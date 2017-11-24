@@ -72,6 +72,7 @@ class AccountPaymentDetails extends React.Component {
             <GenericButton
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
+              extraClasses="account__payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>)}
@@ -83,6 +84,7 @@ class AccountPaymentDetails extends React.Component {
             <GenericButton
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
+              extraClasses="account__payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>)}

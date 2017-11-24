@@ -212,7 +212,7 @@ class AccountPaymentCharges extends React.Component {
     return (
       <ReceiptPopup
         addNotification={this.props.addNotification}
-        close={this._togglePopup}
+        close={this._togglePopup.bind(this)}
         chargeId={charge}
         getReceipt={this.props.getReceipt} />);
   }

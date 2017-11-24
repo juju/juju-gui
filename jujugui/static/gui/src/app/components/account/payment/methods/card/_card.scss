@@ -102,4 +102,10 @@
   &-info {
     padding-top: 20px;
   }
+
+  &-actions {
+    .button--inline-neutral {
+      margin-bottom: 10px;
+    }
+  }
 }

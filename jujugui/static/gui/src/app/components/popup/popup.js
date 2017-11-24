@@ -41,7 +41,7 @@ class Popup extends React.Component {
         <div className="popup__close">
           <GenericButton
             action={close}
-            type="base">
+            type="inline-base">
             <SvgIcon
               name="close_16"
               size="16" />

@@ -218,13 +218,10 @@ class BudgetTableRow extends React.Component {
     var service = this.props.service;
     return (
       <div>
-        <div className="three-col no-margin-bottom">
+        <div className="five-col no-margin-bottom">
           <img className="budget-table__charm-icon"
             src={service.get('icon')} />
           {service.get('name')}
-        </div>
-        <div className="one-col no-margin-bottom">
-          {service.get('unit_count')}
         </div>
       </div>);
   }

@@ -101,6 +101,7 @@ describe('AccountPaymentDetails', () => {
             <GenericButton
               action={instance._toggleAddressEdit}
               disabled={false}
+              extraClasses="account__payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>
@@ -135,6 +136,7 @@ describe('AccountPaymentDetails', () => {
             <GenericButton
               action={instance._toggleBillingAddressEdit}
               disabled={false}
+              extraClasses="account__payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>

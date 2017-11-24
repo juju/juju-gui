@@ -46,10 +46,9 @@ class DeploymentSSHKey extends React.Component {
   }
 
   _updateButtonState() {
-    const hasValue = ((this.refs.sshKey && this.refs.sshKey.getValue()) ||
+    const hasValue = !!((this.refs.sshKey && this.refs.sshKey.getValue()) ||
       (this.refs.githubUsername && this.refs.githubUsername.getValue() ||
-      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue())))
-      !== undefined;
+      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue())));
     if (this.state.buttonDisabled === hasValue) {
       this.setState({
         buttonDisabled: !hasValue
@@ -408,7 +407,7 @@ class DeploymentSSHKey extends React.Component {
     return false;
   }
 
-  componentWillUpdate() {
+  componentDidUpdate() {
     this._updateButtonState();
   }
 

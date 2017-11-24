@@ -235,10 +235,11 @@ describe('jujulib payment service', function() {
 
   it('can create a user', function() {
     const bakery = {
-      put: sinon.stub()
+      post: sinon.stub()
     };
     const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
     const newUser = {
+      nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -257,7 +258,8 @@ describe('jujulib payment service', function() {
       token: '54321'
     };
     payment.createUser(newUser, sinon.stub());
-    assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
+    assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
+      nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
       addresses: [{
@@ -291,7 +293,7 @@ describe('jujulib payment service', function() {
 
   it('can return the user when after creating a user', function() {
     const bakery = {
-      put: function(url, headers, body, callback) {
+      post: function(url, headers, body, callback) {
         assert.equal(
           url,
           'http://1.2.3.4/' +
@@ -330,7 +332,7 @@ describe('jujulib payment service', function() {
 
   it('handles errors when creating a user', function(done) {
     const bakery = {
-      put: function(url, headers, body, callback) {
+      post: function(url, headers, body, callback) {
         const xhr = makeXHRRequest({Error: 'Uh oh!'});
         callback(null, xhr);
       }
@@ -463,15 +465,15 @@ describe('jujulib payment service', function() {
   describe('createPaymentMethod', () => {
     it('can create a payment method', () => {
       const bakery = {
-        put: sinon.stub()
+        post: sinon.stub()
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.createPaymentMethod(
         'spinach', 'token123', 'Business',
         sinon.stub());
-      assert.equal(bakery.put.callCount, 1);
+      assert.equal(bakery.post.callCount, 1);
       assert.deepEqual(
-        bakery.put.args[0][2], JSON.stringify({
+        bakery.post.args[0][2], JSON.stringify({
           'payment-method-name': 'Business',
           token: 'token123'
         }));
@@ -479,7 +481,7 @@ describe('jujulib payment service', function() {
 
     it('can return the payment method when it has been created', (done) => {
       const bakery = {
-        put: function(url, headers, body, callback) {
+        post: function(url, headers, body, callback) {
           assert.equal(
             url,
             'http://1.2.3.4/' +
@@ -538,7 +540,7 @@ describe('jujulib payment service', function() {
 
     it('handles errors when creating a payment method', (done) => {
       const bakery = {
-        put: function(url, headers, body, callback) {
+        post: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
           callback(null, xhr);
         }
@@ -593,7 +595,7 @@ describe('jujulib payment service', function() {
             url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
-            '/u/spinach/payment-methods/paymentmethod1');
+            '/u/spinach/payment-methods/paymentmethod1/content');
           const xhr = makeXHRRequest('success');
           callback(null, xhr);
         }
@@ -914,12 +916,12 @@ describe('jujulib payment service', function() {
 
     it('can update an address', () => {
       const bakery = {
-        post: sinon.stub()
+        put: sinon.stub()
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.updateAddress('spinach', 'address1', address, sinon.stub());
-      assert.equal(bakery.post.callCount, 1);
-      assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
+      assert.equal(bakery.put.callCount, 1);
+      assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
         id: 'address1',
         name: 'Home',
         line1: '1 Maple St',
@@ -934,7 +936,7 @@ describe('jujulib payment service', function() {
 
     it('can successfully update the address', (done) => {
       const bakery = {
-        post: function(url, headers, body, callback) {
+        put: function(url, headers, body, callback) {
           assert.equal(
             url,
             'http://1.2.3.4/' +
@@ -953,7 +955,7 @@ describe('jujulib payment service', function() {
 
     it('handles errors when updating an address', (done) => {
       const bakery = {
-        post: function(url, headers, body, callback) {
+        put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
           callback(null, xhr);
         }
@@ -983,13 +985,13 @@ describe('jujulib payment service', function() {
 
     it('can update a billing address', () => {
       const bakery = {
-        post: sinon.stub()
+        put: sinon.stub()
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
       payment.updateBillingAddress(
         'spinach', 'address1', address, sinon.stub());
-      assert.equal(bakery.post.callCount, 1);
-      assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
+      assert.equal(bakery.put.callCount, 1);
+      assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
         id: 'address1',
         name: 'Home',
         line1: '1 Maple St',
@@ -1004,7 +1006,7 @@ describe('jujulib payment service', function() {
 
     it('can successfully update the billing address', (done) => {
       const bakery = {
-        post: function(url, headers, body, callback) {
+        put: function(url, headers, body, callback) {
           assert.equal(
             url,
             'http://1.2.3.4/' +
@@ -1023,7 +1025,7 @@ describe('jujulib payment service', function() {
 
     it('handles errors when updating a billing address', (done) => {
       const bakery = {
-        post: function(url, headers, body, callback) {
+        put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({error: 'Uh oh!'});
           callback(null, xhr);
         }
@@ -1039,12 +1041,12 @@ describe('jujulib payment service', function() {
   describe('getCharges', () => {
     it('can get a list of charges', (done) => {
       const bakery = {
-        post: function(url, headers, body, callback) {
+        get: function(url, headers, callback) {
           assert.equal(
             url,
             'http://1.2.3.4/' +
             window.jujulib.paymentAPIVersion +
-            '/charges');
+            '/charges?nickname=spinach');
           const xhr = makeXHRRequest({
             charges:[{
               id: 'TEST-12344',
@@ -1143,7 +1145,7 @@ describe('jujulib payment service', function() {
 
     it('handles errors when getting charges', (done) => {
       const bakery = {
-        post: function(url, headers, body, callback) {
+        get: function(url, headers, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
           callback(null, xhr);
         }

@@ -770,7 +770,7 @@ Browser: ${navigator.userAgent}`
         revokeCloudCredential={
           controllerAPI.revokeCloudCredential.bind(controllerAPI)}
         sendAnalytics={this.sendAnalytics}
-        showPay={window.juju_config.flags.pay || false}
+        showPay={this.applicationConfig.flags.pay || false}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         updateAddress={
@@ -1130,6 +1130,7 @@ Browser: ${navigator.userAgent}`
         getUserName={getUserName}
         gisf={this.gisf}
         groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
+        gtmEnabled={this.applicationConfig.GTM_enabled}
         listBudgets={this.plans.listBudgets.bind(this.plans)}
         listClouds={controllerAPI.listClouds.bind(controllerAPI)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}

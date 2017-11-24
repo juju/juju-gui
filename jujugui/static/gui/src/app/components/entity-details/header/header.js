@@ -26,13 +26,14 @@ class EntityHeader extends React.Component {
     @param {Object} e The click event
   */
   _handleDeployClick(e) {
-    var entityModel = this.props.entityModel;
-    var entity = entityModel.toEntity();
+    const props = this.props;
+    const entityModel = props.entityModel;
+    const entity = entityModel.toEntity();
     if (entity.type === 'charm') {
-      var refs = this.refs;
-      var plans = this.props.plans;
-      var plan = refs.plan && refs.plan.value;
-      var activePlan;
+      const refs = this.refs;
+      const plans = props.plans;
+      const plan = refs.plan && refs.plan.value;
+      let activePlan;
       if (plan && Array.isArray(plans)) {
         // It is possible that plan is a string "loading plans..."
         plans.some(item => {
@@ -44,10 +45,12 @@ class EntityHeader extends React.Component {
       }
       // The second param needs to be set as undefined not null as this is the
       // format the method expects.
-      this.props.deployService(entityModel, undefined, plans, activePlan);
+      props.deployService(entityModel, undefined, plans, activePlan);
     } else {
-      var id = entity.id.replace('cs:', '');
-      this.props.getBundleYAML(id, this._getBundleYAMLCallback.bind(this));
+      const bundleURL = props.urllib.fromLegacyString(entity.id);
+      props.getBundleYAML(
+        bundleURL.legacyPath(),
+        this._getBundleYAMLCallback.bind(this, bundleURL.path()));
     }
     this._closeEntityDetails();
   }
@@ -71,10 +74,11 @@ class EntityHeader extends React.Component {
     Callback for getting the bundle YAML.
 
     @method _getBundleYAMLSuccess
+    @param {String} bundleURL The url of the bundle that is being deployed.
     @param {String} error The error, if any. Null if no error.
     @param {String} yaml The yaml for the bundle
   */
-  _getBundleYAMLCallback(error, yaml) {
+  _getBundleYAMLCallback(bundleURL, error, yaml) {
     if (error) {
       console.error(error);
       this.props.addNotification({
@@ -85,7 +89,7 @@ class EntityHeader extends React.Component {
       });
       return;
     }
-    this.props.importBundleYAML(yaml);
+    this.props.importBundleYAML(yaml, bundleURL);
     this._closeEntityDetails();
   }
 

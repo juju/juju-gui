@@ -20,7 +20,8 @@ describe('EntityHeader', function() {
     urllib = sinon.stub();
     urllib.fromLegacyString = sinon.stub().returns({
       revision: 42,
-      path: sinon.stub().returns('u/who/django/42')
+      path: sinon.stub().returns('u/who/django/42'),
+      legacyPath: sinon.stub().returns('django-cluster')
     });
   });
 
@@ -490,12 +491,15 @@ describe('EntityHeader', function() {
         urllib={urllib}
       />);
     const deployAction = output.refs.deployAction;
+    sinon.spy(output, '_getBundleYAMLCallback');
     // Simulate a click.
     deployAction.props.action();
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
+    assert.equal(output._getBundleYAMLCallback.args[0][0], 'u/who/django/42');
     assert.equal(importBundleYAML.callCount, 1);
     assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
+    assert.equal(importBundleYAML.args[0][1], 'u/who/django/42');
   });
 
   it('displays a notification if there is a bundle deploy error', function() {

@@ -16,7 +16,7 @@ class EnvSizeDisplay extends React.Component {
     const view = e.currentTarget.dataset.view;
     this.props.appState.changeState({
       gui: {
-        machines: view === 'machine' ? '' : null,
+        machines: view === 'machines' ? '' : null,
         status: view === 'status' ? '' : null
       }
     });
@@ -32,10 +32,15 @@ class EnvSizeDisplay extends React.Component {
   */
   _genClasses(section) {
     const guiState = this.props.appState.current.gui;
+
+    if (!guiState && section === 'application') {
+      return 'env-size-display__list-item is-active';
+    }
+
     return classNames(
       'env-size-display__list-item',
       {
-        'is-active': guiState && guiState[section]
+        'is-active': guiState && guiState[section] !== undefined
       }
     );
   }
@@ -72,8 +77,8 @@ class EnvSizeDisplay extends React.Component {
               {pluralize('application', serviceCount)}
             </a>
           </li>
-          <li className={this._genClasses('machine')}>
-            <a data-view="machine"
+          <li className={this._genClasses('machines')}>
+            <a data-view="machines"
               onClick={this._changeEnvironmentView.bind(this)}
               className="env-size-display__link">
               {machineCount}&nbsp;
