@@ -43,7 +43,7 @@ const DeployerMixin = (superclass) => class extends superclass {
     const charmId = charm.get('id');
     if (charm.get('id').indexOf('local:') === -1) {
       this.modelAPI.addCharm(
-        charmId, this.charmstoreAPI,
+        charmId, this.charmstore,
         this._addCharmCallbackHandler.bind(this, charm),
         // Options used by ECS, ignored by environment.
         {applicationId: ghostServiceId});
