@@ -10,7 +10,7 @@ const Terminal = require('./terminal');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
-fdescribe('Terminal', () => {
+describe('Terminal', () => {
 
   let websocket;
 
