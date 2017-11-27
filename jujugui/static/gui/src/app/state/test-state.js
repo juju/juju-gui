@@ -92,6 +92,10 @@ describe('State', () => {
     state: { root: 'new', store: '' },
     error: null
   }, {
+    path: 'http://abc.com:123/new/u/spinach/django/xenial/9',
+    state: { root: 'new', store: 'u/spinach/django/xenial/9' },
+    error: null
+  }, {
     path: 'http://abc.com:123/about',
     state: { root: 'about' },
     error: null
@@ -1018,7 +1022,7 @@ describe('State', () => {
 
       const tests = ROOT_RESERVED.map(root => {
         return {
-          path: `http://abc.com:123/${root}/u/lukewh/cheese`,
+          path: `http://abc.com:123/${root}/i/machines`,
           state: {
             root: root
           },
