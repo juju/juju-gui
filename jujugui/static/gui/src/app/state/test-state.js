@@ -1011,7 +1011,7 @@ describe('State', () => {
       });
     });
 
-    it('works with store as the root, but not other ROOT_RESERVED', () => {
+    it('works with new as the root, but not other ROOT_RESERVED', () => {
       const ROOT_RESERVED = [
         'about', 'account', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new'];
 
@@ -1026,7 +1026,7 @@ describe('State', () => {
           state: {
             root: root
           },
-          error: root === 'store' ? null : 'invalid root path.'
+          error: root === 'new' ? null : 'invalid root path.'
         };
       });
 

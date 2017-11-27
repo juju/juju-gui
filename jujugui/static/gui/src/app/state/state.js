@@ -515,9 +515,9 @@ const State = class State {
     state = this._parseRoot(parts, state);
     // If we have root paths in the URL then we can ignore everything else.
     if (state.root) {
-      // If there is anything after this then it's an invalid URL unless it's the store.
-      if (parts.length > 1 && parts[1] !== 'store' &&
-        parts[1] !== PATH_DELIMETERS.get('user')) {
+      // If there is anything after this then it's an invalid URL unless it's
+      // the store or the user delimiter.
+      if (parts.length > 1 && parts[0] !== 'new') {
         error = invalidRootPath;
       }
       if (parts[1] === 'store') {
