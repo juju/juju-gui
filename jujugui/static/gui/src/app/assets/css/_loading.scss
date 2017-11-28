@@ -47,56 +47,121 @@
       text-align: center;
     }
   }
+}
 
-
-  #loading-indicator {  // sass-lint:disable-line no-ids, id-name-format
-    $progress-bar-height: 8px;
-    background-color: $light-mid-grey;
-    border-radius: $border-radius;
-    height: $progress-bar-height;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-
-    @keyframes progress-indicator {
-      from {
-        left: -50%;
-        width: 50%;
-      }
-      to {
-        left: 100%;
-        width: 100%;
-      }
+#loading-message {  // sass-lint:disable-line no-ids, id-name-format
+  .loading-header {
+    &__logo {
+      @include fade-in(.3s);
+      display: inline-block;
+      margin: 11px 0 0 20px;
     }
 
-    &:after {
-      animation: progress-indicator 1.25s linear infinite;
-      background-color: $dark-grey;
-      border-radius: $border-radius;
-      content: " ";
-      height: 100%;
-      display: block;
+    &__search {
       position: absolute;
-      width: 50%;
+      top: 0;
+      right: 0;
+      padding: 11px 20px 0 0;
+    }
+
+    &__deploy {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      padding: 0 20px 11px 0;
+    }
+  }
+
+  .spinner-container {
+    position: absolute;
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    width: 60px;
+  }
+
+  .spinner-loading {
+    &:after {
+      background: $light-grey;
     }
   }
 }
 
-#loading-message {  // sass-lint:disable-line no-ids, id-name-format
-  top: 50%;
-  margin: -100px 0 0 -25%;
-  width: 50%;
+@keyframes fade-in-half {
+  0% {
+    opacity: 0;
+  }
 
-  .panel {
-    box-shadow: none;
-    padding: 20px;
-    width: auto;
+  100% {
+    opacity: 0.5;
+  }
+}
 
-    .header {
-      background-color: transparent;
-      font-size: 13px;
-      color: $warm-grey;
-      margin: 0;
+.content-right {
+  text-align: right;
+}
+
+.loading-fake-content {
+  $size: 35px;
+  animation-duration: 0.3s;
+  animation-name: fade-in-half;
+  animation-fill-mode: forwards;
+  display: inline-block;
+  background-color: $light-mid-grey;
+  width: $size;
+  height: $size;
+  opacity: 0;
+
+  &.space {
+    background-color: transparent;
+  }
+
+  &.half-height {
+    height: $size / 2;
+  }
+
+  &.cols {
+    &-half {
+      width: $size / 2;
+    }
+
+    &-one {
+      width: $size;
+    }
+
+    &-two {
+      width: $size * 2;
+    }
+
+    &-three {
+      width: $size * 3;
+    }
+
+    &-four {
+      width: $size * 4;
+    }
+
+    &-five {
+      width: $size * 5;
+    }
+
+    &-six {
+      width: $size * 6;
+    }
+
+    &-seven {
+      width: $size * 7;
+    }
+
+    &-eight {
+      width: $size * 8;
+    }
+
+    &-nine {
+      width: $size * 9;
+    }
+
+    &-ten {
+      width: $size * 10;
     }
   }
 }
