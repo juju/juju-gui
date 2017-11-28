@@ -192,7 +192,7 @@ describe('State', () => {
     path: 'http://abc.com:123/i/inspector/haproxy/config',
     state: {
       gui: {
-        inspector: {id:'haproxy', activeComponent: 'config', config: true}
+        inspector: {id: 'haproxy', activeComponent: 'config', config: true}
       }},
     error: null
   }, {
@@ -205,7 +205,7 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/i/applications/inspector/ghost',
-    state: {gui: {applications: '', inspector: {id:'ghost'}}},
+    state: {gui: {applications: '', inspector: {id: 'ghost'}}},
     error: null
   }, {
     path:
@@ -330,14 +330,14 @@ describe('State', () => {
     path:
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost',
     state: {
-      user: 'hatch/staging', gui: {applications: '', inspector: {id:'ghost' }}},
+      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost' }}},
     error: null
   }, {
     path:
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/#mayo',
     state: {
       hash: 'mayo',
-      user: 'hatch/staging', gui: {applications: '', inspector: {id:'ghost' }}},
+      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost' }}},
     error: null
   }];
 
@@ -452,7 +452,7 @@ describe('State', () => {
   it('can be instantiated', () => {
     const state = new window.jujugui.State({
       baseURL: 'http://abc.com:123',
-      seriesList:  ['precise', 'trusty', 'xenial']
+      seriesList: ['precise', 'trusty', 'xenial']
     });
     assert.equal(state instanceof window.jujugui.State, true);
   });
@@ -564,7 +564,7 @@ describe('State', () => {
     it('correctly processes urls', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(
         state._processURL('http://abc.com:123/a/b/c/d/'),
@@ -631,7 +631,7 @@ describe('State', () => {
     it('populates the root portion of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(state._parseRoot([], {}), {});
       assert.deepEqual(
@@ -644,7 +644,7 @@ describe('State', () => {
     it('populates the search portion of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(state._parseSearch('', {}, {}), {});
       assert.deepEqual(
@@ -658,7 +658,7 @@ describe('State', () => {
     it('handles query parameters', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       assert.deepEqual(state._parseSearch('', {}, {}), {});
       assert.deepEqual(
@@ -677,7 +677,7 @@ describe('State', () => {
     it('populates the gui portion of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
 
       const guiSections = [{
@@ -734,7 +734,7 @@ describe('State', () => {
     it('populates the user and store portions of the state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
 
       const userSections = [{
@@ -909,7 +909,7 @@ describe('State', () => {
         const baseURL = 'http://abc.com:123';
         const state = new window.jujugui.State({
           baseURL: baseURL,
-          seriesList:  ['precise', 'trusty', 'xenial']
+          seriesList: ['precise', 'trusty', 'xenial']
         });
         sinon.stub(state, '_pushState');
         test.test.forEach(test => {
@@ -931,7 +931,7 @@ describe('State', () => {
     it('correctly returns with an error for invalid urls', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
 
       const badURLS = [{
@@ -1017,7 +1017,7 @@ describe('State', () => {
 
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
 
       const tests = ROOT_RESERVED.map(root => {
@@ -1041,7 +1041,7 @@ describe('State', () => {
     it('can disable state modifications for parse special', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       state._parseSpecial = sinon.stub().returns({});
       state.generateState(
@@ -1056,7 +1056,7 @@ describe('State', () => {
     it('stores the supplied dispatchers', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       const stub1 = sinon.stub();
       const stub2 = sinon.stub();
@@ -1117,7 +1117,7 @@ describe('State', () => {
     it('passes the current location to generateState', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/hatch/ghost'}
       });
       const stub = sinon
@@ -1131,7 +1131,7 @@ describe('State', () => {
     it('updates the _appStateHistory with the new state', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: 'hatch/ghost'}
       });
       sinon
@@ -1144,7 +1144,7 @@ describe('State', () => {
     it('properly extracts complex states', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: 'hatch/ghost'}
       });
       const currentState = {
@@ -1164,7 +1164,7 @@ describe('State', () => {
     it('dispatches registered dispatchers in proper order', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: 'ghost/trusty/i/machines'}
       });
       let counter = 0;
@@ -1199,7 +1199,7 @@ describe('State', () => {
     it('dispatches registered cleanup dispatchers in proper order', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: 'ghost/trusty/i/machines'}
       });
       let counter = 0;
@@ -1243,7 +1243,7 @@ describe('State', () => {
     it('finds and executes parent dispatchers', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/i/inspector/apache/unit/0'}
       });
       const stub1 = sinon.stub();
@@ -1258,7 +1258,7 @@ describe('State', () => {
     it('can handle dispatching when back is called', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/i/machines'}
       });
       const storeCleanup = sinon.stub();
@@ -1291,7 +1291,7 @@ describe('State', () => {
       const sendAnalytics = sinon.stub();
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'},
         sendAnalytics: sendAnalytics
       });
@@ -1329,7 +1329,7 @@ describe('State', () => {
     it('prunes null values when removing states', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
       });
       const pushStub = sinon.stub(state, '_pushState');
@@ -1360,7 +1360,7 @@ describe('State', () => {
     it('calls dispatch with the key paths that were pruned', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
       });
       const pushStub = sinon.stub(state, '_pushState');
@@ -1381,7 +1381,7 @@ describe('State', () => {
     it('calls dispatch with the key paths that were pruned #2', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/i/machines'}
       });
       const pushStub = sinon.stub(state, '_pushState');
@@ -1443,7 +1443,7 @@ describe('State', () => {
       };
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging'},
         browserHistory: historyStub
       });
@@ -1458,7 +1458,7 @@ describe('State', () => {
     it('generates a new null state and calls changeState', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial'],
+        seriesList: ['precise', 'trusty', 'xenial'],
         location: {href: '/u/hatch/staging'}
       });
       const changeState = sinon.stub(state, 'changeState');
@@ -1512,7 +1512,7 @@ describe('State', () => {
         const baseURL = 'http://abc.com:123';
         const state = new window.jujugui.State({
           baseURL: baseURL,
-          seriesList:  ['precise', 'trusty', 'xenial']
+          seriesList: ['precise', 'trusty', 'xenial']
         });
         test.test.forEach(test => {
           state._appStateHistory.push(test.state);
@@ -1524,7 +1524,7 @@ describe('State', () => {
     it('can be passed a custom state object', () => {
       const state = new window.jujugui.State({
         baseURL: 'http://abc.com:123',
-        seriesList:  ['precise', 'trusty', 'xenial']
+        seriesList: ['precise', 'trusty', 'xenial']
       });
       // Because this uses the same logic as above, we're only checking
       // that it actually accepts the argument.

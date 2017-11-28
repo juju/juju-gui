@@ -905,7 +905,7 @@ class DeploymentFlow extends React.Component {
     const classes = classNames(
       'deployment-flow__deploy-option',
       {
-        'deployment-flow__deploy-option--disabled' : status.disabled
+        'deployment-flow__deploy-option--disabled': status.disabled
       });
     return (
       <div className={classes}>

@@ -87,7 +87,7 @@ const createDeploymentFlow = (props = {}) => {
     getCloudProviderDetails: sinon.stub(),
     getCountries: sinon.stub(),
     getCurrentChangeSet: sinon.stub(),
-    getDiagramURL:sinon.stub(),
+    getDiagramURL: sinon.stub(),
     getServiceByName: sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),

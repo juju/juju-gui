@@ -553,7 +553,7 @@ class Status extends React.Component {
         classes: [this._getStatusClass(
           'status-view__table-row--', app.status.current)],
         clickState: this._generateApplicationClickState(app.id),
-        columns:[{
+        columns: [{
           columnSize: 2,
           content: (
             <span>

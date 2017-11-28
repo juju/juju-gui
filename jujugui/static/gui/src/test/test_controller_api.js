@@ -1667,9 +1667,9 @@ describe('Controller API', function() {
               }]
             },
             'cloud-guimaas': {
-              'type':'maas',
-              'auth-types':['oauth1'],
-              'endpoint':'http://maas.jujugui.org/MAAS'
+              'type': 'maas',
+              'auth-types': ['oauth1'],
+              'endpoint': 'http://maas.jujugui.org/MAAS'
             }
           }
         }

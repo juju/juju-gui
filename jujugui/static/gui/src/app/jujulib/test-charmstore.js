@@ -47,16 +47,16 @@ describe('jujulib charmstore', function() {
       Results: [
         { entityType: 'charm', id: 'cs:precise/foo',
           Id: 'cs:precise/foo',
-          Meta: { 'extra-info' : { 'bzr-owner': ''}}},
+          Meta: { 'extra-info': { 'bzr-owner': ''}}},
         { entityType: 'charm', id: 'cs:~charmers/precise/foo',
           Id: 'cs:~charmers/precise/foo',
-          Meta: { 'extra-info' : { 'bzr-owner': 'charmers'}}},
+          Meta: { 'extra-info': { 'bzr-owner': 'charmers'}}},
         { entityType: 'charm', id: 'cs:~juju-gui-charmers/precise/foo',
           Id: 'cs:~juju-gui-charmers/precise/foo',
-          Meta: { 'extra-info' : { 'bzr-owner': 'juju-gui-charmers'}}},
+          Meta: { 'extra-info': { 'bzr-owner': 'juju-gui-charmers'}}},
         { entityType: 'bundle', id: 'cs:bundle/foo',
           Id: 'cs:bundle/foo',
-          Meta: { 'extra-info' : { 'bzr-owner': ''}}}
+          Meta: { 'extra-info': { 'bzr-owner': ''}}}
       ]};
     var cb;
 

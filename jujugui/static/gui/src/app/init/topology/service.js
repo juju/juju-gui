@@ -1549,7 +1549,7 @@ class ServiceModule {
       staticURL += '/';
     }
     var basePath = `${staticURL}static/gui/build/app`;
-    node.attr({'data-name':  function(d) { return d.name; }});
+    node.attr({'data-name': function(d) { return d.name; }});
 
     // Draw a relation button.
     var relationButton = node.filter(function(d) {
