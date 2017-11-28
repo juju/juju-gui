@@ -38,8 +38,7 @@ describe('EnvList', function() {
         handleModelClick={sinon.stub()}
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
-        user={{username: 'who@external', displayName: 'who'}}
-      />, true);
+        user={{username: 'who@external', displayName: 'who'}} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
@@ -101,8 +100,7 @@ describe('EnvList', function() {
         handleModelClick={sinon.stub()}
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
-        user={{username: 'who@external', displayName: 'who'}}
-      />, true);
+        user={{username: 'who@external', displayName: 'who'}} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
@@ -180,8 +178,7 @@ describe('EnvList', function() {
         handleModelClick={sinon.stub()}
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
-        user={{username: 'who@local', displayName: 'who'}}
-      />, true);
+        user={{username: 'who@local', displayName: 'who'}} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (

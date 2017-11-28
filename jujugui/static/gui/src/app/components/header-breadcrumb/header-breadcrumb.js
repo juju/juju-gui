@@ -53,8 +53,7 @@ class HeaderBreadcrumb extends React.Component {
           listModelsWithInfo={this.props.listModelsWithInfo}
           modelCommitted={this.props.modelCommitted}
           setModelName={this.props.setModelName}
-          switchModel={this.props.switchModel}
-        />
+          switchModel={this.props.switchModel} />
       </li>);
   }
 

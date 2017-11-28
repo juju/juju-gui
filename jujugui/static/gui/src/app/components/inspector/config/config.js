@@ -286,7 +286,7 @@ class Configuration extends React.Component {
           description: 'Specify a custom application name. The application' +
             ' name cannot be changed once it has been deployed.'
         }}
-        config={this.props.service.get('name')}/>);
+        config={this.props.service.get('name')} />);
     }
     return;
   }

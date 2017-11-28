@@ -94,7 +94,7 @@ class InspectorRelations extends React.Component {
         key={ref+'1'}
         ref={ref}
         label='Select all relations'
-        whenChanged={this._selectAllRelations.bind(this)}/>
+        whenChanged={this._selectAllRelations.bind(this)} />
     ];
 
     relations.forEach(function(relation, index) {

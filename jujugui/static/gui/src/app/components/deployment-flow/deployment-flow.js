@@ -560,8 +560,7 @@ class DeploymentFlow extends React.Component {
           setSSHKeys={this._setSSHKeys.bind(this)}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           username={this.props.username}
-          WebHandler={this.props.WebHandler}
-        />
+          WebHandler={this.props.WebHandler} />
       </DeploymentSection>);
   }
 

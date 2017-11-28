@@ -240,8 +240,7 @@ class GenericInput extends React.Component {
     const errorIcon = showErrors && this.props.inlineErrorIcon ?
       (<SvgIcon
         name="relation-icon-error"
-        size={16}
-      />) : undefined;
+        size={16} />) : undefined;
     return (
       <div className={classes}>
         {labelElement}

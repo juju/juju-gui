@@ -71,7 +71,7 @@ class SvgIcon extends React.PureComponent {
       <svg className={this._generateClasses()}
         viewBox={this._generateViewbox()}
         style={this._generateStyles()}>
-        <use xlinkHref={'#' + this.props.name}/>
+        <use xlinkHref={'#' + this.props.name} />
       </svg>
     );
   }

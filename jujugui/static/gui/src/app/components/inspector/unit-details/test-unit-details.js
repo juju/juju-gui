@@ -42,8 +42,7 @@ describe('UnitDetails', function() {
         service={service}
         previousComponent='units'
         unitStatus='error'
-        unit={fakeUnit}
-      />);
+        unit={fakeUnit} />);
     const expectedOutput = (
       <div className='unit-details__properties'>
         <div>
@@ -140,8 +139,7 @@ describe('UnitDetails', function() {
         service={service}
         previousComponent='units'
         unitStatus='error'
-        unit={fakeUnit}
-      />);
+        unit={fakeUnit} />);
     const expectedOutput = (
       <div className='unit-details__properties'>
         <div>

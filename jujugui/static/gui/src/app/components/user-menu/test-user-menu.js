@@ -28,8 +28,7 @@ describe('UserMenu', () => {
         controllerAPI={controllerAPI}
         navigateUserAccount={sinon.stub()}
         navigateUserProfile={sinon.stub()}
-        showHelp={sinon.stub()}
-      />, true);
+        showHelp={sinon.stub()} />, true);
     return {
       renderer: renderer,
       output: renderer.getRenderOutput(),
@@ -72,8 +71,7 @@ describe('UserMenu', () => {
             {logoutLink}
           </li>
         ]}
-        tooltip={''}
-      />
+        tooltip={''} />
     );
     expect(c.output).toEqualJSX(expected);
   });
@@ -113,8 +111,7 @@ describe('UserMenu', () => {
             {logoutLink}
           </li>
         ]}
-        tooltip="user"
-      />
+        tooltip="user" />
     );
     expect(c.output).toEqualJSX(expected);
   });

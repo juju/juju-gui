@@ -220,7 +220,7 @@ class AccountCredentials extends React.Component {
             {title}
           </span>
           <span className="three-col last-col user-profile__list-col no-margin-bottom">
-            <ButtonRow buttons={buttons}/>
+            <ButtonRow buttons={buttons} />
           </span>
           {this._generateEditCredentials(credential)}
         </li>);

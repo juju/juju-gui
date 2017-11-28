@@ -197,7 +197,7 @@ class AddressForm extends React.Component {
             ref="line1"
             required={true}
             validate={[required]}
-            value={address.line1}/>
+            value={address.line1} />
           <GenericInput
             disabled={disabled}
             label="Address line 2 (optional)"

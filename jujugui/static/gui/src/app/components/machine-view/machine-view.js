@@ -184,8 +184,7 @@ class MachineView extends React.Component {
             removeUnit: this._removeUnit.bind(this),
             selectMachine: this.selectMachine.bind(this),
             unit: unit
-          }}
-        />
+          }} />
       );
     });
     return (
@@ -225,8 +224,7 @@ class MachineView extends React.Component {
       <MachineViewScaleUp
         acl={props.acl.reshape(propTypes.acl)}
         dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
-        toggleScaleUp={this._toggleScaleUp.bind(this)}
-      />);
+        toggleScaleUp={this._toggleScaleUp.bind(this)} />);
   }
 
   /**
@@ -357,8 +355,7 @@ class MachineView extends React.Component {
           sendAnalytics={props.sendAnalytics}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
-          type="machine"
-        />);
+          type="machine" />);
     });
     return (
       <div>
@@ -417,8 +414,7 @@ class MachineView extends React.Component {
           parseConstraints={props.parseConstraints}
           ref={`container-${container.id}`}
           sendAnalytics={props.sendAnalytics}
-          type="container"
-        />);
+          type="container" />);
     });
     return (
       <ul className="machine-view__list">
@@ -465,8 +461,7 @@ class MachineView extends React.Component {
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         selectMachine={this.selectMachine.bind(this)}
         series={props.series}
-        unit={this.state.placingUnit}
-      />
+        unit={this.state.placingUnit} />
     );
   }
 
@@ -517,8 +512,7 @@ class MachineView extends React.Component {
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         parentId={this._getSelected().machine}
         series={props.series}
-        unit={this.state.placingUnit}
-      />
+        unit={this.state.placingUnit} />
     );
   }
 

@@ -30,8 +30,7 @@ describe('UserProfileHeader', () => {
         avatar="avatar.png"
         interactiveLogin={interactiveLogin}
         links={links}
-        userInfo={userInfo}
-      />);
+        userInfo={userInfo} />);
     const expected = (
       <div className="user-profile-header twelve-col">
         <GenericButton
@@ -71,8 +70,7 @@ describe('UserProfileHeader', () => {
         avatar="avatar.png"
         interactiveLogin={sinon.stub()}
         links={links}
-        userInfo={userInfo}
-      />);
+        userInfo={userInfo} />);
     assert.isUndefined(output.props.children[0]);
   });
 
@@ -84,8 +82,7 @@ describe('UserProfileHeader', () => {
         avatar="avatar.png"
         interactiveLogin={interactiveLogin}
         links={links}
-        userInfo={userInfo}
-      />);
+        userInfo={userInfo} />);
     const expected = (
       <GenericButton
         type="inline-neutral"
@@ -103,8 +100,7 @@ describe('UserProfileHeader', () => {
         avatar=""
         interactiveLogin={undefined}
         links={links}
-        userInfo={userInfo}
-      />);
+        userInfo={userInfo} />);
     const expected = (
       <span className={
         'user-profile-header__avatar user-profile-header__avatar--default'}>

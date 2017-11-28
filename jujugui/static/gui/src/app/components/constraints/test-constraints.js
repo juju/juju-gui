@@ -34,8 +34,7 @@ describe('Constraints', function() {
         hasUnit={args.hasUnit || false}
         providerType={args.providerType || ''}
         series={series}
-        valuesChanged={valuesChanged}
-      />, true);
+        valuesChanged={valuesChanged} />, true);
     return {
       instance: renderer.getMountedInstance(),
       output: renderer.getRenderOutput()
@@ -85,8 +84,7 @@ describe('Constraints', function() {
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="cpuConstraintInput"
-            />
+              ref="cpuConstraintInput" />
           </div>,
           <div key="cores-constraint-div">
             <label htmlFor="cores-constraint" className="constraints__label">
@@ -99,8 +97,7 @@ describe('Constraints', function() {
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput"
-            />
+              ref="coresConstraintInput" />
           </div>,
           <div key="mem-constraint-div">
             <label htmlFor="mem-constraint" className="constraints__label">
@@ -113,8 +110,7 @@ describe('Constraints', function() {
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput"
-            />
+              ref="memConstraintInput" />
           </div>,
           <div key="disk-constraint-div">
             <label htmlFor="disk-constraint" className="constraints__label">
@@ -127,8 +123,7 @@ describe('Constraints', function() {
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput"
-            />
+              ref="diskConstraintInput" />
           </div>
         ]}
       </div>);
@@ -187,8 +182,7 @@ describe('Constraints', function() {
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="cpuConstraintInput"
-            />
+              ref="cpuConstraintInput" />
           </div>,
           <div key="cores-constraint-div">
             <label htmlFor="cores-constraint" className="constraints__label">
@@ -201,8 +195,7 @@ describe('Constraints', function() {
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput"
-            />
+              ref="coresConstraintInput" />
           </div>,
           <div key="mem-constraint-div">
             <label htmlFor="mem-constraint" className="constraints__label">
@@ -215,8 +208,7 @@ describe('Constraints', function() {
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput"
-            />
+              ref="memConstraintInput" />
           </div>,
           <div key="disk-constraint-div">
             <label htmlFor="disk-constraint" className="constraints__label">
@@ -229,8 +221,7 @@ describe('Constraints', function() {
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput"
-            />
+              ref="diskConstraintInput" />
           </div>
         ]}
       </div>);
@@ -254,8 +245,7 @@ describe('Constraints', function() {
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput"
-            />
+              ref="coresConstraintInput" />
           </div>,
           <div key="mem-constraint-div">
             <label htmlFor="mem-constraint" className="constraints__label">
@@ -268,8 +258,7 @@ describe('Constraints', function() {
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput"
-            />
+              ref="memConstraintInput" />
           </div>,
           <div key="disk-constraint-div">
             <label htmlFor="disk-constraint" className="constraints__label">
@@ -282,8 +271,7 @@ describe('Constraints', function() {
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput"
-            />
+              ref="diskConstraintInput" />
           </div>
         ]}
       </div>);
@@ -368,8 +356,7 @@ describe('Constraints', function() {
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="cpuConstraintInput"
-            />
+              ref="cpuConstraintInput" />
           </div>,
           <div key="cores-constraint-div">
             <label htmlFor="cores-constraint" className="constraints__label">
@@ -382,8 +369,7 @@ describe('Constraints', function() {
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput"
-            />
+              ref="coresConstraintInput" />
           </div>,
           <div key="mem-constraint-div">
             <label htmlFor="mem-constraint" className="constraints__label">
@@ -396,8 +382,7 @@ describe('Constraints', function() {
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput"
-            />
+              ref="memConstraintInput" />
           </div>,
           <div key="disk-constraint-div">
             <label htmlFor="disk-constraint" className="constraints__label">
@@ -410,8 +395,7 @@ describe('Constraints', function() {
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput"
-            />
+              ref="diskConstraintInput" />
           </div>
         ]}
       </div>);
@@ -424,8 +408,7 @@ describe('Constraints', function() {
     testUtils.renderIntoDocument(
       <Constraints
         valuesChanged={valuesChanged}
-        series={series}
-      />
+        series={series} />
     );
     assert.equal(valuesChanged.callCount, 1, 'valuesChanged.callCount');
     const args = valuesChanged.args[0];
@@ -446,8 +429,7 @@ describe('Constraints', function() {
     const output = testUtils.renderIntoDocument(
       <Constraints
         valuesChanged={valuesChanged}
-        series={series}
-      />
+        series={series} />
     );
     const refs = output.refs;
     refs.seriesConstraintSelect.value = 'xenial';

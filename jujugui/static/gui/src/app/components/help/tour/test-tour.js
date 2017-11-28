@@ -23,8 +23,7 @@ describe('Tour', () => {
         <SvgIcon
           className="back-to-help__icon"
           name="chevron_down_16"
-          size="16"
-        />
+          size="16" />
         Back to GUI help
       </span>
     );

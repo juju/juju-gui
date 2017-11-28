@@ -210,8 +210,7 @@ describe('Profile Model List', function() {
                     Delete</a>
                   </li>
                 ]}
-                tooltip="more"
-              />
+                tooltip="more" />
             </span>
           </li>
           <li className="profile-model-list__row" key="">
@@ -239,8 +238,7 @@ describe('Profile Model List', function() {
                     Delete</a>
                   </li>
                 ]}
-                tooltip="more"
-              />
+                tooltip="more" />
             </span>
           </li>
         </ul>

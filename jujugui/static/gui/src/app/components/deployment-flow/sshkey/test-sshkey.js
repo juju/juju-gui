@@ -39,8 +39,7 @@ describe('DeploymentSSHKey', function() {
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKeys={setSSHKeys}
         setLaunchpadUsernames={setLaunchpadUsernames}
-        username={username}
-      />, true);
+        username={username} />, true);
     return {
       instance: renderer.getMountedInstance(),
       output: renderer.getRenderOutput(),

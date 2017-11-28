@@ -27,8 +27,7 @@ describe('ModelActions', function() {
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -95,8 +94,7 @@ describe('ModelActions', function() {
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -177,8 +175,7 @@ describe('ModelActions', function() {
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />);
+        sharingVisibility={sinon.stub()} />);
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
   });
@@ -200,8 +197,7 @@ describe('ModelActions', function() {
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         userIsAuthenticated={true}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {'file-input': {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
@@ -225,8 +221,7 @@ describe('ModelActions', function() {
         importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
         userIsAuthenticated={true}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       'file-input': {files: ['apache2.yaml']}
@@ -250,8 +245,7 @@ describe('ModelActions', function() {
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -318,8 +312,7 @@ describe('ModelActions', function() {
         importBundleFile={sinon.stub()}
         userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const sharing = output.props.children[0].props.children[2];
     assert.isNull(sharing);
@@ -337,8 +330,7 @@ describe('ModelActions', function() {
         importBundleFile={sinon.stub()}
         userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const sharing = output.props.children[0].props.children[2];
     assert.isNull(sharing);
@@ -378,8 +370,7 @@ describe('ModelActions', function() {
         loadingModel={true}
         userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const className = 'model-actions--loading-model';
     const classFound = output.props.className.indexOf(className) >= 0;
@@ -399,8 +390,7 @@ describe('ModelActions', function() {
         loadingModel={false}
         userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const className = 'model-actions--loading-model';
     const classFound = output.props.className.indexOf(className) >= 0;
@@ -420,8 +410,7 @@ describe('ModelActions', function() {
         loadingModel={false}
         userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()}
-      />, true);
+        sharingVisibility={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const className = 'model-actions--loading-model';
     const classFound = output.props.className.indexOf(className) >= 0;

@@ -105,7 +105,7 @@ describe('DeploymentCredential', function() {
             sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
-            validateForm={validateForm}/>
+            validateForm={validateForm} />
         </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -506,7 +506,7 @@ describe('DeploymentCredential', function() {
             sendAnalytics={sendAnalytics}
             setCredential={setCredential}
             user={user}
-            validateForm={validateForm}/>
+            validateForm={validateForm} />
         </ExpandingRow>
       </div>);
     expect(output).toEqualJSX(expected);

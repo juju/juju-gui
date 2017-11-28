@@ -123,8 +123,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         appState={this.state}
         machineCount={machineCount}
         pluralize={initUtils.pluralize.bind(this)}
-        serviceCount={serviceCount}
-      />,
+        serviceCount={serviceCount} />,
       document.getElementById('env-size-display-container'));
   }
   /**
@@ -180,8 +179,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
         humanizeTimestamp={initUtils.humanizeTimestamp}
-        revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
-      />, sharing);
+        revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />, sharing);
   }
 
   _renderTerminal(address) {
@@ -217,7 +215,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         changeState={this._bound.changeState}
         commands={commands}
         creds={creds}
-        WebSocket={WebSocket}/>,
+        WebSocket={WebSocket} />,
       document.getElementById('terminal-container'));
   }
 
@@ -354,8 +352,7 @@ Browser: ${navigator.userAgent}`
         staticURL={this.applicationConfig.staticURL}
         storeUser={this.storeUser.bind(this)}
         switchModel={this._bound.switchModel}
-        userInfo={this._getUserInfo(state)}
-      />);
+        userInfo={this._getUserInfo(state)} />);
 
     if (this.applicationConfig.flags.profile) {
       profile = (
@@ -622,8 +619,7 @@ Browser: ${navigator.userAgent}`
       <HeaderLogo
         gisf={gisf}
         homePath={homePath}
-        showProfile={showProfile}
-      />,
+        showProfile={showProfile} />,
       document.getElementById('header-logo'));
   }
 
@@ -692,8 +688,7 @@ Browser: ${navigator.userAgent}`
         makeEntityModel={jujulibConversionUtils.makeEntityModel}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
-        urllib={window.jujulib.URL}
-      />,
+        urllib={window.jujulib.URL} />,
       document.getElementById('charmbrowser-container'));
     next();
   }
@@ -845,8 +840,7 @@ Browser: ${navigator.userAgent}`
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
-        series={window.jujulib.CHARM_SERIES}
-      />,
+        series={window.jujulib.CHARM_SERIES} />,
       document.getElementById('machine-view'));
     next();
   }
@@ -874,8 +868,7 @@ Browser: ${navigator.userAgent}`
         db={shapeup.fromShape(this.db, propTypes.db)}
         generatePath={this.state.generatePath.bind(this.state)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
-        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
-      />,
+        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />,
       document.getElementById('status-container')
     );
     next();
@@ -975,8 +968,7 @@ Browser: ${navigator.userAgent}`
           unexposeService={model.unexpose.bind(model)}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
-            db.updateServiceUnitsDisplayname.bind(db)}
-        />
+            db.updateServiceUnitsDisplayname.bind(db)} />
       );
     } else if (localType && window.localCharmFile) {
       // When dragging a local charm zip over the canvas it animates the
@@ -996,8 +988,7 @@ Browser: ${navigator.userAgent}`
               this, model, db)}
           uploadLocalCharm={
             localCharmHelpers.uploadLocalCharm.bind(
-              this, model, db)}
-        />
+              this, model, db)} />
       );
     } else {
       this.state.changeState({gui: {inspector: null}});
@@ -1308,8 +1299,7 @@ Browser: ${navigator.userAgent}`
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
       showHelp={showHelp}
-      USSOLoginLink={_USSOLoginLink}
-    />, linkContainer);
+      USSOLoginLink={_USSOLoginLink} />, linkContainer);
   }
 
   /**
@@ -1413,7 +1403,7 @@ Browser: ${navigator.userAgent}`
     }
     ReactDOM.render(
       <NotificationList
-        notification={notification}/>,
+        notification={notification} />,
       document.getElementById('notifications-container'));
   }
   /**

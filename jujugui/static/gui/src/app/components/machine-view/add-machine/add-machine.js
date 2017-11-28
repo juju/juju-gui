@@ -105,8 +105,7 @@ class MachineViewAddMachine extends React.Component {
           hasUnit={!!props.unit}
           providerType={props.modelAPI.providerType}
           series={props.series}
-          valuesChanged={this._updateConstraints.bind(this)}
-        />
+          valuesChanged={this._updateConstraints.bind(this)} />
       </div>);
   }
 

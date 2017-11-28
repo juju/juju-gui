@@ -83,8 +83,7 @@ class EntityDetails extends React.Component {
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollPosition={this.props.scrollPosition}
-              urllib={this.props.urllib}
-            />
+              urllib={this.props.urllib} />
             <EntityContent
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
@@ -101,8 +100,7 @@ class EntityDetails extends React.Component {
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
-              showTerms={this.props.showTerms}
-            />
+              showTerms={this.props.showTerms} />
           </div>
         );
         break;

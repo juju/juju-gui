@@ -32,7 +32,7 @@ describe('AddedServicesList', () => {
         hoveredId="mysql"
         getUnitStatusCounts={getUnitStatusCounts}
         panToService={panToService}
-        services={services}/>, true);
+        services={services} />, true);
 
     var output = renderer.getRenderOutput();
 

@@ -120,7 +120,7 @@ class ScaleService extends React.Component {
             autoComplete="off"
             name="num-units"
             onChange={this._updateState.bind(this)}
-            ref="numUnitsInput"/>
+            ref="numUnitsInput" />
           <span className="scale-service--units__span">units</span>
         </div>
         <div className="scale-service--selector">

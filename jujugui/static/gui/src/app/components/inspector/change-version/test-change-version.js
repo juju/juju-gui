@@ -131,16 +131,14 @@ describe('InspectorChangeVersion', function() {
             downgrade={true}
             itemAction={list.props.children[0].props.itemAction}
             buttonAction={list.props.children[0].props.buttonAction}
-            url={window.jujulib.URL.fromString('django/4')}
-          />
+            url={window.jujulib.URL.fromString('django/4')} />
           <InspectorChangeVersionItem
             acl={acl}
             key="cs:django-6"
             downgrade={false}
             itemAction={list.props.children[1].props.itemAction}
             buttonAction={list.props.children[1].props.buttonAction}
-            url={window.jujulib.URL.fromString('django/6')}
-          />
+            url={window.jujulib.URL.fromString('django/6')} />
         </ul>
       </div>);
   });

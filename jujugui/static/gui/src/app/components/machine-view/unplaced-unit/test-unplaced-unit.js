@@ -41,8 +41,7 @@ describe('MachineViewUnplacedUnit', function() {
           removeUnit: removeUnit,
           selectMachine: sinon.stub(),
           unit: unit
-        }}
-      />, true);
+        }} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -87,8 +86,7 @@ describe('MachineViewUnplacedUnit', function() {
           removeUnit: removeUnit,
           selectMachine: sinon.stub(),
           unit: unit
-        }}
-      />);
+        }} />);
     const expected = (
       <li className={'machine-view__unplaced-unit ' +
         'machine-view__unplaced-unit--dragged'}>
@@ -120,8 +118,7 @@ describe('MachineViewUnplacedUnit', function() {
           removeUnit: removeUnit,
           selectMachine: sinon.stub(),
           unit: unit
-        }}
-      />);
+        }} />);
     output.props.children[2].props.items[1].action();
     assert.equal(removeUnit.callCount, 1);
     assert.equal(removeUnit.args[0][0], 'django/7');
@@ -151,8 +148,7 @@ describe('MachineViewUnplacedUnit', function() {
           removeUnit: removeUnit,
           selectMachine: sinon.stub(),
           unit: unit
-        }}
-      />, true);
+        }} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <MoreMenu

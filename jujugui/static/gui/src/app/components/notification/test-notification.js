@@ -13,8 +13,7 @@ describe('Notification', function() {
   it('renders default', () => {
     const renderer = jsTestUtils.shallowRender(
       <Notification
-        content={<span>Hello</span>}
-      />, true);
+        content={<span>Hello</span>} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification">
@@ -30,8 +29,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        type="positive"
-      />, true);
+        type="positive" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification--positive">
@@ -47,8 +45,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        type="caution"
-      />, true);
+        type="caution" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification--caution">
@@ -64,8 +61,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        type="negative"
-      />, true);
+        type="negative" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification--negative">
@@ -81,8 +77,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        extraClasses="test"
-      />, true);
+        extraClasses="test" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification test">
@@ -99,8 +94,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        dismiss={dismiss}
-      />, true);
+        dismiss={dismiss} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification">
@@ -123,8 +117,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        dismiss={dismiss}
-      />, true);
+        dismiss={dismiss} />, true);
     const output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.onClick({
       stopPropagation: stopPropagation
@@ -137,8 +130,7 @@ describe('Notification', function() {
     const renderer = jsTestUtils.shallowRender(
       <Notification
         content={<span></span>}
-        isBlocking={true}
-      />, true);
+        isBlocking={true} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification__blocker">
@@ -158,8 +150,7 @@ describe('Notification', function() {
       <Notification
         content={<span></span>}
         dismiss={dismiss}
-        isBlocking={true}
-      />, true);
+        isBlocking={true} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="p-notification__blocker"

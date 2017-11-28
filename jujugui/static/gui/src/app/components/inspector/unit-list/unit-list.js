@@ -145,7 +145,7 @@ class UnitList extends React.Component {
         ref={key}
         label={group.label}
         className='select-all'
-        whenChanged={this._selectAllUnits.bind(this, key)}/>
+        whenChanged={this._selectAllUnits.bind(this, key)} />
     ];
     group.units.forEach(unit => {
       var ref = 'CheckListItem-' + unit.id;

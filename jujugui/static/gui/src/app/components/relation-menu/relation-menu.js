@@ -51,7 +51,7 @@ const RelationMenu = function(props) {
     return (
       <SvgIcon
         name={icon}
-        size="16"/>);
+        size="16" />);
   }
 
   /**

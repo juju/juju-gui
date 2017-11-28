@@ -174,8 +174,7 @@ class Inspector extends React.Component {
               changeState={changeState}
               createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
               providerType={this.props.providerType}
-              serviceId={serviceId}
-            />,
+              serviceId={serviceId} />,
           backState: {
             gui: {
               inspector: {
@@ -291,7 +290,7 @@ class Inspector extends React.Component {
             <InspectorRelateTo
               changeState={changeState}
               application={service}
-              relatableApplications={this.props.relatableApplications}/>,
+              relatableApplications={this.props.relatableApplications} />,
           backState: {
             gui: {
               inspector: {

@@ -758,8 +758,7 @@ describe('Inspector', function() {
         activeComponent="scale"
         type={undefined}
         title='Scale'
-        icon={icon}
-      />
+        icon={icon} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -770,8 +769,7 @@ describe('Inspector', function() {
         changeState={children.props.changeState}
         createMachinesPlaceUnits={children.props.createMachinesPlaceUnits}
         providerType='lxd'
-        serviceId={service.get('id')}
-      />);
+        serviceId={service.get('id')} />);
   });
 
   it('displays Expose when the app state calls for it', function() {
@@ -991,7 +989,7 @@ describe('Inspector', function() {
       <InspectorRelateTo
         changeState={children.props.changeState}
         application={service}
-        relatableApplications={['apps']}/>);
+        relatableApplications={['apps']} />);
   });
 
   it('displays relate-to with spouse when the app state calls for it', () => {

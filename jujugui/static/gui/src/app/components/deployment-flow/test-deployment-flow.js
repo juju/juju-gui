@@ -204,8 +204,7 @@ describe('DeploymentFlow', function() {
             getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKeys={instance._setSSHKeys}
             setLaunchpadUsernames={instance._setLaunchpadUsernames}
-            username={undefined}
-          />
+            username={undefined} />
         </DeploymentSection>
         {undefined}
         <DeploymentSection
@@ -311,8 +310,7 @@ describe('DeploymentFlow', function() {
         generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}
         entityModel={entityModel}
-        renderMarkdown={renderMarkdown}
-      />
+        renderMarkdown={renderMarkdown} />
     );
   });
 

@@ -38,7 +38,7 @@ class Profile extends React.Component {
             // Use supplied activeSection or the key from the first map entry.
             activeSection={this.props.activeSection || mapEntry[0]}
             changeState={this.props.changeState}
-            sectionsMap={sectionsMap}/>
+            sectionsMap={sectionsMap} />
           {section.getComponent.call(this, this)}
         </div>
       </Panel>

@@ -237,7 +237,7 @@ describe('UserProfileModelList', () => {
             <span className="user-profile__list-col two-col last-col">
               <DateDisplay
                 date='2016-09-12T15:42:09Z'
-                relative={true}/>
+                relative={true} />
             </span>
           </UserProfileEntity>]}
         </ul>
@@ -385,7 +385,7 @@ describe('UserProfileModelList', () => {
             <span className="user-profile__list-col two-col last-col">
               <DateDisplay
                 date='2016-09-12T15:42:09Z'
-                relative={true}/>
+                relative={true} />
             </span>
           </UserProfileEntity>,
           <UserProfileEntity
@@ -416,7 +416,7 @@ describe('UserProfileModelList', () => {
             <span className="user-profile__list-col two-col last-col">
               <DateDisplay
                 date='2016-09-12T15:42:09Z'
-                relative={true}/>
+                relative={true} />
             </span>
           </UserProfileEntity>]}
         </ul>

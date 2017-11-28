@@ -22,12 +22,12 @@ describe('CopyToClipboard', function() {
           ref="input"
           readOnly="true"
           type="text"
-          value=""/>
+          value="" />
         <button className={className + '__btn'}
           ref="btn">
           <SvgIcon
             name="copy-to-clipboard-16"
-            size="16"/>
+            size="16" />
         </button>
       </div>
     );
@@ -37,7 +37,7 @@ describe('CopyToClipboard', function() {
   it('renders a user-provided value properly', function() {
     var value = 'foobar';
     var output = testUtils.renderIntoDocument(
-      <CopyToClipboard value={value}/>);
+      <CopyToClipboard value={value} />);
     assert.equal(output.refs.input.value, value,
       'Value is not set properly for input');
   });
@@ -45,7 +45,7 @@ describe('CopyToClipboard', function() {
   // XXX: can't stub out internal methods.
   xit('initializes the Clipboard widget', function() {
     var component = testUtils.renderIntoDocument(
-      <CopyToClipboard/>);
+      <CopyToClipboard />);
     var node = ReactDOM.findDOMNode(component).querySelector('button');
     assert.deepEqual(Clipboard.getCall(0).args[0], node,
       'Clipboard was not initialized with expected node');

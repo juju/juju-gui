@@ -379,7 +379,7 @@ class EntityHeader extends React.Component {
 
     if (entity.type !== 'bundle') {
       icon = (<img src={entity.iconPath} alt={entity.displayName}
-        width="96" className="entity-header__icon"/>);
+        width="96" className="entity-header__icon" />);
     }
     return (
       <div className="row-hero"
@@ -419,7 +419,7 @@ class EntityHeader extends React.Component {
                     href={twitterUrl}>
                     <SvgIcon
                       name="icon-social-twitter"
-                      size="36"/>
+                      size="36" />
                   </a>
                 </li>
                 <li>
@@ -428,7 +428,7 @@ class EntityHeader extends React.Component {
                     href={googlePlusUrl}>
                     <SvgIcon
                       name="icon-social-google"
-                      size="36"/>
+                      size="36" />
                   </a>
                 </li>
               </ul>

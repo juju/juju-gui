@@ -35,12 +35,12 @@ class CopyToClipboard extends React.Component {
           ref="input"
           readOnly="true"
           type="text"
-          value={this.props.value}/>
+          value={this.props.value} />
         <button className={className + '__btn'}
           ref="btn">
           <SvgIcon
             name="copy-to-clipboard-16"
-            size="16"/>
+            size="16" />
         </button>
       </div>
     );

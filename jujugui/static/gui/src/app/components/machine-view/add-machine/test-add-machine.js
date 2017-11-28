@@ -30,8 +30,7 @@ describe('MachineViewAddMachine', function() {
         modelAPI={{
           createMachine: createMachine,
           providerType: 'ec2'
-        }}
-      />, true);
+        }} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const buttons = [{
@@ -74,8 +73,7 @@ describe('MachineViewAddMachine', function() {
         modelAPI={{
           createMachine: createMachine,
           providerType: 'lxd'
-        }}
-      />, true);
+        }} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const buttons = [{
@@ -208,8 +206,7 @@ describe('MachineViewAddMachine', function() {
         close={close}
         modelAPI={{
           createMachine: createMachine
-        }}
-      />, true);
+        }} />, true);
     const output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[0].action();
     assert.equal(close.callCount, 1);
@@ -224,8 +221,7 @@ describe('MachineViewAddMachine', function() {
         close={close}
         modelAPI={{
           createMachine: createMachine
-        }}
-      />, true);
+        }} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     output.props.children[1].props.buttons[1].action();
@@ -277,8 +273,7 @@ describe('MachineViewAddMachine', function() {
           placeUnit: placeUnit
         }}
         parentId="new0"
-        unit={unit}
-      />, true);
+        unit={unit} />, true);
     const instance = renderer.getMountedInstance();
     instance.state = {selectedMachine: 'new'};
     instance._submitForm();
@@ -346,8 +341,7 @@ describe('MachineViewAddMachine', function() {
           placeUnit: placeUnit
         }}
         parentId="new0"
-        unit={unit}
-      />, true);
+        unit={unit} />, true);
     const instance = renderer.getMountedInstance();
     instance.state = {
       selectedMachine: 'new0',
@@ -380,8 +374,7 @@ describe('MachineViewAddMachine', function() {
           placeUnit: placeUnit
         }}
         parentId="new0"
-        unit={unit}
-      />, true);
+        unit={unit} />, true);
     const instance = renderer.getMountedInstance();
     instance.state = {
       selectedMachine: 'new0',
@@ -416,8 +409,7 @@ describe('MachineViewAddMachine', function() {
         }}
         parentId="new0"
         selectMachine={selectMachine}
-        unit={unit}
-      />, true);
+        unit={unit} />, true);
     const instance = renderer.getMountedInstance();
     instance.state = {selectedMachine: 'new'};
     instance._submitForm();
@@ -447,8 +439,7 @@ describe('MachineViewAddMachine', function() {
         }}
         parentId="new0"
         selectMachine={selectMachine}
-        unit={unit}
-      />, true);
+        unit={unit} />, true);
     const instance = renderer.getMountedInstance();
     instance.state = {
       selectedContainer: 'lxc'

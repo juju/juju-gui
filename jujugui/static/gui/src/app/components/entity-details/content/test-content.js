@@ -599,7 +599,7 @@ describe('EntityContent', function() {
                     title={<span>
                       <img alt="gunicorn"
                         className="entity-content__config-image"
-                        src={undefined} width="26"/>
+                        src={undefined} width="26" />
                       gunicorn
                     </span>}>
                     <div className="entity-content__config-description">
@@ -625,7 +625,7 @@ describe('EntityContent', function() {
                     title={<span>
                       <img alt="django"
                         className="entity-content__config-image"
-                        src={undefined} width="26"/>
+                        src={undefined} width="26" />
                       django
                     </span>} />
                 </div>

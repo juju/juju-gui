@@ -100,8 +100,7 @@ describe('CheckListItem', () => {
         label="a-label"
         action={sinon.stub()}
         id="apache/2"
-        whenChanged={sinon.stub()}
-      />);
+        whenChanged={sinon.stub()} />);
     assert.equal(output.props.children.props.htmlFor, '');
   });
 
@@ -114,8 +113,7 @@ describe('CheckListItem', () => {
         label="a-label"
         action={sinon.stub()}
         id="apache/2"
-        whenChanged={sinon.stub()}
-      />);
+        whenChanged={sinon.stub()} />);
     assert.isTrue(output.props.className.indexOf(
       'check-list-item--nav') > -1);
   });
@@ -128,8 +126,7 @@ describe('CheckListItem', () => {
         checked={false}
         disabled={false}
         whenChanged={whenChanged}
-        label="a-label"
-      />);
+        label="a-label" />);
     const label = output.props.children;
     const hitArea = label.props.children[0];
     const input = hitArea.props.children;
@@ -154,8 +151,7 @@ describe('CheckListItem', () => {
         label="a-label"
         id="apache/2"
         action={actionStub}
-        whenChanged={sinon.stub()}
-      />);
+        whenChanged={sinon.stub()} />);
     const checkbox = testUtils.findRenderedDOMComponentWithTag(output, 'input');
     testUtils.Simulate.click(checkbox);
     assert.equal(actionStub.callCount, 0);

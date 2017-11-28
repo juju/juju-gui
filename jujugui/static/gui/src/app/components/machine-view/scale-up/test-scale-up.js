@@ -199,8 +199,7 @@ describe('MachineViewScaleUp', function() {
               ref="scaleUpUnit-222222$"
               type="number"
               min="0"
-              step="1"
-            />
+              step="1" />
           </li>
         </ul>
         <ButtonRow buttons={[{
@@ -227,8 +226,7 @@ describe('MachineViewScaleUp', function() {
           addGhostAndEcsUnits: addGhostAndEcsUnits,
           applications: applications
         }}
-        toggleScaleUp={toggleScaleUp}
-      />, true);
+        toggleScaleUp={toggleScaleUp} />, true);
     const confirm = ReactDOM.findDOMNode(output).querySelector(
       '.button--neutral');
     const input1 = output.refs['scaleUpUnit-111111$'];
@@ -273,8 +271,7 @@ describe('MachineViewScaleUp', function() {
           addGhostAndEcsUnits: addGhostAndEcsUnits,
           applications: applications
         }}
-        toggleScaleUp={toggleScaleUp}
-      />, true);
+        toggleScaleUp={toggleScaleUp} />, true);
     const confirm = ReactDOM.findDOMNode(output).querySelector(
       '.button--neutral');
     const input1 = output.refs['scaleUpUnit-juju-gui'];
