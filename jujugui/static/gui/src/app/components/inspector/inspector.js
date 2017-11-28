@@ -192,8 +192,7 @@ class Inspector extends React.Component {
               charm={nextProps.charm}
               changeState={changeState}
               getYAMLConfig={this.props.getYAMLConfig}
-              updateServiceUnitsDisplayname=
-                {this.props.updateServiceUnitsDisplayname}
+              updateServiceUnitsDisplayname={this.props.updateServiceUnitsDisplayname}
               getServiceByName={this.props.getServiceByName}
               addNotification={this.props.addNotification}
               linkify={this.props.linkify}
