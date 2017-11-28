@@ -81,6 +81,7 @@ describe('Terminal', () => {
     assert.equal(typeof component.term, 'object');
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
     assert.equal(websocket.prototype.close.callCount, 1);
+    assert.deepEqual(websocket.prototype.close.args[0], [1000]);
   });
 
   it('sends supplied commands when it is set up', () => {
@@ -139,8 +140,13 @@ describe('Terminal', () => {
     const renderer = renderComponent();
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
+    // Set the ws onclose to something we control to be sure that it is reset.
+    instance.ws = {
+      onclose: sinon.stub()
+    };
     // Call the onClick for the X
     output.props.children[0].props.children[1].props.children[2].props.onClick();
+    assert.equal(instance.ws.onclose.callCount, 0);
     assert.deepEqual(instance.props.changeState.args[0], [{
       terminal: null
     }]);
