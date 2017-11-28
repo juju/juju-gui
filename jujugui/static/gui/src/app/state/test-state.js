@@ -92,6 +92,10 @@ describe('State', () => {
     state: { root: 'new', store: '' },
     error: null
   }, {
+    path: 'http://abc.com:123/new/u/spinach/django/xenial/9',
+    state: { root: 'new', store: 'u/spinach/django/xenial/9' },
+    error: null
+  }, {
     path: 'http://abc.com:123/about',
     state: { root: 'about' },
     error: null
@@ -1007,7 +1011,7 @@ describe('State', () => {
       });
     });
 
-    it('works with store as the root, but not other ROOT_RESERVED', () => {
+    it('works with new as the root, but not other ROOT_RESERVED', () => {
       const ROOT_RESERVED = [
         'about', 'account', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new'];
 
@@ -1018,11 +1022,11 @@ describe('State', () => {
 
       const tests = ROOT_RESERVED.map(root => {
         return {
-          path: `http://abc.com:123/${root}/u/lukewh/cheese`,
+          path: `http://abc.com:123/${root}/i/machines`,
           state: {
             root: root
           },
-          error: root === 'store' ? null : 'invalid root path.'
+          error: root === 'new' ? null : 'invalid root path.'
         };
       });
 

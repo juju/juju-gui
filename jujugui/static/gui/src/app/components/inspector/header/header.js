@@ -38,7 +38,7 @@ class InspectorHeader extends React.Component {
   }
 
   /**
-    Method to navigate to Charm details page from Inpsector
+    Method to navigate to Charm details page from Inspector
     @method _navigateToCharmDetails
   */
   _navigateToCharmDetails(e) {

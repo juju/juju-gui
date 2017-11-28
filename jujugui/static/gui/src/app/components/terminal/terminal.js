@@ -83,6 +83,10 @@ class Terminal extends React.Component {
         case 'disconnect':
           // Terminado sends a "disconnect" message when the process it's
           // running exits. When we receive that, we close the terminal.
+          // We also have to overwrite the onclose method because the WebSocket
+          // isn't properly terminated by terminado and instead a 1006 close
+          // code is generated triggering the error notification.
+          this.ws.onclose = () => {};
           this.close();
           break;
         case 'setup':
@@ -153,7 +157,9 @@ class Terminal extends React.Component {
     window.removeEventListener('resize', this._boundThrottledResize, false);
     this.term.destroy();
     this.term = null;
-    this.ws.close();
+    // Specify the close code as chrome uses 1005 "Expected close status, received none"
+    // instead of defaulting to 1000 as per the spec.
+    this.ws.close(1000);
     this.ws = null;
   }
 
