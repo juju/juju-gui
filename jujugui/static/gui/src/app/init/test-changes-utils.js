@@ -408,7 +408,7 @@ describe('ChangesUtils', () => {
         'removeRelation-281': {
           command: {
             method: '_remove_relation',
-            args: [['kibana'],['elasticsearch']]
+            args: [['kibana'], ['elasticsearch']]
           }
         }
       };

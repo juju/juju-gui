@@ -192,11 +192,11 @@ describe('topology relation module', function() {
       view.addRelationStart_possibleEndpoints = {
         'postgresql': [[{
           service: 'python-django', name: 'pgsql', type: 'pgsql'
-        },{
+        }, {
           service: 'postgresql', name: 'db-admin', type: 'pgsql'
         }], [{
           service: 'python-django', name: 'pgsql', type: 'pgsql'
-        },{
+        }, {
           service: 'postgresql', name: 'db', type: 'pgsql'
         }], [{
           service: 'python-django',
@@ -217,17 +217,17 @@ describe('topology relation module', function() {
       // The endpoints need to be sorted alphabetically
       assert.deepEqual(getDisplayName.lastCall.args[0], [[{
         service: 'python-django', name: 'pgsql', type: 'pgsql'
-      },{
+      }, {
         service: 'postgresql', name: 'db-admin', type: 'pgsql'
       }], [{
         service: 'python-django', name: 'pgsql', type: 'pgsql'
-      },{
+      }, {
         service: 'postgresql', name: 'db', type: 'pgsql'
       }], [{
         service: 'python-django',
         name: 'django-settings',
         type: 'directory-path'
-      },{
+      }, {
         service: 'postgresql',
         name: 'persistent-storage',
         type: 'directory-path'

@@ -847,7 +847,7 @@ describe('jujulib payment service', function() {
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeAddress('spinach', 'address1',(error, response) => {
+      payment.removeAddress('spinach', 'address1', (error, response) => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -892,7 +892,7 @@ describe('jujulib payment service', function() {
         }
       };
       const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeBillingAddress('spinach', 'address1',(error, response) => {
+      payment.removeBillingAddress('spinach', 'address1', (error, response) => {
         assert.equal(error, 'Uh oh!');
         done();
       });

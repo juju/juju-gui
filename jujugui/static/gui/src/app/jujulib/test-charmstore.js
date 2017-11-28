@@ -601,10 +601,10 @@ describe('jujulib charmstore', function() {
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], [null, [{
         name: 'file1', type: 'file', path: 'file1.zip', description: 'desc.',
-        revision: 5,fingerprint: '123',size: 168
+        revision: 5, fingerprint: '123', size: 168
       }, {
         name: 'file2', type: 'file', path: 'file2.zip', description: 'desc.',
-        revision: 5,fingerprint: '123',size: 168
+        revision: 5, fingerprint: '123', size: 168
       }]]);
     });
 

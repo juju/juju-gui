@@ -957,7 +957,7 @@ describe('Environment Change Set', function() {
         const cb = record.command.args.pop();
         args.pop();
         assert.deepEqual(record.command.args, args);
-        assert.deepEqual(record.command.options,options);
+        assert.deepEqual(record.command.options, options);
         cb(); // Will call done().
       });
 
@@ -1630,7 +1630,7 @@ describe('Environment Change Set', function() {
         ecs.changeSet['addUnit-982'] = {
           command: {
             args: ['arg1'],
-            method: '_add_unit' ,
+            method: '_add_unit',
             options: {modelId: 'arg1'}}};
         var record = ecs.lazyRemoveUnit([['arg1']]);
         var remove = ecs.get('db').removeUnits;

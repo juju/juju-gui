@@ -932,7 +932,7 @@ describe('init', () => {
         'isAlive':true,
         'isController':false,
         'lastConnection':null
-      },{
+      }, {
         'id':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
         'name':'jujugui-org',
         'series':'xenial',

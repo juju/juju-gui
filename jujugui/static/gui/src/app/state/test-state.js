@@ -660,7 +660,7 @@ describe('State', () => {
         baseURL: 'http://abc.com:123',
         seriesList:  ['precise', 'trusty', 'xenial']
       });
-      assert.deepEqual(state._parseSearch('', {}, {}),{});
+      assert.deepEqual(state._parseSearch('', {}, {}), {});
       assert.deepEqual(
         state._parseSearch(
           'k8s/core', {tags: 'ops,db', series: 'yakkety'}, {}), {
@@ -1135,7 +1135,7 @@ describe('State', () => {
         location: {href: 'hatch/ghost'}
       });
       sinon
-        .stub(state,'generateState')
+        .stub(state, 'generateState')
         .callsFake(() => ({ error: null, state: {new: 'state'}}));
       state.dispatch([], true, false, true);
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);

@@ -1067,7 +1067,7 @@ YUI.add('juju-controller-api', function(Y) {
         const response = data.response;
         const error = response.error && response.error.message;
         if (error) {
-          callback(error , '');
+          callback(error, '');
           return;
         }
         const name = tags.parse(tags.CLOUD, response.result);
