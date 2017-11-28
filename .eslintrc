@@ -9,7 +9,9 @@ parserOptions:
   ecmaFeatures:
     jsx: true
 rules:
+  brace-style: ["error", "1tbs", {allowSingleLine: true}]
   comma-dangle: ["error", "never"]
+  curly: 2
   indent: [2, 2, {SwitchCase: 1, VariableDeclarator: 2}]
   max-len: [2, 95, 2]
   no-const-assign: 2
