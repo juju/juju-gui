@@ -92,8 +92,7 @@ YUI.add('juju-models', function(Y) {
           list.fire('change', {changed: changed, instance: instance});
         }
       }
-    }
-    else if (action === 'remove') {
+    } else if (action === 'remove') {
       if (exists) {
         if (list.name === 'serviceUnitList') {
           // Allow direct changes to units when data arrives from the delta.
@@ -1243,8 +1242,7 @@ YUI.add('juju-models', function(Y) {
             if (machine && machine.toString().indexOf('/') >= 0) {
               // If this is a container then match the entire string.
               return unit.machine && unit.machine.indexOf(machine) === 0;
-            }
-            else {
+            } else {
               // If this is a machine then match against the first token
               // in the id. This prevents against '1' matching '15/lxc/5'.
               return unit.machine && unit.machine.split('/')[0] === machine;

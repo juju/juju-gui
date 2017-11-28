@@ -162,10 +162,12 @@ class Status extends React.Component {
     @returns {Array} The sorted array.
   */
   _byKey(a, b) {
-    if (a.key < b.key)
+    if (a.key < b.key) {
       return -1;
-    if (a.key > b.key)
+    }
+    if (a.key > b.key) {
       return 1;
+    }
     return 0;
   }
 

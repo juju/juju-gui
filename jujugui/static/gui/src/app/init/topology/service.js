@@ -228,7 +228,8 @@ class ServiceModule {
           movedNodes += 1;
           topo.annotateBoxPosition(d);
         }
-      }});
+      }
+    });
     if (movedNodes > 1) {
       this.findCentroid();
     }
