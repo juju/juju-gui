@@ -367,7 +367,10 @@ class Inspector extends React.Component {
           activeComponent={this.state.activeComponent}
           type={this.state.activeChild.headerType}
           title={this.state.activeChild.title}
-          icon={this.state.activeChild.icon} />
+          entityId={this.props.service.get('charm')}
+          icon={this.state.activeChild.icon}
+          changeState={this.props.appState.changeState.bind(this.props.appState)}
+        />
         <div className="inspector-content">
           {this.state.activeChild.component}
         </div>

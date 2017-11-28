@@ -175,7 +175,8 @@ class LocalInspector extends React.Component {
       <div className="inspector-view local-inspector">
         <InspectorHeader
           backCallback={this._close.bind(this)}
-          title="Local charm" />
+          title="Local charm"
+        />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
             <p>File: {file.name}</p>

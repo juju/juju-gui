@@ -10,13 +10,17 @@ const InspectorHeader = require('../inspector/header/header');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('LocalInspector', function() {
-  var acl, series;
+
+  var acl, series, appState;
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
       wily: {name: 'Wily Werewolf 15.10'}
+    };
+    appState = {
+      changeState: sinon.stub()
     };
   });
 
@@ -56,7 +60,8 @@ describe('LocalInspector', function() {
       <div className="inspector-view local-inspector">
         <InspectorHeader
           backCallback={instance._close}
-          title="Local charm" />
+          title="Local charm"
+        />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
             <p>File: {'apache2.zip'}</p>

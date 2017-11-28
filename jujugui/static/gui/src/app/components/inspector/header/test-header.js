@@ -7,13 +7,23 @@ const InspectorHeader = require('./header');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
+var appState;
+
+beforeEach(() => {
+  appState = {
+    changeState: sinon.stub()
+  };
+});
+
 describe('InspectorHeader', function() {
 
   it('displays the provided title', function() {
     const output = jsTestUtils.shallowRender(
       <InspectorHeader
         backCallback={sinon.stub()}
-        title="Juju GUI" />);
+        title="Juju GUI"
+        changeState={appState.changeState.bind(appState)}
+      />);
     assert.equal(output.props.children[1].props.children, 'Juju GUI');
   });
 
@@ -22,7 +32,9 @@ describe('InspectorHeader', function() {
       <InspectorHeader
         backCallback={sinon.stub()}
         title="Juju GUI"
-        type="error" />);
+        type="error"
+        changeState={appState.changeState.bind(appState)}
+      />);
     assert.equal(output.props.className,
       'inspector-header inspector-header--type-error');
   });
@@ -31,7 +43,9 @@ describe('InspectorHeader', function() {
     const output = jsTestUtils.shallowRender(
       <InspectorHeader
         backCallback={sinon.stub()}
-        title="Juju GUI" />);
+        title="Juju GUI"
+        changeState={appState.changeState.bind(appState)}
+      />);
     assert.equal(output.props.className, 'inspector-header');
   });
 
@@ -40,7 +54,9 @@ describe('InspectorHeader', function() {
       <InspectorHeader
         backCallback={sinon.stub()}
         icon="icon.svg"
-        title="Juju GUI" />);
+        title="Juju GUI"
+        changeState={appState.changeState.bind(appState)}
+      />);
     assert.equal(output.props.children[2].props.children.props.src, 'icon.svg');
   });
 
@@ -49,7 +65,9 @@ describe('InspectorHeader', function() {
     const output = jsTestUtils.shallowRender(
       <InspectorHeader
         backCallback={callbackStub}
-        title="Juju GUI" />);
+        title="Juju GUI"
+        changeState={appState.changeState.bind(appState)}
+      />);
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });

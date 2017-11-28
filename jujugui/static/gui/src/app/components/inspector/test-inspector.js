@@ -49,9 +49,11 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     var icon = 'foo.png';
     var title = 'demo';
+    var entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('id').returns('apache2');
     getStub.withArgs('name').returns(title);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -106,7 +108,10 @@ describe('Inspector', function() {
         activeComponent={undefined}
         type={undefined}
         title={title}
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     const overview = output.props.children[1].props.children;
@@ -134,11 +139,13 @@ describe('Inspector', function() {
     var unitStatus = 'error';
     var getStub = sinon.stub();
     var icon = 'foo.png';
+    var entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
       filterByStatus: sinon.stub().returns([])
     });
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -193,7 +200,10 @@ describe('Inspector', function() {
         activeComponent='units'
         type={unitStatus}
         title='Units'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -213,7 +223,9 @@ describe('Inspector', function() {
     var setConfig = sinon.stub();
     var getStub = sinon.stub();
     var icon = 'foo.png';
+    var entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var getYAMLConfig = sinon.stub();
     var updateServiceUnitsDisplayname = sinon.stub();
     var getServiceByName = sinon.stub();
@@ -274,7 +286,10 @@ describe('Inspector', function() {
         activeComponent="config"
         type={undefined}
         title='Configure'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -300,6 +315,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     var title = 'demo-unit';
     var icon = 'foo.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var headerType = 'active';
     var unit = {
       displayName: title,
@@ -310,6 +326,7 @@ describe('Inspector', function() {
       return unit;
     }});
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -364,7 +381,10 @@ describe('Inspector', function() {
         activeComponent='unit'
         type={headerType}
         title={title}
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -702,9 +722,11 @@ describe('Inspector', function() {
 
   it('displays Scale Service when the app state calls for it', function() {
     var icon = 'foo.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -758,7 +780,9 @@ describe('Inspector', function() {
         activeComponent="scale"
         type={undefined}
         title='Scale'
+        entityId={entityId}
         icon={icon}
+        changeState={appState.changeState.bind(appState)}
       />
     );
     expect(header).toEqualJSX(expectedHeader);
@@ -781,10 +805,12 @@ describe('Inspector', function() {
     var service = sinon.stub();
     var units = {};
     var icon = 'icon.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('units').returns(units);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -837,7 +863,10 @@ describe('Inspector', function() {
         activeComponent="expose"
         type={undefined}
         title='Expose'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -856,9 +885,11 @@ describe('Inspector', function() {
     var destroyRelations = sinon.stub();
     var service = sinon.stub();
     var icon = 'icon.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -912,7 +943,10 @@ describe('Inspector', function() {
         activeComponent="relations"
         type={undefined}
         title='Relations'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -928,9 +962,11 @@ describe('Inspector', function() {
   it('displays the relate-to when the app state calls for it', function() {
     var destroyRelations = sinon.stub();
     var icon = 'icon.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -983,7 +1019,10 @@ describe('Inspector', function() {
         activeComponent="relate-to"
         type={undefined}
         title='Relate to'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -997,9 +1036,11 @@ describe('Inspector', function() {
   it('displays relate-to with spouse when the app state calls for it', () => {
     var destroyRelations = sinon.stub();
     var icon = 'icon.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -1058,7 +1099,10 @@ describe('Inspector', function() {
         activeComponent="relate-to"
         type={undefined}
         title='spouse-name'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1079,11 +1123,13 @@ describe('Inspector', function() {
 
   it('displays the Plans when the app state calls for it', function() {
     var icon = 'icon.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var activePlan = {active: 'plan'};
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('activePlan').returns(activePlan);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -1137,7 +1183,10 @@ describe('Inspector', function() {
         activeComponent='plan'
         type={undefined}
         title='Plan'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1155,10 +1204,11 @@ describe('Inspector', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
     var icon = 'icon.png';
+    var entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
-    getStub.withArgs('charm').returns('cs:demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     var service = {
       get: getStub
     };
@@ -1210,7 +1260,10 @@ describe('Inspector', function() {
         activeComponent="change-version"
         type={undefined}
         title='Change version'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1219,7 +1272,7 @@ describe('Inspector', function() {
         acl={acl}
         addNotification={addNotification}
         changeState={children.props.changeState}
-        charmId="cs:demo"
+        charmId={entityId}
         service={service}
         addCharm={addCharm}
         setCharm={setCharm}
@@ -1235,10 +1288,12 @@ describe('Inspector', function() {
     const getCharm = sinon.stub();
     const getAvailableVersions = sinon.stub();
     const icon = 'icon.png';
+    const entityId = 'cs:~rharding/grafana-4';
     const getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('charm').returns('cs:demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
     const service = {
       get: getStub
     };
@@ -1291,7 +1346,10 @@ describe('Inspector', function() {
         activeComponent='resources'
         type={undefined}
         title='Resources'
-        icon={icon} />
+        entityId={entityId}
+        icon={icon}
+        changeState={appState.changeState.bind(appState)}
+      />
     );
     expect(header).toEqualJSX(expectedHeader);
     const children = output.props.children[1].props.children;
@@ -1310,6 +1368,8 @@ describe('Inspector', function() {
           return 'icon.png';
         } else if (val === 'name') {
           return 'spinach';
+        } else if (val === 'charm') {
+          return 'cs:~rharding/grafana-4';
         }
         return {name: 'demo'};
       }};
@@ -1373,6 +1433,8 @@ describe('Inspector', function() {
           return 'icon.png';
         } else if (val === 'name') {
           return 'spinach';
+        } else if (val === 'charm') {
+          return 'cs:~rharding/grafana-4';
         }
         return {name: 'demo'};
       }};

@@ -22,6 +22,43 @@ class InspectorHeader extends React.Component {
   }
 
   /**
+    Open getstarted.md of specific charm in post deployment panel
+    @method _navigateToGetStarted
+  */
+  _navigateToGetStarted(e) {
+    e.preventDefault();
+    this.props.changeState(
+      {postDeploymentPanel:
+        {
+          show: true,
+          entityId: this.props.entityId
+        }
+      }
+    );
+  }
+
+  /**
+    Method to navigate to Charm details page from Inpsector
+    @method _navigateToCharmDetails
+  */
+  _navigateToCharmDetails(e) {
+    e.preventDefault();
+    let url;
+    try {
+      url = window.jujulib.URL.fromString(this.props.entityId);
+    } catch (_) {
+      url = window.jujulib.URL.fromLegacyString(this.props.entityId);
+    }
+    this.props.changeState(
+      {
+        profile: null,
+        search: null,
+        store: url.path()
+      }
+    );
+  }
+
+  /**
     Use the post update call to animate the header on change.
 
     @param {Object} prevProps The props which were sent to the component.
@@ -37,6 +74,20 @@ class InspectorHeader extends React.Component {
         node.classList.add('fade-in');
       });
     }
+  }
+
+  _renderHeaderLinks() {
+    if (!this.props.changeState) {
+      return null;
+    }
+    return (
+      <ul className="inspector-header__inline-list">
+        <li className="inspector-header__list-item"><a href="#"
+          onClick={this._navigateToGetStarted.bind(this)}>Get started</a></li>
+        <li className="inspector-header__list-item"><a href="#"
+          onClick={this._navigateToCharmDetails.bind(this)}>Charm details</a></li>
+      </ul>
+    );
   }
 
   render() {
@@ -57,11 +108,7 @@ class InspectorHeader extends React.Component {
           <img src={this.props.icon}
             className="inspector-header__service-icon" />
         </span>
-        <ul className="inspector-header__inline-list">
-          <li className="inspector-header__list-item"><a href="#"
-            onClick={this._navigateToGetStarted.bind(this)}>Get started</a></li>
-          <li className="inspector-header__list-item"><a href="#">Charm details</a></li>
-        </ul>
+        {this._renderHeaderLinks()}
       </div>
     );
   }
@@ -70,6 +117,8 @@ class InspectorHeader extends React.Component {
 InspectorHeader.propTypes = {
   activeComponent: PropTypes.string,
   backCallback: PropTypes.func.isRequired,
+  changeState: PropTypes.func,
+  entityId: PropTypes.string,
   icon: PropTypes.string,
   title: PropTypes.string.isRequired,
   type: PropTypes.string
