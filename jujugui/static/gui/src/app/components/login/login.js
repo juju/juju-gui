@@ -81,7 +81,7 @@ class Login extends React.Component {
       </p>);
   }
 
-  _generateUSSOLink () {
+  _generateUSSOLink() {
     return (
       <USSOLoginLink
         addNotification={this.props.addNotification}

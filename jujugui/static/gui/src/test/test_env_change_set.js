@@ -1053,7 +1053,7 @@ describe('Environment Change Set', function() {
             },
             revive: function() {
               return {
-                set: function () {
+                set: function() {
                   machineObj.deleted = true;
                 }
               };
@@ -1646,7 +1646,7 @@ describe('Environment Change Set', function() {
           return unitObj;
         };
         ecs.get('db').units.revive = sinon.stub().returns({
-          set: function () {
+          set: function() {
             unitObj.deleted = true;
           }
         });

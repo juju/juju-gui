@@ -4,7 +4,7 @@
 
 var module = module;
 
-(function (exports) {
+(function(exports) {
 
   const jujulib = exports.jujulib;
   const macaroonlib = require('js-macaroon');

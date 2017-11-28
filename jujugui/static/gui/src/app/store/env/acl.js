@@ -24,7 +24,7 @@ let aclModule = {};
   @param modelAPI {Object} The model API connection instance.
   @return {Object} A namespace providing access to ACLs checkers (see below).
 */
-aclModule.generateAcl = function (controllerAPI, modelAPI) {
+aclModule.generateAcl = function(controllerAPI, modelAPI) {
   const getUser = () => {
     const user = controllerAPI.get('user') || {};
     const controller = user.controller || {user: null};

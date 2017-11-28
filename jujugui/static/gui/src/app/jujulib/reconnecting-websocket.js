@@ -49,7 +49,7 @@
 
 var module = module;
 
-(function (exports) {
+(function(exports) {
 
   let jujulib = exports.jujulib;
 

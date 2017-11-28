@@ -19,7 +19,7 @@ describe('MachineViewScaleUp', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
     applications = {
       toArray: sinon.stub().returns([{
-        get: function (val) {
+        get: function(val) {
           switch (val) {
             case 'id':
               return '111111$';
@@ -33,7 +33,7 @@ describe('MachineViewScaleUp', function() {
           }
         }
       }, {
-        get: function (val) {
+        get: function(val) {
           switch (val) {
             case 'id':
               return '222222$';
@@ -48,7 +48,7 @@ describe('MachineViewScaleUp', function() {
         }
       }, {
         // Subordinate applications should not appear in the list.
-        get: function (val) {
+        get: function(val) {
           switch (val) {
             case 'id':
               return '333333$';
@@ -65,7 +65,7 @@ describe('MachineViewScaleUp', function() {
           }
         }
       }]),
-      getById: function (val) {
+      getById: function(val) {
         switch (val) {
           case '111111$':
             return '111111$';
@@ -248,7 +248,7 @@ describe('MachineViewScaleUp', function() {
     const toggleScaleUp = sinon.stub();
     const applications = {
       toArray: sinon.stub().returns([{
-        get: function (val) {
+        get: function(val) {
           switch (val) {
             case 'id':
               return 'juju-gui';
@@ -262,7 +262,7 @@ describe('MachineViewScaleUp', function() {
           }
         }
       }]),
-      getById: function (val) {
+      getById: function(val) {
         return 'juju-gui';
       }
     };

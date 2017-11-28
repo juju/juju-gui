@@ -3,7 +3,7 @@
 
 var module = module;
 
-(function (exports) {
+(function(exports) {
 
 
   var jujulib = exports.jujulib;

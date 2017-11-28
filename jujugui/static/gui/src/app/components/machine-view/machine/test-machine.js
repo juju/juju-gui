@@ -17,7 +17,7 @@ describe('MachineViewMachine', function() {
   let acl, applications, generateMachineDetails, genericConstraints,
       machineUnitACL, parseConstraints, sendAnalytics;
 
-  beforeEach(function () {
+  beforeEach(function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
     sendAnalytics = sinon.stub();
     machineUnitACL = acl.reshape(

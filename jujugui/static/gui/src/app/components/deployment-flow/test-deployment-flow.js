@@ -801,7 +801,7 @@ describe('DeploymentFlow', function() {
     });
   });
 
-  it('can disable the deploy button on deploy', function () {
+  it('can disable the deploy button on deploy', function() {
     const charmsGetById = sinon.stub().withArgs('service1').returns({
       get: sinon.stub().withArgs('terms').returns([])
     });

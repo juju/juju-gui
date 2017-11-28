@@ -38,6 +38,7 @@ rules:
   react/jsx-uses-vars: 2
   semi: [2, "always"]
   space-before-blocks: 2
+  space-before-function-paren: ["error", "never"]
   space-in-parens: 2
   strict: [2, "global"]
 globals:

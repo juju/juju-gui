@@ -101,7 +101,7 @@ class UnitList extends React.Component {
     const units = this.props.units;
     const refs = this.refs;
     const envResolved = this.props.envResolved;
-    Object.keys(refs).forEach(function (ref) {
+    Object.keys(refs).forEach(function(ref) {
       let isInstance = ref.split('-')[0] === 'CheckListItem';
       if (isInstance && refs[ref].state.checked) {
         let unitName = ref.slice(ref.indexOf('-') + 1);
@@ -182,7 +182,7 @@ class UnitList extends React.Component {
         }
         errors[agentState].push(unit);
       });
-      Object.keys(errors).forEach(function (error, i) {
+      Object.keys(errors).forEach(function(error, i) {
         var key = 'select-all-' + i;
         groups[key] = {
           label: error,

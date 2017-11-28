@@ -88,7 +88,7 @@ class UserProfileHeader extends React.Component {
       </ul>);
   }
 
-  render () {
+  render() {
     return (
       <div className="user-profile-header twelve-col">
         {this._generateLogin()}

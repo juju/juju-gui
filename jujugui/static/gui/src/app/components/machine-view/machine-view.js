@@ -584,7 +584,7 @@ class MachineView extends React.Component {
   */
   _sortMachines(machines, method) {
     var sortMethod = this._getSortMethod(method);
-    return machines.sort(function (a, b) {
+    return machines.sort(function(a, b) {
       var sortedA = sortMethod(a);
       var sortedB = sortMethod(b);
       if (sortedA == sortedB) {

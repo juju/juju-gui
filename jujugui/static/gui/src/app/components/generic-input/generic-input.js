@@ -90,7 +90,7 @@ class GenericInput extends React.Component {
     Handle keyup event if set in props.
     @param {Object} evt The keyboard event.
   */
-  _keyUpHandler (evt) {
+  _keyUpHandler(evt) {
     if (this.props.onKeyUp) {
       this.props.onKeyUp(evt);
     }

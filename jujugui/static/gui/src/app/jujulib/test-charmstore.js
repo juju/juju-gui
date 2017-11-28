@@ -78,7 +78,7 @@ describe('jujulib charmstore', function() {
       charmstore._processEntityQueryData = function(entity) {
         return entity;
       };
-      charmstore.processEntity = function (data) {
+      charmstore.processEntity = function(data) {
         if (data.entityType === 'charm') {
           return 'It\'s a charm.';
         } else {
