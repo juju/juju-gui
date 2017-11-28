@@ -315,11 +315,11 @@ YUI.add('juju-controller-api', function(Y) {
         var macaroon = response['discharge-required'];
         if (macaroon) {
           // This is a discharge required response.
-          bakery.discharge(macaroon, (macaroons) => {
+          bakery.discharge(macaroon, macaroons => {
             // Send the login request again including the discharge macaroon.
             sendLoginRequest(
               macaroons, handleResponse.bind(this, bakery, macaroons, cback));
-          }, (msg) => {
+          }, msg => {
             cback('macaroon discharge failed: ' + msg);
           });
           return;
@@ -1003,7 +1003,7 @@ YUI.add('juju-controller-api', function(Y) {
     */
     getClouds: function(names, callback) {
       // Decorate the user supplied callback.
-      const handler = (data) => {
+      const handler = data => {
         if (!callback) {
           console.log('data returned by Cloud.Cloud API call:', data);
           return;

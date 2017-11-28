@@ -172,7 +172,7 @@ class DeploymentCredential extends React.Component {
     @returns {Array} The list of credential options.
   */
   _generateCredentials() {
-    var credentials = this.state.credentials.map((credential) => {
+    var credentials = this.state.credentials.map(credential => {
       return {
         label: credential.displayName,
         value: credential.id

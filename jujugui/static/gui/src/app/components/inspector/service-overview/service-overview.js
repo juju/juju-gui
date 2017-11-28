@@ -84,7 +84,7 @@ class ServiceOverview extends React.Component {
   _navigate(e) {
     const title = e.currentTarget.getAttribute('title');
     let activeAction;
-    this.state.actions.some((action) => {
+    this.state.actions.some(action => {
       if (action.title === title) {
         activeAction = action;
         return true;

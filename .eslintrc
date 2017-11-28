@@ -9,6 +9,7 @@ parserOptions:
   ecmaFeatures:
     jsx: true
 rules:
+  arrow-parens: ["error", "as-needed"]
   brace-style: ["error", "1tbs", {allowSingleLine: true}]
   comma-dangle: ["error", "never"]
   comma-style: 2

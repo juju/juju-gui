@@ -147,7 +147,7 @@ describe('Profile Model List', function() {
   }]`;
 
   function renderComponent(options={}) {
-    listModelsWithInfo = (cb) => {
+    listModelsWithInfo = cb => {
       cb(null, JSON.parse(rawModelData));
     };
     return jsTestUtils.shallowRender(

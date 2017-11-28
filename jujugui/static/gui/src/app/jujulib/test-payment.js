@@ -386,7 +386,7 @@ describe('jujulib payment service', function() {
   });
 
   describe('getPaymentMethods', () => {
-    it('can get payment methods for a user', (done) => {
+    it('can get payment methods for a user', done => {
       const bakery = {
         get: function(url, headers, callback) {
           assert.equal(
@@ -446,7 +446,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when getting a user', (done) => {
+    it('handles errors when getting a user', done => {
       const bakery = {
         get: function(url, headers, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -479,7 +479,7 @@ describe('jujulib payment service', function() {
         }));
     });
 
-    it('can return the payment method when it has been created', (done) => {
+    it('can return the payment method when it has been created', done => {
       const bakery = {
         post: function(url, headers, body, callback) {
           assert.equal(
@@ -538,7 +538,7 @@ describe('jujulib payment service', function() {
         });
     });
 
-    it('handles errors when creating a payment method', (done) => {
+    it('handles errors when creating a payment method', done => {
       const bakery = {
         post: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -588,7 +588,7 @@ describe('jujulib payment service', function() {
       }));
     });
 
-    it('can return when there are no errors', (done) => {
+    it('can return when there are no errors', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           assert.equal(
@@ -608,7 +608,7 @@ describe('jujulib payment service', function() {
         });
     });
 
-    it('handles errors when updating a payment method', (done) => {
+    it('handles errors when updating a payment method', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -637,7 +637,7 @@ describe('jujulib payment service', function() {
       }));
     });
 
-    it('can return when there are no errors', (done) => {
+    it('can return when there are no errors', done => {
       const bakery = {
         delete: function(url, headers, body, callback) {
           assert.equal(
@@ -657,7 +657,7 @@ describe('jujulib payment service', function() {
         });
     });
 
-    it('handles errors when removing a payment method', (done) => {
+    it('handles errors when removing a payment method', done => {
       const bakery = {
         delete: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({error: 'Uh oh!'});
@@ -707,7 +707,7 @@ describe('jujulib payment service', function() {
       }));
     });
 
-    it('can successfully create the address', (done) => {
+    it('can successfully create the address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           assert.equal(
@@ -726,7 +726,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when adding an address', (done) => {
+    it('handles errors when adding an address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -775,7 +775,7 @@ describe('jujulib payment service', function() {
       }));
     });
 
-    it('can successfully create the billing address', (done) => {
+    it('can successfully create the billing address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           assert.equal(
@@ -794,7 +794,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when adding a billing address', (done) => {
+    it('handles errors when adding a billing address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -820,7 +820,7 @@ describe('jujulib payment service', function() {
       assert.strictEqual(bakery.delete.args[0][2], null);
     });
 
-    it('can return when there are no errors', (done) => {
+    it('can return when there are no errors', done => {
       const bakery = {
         delete: function(url, headers, body, callback) {
           assert.equal(
@@ -839,7 +839,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when removing an address', (done) => {
+    it('handles errors when removing an address', done => {
       const bakery = {
         delete: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({error: 'Uh oh!'});
@@ -865,7 +865,7 @@ describe('jujulib payment service', function() {
       assert.strictEqual(bakery.delete.args[0][2], null);
     });
 
-    it('can return when there are no errors', (done) => {
+    it('can return when there are no errors', done => {
       const bakery = {
         delete: function(url, headers, body, callback) {
           assert.equal(
@@ -884,7 +884,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when removing a billing address', (done) => {
+    it('handles errors when removing a billing address', done => {
       const bakery = {
         delete: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({error: 'Uh oh!'});
@@ -934,7 +934,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('can successfully update the address', (done) => {
+    it('can successfully update the address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           assert.equal(
@@ -953,7 +953,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when updating an address', (done) => {
+    it('handles errors when updating an address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});
@@ -1004,7 +1004,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('can successfully update the billing address', (done) => {
+    it('can successfully update the billing address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           assert.equal(
@@ -1023,7 +1023,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when updating a billing address', (done) => {
+    it('handles errors when updating a billing address', done => {
       const bakery = {
         put: function(url, headers, body, callback) {
           const xhr = makeXHRRequest({error: 'Uh oh!'});
@@ -1039,7 +1039,7 @@ describe('jujulib payment service', function() {
   });
 
   describe('getCharges', () => {
-    it('can get a list of charges', (done) => {
+    it('can get a list of charges', done => {
       const bakery = {
         get: function(url, headers, callback) {
           assert.equal(
@@ -1143,7 +1143,7 @@ describe('jujulib payment service', function() {
       });
     });
 
-    it('handles errors when getting charges', (done) => {
+    it('handles errors when getting charges', done => {
       const bakery = {
         get: function(url, headers, callback) {
           const xhr = makeXHRRequest({Message: 'Uh oh!'});

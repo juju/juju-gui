@@ -27,7 +27,7 @@ class GenericInput extends React.Component {
     }
     var value = this.getValue();
     var errors = [];
-    this.props.validate.forEach((validator) => {
+    this.props.validate.forEach(validator => {
       if ((validator.check && validator.check(value)) ||
         (validator.regex && !validator.regex.test(value))) {
         errors.push(validator.error);

@@ -124,7 +124,7 @@ class MachineView extends React.Component {
   _generateUnplacedUnits() {
     const props = this.props;
     let units = props.dbAPI.units.filterByMachine();
-    units = units.filter((unit) => {
+    units = units.filter(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
       if (!service.get('subordinate')) {
         return unit;
@@ -164,7 +164,7 @@ class MachineView extends React.Component {
     if (state.showAddMachine || state.showAddContainer) {
       placingUnit = state.placingUnit;
     }
-    units.forEach((unit) => {
+    units.forEach(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
       if (placingUnit && unit.id === placingUnit.id) {
         return;
@@ -336,7 +336,7 @@ class MachineView extends React.Component {
     const acl = props.acl.reshape(propTypes.acl);
     const dbAPI = props.dbAPI.reshape(propTypes.dbAPI);
     const modelAPI = props.modelAPI.reshape(propTypes.modelAPI);
-    machines.forEach((machine) => {
+    machines.forEach(machine => {
       const selectedMachine = this._getSelected().machine;
       components.push(
         <MachineViewMachine
@@ -399,7 +399,7 @@ class MachineView extends React.Component {
     const propTypes = (
       MachineViewMachine.DecoratedComponent.propTypes);
     const components = [];
-    containers.forEach((container) => {
+    containers.forEach(container => {
       components.push(
         <MachineViewMachine
           acl={props.acl.reshape(propTypes.acl)}

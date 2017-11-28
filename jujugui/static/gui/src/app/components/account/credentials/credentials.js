@@ -36,7 +36,7 @@ class AccountCredentials extends React.Component {
   }
 
   componentWillUnmount() {
-    this.xhrs.forEach((xhr) => {
+    this.xhrs.forEach(xhr => {
       xhr && xhr.abort && xhr.abort();
     });
   }
@@ -161,7 +161,7 @@ class AccountCredentials extends React.Component {
   */
   _deleteCredential() {
     const credential = this.state.removeCredential;
-    const xhr = this.props.revokeCloudCredential(credential, (error) => {
+    const xhr = this.props.revokeCloudCredential(credential, error => {
       if (error) {
         const message = 'Unable to revoke the cloud credential';
         this.props.addNotification({

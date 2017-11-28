@@ -18,7 +18,7 @@ class MachineViewScaleUp extends React.Component {
   _generateServices() {
     const components = [];
     const applications = this.props.dbAPI.applications.toArray();
-    applications.forEach((service) => {
+    applications.forEach(service => {
       if (service.get('subordinate')) {
         return;
       }
@@ -60,7 +60,7 @@ class MachineViewScaleUp extends React.Component {
     }
     const re = /(scaleUpUnit-)(.*)/;
     const props = this.props;
-    Object.keys(this.refs).forEach((ref) => {
+    Object.keys(this.refs).forEach(ref => {
       const parts = re.exec(ref);
       if (parts) {
         const application = props.dbAPI.applications.getById(parts[2]);

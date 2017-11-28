@@ -267,7 +267,7 @@ class DeploymentSSHKey extends React.Component {
     let lpUsernameList = null;
     if (lpUsernames.length) {
       let usernameList = [];
-      lpUsernames.forEach((username) => {
+      lpUsernames.forEach(username => {
         usernameList.push(
           <li className="deployment-flow__row twelve-col" key={'lp-' + username}>
             <div className="eleven-col">{username}</div>

@@ -2814,7 +2814,7 @@ YUI.add('juju-models', function(Y) {
       var service = this.services.getById(serviceId);
       var serviceName = service.get('name');
       var serviceUnits = service.get('units');
-      serviceUnits.each((unit) => {
+      serviceUnits.each(unit => {
         unit.displayName = `${serviceName}/${unit.number}`;
       });
       // Fire an update event to trigger the UI update.

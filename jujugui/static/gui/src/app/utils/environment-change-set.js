@@ -885,7 +885,7 @@ YUI.add('environment-change-set', function(Y) {
         // Add the parent to the list.
         allMachines.unshift(machine);
         // Loop through all of the machines setting them to deleted.
-        allMachines.forEach((machine) => {
+        allMachines.forEach(machine => {
           var machineModel = db.machines.revive(machine);
           machineModel.set('deleted', true);
           db.machines.free(machineModel);

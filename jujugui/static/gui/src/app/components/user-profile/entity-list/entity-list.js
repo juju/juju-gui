@@ -24,7 +24,7 @@ class UserProfileEntityList extends React.Component {
   }
 
   componentWillUnmount() {
-    this.xhrs.forEach((xhr) => {
+    this.xhrs.forEach(xhr => {
       xhr && xhr.abort && xhr.abort();
     });
   }
@@ -92,7 +92,7 @@ class UserProfileEntityList extends React.Component {
       return;
     }
     const tags = [];
-    tagList.forEach((tag) => {
+    tagList.forEach(tag => {
       tags.push(
         <li className="user-profile__comma-item"
           key={id + '-' + tag}>
@@ -118,7 +118,7 @@ class UserProfileEntityList extends React.Component {
       return;
     }
     const listItems = [];
-    series.forEach((release) => {
+    series.forEach(release => {
       listItems.push(
         <li className="user-profile__comma-item"
           key={id + '-' + release}>

@@ -1075,7 +1075,7 @@ describe('init', () => {
     let userClass;
 
     // Set up the mocks required for these tests.
-    const setupApp = (config) => {
+    const setupApp = config => {
       // Clean up the old app.
       app.destructor();
       app = createApp(config);

@@ -61,7 +61,7 @@ const Zoom = require('../components/zoom/zoom');
     A mixin for the JujuGUI class.
     Stores all of the component renderer and cleanup methods.
 */
-const ComponentRenderersMixin = (superclass) => class extends superclass {
+const ComponentRenderersMixin = superclass => class extends superclass {
   _clearRoot() {}
   /**
     Renders the Added Services component to the page in the appropriate
@@ -509,7 +509,7 @@ Browser: ${navigator.userAgent}`
 
       const charmstore = this.charmstore;
 
-      const showEntityDetails = (id) => {
+      const showEntityDetails = id => {
         let url;
         try {
           url = window.jujulib.URL.fromString(id);

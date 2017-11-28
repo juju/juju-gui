@@ -32,7 +32,7 @@ class ButtonRow extends React.Component {
   */
   _generateButtons(buttons) {
     var components = [];
-    buttons.forEach((button) => {
+    buttons.forEach(button => {
       components.push(
         <GenericButton
           key={button.title}

@@ -63,7 +63,7 @@ const RelationMenu = function(props) {
   */
   function _generateRelations(relations) {
     var components = [];
-    relations.forEach((relation) => {
+    relations.forEach(relation => {
       var relationClasses = 'relation-container ' + (
         relation.hasRelationError() ? 'error' : 'running');
       var sourceClasses = 'inspect-relation endpoint ' + (

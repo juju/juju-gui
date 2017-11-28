@@ -29,7 +29,7 @@ class DeploymentBudget extends React.Component {
   }
 
   componentWillUnmount() {
-    this.xhrs.forEach((xhr) => {
+    this.xhrs.forEach(xhr => {
       xhr && xhr.abort && xhr.abort();
     });
   }

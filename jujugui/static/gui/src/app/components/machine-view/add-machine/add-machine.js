@@ -182,7 +182,7 @@ class MachineViewAddMachine extends React.Component {
   _generateMachineOptions() {
     const components = [];
     const machines = this.props.dbAPI.machines.filterByParent();
-    machines.forEach((machine) => {
+    machines.forEach(machine => {
       if (machine.deleted) {
         return;
       }
@@ -216,7 +216,7 @@ class MachineViewAddMachine extends React.Component {
         value={machineId}>
         {machineId}/root-container
       </option>);
-    containers.forEach((container) => {
+    containers.forEach(container => {
       if (container.deleted) {
         return;
       }

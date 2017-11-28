@@ -176,7 +176,7 @@ class MachineViewMachine extends React.Component {
       return;
     }
     const components = [];
-    units.forEach((unit) => {
+    units.forEach(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
       if (props.type === 'machine' && (service.get('hide')
         || service.get('fade'))) {

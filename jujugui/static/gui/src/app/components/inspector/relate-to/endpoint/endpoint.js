@@ -21,7 +21,7 @@ class InspectorRelateToEndpoint extends React.Component {
   _updateActiveCount() {
     var activeCount = 0;
     var refs = this.refs;
-    Object.keys(refs).forEach((ref) => {
+    Object.keys(refs).forEach(ref => {
       if (ref.split('-')[0] === 'InspectorRelateToEndpoint') {
         if (refs[ref].state.checked) {
           activeCount += 1;
@@ -62,7 +62,7 @@ class InspectorRelateToEndpoint extends React.Component {
   _handleCreateRelation() {
     var refs = this.refs;
     var props = this.props;
-    Object.keys(refs).forEach((ref) => {
+    Object.keys(refs).forEach(ref => {
       var isInstance = ref.split('-')[0] === 'InspectorRelateToEndpoint';
       if (isInstance && refs[ref].state.checked) {
         var relationName = ref.slice(ref.indexOf('-') + 1);

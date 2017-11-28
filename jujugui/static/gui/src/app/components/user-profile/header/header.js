@@ -55,7 +55,7 @@ class UserProfileHeader extends React.Component {
   */
   _generateLinks() {
     var links = [];
-    this.props.links.forEach((link) => {
+    this.props.links.forEach(link => {
       var action = link.action;
       var type = link.type;
       var classes = {

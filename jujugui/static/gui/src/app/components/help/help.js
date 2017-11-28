@@ -32,7 +32,7 @@ ${this.props.youtubeAPIKey}`,
       null,
       null,
       null,
-      (response) => {
+      response => {
         try {
           const data = JSON.parse(response.currentTarget.response);
           const jujuShow = {
