@@ -87,7 +87,7 @@ describe('UnitList', () => {
           className="select-all"
           label="Select all units"
           aside="2"
-          whenChanged={children[0].props.whenChanged}/>,
+          whenChanged={children[0].props.whenChanged} />,
         <CheckListItem
           disabled={false}
           key={units[0].displayName}
@@ -146,7 +146,7 @@ describe('UnitList', () => {
           key="select-all-0"
           label="hook failed: install"
           className="select-all"
-          whenChanged={children[0].props.whenChanged}/>,
+          whenChanged={children[0].props.whenChanged} />,
         <CheckListItem
           disabled={false}
           key={units[0].displayName}
@@ -163,7 +163,7 @@ describe('UnitList', () => {
           key="select-all-1"
           label="hook failed: config-changed"
           className="select-all"
-          whenChanged={children[2].props.whenChanged}/>,
+          whenChanged={children[2].props.whenChanged} />,
         <CheckListItem
           disabled={false}
           key={units[1].displayName}
@@ -765,7 +765,7 @@ describe('UnitList', () => {
           className="select-all"
           label="Select all units"
           aside="2"
-          whenChanged={children[0].props.whenChanged}/>,
+          whenChanged={children[0].props.whenChanged} />,
         <CheckListItem
           disabled={true}
           key={units[0].displayName}

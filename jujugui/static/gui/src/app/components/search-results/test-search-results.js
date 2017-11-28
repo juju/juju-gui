@@ -170,7 +170,7 @@ describe('SearchResults', function() {
     });
 
     const changeState = sinon.spy();
-    const getName = (val) => {
+    const getName = val => {
       return val;
     };
     const sortItems = [{
@@ -452,7 +452,7 @@ describe('SearchResults', function() {
     });
 
     it('collapses identical charms with different series', function() {
-      var getName = (val) => {
+      var getName = val => {
         return val.split('/').pop();
       };
       var entities = [
@@ -485,7 +485,7 @@ describe('SearchResults', function() {
     });
 
     it('can collapse charms when the id contains "cs:"', () => {
-      const getName = (val) => {
+      const getName = val => {
         return val.split('/').pop();
       };
       const entities = [
@@ -515,7 +515,7 @@ describe('SearchResults', function() {
     });
 
     it('maintains sort order when collapsing charms', function() {
-      var getName = (val) => {
+      var getName = val => {
         return val;
       };
       var entities = [

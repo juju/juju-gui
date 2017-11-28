@@ -100,8 +100,7 @@ class Constraints extends React.Component {
           id="cpu-constraint"
           name="cpu-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="cpuConstraintInput"
-        />
+          ref="cpuConstraintInput" />
       </div>
     );
     const cores = (
@@ -116,8 +115,7 @@ class Constraints extends React.Component {
           id="cores-constraint"
           name="cores-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="coresConstraintInput"
-        />
+          ref="coresConstraintInput" />
       </div>
     );
     const mem = (
@@ -132,8 +130,7 @@ class Constraints extends React.Component {
           id="mem-constraint"
           name="mem-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="memConstraintInput"
-        />
+          ref="memConstraintInput" />
       </div>
     );
     const disk = (
@@ -148,8 +145,7 @@ class Constraints extends React.Component {
           id="disk-constraint"
           name="disk-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="diskConstraintInput"
-        />
+          ref="diskConstraintInput" />
       </div>
     );
     let parts = [arch, cpu, cores, mem, disk];

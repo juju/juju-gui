@@ -177,7 +177,7 @@ describe('LoginComponent', function() {
         gisf={false}
         loginToController={sinon.stub()}
         errorMessage='bad wolf'
-        loginToAPIs={sinon.stub()}/>);
+        loginToAPIs={sinon.stub()} />);
     var expected = <div className="login__failure-message">bad wolf</div>;
     assert.deepEqual(output.props.children[1].props.children[1], expected);
   });
@@ -190,7 +190,7 @@ describe('LoginComponent', function() {
         controllerIsConnected={sinon.stub()}
         gisf={false}
         loginToController={sinon.stub()}
-        loginToAPIs={loginToAPIs}/>);
+        loginToAPIs={loginToAPIs} />);
     component.refs.username.value = 'foo';
     component.refs.password.value = 'bar';
 
@@ -239,7 +239,7 @@ describe('LoginComponent', function() {
         controllerIsConnected={sinon.stub()}
         gisf={false}
         loginToController={sinon.stub()}
-        loginToAPIs={sinon.stub()}/>, true);
+        loginToAPIs={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {username: {focus: focus}};
     instance.componentDidMount();

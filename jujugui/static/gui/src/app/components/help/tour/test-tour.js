@@ -23,8 +23,7 @@ describe('Tour', () => {
         <SvgIcon
           className="back-to-help__icon"
           name="chevron_down_16"
-          size="16"
-        />
+          size="16" />
         Back to GUI help
       </span>
     );
@@ -35,7 +34,7 @@ describe('Tour', () => {
     const slides = output.props.children[1].props.children;
     assert.isDefined(slides);
     assert.equal(slides.length, 7);
-    slides.forEach((slide) => {
+    slides.forEach(slide => {
       assert.deepEqual(slide.props.className, 'tour__slide');
     });
   });

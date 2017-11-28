@@ -18,7 +18,7 @@ describe('DeploymentVPC', function() {
   // Render the component and return the instance and the output.
   const render = () => {
     const renderer = jsTestUtils.shallowRender(
-      <DeploymentVPC setVPCId={setVPCId}/>, true);
+      <DeploymentVPC setVPCId={setVPCId} />, true);
     return {
       instance: renderer.getMountedInstance(),
       output: renderer.getRenderOutput()
@@ -55,8 +55,7 @@ describe('DeploymentVPC', function() {
             multiLine={false}
             onBlur={comp.instance._onInputBlur}
             onKeyUp={comp.instance._onInputKeyUp}
-            required={false}
-          />
+            required={false} />
           <label>
             <input
               type="checkbox"
@@ -64,8 +63,7 @@ describe('DeploymentVPC', function() {
               onChange={comp.instance._onCheckboxChange}
               onClick={comp.instance._onCheckboxClick}
               checked={false}
-              disabled={true}
-            />
+              disabled={true} />
             &nbsp;
             Always use this ID
           </label>

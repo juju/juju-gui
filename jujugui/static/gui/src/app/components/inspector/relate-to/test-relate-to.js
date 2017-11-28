@@ -17,7 +17,7 @@ describe('InspectorRelateTo', function() {
       <InspectorRelateTo
         application={{}}
         changeState={sinon.stub()}
-        relatableApplications={applications} /> );
+        relatableApplications={applications} />);
     var expected = (
       <div className="inspector-relate-to">
         <ul className="inspector-view__list">
@@ -41,7 +41,7 @@ describe('InspectorRelateTo', function() {
       <InspectorRelateTo
         application={{}}
         changeState={sinon.stub()}
-        relatableApplications={[]} /> );
+        relatableApplications={[]} />);
     var expected = (
       <div className="inspector-relate-to">
         <ul className="inspector-view__list">
@@ -65,7 +65,7 @@ describe('InspectorRelateTo', function() {
           get: () => 'my-id'
         }}
         changeState={changeState}
-        relatableApplications={applications} /> );
+        relatableApplications={applications} />);
     // Trigger a relation click.
     output.props.children.props.children[0].props.onClick({
       currentTarget: {

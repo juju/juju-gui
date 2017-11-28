@@ -555,8 +555,7 @@ class Store extends React.Component {
                 <img
                   src={this._generateIconPath('zabbix-server')}
                   alt=""
-                  className="featured-entity__image control-size"
-                />
+                  className="featured-entity__image control-size" />
               </div>
               <div className="two-col last-col no-margin-bottom">
                 <h3 className="featured-entity__title">
@@ -574,8 +573,7 @@ class Store extends React.Component {
                 <img src={this._generateIconPath(
                   '~ricardokirkner/sentry')}
                 alt=""
-                className="featured-entity__image control-size"
-                />
+                className="featured-entity__image control-size" />
               </div>
               <div
                 className="two-col last-col no-margin-bottom">

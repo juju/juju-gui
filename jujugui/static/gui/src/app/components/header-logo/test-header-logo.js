@@ -16,7 +16,7 @@ describe('HeaderLogo', function() {
       <HeaderLogo
         gisf={true}
         homePath="/"
-        showProfile={showProfile}/>, true);
+        showProfile={showProfile} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <a href="/" onClick={showProfile} role="button" title="Home">
@@ -51,7 +51,7 @@ describe('HeaderLogo', function() {
       <HeaderLogo
         gisf={false}
         homePath="/u/hatch"
-        showProfile={showProfile}/>, true);
+        showProfile={showProfile} />, true);
     const output = renderer.getRenderOutput();
     // Call the click handler
     output.props.onClick({preventDefault});
@@ -66,7 +66,7 @@ describe('HeaderLogo', function() {
       <HeaderLogo
         gisf={true}
         homePath="/u/hatch"
-        showProfile={showProfile}/>, true);
+        showProfile={showProfile} />, true);
     const output = renderer.getRenderOutput();
     // Call the click handler
     output.props.onClick({preventDefault});

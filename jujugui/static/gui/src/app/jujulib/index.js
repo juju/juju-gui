@@ -17,7 +17,7 @@ var module = module;
   - the payment service.
   - the Stripe service.
 */
-(function (exports) {
+(function(exports) {
 
   /**
     Serializes an object into a query string.

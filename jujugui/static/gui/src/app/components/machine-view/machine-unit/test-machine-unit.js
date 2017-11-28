@@ -13,7 +13,7 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('MachineViewMachineUnit', function() {
   let acl, sendAnalytics, service, unit;
 
-  beforeEach(function () {
+  beforeEach(function() {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
     sendAnalytics = sinon.stub();
     service = {

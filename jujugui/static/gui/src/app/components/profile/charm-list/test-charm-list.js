@@ -71,7 +71,7 @@ describe('Profile Charm List', function() {
               <img
                 className="profile-charm-list__icon"
                 src="/charmstore/~hatch/precise/failtester-7/icon.svg"
-                title="failtester"/>
+                title="failtester" />
               <a
                 href="/gui/u/hatch/failtester/precise/7"
                 onClick={list[0].props.children[0].props.children[1].props.onClick}>
@@ -87,7 +87,7 @@ describe('Profile Charm List', function() {
               <img
                 className="profile-charm-list__icon"
                 src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
-                title="ghost"/>
+                title="ghost" />
               <a
                 href="/gui/u/hatch/ghost/xenial/3"
                 onClick={list[1].props.children[0].props.children[1].props.onClick}>
@@ -103,7 +103,7 @@ describe('Profile Charm List', function() {
               <img
                 className="profile-charm-list__icon"
                 src="/charmstore/~hatch/privghost-1/icon.svg"
-                title="privghost"/>
+                title="privghost" />
               <a
                 href="/gui/u/hatch/privghost/1"
                 onClick={list[2].props.children[0].props.children[1].props.onClick}>

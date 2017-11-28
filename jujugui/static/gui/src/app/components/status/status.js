@@ -162,10 +162,12 @@ class Status extends React.Component {
     @returns {Array} The sorted array.
   */
   _byKey(a, b) {
-    if (a.key < b.key)
+    if (a.key < b.key) {
       return -1;
-    if (a.key > b.key)
+    }
+    if (a.key > b.key) {
       return 1;
+    }
     return 0;
   }
 
@@ -551,7 +553,7 @@ class Status extends React.Component {
         classes: [this._getStatusClass(
           'status-view__table-row--', app.status.current)],
         clickState: this._generateApplicationClickState(app.id),
-        columns:[{
+        columns: [{
           columnSize: 2,
           content: (
             <span>

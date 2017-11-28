@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Bakery', () => {
   let bakery, fakeLocalStorage, macaroonlib, storage, client;
 
-  beforeAll((done) => {
+  beforeAll(done => {
     macaroonlib = require('js-macaroon');
     done();
   });

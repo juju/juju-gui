@@ -407,8 +407,7 @@ describe('MachineView', function() {
       <MachineViewScaleUp
         acl={acl.reshape(propTypes.acl)}
         dbAPI={dbAPI.reshape(propTypes.dbAPI)}
-        toggleScaleUp={instance._toggleScaleUp}
-      />);
+        toggleScaleUp={instance._toggleScaleUp} />);
     expect(
       output.props.children.props.children[0].props.children[0]).toEqualJSX(
       expected);
@@ -487,8 +486,7 @@ describe('MachineView', function() {
             removeUnit: instance._removeUnit,
             selectMachine: instance.selectMachine,
             unit: unitList[0]
-          }}
-        />
+          }} />
         <MachineViewUnplacedUnit
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
@@ -501,8 +499,7 @@ describe('MachineView', function() {
             removeUnit: instance._removeUnit,
             selectMachine: instance.selectMachine,
             unit: unitList[1]
-          }}
-        />
+          }} />
       </ul>);
     expect(
       output.props.children.props.children[0].props.children[1]
@@ -583,8 +580,7 @@ describe('MachineView', function() {
             removeUnit: instance._removeUnit,
             selectMachine: instance.selectMachine,
             unit: unitList[0]
-          }}
-        />]}
+          }} />]}
       </ul>);
     expect(
       output.props.children.props.children[0].props.children[1]
@@ -960,8 +956,7 @@ describe('MachineView', function() {
           ref="machine-new0"
           sendAnalytics={sendAnalytics}
           showConstraints={true}
-          type="machine"
-        />
+          type="machine" />
         <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
@@ -979,8 +974,7 @@ describe('MachineView', function() {
           ref="machine-new1"
           sendAnalytics={sendAnalytics}
           showConstraints={true}
-          type="machine"
-        />
+          type="machine" />
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
@@ -1067,8 +1061,7 @@ describe('MachineView', function() {
           ref="machine-new0"
           sendAnalytics={sendAnalytics}
           showConstraints={true}
-          type="machine"
-        />
+          type="machine" />
         <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
@@ -1089,8 +1082,7 @@ describe('MachineView', function() {
           ref="machine-new5"
           sendAnalytics={sendAnalytics}
           showConstraints={true}
-          type="machine"
-        />
+          type="machine" />
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
@@ -1177,8 +1169,7 @@ describe('MachineView', function() {
           ref="machine-new0"
           sendAnalytics={sendAnalytics}
           showConstraints={true}
-          type="machine"
-        />
+          type="machine" />
         <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
@@ -1196,8 +1187,7 @@ describe('MachineView', function() {
           sendAnalytics={sendAnalytics}
           showConstraints={false}
           ref="machine-new1"
-          type="machine"
-        />
+          type="machine" />
       </ul>);
     expect(
       output.props.children.props.children[1].props.children[1]
@@ -1522,8 +1512,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
         <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
@@ -1541,8 +1530,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/0"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
       </ul>);
     expect(
       output.props.children.props.children[2].props.children[1]).toEqualJSX(
@@ -1639,8 +1627,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
         <MachineViewMachine
           acl={reshapedACL}
           dbAPI={reshapedDBAPI}
@@ -1659,8 +1646,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/0"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
         <MachineViewMachine
           acl={reshapedACL}
           dbAPI={reshapedDBAPI}
@@ -1679,8 +1665,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/5"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
       </ul>);
     expect(
       output.props.children.props.children[2].props.children[1]).toEqualJSX(
@@ -1752,8 +1737,7 @@ describe('MachineView', function() {
         modelAPI={modelAPI.reshape(propTypes.modelAPI)}
         parentId="new0"
         series={['trusty', 'xenial']}
-        unit={null}
-      />);
+        unit={null} />);
     expect(
       output.props.children.props.children[2].props.children[0]).toEqualJSX(
       expected);
@@ -1840,8 +1824,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
         <MachineViewMachine
           acl={acl.reshape(propTypes.acl)}
           dbAPI={dbAPI.reshape(propTypes.dbAPI)}
@@ -1857,8 +1840,7 @@ describe('MachineView', function() {
           parseConstraints={parseConstraints}
           ref="container-new0/lxc/0"
           sendAnalytics={sendAnalytics}
-          type="container"
-        />
+          type="container" />
       </ul>);
     expect(
       output.props.children.props.children[2].props.children[1]).toEqualJSX(

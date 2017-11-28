@@ -25,7 +25,7 @@ class StringConfigInput extends React.Component {
   _updateValue(evt) {
     const value = evt.currentTarget.innerText;
     this.props.setValue(value);
-    this.setState({value:  value});
+    this.setState({value: value});
   }
 
   render() {

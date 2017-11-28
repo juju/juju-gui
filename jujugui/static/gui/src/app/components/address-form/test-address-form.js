@@ -140,7 +140,7 @@ describe('AddressForm', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]}
-                value={undefined}/>
+                value={undefined} />
             </div>
             <div className="twelve-col">
               <GenericInput
@@ -232,7 +232,7 @@ describe('AddressForm', function() {
                   regex: /\S+/,
                   error: 'This field is required.'
                 }]}
-                value={undefined}/>
+                value={undefined} />
             </div>
             {null}
           </div>

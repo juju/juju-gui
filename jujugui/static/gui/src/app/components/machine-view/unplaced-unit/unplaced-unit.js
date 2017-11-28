@@ -85,8 +85,7 @@ class MachineViewUnplacedUnit extends React.Component {
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         selectMachine={props.unitAPI.selectMachine}
         series={props.series}
-        unit={props.unitAPI.unit}
-      />
+        unit={props.unitAPI.unit} />
     );
   }
 

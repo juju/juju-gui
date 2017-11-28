@@ -26,8 +26,7 @@ describe('InspectorChangeVersionItem', function() {
         downgrade={false}
         itemAction={itemAction}
         buttonAction={buttonAction}
-        url={url}
-      />);
+        url={url} />);
     assert.deepEqual(output,
       <li className="inspector-current-version__item"
         role="button" tabIndex="0"
@@ -57,8 +56,7 @@ describe('InspectorChangeVersionItem', function() {
         downgrade={true}
         itemAction={itemAction}
         buttonAction={buttonAction}
-        url={url}
-      />);
+        url={url} />);
     assert.deepEqual(output,
       <li className="inspector-current-version__item"
         role="button" tabIndex="0"
@@ -89,8 +87,7 @@ describe('InspectorChangeVersionItem', function() {
         downgrade={false}
         itemAction={itemAction}
         buttonAction={buttonAction}
-        url={url}
-      />);
+        url={url} />);
     const expected = (
       <GenericButton
         disabled={true}

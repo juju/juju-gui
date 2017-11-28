@@ -2,6 +2,8 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom');
+const ReactTestUtils = require('react-dom/test-utils');
 
 const ExpandingRow = require('./expanding-row');
 
@@ -92,34 +94,28 @@ describe('ExpandingRow', () => {
   });
 
   it('can update to be expanded', () => {
-    const renderer = jsTestUtils.shallowRender(
+    const node = document.createElement('div');
+    const component = ReactDOM.render(
       <ExpandingRow
         expanded={false}>
         <span>closed</span>
         <span>open</span>
-      </ExpandingRow>, true);
-    const instance = renderer.getMountedInstance();
-    // Mock the ref. The MutationObserver needs a real DOM node.
-    instance.refs = {inner: document.createElement('div')};
-    // The shallow renderer does not call componentDidMount, so call it
-    // manually.
-    instance.componentDidMount();
-    instance.componentWillUpdate.call(instance, {expanded: true});
-    renderer.render(
+      </ExpandingRow>, node);
+
+    ReactDOM.render(
       <ExpandingRow
         expanded={true}>
         <span>closed</span>
         <span>open</span>
-      </ExpandingRow>);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <li className={
-        'expanding-row twelve-col expanding-row--expanded ' +
-        'expanding-row--clickable'}
-      onClick={instance._toggle}>
-        {output.props.children}
-      </li>);
-    expect(output).toEqualJSX(expected);
+      </ExpandingRow>, node);
+
+    assert.doesNotThrow(
+      function() {
+        ReactTestUtils.findRenderedDOMComponentWithClass(
+          component,
+          'expanding-row twelve-col expanding-row--expanded expanding-row--clickable');
+      });
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
   });
 
   it('can be not clickable', () => {

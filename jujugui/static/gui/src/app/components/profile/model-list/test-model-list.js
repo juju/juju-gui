@@ -147,7 +147,7 @@ describe('Profile Model List', function() {
   }]`;
 
   function renderComponent(options={}) {
-    listModelsWithInfo = (cb) => {
+    listModelsWithInfo = cb => {
       cb(null, JSON.parse(rawModelData));
     };
     return jsTestUtils.shallowRender(
@@ -210,8 +210,7 @@ describe('Profile Model List', function() {
                     Delete</a>
                   </li>
                 ]}
-                tooltip="more"
-              />
+                tooltip="more" />
             </span>
           </li>
           <li className="profile-model-list__row" key="">
@@ -239,8 +238,7 @@ describe('Profile Model List', function() {
                     Delete</a>
                   </li>
                 ]}
-                tooltip="more"
-              />
+                tooltip="more" />
             </span>
           </li>
         </ul>

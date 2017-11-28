@@ -124,7 +124,7 @@ class MachineView extends React.Component {
   _generateUnplacedUnits() {
     const props = this.props;
     let units = props.dbAPI.units.filterByMachine();
-    units = units.filter((unit) => {
+    units = units.filter(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
       if (!service.get('subordinate')) {
         return unit;
@@ -164,7 +164,7 @@ class MachineView extends React.Component {
     if (state.showAddMachine || state.showAddContainer) {
       placingUnit = state.placingUnit;
     }
-    units.forEach((unit) => {
+    units.forEach(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
       if (placingUnit && unit.id === placingUnit.id) {
         return;
@@ -184,8 +184,7 @@ class MachineView extends React.Component {
             removeUnit: this._removeUnit.bind(this),
             selectMachine: this.selectMachine.bind(this),
             unit: unit
-          }}
-        />
+          }} />
       );
     });
     return (
@@ -225,8 +224,7 @@ class MachineView extends React.Component {
       <MachineViewScaleUp
         acl={props.acl.reshape(propTypes.acl)}
         dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
-        toggleScaleUp={this._toggleScaleUp.bind(this)}
-      />);
+        toggleScaleUp={this._toggleScaleUp.bind(this)} />);
   }
 
   /**
@@ -336,7 +334,7 @@ class MachineView extends React.Component {
     const acl = props.acl.reshape(propTypes.acl);
     const dbAPI = props.dbAPI.reshape(propTypes.dbAPI);
     const modelAPI = props.modelAPI.reshape(propTypes.modelAPI);
-    machines.forEach((machine) => {
+    machines.forEach(machine => {
       const selectedMachine = this._getSelected().machine;
       components.push(
         <MachineViewMachine
@@ -357,8 +355,7 @@ class MachineView extends React.Component {
           sendAnalytics={props.sendAnalytics}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
-          type="machine"
-        />);
+          type="machine" />);
     });
     return (
       <div>
@@ -399,7 +396,7 @@ class MachineView extends React.Component {
     const propTypes = (
       MachineViewMachine.DecoratedComponent.propTypes);
     const components = [];
-    containers.forEach((container) => {
+    containers.forEach(container => {
       components.push(
         <MachineViewMachine
           acl={props.acl.reshape(propTypes.acl)}
@@ -417,8 +414,7 @@ class MachineView extends React.Component {
           parseConstraints={props.parseConstraints}
           ref={`container-${container.id}`}
           sendAnalytics={props.sendAnalytics}
-          type="container"
-        />);
+          type="container" />);
     });
     return (
       <ul className="machine-view__list">
@@ -465,8 +461,7 @@ class MachineView extends React.Component {
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         selectMachine={this.selectMachine.bind(this)}
         series={props.series}
-        unit={this.state.placingUnit}
-      />
+        unit={this.state.placingUnit} />
     );
   }
 
@@ -517,8 +512,7 @@ class MachineView extends React.Component {
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         parentId={this._getSelected().machine}
         series={props.series}
-        unit={this.state.placingUnit}
-      />
+        unit={this.state.placingUnit} />
     );
   }
 
@@ -584,7 +578,7 @@ class MachineView extends React.Component {
   */
   _sortMachines(machines, method) {
     var sortMethod = this._getSortMethod(method);
-    return machines.sort(function (a, b) {
+    return machines.sort(function(a, b) {
       var sortedA = sortMethod(a);
       var sortedB = sortMethod(b);
       if (sortedA == sortedB) {

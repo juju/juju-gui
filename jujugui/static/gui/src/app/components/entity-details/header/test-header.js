@@ -43,8 +43,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
@@ -55,7 +54,7 @@ describe('EntityHeader', function() {
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
               <img src="data:image/gif;base64," alt="django"
-                width="96" className="entity-header__icon"/>
+                width="96" className="entity-header__icon" />
               <h1
                 className="entity-header__title"
                 itemProp="name"
@@ -96,7 +95,7 @@ describe('EntityHeader', function() {
                       '.com%2Fdjango%2Ftrusty%2F'}>
                     <SvgIcon
                       name="icon-social-twitter"
-                      size="36"/>
+                      size="36" />
                   </a>
                 </li>
                 <li>
@@ -106,7 +105,7 @@ describe('EntityHeader', function() {
                       'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
                     <SvgIcon
                       name="icon-social-google"
-                      size="36"/>
+                      size="36" />
                   </a>
                 </li>
               </ul>
@@ -146,8 +145,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const output = renderer.getRenderOutput();
     assert.deepEqual(
       output.props.children.props.children.props.children[0].
@@ -172,8 +170,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <select className="entity-header__select"
@@ -204,8 +201,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <select className="entity-header__select"
@@ -233,8 +229,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const output = renderer.getRenderOutput();
     assert.deepEqual(
       output.props.children.props.children.props.children[1].props.children[0],
@@ -261,8 +256,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={pluralize}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <ul className="bullets inline entity-header__properties">
@@ -294,8 +288,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <li className="entity-header__subordinate">
@@ -306,7 +299,7 @@ describe('EntityHeader', function() {
         target="_blank">
           <SvgIcon
             name="help_16"
-            size="16"/>
+            size="16" />
         </a>
       </li>);
     expect(
@@ -328,8 +321,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
     assert.equal(deployAction.props.children, 'Add to model');
@@ -349,8 +341,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
     assert.equal(deployAction.props.children, 'Add to porkchop');
@@ -371,8 +362,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const textContent = output.refs.deployAction.innerText;
     assert.equal(textContent, 'This type of charm can only be deployed from ' +
       'the command line.');
@@ -396,8 +386,7 @@ describe('EntityHeader', function() {
         entityModel={mockEntity}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const deployAction = output.refs.deployAction;
     // Simulate a click.
     deployAction.props.action();
@@ -425,8 +414,7 @@ describe('EntityHeader', function() {
         plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const refs = output.refs;
     const deployAction = refs.deployAction;
     // Change the select value to a plan.
@@ -458,8 +446,7 @@ describe('EntityHeader', function() {
         plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const refs = output.refs;
     const deployAction = refs.deployAction;
     // Simulate a click.
@@ -488,8 +475,7 @@ describe('EntityHeader', function() {
         entityModel={entity}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const deployAction = output.refs.deployAction;
     sinon.spy(output, '_getBundleYAMLCallback');
     // Simulate a click.
@@ -522,8 +508,7 @@ describe('EntityHeader', function() {
         addNotification={addNotification}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />);
+        urllib={urllib} />);
     const deployAction = output.refs.deployAction;
     // Simulate a click.
     deployAction.props.action();
@@ -552,8 +537,7 @@ describe('EntityHeader', function() {
         addNotification={addNotification}
         pluralize={sinon.stub()}
         scrollPosition={100}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     instance.refs = {
       headerWrapper: {
@@ -593,8 +577,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     instance._onOwnerClick(evt);
     assert.strictEqual(evt.preventDefault.callCount, 1, 'preventDefault');
@@ -628,8 +611,7 @@ describe('EntityHeader', function() {
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
         scrollPosition={0}
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     instance._onLastRevisionClick(evt);
     assert.strictEqual(evt.preventDefault.callCount, 1, 'preventDefault');

@@ -39,8 +39,7 @@ describe('DeploymentSSHKey', function() {
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
         setSSHKeys={setSSHKeys}
         setLaunchpadUsernames={setLaunchpadUsernames}
-        username={username}
-      />, true);
+        username={username} />, true);
     return {
       instance: renderer.getMountedInstance(),
       output: renderer.getRenderOutput(),
@@ -258,7 +257,7 @@ describe('DeploymentSSHKey', function() {
           type="negative" />);
     });
 
-    it ('creates a table if keys present', () => {
+    it('creates a table if keys present', () => {
       const comp = render('aws');
       comp.instance.refs = {
         githubUsername: {
@@ -297,7 +296,7 @@ describe('DeploymentSSHKey', function() {
       );
     });
 
-    it ('removes key from table', () => {
+    it('removes key from table', () => {
       const comp = render('aws');
       comp.instance.refs = {
         githubUsername: {
@@ -521,7 +520,7 @@ describe('DeploymentSSHKey', function() {
         }]);
     });
 
-    it ('shows a table if keys present', () => {
+    it('shows a table if keys present', () => {
       comp.instance._handleAddMoreKeys.call(comp.instance);
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[1]).toEqualJSX(

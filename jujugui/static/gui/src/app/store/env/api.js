@@ -680,11 +680,11 @@ YUI.add('juju-env-api', function(Y) {
         var macaroon = response['discharge-required'];
         if (macaroon) {
           // This is a discharge required response.
-          bakery.discharge(macaroon, (macaroons) => {
+          bakery.discharge(macaroon, macaroons => {
             // Send the login request again including the discharge macaroon.
             sendLoginRequest(
               macaroons, handleResponse.bind(this, bakery, macaroons, cback));
-          }, (msg) => {
+          }, msg => {
             cback('macaroon discharge failed: ' + msg);
           });
           return;
@@ -1689,7 +1689,7 @@ YUI.add('juju-env-api', function(Y) {
           return;
         }
         var response = {applicationName: applicationName, err: data.error};
-        Object.keys(args).forEach((key) => {
+        Object.keys(args).forEach(key => {
           response[key] = args[key];
         });
         userCallback(response);

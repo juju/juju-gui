@@ -24,7 +24,7 @@ MachineViewMachineGlobals.dropTarget = {
     @param {Object} monitor A DropTargetMonitor.
     @param {Object} component The component that is being dropped onto.
   */
-  drop: function (props, monitor, component) {
+  drop: function(props, monitor, component) {
     props.sendAnalytics('Machine View', 'Drop Target', 'Machine');
     props.dropUnit(monitor.getItem().unit, props.machineAPI.machine.id);
   },
@@ -36,7 +36,7 @@ MachineViewMachineGlobals.dropTarget = {
     @param {Object} props The component props.
     @param {Object} monitor A DropTargetMonitor.
   */
-  canDrop: function (props, monitor) {
+  canDrop: function(props, monitor) {
     return !props.acl.isReadOnly() && !props.machineAPI.machine.deleted;
   }
 };
@@ -176,7 +176,7 @@ class MachineViewMachine extends React.Component {
       return;
     }
     const components = [];
-    units.forEach((unit) => {
+    units.forEach(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
       if (props.type === 'machine' && (service.get('hide')
         || service.get('fade'))) {

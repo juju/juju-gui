@@ -17,7 +17,7 @@ describe('MachineViewMachine', function() {
   let acl, applications, generateMachineDetails, genericConstraints,
       machineUnitACL, parseConstraints, sendAnalytics;
 
-  beforeEach(function () {
+  beforeEach(function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
     sendAnalytics = sinon.stub();
     machineUnitACL = acl.reshape(
@@ -95,8 +95,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={parseConstraints}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -195,8 +194,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={parseConstraints}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -241,8 +239,7 @@ describe('MachineViewMachine', function() {
         }}
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -287,8 +284,7 @@ describe('MachineViewMachine', function() {
         }}
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -390,8 +386,7 @@ describe('MachineViewMachine', function() {
         }}
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
-        type="machine"
-      />);
+        type="machine" />);
     const expected = (
       <ul className="machine-view__machine-units">
         {[
@@ -460,8 +455,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
         showConstraints={false}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -550,8 +544,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="container"
-      />, true);
+        type="container" />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -643,8 +636,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={parseConstraints}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="machine"
-      />);
+        type="machine" />);
     output.props.children[0].props.items[0].action();
     assert.equal(destroyMachines.callCount, 1);
     assert.deepEqual(destroyMachines.args[0][0], ['new0']);
@@ -687,8 +679,7 @@ describe('MachineViewMachine', function() {
         type="container"
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
-        showConstraints={true}
-      />, true);
+        showConstraints={true} />, true);
     const output = renderer.getRenderOutput();
     output.props.children[3].props.children[0].props.removeUnit();
     assert.equal(removeUnit.callCount, 1);
@@ -746,8 +737,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={parseConstraints}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <MoreMenu
@@ -795,8 +785,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={parseConstraints}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children[0].props.items[1].action();
@@ -868,8 +857,7 @@ describe('MachineViewMachine', function() {
         parseConstraints={parseConstraints}
         sendAnalytics={sendAnalytics}
         showConstraints={true}
-        type="machine"
-      />, true);
+        type="machine" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children[0].props.items[1].action();

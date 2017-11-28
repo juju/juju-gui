@@ -24,7 +24,7 @@ class UserProfile extends React.Component {
     this.props.setPageTitle(this.props.userInfo.profile);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.props.setPageTitle();
   }
 

@@ -22,7 +22,7 @@ class ExpandingProgress extends React.Component {
 
   render() {
     var classes = classNames('expanding-progress', {
-      'expanding-progress--active' : this.state.active
+      'expanding-progress--active': this.state.active
     });
     return (
       <div className={classes}></div>

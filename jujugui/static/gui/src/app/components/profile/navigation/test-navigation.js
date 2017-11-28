@@ -16,7 +16,7 @@ describe('Profile Navigation', function() {
       <ProfileNavigation
         activeSection="bundles"
         changeState={options.changeState || sinon.stub()}
-        sectionsMap={sectionsMap}/>, true);
+        sectionsMap={sectionsMap} />, true);
   }
 
   it('can render', () => {
@@ -96,7 +96,7 @@ describe('Profile Navigation', function() {
       <ProfileNavigation
         changeState={changeState}
         sectionsMap={sectionsMap}
-        activeSection="charms"/>);
+        activeSection="charms" />);
     const output2 = renderer.getRenderOutput();
     const list2 = output2.props.children.props.children;
     const expected2 = (

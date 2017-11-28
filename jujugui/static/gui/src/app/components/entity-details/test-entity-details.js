@@ -69,8 +69,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -97,8 +96,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
-            urllib={urllib}
-          />
+            urllib={urllib} />
           {undefined}
           <EntityContent
             addNotification={addNotification}
@@ -116,8 +114,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms}
-          />
+            showTerms={showTerms} />
         </div>
       </div>
     );
@@ -158,8 +155,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -227,8 +223,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -255,8 +250,7 @@ describe('EntityDetails', function() {
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
-            urllib={urllib}
-          />
+            urllib={urllib} />
           <EntityContent
             addNotification={addNotification}
             apiUrl={apiUrl}
@@ -273,8 +267,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms}
-          />
+            showTerms={showTerms} />
         </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
@@ -315,8 +308,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -350,8 +342,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};
     instance.componentDidMount();
@@ -407,8 +398,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -435,8 +425,7 @@ describe('EntityDetails', function() {
             plans={plans}
             pluralize={pluralize}
             scrollPosition={100}
-            urllib={urllib}
-          />
+            urllib={urllib} />
           {undefined}
           <EntityContent
             addNotification={addNotification}
@@ -454,8 +443,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms}
-          />
+            showTerms={showTerms} />
         </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
@@ -511,8 +499,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();
@@ -539,8 +526,7 @@ describe('EntityDetails', function() {
             plans={[]}
             pluralize={pluralize}
             scrollPosition={100}
-            urllib={urllib}
-          />
+            urllib={urllib} />
           {undefined}
           <EntityContent
             addNotification={addNotification}
@@ -558,8 +544,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms}
-          />
+            showTerms={showTerms} />
         </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
@@ -638,8 +623,7 @@ describe('EntityDetails', function() {
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = shallowRenderer.getMountedInstance();
     instance.refs = {content: {focus: sinon.stub()}};
     instance.componentDidMount();

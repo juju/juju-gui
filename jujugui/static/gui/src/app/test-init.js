@@ -921,29 +921,29 @@ describe('init', () => {
 
     beforeEach(() => {
       modelList = [{
-        'id':'fe9a2845-4829-4d61-8653-248b7052204e',
-        'name':'latta',
-        'series':'xenial',
-        'provider':'gce',
-        'uuid':'fe9a2845-4829-4d61-8653-248b7052204e',
-        'controllerUUID':'a030379a-940f-4760-8fcf-3062b41a04e7',
-        'owner':'frankban@external',
-        'life':'alive',
-        'isAlive':true,
-        'isController':false,
-        'lastConnection':null
-      },{
-        'id':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
-        'name':'jujugui-org',
-        'series':'xenial',
-        'provider':'gce',
-        'uuid':'509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
-        'controllerUUID':'a030379a-940f-4760-8fcf-3062b41a04e7',
-        'owner':'uros-jovanovic@external',
-        'life':'alive',
-        'isAlive':true,
-        'isController':false,
-        'lastConnection':null
+        'id': 'fe9a2845-4829-4d61-8653-248b7052204e',
+        'name': 'latta',
+        'series': 'xenial',
+        'provider': 'gce',
+        'uuid': 'fe9a2845-4829-4d61-8653-248b7052204e',
+        'controllerUUID': 'a030379a-940f-4760-8fcf-3062b41a04e7',
+        'owner': 'frankban@external',
+        'life': 'alive',
+        'isAlive': true,
+        'isController': false,
+        'lastConnection': null
+      }, {
+        'id': '509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+        'name': 'jujugui-org',
+        'series': 'xenial',
+        'provider': 'gce',
+        'uuid': '509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+        'controllerUUID': 'a030379a-940f-4760-8fcf-3062b41a04e7',
+        'owner': 'uros-jovanovic@external',
+        'life': 'alive',
+        'isAlive': true,
+        'isController': false,
+        'lastConnection': null
       }];
       app.maskVisibility = sinon.stub();
       app.state.changeState = sinon.stub();
@@ -1075,7 +1075,7 @@ describe('init', () => {
     let userClass;
 
     // Set up the mocks required for these tests.
-    const setupApp = (config) => {
+    const setupApp = config => {
       // Clean up the old app.
       app.destructor();
       app = createApp(config);

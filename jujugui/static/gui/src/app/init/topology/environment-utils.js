@@ -113,7 +113,8 @@ Object.defineProperties(_box, {
         (this.h / 2) - (margins &&
                         (margins.bottom * this.h / 2 -
                          margins.top * this.h / 2) || 0)
-      ];}
+      ];
+    }
   },
 
   /*

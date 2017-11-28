@@ -51,7 +51,7 @@ const RelationMenu = function(props) {
     return (
       <SvgIcon
         name={icon}
-        size="16"/>);
+        size="16" />);
   }
 
   /**
@@ -63,7 +63,7 @@ const RelationMenu = function(props) {
   */
   function _generateRelations(relations) {
     var components = [];
-    relations.forEach((relation) => {
+    relations.forEach(relation => {
       var relationClasses = 'relation-container ' + (
         relation.hasRelationError() ? 'error' : 'running');
       var sourceClasses = 'inspect-relation endpoint ' + (

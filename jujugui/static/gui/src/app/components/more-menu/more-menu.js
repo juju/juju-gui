@@ -76,7 +76,7 @@ class MoreMenu extends React.Component {
       return;
     }
     var components = [];
-    this.props.items.forEach((item) => {
+    this.props.items.forEach(item => {
       components.push(
         <li className={this._generateItemClasses(item)}
           key={item.label}

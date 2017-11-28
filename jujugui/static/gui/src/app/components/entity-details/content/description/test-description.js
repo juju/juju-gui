@@ -53,7 +53,7 @@ describe('EntityContentDescription', function() {
       expect(output).toEqualJSX(
         <div className="entity-content__description">
           <div className="entity-content__description-content"
-            dangerouslySetInnerHTML={{__html:'HA Django cluster.'}} />
+            dangerouslySetInnerHTML={{__html: 'HA Django cluster.'}} />
         </div>
       );
     });

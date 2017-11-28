@@ -17,8 +17,8 @@ describe('jujulib Stripe service', function() {
   it('exists', function() {
     const stripe = new window.jujulib.stripe('http://example.com', 'key123');
     assert.strictEqual(stripe instanceof window.jujulib.stripe, true);
-    assert.equal(stripe.url,'http://example.com/v3/');
-    assert.equal(stripe.stripeKey,'key123');
+    assert.equal(stripe.url, 'http://example.com/v3/');
+    assert.equal(stripe.stripeKey, 'key123');
   });
 
   it('can load the Stripe JavaScript', function() {

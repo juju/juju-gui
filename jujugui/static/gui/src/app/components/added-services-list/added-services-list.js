@@ -9,7 +9,7 @@ const AddedServicesListItem = require('./item/item');
 class AddedServicesList extends React.Component {
   generateItemList(services) {
     var items = [];
-    services.each((service) => {
+    services.each(service => {
       items.push(
         <AddedServicesListItem
           // We use the 'name' instead of the 'id' here because when a

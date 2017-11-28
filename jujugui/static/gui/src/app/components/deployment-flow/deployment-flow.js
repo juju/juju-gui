@@ -77,7 +77,7 @@ class DeploymentFlow extends React.Component {
   }
 
   componentWillUnmount() {
-    this.xhrs.forEach((xhr) => {
+    this.xhrs.forEach(xhr => {
       xhr && xhr.abort && xhr.abort();
     });
   }
@@ -560,8 +560,7 @@ class DeploymentFlow extends React.Component {
           setSSHKeys={this._setSSHKeys.bind(this)}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           username={this.props.username}
-          WebHandler={this.props.WebHandler}
-        />
+          WebHandler={this.props.WebHandler} />
       </DeploymentSection>);
   }
 
@@ -905,7 +904,7 @@ class DeploymentFlow extends React.Component {
     const classes = classNames(
       'deployment-flow__deploy-option',
       {
-        'deployment-flow__deploy-option--disabled' : status.disabled
+        'deployment-flow__deploy-option--disabled': status.disabled
       });
     return (
       <div className={classes}>

@@ -166,8 +166,7 @@ class InspectorChangeVersion extends React.Component {
             downgrade={downgrade}
             itemAction={this._viewCharmDetails.bind(this, versionURL)}
             buttonAction={this._versionButtonAction.bind(this, version)}
-            url={versionURL}
-          />);
+            url={versionURL} />);
       }, this);
     }
     this.setState({loading: false});

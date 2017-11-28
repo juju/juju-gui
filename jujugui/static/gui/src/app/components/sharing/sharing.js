@@ -31,7 +31,7 @@ class Sharing extends React.Component {
   }
 
   componentWillUnmount() {
-    this.xhrs.forEach((xhr) => {
+    this.xhrs.forEach(xhr => {
       xhr && xhr.abort && xhr.abort();
     });
   }
@@ -155,7 +155,7 @@ class Sharing extends React.Component {
     if (!users.length) {
       return;
     }
-    return users.map((user) => {
+    return users.map(user => {
       if (user.err) {
         return (
           <div key={user.name} className="sharing__user">

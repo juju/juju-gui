@@ -207,8 +207,7 @@ describe('Charmbrowser', function() {
         setPageTitle={setPageTitle}
         showTerms={showTerms}
         staticURL="http://example.com"
-        urllib={urllib}
-      />, true);
+        urllib={urllib} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
@@ -245,8 +244,7 @@ describe('Charmbrowser', function() {
             scrollCharmbrowser={instance._scrollCharmbrowser}
             setPageTitle={setPageTitle}
             showTerms={showTerms}
-            urllib={urllib}
-          />
+            urllib={urllib} />
         </div>
       </Panel>);
     expect(output).toEqualJSX(expectedOutput);

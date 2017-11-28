@@ -58,8 +58,7 @@ class UserMenu extends React.Component {
             {this.props.LogoutLink}
           </li>
         ]}
-        tooltip={showLogin ? '' : 'user'}
-      />);
+        tooltip={showLogin ? '' : 'user'} />);
   }
 };
 

@@ -11,7 +11,7 @@ const changesUtils = {
   */
   filterByParent: (changeSet, parentId) => {
     let changes = {};
-    Object.keys(changeSet).forEach((key) => {
+    Object.keys(changeSet).forEach(key => {
       const change = changeSet[key];
       const parents = change.parents || [];
       if (parents.indexOf(parentId) >= 0) {
@@ -52,7 +52,7 @@ const changesUtils = {
   */
   getGroupedChanges: changeSet => {
     let changes = {};
-    Object.keys(changeSet).forEach((key) => {
+    Object.keys(changeSet).forEach(key => {
       const change = changeSet[key];
       const method = change.command && change.command.method;
       if (method) {

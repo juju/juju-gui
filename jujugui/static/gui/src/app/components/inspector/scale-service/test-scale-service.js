@@ -185,7 +185,7 @@ describe('ScaleService', function() {
             autoComplete="off"
             name="num-units"
             onChange={instance._updateState}
-            ref="numUnitsInput"/>
+            ref="numUnitsInput" />
           <span className="scale-service--units__span">units</span>
         </div>
         <div className="scale-service--selector">

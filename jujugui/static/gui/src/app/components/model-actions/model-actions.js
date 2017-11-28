@@ -35,7 +35,8 @@ class ModelActions extends React.Component {
       this.props.renderDragOverNotification(false);
       this.props.importBundleFile(inputFile);
       setTimeout(() => {
-        this.props.hideDragOverNotification();}, 600);
+        this.props.hideDragOverNotification();
+      }, 600);
     }
   }
 

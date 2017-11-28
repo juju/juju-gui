@@ -401,8 +401,7 @@ YUI.add('juju-charm-models', function(Y) {
           Object.keys(providers).forEach(key => {
             if (providers[key] !== 'SUCCESS') {
               failures.push(key);
-            }
-            else {
+            } else {
               successes.push(key);
             }
           });

@@ -68,7 +68,7 @@ describe('ModalGUISettings', function() {
         </p>
         <input type="button" className="button--positive"
           name="save-settings" onClick={_handleSave}
-          id="save-settings" value="Save"/>
+          id="save-settings" value="Save" />
       </div>
     </div>);
   }

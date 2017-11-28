@@ -393,8 +393,7 @@ describe('GenericInput', function() {
     output = renderer.getRenderOutput();
     const expected = (<SvgIcon
       name="relation-icon-error"
-      size={16}
-    />);
+      size={16} />);
     expect(output.props.children[2]).toEqualJSX(expected);
   });
 

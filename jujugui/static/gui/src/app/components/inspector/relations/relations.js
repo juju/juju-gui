@@ -37,7 +37,7 @@ class InspectorRelations extends React.Component {
   _updateActiveCount() {
     var activeCount = 0;
     var refs = this.refs;
-    Object.keys(refs).forEach((ref) => {
+    Object.keys(refs).forEach(ref => {
       if (ref.split('-')[0] === 'CheckListItem') {
         if (refs[ref].state.checked) {
           activeCount += 1;
@@ -94,7 +94,7 @@ class InspectorRelations extends React.Component {
         key={ref+'1'}
         ref={ref}
         label='Select all relations'
-        whenChanged={this._selectAllRelations.bind(this)}/>
+        whenChanged={this._selectAllRelations.bind(this)} />
     ];
 
     relations.forEach(function(relation, index) {
@@ -137,7 +137,7 @@ class InspectorRelations extends React.Component {
   _handleRemoveRelation() {
     var relations = [];
     var refs = this.refs;
-    Object.keys(refs).forEach((ref) => {
+    Object.keys(refs).forEach(ref => {
       var isInstance = ref.split('-')[0] === 'CheckListItem';
       if (isInstance && refs[ref].state.checked) {
         var relationName = ref.slice(ref.indexOf('-') + 1);
@@ -157,7 +157,7 @@ class InspectorRelations extends React.Component {
   */
   _selectAllRelations(checked) {
     var refs = this.refs;
-    Object.keys(refs).forEach((ref) => {
+    Object.keys(refs).forEach(ref => {
       if (ref.split('-')[0] === 'CheckListItem') {
         refs[ref].setState({
           checked: checked

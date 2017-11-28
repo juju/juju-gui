@@ -87,7 +87,7 @@ describe('InspectorRelations', function() {
           label='Select all relations'
           whenChanged={
             output.props.children[1].props.children[0].props.whenChanged
-          }/>
+          } />
         <CheckListItem
           action={output.props.children[1].props.children[1].props.action}
           disabled={false}
@@ -199,7 +199,7 @@ describe('InspectorRelations', function() {
           label='Select all relations'
           whenChanged={
             output.props.children[1].props.children[0].props.whenChanged
-          }/>
+          } />
         <CheckListItem
           action={output.props.children[1].props.children[1].props.action}
           disabled={true}

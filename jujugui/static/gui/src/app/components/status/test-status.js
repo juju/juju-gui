@@ -56,8 +56,7 @@ describe('Status', function() {
         db={shapeup.fromShape(db, propTypes.db)}
         generatePath={generatePath}
         model={shapeup.fromShape(model, propTypes.model)}
-        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)}
-      />, true
+        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />, true
     );
     return {
       instance: renderer.getMountedInstance(),

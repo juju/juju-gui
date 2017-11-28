@@ -91,8 +91,7 @@ const newBakery = (config, user, stateGetter, cookieSetter, webHandler) => {
         content={content}
         dismiss={dismiss}
         extraClasses="four-col"
-        isBlocking={true}
-      />, holder);
+        isBlocking={true} />, holder);
     // Open the pop up (default behavior for the time being).
     window.open(url, 'Login');
   };

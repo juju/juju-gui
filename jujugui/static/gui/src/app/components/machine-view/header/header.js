@@ -23,7 +23,7 @@ MachineViewHeaderGlobals.dropTarget = {
     @param {Object} monitor A DropTargetMonitor.
     @param {Object} component The component that is being dropped onto.
   */
-  drop: function (props, monitor, component) {
+  drop: function(props, monitor, component) {
     props.sendAnalytics('Machine View', 'Drop Target', 'Header');
     if (props.droppable) {
       props.dropUnit(monitor.getItem().unit, null, props.type);
@@ -37,7 +37,7 @@ MachineViewHeaderGlobals.dropTarget = {
     @param {Object} props The component props.
     @param {Object} monitor A DropTargetMonitor.
   */
-  canDrop: function (props, monitor) {
+  canDrop: function(props, monitor) {
     return !props.acl.isReadOnly() && props.droppable;
   }
 };

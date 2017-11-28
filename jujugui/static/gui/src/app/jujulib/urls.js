@@ -3,7 +3,7 @@
 
 var module = module;
 
-(function (exports) {
+(function(exports) {
 
   // Define the list of valid charm/bundle series.
   const BUNDLE_SERIES = 'bundle';
