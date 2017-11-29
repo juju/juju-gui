@@ -53,7 +53,7 @@ describe('Inspector', function() {
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('id').returns('apache2');
     getStub.withArgs('name').returns(title);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -145,7 +145,7 @@ describe('Inspector', function() {
     getStub.withArgs('units').returns({
       filterByStatus: sinon.stub().returns([])
     });
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -225,7 +225,7 @@ describe('Inspector', function() {
     var icon = 'foo.png';
     var entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var getYAMLConfig = sinon.stub();
     var updateServiceUnitsDisplayname = sinon.stub();
     var getServiceByName = sinon.stub();
@@ -326,7 +326,7 @@ describe('Inspector', function() {
       return unit;
     }});
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -726,7 +726,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -810,7 +810,7 @@ describe('Inspector', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('units').returns(units);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -889,7 +889,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -966,7 +966,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -1040,7 +1040,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -1129,7 +1129,7 @@ describe('Inspector', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('activePlan').returns(activePlan);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -1208,7 +1208,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     var service = {
       get: getStub
     };
@@ -1293,7 +1293,7 @@ describe('Inspector', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('charm').returns('cs:demo');
     getStub.withArgs('icon').returns(icon);
-    getStub.withArgs('charm').returns('cs:~rharding/grafana-4');
+    getStub.withArgs('charm').returns(entityId);
     const service = {
       get: getStub
     };
