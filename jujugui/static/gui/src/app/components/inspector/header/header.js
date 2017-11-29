@@ -23,23 +23,26 @@ class InspectorHeader extends React.Component {
 
   /**
     Open getstarted.md of specific charm in post deployment panel
+
     @method _navigateToGetStarted
+    @param {Object} e The event object
   */
   _navigateToGetStarted(e) {
     e.preventDefault();
-    this.props.changeState(
-      {postDeploymentPanel:
+    this.props.changeState({
+      postDeploymentPanel:
         {
           show: true,
           entityId: this.props.entityId
         }
-      }
-    );
+    });
   }
 
   /**
     Method to navigate to Charm details page from Inspector
+
     @method _navigateToCharmDetails
+    @param {Object} e The event object
   */
   _navigateToCharmDetails(e) {
     e.preventDefault();
@@ -49,13 +52,11 @@ class InspectorHeader extends React.Component {
     } catch (_) {
       url = window.jujulib.URL.fromLegacyString(this.props.entityId);
     }
-    this.props.changeState(
-      {
-        profile: null,
-        search: null,
-        store: url.path()
-      }
-    );
+    this.props.changeState({
+      profile: null,
+      search: null,
+      store: url.path()
+    });
   }
 
   /**
@@ -76,6 +77,12 @@ class InspectorHeader extends React.Component {
     }
   }
 
+  /**
+    Render inline list of Header links
+
+    @method _renderHeaderLinks
+    @returns {Object} Header links markup
+  */
   _renderHeaderLinks() {
     if (!this.props.changeState) {
       return null;
