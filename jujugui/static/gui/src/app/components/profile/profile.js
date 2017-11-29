@@ -32,14 +32,17 @@ class Profile extends React.Component {
       <Panel
         instanceName="profile"
         visible={true}>
-        <ProfileHeader />
-        <div className="profile__content">
-          <ProfileNavigation
-            // Use supplied activeSection or the key from the first map entry.
-            activeSection={this.props.activeSection || mapEntry[0]}
-            changeState={this.props.changeState}
-            sectionsMap={sectionsMap} />
-          {section.getComponent.call(this, this)}
+        <ProfileHeader
+          username={this.props.userInfo.profile} />
+        <div className="twelve-col">
+          <div className="profile__content inner-wrapper">
+            <ProfileNavigation
+              // Use supplied activeSection or the key from the first map entry.
+              activeSection={this.props.activeSection || mapEntry[0]}
+              changeState={this.props.changeState}
+              sectionsMap={sectionsMap} />
+            {section.getComponent.call(this, this)}
+          </div>
         </div>
       </Panel>
     );
