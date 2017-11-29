@@ -124,7 +124,7 @@ class InspectorHeader extends React.Component {
 InspectorHeader.propTypes = {
   activeComponent: PropTypes.string,
   backCallback: PropTypes.func.isRequired,
-  changeState: PropTypes.func,
+  changeState: PropTypes.func, // Not required as charm may not include gettingstarted.md
   entityId: PropTypes.string,
   icon: PropTypes.string,
   title: PropTypes.string.isRequired,

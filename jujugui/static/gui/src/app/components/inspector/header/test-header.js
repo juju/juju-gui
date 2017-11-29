@@ -7,6 +7,8 @@ const InspectorHeader = require('./header');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
+const entityId = 'cs:demo';
+
 describe('InspectorHeader', function() {
 
   it('displays the provided title', function() {
@@ -15,7 +17,8 @@ describe('InspectorHeader', function() {
         backCallback={sinon.stub()}
         title="Juju GUI"
         changeState={sinon.stub()}
-      />);
+        entityId={entityId} />
+    );
     assert.equal(output.props.children[1].props.children, 'Juju GUI');
   });
 
@@ -26,7 +29,8 @@ describe('InspectorHeader', function() {
         title="Juju GUI"
         type="error"
         changeState={sinon.stub()}
-      />);
+        entityId={entityId} />
+    );
     assert.equal(output.props.className,
       'inspector-header inspector-header--type-error');
   });
@@ -37,7 +41,8 @@ describe('InspectorHeader', function() {
         backCallback={sinon.stub()}
         title="Juju GUI"
         changeState={sinon.stub()}
-      />);
+        entityId={entityId} />
+    );
     assert.equal(output.props.className, 'inspector-header');
   });
 
@@ -48,7 +53,8 @@ describe('InspectorHeader', function() {
         icon="icon.svg"
         title="Juju GUI"
         changeState={sinon.stub()}
-      />);
+        entityId={entityId} />
+    );
     assert.equal(output.props.children[2].props.children.props.src, 'icon.svg');
   });
 
@@ -59,7 +65,8 @@ describe('InspectorHeader', function() {
         backCallback={callbackStub}
         title="Juju GUI"
         changeState={sinon.stub()}
-      />);
+        entityId={entityId} />
+    );
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });

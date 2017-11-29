@@ -110,8 +110,7 @@ describe('Inspector', function() {
         title={title}
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     const overview = output.props.children[1].props.children;
@@ -202,8 +201,7 @@ describe('Inspector', function() {
         title='Units'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -288,8 +286,7 @@ describe('Inspector', function() {
         title='Configure'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -383,8 +380,7 @@ describe('Inspector', function() {
         title={title}
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -782,8 +778,7 @@ describe('Inspector', function() {
         title='Scale'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -864,8 +859,7 @@ describe('Inspector', function() {
         title='Expose'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -944,8 +938,7 @@ describe('Inspector', function() {
         title='Relations'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1020,8 +1013,7 @@ describe('Inspector', function() {
         title='Relate to'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1100,8 +1092,7 @@ describe('Inspector', function() {
         title='spouse-name'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1184,8 +1175,7 @@ describe('Inspector', function() {
         title='Plan'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1261,8 +1251,7 @@ describe('Inspector', function() {
         title='Change version'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1347,8 +1336,7 @@ describe('Inspector', function() {
         title='Resources'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()}
-      />
+        changeState={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     const children = output.props.children[1].props.children;
