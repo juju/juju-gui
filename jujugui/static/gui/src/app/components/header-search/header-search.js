@@ -229,7 +229,7 @@ class HeaderSearch extends React.Component {
             onChange={this._handleQueryChange.bind(this)}
             onFocus={this._handleSearchFocus.bind(this)}
             style={this.state.inputStyles}
-            ref="searchInput"/>
+            ref="searchInput" />
         </form>
         <span tabIndex="0" role="button"
           onClick={this._handleStoreClick.bind(this)}

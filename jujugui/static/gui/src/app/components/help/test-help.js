@@ -18,8 +18,7 @@ describe('Help', () => {
       gisf={true}
       user={{user: true}}
       staticURL=""
-      sendGetRequest={sinon.stub()}
-    />, true);
+      sendGetRequest={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     expect(
       output
@@ -41,8 +40,7 @@ describe('Help', () => {
                   type="submit">
                   <SvgIcon
                     name="search_16"
-                    size="16"
-                  />
+                    size="16" />
                 </button>
                 <input ref={sinon.stub()}
                   className="header-search__input"
@@ -98,8 +96,7 @@ describe('Help', () => {
                   /* eslint-disable max-len */
                   srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
                   /* eslint-enable max-len */
-                  width="201"
-                />
+                  width="201" />
                 <span className="link"
                   onClick={sinon.stub()}
                   role="button">

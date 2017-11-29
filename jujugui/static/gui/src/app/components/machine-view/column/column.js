@@ -22,7 +22,7 @@ MachineViewColumnGlobals.dropTarget = {
     @param {Object} monitor A DropTargetMonitor.
     @param {Object} component The component that is being dropped onto.
   */
-  drop: function (props, monitor, component) {
+  drop: function(props, monitor, component) {
     // Don't try and place the unit if it was dropped on a nested component.
     if (monitor.didDrop()) {
       return;
@@ -40,7 +40,7 @@ MachineViewColumnGlobals.dropTarget = {
     @param {Object} props The component props.
     @param {Object} monitor A DropTargetMonitor.
   */
-  canDrop: function (props, monitor) {
+  canDrop: function(props, monitor) {
     return !props.acl.isReadOnly() && props.droppable;
   }
 };

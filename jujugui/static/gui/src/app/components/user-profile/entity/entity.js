@@ -72,7 +72,7 @@ class UserProfileEntity extends React.Component {
     if (!tagList) {
       return;
     }
-    tagList.forEach((tag) => {
+    tagList.forEach(tag => {
       tags.push(
         <li className="user-profile__comma-item link"
           key={entity.id + '-' + tag}
@@ -104,7 +104,7 @@ class UserProfileEntity extends React.Component {
     if (!commitList) {
       return;
     }
-    commitList.forEach((commit) => {
+    commitList.forEach(commit => {
       commits.push(
         <li key={entity.id + '-' + commit.id}>
           <div className="seven-col">
@@ -203,7 +203,7 @@ class UserProfileEntity extends React.Component {
     const entity = this.props.entity;
     const services = [];
     const applications = entity.applications || entity.services || {};
-    Object.keys(applications).forEach((name) => {
+    Object.keys(applications).forEach(name => {
       services.push(
         <li className="user-profile__comma-item"
           key={entity.id + '-service-' + name}>

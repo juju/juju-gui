@@ -350,7 +350,7 @@ class EntityContent extends React.Component {
         diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
         isExpandable={true}
         isRow={false}
-        title={entity.displayName}/>);
+        title={entity.displayName} />);
   }
 
   /**

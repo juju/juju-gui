@@ -6,7 +6,7 @@
   Temporarily holds the Charmstore user storage methods. This logic should
   either become part of the charmstore instance or part of the user instance.
 */
-const CharmstoreUserMixin = (superclass) => class extends superclass {
+const CharmstoreUserMixin = superclass => class extends superclass {
 
   /**
     Takes a macaroon and stores the user info (if any) in the app.

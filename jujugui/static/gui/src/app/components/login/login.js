@@ -12,7 +12,7 @@ const USSOLoginLink = require('../usso-login-link/usso-login-link');
 class Login extends React.Component {
   componentDidMount() {
     if (this.props.gisf) {
-      const bounce = (startTime) => {
+      const bounce = startTime => {
         if (this.props.controllerIsConnected()) {
           if (this.refs.USSOLoginLink) {
             this.refs.USSOLoginLink.handleLogin();
@@ -81,7 +81,7 @@ class Login extends React.Component {
       </p>);
   }
 
-  _generateUSSOLink () {
+  _generateUSSOLink() {
     return (
       <USSOLoginLink
         addNotification={this.props.addNotification}

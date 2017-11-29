@@ -85,8 +85,7 @@ class DeploymentVPC extends React.Component {
             multiLine={false}
             onBlur={this._onInputBlur.bind(this)}
             onKeyUp={this._onInputKeyUp.bind(this)}
-            required={false}
-          />
+            required={false} />
           <label>
             <input
               type="checkbox"
@@ -94,8 +93,7 @@ class DeploymentVPC extends React.Component {
               onChange={this._onCheckboxChange.bind(this)}
               onClick={this._onCheckboxClick.bind(this)}
               checked={this.state.force}
-              disabled={!this.state.forceEnabled}
-            />
+              disabled={!this.state.forceEnabled} />
             &nbsp;
             Always use this ID
           </label>

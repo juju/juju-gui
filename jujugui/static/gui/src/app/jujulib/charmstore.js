@@ -3,7 +3,7 @@
 
 var module = module;
 
-(function (exports) {
+(function(exports) {
 
 
   var jujulib = exports.jujulib;
@@ -353,7 +353,7 @@ var module = module;
       const headers = null;
       const wrappedCallback =
         jujulib._wrap(
-          this._transformQueryResults.bind(this,callback), {parseJSON: true});
+          this._transformQueryResults.bind(this, callback), {parseJSON: true});
       return this.bakery.get(url, headers, wrappedCallback);
     },
 
@@ -398,7 +398,7 @@ var module = module;
       const headers = null;
       const wrappedCallback =
         jujulib._wrap(
-          this._transformQueryResults.bind(this,callback), {parseJSON: true});
+          this._transformQueryResults.bind(this, callback), {parseJSON: true});
       return this.bakery.get(url, headers, wrappedCallback);
     },
 
@@ -449,7 +449,7 @@ var module = module;
       const headers = null;
       const wrappedCallback =
         jujulib._wrap(
-          jujulib._transformAuthObject.bind(this,callback), {parseJSON: true});
+          jujulib._transformAuthObject.bind(this, callback), {parseJSON: true});
       return this.bakery.get(url, headers, wrappedCallback);
     },
 

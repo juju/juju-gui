@@ -126,7 +126,7 @@ describe('DeploymentPanel', function() {
     assert.deepEqual(changeState.args[0][0], {
       gui: {deploy: null},
       profile: null,
-      special: {dd:null}
+      special: {dd: null}
     });
   });
 });

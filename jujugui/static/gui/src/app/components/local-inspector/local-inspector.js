@@ -55,7 +55,7 @@ class LocalInspector extends React.Component {
     switch (activeComponent) {
       case 'new':
         var series = this.props.series;
-        var seriesOptions = Object.keys(series).map((key) => {
+        var seriesOptions = Object.keys(series).map(key => {
           return (
             <option value={key} key={key}>
               {series[key].name}
@@ -140,7 +140,7 @@ class LocalInspector extends React.Component {
   */
   _handleUpdate() {
     const refs = this.refs;
-    const selectedServices = Object.keys(refs).filter((ref) => {
+    const selectedServices = Object.keys(refs).filter(ref => {
       const input = refs[ref];
       if (ref.split('-')[0] === 'service' && input.checked) {
         return true;
@@ -148,7 +148,7 @@ class LocalInspector extends React.Component {
       return false;
     });
     if (selectedServices.length > 0) {
-      const serviceList = selectedServices.map((serviceId) =>
+      const serviceList = selectedServices.map(serviceId =>
         this.props.services.getById(serviceId.split('-').splice(1).join('-')));
       this.props.upgradeServiceUsingLocalCharm(serviceList, this.props.file);
       this._close();

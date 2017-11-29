@@ -19,7 +19,7 @@ describe('Button Dropdown', function() {
         disableDropdown={options.disableDropdown || false}
         icon={options.icon || 'icon_16'}
         listItems={['item1']}
-        tooltip="more"/>, true);
+        tooltip="more" />, true);
   }
 
 
@@ -88,7 +88,7 @@ describe('Button Dropdown', function() {
   });
 
   it('can have a custom icon supplied', () => {
-    const icon = <img alt="test-icond" src=""/>;
+    const icon = <img alt="test-icond" src="" />;
     const renderer = renderComponent({icon});
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();

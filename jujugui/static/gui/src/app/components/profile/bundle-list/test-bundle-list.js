@@ -84,7 +84,7 @@ describe('Profile Bundle List', function() {
               <img
                 className="profile-bundle-list__icon"
                 src="/charmstore/~lazypower/trusty/elasticsearch/icon.svg"
-                title="logstash-core"/>
+                title="logstash-core" />
               <a
                 href="/gui/u/lazypower/logstash-core/bundle/1"
                 onClick={list[0].props.children[0].props.children[1].props.onClick}>
@@ -100,7 +100,7 @@ describe('Profile Bundle List', function() {
               <img
                 className="profile-bundle-list__icon"
                 src="/charmstore/~containers/trusty/consul/icon.svg"
-                title="swarm-core"/>
+                title="swarm-core" />
               <a
                 href="/gui/u/lazypower/swarm-core/bundle/1"
                 onClick={list[1].props.children[0].props.children[1].props.onClick}>

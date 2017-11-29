@@ -743,7 +743,7 @@ class GUIApp {
           resolve(userState);
         });
     });
-    userPaths.set(userState, {promise:entityPromise});
+    userPaths.set(userState, {promise: entityPromise});
     return entityPromise;
   }
 

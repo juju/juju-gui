@@ -17,7 +17,7 @@ describe('HeaderBreadcrumb', () => {
   beforeEach(function() {
     appState = {
       current: {},
-      generatePath: (stateObj) => {
+      generatePath: stateObj => {
         return `/u/${stateObj.profile}`;
       }
     };

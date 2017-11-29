@@ -271,7 +271,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={setConfig}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()}/>);
+        updateServiceUnitsDisplayname={sinon.stub()} />);
 
     var domNode = ReactDOM.findDOMNode(component);
 
@@ -336,7 +336,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={updateUnit}/>);
+        updateServiceUnitsDisplayname={updateUnit} />);
     assert.equal(component.refs.ServiceName.props.config, 'servicename');
 
     var domNode = ReactDOM.findDOMNode(component);
@@ -632,7 +632,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={updateUnit}/>);
+        updateServiceUnitsDisplayname={updateUnit} />);
 
     var domNode = ReactDOM.findDOMNode(component);
     var name = domNode.querySelector('.string-config-input');
@@ -686,7 +686,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={updateUnit}/>);
+        updateServiceUnitsDisplayname={updateUnit} />);
 
     const domNode = ReactDOM.findDOMNode(component);
     const name = domNode.querySelector('.string-config-input');
@@ -749,7 +749,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()}/>);
+        updateServiceUnitsDisplayname={sinon.stub()} />);
     assert.equal(component.refs.ServiceName, undefined);
 
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
@@ -777,7 +777,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()}/>, true);
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     output.props.children[1].props.children.props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -812,7 +812,7 @@ describe('Configuration', function() {
         serviceRelations={[]}
         setConfig={sinon.stub()}
         unplaceServiceUnits={sinon.stub()}
-        updateServiceUnitsDisplayname={sinon.stub()}/>, true);
+        updateServiceUnitsDisplayname={sinon.stub()} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {file: {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();

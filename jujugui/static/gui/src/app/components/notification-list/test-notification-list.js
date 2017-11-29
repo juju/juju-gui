@@ -28,7 +28,7 @@ describe('NotificationList', function() {
     };
     const renderer = jsTestUtils.shallowRender(
       <NotificationList
-        notification={notification}/>, true);
+        notification={notification} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const children = output.props.children;
@@ -54,14 +54,14 @@ describe('NotificationList', function() {
   it('can render with no notifications', () => {
     const output = jsTestUtils.shallowRender(
       <NotificationList
-        notification={null}/>);
+        notification={null} />);
     assert.strictEqual(output.props.children[0], undefined);
   });
 
   it('can render notifications after rendering none', () => {
     const renderer = jsTestUtils.shallowRender(
       <NotificationList
-        notification={null}/>, true);
+        notification={null} />, true);
     const output = renderer.getRenderOutput();
     assert.strictEqual(output.props.children[0], undefined);
     const notification = {
@@ -71,7 +71,7 @@ describe('NotificationList', function() {
     };
     renderer.render(
       <NotificationList
-        notification={notification}/>);
+        notification={notification} />);
     const instance = renderer.getMountedInstance();
     // Updates to state don't re-render when using the shallow renderer
     // so just checking that the state gets updated.
@@ -97,7 +97,7 @@ describe('NotificationList', function() {
     const renderer = jsTestUtils.shallowRender(
       <NotificationList
         timeout={timeout}
-        notification={notification}/>, this);
+        notification={notification} />, this);
     const instance = renderer.getMountedInstance();
     const key = 'NotificationListItem' + notification.timestamp;
     const refs = {};
@@ -120,7 +120,7 @@ describe('NotificationList', function() {
     const renderer = jsTestUtils.shallowRender(
       <NotificationList
         timeout={timeout}
-        notification={notification}/>, this);
+        notification={notification} />, this);
     const instance = renderer.getMountedInstance();
     const key = 'NotificationListItem' + notification.timestamp;
     const refs = {};

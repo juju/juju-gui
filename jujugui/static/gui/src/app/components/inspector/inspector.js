@@ -174,8 +174,7 @@ class Inspector extends React.Component {
               changeState={changeState}
               createMachinesPlaceUnits={this.props.createMachinesPlaceUnits}
               providerType={this.props.providerType}
-              serviceId={serviceId}
-            />,
+              serviceId={serviceId} />,
           backState: {
             gui: {
               inspector: {
@@ -193,8 +192,7 @@ class Inspector extends React.Component {
               charm={nextProps.charm}
               changeState={changeState}
               getYAMLConfig={this.props.getYAMLConfig}
-              updateServiceUnitsDisplayname=
-                {this.props.updateServiceUnitsDisplayname}
+              updateServiceUnitsDisplayname={this.props.updateServiceUnitsDisplayname}
               getServiceByName={this.props.getServiceByName}
               addNotification={this.props.addNotification}
               linkify={this.props.linkify}
@@ -291,7 +289,7 @@ class Inspector extends React.Component {
             <InspectorRelateTo
               changeState={changeState}
               application={service}
-              relatableApplications={this.props.relatableApplications}/>,
+              relatableApplications={this.props.relatableApplications} />,
           backState: {
             gui: {
               inspector: {

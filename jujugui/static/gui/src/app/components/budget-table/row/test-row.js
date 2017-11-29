@@ -52,7 +52,7 @@ describe('BudgetTableRow', function() {
       revision: null
     });
     service = {
-      get: (val) => {
+      get: val => {
         switch (val) {
           case 'name':
             return 'Landscape';
@@ -228,7 +228,7 @@ describe('BudgetTableRow', function() {
 
   it('can show an active plan', function() {
     service = {
-      get: (val) => {
+      get: val => {
         switch (val) {
           case 'name':
             return 'Landscape';

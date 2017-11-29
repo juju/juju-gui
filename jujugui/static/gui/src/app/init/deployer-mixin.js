@@ -5,7 +5,7 @@
   A mixin for the JujuGUI class.
   Adds methods to handle deploying an application.
 */
-const DeployerMixin = (superclass) => class extends superclass {
+const DeployerMixin = superclass => class extends superclass {
   /**
     Show the deploy/configuration panel for a charm.
     @param {Y.Model} charm model to add to the charms database.

@@ -320,7 +320,7 @@ class SearchResults extends React.Component {
           value: ''
         }];
         var series = this.props.seriesList;
-        var seriesMap = Object.keys(series).map((key) => {
+        var seriesMap = Object.keys(series).map(key => {
           return {
             label: series[key].name,
             value: key

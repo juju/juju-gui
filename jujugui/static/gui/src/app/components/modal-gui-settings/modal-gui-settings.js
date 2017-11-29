@@ -99,7 +99,7 @@ class ModalGUISettings extends React.Component {
           </p>
           <input type="button" className="button--positive"
             name="save-settings" onClick={this._handleSave.bind(this)}
-            id="save-settings" value="Save"/>
+            id="save-settings" value="Save" />
         </div>
       </div>
     );

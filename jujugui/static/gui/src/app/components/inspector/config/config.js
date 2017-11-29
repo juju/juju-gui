@@ -72,7 +72,7 @@ class Configuration extends React.Component {
       return;
     }
     var serviceConfig = this.state.serviceConfig;
-    Object.keys(newConfig).forEach((key) => {
+    Object.keys(newConfig).forEach(key => {
       if (serviceConfig[key]) {
         serviceConfig[key] = newConfig[key];
       }
@@ -194,7 +194,7 @@ class Configuration extends React.Component {
   _getChangedValues(configValues) {
     var serviceConfig = this.props.service.get('config');
     var changedValues = {};
-    Object.keys(serviceConfig).forEach((key) => {
+    Object.keys(serviceConfig).forEach(key => {
       const existingValue = serviceConfig[key] || '';
       const configValue = configValues[key] || '';
       if (existingValue.toString() !== configValue.toString()) {
@@ -232,7 +232,7 @@ class Configuration extends React.Component {
     }
     var configElements = [];
 
-    Object.keys(charmOptions).forEach((key) => {
+    Object.keys(charmOptions).forEach(key => {
       // Clone the options so that we're not updating the stored options.
       const option = this._clone(charmOptions[key]);
       option.key = key;
@@ -286,7 +286,7 @@ class Configuration extends React.Component {
           description: 'Specify a custom application name. The application' +
             ' name cannot be changed once it has been deployed.'
         }}
-        config={this.props.service.get('name')}/>);
+        config={this.props.service.get('name')} />);
     }
     return;
   }

@@ -46,7 +46,8 @@ describe('service module annotations', function() {
       update_annotations: function(name, type, data) {
         called = true;
         location['gui-x'] = data['gui-x'];
-        location['gui-y'] = data['gui-y'];},
+        location['gui-y'] = data['gui-y'];
+      },
       get: function() {}};
     view = new EnvironmentView({
       container: viewContainer,

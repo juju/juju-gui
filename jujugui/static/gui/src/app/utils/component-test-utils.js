@@ -96,7 +96,7 @@ const jsTestUtils = {
   */
   superStringify: function superStringify(obj, showFn) {
     var seen = [];
-    return JSON.stringify(obj, function (k, v) {
+    return JSON.stringify(obj, function(k, v) {
       if (v !== null && typeof v === 'object') {
         // Handle cyclical dependencies.
         var seenIndex = seen.indexOf(v);
@@ -129,7 +129,7 @@ const jsTestUtils = {
     var stringB = jsTestUtils.superStringify(b, showFn);
 
     var diff = JsDiff.diffLines(stringA, stringB);
-    diff.forEach(function (part) {
+    diff.forEach(function(part) {
       if (part.added === true) {
         console.log('\x1b[32m+ ' + part.value + '\x1b[0m');
       } else if (part.removed === true) {

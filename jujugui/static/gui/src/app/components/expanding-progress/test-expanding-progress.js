@@ -18,7 +18,7 @@ describe('ExpandingProgress', function() {
     assert.deepEqual(output, expected);
   });
 
-  it('adds the active class after mounted', (done) => {
+  it('adds the active class after mounted', done => {
     var component = testUtils.renderIntoDocument(
       <ExpandingProgress />);
     // The class is set asynchronously so loop over the value and continue When

@@ -15,7 +15,7 @@ describe('UserProfileEntity', () => {
   let acl, model;
 
   beforeEach(() => {
-    acl = {canRemoveModel: (_) => true};
+    acl = {canRemoveModel: _ => true};
     model = {
       uuid: 'env1',
       name: 'spinach/sandbox',
@@ -113,7 +113,7 @@ describe('UserProfileEntity', () => {
 
   it('can render a model without the ability of destroying it', () => {
     const displayConfirmation = sinon.stub();
-    acl = {canRemoveModel: (_) => false};
+    acl = {canRemoveModel: _ => false};
     const renderer = jsTestUtils.shallowRender(
       <UserProfileEntity
         acl={acl}

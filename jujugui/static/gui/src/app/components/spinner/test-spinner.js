@@ -10,7 +10,7 @@ const jsTestUtils = require('../../utils/component-test-utils');
 describe('Spinner', function() {
   it('renders the spinner', function() {
     var output = jsTestUtils.shallowRender(
-      <Spinner/>);
+      <Spinner />);
     expect(output).toEqualJSX(
       <div className="spinner-container">
         <div className="spinner-loading">

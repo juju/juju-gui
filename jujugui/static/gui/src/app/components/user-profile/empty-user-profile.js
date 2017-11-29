@@ -16,8 +16,7 @@ class EmptyUserProfile extends React.Component {
       <div className="user-profile__empty twelve-col no-margin-bottom">
         <img alt="Empty profile"
           className="user-profile__empty-image"
-          src=
-            {`${basePath}/assets/images/non-sprites/empty_profile.png`} />
+          src={`${basePath}/assets/images/non-sprites/empty_profile.png`} />
         <h2 className="user-profile__empty-title">
           {isCurrentUser ? 'Your' : 'This user\'s'} profile is currently empty
         </h2>

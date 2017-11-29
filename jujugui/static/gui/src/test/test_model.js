@@ -47,7 +47,7 @@ describe('test_model.js', function() {
     it('must dedupe tags', () => {
       const charm = new models.Charm({
         id: 'cs:precise/openstack-dashboard-0',
-        tags:['bar', 'bar', 'foo', 'foo']
+        tags: ['bar', 'bar', 'foo', 'foo']
       });
       assert.deepEqual(charm.get('tags'), ['bar', 'foo']);
     });

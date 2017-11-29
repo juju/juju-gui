@@ -22,17 +22,17 @@ class ISVProfile extends React.Component {
   */
   getDataSet() {
     return [[
-      {'date':new Date(2012,0,1), 'value': 300},
-      {'date':new Date(2012,0,3), 'value': 200},
-      {'date':new Date(2012,0,12), 'value': 330},
-      {'date':new Date(2012,0,21), 'value': 130},
-      {'date':new Date(2012,0,30), 'value': 230}
+      {'date': new Date(2012, 0, 1), 'value': 300},
+      {'date': new Date(2012, 0, 3), 'value': 200},
+      {'date': new Date(2012, 0, 12), 'value': 330},
+      {'date': new Date(2012, 0, 21), 'value': 130},
+      {'date': new Date(2012, 0, 30), 'value': 230}
     ], [
-      {'date':new Date(2012,0,1), 'value': 300},
-      {'date':new Date(2012,0,3), 'value': 220},
-      {'date':new Date(2012,0,12), 'value': 630},
-      {'date':new Date(2012,0,21), 'value': 230},
-      {'date':new Date(2012,0,30), 'value': 30}
+      {'date': new Date(2012, 0, 1), 'value': 300},
+      {'date': new Date(2012, 0, 3), 'value': 220},
+      {'date': new Date(2012, 0, 12), 'value': 630},
+      {'date': new Date(2012, 0, 21), 'value': 230},
+      {'date': new Date(2012, 0, 30), 'value': 30}
     ]];
   }
 

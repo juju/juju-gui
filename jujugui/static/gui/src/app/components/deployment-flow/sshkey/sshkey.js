@@ -267,7 +267,7 @@ class DeploymentSSHKey extends React.Component {
     let lpUsernameList = null;
     if (lpUsernames.length) {
       let usernameList = [];
-      lpUsernames.forEach((username) => {
+      lpUsernames.forEach(username => {
         usernameList.push(
           <li className="deployment-flow__row twelve-col" key={'lp-' + username}>
             <div className="eleven-col">{username}</div>
@@ -320,8 +320,7 @@ class DeploymentSSHKey extends React.Component {
             key="githubUsername"
             ref="githubUsername"
             multiLine={false}
-            onKeyUp={this._onKeyUp.bind(this)}
-          />
+            onKeyUp={this._onKeyUp.bind(this)} />
         </div>
       );
     } else if (this.state.addSource === 'manual') {
@@ -332,8 +331,7 @@ class DeploymentSSHKey extends React.Component {
             key="sshKey"
             ref="sshKey"
             multiLine={true}
-            onKeyUp={this._onKeyUp.bind(this)}
-          />
+            onKeyUp={this._onKeyUp.bind(this)} />
         </div>
       );
     } else if (this.state.addSource === 'launchpad') {
@@ -345,8 +343,7 @@ class DeploymentSSHKey extends React.Component {
             ref="launchpadUsername"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
-            value={this.props.username}
-          />
+            value={this.props.username} />
         </div>
       );
     }

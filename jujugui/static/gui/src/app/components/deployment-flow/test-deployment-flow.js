@@ -87,7 +87,7 @@ const createDeploymentFlow = (props = {}) => {
     getCloudProviderDetails: sinon.stub(),
     getCountries: sinon.stub(),
     getCurrentChangeSet: sinon.stub(),
-    getDiagramURL:sinon.stub(),
+    getDiagramURL: sinon.stub(),
     getServiceByName: sinon.stub(),
     getUser: sinon.stub(),
     getUserName: sinon.stub().returns('dalek'),
@@ -204,8 +204,7 @@ describe('DeploymentFlow', function() {
             getGithubSSHKeys={props.getGithubSSHKeys}
             setSSHKeys={instance._setSSHKeys}
             setLaunchpadUsernames={instance._setLaunchpadUsernames}
-            username={undefined}
-          />
+            username={undefined} />
         </DeploymentSection>
         {undefined}
         <DeploymentSection
@@ -311,8 +310,7 @@ describe('DeploymentFlow', function() {
         generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}
         entityModel={entityModel}
-        renderMarkdown={renderMarkdown}
-      />
+        renderMarkdown={renderMarkdown} />
     );
   });
 
@@ -801,7 +799,7 @@ describe('DeploymentFlow', function() {
     });
   });
 
-  it('can disable the deploy button on deploy', function () {
+  it('can disable the deploy button on deploy', function() {
     const charmsGetById = sinon.stub().withArgs('service1').returns({
       get: sinon.stub().withArgs('terms').returns([])
     });

@@ -13,7 +13,7 @@ describe('AddedServicesList', () => {
   it('generates a list of added services list items', () => {
     var allServices = [{get: () => 1}, {get: () => 2}, {get: () => 3}];
     var services = {
-      each: (cb) => {
+      each: cb => {
         allServices.forEach(cb);
       }
     };
@@ -32,7 +32,7 @@ describe('AddedServicesList', () => {
         hoveredId="mysql"
         getUnitStatusCounts={getUnitStatusCounts}
         panToService={panToService}
-        services={services}/>, true);
+        services={services} />, true);
 
     var output = renderer.getRenderOutput();
 

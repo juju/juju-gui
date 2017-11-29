@@ -21,7 +21,7 @@ describe('NotificationListItem', function() {
         message={message}
         removeNotification={sinon.stub()}
         timestamp="123"
-        type="info"/>, true);
+        type="info" />, true);
     var output = renderer.getRenderOutput();
     var instance = renderer.getMountedInstance();
     var expected = (
@@ -45,11 +45,11 @@ describe('NotificationListItem', function() {
         message="message"
         removeNotification={sinon.stub()}
         timestamp="123"
-        type="error"/>);
+        type="error" />);
     assert.equal(output.props.className, classes);
   });
 
-  it('updates class and calls to remove itself after hiding', (done) => {
+  it('updates class and calls to remove itself after hiding', done => {
     var timestamp = '123456';
     var timeout = 1;
     var removeNotification = function(ts) {
@@ -63,7 +63,7 @@ describe('NotificationListItem', function() {
         timestamp={timestamp}
         // Used to shorten the test time by setting the setTimeouts to 0.
         timeout={timeout}
-        type="info"/>);
+        type="info" />);
     var element = ReactDOM.findDOMNode(component);
     // Check that it's rendered with the proper classes.
     assert.isTrue(

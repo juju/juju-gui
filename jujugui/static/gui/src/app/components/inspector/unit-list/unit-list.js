@@ -41,7 +41,7 @@ class UnitList extends React.Component {
   _selectAllUnits(group, checked) {
     var refs = this.refs;
     var setChecked = (key, groups) => {
-      groups[key].units.forEach((unit) => {
+      groups[key].units.forEach(unit => {
         refs['CheckListItem-' + unit.id].setState({
           checked: checked
         }, () => {
@@ -101,12 +101,12 @@ class UnitList extends React.Component {
     const units = this.props.units;
     const refs = this.refs;
     const envResolved = this.props.envResolved;
-    Object.keys(refs).forEach(function (ref) {
+    Object.keys(refs).forEach(function(ref) {
       let isInstance = ref.split('-')[0] === 'CheckListItem';
       if (isInstance && refs[ref].state.checked) {
         let unitName = ref.slice(ref.indexOf('-') + 1);
         unitNames.push(unitName);
-        const unit = units.find((u) => u.id === unitName);
+        const unit = units.find(u => u.id === unitName);
         // If the unit does not have an agent_status, it is not committed,
         // bail early to prevent superfluous RPC/ECS
         if (!unit.agent_status) {
@@ -145,9 +145,9 @@ class UnitList extends React.Component {
         ref={key}
         label={group.label}
         className='select-all'
-        whenChanged={this._selectAllUnits.bind(this, key)}/>
+        whenChanged={this._selectAllUnits.bind(this, key)} />
     ];
-    group.units.forEach((unit) => {
+    group.units.forEach(unit => {
       var ref = 'CheckListItem-' + unit.id;
       unitList.push(
         <CheckListItem
@@ -182,7 +182,7 @@ class UnitList extends React.Component {
         }
         errors[agentState].push(unit);
       });
-      Object.keys(errors).forEach(function (error, i) {
+      Object.keys(errors).forEach(function(error, i) {
         var key = 'select-all-' + i;
         groups[key] = {
           label: error,
@@ -237,7 +237,7 @@ class UnitList extends React.Component {
   _updateActiveCount() {
     var activeCount = 0;
     var refs = this.refs;
-    Object.keys(refs).forEach((ref) => {
+    Object.keys(refs).forEach(ref => {
       if (ref.split('-')[0] === 'CheckListItem') {
         if (refs[ref].state.checked) {
           activeCount += 1;

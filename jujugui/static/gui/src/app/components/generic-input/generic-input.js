@@ -27,7 +27,7 @@ class GenericInput extends React.Component {
     }
     var value = this.getValue();
     var errors = [];
-    this.props.validate.forEach((validator) => {
+    this.props.validate.forEach(validator => {
       if ((validator.check && validator.check(value)) ||
         (validator.regex && !validator.regex.test(value))) {
         errors.push(validator.error);
@@ -90,7 +90,7 @@ class GenericInput extends React.Component {
     Handle keyup event if set in props.
     @param {Object} evt The keyboard event.
   */
-  _keyUpHandler (evt) {
+  _keyUpHandler(evt) {
     if (this.props.onKeyUp) {
       this.props.onKeyUp(evt);
     }
@@ -240,8 +240,7 @@ class GenericInput extends React.Component {
     const errorIcon = showErrors && this.props.inlineErrorIcon ?
       (<SvgIcon
         name="relation-icon-error"
-        size={16}
-      />) : undefined;
+        size={16} />) : undefined;
     return (
       <div className={classes}>
         {labelElement}

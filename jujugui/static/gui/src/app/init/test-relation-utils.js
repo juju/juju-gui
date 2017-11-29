@@ -909,7 +909,7 @@ describe('RelationUtils', () => {
       const service1 = 'service1';
       const db = {
         services: {
-          getById: function (appName) { return service1; }
+          getById: function(appName) { return service1; }
         }
       };
       const endpoints = {

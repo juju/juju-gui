@@ -36,7 +36,7 @@ if (typeof this.jujugui.sshKeys === 'undefined') {
 */
 const githubSSHKeys = (handler, username, callback) => {
   // On load, call the callback with munged data.
-  const wrap = (response) => {
+  const wrap = response => {
     let data = null;
     try {
       data = JSON.parse(response.currentTarget.response);
@@ -53,7 +53,7 @@ const githubSSHKeys = (handler, username, callback) => {
     // If there's no error, pull the key into its respective parts for use by
     // the callback.
     if (error === null) {
-      data = data.map((item) => {
+      data = data.map(item => {
         return {
           'id': item.id,
           'type': item.key.split(' ')[0],
