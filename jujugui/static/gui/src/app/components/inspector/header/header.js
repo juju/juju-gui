@@ -11,7 +11,6 @@ class InspectorHeader extends React.Component {
     Returns the supplied classes with the type class applied if it
     is truthy.
 
-    @method _headerClasses
     @returns {String} The collection of class names.
   */
   _headerClasses() {
@@ -24,7 +23,6 @@ class InspectorHeader extends React.Component {
   /**
     Open getstarted.md of specific charm in post deployment panel
 
-    @method _navigateToGetStarted
     @param {Object} e The event object
   */
   _navigateToGetStarted(e) {
@@ -41,7 +39,6 @@ class InspectorHeader extends React.Component {
   /**
     Method to navigate to Charm details page from Inspector
 
-    @method _navigateToCharmDetails
     @param {Object} e The event object
   */
   _navigateToCharmDetails(e) {
@@ -79,8 +76,6 @@ class InspectorHeader extends React.Component {
 
   /**
     Render inline list of Header links
-
-    @method _renderHeaderLinks
     @returns {Object} Header links markup
   */
   _renderHeaderLinks() {
