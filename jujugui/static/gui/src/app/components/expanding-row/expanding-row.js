@@ -36,7 +36,7 @@ class ExpandingRow extends React.Component {
     this.observer.observe(this.refs.inner, {childList: true, subtree: true});
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillReceiveProps(nextProps, nextState) {
     if (this.props.expanded !== nextProps.expanded) {
       this._toggle();
     }
