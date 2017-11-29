@@ -29,7 +29,7 @@ describe('Profile', function() {
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={{}} />, true);
+        userInfo={{profile: 'spinach'}} />, true);
   }
 
   it('can render', () => {
@@ -40,22 +40,25 @@ describe('Profile', function() {
       <Panel
         instanceName="profile"
         visible={true}>
-        <ProfileHeader />
-        <div className="profile__content">
-          <ProfileNavigation
-            activeSection={Profile.sectionsMap.entries().next().value[0]}
-            changeState={instance.props.changeState}
-            sectionsMap={Profile.sectionsMap} />
-          <ProfileModelList
-            acl={instance.props.acl}
-            addNotification={instance.props.addNotification}
-            baseURL={instance.props.baseURL}
-            changeState={instance.props.changeState}
-            facadesExist={instance.props.facadesExist}
-            destroyModels={instance.props.destroyModels}
-            listModelsWithInfo={instance.props.listModelsWithInfo}
-            switchModel={instance.props.switchModel}
-            userInfo={instance.props.userInfo} />
+        <ProfileHeader
+          username="spinach" />
+        <div className="twelve-col">
+          <div className="profile__content inner-wrapper">
+            <ProfileNavigation
+              activeSection={Profile.sectionsMap.entries().next().value[0]}
+              changeState={instance.props.changeState}
+              sectionsMap={Profile.sectionsMap} />
+            <ProfileModelList
+              acl={instance.props.acl}
+              addNotification={instance.props.addNotification}
+              baseURL={instance.props.baseURL}
+              changeState={instance.props.changeState}
+              facadesExist={instance.props.facadesExist}
+              destroyModels={instance.props.destroyModels}
+              listModelsWithInfo={instance.props.listModelsWithInfo}
+              switchModel={instance.props.switchModel}
+              userInfo={instance.props.userInfo} />
+          </div>
         </div>
       </Panel>
     );
@@ -70,7 +73,7 @@ describe('Profile', function() {
         });
         const output = renderer.getRenderOutput();
         const instance = renderer.getMountedInstance();
-        expect(output.props.children[1].props.children[1])
+        expect(output.props.children[1].props.children.props.children[1])
           .toEqualJSX(val.getComponent(instance));
       });
   });

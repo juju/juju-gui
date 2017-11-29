@@ -11,10 +11,19 @@ describe('Profile Header', function() {
 
   it('can render', () => {
     const output = jsTestUtils.shallowRender(
-      <ProfileHeader />);
+      <ProfileHeader
+        username="spinach" />);
     const expected = (
-      <div className="profile-header">
-        <div className="profile-header__content"></div>
+      <div className="profile-header twelve-col">
+        <div className="inner-wrapper">
+          <span className={
+            'profile-header__avatar profile-header__avatar--default'}>
+            <span className="profile-header__avatar-overlay"></span>
+          </span>
+          <h1 className="profile-header__username">
+            spinach
+          </h1>
+        </div>
       </div>
     );
     expect(output).toEqualJSX(expected);
