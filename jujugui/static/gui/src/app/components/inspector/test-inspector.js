@@ -49,7 +49,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     var icon = 'foo.png';
     var title = 'demo';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('id').returns('apache2');
     getStub.withArgs('name').returns(title);
@@ -139,7 +139,7 @@ describe('Inspector', function() {
     var unitStatus = 'error';
     var getStub = sinon.stub();
     var icon = 'foo.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('units').returns({
@@ -223,7 +223,7 @@ describe('Inspector', function() {
     var setConfig = sinon.stub();
     var getStub = sinon.stub();
     var icon = 'foo.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     getStub.withArgs('icon').returns(icon);
     getStub.withArgs('charm').returns(entityId);
     var getYAMLConfig = sinon.stub();
@@ -315,7 +315,7 @@ describe('Inspector', function() {
     var getStub = sinon.stub();
     var title = 'demo-unit';
     var icon = 'foo.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var headerType = 'active';
     var unit = {
       displayName: title,
@@ -722,7 +722,7 @@ describe('Inspector', function() {
 
   it('displays Scale Service when the app state calls for it', function() {
     var icon = 'foo.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
@@ -805,7 +805,7 @@ describe('Inspector', function() {
     var service = sinon.stub();
     var units = {};
     var icon = 'icon.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
@@ -885,7 +885,7 @@ describe('Inspector', function() {
     var destroyRelations = sinon.stub();
     var service = sinon.stub();
     var icon = 'icon.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
@@ -962,7 +962,7 @@ describe('Inspector', function() {
   it('displays the relate-to when the app state calls for it', function() {
     var destroyRelations = sinon.stub();
     var icon = 'icon.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
@@ -1036,7 +1036,7 @@ describe('Inspector', function() {
   it('displays relate-to with spouse when the app state calls for it', () => {
     var destroyRelations = sinon.stub();
     var icon = 'icon.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
@@ -1123,7 +1123,7 @@ describe('Inspector', function() {
 
   it('displays the Plans when the app state calls for it', function() {
     var icon = 'icon.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var activePlan = {active: 'plan'};
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
@@ -1204,7 +1204,7 @@ describe('Inspector', function() {
     var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub();
     var icon = 'icon.png';
-    var entityId = 'cs:~rharding/grafana-4';
+    const entityId = 'cs:~rharding/grafana-4';
     var getStub = sinon.stub();
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('icon').returns(icon);
