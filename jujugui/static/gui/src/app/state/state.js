@@ -636,13 +636,17 @@ const State = class State {
         });
       }
     }
-    const user = stateObj.user || stateObj.profile;
+    const user = stateObj.user;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
     const model = stateObj.model;
     if (model) {
       path = path.concat([PATH_DELIMETERS.get('user'), model.path]);
+    }
+    const profile = stateObj.profile;
+    if (profile) {
+      path = path.concat([PATH_DELIMETERS.get('user'), profile]);
     }
     const store = stateObj.store;
     if (store) {
@@ -965,6 +969,12 @@ const State = class State {
         state = addToUserOrProfile(block, state);
         // The second user portion will be the store section.
         const storeBlock = urlParts.splice(0).slice(1);
+        // If there are only two parts for the storeBlock then it is to show
+        // the user profile.
+        if (storeBlock.length === 1) {
+          state.profile = storeBlock.join('/');
+          return {state, parts: urlParts, error};
+        }
         // If there are less than two or more than four sections after
         // the delimeter is removed then this is an invalid url.
         if (storeBlock.length < 2 || storeBlock.length > 4) {
