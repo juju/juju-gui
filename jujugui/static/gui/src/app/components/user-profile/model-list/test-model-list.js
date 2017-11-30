@@ -212,6 +212,7 @@ describe('UserProfileModelList', () => {
           {[<UserProfileEntity
             acl={acl}
             addNotification={addNotification}
+            changeState={changeState}
             displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[0]}
             expanded={true}
@@ -360,6 +361,7 @@ describe('UserProfileModelList', () => {
           {[<UserProfileEntity
             acl={acl}
             addNotification={addNotification}
+            changeState={changeState}
             displayConfirmation={content[1][0].props.displayConfirmation}
             entity={models[0]}
             expanded={false}
@@ -391,6 +393,7 @@ describe('UserProfileModelList', () => {
           <UserProfileEntity
             acl={acl}
             addNotification={addNotification}
+            changeState={changeState}
             displayConfirmation={content[1][1].props.displayConfirmation}
             entity={models[1]}
             expanded={false}
