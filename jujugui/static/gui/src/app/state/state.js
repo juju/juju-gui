@@ -957,13 +957,13 @@ const State = class State {
         // as [0, 17, 9]. So we must pass a custom sorter to it so that it
         // sorts numerically.
         indexes.sort((a, b) => a-b);
-        // The first user portion will be the primary user.
-        // Extract out the user portion of the list and then remove the
+        // The first user portion will be the model section.
+        // Extract out the model portion of the list and then remove the
         // user delimeter at the beginning.
         let block = urlParts.splice(indexes[0], indexes[1]).slice(1);
-        // If there are more than two parts in the first block when we have
+        // If any number other than two parts in the first block when we have
         // two user blocks then the url is invalid.
-        if (block.length > 2) {
+        if (block.length !== 2) {
           return {state, parts: urlParts, error: 'invalid user path.'};
         }
         state = addToUserOrProfile(block, state);
