@@ -322,10 +322,6 @@ Browser: ${navigator.userAgent}`
     }
     const charmstore = this.charmstore;
     const currentModel = this.modelUUID;
-    // When going to the profile view, we are theoretically no longer
-    // connected to any model. Setting the current model identifier to null
-    // also allows switching to the same model from the profile view.
-    this.modelUUID = null;
     // NOTE: we need to clone this.get('users') below; passing in without
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
@@ -605,21 +601,11 @@ Browser: ${navigator.userAgent}`
     const gisf = this.applicationConfig.gisf;
     const homePath = gisf ? '/' :
       this.state.generatePath({profile: userName});
-    const showProfile = () =>
-      this.state.changeState({
-        profile: userName,
-        model: null,
-        store: null,
-        root: null,
-        search: null,
-        account: null,
-        user: null
-      });
     ReactDOM.render(
       <HeaderLogo
         gisf={gisf}
         homePath={homePath}
-        showProfile={showProfile} />,
+        showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)} />,
       document.getElementById('header-logo'));
   }
 
@@ -1272,10 +1258,7 @@ Browser: ${navigator.userAgent}`
       if (!username) {
         return;
       }
-      initUtils.showProfile(
-        this.modelAPI && this.modelAPI.get('ecs'),
-        this._bound.changeState,
-        username);
+      initUtils.showProfile(this._bound.changeState, username);
     };
     const navigateUserAccount = () => {
       const username = this.user.displayName;
@@ -1309,7 +1292,6 @@ Browser: ${navigator.userAgent}`
   */
   _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
     const modelAPI = this.modelAPI;
-    const ecs = modelAPI.get('ecs');
     const controllerAPI = this.controllerAPI;
     let listModelsWithInfo =
       controllerAPI &&
@@ -1345,9 +1327,7 @@ Browser: ${navigator.userAgent}`
         modelOwner={modelAPI.get('modelOwner')}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showEnvSwitcher={showEnvSwitcher}
-        showProfile={initUtils.showProfile.bind(
-          this, modelAPI && ecs,
-          this._bound.changeState)}
+        showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
         switchModel={this._bound.switchModel}
         loadingModel={modelAPI.loading}
         modelCommitted={!!modelAPI.get('modelUUID')} />,

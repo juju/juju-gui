@@ -31,6 +31,7 @@ class UserProfileEntity extends React.Component {
     @param {Object} evt The click event.
   */
   _switchModel(model, evt) {
+    this.props.changeState({profile: null});
     this.props.switchModel(model);
   }
 
@@ -494,7 +495,7 @@ class UserProfileEntity extends React.Component {
 UserProfileEntity.propTypes = {
   acl: PropTypes.object,
   addNotification: PropTypes.func,
-  changeState: PropTypes.func,
+  changeState: PropTypes.func.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array

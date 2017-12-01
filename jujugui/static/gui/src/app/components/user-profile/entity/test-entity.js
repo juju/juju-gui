@@ -35,6 +35,7 @@ describe('UserProfileEntity', () => {
     const renderer = jsTestUtils.shallowRender(
       <UserProfileEntity
         acl={acl}
+        changeState={sinon.stub()}
         displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
@@ -117,6 +118,7 @@ describe('UserProfileEntity', () => {
     const renderer = jsTestUtils.shallowRender(
       <UserProfileEntity
         acl={acl}
+        changeState={sinon.stub()}
         displayConfirmation={displayConfirmation}
         entity={model}
         expanded={false}
@@ -526,6 +528,7 @@ describe('UserProfileEntity', () => {
     const switchModel = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <UserProfileEntity
+        changeState={sinon.stub()}
         entity={model}
         switchModel={switchModel}
         type="model">
@@ -549,6 +552,7 @@ describe('UserProfileEntity', () => {
     const renderer = jsTestUtils.shallowRender(
       <UserProfileEntity
         acl={acl}
+        changeState={sinon.stub()}
         entity={model}
         displayConfirmation={displayConfirmation}
         type="model">
@@ -564,6 +568,7 @@ describe('UserProfileEntity', () => {
     model.isController = true;
     const renderer = jsTestUtils.shallowRender(
       <UserProfileEntity
+        changeState={sinon.stub()}
         entity={model}
         type="model">
         <span>Summary details</span>

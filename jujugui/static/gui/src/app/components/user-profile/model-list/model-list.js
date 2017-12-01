@@ -263,6 +263,7 @@ class UserProfileModelList extends React.Component {
       <UserProfileEntity
         acl={props.acl}
         addNotification={this.props.addNotification}
+        changeState={this.props.changeState}
         displayConfirmation={this._displayConfirmation.bind(this, model)}
         entity={model}
         expanded={isCurrent}

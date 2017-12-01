@@ -636,13 +636,17 @@ const State = class State {
         });
       }
     }
-    const user = stateObj.user || stateObj.profile;
+    const user = stateObj.user;
     if (user) {
       path = path.concat([PATH_DELIMETERS.get('user'), user]);
     }
     const model = stateObj.model;
     if (model) {
       path = path.concat([PATH_DELIMETERS.get('user'), model.path]);
+    }
+    const profile = stateObj.profile;
+    if (profile) {
+      path = path.concat([PATH_DELIMETERS.get('user'), profile]);
     }
     const store = stateObj.store;
     if (store) {
@@ -953,18 +957,24 @@ const State = class State {
         // as [0, 17, 9]. So we must pass a custom sorter to it so that it
         // sorts numerically.
         indexes.sort((a, b) => a-b);
-        // The first user portion will be the primary user.
-        // Extract out the user portion of the list and then remove the
+        // The first user portion will be the model section.
+        // Extract out the model portion of the list and then remove the
         // user delimeter at the beginning.
         let block = urlParts.splice(indexes[0], indexes[1]).slice(1);
-        // If there are more than two parts in the first block when we have
+        // If any number other than two parts in the first block when we have
         // two user blocks then the url is invalid.
-        if (block.length > 2) {
+        if (block.length !== 2) {
           return {state, parts: urlParts, error: 'invalid user path.'};
         }
         state = addToUserOrProfile(block, state);
         // The second user portion will be the store section.
         const storeBlock = urlParts.splice(0).slice(1);
+        // If there are only two parts for the storeBlock then it is to show
+        // the user profile.
+        if (storeBlock.length === 1) {
+          state.profile = storeBlock.join('/');
+          return {state, parts: urlParts, error};
+        }
         // If there are less than two or more than four sections after
         // the delimeter is removed then this is an invalid url.
         if (storeBlock.length < 2 || storeBlock.length > 4) {

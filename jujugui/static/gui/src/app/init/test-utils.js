@@ -475,58 +475,18 @@ describe('init utils', () => {
   });
 
   describe('showProfile', () => {
-    let container, _showUncommittedConfirm, _hidePopup;
-
-    beforeEach(() => {
-      container = testUtils.makeAppContainer();
-      _hidePopup = utils._hidePopup;
-      utils._hidePopup = sinon.stub();
-      _showUncommittedConfirm = utils._showUncommittedConfirm;
-      utils._showUncommittedConfirm = sinon.stub();
-    });
-
-    afterEach(() => {
-      container.remove();
-      utils._hidePopup = _hidePopup;
-      utils._showUncommittedConfirm = _showUncommittedConfirm;
-    });
-
-    it('can show the profile if there are no uncommitted changes', () => {
-      const ecs = {
-        getCurrentChangeSet: sinon.stub().returns({})
-      };
+    it('calls changeState with the supplied username', () => {
       const changeState = sinon.stub();
-      utils.showProfile(ecs, changeState, 'spinach');
-      assert.deepEqual(changeState.callCount, 1);
-      assert.deepEqual(utils._showUncommittedConfirm.callCount, 0);
-    });
-
-    it('can show a confirmation if there are uncommitted changes', () => {
-      const ecs = {
-        getCurrentChangeSet: sinon.stub().returns({change: 'one'})
-      };
-      const changeState = sinon.stub();
-      utils.showProfile(ecs, changeState, 'spinach');
-      assert.deepEqual(changeState.callCount, 0);
-      assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
-    });
-
-    it('can show a confirmation and clear changes', () => {
-      const ecs = {
-        clear: sinon.stub(),
-        getCurrentChangeSet: sinon.stub().returns({change: 'one'})
-      };
-      const changeState = sinon.stub();
-      utils._showProfile(ecs, changeState, 'spinach', true);
-      assert.deepEqual(changeState.callCount, 1);
-      assert.deepEqual(changeState.lastCall.args[0], {
-        profile: 'spinach',
-        model: null,
+      const username = 'hatch';
+      utils.showProfile(changeState, username);
+      assert.deepEqual(changeState.args[0], [{
+        profile: username,
         root: null,
-        store: null
-      });
-      assert.deepEqual(utils._hidePopup.callCount, 1);
-      assert.deepEqual(ecs.clear.callCount, 1);
+        store: null,
+        search: null,
+        account: null,
+        user: null
+      }]);
     });
   });
 

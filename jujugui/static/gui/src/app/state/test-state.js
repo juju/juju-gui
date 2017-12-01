@@ -288,6 +288,10 @@ describe('State', () => {
     state: { user: 'frankban/production', store: 'django/bundle/47' },
     error: null
   }, {
+    path: 'http://abc.com:123/u/hatch/staging/u/hatch',
+    state: { user: 'hatch/staging', profile: 'hatch' },
+    error: null
+  }, {
     path: 'http://abc.com:123/u/hatch/staging/u/frankban/django',
     state: { user: 'hatch/staging', store: 'u/frankban/django' },
     error: null
@@ -445,6 +449,16 @@ describe('State', () => {
       user: 'frankban/production',
       store: 'u/frankban/django/bundle/0',
       gui: { applications: '' }
+    },
+    error: null
+  }, {
+    path: 'http://abc.com:123/u/frankban/production/u/frankban/i/applications',
+    state: {
+      gui: {
+        applications: ''
+      },
+      profile: 'frankban',
+      user: 'frankban/production'
     },
     error: null
   }];
@@ -760,9 +774,10 @@ describe('State', () => {
       }, {
         parts: ['u', 'hatch', 'staging', 'u', 'hatch'],
         state: {
-          user: 'hatch/staging'
+          user: 'hatch/staging',
+          profile: 'hatch'
         },
-        error: 'invalid user store path.',
+        error: null,
         outputParts: []
       }, {
         parts: ['u', 'ant'],
@@ -940,24 +955,14 @@ describe('State', () => {
         error: 'cannot parse the User path: invalid user path.'
       }, {
         path: 'http://abc.com:123/u/frankban/u',
-        state: {
-          profile: 'frankban'
-        },
-        error: 'cannot parse the User path: invalid user store path.'
+        state: {},
+        error: 'cannot parse the User path: invalid user path.'
       }, {
         path: 'http://abc.com:123/u/frankban/u/haproxy',
-        state: {
-          profile: 'frankban'
-        },
-        error: 'cannot parse the User path: invalid user store path.'
+        state: {},
+        error: 'cannot parse the User path: invalid user path.'
       }, {
         path: 'http://abc.com:123/u/hatch/staging/u',
-        state: {
-          user: 'hatch/staging'
-        },
-        error: 'cannot parse the User path: invalid user store path.'
-      }, {
-        path: 'http://abc.com:123/u/hatch/staging/u/hatch',
         state: {
           user: 'hatch/staging'
         },
@@ -972,16 +977,6 @@ describe('State', () => {
         path: 'http://abc.com:123/u/hatch/staging/hatch/u/wat',
         state: {},
         error: 'cannot parse the User path: invalid user path.'
-      }, {
-        path:
-          'http://abc.com:123/u/frankban/production/u/frankban/i/applications',
-        state: {
-          gui: {
-            applications: ''
-          },
-          user: 'frankban/production'
-        },
-        error: 'cannot parse the User path: invalid user store path.'
       }, {
         path: 'http://abc.com:123/about/wat',
         state: {
