@@ -3,8 +3,9 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-
 const shapeup = require('shapeup');
+
+const Spinner = require('../../spinner/spinner');
 
 /**
   Charm list React component used to display a list of the users bundles in
@@ -15,7 +16,8 @@ class ProfileBundleList extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: []
+      data: [],
+      loading: false
     };
   }
 
@@ -45,23 +47,28 @@ class ProfileBundleList extends React.Component {
   */
   _fetchBundles(user) {
     const props = this.props;
-    this.xhrs.push(
-      props.charmstore.list(
-        user,
-        (error, data) => {
-          if (error) {
-            const message = 'Unable to retrieve bundles';
-            console.error(message, error);
-            this.props.addNotification({
-              title: message,
-              message: `${message}: ${error}`,
-              level: 'error'
+    this.setState({loading: true}, () => {
+      this.xhrs.push(
+        props.charmstore.list(
+          user,
+          (error, data) => {
+            if (error) {
+              const message = 'Unable to retrieve bundles';
+              console.error(message, error);
+              this.props.addNotification({
+                title: message,
+                message: `${message}: ${error}`,
+                level: 'error'
+              });
+              return;
+            }
+            this.setState({
+              data,
+              loading: false
             });
-            return;
-          }
-          this.setState({data});
-        },
-        'bundle'));
+          },
+          'bundle'));
+    });
   }
 
   /**
@@ -122,8 +129,11 @@ class ProfileBundleList extends React.Component {
   render() {
     const labels = ['Name', 'Units', 'Owner', 'Visibility'];
     const bundleKeys = ['name', 'unitCount', 'owner', 'perm'];
-    return (
-      <div className="profile-bundle-list">
+    let content;
+    if (this.state.loading) {
+      content = (<Spinner />);
+    } else {
+      content = (
         <ul>
           <li className="profile-bundle-list__table-header">
             {labels.map(label => <span key={label}>{label}</span>)}
@@ -135,7 +145,11 @@ class ProfileBundleList extends React.Component {
                   <span key={key}>{this._processData(bundle, key)}</span>)}
               </li>
             ))}
-        </ul>
+        </ul>);
+    }
+    return (
+      <div className="profile-bundle-list">
+        {content}
       </div>);
   }
 };

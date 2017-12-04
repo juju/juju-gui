@@ -4,6 +4,7 @@
 const React = require('react');
 
 const ProfileBundleList = require('./bundle-list');
+const Spinner = require('../../spinner/spinner');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -60,7 +61,7 @@ describe('Profile Bundle List', function() {
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
-          list: charmstoreList,
+          list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
         user="lazypower@external" />, true);
@@ -112,6 +113,20 @@ describe('Profile Bundle List', function() {
             <span>public</span>
           </li>
         </ul>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can display a spinner when loading', () => {
+    const renderer = renderComponent({
+      charmstoreList: sinon.stub()
+    });
+    const instance = renderer.getMountedInstance();
+    instance.componentWillMount();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-bundle-list">
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
