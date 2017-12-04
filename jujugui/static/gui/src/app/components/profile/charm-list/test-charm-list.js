@@ -4,6 +4,8 @@
 
 const React = require('react');
 
+
+const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmList = require('./charm-list');
 const Spinner = require('../../spinner/spinner');
 
@@ -57,65 +59,83 @@ describe('Profile Charm List', function() {
   it('can render', () => {
     const renderer = renderComponent();
     const output = renderer.getRenderOutput();
-    const list = output.props.children.props.children[1];
     const expected = (
       <div className="profile-charm-list">
-        <ul>
-          <li className="profile-charm-list__table-header">
-            <span>Name</span>
-            <span>Series</span>
-            <span>Owner</span>
-            <span>Visibility</span>
-          </li>
-          <li className="profile-charm-list__row">
-            <span>
-              <img
-                className="profile-charm-list__icon"
-                src="/charmstore/~hatch/precise/failtester-7/icon.svg"
-                title="failtester" />
-              <a
-                href="/gui/u/hatch/failtester/precise/7"
-                onClick={list[0].props.children[0].props.children[1].props.onClick}>
-                failtester
-              </a>
-            </span>
-            <span>precise</span>
-            <span>hatch@external</span>
-            <span>public</span>
-          </li>
-          <li className="profile-charm-list__row">
-            <span>
-              <img
-                className="profile-charm-list__icon"
-                src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
-                title="ghost" />
-              <a
-                href="/gui/u/hatch/ghost/xenial/3"
-                onClick={list[1].props.children[0].props.children[1].props.onClick}>
-                ghost
-              </a>
-            </span>
-            <span>xenial</span>
-            <span>hatch@external</span>
-            <span>public</span>
-          </li>
-          <li className="profile-charm-list__row">
-            <span>
-              <img
-                className="profile-charm-list__icon"
-                src="/charmstore/~hatch/privghost-1/icon.svg"
-                title="privghost" />
-              <a
-                href="/gui/u/hatch/privghost/1"
-                onClick={list[2].props.children[0].props.children[1].props.onClick}>
-                privghost
-              </a>
-            </span>
-            <span>xenial trusty</span>
-            <span>hatch@external</span>
-            <span>private</span>
-          </li>
-        </ul>
+        <BasicTable
+          headers={[{
+            content: 'Name',
+            columnSize: 6
+          }, {
+            content: 'Series',
+            columnSize: 3
+          }, {
+            content: 'Release',
+            columnSize: 3
+          }]}
+          rows={[{
+            columns: [{
+              content: (
+                <div>
+                  <img className="profile-charm-list__icon"
+                    src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                    title="failtester" />
+                  <a href="/gui/u/hatch/failtester/precise/7"
+                    onClick={sinon.stub()}>
+                    failtester
+                  </a>
+                </div>),
+              columnSize: 6
+            }, {
+              content: 'precise',
+              columnSize: 3
+            }, {
+              content: '#7',
+              columnSize: 3
+            }],
+            key: 'cs:~hatch/precise/failtester-7'
+          }, {
+            columns: [{
+              content: (
+                <div>
+                  <img className="profile-charm-list__icon"
+                    src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                    title="ghost" />
+                  <a href="/gui/u/hatch/ghost/xenial/3"
+                    onClick={sinon.stub()}>
+                    ghost
+                  </a>
+                </div>),
+              columnSize: 6
+            }, {
+              content: 'xenial',
+              columnSize: 3
+            }, {
+              content: '#3',
+              columnSize: 3
+            }],
+            key: 'cs:~hatch/xenial/ghost-3'
+          }, {
+            columns: [{
+              content: (
+                <div>
+                  <img className="profile-charm-list__icon"
+                    src="/charmstore/~hatch/privghost-1/icon.svg"
+                    title="privghost" />
+                  <a href="/gui/u/hatch/privghost/1"
+                    onClick={sinon.stub()}>
+                    privghost
+                  </a>
+                </div>),
+              columnSize: 6
+            }, {
+              content: 'xenial, trusty',
+              columnSize: 3
+            }, {
+              content: '#1',
+              columnSize: 3
+            }],
+            key: 'cs:~hatch/privghost-1'
+          }]} />
       </div>);
     expect(output).toEqualJSX(expected);
   });
