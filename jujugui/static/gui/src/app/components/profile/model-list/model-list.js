@@ -186,7 +186,7 @@ class ProfileModelList extends React.Component {
         key: model.name
       });
       return models;
-    }, []);
+    }, []) || [];
     return (
       <div>
         <div className="profile-model-list__header twelve-col">
@@ -260,7 +260,7 @@ class ProfileModelList extends React.Component {
         key: model.name
       });
       return models;
-    }, []);
+    }, []) || [];
     return (
       <div>
         <div className="profile-model-list__header twelve-col">

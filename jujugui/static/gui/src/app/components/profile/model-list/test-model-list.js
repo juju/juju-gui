@@ -345,4 +345,37 @@ describe('Profile Model List', function() {
     );
     expect(output).toEqualJSX(expected);
   });
+
+  it('does not break with model data in an unexpected format', () => {
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, [''])
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <CreateModelButton
+              title="Start a new model"
+              changeState={instance.props.changeState}
+              switchModel={instance.props.switchModel} />
+            <span className="profile-model-list__header-title">
+            My models (0)
+            </span>
+          </div>
+          {null}
+        </div>
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <span className="profile-model-list__header-title">
+              Models shared with me (0)
+            </span>
+          </div>
+          {null}
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
 });
