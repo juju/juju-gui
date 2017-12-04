@@ -3,8 +3,9 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-
 const shapeup = require('shapeup');
+
+const Spinner = require('../../spinner/spinner');
 
 /**
   Charm list React component used to display a list of the users charms in
@@ -15,7 +16,8 @@ class ProfileCharmList extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: []
+      data: [],
+      loading: false
     };
   }
 
@@ -45,23 +47,25 @@ class ProfileCharmList extends React.Component {
   */
   _fetchCharms(user) {
     const props = this.props;
-    this.xhrs.push(
-      props.charmstore.list(
-        user,
-        (error, data) => {
-          if (error) {
-            const message = 'Unable to retrieve charms';
-            console.error(message, error);
-            this.props.addNotification({
-              title: message,
-              message: `${message}: ${error}`,
-              level: 'error'
-            });
-            return;
-          }
-          this.setState({data});
-        },
-        'charm'));
+    this.setState({loading: true}, () => {
+      this.xhrs.push(
+        props.charmstore.list(
+          user,
+          (error, data) => {
+            if (error) {
+              const message = 'Unable to retrieve charms';
+              console.error(message, error);
+              this.props.addNotification({
+                title: message,
+                message: `${message}: ${error}`,
+                level: 'error'
+              });
+              return;
+            }
+            this.setState({loading: false, data});
+          },
+          'charm'));
+    });
   }
 
   /**
@@ -90,10 +94,12 @@ class ProfileCharmList extends React.Component {
         const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
         const path = window.jujulib.URL.fromLegacyString(id).path();
         return [
-          <img key="img" className="profile-charm-list__icon" src={src} title={name} />,
-          <a
+          <img className="profile-charm-list__icon"
+            key="img"
+            src={src}
+            title={name} />,
+          <a href={`${this.props.baseURL}${path}`}
             key="link"
-            href={`${this.props.baseURL}${path}`}
             onClick={this._navigateToCharm.bind(this, path)}>{name}</a>
         ];
         return;
@@ -118,8 +124,11 @@ class ProfileCharmList extends React.Component {
   render() {
     const labels = ['Name', 'Series', 'Owner', 'Visibility'];
     const charmKeys = ['name', 'series', 'owner', 'perm'];
-    return (
-      <div className="profile-charm-list">
+    let content;
+    if (this.state.loading) {
+      content = (<Spinner />);
+    } else {
+      content = (
         <ul>
           <li className="profile-charm-list__table-header">
             {labels.map(label => <span key={label}>{label}</span>)}
@@ -130,7 +139,11 @@ class ProfileCharmList extends React.Component {
                 {charmKeys.map(key => <span key={key}>{this._processData(charm, key)}</span>)}
               </li>
             ))}
-        </ul>
+        </ul>);
+    }
+    return (
+      <div className="profile-charm-list">
+        {content}
       </div>);
   }
 };

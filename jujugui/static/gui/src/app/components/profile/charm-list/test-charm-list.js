@@ -5,6 +5,7 @@
 const React = require('react');
 
 const ProfileCharmList = require('./charm-list');
+const Spinner = require('../../spinner/spinner');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -47,7 +48,7 @@ describe('Profile Charm List', function() {
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
-          list: charmstoreList,
+          list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
         user="hatch@external" />, true);
@@ -115,6 +116,20 @@ describe('Profile Charm List', function() {
             <span>private</span>
           </li>
         </ul>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('shows the spinner when loading', () => {
+    const renderer = renderComponent({
+      charmstoreList: sinon.stub()
+    });
+    const instance = renderer.getMountedInstance();
+    instance.componentWillMount();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-charm-list">
+        <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
   });
