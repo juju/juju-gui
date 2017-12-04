@@ -158,7 +158,7 @@ describe('Profile Model List', function() {
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         facadesExist={true}
-        listModelsWithInfo={listModelsWithInfo}
+        listModelsWithInfo={options.listModelsWithInfo || listModelsWithInfo}
         destroyModels={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={{profile: 'tester'}} />, true);
@@ -313,4 +313,36 @@ describe('Profile Model List', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('can render without any models', () => {
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, null)
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <CreateModelButton
+              title="Start a new model"
+              changeState={instance.props.changeState}
+              switchModel={instance.props.switchModel} />
+            <span className="profile-model-list__header-title">
+            My models (0)
+            </span>
+          </div>
+          {null}
+        </div>
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <span className="profile-model-list__header-title">
+              Models shared with me (0)
+            </span>
+          </div>
+          {null}
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
 });

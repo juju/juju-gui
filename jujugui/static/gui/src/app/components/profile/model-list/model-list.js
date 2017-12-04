@@ -75,7 +75,7 @@ class ProfileModelList extends React.Component {
         owned: [],
         shared: []
       };
-      modelList.forEach(model => {
+      (modelList || []).forEach(model => {
         if (model.owner === `${this.props.userInfo.profile}@external`) {
           models.owned.push(model);
         } else {
@@ -198,7 +198,7 @@ class ProfileModelList extends React.Component {
             My models ({rowData.length})
           </span>
         </div>
-        {!rowData || !rowData.length ? null : <BasicTable
+        {!rowData.length ? null : <BasicTable
           headers={[{
             content: 'Name',
             columnSize: 4
@@ -268,7 +268,7 @@ class ProfileModelList extends React.Component {
             Models shared with me ({rowData.length})
           </span>
         </div>
-        {!rowData || !rowData.length ? null : <BasicTable
+        {!rowData.length ? null : <BasicTable
           headers={[{
             content: 'Name',
             columnSize: 3
