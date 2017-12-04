@@ -99,7 +99,8 @@ class Terminal extends React.Component {
           if (this.terminalSetup && !this.initialCommandsSent) {
             // If the first PS1 presented to the user changes then this will
             // need to be updated.
-            if (resp[1].indexOf('\u001b[01;32') === 0) {
+            const suffix = '$ ';
+            if (resp[1].indexOf(suffix, resp[1].length-suffix.length) !== -1) {
               // Call to resize the terminal after getting the first PS1.
               term.fit();
               this.initialCommandsSent = true;
