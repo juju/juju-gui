@@ -4,6 +4,7 @@
 const React = require('react');
 
 const BasicTable = require('./basic-table');
+const ExpandingRow = require('../expanding-row/expanding-row');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
@@ -251,5 +252,63 @@ describe('BasicTable', function() {
     assert.equal(preventDefault.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {another: 'state'});
+  });
+
+  it('can display rows with expandable content', function() {
+    rows = [{
+      classes: ['first-row-class'],
+      columns: [{
+        content: (<span>row 1 column 1</span>),
+        columnSize: 3,
+        classes: ['r1c1class1', 'r1c1class2']
+      }, {
+        content: 'row 1 column 2',
+        columnSize: 3
+      }],
+      expandedContent: (<div>Expanded content!</div>),
+      key: 'row-one-key'
+    }];
+    const renderer = jsTestUtils.shallowRender(
+      <BasicTable
+        headers={headers}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ul className="basic-table twelve-col">
+        <li className="twelve-col basic-table__header"
+          key='basic-table-header'>
+          <div className="three-col class1 class2"
+            key="column-1">
+            Column 1
+          </div>
+          <div className="last-col four-col"
+            key="column-2">
+            <span>Column 2</span>
+          </div>
+        </li>
+        <ExpandingRow
+          classes={{
+            'basic-table__row': true,
+            'basic-table__row--expandable': true,
+            'first-row-class': true,
+            'twelve-col': true
+          }}
+          key="row-one-key">
+          <div>
+            <div className="three-col r1c1class1 r1c1class2"
+              key="column-1">
+              <span>row 1 column 1</span>
+            </div>
+            <div className="last-col three-col"
+              key="column-2">
+              row 1 column 2
+            </div>
+          </div>
+          <div>
+            <div>Expanded content!</div>
+          </div>
+        </ExpandingRow>
+      </ul>);
+    expect(output).toEqualJSX(expected);
   });
 });

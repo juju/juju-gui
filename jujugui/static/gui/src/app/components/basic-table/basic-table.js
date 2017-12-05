@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const ExpandingRow = require('../expanding-row/expanding-row');
+
 /** Basic table React component used to display data in a table structure. */
 class BasicTable extends React.Component {
   constructor() {
@@ -92,20 +94,45 @@ class BasicTable extends React.Component {
           {content}
         </div>);
     });
-    const classes = classNames(
-      'twelve-col',
-      isHeader ? this.props.headerClasses : this.props.rowClasses,
-      row.classes,
-      {
-        'basic-table__header': isHeader,
-        'basic-table__row': !isHeader
+    const defaultRowClasses = this.props.rowClasses || [];
+    const rowClasses = row.classes || [];
+    if (row.expandedContent) {
+      let classes = {
+        'basic-table__row': true,
+        'basic-table__row--expandable': true,
+        'first-row-class': true,
+        'twelve-col': true
+      };
+      defaultRowClasses.concat(rowClasses).forEach(className => {
+        classes[className] = true;
       });
-    return (
-      <li className={classes}
-        key={isHeader ? 'basic-table-header' : row.key}>
-        {this._generateAnchor(row.clickState)}
-        {columns}
-      </li>);
+      return (
+        <ExpandingRow
+          classes={classes}
+          key="row-one-key">
+          <div>
+            {columns}
+          </div>
+          <div>
+            {row.expandedContent}
+          </div>
+        </ExpandingRow>);
+    } else {
+      const classes = classNames(
+        'twelve-col',
+        isHeader ? this.props.headerClasses : defaultRowClasses,
+        rowClasses,
+        {
+          'basic-table__header': isHeader,
+          'basic-table__row': !isHeader
+        });
+      return (
+        <li className={classes}
+          key={isHeader ? 'basic-table-header' : row.key}>
+          {this._generateAnchor(row.clickState)}
+          {columns}
+        </li>);
+    }
   }
 
   /**
@@ -169,6 +196,8 @@ BasicTable.propTypes = {
       // The extra classes to apply to the column.
       classes: PropTypes.arrayOf(PropTypes.string)
     }).isRequired).isRequired,
+    // Content to be displayed when the row is toggled.
+    expandedContent: PropTypes.any,
     // Extra data that can be used when ordering, sorting etc.
     extraData: PropTypes.any,
     // The row key, used for React indexing and sorting.
