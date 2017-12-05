@@ -36,7 +36,7 @@ class InspectorHeader extends React.Component {
   }
 
   /**
-    Method to navigate to Charm details page from Inspector
+    Navigate to the charm details page
 
     @param {Object} event The event object
   */
