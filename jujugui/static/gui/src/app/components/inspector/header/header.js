@@ -23,10 +23,10 @@ class InspectorHeader extends React.Component {
   /**
     Open getstarted.md of specific charm in post deployment panel
 
-    @param {Object} e The event object
+    @param {Object} event The event object
   */
-  _navigateToGetStarted(e) {
-    e.preventDefault();
+  _navigateToGetStarted(event) {
+    event.preventDefault();
     this.props.changeState({
       postDeploymentPanel:
         {
@@ -39,10 +39,10 @@ class InspectorHeader extends React.Component {
   /**
     Method to navigate to Charm details page from Inspector
 
-    @param {Object} e The event object
+    @param {Object} event The event object
   */
-  _navigateToCharmDetails(e) {
-    e.preventDefault();
+  _navigateToCharmDetails(event) {
+    event.preventDefault();
     let url;
     try {
       url = window.jujulib.URL.fromString(this.props.entityId);
