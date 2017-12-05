@@ -72,20 +72,28 @@ describe('InspectorHeader', function() {
   });
 
   fit('can render correctly with details inline list', () => {
-    const output = InspectorHeader._renderHeaderLinks();
+    const renderer = jsTestUtils.shallowRender(
+      <InspectorHeader
+        backCallback={sinon.stub()}
+        title="Juju GUI"
+        changeState={sinon.stub()}
+        entityId={entityId}
+      />, true);
+    const instance = renderer.getMountedInstance();
+    const output = instance._renderHeaderLinks();
     const expected = (
       <ul className="inspector-header__inline-list">
         <li className="inspector-header__list-item">
-          <a href="#" onClick={this._navigateToGetStarted.bind(this)}>
+          <a href="#" onClick={instance._navigateToGetStarted.bind(instance)}>
             Get started
           </a>
         </li>
         <li className="inspector-header__list-item">
-          <a href="#" onClick={this._navigateToCharmDetails.bind(this)}>
+          <a href="#" onClick={instance._navigateToCharmDetails.bind(instance)}>
             Charm details
           </a>
         </li>
       </ul>);
-    assert.deepEqual(output, expected);
+    expect(output).toEqualJSX(expected);
   });
 });
