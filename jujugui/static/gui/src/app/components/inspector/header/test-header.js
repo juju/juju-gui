@@ -70,4 +70,22 @@ describe('InspectorHeader', function() {
     output.props.onClick();
     assert.equal(callbackStub.callCount, 1);
   });
+
+  fit('can render correctly with details inline list', () => {
+    const output = InspectorHeader._renderHeaderLinks();
+    const expected = (
+      <ul className="inspector-header__inline-list">
+        <li className="inspector-header__list-item">
+          <a href="#" onClick={this._navigateToGetStarted.bind(this)}>
+            Get started
+          </a>
+        </li>
+        <li className="inspector-header__list-item">
+          <a href="#" onClick={this._navigateToCharmDetails.bind(this)}>
+            Charm details
+          </a>
+        </li>
+      </ul>);
+    assert.deepEqual(output, expected);
+  });
 });
