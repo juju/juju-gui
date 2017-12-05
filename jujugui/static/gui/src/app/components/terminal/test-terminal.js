@@ -104,7 +104,7 @@ describe('Terminal', () => {
     // Send the setup from the term.
     component.ws.onmessage({data: '["setup", {}]'});
     // Send the initial PS1
-    component.ws.onmessage({data: '["stdout", "\\u001b[01;32"]'});
+    component.ws.onmessage({data: '["stdout", "my prompt $ "]'});
     assert.equal(component.term.fit.callCount, 1); // eslint-disable-line
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
     assert.equal(websocket.prototype.send.callCount, 1);
@@ -129,7 +129,7 @@ describe('Terminal', () => {
     // Send the setup from the term.
     component.ws.onmessage({data: '["setup", {}]'});
     // Send the initial PS1
-    component.ws.onmessage({data: '["stdout", "\\u001b[01;32"]'});
+    component.ws.onmessage({data: '["stdout", "another prompt ~$ "]'});
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
     assert.equal(websocket.prototype.send.callCount, 2);
     assert.deepEqual(websocket.prototype.send.args[0], ['["stdin","juju status\\n"]']);
