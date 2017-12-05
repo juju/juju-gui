@@ -423,6 +423,7 @@ var module = module;
         'include=charm-metadata',
         'include=bundle-metadata',
         'include=bundle-unit-count',
+        'include=bundle-machine-count',
         'include=extra-info',
         'include=supported-series',
         'include=stats',
