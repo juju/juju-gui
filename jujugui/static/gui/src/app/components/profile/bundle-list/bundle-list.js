@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const BasicTable = require('../../basic-table/basic-table');
 const Spinner = require('../../spinner/spinner');
 
 /**
@@ -83,69 +84,65 @@ class ProfileBundleList extends React.Component {
     this.props.changeState({profile: null, store: path, hash: null});
   }
 
-  /**
-    Process the data required for the bundle table.
-    @param {Object} bundle The bundle data.
-    @param {String} key The key that stores the data in the bundle object.
-    @return {String} The string value to display in the table.
-  */
-  _processData(bundle, key) {
-    switch(key) {
-      case 'name':
-        const name = bundle[key];
-        // To get the icon for the bundle we take the first application in the
-        // list and then use its icon as the icon for the bundle
-        let src = '';
-        const applications = bundle.applications;
-        for (let key in applications) {
-          const app = applications[key];
-          src = `${this.props.charmstore.url}/${app.charm.replace('cs:', '')}/icon.svg`;
-          break;
-        }
-        const path = window.jujulib.URL.fromLegacyString(bundle.id).path();
-        return [
-          <img key="img" className="profile-bundle-list__icon" src={src} title={name} />,
-          <a
-            key="link"
-            href={`${this.props.baseURL}${path}`}
-            onClick={this._navigateToBundle.bind(this, path)}>{name}</a>
-        ];
-        return;
-        break;
-      case 'owner':
-        return bundle[key] || this.props.user;
-      case 'perm':
-        const perms = bundle[key];
-        if (perms && perms.read.includes('everyone')) {
-          return 'public';
-        }
-        return 'private';
-      default:
-        return bundle[key];
-    }
-    return '';
-  }
-
   render() {
-    const labels = ['Name', 'Units', 'Owner', 'Visibility'];
-    const bundleKeys = ['name', 'unitCount', 'owner', 'perm'];
     let content;
     if (this.state.loading) {
       content = (<Spinner />);
     } else {
+      const rows = (this.state.data || []).map(bundle => {
+        const applications = bundle.applications;
+        const icons = Object.keys(applications).map(name => {
+          const app = applications[name];
+          return (
+            <img className="profile-bundle-list__icon"
+              key={name}
+              src={`${this.props.charmstore.url}/${app.charm.replace('cs:', '')}/icon.svg`}
+              title={name} />);
+        });
+        const path = window.jujulib.URL.fromLegacyString(bundle.id).path();
+        return {
+          columns: [{
+            content: (
+              <a href={`${this.props.baseURL}${path}`}
+                onClick={this._navigateToBundle.bind(this, path)}>
+                {bundle.name}
+              </a>),
+            columnSize: 4
+          }, {
+            content: (
+              <div>
+                {icons}
+              </div>),
+            columnSize: 4
+          }, {
+            content: bundle.machineCount,
+            columnSize: 2
+          }, {
+            content: bundle.unitCount,
+            columnSize: 1
+          }, {
+            content: `#${bundle.id.slice(-1)[0]}`,
+            columnSize: 1
+          }],
+          key: bundle.id
+        };
+      });
       content = (
-        <ul>
-          <li className="profile-bundle-list__table-header">
-            {labels.map(label => <span key={label}>{label}</span>)}
-          </li>
-          {this.state.data
-            .map((bundle, idx) => (
-              <li className="profile-bundle-list__row" key={idx}>
-                {bundleKeys.map(key =>
-                  <span key={key}>{this._processData(bundle, key)}</span>)}
-              </li>
-            ))}
-        </ul>);
+        <BasicTable
+          headers={[{
+            content: 'Name',
+            columnSize: 8
+          }, {
+            content: 'Machines',
+            columnSize: 2
+          }, {
+            content: 'Units',
+            columnSize: 1
+          }, {
+            content: 'Release',
+            columnSize: 1
+          }]}
+          rows={rows} />);
     }
     return (
       <div className="profile-bundle-list">

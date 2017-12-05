@@ -3,6 +3,7 @@
 'use strict';
 const React = require('react');
 
+const BasicTable = require('../../basic-table/basic-table');
 const ProfileBundleList = require('./bundle-list');
 const Spinner = require('../../spinner/spinner');
 
@@ -31,6 +32,7 @@ describe('Profile Bundle List', function() {
       }
     },
     "name": "logstash-core",
+    "machineCount": 2,
     "unitCount": 3
   }, {
     "id": "cs:~lazypower/bundle/swarm-core-1",
@@ -47,6 +49,7 @@ describe('Profile Bundle List', function() {
       }
     },
     "name": "swarm-core",
+    "machineCount": 5,
     "unitCount": 5
   }]`;
 
@@ -70,49 +73,115 @@ describe('Profile Bundle List', function() {
   it('can render', () => {
     const renderer = renderComponent();
     const output = renderer.getRenderOutput();
-    const list = output.props.children.props.children[1];
     const expected = (
       <div className="profile-bundle-list">
-        <ul>
-          <li className="profile-bundle-list__table-header">
-            <span>Name</span>
-            <span>Units</span>
-            <span>Owner</span>
-            <span>Visibility</span>
-          </li>
-          <li className="profile-bundle-list__row">
-            <span>
-              <img
-                className="profile-bundle-list__icon"
-                src="/charmstore/~lazypower/trusty/elasticsearch/icon.svg"
-                title="logstash-core" />
-              <a
-                href="/gui/u/lazypower/logstash-core/bundle/1"
-                onClick={list[0].props.children[0].props.children[1].props.onClick}>
-                logstash-core
-              </a>
-            </span>
-            <span>3</span>
-            <span>lazypower@external</span>
-            <span>public</span>
-          </li>
-          <li className="profile-bundle-list__row">
-            <span>
-              <img
-                className="profile-bundle-list__icon"
-                src="/charmstore/~containers/trusty/consul/icon.svg"
-                title="swarm-core" />
-              <a
-                href="/gui/u/lazypower/swarm-core/bundle/1"
-                onClick={list[1].props.children[0].props.children[1].props.onClick}>
-                swarm-core
-              </a>
-            </span>
-            <span>5</span>
-            <span>lazypower@external</span>
-            <span>public</span>
-          </li>
-        </ul>
+        <BasicTable
+          headers={[{
+            content: 'Name',
+            columnSize: 8
+          }, {
+            content: 'Machines',
+            columnSize: 2
+          }, {
+            content: 'Units',
+            columnSize: 1
+          }, {
+            content: 'Release',
+            columnSize: 1
+          }]}
+          rows={[{
+            columns: [{
+              content: (
+                <a href="/gui/u/lazypower/logstash-core/bundle/1"
+                  onClick={sinon.stub()}>
+                  logstash-core
+                </a>),
+              columnSize: 4
+            }, {
+              content: (
+                <div>
+                  <img className="profile-bundle-list__icon"
+                    src="/charmstore/~lazypower/trusty/elasticsearch/icon.svg"
+                    title="elasticsearch" />
+                  <img className="profile-bundle-list__icon"
+                    src="/charmstore/trusty/kibana-10/icon.svg"
+                    title="kibana" />
+                  <img className="profile-bundle-list__icon"
+                    src="/charmstore/~lazypower/trusty/logstash-20/icon.svg"
+                    title="logstash" />
+                  <img className="profile-bundle-list__icon"
+                    src="/charmstore/~kwmonroe/trusty/openjdk/icon.svg"
+                    title="openjdk" />
+                </div>),
+              columnSize: 4
+            }, {
+              content: 2,
+              columnSize: 2
+            }, {
+              content: 3,
+              columnSize: 1
+            }, {
+              content: '#1',
+              columnSize: 1
+            }],
+            key: 'cs:~lazypower/bundle/logstash-core-1'
+          }, {
+            columns: [{
+              content: (
+                <a href="/gui/u/lazypower/swarm-core/bundle/1"
+                  onClick={sinon.stub()}>
+                  swarm-core
+                </a>),
+              columnSize: 4
+            }, {
+              content: (
+                <div>
+                  <img className="profile-bundle-list__icon"
+                    src="/charmstore/~containers/trusty/consul/icon.svg"
+                    title="consul" />
+                  <img className="profile-bundle-list__icon"
+                    src="/charmstore/~lazypower/swarm/icon.svg"
+                    title="swarm" />
+                </div>),
+              columnSize: 4
+            }, {
+              content: 5,
+              columnSize: 2
+            }, {
+              content: 5,
+              columnSize: 1
+            }, {
+              content: '#1',
+              columnSize: 1
+            }],
+            key: 'cs:~lazypower/bundle/swarm-core-1'
+          }]} />
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render without any bundles', () => {
+    const renderer = renderComponent({
+      charmstoreList: sinon.stub().callsArgWith(1, null, null)
+    });
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-bundle-list">
+        <BasicTable
+          headers={[{
+            content: 'Name',
+            columnSize: 8
+          }, {
+            content: 'Machines',
+            columnSize: 2
+          }, {
+            content: 'Units',
+            columnSize: 1
+          }, {
+            content: 'Release',
+            columnSize: 1
+          }]}
+          rows={[]} />
       </div>);
     expect(output).toEqualJSX(expected);
   });
