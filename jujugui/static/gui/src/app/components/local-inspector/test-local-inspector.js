@@ -10,7 +10,6 @@ const InspectorHeader = require('../inspector/header/header');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('LocalInspector', function() {
-
   var acl, series;
 
   beforeEach(function() {
