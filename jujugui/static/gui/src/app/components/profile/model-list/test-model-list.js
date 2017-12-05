@@ -3,10 +3,11 @@
 
 const React = require('react');
 
-const ProfileModelList = require('./model-list');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const BasicTable = require('../../basic-table/basic-table');
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
+const ProfileModelList = require('./model-list');
+const SvgIcon = require('../../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -157,7 +158,7 @@ describe('Profile Model List', function() {
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         facadesExist={true}
-        listModelsWithInfo={listModelsWithInfo}
+        listModelsWithInfo={options.listModelsWithInfo || listModelsWithInfo}
         destroyModels={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={{profile: 'tester'}} />, true);
@@ -169,117 +170,212 @@ describe('Profile Model List', function() {
     const instance = renderer.getMountedInstance();
     const expected = (
       <div className="profile-model-list">
-        <ul className="profile-model-list__list">
-          <li className="profile-model-list__header">
-            <span className="profile-model-list__header-title">
-              My models (2)
-            </span>
+        <div>
+          <div className="profile-model-list__header twelve-col">
             <CreateModelButton
               title="Start a new model"
               changeState={instance.props.changeState}
               switchModel={instance.props.switchModel} />
-          </li>
-          <li className="profile-model-list__table-header">
-            <span>Name</span>
-            <span>Machines, Cloud/region</span>
-            <span>Last accessed</span>
-            <span>Action</span>
-          </li>
-          <li className="profile-model-list__row" key="">
-            <span>
-              <a
-                href="/gui/u/tester/mymodel"
-                onClick={output.props.children[0].props
-                  .children[2].props.children[0].props.children.props.onClick}>
-                mymodel</a></span>
-            <span>0 EC2/EU-WEST-1</span>
-            <span>
-              <DateDisplay
-                date="2017-07-06T14:47:03.000Z"
-                relative={true} />
+            <span className="profile-model-list__header-title">
+            My models (2)
             </span>
-            <span>
-              <ButtonDropdown
-                ref="mymodel-button-dropdown-0"
-                icon="contextual-menu-16"
-                listItems={[
-                  <li key="delete" className="dropdown-menu__list-item"
-                    role="menuitem" tabIndex="0">
-                    <a className="dropdown-menu__list-item-link"
-                      onClick={instance._destroyModel}>
-                    Delete</a>
-                  </li>
-                ]}
-                tooltip="more" />
-            </span>
-          </li>
-          <li className="profile-model-list__row" key="">
-            <span>
-              <a
-                href="/gui/u/tester/mymodel2"
-                onClick={output.props.children[0].props
-                  .children[3].props.children[0].props.children.props.onClick}>
-                mymodel2</a></span>
-            <span>0 GCE/US-CENTRAL1</span>
-            <span>
-              <DateDisplay
-                date="2017-07-06T16:26:47.000Z"
-                relative={true} />
-            </span>
-            <span>
-              <ButtonDropdown
-                ref="mymodel-button-dropdown-1"
-                icon="contextual-menu-16"
-                listItems={[
-                  <li key="delete" className="dropdown-menu__list-item"
-                    role="menuitem" tabIndex="0">
-                    <a className="dropdown-menu__list-item-link"
-                      onClick={instance._destroyModel}>
-                    Delete</a>
-                  </li>
-                ]}
-                tooltip="more" />
-            </span>
-          </li>
-        </ul>
-        <ul className="profile-model-list__list">
-          <li className="profile-model-list__header">
+          </div>
+          <BasicTable
+            headers={[{
+              content: 'Name',
+              columnSize: 4
+            }, {
+              content: 'Machines, cloud/region',
+              columnSize: 4
+            }, {
+              content: 'Last accessed',
+              columnSize: 3
+            }, {
+              content: '',
+              columnSize: 1
+            }]}
+            rows={[{
+              columns: [{
+                content: (
+                  <a href="/gui/u/tester@external/mymodel"
+                    onClick={sinon.stub()}>
+                    mymodel
+                  </a>),
+                columnSize: 4
+              }, {
+                content: '0 EC2/EU-WEST-1',
+                columnSize: 4
+              }, {
+                content: (
+                  <DateDisplay
+                    date='2017-07-06T14:47:03.000Z'
+                    relative={true} />),
+                columnSize: 3
+              }, {
+                content: (
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon name="delete_16"
+                      size="16" />
+                  </a>),
+                columnSize: 1
+              }],
+              key: 'mymodel'
+            }, {
+              columns: [{
+                content: (
+                  <a href="/gui/u/tester@external/mymodel2"
+                    onClick={sinon.stub()}>
+                    mymodel2
+                  </a>),
+                columnSize: 4
+              }, {
+                content: '0 GCE/US-CENTRAL1',
+                columnSize: 4
+              }, {
+                content: (
+                  <DateDisplay
+                    date='2017-07-06T16:26:47.000Z'
+                    relative={true} />),
+                columnSize: 3
+              }, {
+                content: (
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon name="delete_16"
+                      size="16" />
+                  </a>),
+                columnSize: 1
+              }],
+              key: 'mymodel2'
+            }]} />
+        </div>
+        <div>
+          <div className="profile-model-list__header twelve-col">
             <span className="profile-model-list__header-title">
               Models shared with me (2)
             </span>
-          </li>
-          <li className="profile-model-list__table-header" key="sharedmodels">
-            <span>Name</span>
-            <span>Machines, Cloud/region</span>
-            <span>Permissions</span>
-            <span>Owner</span>
-          </li>
-          <li className="profile-model-list__row" key="">
-            <span>
-              <a
-                href="/gui/u/tester2/test-db"
-                onClick={output.props.children[1].props
-                  .children[2].props.children[0].props.children.props.onClick}>
-                test-db</a></span>
-            <span>2 GCE/US-EAST1</span>
-            <span>read</span>
-            <span>tester2</span>
-          </li>
-          <li className="profile-model-list__row" key="">
-            <span>
-              <a
-                href="/gui/u/tester3/website"
-                onClick={output.props.children[1].props
-                  .children[2].props.children[0].props.children.props.onClick}>
-                website</a></span>
-            <span>25 GCE/US-EAST1</span>
-            <span>admin</span>
-            <span>tester3</span>
-          </li>
-        </ul>
+          </div>
+          <BasicTable
+            headers={[{
+              content: 'Name',
+              columnSize: 3
+            }, {
+              content: 'Machines, cloud/region',
+              columnSize: 3
+            }, {
+              content: 'Permissions',
+              columnSize: 3
+            }, {
+              content: 'Owner',
+              columnSize: 3
+            }]}
+            rows={[{
+              columns: [{
+                content: (
+                  <a href="/gui/u/tester2/test-db"
+                    onClick={sinon.stub()}>
+                    test-db
+                  </a>),
+                columnSize: 3
+              }, {
+                content: '2 GCE/US-EAST1',
+                columnSize: 3
+              }, {
+                content: 'read',
+                columnSize: 3
+              }, {
+                content: 'tester2@external',
+                columnSize: 3
+              }],
+              key: 'test-db'
+            }, {
+              columns: [{
+                content: (
+                  <a href="/gui/u/tester3/website"
+                    onClick={sinon.stub()}>
+                    website
+                  </a>),
+                columnSize: 3
+              }, {
+                content: '25 GCE/US-EAST1',
+                columnSize: 3
+              }, {
+                content: 'admin',
+                columnSize: 3
+              }, {
+                content: 'tester3@external',
+                columnSize: 3
+              }],
+              key: 'website'
+            }]} />
+        </div>
       </div>
     );
     expect(output).toEqualJSX(expected);
   });
 
+  it('can render without any models', () => {
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, null)
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <CreateModelButton
+              title="Start a new model"
+              changeState={instance.props.changeState}
+              switchModel={instance.props.switchModel} />
+            <span className="profile-model-list__header-title">
+            My models (0)
+            </span>
+          </div>
+          {null}
+        </div>
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <span className="profile-model-list__header-title">
+              Models shared with me (0)
+            </span>
+          </div>
+          {null}
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('does not break with model data in an unexpected format', () => {
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, [''])
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <CreateModelButton
+              title="Start a new model"
+              changeState={instance.props.changeState}
+              switchModel={instance.props.switchModel} />
+            <span className="profile-model-list__header-title">
+            My models (0)
+            </span>
+          </div>
+          {null}
+        </div>
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <span className="profile-model-list__header-title">
+              Models shared with me (0)
+            </span>
+          </div>
+          {null}
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
 });

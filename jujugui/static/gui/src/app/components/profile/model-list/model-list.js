@@ -4,10 +4,11 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const BasicTable = require('../../basic-table/basic-table');
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
 const Popup = require('../../popup/popup');
+const SvgIcon = require('../../svg-icon/svg-icon');
 
 /**
   Model list React component used to display a list of the users models in
@@ -74,7 +75,7 @@ class ProfileModelList extends React.Component {
         owned: [],
         shared: []
       };
-      modelList.forEach(model => {
+      (modelList || []).forEach(model => {
         if (model.owner === `${this.props.userInfo.profile}@external`) {
           models.owned.push(model);
         } else {
@@ -126,7 +127,6 @@ class ProfileModelList extends React.Component {
   _destroyModel(model, bdRef, e) {
     e.preventDefault();
     e.stopPropagation();
-    this.refs[bdRef]._toggleDropdown();
     if (model.isController) {
       this.props.addNotification({
         title: 'Cannot destroy model',
@@ -143,60 +143,77 @@ class ProfileModelList extends React.Component {
     @return {Object} The model list as JSX.
   */
   _generateMyModels() {
-    const key = 'mymodels';
-    const headerLabel = 'My models';
-    const labels = [
-      'Name', 'Machines, Cloud/region', 'Last accessed', 'Action'];
-    const tableHeader = this._generateTableHeader(labels, key);
     const state = this.state.models;
-    const modelList = state && state.owned;
-    if (!modelList || modelList.length === 0) {
-      return [this._generateHeader(headerLabel, 0, true), tableHeader];
-    }
+    const modelList = state && state.owned || [];
     const rowData = modelList.reduce((models, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
         return;
       }
       const bdRef = `mymodel-button-dropdown-${index}`;
+      const owner = model.owner || this.props.userInfo.profile;
+      const path = `${this.props.baseURL}u/${owner}/${model.name}`;
       models.push({
-        id: model.id,
-        name: model.name,
-        provider: `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
-        lastConnection: model.lastConnection,
-        action: (
-          <ButtonDropdown
-            ref={bdRef}
-            listItems={[
-              <li
-                className="dropdown-menu__list-item" role="menuitem" tabIndex="0"
-                key="delete">
-                <a
-                  className="dropdown-menu__list-item-link"
-                  onClick={this._destroyModel.bind(this, model, bdRef)}>
-                  Delete
-                </a>
-              </li>
-            ]}
-            tooltip="more"
-            icon="contextual-menu-16" />)
+        columns: [{
+          content: (
+            <a href={path}
+              onClick={this.switchToModel.bind(this, {
+                name: model.name,
+                id: model.id,
+                owner
+              })}>
+              {model.name}
+            </a>),
+          columnSize: 4
+        }, {
+          content: `${model.numMachines} ${model.provider.toUpperCase()}/` +
+            model.region.toUpperCase(),
+          columnSize: 4
+        }, {
+          content: (
+            <DateDisplay
+              date={model.lastConnection || '--'}
+              relative={true} />),
+          columnSize: 3
+        }, {
+          content: (
+            <a onClick={this._destroyModel.bind(this, model, bdRef)}>
+              <SvgIcon name="delete_16"
+                size="16" />
+            </a>),
+          columnSize: 1
+        }],
+        key: model.name
       });
       return models;
-    }, []);
-    if (!rowData || !rowData.length) {
-      // We have no models
-      return null;
-    }
-    const rows = this._generateRows(
-      rowData, ['name', 'provider', 'lastConnection', 'action']);
+    }, []) || [];
     return (
-      <ul className="profile-model-list__list">
-        {[
-          this._generateHeader(headerLabel, rowData.length, true),
-          tableHeader,
-          ...rows
-        ]}
-      </ul>);
+      <div>
+        <div className="profile-model-list__header twelve-col">
+          <CreateModelButton
+            title="Start a new model"
+            changeState={this.props.changeState}
+            switchModel={this.props.switchModel} />
+          <span className="profile-model-list__header-title">
+            My models ({rowData.length})
+          </span>
+        </div>
+        {!rowData.length ? null : <BasicTable
+          headers={[{
+            content: 'Name',
+            columnSize: 4
+          }, {
+            content: 'Machines, cloud/region',
+            columnSize: 4
+          }, {
+            content: 'Last accessed',
+            columnSize: 3
+          }, {
+            content: '',
+            columnSize: 1
+          }]}
+          rows={rowData} />}
+      </div>);
   }
 
   /**
@@ -205,16 +222,8 @@ class ProfileModelList extends React.Component {
     @return {Object} The model list as JSX.
   */
   _generateSharedModels() {
-    const key = 'sharedmodels';
-    const headerLabel = 'Models shared with me';
-    const labels = [
-      'Name', 'Machines, Cloud/region', 'Permissions', 'Owner'];
-    const tableHeader = this._generateTableHeader(labels, key);
     const state = this.state.models;
-    const modelList = state && state.shared;
-    if (!modelList || modelList.length === 0) {
-      return [this._generateHeader(headerLabel, 0), tableHeader];
-    }
+    const modelList = state && state.shared || [];
     const rowData = modelList.reduce((models, model) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
@@ -223,59 +232,58 @@ class ProfileModelList extends React.Component {
       // Get the model users permissions
       const modelUser = model.users ? model.users.filter(user =>
         user.displayName === this.props.userInfo.profile) : null;
+      const owner = model.owner.replace('@external', '');
+      const path = `${this.props.baseURL}u/${owner}/${model.name}`;
       models.push({
-        id: model.id,
-        name: model.name,
-        provider: `${model.numMachines} ${model.provider.toUpperCase()}/${model.region.toUpperCase()}`, // eslint-disable-line max-len
-        access: modelUser.length && modelUser[0].access,
-        owner: model.owner.replace('@external', '')
+        columns: [{
+          content: (
+            <a href={path}
+              onClick={this.switchToModel.bind(this, {
+                name: model.name,
+                id: model.id,
+                owner: owner
+              })}>
+              {model.name}
+            </a>),
+          columnSize: 3
+        }, {
+          content: `${model.numMachines} ${model.provider.toUpperCase()}/` +
+            model.region.toUpperCase(),
+          columnSize: 3
+        }, {
+          content: modelUser.length && modelUser[0].access,
+          columnSize: 3
+        }, {
+          content: model.owner,
+          columnSize: 3
+        }],
+        key: model.name
       });
       return models;
-    }, []);
-    const rows = this._generateRows(rowData, ['name', 'provider', 'access', 'owner']);
+    }, []) || [];
     return (
-      <ul className="profile-model-list__list">
-        {[
-          this._generateHeader(headerLabel, rowData.length),
-          tableHeader,
-          ...rows
-        ]}
-      </ul>);
-  }
-
-  /**
-    Generates the JSX markup for the model list header.
-    @param {String} label The content for the header
-    @param {Boolean} showCreate Whether it should show the "Create New" button.
-    @param {Integer} modelCount The number of rows in the model table.
-    @return {Object} The model list header as JSX markup.
-  */
-  _generateHeader(label, modelCount, showCreate=false) {
-    const props = this.props;
-    return (
-      <li className="profile-model-list__header" key={label}>
-        <span className="profile-model-list__header-title">
-          {`${label} (${modelCount})`}
-        </span>
-        {showCreate ?
-          <CreateModelButton
-            title="Start a new model"
-            changeState={props.changeState}
-            switchModel={props.switchModel} /> : null}
-      </li>);
-  }
-
-  /**
-    Generates the JSX markup for the model list table header.
-    @param {Array} labels An array of labels required to generate the header.
-    @param {String} key The key for react lists.
-    @return {Object} The model list header as JSX markup.
-  */
-  _generateTableHeader(labels, key) {
-    return (
-      <li className="profile-model-list__table-header" key={key}>
-        {labels.map(label => <span key={label}>{label}</span>)}
-      </li>);
+      <div>
+        <div className="profile-model-list__header twelve-col">
+          <span className="profile-model-list__header-title">
+            Models shared with me ({rowData.length})
+          </span>
+        </div>
+        {!rowData.length ? null : <BasicTable
+          headers={[{
+            content: 'Name',
+            columnSize: 3
+          }, {
+            content: 'Machines, cloud/region',
+            columnSize: 3
+          }, {
+            content: 'Permissions',
+            columnSize: 3
+          }, {
+            content: 'Owner',
+            columnSize: 3
+          }]}
+          rows={rowData} />}
+      </div>);
   }
 
   /**
@@ -288,42 +296,6 @@ class ProfileModelList extends React.Component {
     e.preventDefault();
     e.stopPropagation(); // Required to avoid react error about root DOM node.
     this.props.switchModel(model);
-  }
-
-  /**
-    Generate the JSX markup for a row of model data.
-    @param {Map} rowData The data to display.
-    @param {Array} columns The columns that the supplied data is to be sorted into
-    @return {Array} The model list rows as JSX markup.
-  */
-  _generateRows(rows, columns) {
-    function processData(data, label) {
-      switch(label) {
-        case 'lastConnection':
-          return <DateDisplay date={data[label] || '--'} relative={true} />;
-          break;
-        case 'name':
-          const owner = data.owner || this.props.userInfo.profile;
-          const name = data.name;
-          const path = `${this.props.baseURL}u/${owner}/${name}`;
-          return (
-            <a href={path} onClick={this.switchToModel.bind(this, {
-              name,
-              id: data.id,
-              owner
-            })} >{data.name}</a>);
-          break;
-        default:
-          return data[label];
-      }
-    }
-
-    return (
-      rows.map((rowData, idx) => (
-        <li className="profile-model-list__row" key={idx}>
-          {columns.map(label =>
-            <span key={`${label}-${idx}`}>{processData.call(this, rowData, label)}</span>)}
-        </li>)));
   }
 
   _generateNotification() {
