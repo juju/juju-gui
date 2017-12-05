@@ -28,11 +28,10 @@ class InspectorHeader extends React.Component {
   _navigateToGetStarted(event) {
     event.preventDefault();
     this.props.changeState({
-      postDeploymentPanel:
-        {
-          show: true,
-          entityId: this.props.entityId
-        }
+      postDeploymentPanel: {
+        show: true,
+        entityId: this.props.entityId
+      }
     });
   }
 
