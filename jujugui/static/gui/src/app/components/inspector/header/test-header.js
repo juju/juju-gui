@@ -18,9 +18,10 @@ fdescribe('InspectorHeader', function() {
         changeState={params.changeState}
         entityId={params.entityId || 'cs:demo'}
         icon={params.icon}
+        hasGetStarted={sinon.stub()}
         title={params.title || 'Juju GUI'}
-        type={params.type}
-      />, true);
+        type={params.type} />,
+      true);
     return {
       instance: renderer.getMountedInstance(),
       output: renderer.getRenderOutput()
@@ -60,11 +61,6 @@ fdescribe('InspectorHeader', function() {
     const output = instance._renderHeaderLinks();
     const expected = (
       <ul className="inspector-header__inline-list">
-        <li className="inspector-header__list-item">
-          <a href="#" onClick={instance._navigateToGetStarted.bind(instance)}>
-            Get started
-          </a>
-        </li>
         <li className="inspector-header__list-item">
           <a href="#" onClick={instance._navigateToCharmDetails.bind(instance)}>
             Charm details

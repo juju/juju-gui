@@ -82,6 +82,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -110,7 +111,8 @@ describe('Inspector', function() {
         title={title}
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     const overview = output.props.children[1].props.children;
@@ -172,6 +174,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -201,7 +204,8 @@ describe('Inspector', function() {
         title='Units'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -257,6 +261,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={getServiceByName}
@@ -286,7 +291,8 @@ describe('Inspector', function() {
         title='Configure'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -351,6 +357,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -380,7 +387,8 @@ describe('Inspector', function() {
         title={title}
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -432,6 +440,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -481,6 +490,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -550,6 +560,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -614,6 +625,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -686,6 +698,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -749,6 +762,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -778,7 +792,8 @@ describe('Inspector', function() {
         title='Scale'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -831,6 +846,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -910,6 +926,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -938,7 +955,8 @@ describe('Inspector', function() {
         title='Relations'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -985,6 +1003,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1013,7 +1032,8 @@ describe('Inspector', function() {
         title='Relate to'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1064,6 +1084,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={getAvailableEndpoints}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={getServiceById}
         getServiceByName={sinon.stub()}
@@ -1092,7 +1113,8 @@ describe('Inspector', function() {
         title='spouse-name'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1147,6 +1169,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1175,7 +1198,8 @@ describe('Inspector', function() {
         title='Plan'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1224,6 +1248,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={getAvailableVersions}
         getCharm={getCharm}
+        getEntity={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
         getUnitStatusCounts={sinon.stub()}
@@ -1308,6 +1333,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={getAvailableVersions}
         getCharm={getCharm}
+        getEntity={sinon.stub()}
         getMacaroon={getMacaroon}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1336,7 +1362,8 @@ describe('Inspector', function() {
         title='Resources'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     const children = output.props.children[1].props.children;
@@ -1380,6 +1407,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1445,6 +1473,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1500,6 +1529,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1552,6 +1582,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
@@ -1607,6 +1638,7 @@ describe('Inspector', function() {
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
         getCharm={sinon.stub()}
+        getEntity={sinon.stub()}
         getMacaroon={sinon.stub()}
         getServiceById={sinon.stub()}
         getServiceByName={sinon.stub()}
