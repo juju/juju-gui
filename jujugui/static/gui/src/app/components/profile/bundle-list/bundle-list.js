@@ -157,7 +157,7 @@ class ProfileBundleList extends React.Component {
         });
         const url = window.jujulib.URL.fromLegacyString(bundle.id);
         const path = url.path();
-        const version = url.revision;
+        const version = `#${url.revision}`;
         return {
           columns: [{
             content: (
