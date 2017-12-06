@@ -109,7 +109,7 @@ class BasicTable extends React.Component {
       return (
         <ExpandingRow
           classes={classes}
-          key="row-one-key">
+          key={row.key}>
           <div>
             {columns}
           </div>

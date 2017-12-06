@@ -1,19 +1,29 @@
 .profile-bundle-list {
   width: 766px;
 
-  &__row,
-  &__table-header {
-    border-bottom: 1px solid $mid-grey;
-    padding-bottom: 10px;
-    display: grid;
-    grid-template-columns: 225px 200px 150px auto;
-  }
-
   &__icon {
     border-radius: 50%;
     width: 20px;
-    float: left;
-    margin-right: 15px;
+    margin: 0 4px 4px 0;
   }
 
+  &__expanded {
+    padding: 20px;
+
+    &-leading {
+      font-weight: 400;
+    }
+  }
+
+  &__permissions {
+    @extend %list-style;
+
+    &-title {
+      margin-top: 20px;
+    }
+  }
+
+  &__permission {
+    margin: 0;
+  }
 }

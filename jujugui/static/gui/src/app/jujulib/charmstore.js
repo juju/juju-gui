@@ -184,6 +184,9 @@ var module = module;
           location: extraInfo['bzr-url']
         }
       };
+      if (bundleMeta && bundleMeta.Description) {
+        processed.description = bundleMeta.Description;
+      }
       if (meta['supported-series']) {
         processed.series = meta['supported-series']['SupportedSeries'];
       }
@@ -424,6 +427,7 @@ var module = module;
         'include=bundle-metadata',
         'include=bundle-unit-count',
         'include=bundle-machine-count',
+        'include=common-info',
         'include=extra-info',
         'include=supported-series',
         'include=stats',
