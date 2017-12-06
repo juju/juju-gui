@@ -184,8 +184,8 @@ var module = module;
           location: extraInfo['bzr-url']
         }
       };
-      if (bundleMeta && bundleMeta.Description) {
-        processed.description = bundleMeta.Description;
+      if (bundleMeta) {
+        processed.description = bundleMeta.Description || '';
       }
       if (meta['supported-series']) {
         processed.series = meta['supported-series']['SupportedSeries'];

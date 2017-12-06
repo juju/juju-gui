@@ -155,8 +155,9 @@ class ProfileBundleList extends React.Component {
               src={`${this.props.charmstore.url}/${app.charm.replace('cs:', '')}/icon.svg`}
               title={name} />);
         });
-        const path = window.jujulib.URL.fromLegacyString(bundle.id).path();
-        const version = `#${bundle.id.slice(-1)[0]}`;
+        const url = window.jujulib.URL.fromLegacyString(bundle.id);
+        const path = url.path();
+        const version = url.revision;
         return {
           columns: [{
             content: (
