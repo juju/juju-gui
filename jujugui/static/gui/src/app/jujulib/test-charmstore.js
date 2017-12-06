@@ -281,6 +281,7 @@ describe('jujulib charmstore', function() {
         channels: [],
         deployerFileUrl: 'local/v5/~charmers/bundle/mongodb-cluster-4/' +
             'archive/bundle.yaml',
+        description: '',
         downloads: 10,
         entityType: 'bundle',
         id: 'cs:~charmers/bundle/mongodb-cluster-4',
@@ -364,6 +365,7 @@ describe('jujulib charmstore', function() {
             'include=bundle-metadata&' +
             'include=bundle-unit-count&' +
             'include=bundle-machine-count&' +
+            'include=common-info&' +
             'include=extra-info&' +
             'include=supported-series&' +
             'include=stats&' +

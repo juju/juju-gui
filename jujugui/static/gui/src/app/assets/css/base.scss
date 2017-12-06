@@ -167,4 +167,8 @@ $asset-path: 'static/gui/build/app/assets/';
 a {
   color: $cool-grey;
   cursor: pointer;
+
+  &.cold-link {
+    color: $cool-grey;
+  }
 }

@@ -22,6 +22,7 @@ describe('Profile', function() {
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
+          getDiagramURL: sinon.stub(),
           list: sinon.stub(),
           url: '/charmstore'
         }}
