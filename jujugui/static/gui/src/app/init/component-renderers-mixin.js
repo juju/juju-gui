@@ -135,7 +135,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        displayTerminalButton={this.applicationConfig.flags['terminal'] || false}
+        displayTerminalButton={this.applicationConfig.flags.terminal || false}
         appState={this.state}
         changeState={this._bound.changeState}
         exportEnvironmentFile={
@@ -430,6 +430,7 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <ModalGUISettings
         closeModal={this._clearSettingsModal.bind(this)}
+        flags={this.applicationConfig.flags}
         localStorage={localStorage} />,
       document.getElementById('modal-gui-settings'));
   }
