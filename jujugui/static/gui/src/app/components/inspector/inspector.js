@@ -358,16 +358,21 @@ class Inspector extends React.Component {
   }
 
   render() {
+    const hasGetStarted = (entityId, callback) => {
+      callback(null, true);
+    };
     return (
       <div className="inspector-view">
         <InspectorHeader
-          backCallback={this._backCallback.bind(this)}
           activeComponent={this.state.activeComponent}
-          type={this.state.activeChild.headerType}
-          title={this.state.activeChild.title}
+          backCallback={this._backCallback.bind(this)}
+          changeState={this.props.appState.changeState.bind(this.props.appState)}
           entityId={this.props.service.get('charm')}
+          hasGetStarted={hasGetStarted}
           icon={this.state.activeChild.icon}
-          changeState={this.props.appState.changeState.bind(this.props.appState)} />
+          title={this.state.activeChild.title}
+          type={this.state.activeChild.headerType}
+        />
         <div className="inspector-content">
           {this.state.activeChild.component}
         </div>

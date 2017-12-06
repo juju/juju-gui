@@ -7,6 +7,26 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 class InspectorHeader extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {getStartedPresent: false};
+  }
+
+  componentWillMount() {
+    const props = this.props;
+    if (props.entityId) {
+      this.props.hasGetStarted(props.entityId, (err, value) => {
+        if (err) {
+          // TODO: properly provide feedback to teh user about the error.
+          console.error('cannot retrieve getStarted info:', err);
+          return;
+        }
+        this.setState({getStartedPresent: value});
+      });
+    }
+  }
+
   /**
     Returns the supplied classes with the type class applied if it
     is truthy.
@@ -81,10 +101,19 @@ class InspectorHeader extends React.Component {
     if (!this.props.changeState) {
       return null;
     }
+    let getStartedLink = null;
+    if (this.state.getStartedPresent) {
+      getStartedLink = (
+        <li className="inspector-header__list-item">
+          <a href="#" onClick={this._navigateToGetStarted.bind(this)}>
+            Get started
+          </a>
+        </li>
+      );
+    }
     return (
       <ul className="inspector-header__inline-list">
-        <li className="inspector-header__list-item"><a href="#"
-          onClick={this._navigateToGetStarted.bind(this)}>Get started</a></li>
+        {getStartedLink}
         <li className="inspector-header__list-item"><a href="#"
           onClick={this._navigateToCharmDetails.bind(this)}>Charm details</a></li>
       </ul>
@@ -118,9 +147,10 @@ class InspectorHeader extends React.Component {
 InspectorHeader.propTypes = {
   activeComponent: PropTypes.string,
   backCallback: PropTypes.func.isRequired,
-  // changeState is not required as InspectorHeader also used for local charm or bundle
+  // changeState is not required as InspectorHeader also used for local charm or bundle.
   changeState: PropTypes.func,
   entityId: PropTypes.string,
+  hasGetStarted: PropTypes.func,
   icon: PropTypes.string,
   title: PropTypes.string.isRequired,
   type: PropTypes.string
