@@ -382,8 +382,7 @@ class Inspector extends React.Component {
           hasGetStarted={hasGetStarted}
           icon={this.state.activeChild.icon}
           title={this.state.activeChild.title}
-          type={this.state.activeChild.headerType}
-        />
+          type={this.state.activeChild.headerType} />
         <div className="inspector-content">
           {this.state.activeChild.component}
         </div>
