@@ -952,6 +952,7 @@ Browser: ${navigator.userAgent}`
             this, this.endpointsController, db, endpointUtils.getEndpoints)}
           getAvailableVersions={charmstore.getAvailableVersions.bind(
             charmstore)}
+          getEntity={charmstore.getEntity.bind(charmstore)}
           getServiceById={db.services.getById.bind(db.services)}
           getServiceByName={db.services.getServiceByName.bind(db.services)}
           linkify={initUtils.linkify}

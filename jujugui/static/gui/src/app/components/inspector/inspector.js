@@ -358,16 +358,27 @@ class Inspector extends React.Component {
   }
 
   render() {
+    const props = this.props;
     const hasGetStarted = (entityId, callback) => {
-      callback(null, true);
+      props.getEntity(entityId, (err, data) => {
+        if (err) {
+          callback(err, null);
+          return;
+        }
+        const files = data[0].files || [];
+        const getStartedPresent = files.some(file => {
+          return file.toLowerCase() === 'getstarted.md';
+        });
+        callback(null, getStartedPresent);
+      });
     };
     return (
       <div className="inspector-view">
         <InspectorHeader
           activeComponent={this.state.activeComponent}
           backCallback={this._backCallback.bind(this)}
-          changeState={this.props.appState.changeState.bind(this.props.appState)}
-          entityId={this.props.service.get('charm')}
+          changeState={props.appState.changeState.bind(props.appState)}
+          entityId={props.service.get('charm')}
           hasGetStarted={hasGetStarted}
           icon={this.state.activeChild.icon}
           title={this.state.activeChild.title}
@@ -400,6 +411,7 @@ Inspector.propTypes = {
   getAvailableEndpoints: PropTypes.func.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
   getCharm: PropTypes.func.isRequired,
+  getEntity: PropTypes.func.isRequired,
   getServiceById: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,
   getUnitStatusCounts: PropTypes.func.isRequired,
