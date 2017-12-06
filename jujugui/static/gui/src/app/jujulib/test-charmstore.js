@@ -364,6 +364,7 @@ describe('jujulib charmstore', function() {
             'include=bundle-metadata&' +
             'include=bundle-unit-count&' +
             'include=bundle-machine-count&' +
+            'include=common-info&' +
             'include=extra-info&' +
             'include=supported-series&' +
             'include=stats&' +
