@@ -232,14 +232,7 @@ Browser: ${navigator.userAgent}`
     };
     const githubIssueLink =
       `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
-    const address = function() {
-      if (db.environment.get('jujushellURL')) {
-        return `ws://${db.environment.get('jujushellURL')}/ws/`;
-      }
-      if (config.jujushellURL) {
-        return config.jujushellURL;
-      }
-    }();
+    const address = initUtils.jujushellURL(localStorage, db, config);
     if (!address) {
       let message = 'an unknown error has occurred please file an issue ';
       let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;

@@ -262,6 +262,35 @@ utils.pluralize = (word, object, plural_word, options) => {
 };
 
 /**
+  Retrieve the jujushell URL from the provided sources.
+  Return null if jujushell is not available.
+
+  @param {Object} storage A storage object for persisting custom settings.
+  @param {Object} db The application database.
+  @param {Object} config The application config.
+*/
+utils.jujushellURL = (storage, db, config) => {
+  // First check if the user has put the jujushell URL in the GUI settings.
+  let url = storage.getItem('jujushell-url');
+  if (url) {
+    url = url.replace(/^(http:\/\/)/, 'ws://');
+    url = url.replace(/^(https:\/\/)/, 'wss://');
+    if (url.indexOf('ws://') !== 0 && url.indexOf('wss://') !== 0) {
+      url = 'wss://' + url;
+    }
+    return url;
+  }
+  // Then try and check whether there is a jujushell charm deployed and ready
+  // on the current model.
+  url = db.environment.get('jujushellURL');
+  if (url) {
+    return `ws://${url}/ws/`;
+  }
+  // Last option is the application settings (JAAS case).
+  return config.jujushellURL || null;
+};
+
+/**
   Remove a service. If it is uncommitted then remove it otherwise use the
   ecs.
   @param {Object} db Reference to the app db.
