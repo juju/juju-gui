@@ -7,7 +7,7 @@ const InspectorHeader = require('./header');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
-fdescribe('InspectorHeader', function() {
+describe('InspectorHeader', function() {
 
   // render creates and returns a renderer for the header component, optionally
   // passing the provided parameters.
