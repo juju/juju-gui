@@ -99,6 +99,55 @@ describe('init utils', () => {
     });
   });
 
+  describe('jujushellURL', () => {
+    // Set up mock sources from which to retrieve the jujushell URL.
+    const setupSources = values => {
+      const config = {jujushellURL: values.config || ''};
+      const db = {
+        environment: {
+          get: sinon.stub().withArgs('jujushellURL').returns(values.db || '')
+        }
+      };
+      const storage = {
+        getItem: sinon.stub().withArgs('jujushell-url').returns(
+          values.storage || '')
+      };
+      return {
+        config: config,
+        db: db,
+        storage: storage
+      };
+    };
+
+    // Check that a call to jujushellURL in a scenario set up with the given
+    // values returns the expected URL.
+    const assertURL = (values, expectedURL) => {
+      const params = setupSources(values);
+      const url = utils.jujushellURL(params.storage, params.db, params.config);
+      assert.strictEqual(url, expectedURL);
+    };
+
+    it('returns the URL stored in the storage', () => {
+      assertURL({storage: 'wss://1.2.3.4/ws1/'}, 'wss://1.2.3.4/ws1/');
+      assertURL({storage: 'ws://1.2.3.4/ws2/'}, 'ws://1.2.3.4/ws2/');
+      assertURL({storage: '1.2.3.4/ws3/'}, 'wss://1.2.3.4/ws3/');
+      assertURL({storage: 'http://1.2.3.4/ws4/'}, 'ws://1.2.3.4/ws4/');
+      assertURL({storage: 'https://1.2.3.4/ws5/'}, 'wss://1.2.3.4/ws5/');
+    });
+
+    it('returns the URL stored in the db', () => {
+      assertURL({db: '1.2.3.4'}, 'ws://1.2.3.4/ws/');
+    });
+
+    it('returns the URL stored in the config', () => {
+      assertURL({config: 'wss://4.3.2.1/ws'}, 'wss://4.3.2.1/ws');
+    });
+
+    it('returns null if the URL cannot be found', () => {
+      assertURL({}, null);
+    });
+  });
+
   describe('destroyService', () => {
     it('responds to service removal failure by alerting the user', () => {
       let notificationAdded;

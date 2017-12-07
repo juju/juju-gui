@@ -135,7 +135,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        displayTerminalButton={this.applicationConfig.flags['terminal'] || false}
+        displayTerminalButton={this.applicationConfig.flags.terminal || false}
         appState={this.state}
         changeState={this._bound.changeState}
         exportEnvironmentFile={
@@ -232,16 +232,10 @@ Browser: ${navigator.userAgent}`
     };
     const githubIssueLink =
       `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
-    const address = function() {
-      if (db.environment.get('jujushellURL')) {
-        return `ws://${db.environment.get('jujushellURL')}/ws/`;
-      }
-      if (config.jujushellURL) {
-        return config.jujushellURL;
-      }
-    }();
+    const address = initUtils.jujushellURL(localStorage, db, config);
     if (!address) {
-      let message = 'an unknown error has occurred please file an issue ';
+      // This should never happen.
+      let message = 'an unexpected error has occurred please file an issue ';
       let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
       const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
       if (!jujushell || jujushell.get('pending')) {
@@ -430,6 +424,7 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <ModalGUISettings
         closeModal={this._clearSettingsModal.bind(this)}
+        flags={this.applicationConfig.flags}
         localStorage={localStorage} />,
       document.getElementById('modal-gui-settings'));
   }
