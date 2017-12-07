@@ -18,7 +18,7 @@ class InspectorHeader extends React.Component {
     if (props.entityId) {
       this.props.hasGetStarted(props.entityId, (err, value) => {
         if (err) {
-          // TODO: properly provide feedback to teh user about the error.
+          // TODO: properly provide feedback to the user about the error.
           console.error('cannot retrieve getStarted info:', err);
           return;
         }
