@@ -1,0 +1,19 @@
+.profile-expanded-content {
+  padding: 20px;
+
+  &__top-row {
+    font-weight: 400;
+  }
+
+  &__permissions {
+    @extend %list-style;
+
+    &-title {
+      margin-top: 20px;
+    }
+  }
+
+  &__permission {
+    margin: 0;
+  }
+}
