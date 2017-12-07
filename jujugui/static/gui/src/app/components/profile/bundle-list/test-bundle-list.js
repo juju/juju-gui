@@ -4,14 +4,13 @@
 const React = require('react');
 
 const BasicTable = require('../../basic-table/basic-table');
-const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
+const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const ProfileBundleList = require('./bundle-list');
 const Spinner = require('../../spinner/spinner');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Bundle List', function() {
-
   const rawBundleData = `[{
     "bugUrl": "example.com/bugs",
     "description": "logstash-core description",
@@ -59,11 +58,12 @@ describe('Profile Bundle List', function() {
     "machineCount": 5,
     "unitCount": 5
   }]`;
+  const bundles = JSON.parse(rawBundleData);
 
   function renderComponent(options={}) {
     const charmstoreList = (user, cb) => {
       assert.equal(user, 'lazypower@external');
-      cb(null, JSON.parse(rawBundleData));
+      cb(null, bundles);
     };
     return jsTestUtils.shallowRender(
       <ProfileBundleList
@@ -134,60 +134,25 @@ describe('Profile Bundle List', function() {
               columnSize: 1
             }],
             expandedContent: (
-              <div className="profile-bundle-list__expanded">
-                <div className="eight-col profile-bundle-list__expanded-leading">
-                  logstash-core
-                </div>
-                <div className="two-col profile-bundle-list__expanded-leading">
-                  2
-                </div>
-                <div className="one-col profile-bundle-list__expanded-leading">
-                  3
-                </div>
-                <div className="one-col last-col profile-bundle-list__expanded-leading">
-                  #1
-                </div>
-                <div className="seven-col">
-                  <p>logstash-core description</p>
-                  <EntityContentDiagram
-                    diagramUrl="diagram.svg" />
-                </div>
-                <div className="five-col last-col">
+              <ProfileExpandedContent
+                changeState={sinon.stub()}
+                entity={bundles[0]}
+                getDiagramURL={sinon.stub()}
+                topRow={(
                   <div>
-                    <a href="example.com/bugs"
-                      onClick={sinon.stub()}
-                      target="_blank">
-                      Bugs
-                    </a>
-                  </div>
-                  <div>
-                    <a href="example.com/"
-                      onClick={sinon.stub()}
-                      target="_blank">
-                      Homepage
-                    </a>
-                  </div>
-                  <p className="profile-bundle-list__permissions-title">
-                    Writeable:
-                  </p>
-                  <ul className="profile-bundle-list__permissions">
-                    <li className="profile-bundle-list__permission link"
-                      onClick={sinon.stub()}
-                      role="button"
-                      tabIndex="0">
-                      lazypower
-                    </li>
-                  </ul>
-                  <p className="profile-bundle-list__permissions-title">
-                    Readable:
-                  </p>
-                  <ul className="profile-bundle-list__permissions">
-                    <li className="profile-bundle-list__permission">
-                      everyone
-                    </li>
-                  </ul>
-                </div>
-              </div>),
+                    <div className="eight-col profile-expanded-content__top-row">
+                      logstash-core
+                    </div>
+                    <div className="two-col profile-expanded-content__top-row">
+                      2
+                    </div>
+                    <div className="one-col profile-expanded-content__top-row">
+                      3
+                    </div>
+                    <div className="one-col last-col profile-expanded-content__top-row">
+                      #1
+                    </div>
+                  </div>)} />),
             key: 'cs:~lazypower/bundle/logstash-core-1'
           }, {
             columns: [{
@@ -220,66 +185,25 @@ describe('Profile Bundle List', function() {
               columnSize: 1
             }],
             expandedContent: (
-              <div className="profile-bundle-list__expanded">
-                <div className="eight-col profile-bundle-list__expanded-leading">
-                  swarm-core
-                </div>
-                <div className="two-col profile-bundle-list__expanded-leading">
-                  5
-                </div>
-                <div className="one-col profile-bundle-list__expanded-leading">
-                  5
-                </div>
-                <div className="one-col last-col profile-bundle-list__expanded-leading">
-                  #1
-                </div>
-                <div className="seven-col">
-                  <p>swarm-core description</p>
-                  <EntityContentDiagram
-                    diagramUrl="diagram.svg" />
-                </div>
-                <div className="five-col last-col">
+              <ProfileExpandedContent
+                changeState={sinon.stub()}
+                entity={bundles[1]}
+                getDiagramURL={sinon.stub()}
+                topRow={(
                   <div>
-                    <a href="example.com/bugs"
-                      onClick={sinon.stub()}
-                      target="_blank">
-                      Bugs
-                    </a>
-                  </div>
-                  <div>
-                    <a href="example.com/"
-                      onClick={sinon.stub()}
-                      target="_blank">
-                      Homepage
-                    </a>
-                  </div>
-                  <p className="profile-bundle-list__permissions-title">
-                    Writeable:
-                  </p>
-                  <ul className="profile-bundle-list__permissions">
-                    <li className="profile-bundle-list__permission link"
-                      onClick={sinon.stub()}
-                      role="button"
-                      tabIndex="0">
-                      lazypower
-                    </li>
-                  </ul>
-                  <p className="profile-bundle-list__permissions-title">
-                    Readable:
-                  </p>
-                  <ul className="profile-bundle-list__permissions">
-                    <li className="profile-bundle-list__permission link"
-                      onClick={sinon.stub()}
-                      role="button"
-                      tabIndex="0">
-                      lazypower
-                    </li>
-                    <li className="profile-bundle-list__permission">
-                      everyone
-                    </li>
-                  </ul>
-                </div>
-              </div>),
+                    <div className="eight-col profile-expanded-content__top-row">
+                      swarm-core
+                    </div>
+                    <div className="two-col profile-expanded-content__top-row">
+                      5
+                    </div>
+                    <div className="one-col profile-expanded-content__top-row">
+                      5
+                    </div>
+                    <div className="one-col last-col profile-expanded-content__top-row">
+                      #1
+                    </div>
+                  </div>)} />),
             key: 'cs:~lazypower/bundle/swarm-core-1'
           }]} />
       </div>);
