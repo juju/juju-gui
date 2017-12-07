@@ -234,7 +234,8 @@ Browser: ${navigator.userAgent}`
       `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
     const address = initUtils.jujushellURL(localStorage, db, config);
     if (!address) {
-      let message = 'an unknown error has occurred please file an issue ';
+      // This should never happen.
+      let message = 'an unexpected error has occurred please file an issue ';
       let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
       const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
       if (!jujushell || jujushell.get('pending')) {
