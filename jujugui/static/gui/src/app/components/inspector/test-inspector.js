@@ -875,7 +875,8 @@ describe('Inspector', function() {
         title='Expose'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1276,7 +1277,8 @@ describe('Inspector', function() {
         title='Change version'
         entityId={entityId}
         icon={icon}
-        changeState={sinon.stub()} />
+        changeState={sinon.stub()}
+        hasGetStarted={sinon.stub()} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
