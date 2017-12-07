@@ -11,9 +11,9 @@ class ModalGUISettings extends React.Component {
 
   constructor(props) {
     super(props);
-    const localStorage = this.props.localStorage;
+    const storage = this.props.localStorage;
     const getString = key => {
-      return localStorage.getItem(key) || '';
+      return storage.getItem(key) || '';
     };
     const getBool = key => {
       // As localStorage only handles strings, check for the 'true' string.
