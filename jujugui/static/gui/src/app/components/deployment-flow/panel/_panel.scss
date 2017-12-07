@@ -38,4 +38,8 @@
     @extend %scroll-children;
     padding-top: 40px;
   }
+
+  &__link {
+    font-weight: 400;
+  }
 }
