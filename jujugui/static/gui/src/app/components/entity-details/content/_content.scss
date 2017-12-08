@@ -100,24 +100,28 @@
     }
 
     h1 {
-      font-size: 1.4375rem;
+      font-size: 2.8125rem;
     }
 
     h2 {
-      font-size: 1.4375rem;
+      font-size: 2rem;
     }
 
     h3 {
-      font-size: 1.2rem;
+      font-size: 1.4375rem;
     }
 
     h4 {
-      font-size: 1.1rem;
+      font-size: 1.25rem;
     }
 
-    h5,
-    h6 {
+    h5 {
       font-size: 1rem;
+    }
+
+    h6 {
+      font-size: .8125rem;
+      text-transform: uppercase;
     }
 
     .readme-link {
@@ -313,7 +317,7 @@
 
   &__configuration {
     margin-top: 1.6rem;
-    
+
     .entity-content__header {
       margin-bottom: 1rem;
     }
