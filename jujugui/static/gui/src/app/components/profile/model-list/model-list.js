@@ -69,20 +69,7 @@ class ProfileModelList extends React.Component {
         });
         return;
       }
-      // Split the models into ones owned by the active user and ones
-      // shared to the active user.
-      const models = {
-        owned: [],
-        shared: []
-      };
-      (modelList || []).forEach(model => {
-        if (model.owner === `${this.props.userInfo.profile}@external`) {
-          models.owned.push(model);
-        } else {
-          models.shared.push(model);
-        }
-      });
-      this.setState({models});
+      this.setState({models: modelList});
     });
   }
 
@@ -142,17 +129,37 @@ class ProfileModelList extends React.Component {
     Generates the list of models that are owned by the active user.
     @return {Object} The model list as JSX.
   */
-  _generateMyModels() {
-    const state = this.state.models;
-    const modelList = state && state.owned || [];
-    const rowData = modelList.reduce((models, model, index) => {
+  _generateModels() {
+    const models = this.state.models || [];
+    const rowData = models.reduce((models, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
         return;
       }
       const bdRef = `mymodel-button-dropdown-${index}`;
-      const owner = model.owner || this.props.userInfo.profile;
+      const owner = model.owner.replace('@external', '') || this.props.userInfo.profile;
       const path = `${this.props.baseURL}u/${owner}/${model.name}`;
+      let adminUser;
+      let profileUser;
+      model.users.some(user => {
+        if (user.access === 'admin') {
+          adminUser = user;
+        }
+        if (user.displayName === this.props.userInfo.profile) {
+          profileUser = user;
+        }
+        // We've got all the info we need, exit the loop.
+        if (adminUser && profileUser) {
+          return true;
+        }
+      });
+      const icons = new Map([
+        ['read', 'show_16'],
+        ['write', 'edit_16'],
+        ['admin', 'user_16']
+      ]);
+      const userIsAdmin = profileUser.access === 'admin';
+      const username = userIsAdmin ? 'Me' : adminUser.displayName;
       models.push({
         columns: [{
           content: (
@@ -164,23 +171,33 @@ class ProfileModelList extends React.Component {
               })}>
               {model.name}
             </a>),
-          columnSize: 4
+          columnSize: 3
         }, {
           content: `${model.numMachines} ${model.provider.toUpperCase()}/` +
             model.region.toUpperCase(),
-          columnSize: 4
+          columnSize: 3
+        }, {
+          content: (
+            <div>
+              <SvgIcon name={icons.get(profileUser.access)}
+                size="16" />
+              <span className="profile-model-list__username">
+                {username}
+              </span>
+            </div>),
+          columnSize: 3
         }, {
           content: (
             <DateDisplay
               date={model.lastConnection || '--'}
               relative={true} />),
-          columnSize: 3
+          columnSize: 2
         }, {
-          content: (
+          content: userIsAdmin ? (
             <a onClick={this._destroyModel.bind(this, model, bdRef)}>
               <SvgIcon name="delete_16"
                 size="16" />
-            </a>),
+            </a>) : null,
           columnSize: 1
         }],
         key: model.name
@@ -201,86 +218,19 @@ class ProfileModelList extends React.Component {
         {!rowData.length ? null : <BasicTable
           headers={[{
             content: 'Name',
-            columnSize: 4
+            columnSize: 3
           }, {
             content: 'Machines, cloud/region',
-            columnSize: 4
+            columnSize: 3
+          }, {
+            content: 'Permissions/owner',
+            columnSize: 3
           }, {
             content: 'Last accessed',
-            columnSize: 3
+            columnSize: 2
           }, {
             content: '',
             columnSize: 1
-          }]}
-          rows={rowData} />}
-      </div>);
-  }
-
-  /**
-    Generates the list of models that are owned by another user but shared
-    with the active user.
-    @return {Object} The model list as JSX.
-  */
-  _generateSharedModels() {
-    const state = this.state.models;
-    const modelList = state && state.shared || [];
-    const rowData = modelList.reduce((models, model) => {
-      // Keep only the models that aren't currently in the destroy cycle.
-      if (!model.isAlive) {
-        return;
-      }
-      // Get the model users permissions
-      const modelUser = model.users ? model.users.filter(user =>
-        user.displayName === this.props.userInfo.profile) : null;
-      const owner = model.owner.replace('@external', '');
-      const path = `${this.props.baseURL}u/${owner}/${model.name}`;
-      models.push({
-        columns: [{
-          content: (
-            <a href={path}
-              onClick={this.switchToModel.bind(this, {
-                name: model.name,
-                id: model.id,
-                owner: owner
-              })}>
-              {model.name}
-            </a>),
-          columnSize: 3
-        }, {
-          content: `${model.numMachines} ${model.provider.toUpperCase()}/` +
-            model.region.toUpperCase(),
-          columnSize: 3
-        }, {
-          content: modelUser.length && modelUser[0].access,
-          columnSize: 3
-        }, {
-          content: model.owner,
-          columnSize: 3
-        }],
-        key: model.name
-      });
-      return models;
-    }, []) || [];
-    return (
-      <div>
-        <div className="profile-model-list__header twelve-col">
-          <span className="profile-model-list__header-title">
-            Models shared with me ({rowData.length})
-          </span>
-        </div>
-        {!rowData.length ? null : <BasicTable
-          headers={[{
-            content: 'Name',
-            columnSize: 3
-          }, {
-            content: 'Machines, cloud/region',
-            columnSize: 3
-          }, {
-            content: 'Permissions',
-            columnSize: 3
-          }, {
-            content: 'Owner',
-            columnSize: 3
           }]}
           rows={rowData} />}
       </div>);
@@ -308,8 +258,7 @@ class ProfileModelList extends React.Component {
   render() {
     return (
       <div className="profile-model-list">
-        {this._generateMyModels()}
-        {this._generateSharedModels()}
+        {this._generateModels()}
         {this._generateNotification()}
       </div>);
   }
