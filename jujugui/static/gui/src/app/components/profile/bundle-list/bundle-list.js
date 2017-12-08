@@ -103,6 +103,7 @@ class ProfileBundleList extends React.Component {
         const url = window.jujulib.URL.fromLegacyString(bundle.id);
         const path = url.path();
         const version = `#${url.revision}`;
+        const charmstore = this.props.charmstore;
         return {
           columns: [{
             content: (
@@ -132,7 +133,7 @@ class ProfileBundleList extends React.Component {
             <ProfileExpandedContent
               changeState={this.props.changeState}
               entity={bundle}
-              getDiagramURL={this.props.charmstore.getDiagramURL}
+              getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
               topRow={(
                 <div>
                   <div className="eight-col profile-expanded-content__top-row">
