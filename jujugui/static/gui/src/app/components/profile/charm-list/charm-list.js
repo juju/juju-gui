@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 
 
 const BasicTable = require('../../basic-table/basic-table');
+const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
 
 /**
@@ -90,15 +91,20 @@ class ProfileCharmList extends React.Component {
       const rows = this.state.data.map(charm => {
         const id = charm.id;
         const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
-        const path = window.jujulib.URL.fromLegacyString(id).path();
+        const url = window.jujulib.URL.fromLegacyString(id);
+        const path = url.path();
+        const version = `#${url.revision}`;
+        const series = charm.series.join(', ');
+        const icon = (
+          <img className="profile-charm-list__icon"
+            key="img"
+            src={src}
+            title={charm.name} />);
         return ({
           columns: [{
             content: (
               <div>
-                <img className="profile-charm-list__icon"
-                  key="img"
-                  src={src}
-                  title={charm.name} />
+                {icon}
                 <a href={`${this.props.baseURL}${path}`}
                   key="link"
                   onClick={this._navigateToCharm.bind(this, path)}>
@@ -107,12 +113,28 @@ class ProfileCharmList extends React.Component {
               </div>),
             columnSize: 6
           }, {
-            content: charm.series.join(', '),
+            content: series,
             columnSize: 3
           }, {
-            content: `#${id.slice(-1)[0]}`,
+            content: version,
             columnSize: 3
           }],
+          expandedContent: (
+            <ProfileExpandedContent
+              changeState={this.props.changeState}
+              entity={charm}
+              topRow={(
+                <div>
+                  <div className="six-col profile-expanded-content__top-row">
+                    {icon} {charm.name}
+                  </div>
+                  <div className="three-col profile-expanded-content__top-row">
+                    {series}
+                  </div>
+                  <div className="three-col last-col profile-expanded-content__top-row">
+                    {version}
+                  </div>
+                </div>)} />),
           key: charm.id
         });
       });

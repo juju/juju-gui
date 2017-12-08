@@ -7,6 +7,7 @@ const React = require('react');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmList = require('./charm-list');
+const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -38,11 +39,12 @@ describe('Profile Charm List', function() {
     },
     "name": "privghost"
   }]`;
+  const charms = JSON.parse(rawCharmData);
 
   function renderComponent(options={}) {
     const charmstoreList = (user, cb) => {
       assert.equal(user, 'hatch@external');
-      cb(null, JSON.parse(rawCharmData));
+      cb(null, charms);
     };
     return jsTestUtils.shallowRender(
       <ProfileCharmList
@@ -92,6 +94,24 @@ describe('Profile Charm List', function() {
               content: '#7',
               columnSize: 3
             }],
+            expandedContent: (
+              <ProfileExpandedContent
+                changeState={sinon.stub()}
+                entity={charms[0]}
+                topRow={(
+                  <div>
+                    <div className="six-col profile-expanded-content__top-row">
+                      <img className="profile-charm-list__icon"
+                        src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                        title="failtester" /> failtester
+                    </div>
+                    <div className="three-col profile-expanded-content__top-row">
+                      precise
+                    </div>
+                    <div className="three-col last-col profile-expanded-content__top-row">
+                      #7
+                    </div>
+                  </div>)} />),
             key: 'cs:~hatch/precise/failtester-7'
           }, {
             columns: [{
@@ -113,6 +133,24 @@ describe('Profile Charm List', function() {
               content: '#3',
               columnSize: 3
             }],
+            expandedContent: (
+              <ProfileExpandedContent
+                changeState={sinon.stub()}
+                entity={charms[1]}
+                topRow={(
+                  <div>
+                    <div className="six-col profile-expanded-content__top-row">
+                      <img className="profile-charm-list__icon"
+                        src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                        title="ghost" /> ghost
+                    </div>
+                    <div className="three-col profile-expanded-content__top-row">
+                      xenial
+                    </div>
+                    <div className="three-col last-col profile-expanded-content__top-row">
+                      #3
+                    </div>
+                  </div>)} />),
             key: 'cs:~hatch/xenial/ghost-3'
           }, {
             columns: [{
@@ -134,6 +172,24 @@ describe('Profile Charm List', function() {
               content: '#1',
               columnSize: 3
             }],
+            expandedContent: (
+              <ProfileExpandedContent
+                changeState={sinon.stub()}
+                entity={charms[2]}
+                topRow={(
+                  <div>
+                    <div className="six-col profile-expanded-content__top-row">
+                      <img className="profile-charm-list__icon"
+                        src="/charmstore/~hatch/privghost-1/icon.svg"
+                        title="privghost" /> privghost
+                    </div>
+                    <div className="three-col profile-expanded-content__top-row">
+                      xenial, trusty
+                    </div>
+                    <div className="three-col last-col profile-expanded-content__top-row">
+                      #1
+                    </div>
+                  </div>)} />),
             key: 'cs:~hatch/privghost-1'
           }]} />
       </div>);

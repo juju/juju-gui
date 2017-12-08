@@ -6,24 +6,4 @@
     width: 20px;
     margin: 0 4px 4px 0;
   }
-
-  &__expanded {
-    padding: 20px;
-
-    &-leading {
-      font-weight: 400;
-    }
-  }
-
-  &__permissions {
-    @extend %list-style;
-
-    &-title {
-      margin-top: 20px;
-    }
-  }
-
-  &__permission {
-    margin: 0;
-  }
 }
