@@ -8,6 +8,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
 const Popup = require('../../popup/popup');
+const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 /**
@@ -256,10 +257,19 @@ class ProfileModelList extends React.Component {
   }
 
   render() {
+    let content;
+    if (this.state.loadingModels) {
+      content = (<Spinner />);
+    } else {
+      content = (
+        <div>
+          {this._generateModels()}
+          {this._generateNotification()}
+        </div>);
+    }
     return (
       <div className="profile-model-list">
-        {this._generateModels()}
-        {this._generateNotification()}
+        {content}
       </div>);
   }
 
