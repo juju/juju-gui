@@ -134,7 +134,7 @@ class ProfileModelList extends React.Component {
     const rowData = models.reduce((modelList, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
-        return;
+        return modelList;
       }
       const bdRef = `mymodel-button-dropdown-${index}`;
       const owner = model.owner.replace('@external', '') || this.props.userInfo.profile;

@@ -399,4 +399,119 @@ describe('Profile Model List', function() {
     );
     expect(output).toEqualJSX(expected);
   });
+
+  it('does not show models that are being destroyed', () => {
+    const models = [{isAlive: false}];
+    models.push(JSON.parse(`{
+      "id": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
+      "name": "mymodel",
+      "series": "xenial",
+      "provider": "ec2",
+      "uuid": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
+      "agentVersion": "",
+      "sla": "",
+      "slaOwner": "",
+      "status": "available",
+      "statusInfo": "",
+      "controllerUUID": "a030379a-940f-4760-8fce-3062b41a04e9",
+      "owner": "tester@external",
+      "credential": "aws_tester@external_base",
+      "credentialName": "base",
+      "region": "eu-west-1",
+      "cloud": "aws",
+      "numMachines": 0,
+      "users": [{
+        "name": "tester@external",
+        "displayName": "tester",
+        "domain": "Ubuntu SSO",
+        "lastConnection": "2017-07-06T14:47:03.000Z",
+        "access": "admin"
+      }, {
+        "name": "tester2@external",
+        "displayName": "tester2",
+        "domain": "Ubuntu SSO",
+        "lastConnection": "2017-05-25T18:53:35.000Z",
+        "access": "read"
+      }],
+      "life": "alive",
+      "isAlive": true,
+      "isController": false,
+      "lastConnection": "2017-07-06T14:47:03.000Z"
+    }`));
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, models)
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
+        <div>
+          <div className="profile-model-list__header twelve-col">
+            <CreateModelButton
+              title="Start a new model"
+              changeState={instance.props.changeState}
+              switchModel={instance.props.switchModel} />
+            <span className="profile-model-list__header-title">
+            My models (1)
+            </span>
+          </div>
+          <BasicTable
+            headers={[{
+              content: 'Name',
+              columnSize: 3
+            }, {
+              content: 'Machines, cloud/region',
+              columnSize: 3
+            }, {
+              content: 'Permissions/owner',
+              columnSize: 3
+            }, {
+              content: 'Last accessed',
+              columnSize: 2
+            }, {
+              content: '',
+              columnSize: 1
+            }]}
+            rows={[{
+              columns: [{
+                content: (
+                  <a href="/gui/u/tester/mymodel"
+                    onClick={sinon.stub()}>
+                    mymodel
+                  </a>),
+                columnSize: 3
+              }, {
+                content: '0 EC2/EU-WEST-1',
+                columnSize: 3
+              }, {
+                content: (
+                  <div>
+                    <SvgIcon name='user_16'
+                      size="16" />
+                    <span className="profile-model-list__username">
+                      Me
+                    </span>
+                  </div>),
+                columnSize: 3
+              }, {
+                content: (
+                  <DateDisplay
+                    date='2017-07-06T14:47:03.000Z'
+                    relative={true} />),
+                columnSize: 2
+              }, {
+                content: (
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon name="delete_16"
+                      size="16" />
+                  </a>),
+                columnSize: 1
+              }],
+              key: 'mymodel'
+            }]} />
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
 });
