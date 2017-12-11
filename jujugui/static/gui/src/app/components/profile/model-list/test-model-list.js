@@ -7,6 +7,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
 const ProfileModelList = require('./model-list');
+const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -510,6 +511,19 @@ describe('Profile Model List', function() {
               key: 'mymodel'
             }]} />
         </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('displays a spinner when loading', () => {
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub()
+    });
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-model-list">
+        <Spinner />
       </div>
     );
     expect(output).toEqualJSX(expected);
