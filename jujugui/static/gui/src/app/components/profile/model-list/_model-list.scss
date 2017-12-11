@@ -1,17 +1,6 @@
 .profile-model-list {
-  width: 766px;
-
   .create-new-model {
     float: right;
-  }
-
-  &__list:first-of-type {
-    margin-top: 0px;
-  }
-
-  &__list {
-    @extend %list-style;
-    margin-top: 30px;
   }
 
   &__header {
@@ -22,13 +11,7 @@
     }
   }
 
-  &__table-header {
-    border-bottom: 1px solid $mid-grey;
-    padding-bottom: 10px;
-  }
-
-  &__row {
-    border-bottom: 1px solid $mid-grey;
-    padding-bottom: 10px;
+  &__username {
+    margin-left: 14px;
   }
 }

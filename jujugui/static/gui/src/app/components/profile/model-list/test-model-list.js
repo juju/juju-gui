@@ -105,6 +105,12 @@ describe('Profile Model List', function() {
       "domain": "Ubuntu SSO",
       "lastConnection": null,
       "access": "read"
+    }, {
+      "name": "tester2@external",
+      "displayName": "tester2",
+      "domain": "Ubuntu SSO",
+      "lastConnection": null,
+      "access": "admin"
     }],
     "life": "alive",
     "isAlive": true,
@@ -177,19 +183,22 @@ describe('Profile Model List', function() {
               changeState={instance.props.changeState}
               switchModel={instance.props.switchModel} />
             <span className="profile-model-list__header-title">
-            My models (2)
+            My models (4)
             </span>
           </div>
           <BasicTable
             headers={[{
               content: 'Name',
-              columnSize: 4
+              columnSize: 3
             }, {
               content: 'Machines, cloud/region',
-              columnSize: 4
+              columnSize: 3
+            }, {
+              content: 'Permissions/owner',
+              columnSize: 3
             }, {
               content: 'Last accessed',
-              columnSize: 3
+              columnSize: 2
             }, {
               content: '',
               columnSize: 1
@@ -197,20 +206,30 @@ describe('Profile Model List', function() {
             rows={[{
               columns: [{
                 content: (
-                  <a href="/gui/u/tester@external/mymodel"
+                  <a href="/gui/u/tester/mymodel"
                     onClick={sinon.stub()}>
                     mymodel
                   </a>),
-                columnSize: 4
+                columnSize: 3
               }, {
                 content: '0 EC2/EU-WEST-1',
-                columnSize: 4
+                columnSize: 3
+              }, {
+                content: (
+                  <div>
+                    <SvgIcon name='user_16'
+                      size="16" />
+                    <span className="profile-model-list__username">
+                      Me
+                    </span>
+                  </div>),
+                columnSize: 3
               }, {
                 content: (
                   <DateDisplay
                     date='2017-07-06T14:47:03.000Z'
                     relative={true} />),
-                columnSize: 3
+                columnSize: 2
               }, {
                 content: (
                   <a onClick={sinon.stub()}>
@@ -223,20 +242,30 @@ describe('Profile Model List', function() {
             }, {
               columns: [{
                 content: (
-                  <a href="/gui/u/tester@external/mymodel2"
+                  <a href="/gui/u/tester/mymodel2"
                     onClick={sinon.stub()}>
                     mymodel2
                   </a>),
-                columnSize: 4
+                columnSize: 3
               }, {
                 content: '0 GCE/US-CENTRAL1',
-                columnSize: 4
+                columnSize: 3
+              }, {
+                content: (
+                  <div>
+                    <SvgIcon name='user_16'
+                      size="16" />
+                    <span className="profile-model-list__username">
+                      Me
+                    </span>
+                  </div>),
+                columnSize: 3
               }, {
                 content: (
                   <DateDisplay
                     date='2017-07-06T16:26:47.000Z'
                     relative={true} />),
-                columnSize: 3
+                columnSize: 2
               }, {
                 content: (
                   <a onClick={sinon.stub()}>
@@ -246,29 +275,7 @@ describe('Profile Model List', function() {
                 columnSize: 1
               }],
               key: 'mymodel2'
-            }]} />
-        </div>
-        <div>
-          <div className="profile-model-list__header twelve-col">
-            <span className="profile-model-list__header-title">
-              Models shared with me (2)
-            </span>
-          </div>
-          <BasicTable
-            headers={[{
-              content: 'Name',
-              columnSize: 3
             }, {
-              content: 'Machines, cloud/region',
-              columnSize: 3
-            }, {
-              content: 'Permissions',
-              columnSize: 3
-            }, {
-              content: 'Owner',
-              columnSize: 3
-            }]}
-            rows={[{
               columns: [{
                 content: (
                   <a href="/gui/u/tester2/test-db"
@@ -280,11 +287,24 @@ describe('Profile Model List', function() {
                 content: '2 GCE/US-EAST1',
                 columnSize: 3
               }, {
-                content: 'read',
+                content: (
+                  <div>
+                    <SvgIcon name='show_16'
+                      size="16" />
+                    <span className="profile-model-list__username">
+                      tester2
+                    </span>
+                  </div>),
                 columnSize: 3
               }, {
-                content: 'tester2@external',
-                columnSize: 3
+                content: (
+                  <DateDisplay
+                    date='--'
+                    relative={true} />),
+                columnSize: 2
+              }, {
+                content: null,
+                columnSize: 1
               }],
               key: 'test-db'
             }, {
@@ -299,11 +319,28 @@ describe('Profile Model List', function() {
                 content: '25 GCE/US-EAST1',
                 columnSize: 3
               }, {
-                content: 'admin',
+                content: (
+                  <div>
+                    <SvgIcon name='user_16'
+                      size="16" />
+                    <span className="profile-model-list__username">
+                      Me
+                    </span>
+                  </div>),
                 columnSize: 3
               }, {
-                content: 'tester3@external',
-                columnSize: 3
+                content: (
+                  <DateDisplay
+                    date='2017-07-05T01:42:05.000Z'
+                    relative={true} />),
+                columnSize: 2
+              }, {
+                content: (
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon name="delete_16"
+                      size="16" />
+                  </a>),
+                columnSize: 1
               }],
               key: 'website'
             }]} />
@@ -333,14 +370,6 @@ describe('Profile Model List', function() {
           </div>
           {null}
         </div>
-        <div>
-          <div className="profile-model-list__header twelve-col">
-            <span className="profile-model-list__header-title">
-              Models shared with me (0)
-            </span>
-          </div>
-          {null}
-        </div>
       </div>
     );
     expect(output).toEqualJSX(expected);
@@ -366,13 +395,120 @@ describe('Profile Model List', function() {
           </div>
           {null}
         </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('does not show models that are being destroyed', () => {
+    const models = [{isAlive: false}];
+    models.push(JSON.parse(`{
+      "id": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
+      "name": "mymodel",
+      "series": "xenial",
+      "provider": "ec2",
+      "uuid": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
+      "agentVersion": "",
+      "sla": "",
+      "slaOwner": "",
+      "status": "available",
+      "statusInfo": "",
+      "controllerUUID": "a030379a-940f-4760-8fce-3062b41a04e9",
+      "owner": "tester@external",
+      "credential": "aws_tester@external_base",
+      "credentialName": "base",
+      "region": "eu-west-1",
+      "cloud": "aws",
+      "numMachines": 0,
+      "users": [{
+        "name": "tester@external",
+        "displayName": "tester",
+        "domain": "Ubuntu SSO",
+        "lastConnection": "2017-07-06T14:47:03.000Z",
+        "access": "admin"
+      }, {
+        "name": "tester2@external",
+        "displayName": "tester2",
+        "domain": "Ubuntu SSO",
+        "lastConnection": "2017-05-25T18:53:35.000Z",
+        "access": "read"
+      }],
+      "life": "alive",
+      "isAlive": true,
+      "isController": false,
+      "lastConnection": "2017-07-06T14:47:03.000Z"
+    }`));
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, models)
+    });
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
         <div>
           <div className="profile-model-list__header twelve-col">
+            <CreateModelButton
+              title="Start a new model"
+              changeState={instance.props.changeState}
+              switchModel={instance.props.switchModel} />
             <span className="profile-model-list__header-title">
-              Models shared with me (0)
+            My models (1)
             </span>
           </div>
-          {null}
+          <BasicTable
+            headers={[{
+              content: 'Name',
+              columnSize: 3
+            }, {
+              content: 'Machines, cloud/region',
+              columnSize: 3
+            }, {
+              content: 'Permissions/owner',
+              columnSize: 3
+            }, {
+              content: 'Last accessed',
+              columnSize: 2
+            }, {
+              content: '',
+              columnSize: 1
+            }]}
+            rows={[{
+              columns: [{
+                content: (
+                  <a href="/gui/u/tester/mymodel"
+                    onClick={sinon.stub()}>
+                    mymodel
+                  </a>),
+                columnSize: 3
+              }, {
+                content: '0 EC2/EU-WEST-1',
+                columnSize: 3
+              }, {
+                content: (
+                  <div>
+                    <SvgIcon name='user_16'
+                      size="16" />
+                    <span className="profile-model-list__username">
+                      Me
+                    </span>
+                  </div>),
+                columnSize: 3
+              }, {
+                content: (
+                  <DateDisplay
+                    date='2017-07-06T14:47:03.000Z'
+                    relative={true} />),
+                columnSize: 2
+              }, {
+                content: (
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon name="delete_16"
+                      size="16" />
+                  </a>),
+                columnSize: 1
+              }],
+              key: 'mymodel'
+            }]} />
         </div>
       </div>
     );
