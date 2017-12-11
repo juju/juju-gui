@@ -131,7 +131,7 @@ class ProfileModelList extends React.Component {
   */
   _generateModels() {
     const models = this.state.models || [];
-    const rowData = models.reduce((models, model, index) => {
+    const rowData = models.reduce((modelList, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
         return;
@@ -160,7 +160,7 @@ class ProfileModelList extends React.Component {
       ]);
       const userIsAdmin = profileUser.access === 'admin';
       const username = userIsAdmin ? 'Me' : adminUser.displayName;
-      models.push({
+      modelList.push({
         columns: [{
           content: (
             <a href={path}
@@ -202,7 +202,7 @@ class ProfileModelList extends React.Component {
         }],
         key: model.name
       });
-      return models;
+      return modelList;
     }, []) || [];
     return (
       <div>
