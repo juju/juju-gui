@@ -353,7 +353,9 @@ Browser: ${navigator.userAgent}`
           baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
           charmstore={charmstore}
+          deployTarget={this.deployTarget.bind(this, charmstore)}
           facadesExist={facadesExist}
+          getModelName={this._getModelName.bind(this)}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           destroyModels={this._bound.destroyModels}
           switchModel={this._bound.switchModel}
@@ -637,7 +639,6 @@ Browser: ${navigator.userAgent}`
       // Get the entity and return the XHR.
       return charmstore.getEntity(url.legacyPath(), callback);
     };
-    const getModelName = () => this.modelAPI.get('environmentName');
     ReactDOM.render(
       <Charmbrowser
         acl={this.acl}
@@ -654,7 +655,7 @@ Browser: ${navigator.userAgent}`
         getEntity={getEntity}
         getFile={charmstore.getFile.bind(charmstore)}
         getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-        getModelName={getModelName}
+        getModelName={this._getModelName}
         gisf={this.applicationConfig.gisf}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         renderMarkdown={marked}

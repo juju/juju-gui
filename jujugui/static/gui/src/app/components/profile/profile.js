@@ -73,10 +73,13 @@ Profile.sectionsMap = new Map([
       const propTypes = ProfileCharmList.propTypes;
       return (
         <ProfileCharmList
+          acl={component.props.acl}
           addNotification={component.props.addNotification}
           baseURL={component.props.baseURL}
           changeState={component.props.changeState}
           charmstore={shapeup.fromShape(component.props.charmstore, propTypes.charmstore)}
+          deployTarget={component.props.deployTarget}
+          getModelName={component.props.getModelName}
           user={component.props.userInfo.external} />);
     }
   }],
@@ -86,10 +89,13 @@ Profile.sectionsMap = new Map([
       const propTypes = ProfileBundleList.propTypes;
       return (
         <ProfileBundleList
+          acl={component.props.acl}
           addNotification={component.props.addNotification}
           baseURL={component.props.baseURL}
           changeState={component.props.changeState}
           charmstore={shapeup.fromShape(component.props.charmstore, propTypes.charmstore)}
+          deployTarget={component.props.deployTarget}
+          getModelName={component.props.getModelName}
           user={component.props.userInfo.external} />);
     }
   }],
@@ -100,14 +106,16 @@ Profile.sectionsMap = new Map([
 ]);
 
 Profile.propTypes = {
-  acl: PropTypes.object,
+  acl: PropTypes.object.isRequired,
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
+  deployTarget: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
+  getModelName: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   // userInfo must have the following attributes:
