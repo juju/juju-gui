@@ -30,20 +30,9 @@ describe('ModalGUISettings', function() {
   }
 
   // Return a node wit the component expected output.
-  function expectedOutput(instance, includeShell=false) {
+  function expectedOutput(instance) {
     const handleChange = instance._handleChange.bind(instance);
     const handleSave = instance._handleSave.bind(instance);
-    const shellNode = includeShell ? (
-      <p>
-        <label htmlFor="jujushell-url">
-          <input type="text" name="jujushell-url"
-            id="jujushell-url"
-            onChange={handleChange}
-            value="" />&nbsp;
-          DNS name for the Juju Shell.
-        </label>
-      </p>
-    ) : null;
     return (
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
@@ -81,7 +70,15 @@ describe('ModalGUISettings', function() {
               Default to not automatically place units on commit.
             </label>
           </p>
-          {shellNode}
+          <p>
+            <label htmlFor="jujushell-url">
+              <input type="text" name="jujushell-url"
+                id="jujushell-url"
+                onChange={handleChange}
+                value="" />&nbsp;
+              DNS name for the Juju Shell.
+            </label>
+          </p>
           <p>
             <small>
               NOTE: You will need to reload for changes to take effect.
@@ -98,11 +95,6 @@ describe('ModalGUISettings', function() {
   it('renders', function() {
     const comp = render();
     expect(comp.output).toEqualJSX(expectedOutput(comp.instance));
-  });
-
-  it('renders including the jujushell URL input', function() {
-    const comp = render({flags: {terminal: true}});
-    expect(comp.output).toEqualJSX(expectedOutput(comp.instance, true));
   });
 
   it('saves state', function() {

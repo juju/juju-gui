@@ -132,10 +132,17 @@ const ComponentRenderersMixin = superclass => class extends superclass {
   */
   _renderModelActions() {
     const modelAPI = this.modelAPI;
+    const displayTerminalButton = (
+      this.applicationConfig.flags.terminal ||
+      // Always allow for opening the terminal if the user specified a
+      // jujushell URL in the GUI settings.
+      localStorage.getItem('jujushell-url') ||
+      false
+    );
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        displayTerminalButton={this.applicationConfig.flags.terminal || false}
+        displayTerminalButton={displayTerminalButton}
         appState={this.state}
         changeState={this._bound.changeState}
         exportEnvironmentFile={
@@ -424,7 +431,6 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <ModalGUISettings
         closeModal={this._clearSettingsModal.bind(this)}
-        flags={this.applicationConfig.flags}
         localStorage={localStorage} />,
       document.getElementById('modal-gui-settings'));
   }
