@@ -26,7 +26,9 @@ describe('Profile', function() {
           list: sinon.stub(),
           url: '/charmstore'
         }}
+        deployTarget={options.deployTarget || sinon.stub()}
         facadesExist={true}
+        getModelName={options.getModelName || sinon.stub()}
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}
         switchModel={sinon.stub()}

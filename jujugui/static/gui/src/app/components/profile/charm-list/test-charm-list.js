@@ -48,6 +48,7 @@ describe('Profile Charm List', function() {
     };
     return jsTestUtils.shallowRender(
       <ProfileCharmList
+        acl={options.acl || {}}
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -55,11 +56,14 @@ describe('Profile Charm List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
+        deployTarget={options.deployTarget || sinon.stub()}
+        getModelName={options.getModelName || sinon.stub()}
         user="hatch@external" />, true);
   }
 
   it('can render', () => {
     const renderer = renderComponent();
+    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-charm-list">
@@ -96,8 +100,11 @@ describe('Profile Charm List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={charms[0]}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="six-col profile-expanded-content__top-row">
@@ -135,8 +142,11 @@ describe('Profile Charm List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={charms[1]}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="six-col profile-expanded-content__top-row">
@@ -174,8 +184,11 @@ describe('Profile Charm List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={charms[2]}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="six-col profile-expanded-content__top-row">

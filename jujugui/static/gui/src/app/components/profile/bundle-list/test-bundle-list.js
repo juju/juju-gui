@@ -67,6 +67,7 @@ describe('Profile Bundle List', function() {
     };
     return jsTestUtils.shallowRender(
       <ProfileBundleList
+        acl={options.acl || {}}
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -75,11 +76,14 @@ describe('Profile Bundle List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
+        deployTarget={options.deployTarget || sinon.stub()}
+        getModelName={options.getModelName || sinon.stub()}
         user="lazypower@external" />, true);
   }
 
   it('can render', () => {
     const renderer = renderComponent();
+    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-bundle-list">
@@ -135,9 +139,12 @@ describe('Profile Bundle List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={bundles[0]}
                 getDiagramURL={sinon.stub()}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="eight-col profile-expanded-content__top-row">
@@ -186,9 +193,12 @@ describe('Profile Bundle List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={bundles[1]}
                 getDiagramURL={sinon.stub()}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="eight-col profile-expanded-content__top-row">
