@@ -69,18 +69,6 @@ class ModalGUISettings extends React.Component {
     const props = this.props;
     const state = this.state;
     const handleChange = this._handleChange.bind(this);
-    let jujushellNode = null;
-    if (props.flags.terminal) {
-      jujushellNode = (<p>
-        <label htmlFor="jujushell-url">
-          <input type="text" name="jujushell-url"
-            id="jujushell-url"
-            onChange={handleChange}
-            value={state['jujushell-url']} />&nbsp;
-          DNS name for the Juju Shell.
-        </label>
-      </p>);
-    }
     return (
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
@@ -118,7 +106,15 @@ class ModalGUISettings extends React.Component {
               Default to not automatically place units on commit.
             </label>
           </p>
-          {jujushellNode}
+          <p>
+            <label htmlFor="jujushell-url">
+              <input type="text" name="jujushell-url"
+                id="jujushell-url"
+                onChange={handleChange}
+                value={state['jujushell-url']} />&nbsp;
+              DNS name for the Juju Shell.
+            </label>
+          </p>
           <p>
             <small>
               NOTE: You will need to reload for changes to take effect.
@@ -135,7 +131,6 @@ class ModalGUISettings extends React.Component {
 
 ModalGUISettings.propTypes = {
   closeModal: PropTypes.func.isRequired,
-  flags: PropTypes.object.isRequired,
   localStorage: PropTypes.object.isRequired
 };
 

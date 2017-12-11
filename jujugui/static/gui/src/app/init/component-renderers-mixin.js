@@ -424,7 +424,6 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <ModalGUISettings
         closeModal={this._clearSettingsModal.bind(this)}
-        flags={this.applicationConfig.flags}
         localStorage={localStorage} />,
       document.getElementById('modal-gui-settings'));
   }
