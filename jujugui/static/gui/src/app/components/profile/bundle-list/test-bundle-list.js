@@ -2,6 +2,7 @@
 
 'use strict';
 const React = require('react');
+const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
@@ -59,6 +60,11 @@ describe('Profile Bundle List', function() {
     "unitCount": 5
   }]`;
   const bundles = JSON.parse(rawBundleData);
+  let acl;
+
+  beforeEach(() => {
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
+  });
 
   function renderComponent(options={}) {
     const charmstoreList = (user, cb) => {
@@ -67,7 +73,7 @@ describe('Profile Bundle List', function() {
     };
     return jsTestUtils.shallowRender(
       <ProfileBundleList
-        acl={options.acl || {}}
+        acl={options.acl || acl}
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}

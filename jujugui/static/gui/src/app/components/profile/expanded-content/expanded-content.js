@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const GenericButton = require('../../generic-button/generic-button');
@@ -132,7 +133,9 @@ class ProfileExpandedContent extends React.Component {
 };
 
 ProfileExpandedContent.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   changeState: PropTypes.func.isRequired,
   deployTarget: PropTypes.func.isRequired,
   entity: PropTypes.object.isRequired,

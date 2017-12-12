@@ -3,7 +3,6 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-
 const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');

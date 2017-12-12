@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const ProfileNavigation = require('./navigation/navigation');
 const ProfileHeader = require('./header/header');
@@ -10,8 +11,6 @@ const ProfileModelList = require('./model-list/model-list');
 const ProfileCharmList = require('./charm-list/charm-list');
 const ProfileBundleList = require('./bundle-list/bundle-list');
 const Panel = require('../panel/panel');
-
-const shapeup = require('shapeup');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
@@ -106,7 +105,9 @@ Profile.sectionsMap = new Map([
 ]);
 
 Profile.propTypes = {
-  acl: PropTypes.object.isRequired,
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,

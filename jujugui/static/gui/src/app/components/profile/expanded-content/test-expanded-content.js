@@ -2,6 +2,7 @@
 
 'use strict';
 const React = require('react');
+const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const GenericButton = require('../../generic-button/generic-button');
@@ -50,12 +51,17 @@ describe('Profile expanded content', function() {
     },
     "name": "failtester"
   }`;
+  let acl;
+
+  beforeEach(() => {
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
+  });
 
   function renderComponent(options={}) {
     const entity = JSON.parse(options.entity);
     return jsTestUtils.shallowRender(
       <ProfileExpandedContent
-        acl={options.acl || {isReadOnly: sinon.stub().returns(false)}}
+        acl={options.acl || acl}
         changeState={options.changeState || sinon.stub()}
         deployTarget={options.deployTarget || sinon.stub()}
         entity={entity}
