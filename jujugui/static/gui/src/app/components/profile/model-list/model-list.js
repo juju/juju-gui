@@ -261,10 +261,11 @@ class ProfileModelList extends React.Component {
     if (this.state.loadingModels) {
       content = (<Spinner />);
     } else {
-      content = [
-        this._generateModels(),
-        this._generateNotification()
-      ];
+      content = (
+        <div>
+          {this._generateModels()}
+          {this._generateNotification()}
+        </div>);
     }
     return (
       <div className="profile-model-list">

@@ -178,173 +178,175 @@ describe('Profile Model List', function() {
     const expected = (
       <div className="profile-model-list">
         <div>
-          <div className="profile-model-list__header twelve-col">
-            <CreateModelButton
-              title="Start a new model"
-              changeState={instance.props.changeState}
-              switchModel={instance.props.switchModel} />
-            <span className="profile-model-list__header-title">
-            My models (4)
-            </span>
+          <div>
+            <div className="profile-model-list__header twelve-col">
+              <CreateModelButton
+                title="Start a new model"
+                changeState={instance.props.changeState}
+                switchModel={instance.props.switchModel} />
+              <span className="profile-model-list__header-title">
+              My models (4)
+              </span>
+            </div>
+            <BasicTable
+              headers={[{
+                content: 'Name',
+                columnSize: 3
+              }, {
+                content: 'Machines, cloud/region',
+                columnSize: 3
+              }, {
+                content: 'Permissions/owner',
+                columnSize: 3
+              }, {
+                content: 'Last accessed',
+                columnSize: 2
+              }, {
+                content: '',
+                columnSize: 1
+              }]}
+              rows={[{
+                columns: [{
+                  content: (
+                    <a href="/gui/u/tester/mymodel"
+                      onClick={sinon.stub()}>
+                      mymodel
+                    </a>),
+                  columnSize: 3
+                }, {
+                  content: '0 EC2/EU-WEST-1',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <div>
+                      <SvgIcon name='user_16'
+                        size="16" />
+                      <span className="profile-model-list__username">
+                        Me
+                      </span>
+                    </div>),
+                  columnSize: 3
+                }, {
+                  content: (
+                    <DateDisplay
+                      date='2017-07-06T14:47:03.000Z'
+                      relative={true} />),
+                  columnSize: 2
+                }, {
+                  content: (
+                    <a onClick={sinon.stub()}>
+                      <SvgIcon name="delete_16"
+                        size="16" />
+                    </a>),
+                  columnSize: 1
+                }],
+                key: 'mymodel'
+              }, {
+                columns: [{
+                  content: (
+                    <a href="/gui/u/tester/mymodel2"
+                      onClick={sinon.stub()}>
+                      mymodel2
+                    </a>),
+                  columnSize: 3
+                }, {
+                  content: '0 GCE/US-CENTRAL1',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <div>
+                      <SvgIcon name='user_16'
+                        size="16" />
+                      <span className="profile-model-list__username">
+                        Me
+                      </span>
+                    </div>),
+                  columnSize: 3
+                }, {
+                  content: (
+                    <DateDisplay
+                      date='2017-07-06T16:26:47.000Z'
+                      relative={true} />),
+                  columnSize: 2
+                }, {
+                  content: (
+                    <a onClick={sinon.stub()}>
+                      <SvgIcon name="delete_16"
+                        size="16" />
+                    </a>),
+                  columnSize: 1
+                }],
+                key: 'mymodel2'
+              }, {
+                columns: [{
+                  content: (
+                    <a href="/gui/u/tester2/test-db"
+                      onClick={sinon.stub()}>
+                      test-db
+                    </a>),
+                  columnSize: 3
+                }, {
+                  content: '2 GCE/US-EAST1',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <div>
+                      <SvgIcon name='show_16'
+                        size="16" />
+                      <span className="profile-model-list__username">
+                        tester2
+                      </span>
+                    </div>),
+                  columnSize: 3
+                }, {
+                  content: (
+                    <DateDisplay
+                      date='--'
+                      relative={true} />),
+                  columnSize: 2
+                }, {
+                  content: null,
+                  columnSize: 1
+                }],
+                key: 'test-db'
+              }, {
+                columns: [{
+                  content: (
+                    <a href="/gui/u/tester3/website"
+                      onClick={sinon.stub()}>
+                      website
+                    </a>),
+                  columnSize: 3
+                }, {
+                  content: '25 GCE/US-EAST1',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <div>
+                      <SvgIcon name='user_16'
+                        size="16" />
+                      <span className="profile-model-list__username">
+                        Me
+                      </span>
+                    </div>),
+                  columnSize: 3
+                }, {
+                  content: (
+                    <DateDisplay
+                      date='2017-07-05T01:42:05.000Z'
+                      relative={true} />),
+                  columnSize: 2
+                }, {
+                  content: (
+                    <a onClick={sinon.stub()}>
+                      <SvgIcon name="delete_16"
+                        size="16" />
+                    </a>),
+                  columnSize: 1
+                }],
+                key: 'website'
+              }]} />
           </div>
-          <BasicTable
-            headers={[{
-              content: 'Name',
-              columnSize: 3
-            }, {
-              content: 'Machines, cloud/region',
-              columnSize: 3
-            }, {
-              content: 'Permissions/owner',
-              columnSize: 3
-            }, {
-              content: 'Last accessed',
-              columnSize: 2
-            }, {
-              content: '',
-              columnSize: 1
-            }]}
-            rows={[{
-              columns: [{
-                content: (
-                  <a href="/gui/u/tester/mymodel"
-                    onClick={sinon.stub()}>
-                    mymodel
-                  </a>),
-                columnSize: 3
-              }, {
-                content: '0 EC2/EU-WEST-1',
-                columnSize: 3
-              }, {
-                content: (
-                  <div>
-                    <SvgIcon name='user_16'
-                      size="16" />
-                    <span className="profile-model-list__username">
-                      Me
-                    </span>
-                  </div>),
-                columnSize: 3
-              }, {
-                content: (
-                  <DateDisplay
-                    date='2017-07-06T14:47:03.000Z'
-                    relative={true} />),
-                columnSize: 2
-              }, {
-                content: (
-                  <a onClick={sinon.stub()}>
-                    <SvgIcon name="delete_16"
-                      size="16" />
-                  </a>),
-                columnSize: 1
-              }],
-              key: 'mymodel'
-            }, {
-              columns: [{
-                content: (
-                  <a href="/gui/u/tester/mymodel2"
-                    onClick={sinon.stub()}>
-                    mymodel2
-                  </a>),
-                columnSize: 3
-              }, {
-                content: '0 GCE/US-CENTRAL1',
-                columnSize: 3
-              }, {
-                content: (
-                  <div>
-                    <SvgIcon name='user_16'
-                      size="16" />
-                    <span className="profile-model-list__username">
-                      Me
-                    </span>
-                  </div>),
-                columnSize: 3
-              }, {
-                content: (
-                  <DateDisplay
-                    date='2017-07-06T16:26:47.000Z'
-                    relative={true} />),
-                columnSize: 2
-              }, {
-                content: (
-                  <a onClick={sinon.stub()}>
-                    <SvgIcon name="delete_16"
-                      size="16" />
-                  </a>),
-                columnSize: 1
-              }],
-              key: 'mymodel2'
-            }, {
-              columns: [{
-                content: (
-                  <a href="/gui/u/tester2/test-db"
-                    onClick={sinon.stub()}>
-                    test-db
-                  </a>),
-                columnSize: 3
-              }, {
-                content: '2 GCE/US-EAST1',
-                columnSize: 3
-              }, {
-                content: (
-                  <div>
-                    <SvgIcon name='show_16'
-                      size="16" />
-                    <span className="profile-model-list__username">
-                      tester2
-                    </span>
-                  </div>),
-                columnSize: 3
-              }, {
-                content: (
-                  <DateDisplay
-                    date='--'
-                    relative={true} />),
-                columnSize: 2
-              }, {
-                content: null,
-                columnSize: 1
-              }],
-              key: 'test-db'
-            }, {
-              columns: [{
-                content: (
-                  <a href="/gui/u/tester3/website"
-                    onClick={sinon.stub()}>
-                    website
-                  </a>),
-                columnSize: 3
-              }, {
-                content: '25 GCE/US-EAST1',
-                columnSize: 3
-              }, {
-                content: (
-                  <div>
-                    <SvgIcon name='user_16'
-                      size="16" />
-                    <span className="profile-model-list__username">
-                      Me
-                    </span>
-                  </div>),
-                columnSize: 3
-              }, {
-                content: (
-                  <DateDisplay
-                    date='2017-07-05T01:42:05.000Z'
-                    relative={true} />),
-                columnSize: 2
-              }, {
-                content: (
-                  <a onClick={sinon.stub()}>
-                    <SvgIcon name="delete_16"
-                      size="16" />
-                  </a>),
-                columnSize: 1
-              }],
-              key: 'website'
-            }]} />
         </div>
       </div>
     );
@@ -360,16 +362,18 @@ describe('Profile Model List', function() {
     const expected = (
       <div className="profile-model-list">
         <div>
-          <div className="profile-model-list__header twelve-col">
-            <CreateModelButton
-              title="Start a new model"
-              changeState={instance.props.changeState}
-              switchModel={instance.props.switchModel} />
-            <span className="profile-model-list__header-title">
-            My models (0)
-            </span>
+          <div>
+            <div className="profile-model-list__header twelve-col">
+              <CreateModelButton
+                title="Start a new model"
+                changeState={instance.props.changeState}
+                switchModel={instance.props.switchModel} />
+              <span className="profile-model-list__header-title">
+              My models (0)
+              </span>
+            </div>
+            {null}
           </div>
-          {null}
         </div>
       </div>
     );
@@ -385,16 +389,18 @@ describe('Profile Model List', function() {
     const expected = (
       <div className="profile-model-list">
         <div>
-          <div className="profile-model-list__header twelve-col">
-            <CreateModelButton
-              title="Start a new model"
-              changeState={instance.props.changeState}
-              switchModel={instance.props.switchModel} />
-            <span className="profile-model-list__header-title">
-            My models (0)
-            </span>
+          <div>
+            <div className="profile-model-list__header twelve-col">
+              <CreateModelButton
+                title="Start a new model"
+                changeState={instance.props.changeState}
+                switchModel={instance.props.switchModel} />
+              <span className="profile-model-list__header-title">
+              My models (0)
+              </span>
+            </div>
+            {null}
           </div>
-          {null}
         </div>
       </div>
     );
@@ -447,69 +453,71 @@ describe('Profile Model List', function() {
     const expected = (
       <div className="profile-model-list">
         <div>
-          <div className="profile-model-list__header twelve-col">
-            <CreateModelButton
-              title="Start a new model"
-              changeState={instance.props.changeState}
-              switchModel={instance.props.switchModel} />
-            <span className="profile-model-list__header-title">
-            My models (1)
-            </span>
-          </div>
-          <BasicTable
-            headers={[{
-              content: 'Name',
-              columnSize: 3
-            }, {
-              content: 'Machines, cloud/region',
-              columnSize: 3
-            }, {
-              content: 'Permissions/owner',
-              columnSize: 3
-            }, {
-              content: 'Last accessed',
-              columnSize: 2
-            }, {
-              content: '',
-              columnSize: 1
-            }]}
-            rows={[{
-              columns: [{
-                content: (
-                  <a href="/gui/u/tester/mymodel"
-                    onClick={sinon.stub()}>
-                    mymodel
-                  </a>),
+          <div>
+            <div className="profile-model-list__header twelve-col">
+              <CreateModelButton
+                title="Start a new model"
+                changeState={instance.props.changeState}
+                switchModel={instance.props.switchModel} />
+              <span className="profile-model-list__header-title">
+              My models (1)
+              </span>
+            </div>
+            <BasicTable
+              headers={[{
+                content: 'Name',
                 columnSize: 3
               }, {
-                content: '0 EC2/EU-WEST-1',
+                content: 'Machines, cloud/region',
                 columnSize: 3
               }, {
-                content: (
-                  <div>
-                    <SvgIcon name='user_16'
-                      size="16" />
-                    <span className="profile-model-list__username">
-                      Me
-                    </span>
-                  </div>),
+                content: 'Permissions/owner',
                 columnSize: 3
               }, {
-                content: (
-                  <DateDisplay
-                    date='2017-07-06T14:47:03.000Z'
-                    relative={true} />),
+                content: 'Last accessed',
                 columnSize: 2
               }, {
-                content: (
-                  <a onClick={sinon.stub()}>
-                    <SvgIcon name="delete_16"
-                      size="16" />
-                  </a>),
+                content: '',
                 columnSize: 1
-              }],
-              key: 'mymodel'
-            }]} />
+              }]}
+              rows={[{
+                columns: [{
+                  content: (
+                    <a href="/gui/u/tester/mymodel"
+                      onClick={sinon.stub()}>
+                      mymodel
+                    </a>),
+                  columnSize: 3
+                }, {
+                  content: '0 EC2/EU-WEST-1',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <div>
+                      <SvgIcon name='user_16'
+                        size="16" />
+                      <span className="profile-model-list__username">
+                        Me
+                      </span>
+                    </div>),
+                  columnSize: 3
+                }, {
+                  content: (
+                    <DateDisplay
+                      date='2017-07-06T14:47:03.000Z'
+                      relative={true} />),
+                  columnSize: 2
+                }, {
+                  content: (
+                    <a onClick={sinon.stub()}>
+                      <SvgIcon name="delete_16"
+                        size="16" />
+                    </a>),
+                  columnSize: 1
+                }],
+                key: 'mymodel'
+              }]} />
+          </div>
         </div>
       </div>
     );
