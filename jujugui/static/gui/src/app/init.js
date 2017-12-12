@@ -1383,6 +1383,14 @@ class GUIApp {
   }
 
   /**
+    Get the current model name.
+    @returns {String} The current model name.
+  */
+  _getModelName() {
+    return this.modelAPI.get('environmentName');
+  }
+
+  /**
     Auto log the user into the charm store as part of the login process
     when the GUI operates in a GISF context.
   */

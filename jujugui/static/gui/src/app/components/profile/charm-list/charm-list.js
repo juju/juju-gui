@@ -121,8 +121,11 @@ class ProfileCharmList extends React.Component {
           }],
           expandedContent: (
             <ProfileExpandedContent
+              acl={this.props.acl}
               changeState={this.props.changeState}
               entity={charm}
+              deployTarget={this.props.deployTarget}
+              getModelName={this.props.getModelName}
               topRow={(
                 <div>
                   <div className="six-col profile-expanded-content__top-row">
@@ -160,6 +163,9 @@ class ProfileCharmList extends React.Component {
 };
 
 ProfileCharmList.propTypes = {
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
@@ -167,6 +173,8 @@ ProfileCharmList.propTypes = {
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
   }).isRequired,
+  deployTarget: PropTypes.func.isRequired,
+  getModelName: PropTypes.func.isRequired,
   user: PropTypes.string
 };
 

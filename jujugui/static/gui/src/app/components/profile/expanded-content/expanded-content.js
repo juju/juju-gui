@@ -3,8 +3,10 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
+const GenericButton = require('../../generic-button/generic-button');
 
 /**
   Display extra info for a charm or bundle in a user profile.
@@ -26,6 +28,18 @@ class ProfileExpandedContent extends React.Component {
     this.props.changeState({
       hash: null,
       profile: username
+    });
+  }
+
+  /**
+    Handle deploying an entity.
+    @param entityId {String} A charm or bundle id.
+  */
+  _handleDeploy(entityId) {
+    this.props.deployTarget(entityId);
+    this.props.changeState({
+      hash: null,
+      profile: null
     });
   }
 
@@ -68,6 +82,9 @@ class ProfileExpandedContent extends React.Component {
   render() {
     const entity = this.props.entity;
     const getDiagramURL = this.props.getDiagramURL;
+    const modelName = this.props.getModelName();
+    const title = `Add to ${modelName || 'model'}`;
+    const type = getDiagramURL ? 'bundle' : 'charm';
     return (
       <div className="profile-expanded-content">
         {this.props.topRow}
@@ -101,14 +118,29 @@ class ProfileExpandedContent extends React.Component {
           </p>
           {this._generatePermissions(entity.perm.read)}
         </div>
+        <div className="three-col prepend-nine last-col">
+          <GenericButton
+            action={this._handleDeploy.bind(this, entity.id)}
+            disabled={this.props.acl.isReadOnly()}
+            tooltip={
+              `Add this ${type} to ${modelName ? 'your current' : 'a new'} model`}
+            type="positive">
+            {title}
+          </GenericButton>
+        </div>
       </div>);
   }
 };
 
 ProfileExpandedContent.propTypes = {
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).frozen.isRequired,
   changeState: PropTypes.func.isRequired,
+  deployTarget: PropTypes.func.isRequired,
   entity: PropTypes.object.isRequired,
   getDiagramURL: PropTypes.func,
+  getModelName: PropTypes.func.isRequired,
   topRow: PropTypes.object.isRequired
 };
 

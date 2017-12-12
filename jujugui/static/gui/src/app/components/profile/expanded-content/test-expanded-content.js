@@ -2,8 +2,10 @@
 
 'use strict';
 const React = require('react');
+const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
+const GenericButton = require('../../generic-button/generic-button');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -49,14 +51,22 @@ describe('Profile expanded content', function() {
     },
     "name": "failtester"
   }`;
+  let acl;
+
+  beforeEach(() => {
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
+  });
 
   function renderComponent(options={}) {
     const entity = JSON.parse(options.entity);
     return jsTestUtils.shallowRender(
       <ProfileExpandedContent
+        acl={options.acl || acl}
         changeState={options.changeState || sinon.stub()}
+        deployTarget={options.deployTarget || sinon.stub()}
         entity={entity}
         getDiagramURL={options.getDiagramURL || sinon.stub().returns('diagram.svg')}
+        getModelName={options.getModelName || sinon.stub().returns('snazzy-model')}
         topRow={options.topRow || (<div>Top row</div>)} />, true);
   }
 
@@ -107,6 +117,15 @@ describe('Profile expanded content', function() {
               everyone
             </li>
           </ul>
+        </div>
+        <div className="three-col prepend-nine last-col">
+          <GenericButton
+            action={sinon.stub()}
+            disabled={false}
+            tooltip="Add this bundle to your current model"
+            type="positive">
+            Add to snazzy-model
+          </GenericButton>
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
@@ -166,7 +185,35 @@ describe('Profile expanded content', function() {
             </li>
           </ul>
         </div>
+        <div className="three-col prepend-nine last-col">
+          <GenericButton
+            action={sinon.stub()}
+            disabled={false}
+            tooltip="Add this bundle to your current model"
+            type="positive">
+            Add to snazzy-model
+          </GenericButton>
+        </div>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('can deploy an entity', () => {
+    const changeState = sinon.stub();
+    const deployTarget = sinon.stub();
+    const renderer = renderComponent({
+      changeState: changeState,
+      deployTarget: deployTarget,
+      entity: rawBundleData
+    });
+    const output = renderer.getRenderOutput();
+    output.props.children[3].props.children.props.action();
+    assert.equal(deployTarget.callCount, 1);
+    assert.equal(deployTarget.args[0][0], 'cs:~lazypower/bundle/logstash-core-1');
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      hash: null,
+      profile: null
+    });
   });
 });

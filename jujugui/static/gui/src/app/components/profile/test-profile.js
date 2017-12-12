@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const ProfileNavigation = require('./navigation/navigation');
 const ProfileHeader = require('./header/header');
@@ -16,7 +17,7 @@ describe('Profile', function() {
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
       <Profile
-        acl={{}}
+        acl={options.acl || acl}
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
         baseURL="/gui/"
@@ -26,12 +27,19 @@ describe('Profile', function() {
           list: sinon.stub(),
           url: '/charmstore'
         }}
+        deployTarget={options.deployTarget || sinon.stub()}
         facadesExist={true}
+        getModelName={options.getModelName || sinon.stub()}
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={{profile: 'spinach'}} />, true);
   }
+  let acl;
+
+  beforeEach(() => {
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
+  });
 
   it('can render', () => {
     const renderer = renderComponent();

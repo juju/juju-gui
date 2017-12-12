@@ -2,6 +2,7 @@
 
 'use strict';
 const React = require('react');
+const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
@@ -59,6 +60,11 @@ describe('Profile Bundle List', function() {
     "unitCount": 5
   }]`;
   const bundles = JSON.parse(rawBundleData);
+  let acl;
+
+  beforeEach(() => {
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
+  });
 
   function renderComponent(options={}) {
     const charmstoreList = (user, cb) => {
@@ -67,6 +73,7 @@ describe('Profile Bundle List', function() {
     };
     return jsTestUtils.shallowRender(
       <ProfileBundleList
+        acl={options.acl || acl}
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -75,11 +82,14 @@ describe('Profile Bundle List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
+        deployTarget={options.deployTarget || sinon.stub()}
+        getModelName={options.getModelName || sinon.stub()}
         user="lazypower@external" />, true);
   }
 
   it('can render', () => {
     const renderer = renderComponent();
+    const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-bundle-list">
@@ -135,9 +145,12 @@ describe('Profile Bundle List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={bundles[0]}
                 getDiagramURL={sinon.stub()}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="eight-col profile-expanded-content__top-row">
@@ -186,9 +199,12 @@ describe('Profile Bundle List', function() {
             }],
             expandedContent: (
               <ProfileExpandedContent
+                acl={instance.props.acl}
                 changeState={sinon.stub()}
+                deployTarget={instance.props.deployTarget}
                 entity={bundles[1]}
                 getDiagramURL={sinon.stub()}
+                getModelName={instance.props.getModelName}
                 topRow={(
                   <div>
                     <div className="eight-col profile-expanded-content__top-row">
