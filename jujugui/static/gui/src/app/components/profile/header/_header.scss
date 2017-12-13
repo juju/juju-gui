@@ -4,6 +4,10 @@
   padding-bottom: 30px;
   border-bottom: 1px solid $light-grey;
 
+  &__close {
+    float: right;
+  }
+
   &__avatar {
     $size: 96px;
     float: left;

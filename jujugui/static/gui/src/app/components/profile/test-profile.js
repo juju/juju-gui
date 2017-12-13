@@ -50,6 +50,7 @@ describe('Profile', function() {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
+          changeState={sinon.stub()}
           username="spinach" />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
