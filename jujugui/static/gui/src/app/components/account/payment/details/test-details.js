@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AccountPaymentDetails = require('./details');
 const GenericButton = require('../../../generic-button/generic-button');
@@ -11,10 +12,20 @@ const AccountPaymentDetailsAddress = require('./address/address');
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('AccountPaymentDetails', () => {
-  let acl;
+  let acl, payment;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    payment = {
+      addAddress: sinon.stub(),
+      addBillingAddress: sinon.stub(),
+      getCountries: sinon.stub(),
+      removeAddress: sinon.stub(),
+      removeBillingAddress: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      updateAddress: sinon.stub(),
+      updateBillingAddress: sinon.stub()
+    };
   });
 
   it('can display the details', () => {
@@ -26,7 +37,6 @@ describe('AccountPaymentDetails', () => {
     const removeBillingAddress = sinon.stub();
     const validateForm = sinon.stub();
     const updateAddress = sinon.stub();
-    const updateBillingAddress = sinon.stub();
     const updateUser = sinon.stub();
     const paymentUser ={
       name: 'Geoffrey Spinach',
@@ -58,15 +68,9 @@ describe('AccountPaymentDetails', () => {
     const component = jsTestUtils.shallowRender(
       <AccountPaymentDetails
         acl={acl}
-        addAddress={addAddress}
-        addBillingAddress={addBillingAddress}
         addNotification={addNotification}
-        getCountries={getCountries}
+        payment={payment}
         paymentUser={paymentUser}
-        removeAddress={removeAddress}
-        removeBillingAddress={removeBillingAddress}
-        updateAddress={updateAddress}
-        updateBillingAddress={updateBillingAddress}
         updateUser={updateUser}
         username="spinach"
         validateForm={validateForm} />, true);

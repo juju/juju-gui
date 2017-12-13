@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AccountCredentials = require('./credentials');
 const ButtonRow = require('../../button-row/button-row');
@@ -15,33 +16,43 @@ const GenericButton = require('../../generic-button/generic-button');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('AccountCredentials', () => {
-  let acl, controllerIsReady, getCloudCredentialNames, getCloudProviderDetails,
-      listClouds;
+  let acl, controllerAPI, controllerIsReady, initUtils;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     controllerIsReady = sinon.stub().withArgs().returns(true);
-    getCloudProviderDetails = sinon.stub();
+    const getCloudProviderDetails = sinon.stub();
     getCloudProviderDetails.withArgs('aws').returns({title: 'Amazon'});
     getCloudProviderDetails.withArgs('gce').returns({title: 'Google'});
-    listClouds = sinon.stub().callsArgWith(0, null, {
-      aws: {
-        cloudType: 'aws'
-      },
-      gce: {
-        cloudType: 'gce'
-      },
-      guimaas: {
-        cloudType: 'maas'
-      }
-    });
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, [{
-      names: ['aws_spinach@external_test1'],
-      displayNames: ['test1']
-    }, {
-      names: ['gce_spinach@external_test2'],
-      displayNames: ['test2']
-    }]);
+    controllerAPI = {
+      getCloudCredentialNames: sinon.stub().callsArgWith(1, null, [{
+        names: ['aws_spinach@external_test1'],
+        displayNames: ['test1']
+      }, {
+        names: ['gce_spinach@external_test2'],
+        displayNames: ['test2']
+      }]),
+      listClouds: sinon.stub().callsArgWith(0, null, {
+        aws: {
+          cloudType: 'aws'
+        },
+        gce: {
+          cloudType: 'gce'
+        },
+        guimaas: {
+          cloudType: 'maas'
+        }
+      }),
+      reshape: shapeup.reshapeFunc,
+      revokeCloudCredential: sinon.stub(),
+      updateCloudCredential: sinon.stub()
+    };
+    initUtils = {
+      generateCloudCredentialName: sinon.stub(),
+      getCloudProviderDetails: getCloudProviderDetails,
+      reshape: shapeup.reshapeFunc,
+      validateForm: sinon.stub()
+    };
   });
 
   function renderComponent(options = {}) {
@@ -49,16 +60,11 @@ describe('AccountCredentials', () => {
       <AccountCredentials
         acl={acl}
         addNotification={options.addNotification || sinon.stub()}
+        controllerAPI={controllerAPI}
         controllerIsReady={controllerIsReady}
-        generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
-        getCloudCredentialNames={options.getCloudCredentialNames || getCloudCredentialNames}
-        getCloudProviderDetails={getCloudProviderDetails}
-        listClouds={options.listClouds || listClouds}
-        revokeCloudCredential={options.revokeCloudCredential || sinon.stub()}
+        initUtils={initUtils}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
-        updateCloudCredential={options.updateCloudCredential || sinon.stub()}
-        username="spinach@external"
-        validateForm={options.sendAnalytics || sinon.stub()} />, true);
+        username="spinach@external" />, true);
     return {
       renderer,
       output: renderer.getRenderOutput(),
@@ -67,7 +73,7 @@ describe('AccountCredentials', () => {
   }
 
   it('can display a spinner when loading credentials', () => {
-    getCloudCredentialNames = sinon.stub();
+    controllerAPI.getCloudCredentialNames = sinon.stub();
     const comp = renderComponent();
     const instance = comp.instance;
     const expected = (
@@ -99,15 +105,12 @@ describe('AccountCredentials', () => {
   });
 
   it('does not allow for adding/removing credentials on local cloud', () => {
-    listClouds = sinon.stub().callsArgWith(0, null, {localhost: {}});
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, [{
+    controllerAPI.listClouds = sinon.stub().callsArgWith(0, null, {localhost: {}});
+    controllerAPI.getCloudCredentialNames = sinon.stub().callsArgWith(1, null, [{
       names: ['localhost_admin'],
       displayNames: ['localcred']
     }]);
-    const comp = renderComponent({
-      listClouds,
-      getCloudCredentialNames
-    });
+    const comp = renderComponent();
     const output = comp.output;
     const expectedOutput = (
       <div className="account__section account__credentials twelve-col">
@@ -254,10 +257,8 @@ describe('AccountCredentials', () => {
   });
 
   it('can render when there are no credentials', () => {
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
-    const comp = renderComponent({
-      getCloudCredentialNames
-    });
+    controllerAPI.getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    const comp = renderComponent();
     const instance = comp.instance;
     const expected = (
       <div className="account__section account__credentials twelve-col">
@@ -291,10 +292,9 @@ describe('AccountCredentials', () => {
 
   it('can display errors when getting clouds', () => {
     const addNotification = sinon.stub();
-    listClouds.callsArgWith(0, 'Uh oh!', null);
+    controllerAPI.listClouds.callsArgWith(0, 'Uh oh!', null);
     renderComponent({
-      addNotification,
-      listClouds
+      addNotification
     });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -306,11 +306,10 @@ describe('AccountCredentials', () => {
 
   it('can display errors when getting credential names', () => {
     const addNotification = sinon.stub();
-    getCloudCredentialNames = sinon.stub().callsArgWith(
+    controllerAPI.getCloudCredentialNames = sinon.stub().callsArgWith(
       1, 'Uh oh!', null);
     renderComponent({
-      addNotification,
-      getCloudCredentialNames
+      addNotification
     });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -321,10 +320,8 @@ describe('AccountCredentials', () => {
   });
 
   it('can display a remove credentials confirmation', () => {
-    const revokeCloudCredential = sinon.stub();
-    const comp = renderComponent({
-      revokeCloudCredential
-    });
+    controllerAPI.revokeCloudCredential = sinon.stub();
+    const comp = renderComponent();
     const instance = comp.instance;
     let output = comp.output;
     output.props.children[2].props.children[1][0].props
@@ -350,25 +347,22 @@ describe('AccountCredentials', () => {
   });
 
   it('can remove credentials', () => {
-    const revokeCloudCredential = sinon.stub();
-    const comp = renderComponent({
-      revokeCloudCredential
-    });
+    controllerAPI.revokeCloudCredential = sinon.stub();
+    const comp = renderComponent();
     let output = comp.output;
     output.props.children[2].props.children[1][0].props
       .children[2].props.children.props.buttons[0].action();
     output = comp.renderer.getRenderOutput();
     output.props.children[3].props.buttons[1].action();
-    assert.equal(revokeCloudCredential.callCount, 1);
-    assert.equal(revokeCloudCredential.args[0][0], 'aws_spinach@external_test1');
+    assert.equal(controllerAPI.revokeCloudCredential.callCount, 1);
+    assert.equal(controllerAPI.revokeCloudCredential.args[0][0], 'aws_spinach@external_test1');
   });
 
   it('can display errors when deleting credentials', () => {
     const addNotification = sinon.stub();
-    const revokeCloudCredential = sinon.stub().callsArgWith(1, 'Uh oh!');
+    controllerAPI.revokeCloudCredential = sinon.stub().callsArgWith(1, 'Uh oh!');
     const comp = renderComponent({
-      addNotification,
-      revokeCloudCredential
+      addNotification
     });
     let output = comp.output;
     output.props.children[2].props.children[1][0].props
@@ -384,10 +378,8 @@ describe('AccountCredentials', () => {
   });
 
   it('removes the credential from the list', () => {
-    const revokeCloudCredential = sinon.stub().callsArgWith(1, null);
-    const comp = renderComponent({
-      revokeCloudCredential
-    });
+    controllerAPI.revokeCloudCredential = sinon.stub().callsArgWith(1, null);
+    const comp = renderComponent();
     const instance = comp.instance;
     let output = comp.output;
     let credentials = output.props.children[2].props.children[1];
@@ -458,20 +450,17 @@ describe('AccountCredentials', () => {
 
   it('can abort the requests when unmounting', () => {
     const abort = sinon.stub();
-    getCloudCredentialNames = sinon.stub().returns({abort: abort});
-    const comp = renderComponent({
-      getCloudCredentialNames
-    });
+    controllerAPI.getCloudCredentialNames = sinon.stub().returns({abort: abort});
+    const comp = renderComponent();
     comp.renderer.unmount();
     assert.equal(abort.callCount, 1);
   });
 
   it('can show the add credentials form', () => {
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    controllerAPI.getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
     const addNotification = sinon.stub();
     const comp = renderComponent({
-      addNotification,
-      getCloudCredentialNames
+      addNotification
     });
     const instance = comp.instance;
     let output = comp.output;
@@ -504,8 +493,8 @@ describe('AccountCredentials', () => {
                 addNotification={addNotification}
                 cloud={null}
                 controllerIsReady={controllerIsReady}
-                listClouds={listClouds}
-                getCloudProviderDetails={getCloudProviderDetails}
+                listClouds={sinon.stub()}
+                getCloudProviderDetails={initUtils.getCloudProviderDetails}
                 setCloud={instance._setCloud} />
               {null}
             </div>
@@ -558,8 +547,8 @@ describe('AccountCredentials', () => {
               addNotification={addNotification}
               cloud={{title: 'aws'}}
               controllerIsReady={controllerIsReady}
-              listClouds={listClouds}
-              getCloudProviderDetails={getCloudProviderDetails}
+              listClouds={sinon.stub()}
+              getCloudProviderDetails={initUtils.getCloudProviderDetails}
               setCloud={instance._setCloud} />
             <DeploymentCredentialAdd
               acl={acl}
@@ -568,7 +557,7 @@ describe('AccountCredentials', () => {
               cloud={{title: 'aws'}}
               credentialName={undefined}
               credentials={['test1', 'test2']}
-              getCloudProviderDetails={getCloudProviderDetails}
+              getCloudProviderDetails={initUtils.getCloudProviderDetails}
               generateCloudCredentialName={generateCloudCredentialName}
               getCredentials={instance._getClouds}
               sendAnalytics={sendAnalytics}
@@ -583,7 +572,7 @@ describe('AccountCredentials', () => {
   });
 
   it('clears the cloud when the form is closed', () => {
-    getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
+    controllerAPI.getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
     const addNotification = sinon.stub();
     const generateCloudCredentialName = sinon.stub();
     const updateCloudCredential = sinon.stub();

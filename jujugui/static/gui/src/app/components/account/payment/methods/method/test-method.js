@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const GenericButton = require('../../../../generic-button/generic-button');
 const GenericInput = require('../../../../generic-input/generic-input');
@@ -13,10 +14,16 @@ const AccountPaymentMethod = require('./method');
 const jsTestUtils = require('../../../../../utils/component-test-utils');
 
 describe('AccountPaymentMethod', () => {
-  let acl, paymentMethod, refs;
+  let acl, payment, paymentMethod, refs;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    payment = {
+      getCountries: sinon.stub(),
+      removePaymentMethod: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      updatePaymentMethod: sinon.stub()
+    };
     paymentMethod = {
       address: {
         id: 'address1',
@@ -59,10 +66,8 @@ describe('AccountPaymentMethod', () => {
       <AccountPaymentMethod
         acl={acl}
         addNotification={addNotification}
-        getCountries={sinon.stub()}
+        payment={payment}
         paymentMethod={paymentMethod}
-        removePaymentMethod={removePaymentMethod}
-        updatePaymentMethod={sinon.stub()}
         updateUser={updateUser}
         username="spinach"
         validateForm={sinon.stub()} />, true);
@@ -98,10 +103,8 @@ describe('AccountPaymentMethod', () => {
       <AccountPaymentMethod
         acl={acl}
         addNotification={addNotification}
-        getCountries={getCountries}
+        payment={payment}
         paymentMethod={paymentMethod}
-        removePaymentMethod={sinon.stub()}
-        updatePaymentMethod={sinon.stub()}
         updateUser={sinon.stub()}
         username="spinach"
         validateForm={validateForm} />, true);
@@ -152,15 +155,13 @@ describe('AccountPaymentMethod', () => {
   });
 
   it('validates the form when updating the payment method', () => {
-    const updatePaymentMethod = sinon.stub();
+    payment.updatePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
-        getCountries={sinon.stub()}
+        payment={payment}
         paymentMethod={paymentMethod}
-        removePaymentMethod={sinon.stub()}
-        updatePaymentMethod={updatePaymentMethod}
         updateUser={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub().returns(false)} />, true);
@@ -171,20 +172,18 @@ describe('AccountPaymentMethod', () => {
     output = component.getRenderOutput();
     output.props.children[1].props.children.props.children[2]
       .props.children[1].props.action();
-    assert.equal(updatePaymentMethod.callCount, 0);
+    assert.equal(payment.updatePaymentMethod.callCount, 0);
   });
 
   it('can update a payment method', () => {
-    const updatePaymentMethod = sinon.stub().callsArgWith(4, null);
+    payment.updatePaymentMethod = sinon.stub().callsArgWith(4, null);
     const updateUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
-        getCountries={sinon.stub()}
+        payment={payment}
         paymentMethod={paymentMethod}
-        removePaymentMethod={sinon.stub()}
-        updatePaymentMethod={updatePaymentMethod}
         updateUser={updateUser}
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);
@@ -196,10 +195,10 @@ describe('AccountPaymentMethod', () => {
     output.props.children[1].props.children.props.children[2]
       .props.children[1].props.action();
     output = component.getRenderOutput();
-    assert.equal(updatePaymentMethod.callCount, 1);
-    assert.equal(updatePaymentMethod.args[0][0], 'spinach');
-    assert.equal(updatePaymentMethod.args[0][1], 'method1');
-    assert.deepEqual(updatePaymentMethod.args[0][2], {
+    assert.equal(payment.updatePaymentMethod.callCount, 1);
+    assert.equal(payment.updatePaymentMethod.args[0][0], 'spinach');
+    assert.equal(payment.updatePaymentMethod.args[0][1], 'method1');
+    assert.deepEqual(payment.updatePaymentMethod.args[0][2], {
       name: 'Bruce Dundee',
       line1: '9 Kangaroo St',
       line2: '',
@@ -209,22 +208,20 @@ describe('AccountPaymentMethod', () => {
       country: 'AU',
       phones: ['00001111']
     });
-    assert.equal(updatePaymentMethod.args[0][3], '12/22');
+    assert.equal(payment.updatePaymentMethod.args[0][3], '12/22');
     assert.equal(instance.state.showForm, false);
     assert.equal(updateUser.callCount, 1);
   });
 
   it('can handle errors when creating a token', () => {
     const addNotification = sinon.stub();
-    const updatePaymentMethod = sinon.stub().callsArgWith(4, 'Uh oh!');
+    payment.updatePaymentMethod = sinon.stub().callsArgWith(4, 'Uh oh!');
     const component = jsTestUtils.shallowRender(
       <AccountPaymentMethod
         acl={acl}
         addNotification={addNotification}
-        getCountries={sinon.stub()}
+        payment={payment}
         paymentMethod={paymentMethod}
-        removePaymentMethod={sinon.stub()}
-        updatePaymentMethod={updatePaymentMethod}
         updateUser={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);
@@ -245,15 +242,13 @@ describe('AccountPaymentMethod', () => {
 
   it('can cancel the requests when unmounting (method)', () => {
     const abort = sinon.stub();
-    const updatePaymentMethod = sinon.stub().returns({abort: abort});
+    payment.updatePaymentMethod = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
       <AccountPaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
-        getCountries={sinon.stub()}
+        payment={payment}
         paymentMethod={paymentMethod}
-        removePaymentMethod={sinon.stub()}
-        updatePaymentMethod={updatePaymentMethod}
         updateUser={sinon.stub()}
         username="spinach"
         validateForm={sinon.stub().returns(true)} />, true);

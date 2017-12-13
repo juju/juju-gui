@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AccountPayment = require('./payment');
 const Spinner = require('../../spinner/spinner');
@@ -14,7 +15,7 @@ const GenericButton = require('../../generic-button/generic-button');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('AccountPayment', function() {
-  let acl, getCountries, getUser, user;
+  let acl, getCountries, payment, stripe, user;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -23,35 +24,43 @@ describe('AccountPayment', function() {
         name: 'Company'
       }]
     };
-    getUser = sinon.stub().callsArgWith(1, null, {
-      paymentMethods: [{
-        name: 'Company'
-      }]
-    });
     getCountries = sinon.stub();
+    payment = {
+      addAddress: sinon.stub(),
+      addBillingAddress: sinon.stub(),
+      createPaymentMethod: sinon.stub(),
+      createUser: sinon.stub(),
+      getCharges: sinon.stub(),
+      getCountries: sinon.stub(),
+      getReceipt: sinon.stub(),
+      getUser: sinon.stub().callsArgWith(1, null, {
+        paymentMethods: [{
+          name: 'Company'
+        }]
+      }),
+      removeAddress: sinon.stub(),
+      removeBillingAddress: sinon.stub(),
+      removePaymentMethod: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      updateAddress: sinon.stub(),
+      updateBillingAddress: sinon.stub(),
+      updatePaymentMethod: sinon.stub()
+    };
+    stripe = {
+      createCardElement: sinon.stub(),
+      createToken: sinon.stub(),
+      reshape: shapeup.reshapeFunc
+    };
   });
 
   it('can display a loading spinner', function() {
+    payment.getUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <AccountPayment
         acl={acl}
-        addAddress={sinon.stub()}
-        addBillingAddress={sinon.stub()}
         addNotification={sinon.stub()}
-        createCardElement={sinon.stub()}
-        createPaymentMethod={sinon.stub()}
-        createToken={sinon.stub()}
-        createUser={sinon.stub()}
-        getCharges={sinon.stub()}
-        getCountries={sinon.stub()}
-        getReceipt={sinon.stub()}
-        getUser={sinon.stub()}
-        removeAddress={sinon.stub()}
-        removeBillingAddress={sinon.stub()}
-        removePaymentMethod={sinon.stub()}
-        updateAddress={sinon.stub()}
-        updateBillingAddress={sinon.stub()}
-        updatePaymentMethod={sinon.stub()}
+        payment={payment}
+        stripe={stripe}
         username="spinach"
         validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -64,45 +73,16 @@ describe('AccountPayment', function() {
 
   it('can display the user details', function() {
     const addNotification = sinon.stub();
-    const createPaymentMethod = sinon.stub();
-    const createToken = sinon.stub();
-    const removePaymentMethod = sinon.stub();
     const validateForm = sinon.stub();
-    const createCardElement = sinon.stub();
-    const addAddress = sinon.stub();
-    const addBillingAddress = sinon.stub();
-    const removeAddress = sinon.stub();
-    const removeBillingAddress = sinon.stub();
-    const updateAddress = sinon.stub();
-    const updateBillingAddress = sinon.stub();
     const updateUser = sinon.stub();
-    const updatePaymentMethod = sinon.stub();
-    const getCharges = sinon.stub();
-    const getReceipt = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
       <AccountPayment
         acl={acl}
-        addAddress={addAddress}
-        addBillingAddress={addBillingAddress}
-        addNotification={addNotification}
-        createCardElement={createCardElement}
-        createPaymentMethod={createPaymentMethod}
-        createToken={createToken}
-        createUser={sinon.stub()}
-        getCharges={getCharges}
-        getCountries={sinon.stub()}
-        getReceipt={getReceipt}
-        getUser={getUser}
-        removeAddress={removeAddress}
-        removeBillingAddress={removeBillingAddress}
-        removePaymentMethod={removePaymentMethod}
-        updateAddress={updateAddress}
-        updateBillingAddress={updateBillingAddress}
-        updateUser={updateUser}
-        updatePaymentMethod={updatePaymentMethod}
+        addNotification={sinon.stub()}
+        payment={payment}
+        stripe={stripe}
         username="spinach"
-        validateForm={validateForm} />, true);
-    const instance = renderer.getMountedInstance();
+        validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="account-payment">
@@ -110,35 +90,43 @@ describe('AccountPayment', function() {
           <AccountPaymentMethods
             acl={acl}
             addNotification={addNotification}
-            createCardElement={createCardElement}
-            createPaymentMethod={createPaymentMethod}
-            createToken={createToken}
-            getCountries={getCountries}
+            payment={{
+              createPaymentMethod: payment.createPaymentMethod,
+              getCountries: payment.getCountries,
+              removePaymentMethod: payment.removePaymentMethod,
+              reshape: shapeup.reshapeFunc,
+              updatePaymentMethod: payment.updatePaymentMethod
+            }}
             paymentUser={user}
-            removePaymentMethod={removePaymentMethod}
-            updatePaymentMethod={updatePaymentMethod}
-            updateUser={instance._getUser}
+            stripe={stripe}
+            updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
           <AccountPaymentDetails
             acl={acl}
-            addAddress={addAddress}
-            addBillingAddress={addBillingAddress}
             addNotification={addNotification}
-            getCountries={getCountries}
+            payment={{
+              addAddress: payment.addAddress,
+              addBillingAddress: payment.addBillingAddress,
+              getCountries: payment.getCountries,
+              removeAddress: payment.removeAddress,
+              removeBillingAddress: payment.removeBillingAddress,
+              reshape: shapeup.reshapeFunc,
+              updateAddress: payment.updateAddress,
+              updateBillingAddress: payment.updateBillingAddress
+            }}
             paymentUser={user}
-            removeAddress={removeAddress}
-            removeBillingAddress={removeBillingAddress}
-            updateAddress={updateAddress}
-            updateBillingAddress={updateBillingAddress}
             updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
           <AccountPaymentCharges
             acl={acl}
             addNotification={addNotification}
-            getCharges={getCharges}
-            getReceipt={getReceipt}
+            payment={{
+              getCharges: payment.getCharges,
+              getReceipt: payment.getReceipt,
+              reshape: shapeup.reshapeFunc
+            }}
             username="spinach" />
         </div>
       </div>);
@@ -146,30 +134,16 @@ describe('AccountPayment', function() {
   });
 
   it('can display an error when getting users', function() {
-    getUser = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    payment.getUser = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
       <AccountPayment
         acl={acl}
-        addAddress={sinon.stub()}
-        addBillingAddress={sinon.stub()}
         addNotification={addNotification}
-        createCardElement={sinon.stub()}
-        createPaymentMethod={sinon.stub()}
-        createToken={sinon.stub()}
-        createUser={sinon.stub()}
-        getCharges={sinon.stub()}
-        getCountries={sinon.stub()}
-        getReceipt={sinon.stub()}
-        getUser={getUser}
-        removeAddress={sinon.stub()}
-        removeBillingAddress={sinon.stub()}
-        removePaymentMethod={sinon.stub()}
-        updateAddress={sinon.stub()}
-        updateBillingAddress={sinon.stub()}
-        updatePaymentMethod={sinon.stub()}
+        payment={payment}
+        stripe={stripe}
         username="spinach"
-        validateForm={sinon.stub()} />);
+        validateForm={sinon.stub()} />, true);
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not load user info',
@@ -179,33 +153,15 @@ describe('AccountPayment', function() {
   });
 
   it('can display a message if there is no user', function() {
-    const addNotification = sinon.stub();
-    const validateForm = sinon.stub();
-    const createUser = sinon.stub();
-    const createToken = sinon.stub();
-    getUser = sinon.stub().callsArgWith(1, null, null);
+    payment.getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
       <AccountPayment
         acl={acl}
-        addAddress={sinon.stub()}
-        addBillingAddress={sinon.stub()}
-        addNotification={addNotification}
-        createCardElement={sinon.stub()}
-        createPaymentMethod={sinon.stub()}
-        createToken={createToken}
-        createUser={createUser}
-        getCharges={sinon.stub()}
-        getCountries={getCountries}
-        getReceipt={sinon.stub()}
-        getUser={getUser}
-        removeAddress={sinon.stub()}
-        removeBillingAddress={sinon.stub()}
-        removePaymentMethod={sinon.stub()}
-        updateAddress={sinon.stub()}
-        updateBillingAddress={sinon.stub()}
-        updatePaymentMethod={sinon.stub()}
+        addNotification={sinon.stub()}
+        payment={payment}
+        stripe={stripe}
         username="spinach"
-        validateForm={validateForm} />, true);
+        validateForm={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
@@ -233,29 +189,15 @@ describe('AccountPayment', function() {
     const createUser = sinon.stub();
     const createToken = sinon.stub();
     const createCardElement = sinon.stub();
-    getUser = sinon.stub().callsArgWith(1, null, null);
+    payment.getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
       <AccountPayment
         acl={acl}
-        addAddress={sinon.stub()}
-        addBillingAddress={sinon.stub()}
-        addNotification={addNotification}
-        createCardElement={createCardElement}
-        createPaymentMethod={sinon.stub()}
-        createToken={createToken}
-        createUser={createUser}
-        getCharges={sinon.stub()}
-        getCountries={getCountries}
-        getReceipt={sinon.stub()}
-        getUser={getUser}
-        removeAddress={sinon.stub()}
-        removeBillingAddress={sinon.stub()}
-        removePaymentMethod={sinon.stub()}
-        updateAddress={sinon.stub()}
-        updateBillingAddress={sinon.stub()}
-        updatePaymentMethod={sinon.stub()}
+        addNotification={sinon.stub()}
+        payment={payment}
+        stripe={stripe}
         username="spinach"
-        validateForm={validateForm} />, true);
+        validateForm={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
     output.props.children.props.children[1].props.children[1].props.action();
@@ -285,27 +227,13 @@ describe('AccountPayment', function() {
 
   it('can abort requests when unmounting', function() {
     const abort = sinon.stub();
-    getUser = sinon.stub().returns({abort: abort});
+    payment.getUser = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
       <AccountPayment
         acl={acl}
-        addAddress={sinon.stub()}
-        addBillingAddress={sinon.stub()}
         addNotification={sinon.stub()}
-        createCardElement={sinon.stub()}
-        createPaymentMethod={sinon.stub()}
-        createToken={sinon.stub()}
-        createUser={sinon.stub()}
-        getCharges={sinon.stub()}
-        getCountries={sinon.stub()}
-        getReceipt={sinon.stub()}
-        getUser={getUser}
-        removeAddress={sinon.stub()}
-        removeBillingAddress={sinon.stub()}
-        removePaymentMethod={sinon.stub()}
-        updateAddress={sinon.stub()}
-        updateBillingAddress={sinon.stub()}
-        updatePaymentMethod={sinon.stub()}
+        payment={payment}
+        stripe={stripe}
         username="spinach"
         validateForm={sinon.stub()} />, true);
     component.unmount();

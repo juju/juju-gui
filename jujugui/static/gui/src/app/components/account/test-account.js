@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const Account = require('./account');
 const UserProfileHeader = require('../user-profile/header/header');
@@ -12,73 +13,66 @@ const AccountPayment = require('./payment/payment');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Account', () => {
-  let acl;
+  let acl, controllerAPI, initUtils, payment, stripe;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    controllerAPI = {
+      getCloudCredentialNames: sinon.stub(),
+      listClouds: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      revokeCloudCredential: sinon.stub(),
+      updateCloudCredential: sinon.stub()
+    };
+    initUtils = {
+      generateCloudCredentialName: sinon.stub(),
+      getCloudProviderDetails: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      validateForm: sinon.stub()
+    };
+    payment = {
+      addAddress: sinon.stub(),
+      addBillingAddress: sinon.stub(),
+      createPaymentMethod: sinon.stub(),
+      createUser: sinon.stub(),
+      getCharges: sinon.stub(),
+      getCountries: sinon.stub(),
+      getReceipt: sinon.stub(),
+      getUser: sinon.stub(),
+      removeAddress: sinon.stub(),
+      removeBillingAddress: sinon.stub(),
+      removePaymentMethod: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      updateAddress: sinon.stub(),
+      updateBillingAddress: sinon.stub(),
+      updatePaymentMethod: sinon.stub()
+    };
+    stripe = {
+      createCardElement: sinon.stub(),
+      createToken: sinon.stub(),
+      reshape: shapeup.reshapeFunc
+    };
   });
 
   it('can render', () => {
     const userInfo = {profile: 'spinach'};
-    const getUser = sinon.stub();
     const addNotification = sinon.stub();
     const controllerIsReady = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    const getCloudCredentialNames = sinon.stub();
-    const getCloudProviderDetails = sinon.stub();
-    const listClouds = sinon.stub();
-    const revokeCloudCredential = sinon.stub();
-    const updateCloudCredential = sinon.stub();
-    const validateForm = sinon.stub();
     const sendAnalytics = sinon.stub();
-    const removePaymentMethod = sinon.stub();
-    const createPaymentMethod= sinon.stub();
-    const createToken = sinon.stub();
-    const getCountries = sinon.stub();
-    const createUser = sinon.stub();
-    const createCardElement = sinon.stub();
-    const addAddress = sinon.stub();
-    const addBillingAddress = sinon.stub();
-    const removeAddress = sinon.stub();
-    const removeBillingAddress = sinon.stub();
-    const updateAddress = sinon.stub();
-    const updateBillingAddress = sinon.stub();
-    const updatePaymentMethod = sinon.stub();
-    const getReceipt = sinon.stub();
-    const getCharges = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <Account
         acl={acl}
-        addAddress={addAddress}
-        addBillingAddress={addBillingAddress}
         addNotification={addNotification}
         changeState={sinon.stub()}
+        controllerAPI={controllerAPI}
         controllerIsReady={controllerIsReady}
-        createCardElement={createCardElement}
-        createPaymentMethod={createPaymentMethod}
-        createToken={createToken}
-        createUser={createUser}
-        generateCloudCredentialName={generateCloudCredentialName}
-        getCharges={getCharges}
-        getCloudCredentialNames={getCloudCredentialNames}
-        getCloudProviderDetails={getCloudProviderDetails}
-        getCountries={getCountries}
-        getReceipt={getReceipt}
-        getUser={getUser}
-        listClouds={listClouds}
-        removeAddress={removeAddress}
-        removeBillingAddress={removeBillingAddress}
-        removePaymentMethod={removePaymentMethod}
-        revokeCloudCredential={revokeCloudCredential}
-        updateAddress={updateAddress}
-        updateBillingAddress={updateBillingAddress}
-        updateCloudCredential={updateCloudCredential}
-        updatePaymentMethod={updatePaymentMethod}
+        initUtils={initUtils}
+        payment={payment}
         sendAnalytics={sendAnalytics}
         showPay={true}
+        stripe={stripe}
         user="spinach@external"
-        userInfo={userInfo}
-        validateForm={validateForm} />, true);
+        userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
     const links = [{
       label: 'Primary account'
@@ -98,37 +92,18 @@ describe('Account', () => {
             <AccountCredentials
               acl={acl}
               addNotification={addNotification}
+              controllerAPI={controllerAPI}
               controllerIsReady={controllerIsReady}
-              generateCloudCredentialName={generateCloudCredentialName}
-              getCloudCredentialNames={getCloudCredentialNames}
-              getCloudProviderDetails={getCloudProviderDetails}
-              listClouds={listClouds}
-              revokeCloudCredential={revokeCloudCredential}
+              initUtils={initUtils}
               sendAnalytics={sendAnalytics}
-              updateCloudCredential={updateCloudCredential}
-              username="spinach@external"
-              validateForm={validateForm} />
+              username="spinach@external" />
             <AccountPayment
               acl={acl}
-              addAddress={addAddress}
-              addBillingAddress={addBillingAddress}
               addNotification={addNotification}
-              createCardElement={createCardElement}
-              createPaymentMethod={createPaymentMethod}
-              createToken={createToken}
-              createUser={createPaymentMethod}
-              getCharges={getCharges}
-              getCountries={getCountries}
-              getReceipt={getReceipt}
-              getUser={getUser}
-              removeAddress={removeAddress}
-              removeBillingAddress={removeBillingAddress}
-              removePaymentMethod={removePaymentMethod}
-              updateAddress={updateAddress}
-              updateBillingAddress={updateBillingAddress}
-              updatePaymentMethod={updatePaymentMethod}
+              payment={payment}
+              stripe={stripe}
               username="spinach"
-              validateForm={validateForm} />
+              validateForm={initUtils.validateForm} />
           </div>
         </div>
       </Panel>);
@@ -137,36 +112,21 @@ describe('Account', () => {
 
   it('can render without payments', () => {
     const userInfo = {profile: 'spinach'};
-    const getUser = sinon.stub();
     const addNotification = sinon.stub();
     const controllerIsReady = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    const getCloudCredentialNames = sinon.stub();
-    const getCloudProviderDetails = sinon.stub();
-    const listClouds = sinon.stub();
-    const revokeCloudCredential = sinon.stub();
-    const updateCloudCredential = sinon.stub();
-    const validateForm = sinon.stub();
     const sendAnalytics = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <Account
         acl={acl}
         addNotification={addNotification}
         changeState={sinon.stub()}
+        controllerAPI={controllerAPI}
         controllerIsReady={controllerIsReady}
-        generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentialNames={getCloudCredentialNames}
-        getCloudProviderDetails={getCloudProviderDetails}
-        getUser={getUser}
-        getCountries={sinon.stub()}
-        listClouds={listClouds}
-        revokeCloudCredential={revokeCloudCredential}
-        updateCloudCredential={updateCloudCredential}
+        initUtils={initUtils}
         sendAnalytics={sendAnalytics}
         showPay={false}
         user="spinach@external"
-        userInfo={userInfo}
-        validateForm={validateForm} />, true);
+        userInfo={userInfo} />, true);
     const output = component.getRenderOutput();
     const links = [{
       label: 'Primary account'
@@ -186,16 +146,11 @@ describe('Account', () => {
             <AccountCredentials
               acl={acl}
               addNotification={addNotification}
+              controllerAPI={controllerAPI}
               controllerIsReady={controllerIsReady}
-              generateCloudCredentialName={generateCloudCredentialName}
-              getCloudCredentialNames={getCloudCredentialNames}
-              getCloudProviderDetails={getCloudProviderDetails}
-              listClouds={listClouds}
-              revokeCloudCredential={revokeCloudCredential}
+              initUtils={initUtils}
               sendAnalytics={sendAnalytics}
-              updateCloudCredential={updateCloudCredential}
-              username="spinach@external"
-              validateForm={validateForm} />
+              username="spinach@external" />
             {null}
           </div>
         </div>
