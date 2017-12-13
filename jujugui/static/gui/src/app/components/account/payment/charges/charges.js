@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
 const DateDisplay = require('../../../date-display/date-display');
@@ -48,7 +49,7 @@ class AccountPaymentCharges extends React.Component {
   _getCharges() {
     this.setState({loading: true}, () => {
       const username = this.props.username;
-      const xhr = this.props.getCharges(username, (error, response) => {
+      const xhr = this.props.payment.getCharges(username, (error, response) => {
         if (error) {
           const message = 'Could not load the list of charges';
           this.props.addNotification({
@@ -214,7 +215,7 @@ class AccountPaymentCharges extends React.Component {
         addNotification={this.props.addNotification}
         close={this._togglePopup.bind(this)}
         chargeId={charge}
-        getReceipt={this.props.getReceipt} />);
+        getReceipt={this.props.payment.getReceipt} />);
   }
 
   render() {
@@ -235,8 +236,11 @@ class AccountPaymentCharges extends React.Component {
 AccountPaymentCharges.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  getCharges: PropTypes.func.isRequired,
-  getReceipt: PropTypes.func.isRequired,
+  payment: shapeup.shape({
+    getCharges: PropTypes.func,
+    getReceipt: PropTypes.func,
+    reshape: shapeup.reshapeFunc
+  }),
   username: PropTypes.string.isRequired
 };
 

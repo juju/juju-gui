@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const Spinner = require('../../spinner/spinner');
 const AccountPaymentCharges = require('./charges/charges');
@@ -68,7 +69,7 @@ class AccountPayment extends React.Component {
   */
   _getUser() {
     this.setState({loading: true}, () => {
-      const xhr = this.props.getUser(this.props.username, (error, user) => {
+      const xhr = this.props.payment.getUser(this.props.username, (error, user) => {
         // If the user is not found we don't want to display the error, but
         // rather display a message about creating a user.
         if (error && error !== 'not found') {
@@ -95,40 +96,46 @@ class AccountPayment extends React.Component {
     @returns {Object} The payment details markup.
   */
   _generatePaymentDetails() {
+    const payment = this.props.payment;
     return (
       <div>
         <AccountPaymentMethods
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          createCardElement={this.props.createCardElement}
-          createPaymentMethod={this.props.createPaymentMethod}
-          createToken={this.props.createToken}
-          getCountries={this.props.getCountries}
+          payment={payment && shapeup.addReshape({
+            createPaymentMethod: payment.createPaymentMethod.bind(payment),
+            getCountries: payment.getCountries.bind(payment),
+            removePaymentMethod: payment.removePaymentMethod.bind(payment),
+            updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
+          })}
           paymentUser={this.state.paymentUser}
-          removePaymentMethod={this.props.removePaymentMethod}
-          updatePaymentMethod={this.props.updatePaymentMethod}
+          stripe={this.props.stripe}
           updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
         <AccountPaymentDetails
           acl={this.props.acl}
-          addAddress={this.props.addAddress}
-          addBillingAddress={this.props.addBillingAddress}
+          payment={payment && shapeup.addReshape({
+            addAddress: payment.addAddress.bind(payment),
+            addBillingAddress: payment.addBillingAddress.bind(payment),
+            getCountries: payment.getCountries.bind(payment),
+            removeAddress: payment.removeAddress.bind(payment),
+            removeBillingAddress: payment.removeBillingAddress.bind(payment),
+            updateAddress: payment.updateAddress.bind(payment),
+            updateBillingAddress: payment.updateBillingAddress.bind(payment)
+          })}
           addNotification={this.props.addNotification}
-          getCountries={this.props.getCountries}
           paymentUser={this.state.paymentUser}
-          removeAddress={this.props.removeAddress}
-          removeBillingAddress={this.props.removeBillingAddress}
-          updateAddress={this.props.updateAddress}
-          updateBillingAddress={this.props.updateBillingAddress}
           updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
         <AccountPaymentCharges
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          getCharges={this.props.getCharges}
-          getReceipt={this.props.getReceipt}
+          payment={payment && shapeup.addReshape({
+            getCharges: payment.getCharges.bind(payment),
+            getReceipt: payment.getReceipt.bind(payment)
+          })}
           username={this.props.username} />
       </div>);
   }
@@ -148,10 +155,10 @@ class AccountPayment extends React.Component {
           <CreatePaymentUser
             acl={this.props.acl}
             addNotification={this.props.addNotification}
-            createCardElement={this.props.createCardElement}
-            createToken={this.props.createToken}
-            createUser={this.props.createUser}
-            getCountries={this.props.getCountries}
+            createCardElement={this.props.stripe.createCardElement}
+            createToken={this.props.stripe.createToken}
+            createUser={this.props.payment.createUser}
+            getCountries={this.props.payment.getCountries}
             onUserCreated={this._handleUserCreated.bind(this)}
             username={this.props.username}
             validateForm={this.props.validateForm} />
@@ -203,23 +210,29 @@ class AccountPayment extends React.Component {
 
 AccountPayment.propTypes = {
   acl: PropTypes.object.isRequired,
-  addAddress: PropTypes.func.isRequired,
-  addBillingAddress: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
-  createCardElement: PropTypes.func.isRequired,
-  createPaymentMethod: PropTypes.func.isRequired,
-  createToken: PropTypes.func.isRequired,
-  createUser: PropTypes.func.isRequired,
-  getCharges: PropTypes.func.isRequired,
-  getCountries: PropTypes.func.isRequired,
-  getReceipt: PropTypes.func.isRequired,
-  getUser: PropTypes.func.isRequired,
-  removeAddress: PropTypes.func.isRequired,
-  removeBillingAddress: PropTypes.func.isRequired,
-  removePaymentMethod: PropTypes.func.isRequired,
-  updateAddress: PropTypes.func.isRequired,
-  updateBillingAddress: PropTypes.func.isRequired,
-  updatePaymentMethod: PropTypes.func.isRequired,
+  payment: shapeup.shape({
+    addAddress: PropTypes.func,
+    addBillingAddress: PropTypes.func,
+    createPaymentMethod: PropTypes.func,
+    createUser: PropTypes.func,
+    getCharges: PropTypes.func,
+    getCountries: PropTypes.func,
+    getReceipt: PropTypes.func,
+    getUser: PropTypes.func,
+    removeAddress: PropTypes.func,
+    removeBillingAddress: PropTypes.func,
+    removePaymentMethod: PropTypes.func,
+    reshape: shapeup.reshapeFunc,
+    updateAddress: PropTypes.func,
+    updateBillingAddress: PropTypes.func,
+    updatePaymentMethod: PropTypes.func
+  }),
+  stripe: shapeup.shape({
+    createCardElement: PropTypes.func,
+    createToken: PropTypes.func,
+    reshape: shapeup.reshapeFunc
+  }),
   username: PropTypes.string.isRequired,
   validateForm: PropTypes.func.isRequired
 };

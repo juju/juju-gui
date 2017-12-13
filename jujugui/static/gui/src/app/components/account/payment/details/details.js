@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const GenericButton = require('../../../generic-button/generic-button');
 const GenericInput = require('../../../generic-input/generic-input');
@@ -108,21 +109,21 @@ class AccountPaymentDetails extends React.Component {
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           addAddress={
-            billing ? this.props.addBillingAddress : this.props.addAddress}
+            billing ? this.props.payment.addBillingAddress : this.props.payment.addAddress}
           address={address}
           close={
             billing ? this._toggleBillingAddressEdit :
               this._toggleAddressEdit}
-          getCountries={this.props.getCountries}
+          getCountries={this.props.payment.getCountries}
           key={address.name}
           removeAddress={
-            billing ? this.props.removeBillingAddress :
-              this.props.removeAddress}
+            billing ? this.props.payment.removeBillingAddress :
+              this.props.payment.removeAddress}
           showEdit={
             billing ? this.state.billingAddressEdit : this.state.addressEdit}
           updateAddress={
-            billing ? this.props.updateBillingAddress :
-              this.props.updateAddress}
+            billing ? this.props.payment.updateBillingAddress :
+              this.props.payment.updateAddress}
           updated={this.props.updateUser}
           username={this.props.username}
           validateForm={this.props.validateForm} />);
@@ -147,15 +148,18 @@ class AccountPaymentDetails extends React.Component {
 
 AccountPaymentDetails.propTypes = {
   acl: PropTypes.object.isRequired,
-  addAddress: PropTypes.func.isRequired,
-  addBillingAddress: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
-  getCountries: PropTypes.func.isRequired,
+  payment: shapeup.shape({
+    addAddress: PropTypes.func,
+    addBillingAddress: PropTypes.func,
+    getCountries: PropTypes.func,
+    removeAddress: PropTypes.func,
+    removeBillingAddress: PropTypes.func,
+    reshape: shapeup.reshapeFunc,
+    updateAddress: PropTypes.func,
+    updateBillingAddress: PropTypes.func
+  }),
   paymentUser: PropTypes.object.isRequired,
-  removeAddress: PropTypes.func.isRequired,
-  removeBillingAddress: PropTypes.func.isRequired,
-  updateAddress: PropTypes.func.isRequired,
-  updateBillingAddress: PropTypes.func.isRequired,
   updateUser: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
   validateForm: PropTypes.func.isRequired
