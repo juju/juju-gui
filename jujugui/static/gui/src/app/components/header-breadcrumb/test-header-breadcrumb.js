@@ -144,9 +144,11 @@ describe('HeaderBreadcrumb', () => {
   });
 
   it('renders properly with a profile', () => {
+    const user = {username: 'dalek@external', displayName: 'dalek'};
     appState.current.profile = 'cyberman';
     const comp = render({
-      user: {username: 'dalek@external', displayName: 'dalek'},
+      user: user,
+      modelCommitted: true,
       modelName: 'mymodel',
       modelOwner: 'rose',
       showEnvSwitcher: true
@@ -163,7 +165,19 @@ describe('HeaderBreadcrumb', () => {
               cyberman
             </a>
           </li>
-          {null}
+          <li className="header-breadcrumb__list-item">
+            <EnvSwitcher
+              acl={acl}
+              addNotification={addNotification}
+              user={user}
+              changeState={changeState}
+              environmentName={'mymodel'}
+              humanizeTimestamp={humanizeTimestamp}
+              listModelsWithInfo={listModelsWithInfo}
+              modelCommitted={true}
+              setModelName={sinon.stub()}
+              switchModel={switchModel} />
+          </li>
         </ul>
       </div>
     );
@@ -189,33 +203,6 @@ describe('HeaderBreadcrumb', () => {
     });
     assert.strictEqual(comp.output.props.children[1].props.children[1],
       null);
-  });
-
-  it('does not render the model switcher when profile is visible', () => {
-    appState.current.profile = 'who';
-    const comp = render({
-      user: {username: 'who@external', displayName: 'who'},
-      modelName: 'mymodel',
-      modelOwner: '',
-      // Even though showEnvSwitcher is true, because the profile is visibile
-      // it shouldn't render the model switcher.
-      showEnvSwitcher: true
-    });
-    // There will be no third child if the envSwitcher is rendered
-    assert.strictEqual(comp.output.props.children[1].props.children[1],
-      null);
-  });
-
-  it('does not render the model switcher when in the account page', () => {
-    appState.current.root = 'account';
-    const comp = render({
-      user: {username: 'who@external', displayName: 'who'},
-      modelName: 'mymodel',
-      modelOwner: '',
-      showEnvSwitcher: true
-    });
-    const switcher = comp.output.props.children[1].props.children[1];
-    assert.strictEqual(switcher, null);
   });
 
   it('does not make the username linkable if we hide model switcher', () => {

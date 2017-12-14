@@ -282,8 +282,6 @@ Browser: ${navigator.userAgent}`
       <ISVProfile
         d3={yui.d3} />,
       document.getElementById('top-page-container'));
-    // The model name should not be visible when viewing the profile.
-    this._renderBreadcrumb({ showEnvSwitcher: false });
   }
   /**
     Renders the user profile component.
@@ -1289,12 +1287,11 @@ Browser: ${navigator.userAgent}`
 
   /**
     Renders the breadcrumb component to the DOM.
-    @param {Object} options
-      showEnvSwitcher: true
   */
-  _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
+  _renderBreadcrumb() {
     const modelAPI = this.modelAPI;
     const controllerAPI = this.controllerAPI;
+    let showEnvSwitcher = true;
     let listModelsWithInfo =
       controllerAPI &&
         controllerAPI.listModelsWithInfo.bind(this.controllerAPI);

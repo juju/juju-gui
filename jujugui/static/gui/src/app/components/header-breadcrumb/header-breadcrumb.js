@@ -36,7 +36,6 @@ class HeaderBreadcrumb extends React.Component {
     const currentState = props.appState.current;
     if (
       !props.showEnvSwitcher ||
-      currentState.profile ||
       currentState.root === 'account'
     ) {
       return null;
