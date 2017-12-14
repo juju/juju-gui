@@ -62,7 +62,6 @@ const Zoom = require('../components/zoom/zoom');
     Stores all of the component renderer and cleanup methods.
 */
 const ComponentRenderersMixin = superclass => class extends superclass {
-  _clearRoot() {}
   /**
     Renders the Added Services component to the page in the appropriate
     element.
@@ -718,6 +717,7 @@ Browser: ${navigator.userAgent}`
         addBillingAddress={
           this.payment && this.payment.addBillingAddress.bind(this.payment)}
         addNotification={this._bound.addNotification}
+        changeState={this._bound.changeState}
         controllerIsReady={this._controllerIsReady.bind(this)}
         createCardElement={
           this.stripe && this.stripe.createCardElement.bind(this.stripe)}

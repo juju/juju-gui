@@ -73,6 +73,8 @@
     .panel-component__inner {
       background-color: $canvas-background;
       border-top: 1px solid $mid-grey;
+      // Clearfix.
+      overflow: auto;
     }
   }
 

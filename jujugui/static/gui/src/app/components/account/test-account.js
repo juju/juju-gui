@@ -52,6 +52,7 @@ describe('Account', () => {
         addAddress={addAddress}
         addBillingAddress={addBillingAddress}
         addNotification={addNotification}
+        changeState={sinon.stub()}
         controllerIsReady={controllerIsReady}
         createCardElement={createCardElement}
         createPaymentMethod={createPaymentMethod}
@@ -90,6 +91,8 @@ describe('Account', () => {
           <div className="inner-wrapper">
             <UserProfileHeader
               avatar=""
+              changeState={sinon.stub()}
+              closeState={{root: null}}
               links={links}
               userInfo={userInfo} />
             <AccountCredentials
@@ -149,6 +152,7 @@ describe('Account', () => {
       <Account
         acl={acl}
         addNotification={addNotification}
+        changeState={sinon.stub()}
         controllerIsReady={controllerIsReady}
         generateCloudCredentialName={generateCloudCredentialName}
         getCloudCredentialNames={getCloudCredentialNames}
@@ -175,6 +179,8 @@ describe('Account', () => {
           <div className="inner-wrapper">
             <UserProfileHeader
               avatar=""
+              changeState={sinon.stub()}
+              closeState={{root: null}}
               links={links}
               userInfo={userInfo} />
             <AccountCredentials

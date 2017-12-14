@@ -154,6 +154,8 @@ class UserProfile extends React.Component {
           <div className="inner-wrapper">
             <UserProfileHeader
               avatar=""
+              changeState={this.props.changeState}
+              closeState={{profile: null}}
               interactiveLogin={this._interactiveLogin.bind(this)}
               links={links}
               userInfo={this.props.userInfo} />
