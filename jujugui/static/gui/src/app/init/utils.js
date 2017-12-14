@@ -270,21 +270,23 @@ utils.pluralize = (word, object, plural_word, options) => {
   @param {Object} config The application config.
 */
 utils.jujushellURL = (storage, db, config) => {
+  const storageKey = 'jujushell-url';
   // First check if the user has put the jujushell URL in the GUI settings.
-  let url = storage.getItem('jujushell-url');
+  let url = storage.getItem(storageKey);
   if (url) {
     url = url.replace(/^(http:\/\/)/, 'ws://');
     url = url.replace(/^(https:\/\/)/, 'wss://');
     if (url.indexOf('ws://') !== 0 && url.indexOf('wss://') !== 0) {
       url = 'wss://' + url;
     }
-    return url;
+    return url.replace(/\/?$/, '/') + 'ws/';
   }
   // Then try and check whether there is a jujushell charm deployed and ready
   // on the current model.
   url = db.environment.get('jujushellURL');
   if (url) {
-    return `ws://${url}/ws/`;
+    storage.setItem(storageKey, url);
+    return `wss://${url}/ws/`;
   }
   // Last option is the application settings (JAAS case).
   return config.jujushellURL || null;

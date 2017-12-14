@@ -136,8 +136,10 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       this.applicationConfig.flags.terminal ||
       // Always allow for opening the terminal if the user specified a
       // jujushell URL in the GUI settings.
-      localStorage.getItem('jujushell-url') ||
-      false
+      !!localStorage.getItem('jujushell-url') ||
+      // Also allow for opening the terminal if the user deployed the juju
+      // shell charm.
+      !!this.db.environment.get('jujushellURL')
     );
     ReactDOM.render(
       <ModelActions

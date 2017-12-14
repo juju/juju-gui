@@ -98,7 +98,7 @@ YUI.add('juju-delta-handlers', function(Y) {
 
     handleGUIServices: (unit, db) => {
       // XXX This if-statement is in place for some minor test difficulties.
-      // Something about the way that test data is loaded into the dbin tests
+      // Something about the way that test data is loaded into the db in tests
       // allows unit.charmUrl to be undefined. This is a problem with tests
       // only and lower priority, so this will be an issue to be tackled later.
       // https://github.com/juju/juju-gui/issues/3277
@@ -113,15 +113,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       let address = null;
       const app = db.services.getById(unit.service);
       if (unit.agent_state === 'started' && app.get('exposed')) {
-        let port = app.get('config').port;
-        if (!port) {
-          if (!unit.portRanges.length) {
-            // Nothing to do then, let's wait.
-            return;
-          }
-          port = unit.portRanges[0].to;
-        }
-        address = `${unit.public_address}:${port}`;
+        address = app.get('config')['dns-name'];
       }
       db.environment.set('jujushellURL', address);
     },
