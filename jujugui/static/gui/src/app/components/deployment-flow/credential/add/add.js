@@ -269,7 +269,7 @@ class DeploymentCredentialAdd extends React.Component {
       <div className="deployment-credential-add twelve-col">
         <h4>{`Create new ${title} credential`}</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a href={info && info.signupUrl}
+          <a className="deployment-credential-add__link" href={info && info.signupUrl}
             target="_blank">
             Sign up for {title}
             &nbsp;

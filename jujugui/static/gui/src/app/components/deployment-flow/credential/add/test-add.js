@@ -112,7 +112,7 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a href={cloud.signupUrl}
+          <a className="deployment-credential-add__link" href={cloud.signupUrl}
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
@@ -277,7 +277,7 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Amazon Web Services credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a href={cloud.signupUrl}
+          <a className="deployment-credential-add__link" href={cloud.signupUrl}
             target="_blank">
             Sign up for {'Amazon Web Services'}
             &nbsp;
@@ -375,7 +375,7 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a href={cloud.signupUrl}
+          <a className="deployment-credential-add__link" href={cloud.signupUrl}
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
@@ -519,7 +519,7 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a href={cloud.signupUrl}
+          <a className="deployment-credential-add__link" href={cloud.signupUrl}
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
@@ -610,7 +610,7 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add twelve-col">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a href={cloud.signupUrl}
+          <a className="deployment-credential-add__link" href={cloud.signupUrl}
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
