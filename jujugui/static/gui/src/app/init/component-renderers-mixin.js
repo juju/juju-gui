@@ -62,7 +62,6 @@ const Zoom = require('../components/zoom/zoom');
     Stores all of the component renderer and cleanup methods.
 */
 const ComponentRenderersMixin = superclass => class extends superclass {
-  _clearRoot() {}
   /**
     Renders the Added Services component to the page in the appropriate
     element.
@@ -282,8 +281,6 @@ Browser: ${navigator.userAgent}`
       <ISVProfile
         d3={yui.d3} />,
       document.getElementById('top-page-container'));
-    // The model name should not be visible when viewing the profile.
-    this._renderBreadcrumb({ showEnvSwitcher: false });
   }
   /**
     Renders the user profile component.
@@ -720,6 +717,7 @@ Browser: ${navigator.userAgent}`
         addBillingAddress={
           this.payment && this.payment.addBillingAddress.bind(this.payment)}
         addNotification={this._bound.addNotification}
+        changeState={this._bound.changeState}
         controllerIsReady={this._controllerIsReady.bind(this)}
         createCardElement={
           this.stripe && this.stripe.createCardElement.bind(this.stripe)}
@@ -1289,12 +1287,11 @@ Browser: ${navigator.userAgent}`
 
   /**
     Renders the breadcrumb component to the DOM.
-    @param {Object} options
-      showEnvSwitcher: true
   */
-  _renderBreadcrumb({ showEnvSwitcher=true } = {}) {
+  _renderBreadcrumb() {
     const modelAPI = this.modelAPI;
     const controllerAPI = this.controllerAPI;
+    let showEnvSwitcher = true;
     let listModelsWithInfo =
       controllerAPI &&
         controllerAPI.listModelsWithInfo.bind(this.controllerAPI);

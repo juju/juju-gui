@@ -32,6 +32,7 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
+          changeState={this.props.changeState}
           username={this.props.userInfo.profile} />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">

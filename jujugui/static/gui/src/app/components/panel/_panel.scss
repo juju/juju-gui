@@ -62,13 +62,20 @@
   &.user-profile {
     @extend %scroll-children;
     z-index: index($z-indexed-elements, top-page);
-    top: $navbar-height;
+    top: 0;
     bottom: 0;
     right: 0;
     left: 0;
-    background-color: $canvas-background;
-    border-top: 1px solid $mid-grey;
+    padding-top: $navbar-height;
+    background-color: rgba(247, 247, 247, 0.7);
     box-shadow: none;
+
+    .panel-component__inner {
+      background-color: $canvas-background;
+      border-top: 1px solid $mid-grey;
+      // Clearfix.
+      overflow: auto;
+    }
   }
 
   &.popup {

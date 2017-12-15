@@ -67,6 +67,8 @@ class Account extends React.Component {
           <div className="inner-wrapper">
             <UserProfileHeader
               avatar=""
+              changeState={this.props.changeState}
+              closeState={{root: null}}
               links={links}
               userInfo={this.props.userInfo} />
             <AccountCredentials
@@ -96,6 +98,7 @@ Account.propTypes = {
   addAddress: PropTypes.func,
   addBillingAddress: PropTypes.func,
   addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
   controllerIsReady: PropTypes.func.isRequired,
   createCardElement: PropTypes.func,
   createPaymentMethod: PropTypes.func,

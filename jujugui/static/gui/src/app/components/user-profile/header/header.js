@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericButton = require('../../generic-button/generic-button');
+const SvgIcon = require('../../svg-icon/svg-icon');
 
 class UserProfileHeader extends React.Component {
   /**
@@ -88,9 +89,24 @@ class UserProfileHeader extends React.Component {
       </ul>);
   }
 
+  /**
+    Handle closing the profile.
+  */
+  _handleClose() {
+    this.props.changeState(this.props.closeState);
+  }
+
   render() {
     return (
       <div className="user-profile-header twelve-col">
+        <div className="user-profile-header__close link"
+          onClick={this._handleClose.bind(this)}
+          role="button"
+          tabIndex="0">
+          <SvgIcon
+            name="close_16"
+            size="20" />
+        </div>
         {this._generateLogin()}
         {this._generateAvatar()}
         <h1 className="user-profile-header__username">
@@ -103,6 +119,8 @@ class UserProfileHeader extends React.Component {
 
 UserProfileHeader.propTypes = {
   avatar: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired,
+  closeState: PropTypes.object.isRequired,
   interactiveLogin: PropTypes.func,
   links: PropTypes.array.isRequired,
   // userInfo must have the following attributes:

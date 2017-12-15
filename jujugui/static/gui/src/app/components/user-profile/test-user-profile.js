@@ -66,6 +66,8 @@ describe('UserProfile', () => {
       <div className="inner-wrapper">
         <UserProfileHeader
           avatar=""
+          changeState={sinon.stub()}
+          closeState={{profile: null}}
           interactiveLogin={instance._interactiveLogin}
           links={links}
           userInfo={userInfo} />
@@ -159,6 +161,8 @@ describe('UserProfile', () => {
       <div className="inner-wrapper">
         <UserProfileHeader
           avatar=""
+          changeState={sinon.stub()}
+          closeState={{profile: null}}
           interactiveLogin={instance._interactiveLogin}
           links={links}
           userInfo={userInfo} />
