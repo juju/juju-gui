@@ -43,7 +43,7 @@ describe('Profile Navigation', function() {
           <li className="profile-navigation__list-item" key='credentials'
             role="button"
             onClick={list[3].props.onClick}>
-            Cloud Credentials
+            Cloud credentials
           </li>
         </ul>
       </div>
@@ -86,7 +86,7 @@ describe('Profile Navigation', function() {
           <li className="profile-navigation__list-item"
             role="button" key='credentials'
             onClick={list[3].props.onClick}>
-            Cloud Credentials
+            Cloud credentials
           </li>
         </ul>
       </div>
@@ -117,7 +117,7 @@ describe('Profile Navigation', function() {
           <li className="profile-navigation__list-item"
             key='credentials' role="button"
             onClick={list2[3].props.onClick}>
-            Cloud Credentials
+            Cloud credentials
           </li>
         </ul>
       </div>

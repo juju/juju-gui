@@ -27,18 +27,36 @@ describe('Profile', function() {
           list: sinon.stub(),
           url: '/charmstore'
         }}
+        controllerAPI={controllerAPI}
+        controllerIsReady={sinon.stub()}
+        controllerUser="spinach"
         deployTarget={options.deployTarget || sinon.stub()}
         facadesExist={true}
         getModelName={options.getModelName || sinon.stub()}
+        initUtils={initUtils}
         listModelsWithInfo={sinon.stub()}
         destroyModels={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={{profile: 'spinach'}} />, true);
   }
-  let acl;
+  let acl, controllerAPI, initUtils;
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
+    controllerAPI = {
+      getCloudCredentialNames: sinon.stub(),
+      listClouds: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      revokeCloudCredential: sinon.stub(),
+      updateCloudCredential: sinon.stub()
+    };
+    initUtils = {
+      generateCloudCredentialName: sinon.stub(),
+      getCloudProviderDetails: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      validateForm: sinon.stub()
+    };
   });
 
   it('can render', () => {
