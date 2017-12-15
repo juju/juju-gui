@@ -359,11 +359,17 @@ Browser: ${navigator.userAgent}`
           baseURL={this.applicationConfig.baseUrl}
           changeState={this._bound.changeState}
           charmstore={charmstore}
+          controllerAPI={
+            shapeup.fromShape(this.controllerAPI, Profile.propTypes.controllerAPI)}
+          controllerIsReady={this._controllerIsReady.bind(this)}
+          controllerUser={this.user.controller.user}
           deployTarget={this.deployTarget.bind(this, charmstore)}
+          destroyModels={this._bound.destroyModels}
           facadesExist={facadesExist}
           getModelName={this._getModelName.bind(this)}
+          initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
           listModelsWithInfo={this._bound.listModelsWithInfo}
-          destroyModels={this._bound.destroyModels}
+          sendAnalytics={this.sendAnalytics}
           switchModel={this._bound.switchModel}
           userInfo={this._getUserInfo(state)} />);
     }
