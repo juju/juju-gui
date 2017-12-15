@@ -702,6 +702,8 @@ Browser: ${navigator.userAgent}`
   */
   _renderAccount(state, next) {
     const controllerAPI = this.controllerAPI;
+    const payment = this.payment;
+    const stripe = this.stripe;
     if (!controllerAPI || !controllerAPI.userIsAuthenticated) {
       // If the controller isn't ready yet then don't render anything.
       return;
@@ -712,59 +714,17 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <Account
         acl={this.acl}
-        addAddress={
-          this.payment && this.payment.addAddress.bind(this.payment)}
-        addBillingAddress={
-          this.payment && this.payment.addBillingAddress.bind(this.payment)}
         addNotification={this._bound.addNotification}
         changeState={this._bound.changeState}
+        controllerAPI={shapeup.fromShape(controllerAPI, Account.propTypes.controllerAPI)}
         controllerIsReady={this._controllerIsReady.bind(this)}
-        createCardElement={
-          this.stripe && this.stripe.createCardElement.bind(this.stripe)}
-        createPaymentMethod={
-          this.payment && this.payment.createPaymentMethod.bind(this.payment)}
-        createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
-        createUser={
-          this.payment && this.payment.createUser.bind(this.payment)}
-        generateCloudCredentialName={
-          initUtils.generateCloudCredentialName}
-        getUser={this.payment && this.payment.getUser.bind(this.payment)}
-        getCharges={
-          this.payment && this.payment.getCharges.bind(this.payment)}
-        getCloudCredentialNames={
-          controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
-        getCloudProviderDetails={
-          initUtils.getCloudProviderDetails.bind(
-            initUtils)}
-        getCountries={
-          this.payment && this.payment.getCountries.bind(this.payment)}
-        getReceipt={
-          this.payment && this.payment.getReceipt.bind(this.payment)}
-        listClouds={controllerAPI.listClouds.bind(controllerAPI)}
-        removeAddress={
-          this.payment && this.payment.removeAddress.bind(this.payment)}
-        removeBillingAddress={
-          this.payment && this.payment.removeBillingAddress.bind(
-            this.payment)}
-        removePaymentMethod={
-          this.payment && this.payment.removePaymentMethod.bind(this.payment)}
-        revokeCloudCredential={
-          controllerAPI.revokeCloudCredential.bind(controllerAPI)}
+        initUtils={shapeup.fromShape(initUtils, Account.propTypes.initUtils)}
+        payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
         sendAnalytics={this.sendAnalytics}
         showPay={this.applicationConfig.flags.pay || false}
-        updateCloudCredential={
-          controllerAPI.updateCloudCredential.bind(controllerAPI)}
-        updateAddress={
-          this.payment && this.payment.updateAddress.bind(this.payment)}
-        updateBillingAddress={
-          this.payment && this.payment.updateBillingAddress.bind(
-            this.payment)}
-        updatePaymentMethod={
-          this.payment && this.payment.updatePaymentMethod.bind(this.payment)}
+        stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
         user={this.user.controller.user}
-        userInfo={this._getUserInfo(state)}
-        validateForm={
-          initUtils.validateForm.bind(initUtils)} />,
+        userInfo={this._getUserInfo(state)} />,
       document.getElementById('top-page-container'));
     next();
   }

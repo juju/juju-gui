@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const GenericButton = require('../../../generic-button/generic-button');
 const ExpandingRow = require('../../../expanding-row/expanding-row');
@@ -44,16 +45,19 @@ class AccountPaymentMethods extends React.Component {
           </GenericButton>
         </div>);
     }
+    const payment = this.props.payment;
     const methods = user.paymentMethods.map(method => {
       return (
         <AccountPaymentMethod
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          getCountries={this.props.getCountries}
+          payment={payment && shapeup.addReshape({
+            getCountries: payment.getCountries.bind(payment),
+            removePaymentMethod: payment.removePaymentMethod.bind(payment),
+            updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
+          })}
           key={method.id}
           paymentMethod={method}
-          removePaymentMethod={this.props.removePaymentMethod}
-          updatePaymentMethod={this.props.updatePaymentMethod}
           updateUser={this.props.updateUser}
           username={this.props.username}
           validateForm={this.props.validateForm} />);
@@ -92,7 +96,7 @@ class AccountPaymentMethods extends React.Component {
       addressCountry: address.country || '',
       name: card.name
     };
-    const xhr = this.props.createToken(card.card, extra, (error, token) => {
+    const xhr = this.props.stripe.createToken(card.card, extra, (error, token) => {
       if (error) {
         const message = 'Could not create Stripe token';
         this.props.addNotification({
@@ -115,7 +119,7 @@ class AccountPaymentMethods extends React.Component {
     @param token {String} A Stripe token.
   */
   _createPaymentMethod(token) {
-    const xhr = this.props.createPaymentMethod(
+    const xhr = this.props.payment.createPaymentMethod(
       this.props.username, token, null, (error, method) => {
         if (error) {
           const message = 'Could not create the payment method';
@@ -166,7 +170,7 @@ class AccountPaymentMethods extends React.Component {
       <AddressForm
         disabled={this.props.acl.isReadOnly()}
         addNotification={this.props.addNotification}
-        getCountries={this.props.getCountries}
+        getCountries={this.props.payment.getCountries}
         ref="cardAddress"
         showName={false}
         showPhone={false}
@@ -192,7 +196,7 @@ class AccountPaymentMethods extends React.Component {
           <div className="account__payment-form-fields">
             <CardForm
               acl={this.props.acl}
-              createCardElement={this.props.createCardElement}
+              createCardElement={this.props.stripe.createCardElement}
               ref="cardForm"
               validateForm={this.props.validateForm} />
             <label htmlFor="cardAddressSame">
@@ -240,13 +244,19 @@ class AccountPaymentMethods extends React.Component {
 AccountPaymentMethods.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  createCardElement: PropTypes.func.isRequired,
-  createPaymentMethod: PropTypes.func.isRequired,
-  createToken: PropTypes.func.isRequired,
-  getCountries: PropTypes.func.isRequired,
+  payment: shapeup.shape({
+    createPaymentMethod: PropTypes.func.isRequired,
+    getCountries: PropTypes.func.isRequired,
+    removePaymentMethod: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    updatePaymentMethod: PropTypes.func.isRequired
+  }),
   paymentUser: PropTypes.object.isRequired,
-  removePaymentMethod: PropTypes.func.isRequired,
-  updatePaymentMethod: PropTypes.func.isRequired,
+  stripe: shapeup.shape({
+    createCardElement: PropTypes.func,
+    createToken: PropTypes.func,
+    reshape: shapeup.reshapeFunc
+  }),
   updateUser: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
   validateForm: PropTypes.func.isRequired

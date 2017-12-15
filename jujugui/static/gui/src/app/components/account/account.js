@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const UserProfileHeader = require('../user-profile/header/header');
 const Panel = require('../panel/panel');
@@ -20,25 +21,11 @@ class Account extends React.Component {
       return (
         <AccountPayment
           acl={this.props.acl}
-          addAddress={this.props.addAddress}
-          addBillingAddress={this.props.addBillingAddress}
           addNotification={this.props.addNotification}
-          createCardElement={this.props.createCardElement}
-          createPaymentMethod={this.props.createPaymentMethod}
-          createToken={this.props.createToken}
-          createUser={this.props.createUser}
-          getCharges={this.props.getCharges}
-          getCountries={this.props.getCountries}
-          getReceipt={this.props.getReceipt}
-          getUser={this.props.getUser}
-          removeAddress={this.props.removeAddress}
-          removeBillingAddress={this.props.removeBillingAddress}
-          removePaymentMethod={this.props.removePaymentMethod}
-          updateAddress={this.props.updateAddress}
-          updateBillingAddress={this.props.updateBillingAddress}
-          updatePaymentMethod={this.props.updatePaymentMethod}
+          payment={this.props.payment}
+          stripe={this.props.stripe}
           username={this.props.userInfo.profile}
-          validateForm={this.props.validateForm} />);
+          validateForm={this.props.initUtils.validateForm} />);
     } else {
       return null;
     }
@@ -74,17 +61,11 @@ class Account extends React.Component {
             <AccountCredentials
               acl={this.props.acl}
               addNotification={this.props.addNotification}
+              controllerAPI={this.props.controllerAPI}
               controllerIsReady={this.props.controllerIsReady}
-              generateCloudCredentialName={
-                this.props.generateCloudCredentialName}
-              getCloudCredentialNames={this.props.getCloudCredentialNames}
-              getCloudProviderDetails={this.props.getCloudProviderDetails}
-              listClouds={this.props.listClouds}
-              revokeCloudCredential={this.props.revokeCloudCredential}
+              initUtils={this.props.initUtils}
               sendAnalytics={this.sendAnalytics.bind(this)}
-              updateCloudCredential={this.props.updateCloudCredential}
-              username={this.props.user}
-              validateForm={this.props.validateForm} />
+              username={this.props.user} />
             {this._generatePaymentDetails()}
           </div>
         </div>
@@ -95,36 +76,48 @@ class Account extends React.Component {
 
 Account.propTypes = {
   acl: PropTypes.object.isRequired,
-  addAddress: PropTypes.func,
-  addBillingAddress: PropTypes.func,
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
+  controllerAPI: shapeup.shape({
+    getCloudCredentialNames: PropTypes.func.isRequired,
+    listClouds: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    revokeCloudCredential: PropTypes.func.isRequired,
+    updateCloudCredential: PropTypes.func.isRequired
+  }).isRequired,
   controllerIsReady: PropTypes.func.isRequired,
-  createCardElement: PropTypes.func,
-  createPaymentMethod: PropTypes.func,
-  createToken: PropTypes.func,
-  createUser: PropTypes.func,
-  generateCloudCredentialName: PropTypes.func.isRequired,
-  getCharges: PropTypes.func,
-  getCloudCredentialNames: PropTypes.func.isRequired,
-  getCloudProviderDetails: PropTypes.func.isRequired,
-  getCountries: PropTypes.func,
-  getReceipt: PropTypes.func,
-  getUser: PropTypes.func,
-  listClouds: PropTypes.func.isRequired,
-  removeAddress: PropTypes.func,
-  removeBillingAddress: PropTypes.func,
-  removePaymentMethod: PropTypes.func,
-  revokeCloudCredential: PropTypes.func.isRequired,
+  initUtils: shapeup.shape({
+    generateCloudCredentialName: PropTypes.func.isRequired,
+    getCloudProviderDetails: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    validateForm: PropTypes.func.isRequired
+  }).isRequired,
+  payment: shapeup.shape({
+    addAddress: PropTypes.func,
+    addBillingAddress: PropTypes.func,
+    createPaymentMethod: PropTypes.func,
+    createUser: PropTypes.func,
+    getCharges: PropTypes.func,
+    getCountries: PropTypes.func,
+    getReceipt: PropTypes.func,
+    getUser: PropTypes.func,
+    removeAddress: PropTypes.func,
+    removeBillingAddress: PropTypes.func,
+    removePaymentMethod: PropTypes.func,
+    reshape: shapeup.reshapeFunc,
+    updateAddress: PropTypes.func,
+    updateBillingAddress: PropTypes.func,
+    updatePaymentMethod: PropTypes.func
+  }),
   sendAnalytics: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
-  updateAddress: PropTypes.func,
-  updateBillingAddress: PropTypes.func,
-  updateCloudCredential: PropTypes.func.isRequired,
-  updatePaymentMethod: PropTypes.func,
+  stripe: shapeup.shape({
+    createCardElement: PropTypes.func,
+    createToken: PropTypes.func,
+    reshape: shapeup.reshapeFunc
+  }),
   user: PropTypes.string.isRequired,
-  userInfo: PropTypes.object.isRequired,
-  validateForm: PropTypes.func.isRequired
+  userInfo: PropTypes.object.isRequired
 };
 
 module.exports = Account;

@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
 const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
@@ -48,7 +49,7 @@ class AccountCredentials extends React.Component {
   */
   _getClouds() {
     this.setState({loading: true}, () => {
-      const xhr = this.props.listClouds((error, clouds) => {
+      const xhr = this.props.controllerAPI.listClouds((error, clouds) => {
         if (error) {
           const message = 'Unable to list clouds';
           this.props.addNotification({
@@ -78,7 +79,7 @@ class AccountCredentials extends React.Component {
     const pairs = Object.keys(clouds).map(cloud => {
       return [this.props.username, cloud];
     });
-    const xhr = this.props.getCloudCredentialNames(
+    const xhr = this.props.controllerAPI.getCloudCredentialNames(
       pairs, (error, names) => {
         if (error) {
           const message = 'Unable to get names for credentials';
@@ -161,7 +162,7 @@ class AccountCredentials extends React.Component {
   */
   _deleteCredential() {
     const credential = this.state.removeCredential;
-    const xhr = this.props.revokeCloudCredential(credential, error => {
+    const xhr = this.props.controllerAPI.revokeCloudCredential(credential, error => {
       if (error) {
         const message = 'Unable to revoke the cloud credential';
         this.props.addNotification({
@@ -197,7 +198,7 @@ class AccountCredentials extends React.Component {
         <Spinner />);
     }
     const credentialsList = credentials.map(credential => {
-      const cloud = this.props.getCloudProviderDetails(credential.cloud);
+      const cloud = this.props.initUtils.getCloudProviderDetails(credential.cloud);
       const title = cloud ? cloud.title : credential.cloud;
       const buttons = [{
         title: 'Remove',
@@ -332,8 +333,8 @@ class AccountCredentials extends React.Component {
         addNotification={props.addNotification}
         cloud={overrides.cloud || this.state.cloud}
         controllerIsReady={props.controllerIsReady}
-        listClouds={props.listClouds}
-        getCloudProviderDetails={props.getCloudProviderDetails}
+        listClouds={props.controllerAPI.listClouds}
+        getCloudProviderDetails={props.initUtils.getCloudProviderDetails}
         setCloud={this._setCloud.bind(this)} />);
   }
 
@@ -375,14 +376,14 @@ class AccountCredentials extends React.Component {
         credentialName={overrides.name}
         credentials={this.state.credentials.map(credential =>
           credential.name)}
-        getCloudProviderDetails={this.props.getCloudProviderDetails}
-        generateCloudCredentialName={this.props.generateCloudCredentialName}
+        getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
+        generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
         getCredentials={this._getClouds.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
         setCredential={this._setCredential.bind(this)}
-        updateCloudCredential={this.props.updateCloudCredential}
+        updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
         user={this.props.username}
-        validateForm={this.props.validateForm} />);
+        validateForm={this.props.initUtils.validateForm} />);
   }
 
   render() {
@@ -417,16 +418,22 @@ class AccountCredentials extends React.Component {
 AccountCredentials.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  controllerAPI: shapeup.shape({
+    getCloudCredentialNames: PropTypes.func.isRequired,
+    listClouds: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    revokeCloudCredential: PropTypes.func.isRequired,
+    updateCloudCredential: PropTypes.func.isRequired
+  }).isRequired,
   controllerIsReady: PropTypes.func.isRequired,
-  generateCloudCredentialName: PropTypes.func.isRequired,
-  getCloudCredentialNames: PropTypes.func.isRequired,
-  getCloudProviderDetails: PropTypes.func.isRequired,
-  listClouds: PropTypes.func.isRequired,
-  revokeCloudCredential: PropTypes.func.isRequired,
+  initUtils: shapeup.shape({
+    generateCloudCredentialName: PropTypes.func.isRequired,
+    getCloudProviderDetails: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    validateForm: PropTypes.func.isRequired
+  }).isRequired,
   sendAnalytics: PropTypes.func.isRequired,
-  updateCloudCredential: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = AccountCredentials;

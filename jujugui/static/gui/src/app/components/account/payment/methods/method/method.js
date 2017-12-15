@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const GenericButton = require('../../../../generic-button/generic-button');
 const GenericInput = require('../../../../generic-input/generic-input');
@@ -36,7 +37,7 @@ class AccountPaymentMethod extends React.Component {
         addNotification={this.props.addNotification}
         card={this.props.paymentMethod}
         onPaymentMethodRemoved={this.props.updateUser}
-        removePaymentMethod={this.props.removePaymentMethod}
+        removePaymentMethod={this.props.payment.removePaymentMethod}
         updatePaymentMethod={this._toggleForm.bind(this)}
         username={this.props.username} />);
   }
@@ -52,7 +53,7 @@ class AccountPaymentMethod extends React.Component {
     }
     const address = this.refs.cardAddress.getValue();
     const expiry = this.refs.expiry.getValue();
-    const xhr = this.props.updatePaymentMethod(
+    const xhr = this.props.payment.updatePaymentMethod(
       this.props.username, this.props.paymentMethod.id, address, expiry,
       error => {
         if (error) {
@@ -94,7 +95,7 @@ class AccountPaymentMethod extends React.Component {
           address={paymentMethod.address}
           disabled={this.props.acl.isReadOnly()}
           addNotification={this.props.addNotification}
-          getCountries={this.props.getCountries}
+          getCountries={this.props.payment.getCountries}
           ref="cardAddress"
           showName={false}
           showPhone={false}
@@ -152,10 +153,13 @@ class AccountPaymentMethod extends React.Component {
 AccountPaymentMethod.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  getCountries: PropTypes.func.isRequired,
+  payment: shapeup.shape({
+    getCountries: PropTypes.func.isRequired,
+    removePaymentMethod: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    updatePaymentMethod: PropTypes.func.isRequired
+  }),
   paymentMethod: PropTypes.object.isRequired,
-  removePaymentMethod: PropTypes.func.isRequired,
-  updatePaymentMethod: PropTypes.func.isRequired,
   updateUser: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
   validateForm: PropTypes.func.isRequired

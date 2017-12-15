@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AccountPaymentCharges = require('./charges');
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
@@ -13,10 +14,15 @@ const Spinner = require('../../../spinner/spinner');
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('AccountPaymentCharges', function() {
-  let acl;
+  let acl, payment;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    payment = {
+      getCharges: sinon.stub(),
+      getReceipt: sinon.stub(),
+      reshape: shapeup.reshapeFunc
+    };
   });
 
   it('can display the loading spinner', function() {
@@ -24,8 +30,7 @@ describe('AccountPaymentCharges', function() {
       <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
-        getCharges={sinon.stub()}
-        getReceipt={sinon.stub()}
+        payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -34,7 +39,7 @@ describe('AccountPaymentCharges', function() {
   });
 
   it('can display charges', function() {
-    const getCharges = sinon.stub().callsArgWith(1, null, [{
+    payment.getCharges = sinon.stub().callsArgWith(1, null, [{
       id: 'TEST-12344',
       statementId: '12344',
       price: 10000,
@@ -52,8 +57,7 @@ describe('AccountPaymentCharges', function() {
       <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
-        getCharges={getCharges}
-        getReceipt={sinon.stub()}
+        payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -162,13 +166,12 @@ describe('AccountPaymentCharges', function() {
   });
 
   it('can display when there are no charges', function() {
-    const getCharges = sinon.stub().callsArgWith(1, null, []);
+    payment.getCharges = sinon.stub().callsArgWith(1, null, []);
     const renderer = jsTestUtils.shallowRender(
       <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
-        getCharges={getCharges}
-        getReceipt={sinon.stub()}
+        payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -187,7 +190,7 @@ describe('AccountPaymentCharges', function() {
   });
 
   it('can display when there are no line items', function() {
-    const getCharges = sinon.stub().callsArgWith(1, null, [{
+    payment.getCharges = sinon.stub().callsArgWith(1, null, [{
       id: 'TEST-12344',
       statementId: '12344',
       price: 10000,
@@ -200,8 +203,7 @@ describe('AccountPaymentCharges', function() {
       <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
-        getCharges={getCharges}
-        getReceipt={sinon.stub()}
+        payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -280,13 +282,12 @@ describe('AccountPaymentCharges', function() {
 
   it('can handle errors when getting the charges', function() {
     const addNotification = sinon.stub();
-    const getCharges = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    payment.getCharges = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     jsTestUtils.shallowRender(
       <AccountPaymentCharges
         acl={acl}
         addNotification={addNotification}
-        getCharges={getCharges}
-        getReceipt={sinon.stub()}
+        payment={payment}
         username="spinach" />);
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -297,7 +298,7 @@ describe('AccountPaymentCharges', function() {
   });
 
   it('can display the popup', function() {
-    const getCharges = sinon.stub().callsArgWith(1, null, [{
+    payment.getCharges = sinon.stub().callsArgWith(1, null, [{
       id: 'TEST-12344',
       statementId: '12344',
       price: 10000,
@@ -312,8 +313,7 @@ describe('AccountPaymentCharges', function() {
       <AccountPaymentCharges
         acl={acl}
         addNotification={addNotification}
-        getCharges={getCharges}
-        getReceipt={getReceipt}
+        payment={payment}
         username="spinach" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
@@ -332,13 +332,12 @@ describe('AccountPaymentCharges', function() {
 
   it('can abort requests when unmounting', function() {
     const abort = sinon.stub();
-    const getCharges = sinon.stub().returns({abort: abort});
+    payment.getCharges = sinon.stub().returns({abort: abort});
     const renderer = jsTestUtils.shallowRender(
       <AccountPaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
-        getCharges={getCharges}
-        getReceipt={sinon.stub()}
+        payment={payment}
         username="spinach" />, true);
     renderer.unmount();
     assert.equal(abort.callCount, 1);
