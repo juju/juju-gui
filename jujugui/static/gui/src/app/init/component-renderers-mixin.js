@@ -716,40 +716,13 @@ Browser: ${navigator.userAgent}`
         acl={this.acl}
         addNotification={this._bound.addNotification}
         changeState={this._bound.changeState}
-        controllerAPI={shapeup.addReshape({
-          getCloudCredentialNames: controllerAPI.getCloudCredentialNames.bind(controllerAPI),
-          listClouds: controllerAPI.listClouds.bind(controllerAPI),
-          revokeCloudCredential: controllerAPI.revokeCloudCredential.bind(controllerAPI),
-          updateCloudCredential: controllerAPI.updateCloudCredential.bind(controllerAPI)
-        })}
+        controllerAPI={shapeup.fromShape(controllerAPI, Account.propTypes.controllerAPI)}
         controllerIsReady={this._controllerIsReady.bind(this)}
-        initUtils={shapeup.addReshape({
-          generateCloudCredentialName: initUtils.generateCloudCredentialName.bind(initUtils),
-          getCloudProviderDetails: initUtils.getCloudProviderDetails.bind(initUtils),
-          validateForm: initUtils.validateForm.bind(initUtils)
-        })}
-        payment={payment && shapeup.addReshape({
-          addAddress: payment.addAddress.bind(payment),
-          addBillingAddress: payment.addBillingAddress.bind(payment),
-          createPaymentMethod: payment.createPaymentMethod.bind(payment),
-          createUser: payment.createUser.bind(payment),
-          getCharges: payment.getCharges.bind(payment),
-          getCountries: payment.getCountries.bind(payment),
-          getReceipt: payment.getReceipt.bind(payment),
-          getUser: payment.getUser.bind(payment),
-          removeAddress: payment.removeAddress.bind(payment),
-          removeBillingAddress: payment.removeBillingAddress.bind(payment),
-          removePaymentMethod: payment.removePaymentMethod.bind(payment),
-          updateAddress: payment.updateAddress.bind(payment),
-          updateBillingAddress: payment.updateBillingAddress.bind(payment),
-          updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
-        })}
+        initUtils={shapeup.fromShape(initUtils, Account.propTypes.initUtils)}
+        payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
         sendAnalytics={this.sendAnalytics}
         showPay={this.applicationConfig.flags.pay || false}
-        stripe={stripe && shapeup.addReshape({
-          createCardElement: stripe.createCardElement.bind(stripe),
-          createToken: stripe.createToken.bind(stripe)
-        })}
+        stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
         user={this.user.controller.user}
         userInfo={this._getUserInfo(state)} />,
       document.getElementById('top-page-container'));
