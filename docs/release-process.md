@@ -80,12 +80,13 @@ guiproxy -env production
 ```bash
 make dist
 juju bootstrap google google
-juju upgrade-gui dist/juju-gui-*.tar.bz2
+juju upgrade-gui dist/jujugui-*.tar.bz2
 ```
 
 ### Push to GitHub
 
 ```bash
+git commit -am "Update package.lock."
 git push --tags origin master
 ```
 
