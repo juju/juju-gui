@@ -107,13 +107,17 @@ YUI.add('juju-delta-handlers', function(Y) {
         return;
       }
       const url = window.jujulib.URL.fromLegacyString(unit.charmUrl);
-      if (url.name !== 'jujushell' || (url.user && url.user !== 'yellow')) {
+      if (
+        url.name !== 'jujushell' || (
+          url.user && url.user !== 'juju-gui' && url.user !== 'yellow'
+        )
+      ) {
         return;
       }
       let address = null;
       const app = db.services.getById(unit.service);
       if (unit.agent_state === 'started' && app.get('exposed')) {
-        address = app.get('config')['dns-name'];
+        address = app.get('config')['dns-name'] || null;
       }
       db.environment.set('jujushellURL', address);
     },
