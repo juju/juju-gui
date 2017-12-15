@@ -1,3 +1,11 @@
+- 2.11.1:
+
+  - (Fix) Fix typo causing charmstore to be undefined when deploying from the user profile.
+  - (Fix) Do not disconnect from the model when viewing user profiles.
+  - (Fix) Style links in deployment flow with correct font-weight
+  - (Beta) Improve detection and handling of the jujushell service.
+  - (Beta) Implement models, bundles and charms panes on the new profile page.
+
 - 2.11.0:
 
   - Beta release of a Terminal embedded into the GUI which allows you to perform CLI commands in the browser as you would in your local terminal. Currently only available behind a feature flag, in upcoming releases this will become widely available.
