@@ -1127,6 +1127,101 @@ describe('Juju delta handlers utilities', function() {
 
   });
 
+  describe('handleGUIServices', function() {
+
+    // Create and return a fake db.
+    const makeDB = (dnsName, exposed) => {
+      const get = sinon.stub();
+      get.withArgs('config').returns({'dns-name': dnsName});
+      get.withArgs('exposed').returns(exposed);
+      return {
+        environment: {set: sinon.stub()},
+        services: {
+          getById: sinon.stub().withArgs('myshell').returns({get: get})
+        }
+      };
+    };
+
+    // Create and return a fake unit with the given URL and agent state.
+    const makeUnit = (url, state) => {
+      return {agent_state: state, charmUrl: url, service: 'myshell'};
+    };
+
+    // Ensure the jujushell URL has been set in the environment included in the
+    // given db.
+    const assertSetCalledOnceWith = (db, url) => {
+      assert.strictEqual(db.environment.set.callCount, 1, 'set call count');
+      const args = db.environment.set.args[0];
+      assert.strictEqual(args.length, 2, 'set number of args');
+      assert.strictEqual(args[0], 'jujushellURL');
+      assert.strictEqual(args[1], url);
+    };
+
+    it('sets the jujushell URL when the app is exposed and ready', function() {
+      const db = makeDB('shell1.example.com', true);
+      const unit = makeUnit('cs:jujushell-42', 'started');
+      utils.handleGUIServices(unit, db);
+      assertSetCalledOnceWith(db, 'shell1.example.com');
+    });
+
+    it('sets the URL when the charm is owned by juju-gui', function() {
+      const db = makeDB('shell2.example.com', true);
+      const unit = makeUnit('cs:~juju-gui/jujushell-42', 'started');
+      utils.handleGUIServices(unit, db);
+      assertSetCalledOnceWith(db, 'shell2.example.com');
+    });
+
+    it('sets the URL when the charm is owned by yellow', function() {
+      const db = makeDB('shell3.example.com', true);
+      const unit = makeUnit('cs:~yellow/jujushell-47', 'started');
+      utils.handleGUIServices(unit, db);
+      assertSetCalledOnceWith(db, 'shell3.example.com');
+    });
+
+    it('unsets the jujushell URL when the app is not exposed', function() {
+      const db = makeDB('shell.example.com', false);
+      const unit = makeUnit('cs:jujushell-42', 'started');
+      utils.handleGUIServices(unit, db);
+      assertSetCalledOnceWith(db, null);
+    });
+
+    it('unsets the jujushell URL when the app is not started', function() {
+      const db = makeDB('shell.example.com', true);
+      const unit = makeUnit('cs:jujushell-42', 'pending');
+      utils.handleGUIServices(unit, db);
+      assertSetCalledOnceWith(db, null);
+    });
+
+    it('unsets the jujushell URL when the app lacks a DNS name', function() {
+      const db = makeDB('', true);
+      const unit = makeUnit('cs:jujushell-42', 'started');
+      utils.handleGUIServices(unit, db);
+      assertSetCalledOnceWith(db, null);
+    });
+
+    it('does nothing when the charm URL is not set on the unit', function() {
+      const db = makeDB('shell.example.com', true);
+      const unit = makeUnit('', 'started');
+      utils.handleGUIServices(unit, db);
+      assert.strictEqual(db.environment.set.callCount, 0, 'set call count');
+    });
+
+    it('does nothing when the charm is not jujushell', function() {
+      const db = makeDB('shell.example.com', true);
+      const unit = makeUnit('cs:bad-wolf-42', 'started');
+      utils.handleGUIServices(unit, db);
+      assert.strictEqual(db.environment.set.callCount, 0, 'set call count');
+    });
+
+    it('does nothing when the charm has an unexpected owner', function() {
+      const db = makeDB('shell.example.com', true);
+      const unit = makeUnit('cs:~badwolf/jujushell-42', 'started');
+      utils.handleGUIServices(unit, db);
+      assert.strictEqual(db.environment.set.callCount, 0, 'set call count');
+    });
+
+  });
+
   describe('translateToLegacyAgentState', function() {
     var translate;
 
