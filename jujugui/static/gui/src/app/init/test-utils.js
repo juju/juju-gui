@@ -110,7 +110,8 @@ describe('init utils', () => {
       };
       const storage = {
         getItem: sinon.stub().withArgs('jujushell-url').returns(
-          values.storage || '')
+          values.storage || ''),
+        setItem: sinon.stub()
       };
       return {
         config: config,
@@ -128,15 +129,35 @@ describe('init utils', () => {
     };
 
     it('returns the URL stored in the storage', () => {
-      assertURL({storage: 'wss://1.2.3.4/ws1/'}, 'wss://1.2.3.4/ws1/');
-      assertURL({storage: 'ws://1.2.3.4/ws2/'}, 'ws://1.2.3.4/ws2/');
-      assertURL({storage: '1.2.3.4/ws3/'}, 'wss://1.2.3.4/ws3/');
-      assertURL({storage: 'http://1.2.3.4/ws4/'}, 'ws://1.2.3.4/ws4/');
-      assertURL({storage: 'https://1.2.3.4/ws5/'}, 'wss://1.2.3.4/ws5/');
+      assertURL({storage: 'wss://1.2.3.4'}, 'wss://1.2.3.4/ws/');
+      assertURL({storage: 'ws://1.2.3.4/api'}, 'ws://1.2.3.4/api/ws/');
+      assertURL({storage: '1.2.3.4'}, 'wss://1.2.3.4/ws/');
+      assertURL({storage: 'http://1.2.3.4/'}, 'ws://1.2.3.4/ws/');
+      assertURL({storage: 'https://1.2.3.4'}, 'wss://1.2.3.4/ws/');
     });
 
     it('returns the URL stored in the db', () => {
-      assertURL({db: '1.2.3.4'}, 'ws://1.2.3.4/ws/');
+      assertURL({db: 'shell.example.com'}, 'wss://shell.example.com/ws/');
+    });
+
+    it('sets the URL in the storage if found in the db', () => {
+      const params = setupSources({db: 'shell.example.com'});
+      const url = utils.jujushellURL(params.storage, params.db, params.config);
+      assert.strictEqual(url, 'wss://shell.example.com/ws/');
+      assert.strictEqual(params.storage.setItem.callCount, 1);
+      assert.deepEqual(
+        params.storage.setItem.args[0],
+        ['jujushell-url', 'shell.example.com']);
+    });
+
+    it('does not set the URL from db if already in the storage', () => {
+      const params = setupSources({
+        db: 'db.example.com',
+        storage: 'storage.example.com'
+      });
+      const url = utils.jujushellURL(params.storage, params.db, params.config);
+      assert.strictEqual(url, 'wss://storage.example.com/ws/');
+      assert.strictEqual(params.storage.setItem.callCount, 0);
     });
 
     it('returns the URL stored in the config', () => {
