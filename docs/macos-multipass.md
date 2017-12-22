@@ -1,7 +1,7 @@
 # Juju GUI and multipass
 
-This document describes how to set up a development environment for the Juju GUI
-on macOS with multipass. The *Initial setup* section must be done only once
+This document describes how to set up a development environment for the Juju
+GUI on macOS with multipass. The *Initial setup* section must be done only once
 initially. The *Working with the GUI* section describes the daily routine of
 switching to GUI branches under review and QAing them.
 
@@ -12,23 +12,24 @@ switching to GUI branches under review and QAing them.
 - Download and install multipass from
   <https://private-fileshare.canonical.com/~msawicz/multipass/current/>.
 - Create an ubuntu instance, for example with
-  `ubuntu create -n dev -c 4 -d 20G -m 8G`. This command will create an instance
-  named "dev", assigning 4 cores, 20GB of disk space and 8GB of memory. Adjust
-  based on your machine's specs.
+  `multipass launch -n dev -c 4 -d 20G -m 8G`. This command will create an
+  instance named "dev", assigning 4 cores, 20GB of disk space and 8GB of
+  memory. Adjust based on your machine's specs.
 
 ### Make the instance discoverable
 
 - In order to make the instance hostname discoverable from macOS, run the
   following commands:
 ```shell
-ubuntu exec dev -- sudo apt update
-ubuntu exec dev -- sudo apt install avahi-daemon avahi-autoipd
+multipass exec dev -- sudo apt update
+multipass exec dev -- sudo apt install avahi-daemon avahi-autoipd
 ```
 - At this point you should be able to call the instance by name, for instance
   with `ping dev.local`.
 - Import your SSH keys from launchpad into the instance with
-  `ubuntu exec dev -- ssh-import-id {launchpad-id}`. Replace `{launchpad-id}`
-  with your launchpad id, for instance mine is "frankban" (without quotes).
+  `multipass exec dev -- ssh-import-id {launchpad-id}`. Replace
+  `{launchpad-id}` with your launchpad id, for instance mine is "frankban"
+  (without quotes).
 - At this point you should be able to ssh into the instance with
   `ssh ubuntu@dev.local`: do it!
 
@@ -42,8 +43,8 @@ ubuntu exec dev -- sudo apt install avahi-daemon avahi-autoipd
 sudo sh -c "echo '/home/ubuntu/code *(rw,sync,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
 sudo /etc/init.d/nfs-kernel-server restart
 ```
-- Exit to get back to the host system (macOS): you can either use `exit` or send
-  the EOF signal with CTRL-D.
+- Exit to get back to the host system (macOS): you can either use `exit` or
+  send the EOF signal with CTRL-D.
 - Double check that the host can see the export: the command
   `showmount -e dev.local` should show an output like:
 ```shell
@@ -52,8 +53,8 @@ Exports list on dev.local:
 ```
 - Create a directory where to mount the export: `mkdir -p ~/code/ubuntu`.
 - Enable automatic mounting of this share by adding an entry to the host fstab
-  file, and then mount it. Note that `{user}` must be replaced with your own user
-  name in macOS:
+  file, and then mount it. Note that `{user}` must be replaced with your own
+  user name in macOS:
 ```shell
 sudo sh -c "echo dev.local:/home/ubuntu/code /Users/{user}/code/ubuntu nfs resvport,rw,rsize=8192,wsize=8192,timeo=14,intr >> /etc/fstab"
 sudo mount -a
@@ -111,9 +112,9 @@ echo -e '\nexport GOPATH=$HOME/code/go\nexport PATH=$PATH:$GOROOT/bin:$GOPATH/bi
 ## Working with the GUI
 
 As mentioned, while development can be done using your favorite macOS editor
-(if you wish), the GUI can be run exclusively from ubuntu. So, from now on, this
-document assumes you are working from inside the dev instance. As usual, to run
-commands in the instance, you first need to SSH into it with
+(if you wish), the GUI can be run exclusively from ubuntu. So, from now on,
+this document assumes you are working from inside the dev instance. As usual,
+to run commands in the instance, you first need to SSH into it with
 `ssh ubuntu@dev.local`.
 
 ### Switching between develop branch and branches under review
@@ -131,10 +132,10 @@ to the PR title). The instructions below refer to this id as the `{PR id}`.
   code, or review the changes locally), run `git review {PR id}`. For instance,
   try `git review 3297`: at this point `git log` should show that the last log
   is "Allow a custom jujushell url to be provided as a config." from Jeff
-  Pihach. This means that you successfully checked out the branch Jeff proposed:
-  in this case it is code that's already merged into develop, but for pending
-  pull requests the process is the same. Continue reading for instructions on
-  how to actually run your current branch.
+  Pihach. This means that you successfully checked out the branch Jeff
+  proposed: in this case it is code that's already merged into develop, but for
+  pending pull requests the process is the same. Continue reading for
+  instructions on how to actually run your current branch.
 - To switch back to latest "develop", do the following:
 ```shell
 git checkout develop
@@ -146,16 +147,16 @@ git pull origin
 - Move to the GUI directory: `cd ~/code/juju-gui`.
 - Check out the branch you want to run as described above.
 - Run `make clean-all run`, and wait for the process to complete: thousands of
-  node modules will be installed (typical npm), the GUI files will be babelified
-  (no, it's not a real word...) and then the process will complete with a
-  "serving on http://0.0.0.0:6543" (or similar) message. At this point the GUI
-  is built and assets are being served by a static HTTP server that can be
-  stopped by pressing CTRL-C. This server has the ability to automatically
-  rebuild GUI assets each time a code change is detected; it could take a couple
-  of seconds sometimes, check its output!
+  node modules will be installed (typical npm), the GUI files will be
+  babelified (no, it's not a real word...) and then the process will complete
+  with a "serving on http://0.0.0.0:6543" (or similar) message. At this point
+  the GUI is built and assets are being served by a static HTTP server that can
+  be stopped by pressing CTRL-C. This server has the ability to automatically
+  rebuild GUI assets each time a code change is detected; it could take a
+  couple of seconds sometimes, check its output!
 - In another terminal tab, ssh into the dev instance again, and run guiproxy:
-  `guiproxy -env prod`. The proxy will start and suggest to you a set of URLs to
-  use for opening the GUI, something like
+  `guiproxy -env prod`. The proxy will start and suggest to you a set of URLs
+  to use for opening the GUI, something like
 ```shell
 2017/11/07 11:19:10 visit the GUI at any of the following addresses:
   http://127.0.0.1:8042/
