@@ -216,7 +216,10 @@ class ProfileModelList extends React.Component {
 
   render() {
     if (this.state.loadingModels) {
-      return <Spinner />;
+      return (
+        <div className="profile-model-list">
+          <Spinner />
+        </div>);
     }
     const rowData = this._generateModels();
     return (
