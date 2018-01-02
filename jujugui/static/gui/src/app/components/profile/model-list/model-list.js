@@ -140,27 +140,15 @@ class ProfileModelList extends React.Component {
       const bdRef = `mymodel-button-dropdown-${index}`;
       const owner = model.owner.replace('@external', '') || this.props.userInfo.profile;
       const path = `${this.props.baseURL}u/${owner}/${model.name}`;
-      let adminUser;
-      let profileUser;
-      model.users.some(user => {
-        if (user.access === 'admin') {
-          adminUser = user;
-        }
-        if (user.displayName === this.props.userInfo.profile) {
-          profileUser = user;
-        }
-        // We've got all the info we need, exit the loop.
-        if (adminUser && profileUser) {
-          return true;
-        }
-      });
+      const profileUser = model.users.find(
+        user => user.displayName === this.props.userInfo.profile);
       const icons = new Map([
         ['read', 'show_16'],
         ['write', 'edit_16'],
         ['admin', 'user_16']
       ]);
       const userIsAdmin = profileUser.access === 'admin';
-      const username = userIsAdmin ? 'Me' : adminUser.displayName;
+      const username = userIsAdmin ? 'Me' : owner;
       modelList.push({
         columns: [{
           content: (
