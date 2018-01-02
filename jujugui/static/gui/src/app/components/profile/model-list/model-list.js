@@ -131,36 +131,25 @@ class ProfileModelList extends React.Component {
     @return {Object} The model list as JSX.
   */
   _generateModels() {
+    const icons = new Map([
+      ['read', 'show_16'],
+      ['write', 'edit_16'],
+      ['admin', 'user_16']
+    ]);
+    const profileUsername = this.props.userInfo.profile;
     const models = this.state.models || [];
-    const rowData = models.reduce((modelList, model, index) => {
+    return models.reduce((modelList, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
         return modelList;
       }
       const bdRef = `mymodel-button-dropdown-${index}`;
-      const owner = model.owner.replace('@external', '') || this.props.userInfo.profile;
+      const owner = model.owner.replace('@external', '') || profileUsername;
       const path = `${this.props.baseURL}u/${owner}/${model.name}`;
-      let adminUser;
-      let profileUser;
-      model.users.some(user => {
-        if (user.access === 'admin') {
-          adminUser = user;
-        }
-        if (user.displayName === this.props.userInfo.profile) {
-          profileUser = user;
-        }
-        // We've got all the info we need, exit the loop.
-        if (adminUser && profileUser) {
-          return true;
-        }
-      });
-      const icons = new Map([
-        ['read', 'show_16'],
-        ['write', 'edit_16'],
-        ['admin', 'user_16']
-      ]);
+      const profileUser = model.users.find(user => user.displayName === profileUsername);
       const userIsAdmin = profileUser.access === 'admin';
-      const username = userIsAdmin ? 'Me' : adminUser.displayName;
+      const username = owner === profileUsername ? 'Me' : owner;
+      const region = model.region ? '/' + model.region.toUpperCase() : '';
       modelList.push({
         columns: [{
           content: (
@@ -174,8 +163,7 @@ class ProfileModelList extends React.Component {
             </a>),
           columnSize: 3
         }, {
-          content: `${model.numMachines} ${model.provider.toUpperCase()}/` +
-            model.region.toUpperCase(),
+          content: `${model.numMachines} ${model.provider.toUpperCase()}${region}`,
           columnSize: 3
         }, {
           content: (
@@ -205,8 +193,37 @@ class ProfileModelList extends React.Component {
       });
       return modelList;
     }, []) || [];
+  }
+
+  /**
+    Call the switchModel prop to switch a model passing it the necessary
+    model data. Prevents default and propagation.
+    @param {Object} model The model data necessary for the switchModel call.
+    @param {Object} e The click event.
+  */
+  switchToModel(model, e) {
+    e.preventDefault();
+    e.stopPropagation(); // Required to avoid react error about root DOM node.
+    this.props.switchModel(model);
+  }
+
+  _generateNotification() {
+    if (!this.state.notification) {
+      return;
+    }
+    return this.state.notification;
+  }
+
+  render() {
+    if (this.state.loadingModels) {
+      return (
+        <div className="profile-model-list">
+          <Spinner />
+        </div>);
+    }
+    const rowData = this._generateModels();
     return (
-      <div>
+      <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
             title="Start a new model"
@@ -234,42 +251,7 @@ class ProfileModelList extends React.Component {
             columnSize: 1
           }]}
           rows={rowData} />}
-      </div>);
-  }
-
-  /**
-    Call the switchModel prop to switch a model passing it the necessary
-    model data. Prevents default and propagation.
-    @param {Object} model The model data necessary for the switchModel call.
-    @param {Object} e The click event.
-  */
-  switchToModel(model, e) {
-    e.preventDefault();
-    e.stopPropagation(); // Required to avoid react error about root DOM node.
-    this.props.switchModel(model);
-  }
-
-  _generateNotification() {
-    if (!this.state.notification) {
-      return;
-    }
-    return this.state.notification;
-  }
-
-  render() {
-    let content;
-    if (this.state.loadingModels) {
-      content = (<Spinner />);
-    } else {
-      content = (
-        <div>
-          {this._generateModels()}
-          {this._generateNotification()}
-        </div>);
-    }
-    return (
-      <div className="profile-model-list">
-        {content}
+        {this._generateNotification()}
       </div>);
   }
 
