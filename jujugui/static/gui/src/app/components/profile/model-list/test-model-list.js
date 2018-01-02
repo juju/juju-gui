@@ -146,7 +146,7 @@ describe('Profile Model List', function() {
       "displayName": "tester",
       "domain": "Ubuntu SSO",
       "lastConnection": "2017-07-05T01:42:05.000Z",
-      "access": "read"
+      "access": "admin"
     }],
     "life": "alive",
     "isAlive": true,
@@ -321,7 +321,7 @@ describe('Profile Model List', function() {
             }, {
               content: (
                 <div>
-                  <SvgIcon name='show_16'
+                  <SvgIcon name='user_16'
                     size="16" />
                   <span className="profile-model-list__username">
                     tester3
@@ -335,7 +335,11 @@ describe('Profile Model List', function() {
                   relative={true} />),
               columnSize: 2
             }, {
-              content: null,
+              content: (
+                <a onClick={sinon.stub()}>
+                  <SvgIcon name="delete_16"
+                    size="16" />
+                </a>),
               columnSize: 1
             }],
             key: 'website'

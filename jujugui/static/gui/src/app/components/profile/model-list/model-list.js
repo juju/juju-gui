@@ -136,6 +136,7 @@ class ProfileModelList extends React.Component {
       ['write', 'edit_16'],
       ['admin', 'user_16']
     ]);
+    const profileUsername = this.props.userInfo.profile;
     const models = this.state.models || [];
     return models.reduce((modelList, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
@@ -143,12 +144,11 @@ class ProfileModelList extends React.Component {
         return modelList;
       }
       const bdRef = `mymodel-button-dropdown-${index}`;
-      const owner = model.owner.replace('@external', '') || this.props.userInfo.profile;
+      const owner = model.owner.replace('@external', '') || profileUsername;
       const path = `${this.props.baseURL}u/${owner}/${model.name}`;
-      const profileUser = model.users.find(
-        user => user.displayName === this.props.userInfo.profile);
+      const profileUser = model.users.find(user => user.displayName === profileUsername);
       const userIsAdmin = profileUser.access === 'admin';
-      const username = userIsAdmin ? 'Me' : owner;
+      const username = owner === profileUsername ? 'Me' : owner;
       modelList.push({
         columns: [{
           content: (
