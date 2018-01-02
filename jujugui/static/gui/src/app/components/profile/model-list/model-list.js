@@ -131,8 +131,13 @@ class ProfileModelList extends React.Component {
     @return {Object} The model list as JSX.
   */
   _generateModels() {
+    const icons = new Map([
+      ['read', 'show_16'],
+      ['write', 'edit_16'],
+      ['admin', 'user_16']
+    ]);
     const models = this.state.models || [];
-    const rowData = models.reduce((modelList, model, index) => {
+    return models.reduce((modelList, model, index) => {
       // Keep only the models that aren't currently in the destroy cycle.
       if (!model.isAlive) {
         return modelList;
@@ -142,11 +147,6 @@ class ProfileModelList extends React.Component {
       const path = `${this.props.baseURL}u/${owner}/${model.name}`;
       const profileUser = model.users.find(
         user => user.displayName === this.props.userInfo.profile);
-      const icons = new Map([
-        ['read', 'show_16'],
-        ['write', 'edit_16'],
-        ['admin', 'user_16']
-      ]);
       const userIsAdmin = profileUser.access === 'admin';
       const username = userIsAdmin ? 'Me' : owner;
       modelList.push({
@@ -193,8 +193,34 @@ class ProfileModelList extends React.Component {
       });
       return modelList;
     }, []) || [];
+  }
+
+  /**
+    Call the switchModel prop to switch a model passing it the necessary
+    model data. Prevents default and propagation.
+    @param {Object} model The model data necessary for the switchModel call.
+    @param {Object} e The click event.
+  */
+  switchToModel(model, e) {
+    e.preventDefault();
+    e.stopPropagation(); // Required to avoid react error about root DOM node.
+    this.props.switchModel(model);
+  }
+
+  _generateNotification() {
+    if (!this.state.notification) {
+      return;
+    }
+    return this.state.notification;
+  }
+
+  render() {
+    if (this.state.loadingModels) {
+      return <Spinner />;
+    }
+    const rowData = this._generateModels();
     return (
-      <div>
+      <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
             title="Start a new model"
@@ -222,42 +248,7 @@ class ProfileModelList extends React.Component {
             columnSize: 1
           }]}
           rows={rowData} />}
-      </div>);
-  }
-
-  /**
-    Call the switchModel prop to switch a model passing it the necessary
-    model data. Prevents default and propagation.
-    @param {Object} model The model data necessary for the switchModel call.
-    @param {Object} e The click event.
-  */
-  switchToModel(model, e) {
-    e.preventDefault();
-    e.stopPropagation(); // Required to avoid react error about root DOM node.
-    this.props.switchModel(model);
-  }
-
-  _generateNotification() {
-    if (!this.state.notification) {
-      return;
-    }
-    return this.state.notification;
-  }
-
-  render() {
-    let content;
-    if (this.state.loadingModels) {
-      content = (<Spinner />);
-    } else {
-      content = (
-        <div>
-          {this._generateModels()}
-          {this._generateNotification()}
-        </div>);
-    }
-    return (
-      <div className="profile-model-list">
-        {content}
+        {this._generateNotification()}
       </div>);
   }
 
