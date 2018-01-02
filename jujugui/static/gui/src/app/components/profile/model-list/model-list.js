@@ -149,6 +149,7 @@ class ProfileModelList extends React.Component {
       const profileUser = model.users.find(user => user.displayName === profileUsername);
       const userIsAdmin = profileUser.access === 'admin';
       const username = owner === profileUsername ? 'Me' : owner;
+      const region = model.region ? '/' + model.region.toUpperCase() : '';
       modelList.push({
         columns: [{
           content: (
@@ -162,8 +163,7 @@ class ProfileModelList extends React.Component {
             </a>),
           columnSize: 3
         }, {
-          content: `${model.numMachines} ${model.provider.toUpperCase()}/` +
-            model.region.toUpperCase(),
+          content: `${model.numMachines} ${model.provider.toUpperCase()}${region}`,
           columnSize: 3
         }, {
           content: (
