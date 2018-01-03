@@ -72,12 +72,13 @@ YUI.add('model-controller', function(Y) {
       @return {Promise} A promise for the charm model.
     */
     getCharm: function(charmId) {
-      var db = this.get('db'),
-          env = this.get('env');
+      const db = this.get('db');
+      const env = this.get('env');
+      const charmstore = this.get('charmstore');
 
       return this._getPromise(
         charmId, this._charmPromises,
-        function(resolve, reject) {
+        (resolve, reject) => {
           var charm = db.charms.getById(charmId);
           if (charm && charm.loaded) {
             resolve(charm);
@@ -85,9 +86,12 @@ YUI.add('model-controller', function(Y) {
             charm = db.charms.add({url: charmId}).load(env,
               // If views are bound to the charm model, firing "update" is
               // unnecessary, and potentially even mildly harmful.
-              function(err, data) {
-                db.fireEvent('update');
-                resolve(db.charms.getById(charmId));
+              (err, data) => {
+                const charm = db.charms.getById(charmId);
+                charm.populateFileList(charmstore.getEntity.bind(charmstore), () => {
+                  db.fireEvent('update');
+                  resolve(charm);
+                });
               });
           }
         });
