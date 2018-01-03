@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const AccountCredentials = require('../account/credentials/credentials');
 const ProfileNavigation = require('./navigation/navigation');
 const ProfileHeader = require('./header/header');
 const ProfileModelList = require('./model-list/model-list');
@@ -14,6 +15,15 @@ const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
+  /**
+    Send profile analytics.
+    @param {String} action Some identifiable action.
+    @param {String} label Name of the event.
+    @param {Object} value An optional single depth object for extra info.
+  */
+  _sendAnalytics(action, label, value) {
+    this.props.sendAnalytics('Profile', action, label, value);
+  }
 
   render() {
     const sectionsMap = Profile.sectionsMap;
@@ -100,8 +110,18 @@ Profile.sectionsMap = new Map([
     }
   }],
   ['credentials', {
-    label: 'Cloud Credentials',
-    getComponent: context => 'Cloud Credentials'
+    label: 'Cloud credentials',
+    getComponent: component => {
+      return (
+        <AccountCredentials
+          acl={component.props.acl}
+          addNotification={component.props.addNotification}
+          controllerAPI={component.props.controllerAPI}
+          controllerIsReady={component.props.controllerIsReady}
+          initUtils={component.props.initUtils}
+          sendAnalytics={component._sendAnalytics.bind(component)}
+          username={component.props.controllerUser} />);
+    }
   }]
 ]);
 
@@ -114,11 +134,27 @@ Profile.propTypes = {
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
+  controllerAPI: shapeup.shape({
+    getCloudCredentialNames: PropTypes.func.isRequired,
+    listClouds: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    revokeCloudCredential: PropTypes.func.isRequired,
+    updateCloudCredential: PropTypes.func.isRequired
+  }).isRequired,
+  controllerIsReady: PropTypes.func.isRequired,
+  controllerUser: PropTypes.string.isRequired,
   deployTarget: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   getModelName: PropTypes.func.isRequired,
+  initUtils: shapeup.shape({
+    generateCloudCredentialName: PropTypes.func.isRequired,
+    getCloudProviderDetails: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    validateForm: PropTypes.func.isRequired
+  }).isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   // userInfo must have the following attributes:
   // - external: the external user name to use for retrieving data, for
