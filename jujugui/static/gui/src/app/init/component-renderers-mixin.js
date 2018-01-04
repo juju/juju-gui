@@ -351,6 +351,8 @@ Browser: ${navigator.userAgent}`
         userInfo={this._getUserInfo(state)} />);
 
     if (this.applicationConfig.flags.profile) {
+      const payment = this.payment;
+      const stripe = this.stripe;
       profile = (
         <Profile
           acl={shapeup.fromShape(this.acl, Profile.propTypes.acl)}
@@ -369,7 +371,10 @@ Browser: ${navigator.userAgent}`
           getModelName={this._getModelName.bind(this)}
           initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
           listModelsWithInfo={this._bound.listModelsWithInfo}
+          payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
           sendAnalytics={this.sendAnalytics}
+          showPay={this.applicationConfig.flags.pay || false}
+          stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
           switchModel={this._bound.switchModel}
           userInfo={this._getUserInfo(state)} />);
     }
@@ -1243,12 +1248,15 @@ Browser: ${navigator.userAgent}`
         help: true
       });
     };
-
+    const flags = this.applicationConfig.flags;
     ReactDOM.render(<UserMenu
       controllerAPI={controllerAPI}
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
+      // The account functionality is available in the new profile so don't
+      // need to show the account link when the flag is on.
+      showAccount={!flags.profile}
       showHelp={showHelp}
       USSOLoginLink={_USSOLoginLink} />, linkContainer);
   }

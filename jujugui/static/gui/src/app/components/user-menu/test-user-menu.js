@@ -28,6 +28,7 @@ describe('UserMenu', () => {
         controllerAPI={controllerAPI}
         navigateUserAccount={sinon.stub()}
         navigateUserProfile={sinon.stub()}
+        showAccount={true}
         showHelp={sinon.stub()} />, true);
     return {
       renderer: renderer,
@@ -35,6 +36,47 @@ describe('UserMenu', () => {
       instance: renderer.getMountedInstance()
     };
   }
+
+  it('can render without the account link', () => {
+    const c = renderComponent({
+      showAccount: false,
+      userIsAuthenticated: false
+    });
+    const expected = (
+      <ButtonDropdown
+        classes={['user-menu']}
+        ref="buttonDropdown"
+        icon={loginLink}
+        disableDropdown={true}
+        listItems={[
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="profile">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={c.instance._handleProfileClick}>Profile</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="account">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={c.instance._handleAccountClick}>Account</a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="help">
+            <a className="dropdown-menu__list-item-link"
+              onClick={c.instance.props.showHelp} role="button">
+                GUI help
+            </a>
+          </li>,
+          <li className="dropdown-menu__list-item"
+            role="menuitem" tabIndex="0" key="logout">
+            {logoutLink}
+          </li>
+        ]}
+        tooltip={''} />
+    );
+    expect(c.output).toEqualJSX(expected);
+  });
 
   it('renders the login link if supplied', () => {
     const c = renderComponent({
