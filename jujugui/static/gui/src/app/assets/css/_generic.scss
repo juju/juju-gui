@@ -157,4 +157,12 @@ $pre-background: #fdf6f2;
       text-decoration: underline;
     }
   }
+
+  [contenteditable='true'] {
+    // Workaround for Firefox: add a min-height so that the editable div gets
+    // non zero height.
+    // See <https://bugzilla.mozilla.org/show_bug.cgi?id=1098151>.
+    min-height: $base;
+  }
+
 }
