@@ -36,7 +36,7 @@ class ProfileExpandedContent extends React.Component {
     @param entityId {String} A charm or bundle id.
   */
   _handleDeploy(entityId) {
-    this.props.deployTarget(entityId);
+    this.props.addToModel(entityId);
     this.props.changeState({
       hash: null,
       profile: null
@@ -139,7 +139,7 @@ ProfileExpandedContent.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
   changeState: PropTypes.func.isRequired,
-  deployTarget: PropTypes.func.isRequired,
+  addToModel: PropTypes.func.isRequired,
   entity: PropTypes.object.isRequired,
   getDiagramURL: PropTypes.func,
   getModelName: PropTypes.func.isRequired,

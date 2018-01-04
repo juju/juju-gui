@@ -176,7 +176,7 @@ class ProfileCharmList extends React.Component {
               acl={this.props.acl}
               changeState={this.props.changeState}
               entity={charm}
-              deployTarget={this.props.deployTarget}
+              addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}
               topRow={(
                 <div>
@@ -238,7 +238,7 @@ ProfileCharmList.propTypes = {
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
   }).isRequired,
-  deployTarget: PropTypes.func.isRequired,
+  addToModel: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string

@@ -61,7 +61,7 @@ describe('Profile Charm List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
-        deployTarget={options.deployTarget || sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         user="hatch@external" />, true);
@@ -130,7 +130,7 @@ describe('Profile Charm List', function() {
                 <ProfileExpandedContent
                   acl={instance.props.acl}
                   changeState={sinon.stub()}
-                  deployTarget={instance.props.deployTarget}
+                  addToModel={instance.props.addToModel}
                   entity={charms[0]}
                   getModelName={instance.props.getModelName}
                   topRow={(
@@ -192,7 +192,7 @@ describe('Profile Charm List', function() {
                 <ProfileExpandedContent
                   acl={instance.props.acl}
                   changeState={sinon.stub()}
-                  deployTarget={instance.props.deployTarget}
+                  addToModel={instance.props.addToModel}
                   entity={charms[1]}
                   getModelName={instance.props.getModelName}
                   topRow={(
@@ -240,7 +240,7 @@ describe('Profile Charm List', function() {
                 <ProfileExpandedContent
                   acl={instance.props.acl}
                   changeState={sinon.stub()}
-                  deployTarget={instance.props.deployTarget}
+                  addToModel={instance.props.addToModel}
                   entity={charms[2]}
                   getModelName={instance.props.getModelName}
                   topRow={(

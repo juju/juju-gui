@@ -48,7 +48,7 @@ class Profile extends React.Component {
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-              deployTarget={this.props.deployTarget}
+              addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}
               user={this.props.userInfo.external} />);
         }
@@ -65,7 +65,7 @@ class Profile extends React.Component {
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-              deployTarget={this.props.deployTarget}
+              addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}
               user={this.props.userInfo.external} />);
         }
@@ -191,7 +191,7 @@ Profile.propTypes = {
   }).isRequired,
   controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
-  deployTarget: PropTypes.func.isRequired,
+  addToModel: PropTypes.func.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   getModelName: PropTypes.func.isRequired,

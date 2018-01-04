@@ -207,7 +207,7 @@ class SearchResultsItem extends React.Component {
     @param id {String} The id of the entity to deploy.
   */
   _handleDeploy(id) {
-    this.props.deployTarget(id);
+    this.props.addToModel(id);
     // Close the search results so that the deployed entity is visible on the
     // canvas.
     this.props.changeState({
@@ -314,7 +314,7 @@ class SearchResultsItem extends React.Component {
 SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
-  deployTarget: PropTypes.func.isRequired,
+  addToModel: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired
 };

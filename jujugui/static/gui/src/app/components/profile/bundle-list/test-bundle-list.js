@@ -86,7 +86,7 @@ describe('Profile Bundle List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
-        deployTarget={options.deployTarget || sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         user="lazypower@external" />, true);
@@ -167,7 +167,7 @@ describe('Profile Bundle List', function() {
                 <ProfileExpandedContent
                   acl={instance.props.acl}
                   changeState={sinon.stub()}
-                  deployTarget={instance.props.deployTarget}
+                  addToModel={instance.props.addToModel}
                   entity={bundles[0]}
                   getDiagramURL={sinon.stub()}
                   getModelName={instance.props.getModelName}
@@ -225,7 +225,7 @@ describe('Profile Bundle List', function() {
                 <ProfileExpandedContent
                   acl={instance.props.acl}
                   changeState={sinon.stub()}
-                  deployTarget={instance.props.deployTarget}
+                  addToModel={instance.props.addToModel}
                   entity={bundles[1]}
                   getDiagramURL={sinon.stub()}
                   getModelName={instance.props.getModelName}

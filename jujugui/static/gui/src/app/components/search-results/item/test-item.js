@@ -40,7 +40,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const tags = output.props.children[1].props.children[1].props.children;
@@ -150,7 +150,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const icons = output.props.children[3].props.children.props.children;
@@ -242,7 +242,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const icons = output.props.children[3].props.children.props.children;
@@ -335,7 +335,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[0].props.onClick({preventDefault: preventDefault});
@@ -355,7 +355,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     const series = output.props.children[2].props.children.props.children;
@@ -384,7 +384,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[1].props.children[1].props.children[0].props.children
@@ -411,7 +411,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
     output.props.children[4].props.children.props.children[1]
@@ -429,7 +429,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={sinon.stub()}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
 
@@ -446,7 +446,7 @@ describe('SearchResultsItem', function() {
       <SearchResultsItem
         acl={acl}
         changeState={sinon.stub()}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
 
@@ -459,17 +459,17 @@ describe('SearchResultsItem', function() {
 
   it('can deploy an entity', function() {
     const changeState = sinon.stub();
-    const deployTarget = sinon.stub();
+    const addToModel = sinon.stub();
     const output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
         changeState={changeState}
-        deployTarget={deployTarget}
+        addToModel={addToModel}
         generatePath={generatePath}
         item={item} />);
     output.props.children[5].props.children.props.action();
     assert.equal(changeState.callCount, 1);
-    assert.equal(deployTarget.callCount, 1);
-    assert.deepEqual(deployTarget.args[0][0], 'mysql');
+    assert.equal(addToModel.callCount, 1);
+    assert.deepEqual(addToModel.args[0][0], 'mysql');
   });
 });

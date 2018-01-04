@@ -29,7 +29,7 @@ describe('Charmbrowser', function() {
     const series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
-    const deployTarget = sinon.stub();
+    const addToModel = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
     const charmstoreSearch = sinon.stub();
@@ -46,7 +46,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
-        deployTarget={deployTarget}
+        addToModel={addToModel}
         flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
@@ -78,7 +78,7 @@ describe('Charmbrowser', function() {
             acl={acl}
             changeState={searchResults.changeState}
             charmstoreSearch={charmstoreSearch}
-            deployTarget={deployTarget}
+            addToModel={addToModel}
             generatePath={searchResults.generatePath}
             getName={utils.getName}
             makeEntityModel={makeEntityModel}
@@ -114,7 +114,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         flags={{}}
         deployService={sinon.stub()}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -189,7 +189,7 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         clearLightbox={clearLightbox}
         deployService={deployService}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -265,7 +265,7 @@ describe('Charmbrowser', function() {
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
-        deployTarget={sinon.stub()}
+        addToModel={sinon.stub()}
         flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}

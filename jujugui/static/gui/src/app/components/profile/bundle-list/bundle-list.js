@@ -137,7 +137,7 @@ class ProfileBundleList extends React.Component {
               changeState={this.props.changeState}
               entity={bundle}
               getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-              deployTarget={this.props.deployTarget}
+              addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}
               topRow={(
                 <div>
@@ -208,7 +208,7 @@ ProfileBundleList.propTypes = {
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
   }).isRequired,
-  deployTarget: PropTypes.func.isRequired,
+  addToModel: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string
