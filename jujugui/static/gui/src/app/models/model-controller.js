@@ -88,10 +88,13 @@ YUI.add('model-controller', function(Y) {
               // unnecessary, and potentially even mildly harmful.
               (err, data) => {
                 const charm = db.charms.getById(charmId);
-                charm.populateFileList(charmstore.getEntity.bind(charmstore), () => {
-                  db.fireEvent('update');
-                  resolve(charm);
-                });
+                if (charmId.indexOf('local:') === -1) {
+                  charm.populateFileList(
+                    charmstore.getEntity.bind(charmstore), () => {
+                      db.fireEvent('update');
+                      resolve(charm);
+                    });
+                }
               });
           }
         });
