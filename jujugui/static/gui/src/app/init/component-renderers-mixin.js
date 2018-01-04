@@ -1254,9 +1254,9 @@ Browser: ${navigator.userAgent}`
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
-      // If both the profile and pay flags are set then the account page is no
-      // longer necessary.
-      showAccount={!flags.profile || !flags.pay}
+      // The account functionality is available in the new profile so don't
+      // need to show the account link when the flag is on.
+      showAccount={!flags.profile}
       showHelp={showHelp}
       USSOLoginLink={_USSOLoginLink} />, linkContainer);
   }
