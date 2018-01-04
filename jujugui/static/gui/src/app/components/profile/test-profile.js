@@ -35,6 +35,9 @@ describe('Profile', function() {
         getModelName={options.getModelName || sinon.stub()}
         initUtils={initUtils}
         listModelsWithInfo={sinon.stub()}
+        payment={options.payment}
+        showPay={options.showPay || false}
+        stripe={options.stripe}
         destroyModels={sinon.stub()}
         sendAnalytics={sinon.stub()}
         switchModel={sinon.stub()}
@@ -73,9 +76,9 @@ describe('Profile', function() {
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
             <ProfileNavigation
-              activeSection={Profile.sectionsMap.entries().next().value[0]}
+              activeSection={instance.sectionsMap.entries().next().value[0]}
               changeState={instance.props.changeState}
-              sectionsMap={Profile.sectionsMap} />
+              sectionsMap={instance.sectionsMap} />
             <ProfileModelList
               acl={instance.props.acl}
               addNotification={instance.props.addNotification}
@@ -93,17 +96,16 @@ describe('Profile', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('can show all of the defined sections', () => {
-    Profile.sectionsMap
-      .forEach((val, key) => {
-        const renderer = renderComponent({
-          activeSection: key
-        });
-        const output = renderer.getRenderOutput();
-        const instance = renderer.getMountedInstance();
-        expect(output.props.children[1].props.children.props.children[1])
-          .toEqualJSX(val.getComponent(instance));
-      });
+  it('does not show the payments section when the flag is off', () => {
+    const renderer = renderComponent();
+    const instance = renderer.getMountedInstance();
+    assert.isUndefined(instance.sectionsMap.get('payment'));
+  });
+
+  it('can show the payments section when the flag is on', () => {
+    const renderer = renderComponent({showPay: true});
+    const instance = renderer.getMountedInstance();
+    assert.isObject(instance.sectionsMap.get('payment'));
   });
 
 });
