@@ -1248,12 +1248,15 @@ Browser: ${navigator.userAgent}`
         help: true
       });
     };
-
+    const flags = this.applicationConfig.flags;
     ReactDOM.render(<UserMenu
       controllerAPI={controllerAPI}
       LogoutLink={LogoutLink}
       navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
+      // If both the profile and pay flags are set then the account page is no
+      // longer necessary.
+      showAccount={!flags.profile || !flags.pay}
       showHelp={showHelp}
       USSOLoginLink={_USSOLoginLink} />, linkContainer);
   }

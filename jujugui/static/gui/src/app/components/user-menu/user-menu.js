@@ -41,12 +41,12 @@ class UserMenu extends React.Component {
               role="button"
               onClick={this._handleProfileClick.bind(this)}>Profile</a>
           </li>,
-          <li className="dropdown-menu__list-item"
+          this.props.showAccount ? (<li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="account">
             <a className="dropdown-menu__list-item-link"
               role="button"
               onClick={this._handleAccountClick.bind(this)}>Account</a>
-          </li>,
+          </li>) : null,
           <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="help">
             <a className="dropdown-menu__list-item-link"
@@ -68,6 +68,7 @@ UserMenu.propTypes = {
   controllerAPI: PropTypes.object,
   navigateUserAccount: PropTypes.func.isRequired,
   navigateUserProfile: PropTypes.func.isRequired,
+  showAccount: PropTypes.bool,
   showHelp: PropTypes.func.isRequired
 };
 

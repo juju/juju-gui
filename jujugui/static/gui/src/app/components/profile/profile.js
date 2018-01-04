@@ -85,7 +85,7 @@ class Profile extends React.Component {
     if (this.props.showPay) {
       this.sectionsMap.set('payment', {
         label: 'Payment',
-        getComponent: component => {
+        getComponent: () => {
           return (
             <AccountPayment
               acl={this.props.acl}
