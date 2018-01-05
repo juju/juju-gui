@@ -1901,6 +1901,49 @@ describe('test_model.js', function() {
       });
     });
 
+    describe('populateFileList', function() {
+      it('populates the file list with file list returned from charmstore', function(done) {
+        const fileList = ['file1', 'file2', 'file3'];
+        const getEntity = (id, cb) => {
+          assert.equal(id, 'foo');
+          cb(null, [{files: fileList}]);
+        };
+        const callback = function() {
+          done();
+        };
+        instance = new models.Charm(data);
+        instance.populateFileList(getEntity, callback);
+        assert.deepEqual(instance.get('files'), fileList);
+      });
+
+      it('does not try and populate a file list if it already is populated', function() {
+        const getEntity = sinon.stub();
+        const callback = sinon.stub();
+        instance = new models.Charm(data);
+        instance.set('files', ['file1', 'file2', 'file3']);
+        instance.populateFileList(getEntity, callback);
+        assert.equal(getEntity.callCount, 0);
+        assert.equal(callback.callCount, 1);
+      });
+    });
+
+    describe('hasGetStarted', function() {
+      it('returns the existance of the getstarted.md file in the file list', function() {
+        instance = new models.Charm(data);
+        assert.equal(instance.hasGetStarted(), false);
+        // Add the file to the files list.
+        instance.get('files').push('getstarted.md');
+        assert.equal(instance.hasGetStarted(), true);
+      });
+
+      it('is case insensitive', function() {
+        instance = new models.Charm(data);
+        // Add the file to the files list.
+        instance.get('files').push('GeTsTaRtEd.Md');
+        assert.equal(instance.hasGetStarted(), true);
+      });
+    });
+
   });
 
   describe('database import/export', function() {
