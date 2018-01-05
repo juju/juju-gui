@@ -1,3 +1,6 @@
+- 2.11.3:
+  - (Fix) Update marked to 0.3.9 to fix a security bug.
+
 - 2.11.2:
   - (Fix) Add a workaround for the contenteditable bug in Firefox.
   - (Doc) Update multipass instructions.
