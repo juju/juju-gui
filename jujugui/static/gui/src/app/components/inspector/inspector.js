@@ -361,11 +361,16 @@ class Inspector extends React.Component {
     return (
       <div className="inspector-view">
         <InspectorHeader
-          backCallback={this._backCallback.bind(this)}
           activeComponent={this.state.activeComponent}
-          type={this.state.activeChild.headerType}
+          backCallback={this._backCallback.bind(this)}
+          charmId={this.props.charm.get('id')}
+          changeState={this.props.appState.changeState.bind(this.props.appState)}
+          entityPath={this.props.entityPath}
+          hasGetStarted={this.props.charm.hasGetStarted()}
+          showLinks={true}
+          icon={this.state.activeChild.icon}
           title={this.state.activeChild.title}
-          icon={this.state.activeChild.icon} />
+          type={this.state.activeChild.headerType} />
         <div className="inspector-content">
           {this.state.activeChild.component}
         </div>
@@ -388,6 +393,7 @@ Inspector.propTypes = {
   destroyService: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   displayPlans: PropTypes.bool.isRequired,
+  entityPath: PropTypes.string.isRequired,
   envResolved: PropTypes.func.isRequired,
   exposeService: PropTypes.func.isRequired,
   getAvailableEndpoints: PropTypes.func.isRequired,
