@@ -344,6 +344,15 @@ YUI.add('juju-charm-models', function(Y) {
         this.set('files', charmData[0].files);
         callback();
       });
+    },
+
+    /**
+      If the charm files list contains a file called 'getstarted.md'.
+      Case insensitive.
+      @returns {Boolean} Whether the file exists.
+    */
+    hasGetStarted: function() {
+      return this.get('files').some(f => f.toLowerCase() === 'getstarted.md');
     }
 
   }, {
