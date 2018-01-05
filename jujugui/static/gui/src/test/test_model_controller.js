@@ -162,13 +162,18 @@ describe('Model Controller Promises', function() {
   it('will return a promise with a loaded charm', function(done) {
     // This tests the second resolve path
     clobberLoad();
-    var charmId = 'cs:precise/wordpress-7',
-        promise = modelController.getCharm(charmId);
+    const charmId = 'cs:precise/wordpress-7';
+    modelController.get('charmstore').getEntity = sinon.stub();
+    const populateStub = sinon.stub(yui.juju.models.Charm.prototype, 'populateFileList');
+    const promise = modelController.getCharm(charmId);
     assert(promise instanceof Promise, true);
     assert(db.charms.getById(charmId), null);
+    populateStub.args[0][1]();
     promise.then(
       function(charm) {
+        populateStub.restore();
         assert(charm.get('package_name'), 'wordpress');
+        assert.equal(populateStub.callCount, 1);
         done();
       },
       function() {
