@@ -313,8 +313,8 @@ class SearchResultsItem extends React.Component {
 
 SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,
-  changeState: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired
 };

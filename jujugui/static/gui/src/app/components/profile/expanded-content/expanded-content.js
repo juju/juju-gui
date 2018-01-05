@@ -138,8 +138,8 @@ ProfileExpandedContent.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
-  changeState: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
   entity: PropTypes.object.isRequired,
   getDiagramURL: PropTypes.func,
   getModelName: PropTypes.func.isRequired,

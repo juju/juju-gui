@@ -232,13 +232,13 @@ ProfileCharmList.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
   addNotification: PropTypes.func.isRequired,
+  addToModel: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
   }).isRequired,
-  addToModel: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string

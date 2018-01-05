@@ -559,9 +559,9 @@ class SearchResults extends React.Component {
 
 SearchResults.propTypes = {
   acl: PropTypes.object.isRequired,
+  addToModel: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
-  addToModel: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getName: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
