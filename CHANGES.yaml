@@ -1,3 +1,9 @@
+- 2.11.2:
+  - (Fix) Add a workaround for the contenteditable bug in Firefox.
+  - (Doc) Update multipass instructions.
+  - (Doc) Minor fixes to releasing instructions.
+  - (Beta) Improve jujushell detection and actually add tests for the feature.
+
 - 2.11.1:
 
   - (Fix) Fix typo causing charmstore to be undefined when deploying from the user profile.
