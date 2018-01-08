@@ -168,6 +168,7 @@ var module = module;
           revisionInfo = meta['revision-info'] || {},
           bundleMeta = meta['bundle-metadata'],
           published = meta['published'] || {},
+          tags = meta['tags'] || {},
           owner = meta.owner && meta.owner.User;
 
       // Singletons and keys which are outside of the common structure
@@ -180,6 +181,7 @@ var module = module;
         is_approved: data.Id.indexOf('~') > 0 ? false : true,
         owner: owner,
         revisions: revisionInfo.Revisions || [],
+        tags: tags.Tags || [],
         code_source: {
           location: extraInfo['bzr-url']
         }
@@ -431,6 +433,7 @@ var module = module;
         'include=extra-info',
         'include=supported-series',
         'include=stats',
+        'include=tags',
         'include=perm'
       ];
       const url = this._generatePath('list', qs.join('&'));

@@ -191,10 +191,10 @@ describe('Profile Model List', function() {
             content: 'Name',
             columnSize: 3
           }, {
-            content: 'Machines, cloud/region',
+            content: 'Owner',
             columnSize: 3
           }, {
-            content: 'Permissions/owner',
+            content: 'Machines, cloud/region',
             columnSize: 3
           }, {
             content: 'Last accessed',
@@ -212,9 +212,6 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: '0 EC2/EU-WEST-1',
-              columnSize: 3
-            }, {
               content: (
                 <div>
                   <SvgIcon name='user_16'
@@ -222,6 +219,15 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__username">
                     Me
                   </span>
+                </div>),
+              columnSize: 3
+            }, {
+              content: (
+                <div>
+                  <span className="profile-model-list__machine-number">
+                    {0}
+                  </span>
+                  ec2/eu-west-1
                 </div>),
               columnSize: 3
             }, {
@@ -248,9 +254,6 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: '0 GCE/US-CENTRAL1',
-              columnSize: 3
-            }, {
               content: (
                 <div>
                   <SvgIcon name='user_16'
@@ -258,6 +261,15 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__username">
                     Me
                   </span>
+                </div>),
+              columnSize: 3
+            }, {
+              content: (
+                <div>
+                  <span className="profile-model-list__machine-number">
+                    {0}
+                  </span>
+                  gce/us-central1
                 </div>),
               columnSize: 3
             }, {
@@ -284,9 +296,6 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: '2 GCE/US-EAST1',
-              columnSize: 3
-            }, {
               content: (
                 <div>
                   <SvgIcon name='show_16'
@@ -294,6 +303,15 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__username">
                     tester2
                   </span>
+                </div>),
+              columnSize: 3
+            }, {
+              content: (
+                <div>
+                  <span className="profile-model-list__machine-number">
+                    {2}
+                  </span>
+                  gce/us-east1
                 </div>),
               columnSize: 3
             }, {
@@ -316,9 +334,6 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: '25 GCE/US-EAST1',
-              columnSize: 3
-            }, {
               content: (
                 <div>
                   <SvgIcon name='user_16'
@@ -326,6 +341,15 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__username">
                     tester3
                   </span>
+                </div>),
+              columnSize: 3
+            }, {
+              content: (
+                <div>
+                  <span className="profile-model-list__machine-number">
+                    {25}
+                  </span>
+                  gce/us-east1
                 </div>),
               columnSize: 3
             }, {
@@ -454,10 +478,10 @@ describe('Profile Model List', function() {
             content: 'Name',
             columnSize: 3
           }, {
-            content: 'Machines, cloud/region',
+            content: 'Owner',
             columnSize: 3
           }, {
-            content: 'Permissions/owner',
+            content: 'Machines, cloud/region',
             columnSize: 3
           }, {
             content: 'Last accessed',
@@ -475,9 +499,6 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: '0 EC2/EU-WEST-1',
-              columnSize: 3
-            }, {
               content: (
                 <div>
                   <SvgIcon name='user_16'
@@ -485,6 +506,15 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__username">
                     Me
                   </span>
+                </div>),
+              columnSize: 3
+            }, {
+              content: (
+                <div>
+                  <span className="profile-model-list__machine-number">
+                    {0}
+                  </span>
+                  ec2/eu-west-1
                 </div>),
               columnSize: 3
             }, {
