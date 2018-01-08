@@ -149,7 +149,7 @@ class ProfileModelList extends React.Component {
       const profileUser = model.users.find(user => user.displayName === profileUsername);
       const userIsAdmin = profileUser.access === 'admin';
       const username = owner === profileUsername ? 'Me' : owner;
-      const region = model.region ? '/' + model.region.toUpperCase() : '';
+      const region = model.region ? '/' + model.region : '';
       modelList.push({
         columns: [{
           content: (
@@ -163,9 +163,6 @@ class ProfileModelList extends React.Component {
             </a>),
           columnSize: 3
         }, {
-          content: `${model.numMachines} ${model.provider.toUpperCase()}${region}`,
-          columnSize: 3
-        }, {
           content: (
             <div>
               <SvgIcon name={icons.get(profileUser.access)}
@@ -173,6 +170,15 @@ class ProfileModelList extends React.Component {
               <span className="profile-model-list__username">
                 {username}
               </span>
+            </div>),
+          columnSize: 3
+        }, {
+          content: (
+            <div>
+              <span className="profile-model-list__machine-number">
+                {model.numMachines}
+              </span>
+              {model.provider}{region}
             </div>),
           columnSize: 3
         }, {
@@ -238,10 +244,10 @@ class ProfileModelList extends React.Component {
             content: 'Name',
             columnSize: 3
           }, {
-            content: 'Machines, cloud/region',
+            content: 'Owner',
             columnSize: 3
           }, {
-            content: 'Permissions/owner',
+            content: 'Machines, cloud/region',
             columnSize: 3
           }, {
             content: 'Last accessed',
