@@ -134,7 +134,6 @@ class ProfileCharmList extends React.Component {
       content = (<Spinner />);
     } else {
       const rows = this.state.data.map(charm => {
-        console.log(charm);
         const id = charm.id;
         const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
         const url = window.jujulib.URL.fromLegacyString(id);
