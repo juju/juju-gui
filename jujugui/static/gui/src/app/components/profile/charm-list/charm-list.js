@@ -83,12 +83,58 @@ class ProfileCharmList extends React.Component {
     this.props.changeState({profile: null, store: path, hash: null});
   }
 
+  /**
+    Display a tag in the store.
+    @param tag {String} The name of the tag.
+    @param evt {Object} The click event.
+  */
+  _handleTagClick(tag, evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    this.props.changeState({
+      profile: null,
+      search: {
+        owner: null,
+        provides: null,
+        requires: null,
+        series: null,
+        tags: tag,
+        text: '',
+        type: null
+      },
+      hash: null});
+  }
+
+  /**
+    Generate a list of tags for a charm
+    @param tags {Array} A list of tags.
+    @returns {Object} JSX for the tags.
+  */
+  _generateTags(tags) {
+    if (!tags || !tags.length) {
+      return null;
+    }
+    const tagList = tags.map(tag => (
+      <li className="link profile-charm-list__tag"
+        key={tag}
+        onClick={this._handleTagClick.bind(this, tag)}
+        role="button"
+        tabIndex="0">
+        {tag}
+      </li>));
+    return (
+      <ul className="profile-charm-list__tags">
+        {tagList}
+      </ul>);
+  }
+
   render() {
     let content;
     if (this.state.loading) {
       content = (<Spinner />);
     } else {
       const rows = this.state.data.map(charm => {
+        console.log(charm);
         const id = charm.id;
         const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
         const url = window.jujulib.URL.fromLegacyString(id);
@@ -104,12 +150,15 @@ class ProfileCharmList extends React.Component {
           columns: [{
             content: (
               <div>
-                {icon}
-                <a href={`${this.props.baseURL}${path}`}
-                  key="link"
-                  onClick={this._navigateToCharm.bind(this, path)}>
-                  {charm.name}
-                </a>
+                <div>
+                  {icon}
+                  <a href={`${this.props.baseURL}${path}`}
+                    key="link"
+                    onClick={this._navigateToCharm.bind(this, path)}>
+                    {charm.name}
+                  </a>
+                </div>
+                {this._generateTags(charm.tags)}
               </div>),
             columnSize: 6
           }, {

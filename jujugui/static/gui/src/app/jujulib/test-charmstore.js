@@ -172,6 +172,9 @@ describe('jujulib charmstore', function() {
           stats: {
             ArchiveDownloadCount: 10
           },
+          tags: {
+            Tags: ['ops', 'misc']
+          },
           'supported-series': {
             SupportedSeries: [
               'precise',
@@ -226,7 +229,8 @@ describe('jujulib charmstore', function() {
             type: 'String'
           }
         },
-        series: ['precise', 'trusty']
+        series: ['precise', 'trusty'],
+        tags: ['ops', 'misc']
       });
     });
 
@@ -290,6 +294,7 @@ describe('jujulib charmstore', function() {
         owner: 'hatch',
         revisions: ['rev1', 'rev2'],
         services: '',
+        tags: [],
         unitCount: 7
       });
     });
@@ -369,6 +374,7 @@ describe('jujulib charmstore', function() {
             'include=extra-info&' +
             'include=supported-series&' +
             'include=stats&' +
+            'include=tags&' +
             'include=perm']);
     });
 
