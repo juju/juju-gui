@@ -141,8 +141,7 @@ describe('HeaderSearch', function() {
       user: null,
       profile: null,
       gui: {
-        machines: null,
-        inspector: null
+        machines: null
       }
     });
   });
@@ -166,8 +165,7 @@ describe('HeaderSearch', function() {
       user: null,
       profile: null,
       gui: {
-        machines: null,
-        inspector: null
+        machines: null
       }
     });
   });

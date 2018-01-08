@@ -902,6 +902,7 @@ Browser: ${navigator.userAgent}`
           destroyUnits={model.remove_units.bind(model)}
           displayPlans={initUtils.compareSemver(
             this.applicationConfig.jujuCoreVersion, '2') > -1}
+          entityPath={window.jujulib.URL.fromAnyString(charm.get('id')).path()}
           getCharm={model.get_charm.bind(model)}
           getUnitStatusCounts={initUtils.getUnitStatusCounts}
           getYAMLConfig={initUtils.getYAMLConfig.bind(this)}

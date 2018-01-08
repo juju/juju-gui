@@ -332,6 +332,24 @@ var module = module;
   };
 
   /**
+    Given a legacy or current url, create and return a URL instance.
+    @param value {String} The charm/bundle legacy URL string, like
+      "cs:wordpress", "cs:bundle/rails", "local:kibana",
+      "cs:~who/xenial/haproxy-42". OR The charm/bundle URL string, like
+      "wordpress", "django/bundle" or "/u/who/haproxy/xenial/42".
+    @returns {URL} The resulting charm or bundle URL object.
+  */
+  URL.fromAnyString = value => {
+    let url;
+    try {
+      url = URL.fromString(value);
+    } catch (_) {
+      url = URL.fromLegacyString(value);
+    }
+    return url;
+  };
+
+  /**
     Clean up the given URL value.
     Throw an error if the given value is not a valid charm/bundle URL string.
 

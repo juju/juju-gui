@@ -106,8 +106,7 @@ class HeaderSearch extends React.Component {
         user: null,
         profile: null,
         gui: {
-          machines: null,
-          inspector: null
+          machines: null
         }
       };
       // Open the base store page if it is not already displaying an entity.

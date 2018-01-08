@@ -325,6 +325,34 @@ YUI.add('juju-charm-models', function(Y) {
     */
     hasMetrics: function() {
       return !!this.get('metrics');
+    },
+
+    /**
+      Idempotent. Populates the charm files attribute with the file list from
+      the charmstore.
+      @param {Object} getEntity The getEntity method from the charmstore instance.
+      @param {Function} callback The callback to call once the files list has
+        been populated.
+    */
+    populateFileList: function(getEntity, callback) {
+      const files = this.get('files');
+      if (files.length > 0) {
+        callback();
+        return;
+      }
+      getEntity(this.get('id'), (error, charmData) => {
+        this.set('files', charmData[0].files);
+        callback();
+      });
+    },
+
+    /**
+      If the charm files list contains a file called 'getstarted.md'.
+      Case insensitive.
+      @returns {Boolean} Whether the file exists.
+    */
+    hasGetStarted: function() {
+      return this.get('files').some(f => f.toLowerCase() === 'getstarted.md');
     }
 
   }, {

@@ -44,6 +44,7 @@ describe('jujulib urls', () => {
     }),
     path: 'u/cyberman/mediawiki-scalable/bundle/0'
   }];
+
   const legacyPathTests = [{
     url: new URL({name: 'django'}),
     path: 'django'
@@ -175,6 +176,20 @@ describe('jujulib urls', () => {
       legacyPathTests.forEach(test => {
         assert.strictEqual(
           test.url.toLegacyString(), `${test.url.schema}:${test.path}`);
+      });
+    });
+
+    it('returns a URL instance for urls valid with fromString', () => {
+      pathTests.forEach(pt => {
+        const url = URL.fromAnyString(pt.path);
+        assert.deepEqual(url.path(), pt.url.path());
+      });
+    });
+
+    it('returns a URL instance for urls valid with fromLegacyString', () => {
+      legacyPathTests.forEach(pt => {
+        const url = URL.fromAnyString(pt.path);
+        assert.deepEqual(url.path(), pt.url.path());
       });
     });
 

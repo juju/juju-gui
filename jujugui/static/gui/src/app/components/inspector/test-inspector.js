@@ -60,6 +60,7 @@ describe('Inspector', function() {
     var getUnitStatusCounts = sinon.stub();
     var showActivePlan = sinon.stub();
     var serviceRelations = ['relations'];
+    const charm = {get: () => 'charmid', hasGetStarted: () => true};
     var component = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
@@ -67,7 +68,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
         appState={appState}
-        charm={{}}
+        charm={charm}
         clearState={clearState}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -75,6 +76,7 @@ describe('Inspector', function() {
         destroyService={destroyService}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -102,8 +104,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent={undefined}
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title={title}
         icon={icon} />
@@ -115,7 +122,7 @@ describe('Inspector', function() {
         acl={acl}
         addNotification={addNotification}
         changeState={overview.props.changeState}
-        charm={{}}
+        charm={charm}
         clearState={clearState}
         destroyService={destroyService}
         displayPlans={true}
@@ -153,7 +160,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -161,6 +168,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={destroyUnits}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={envResolved}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -189,8 +197,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent='units'
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={unitStatus}
         title='Units'
         icon={icon} />
@@ -226,7 +239,7 @@ describe('Inspector', function() {
     appState.current.gui.inspector = {
       activeComponent: 'config'
     };
-    var charm = {};
+    var charm = {get: () => 'charmid', hasGetStarted: () => true};
     var component = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
@@ -242,6 +255,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -270,8 +284,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="config"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Configure'
         icon={icon} />
@@ -324,7 +343,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -332,6 +351,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={destroyUnits}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -360,8 +380,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent='unit'
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={headerType}
         title={title}
         icon={icon} />
@@ -403,7 +428,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -411,6 +436,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -452,7 +478,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -460,6 +486,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -521,7 +548,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -529,6 +556,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={destroyUnits}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -585,7 +613,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -594,6 +622,7 @@ describe('Inspector', function() {
         destroyUnits={destroyUnits}
         displayPlans={true}
         envResolved={sinon.stub()}
+        entityPath={'u/foo/bar'}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
@@ -657,7 +686,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -665,6 +694,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={destroyUnits}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -718,7 +748,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -726,6 +756,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -754,8 +785,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="scale"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Scale'
         icon={icon} />
@@ -796,7 +832,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -804,6 +840,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={exposeService}
         getAvailableEndpoints={sinon.stub()}
@@ -831,8 +868,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="expose"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Expose'
         icon={icon} />
@@ -871,7 +913,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -879,6 +921,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -906,8 +949,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="relations"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Relations'
         icon={icon} />
@@ -942,7 +990,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -950,6 +998,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -977,8 +1026,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="relate-to"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Relate to'
         icon={icon} />
@@ -1017,7 +1071,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={createRelation}
@@ -1025,6 +1079,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={getAvailableEndpoints}
@@ -1052,8 +1107,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="relate-to"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='spouse-name'
         icon={icon} />
@@ -1096,7 +1156,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1104,6 +1164,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1131,8 +1192,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent='plan'
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Plan'
         icon={icon} />
@@ -1170,7 +1236,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1178,6 +1244,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1204,8 +1271,13 @@ describe('Inspector', function() {
     var header = output.props.children[0];
     var expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent="change-version"
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="charmid"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Change version'
         icon={icon} />
@@ -1237,12 +1309,14 @@ describe('Inspector', function() {
     getStub.withArgs('id').returns('demo');
     getStub.withArgs('charm').returns('cs:demo');
     getStub.withArgs('icon').returns(icon);
+    getStub.returns([{resource: 'one'}]);
     const service = {
       get: getStub
     };
     appState.current.gui.inspector = {
       activeComponent: 'resources'
     };
+
     const component = jsTestUtils.shallowRender(
       <Inspector
         acl={acl}
@@ -1250,7 +1324,10 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={addNotification}
         appState={appState}
-        charm={{get: sinon.stub().returns([{resource: 'one'}])}}
+        charm={{
+          get: getStub,
+          hasGetStarted: () => true
+        }}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1258,6 +1335,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1285,8 +1363,13 @@ describe('Inspector', function() {
     const header = output.props.children[0];
     const expectedHeader = (
       <InspectorHeader
-        backCallback={instance._backCallback}
         activeComponent='resources'
+        backCallback={instance._backCallback}
+        changeState={sinon.stub()}
+        charmId="demo"
+        entityPath="u/foo/bar"
+        hasGetStarted={true}
+        showLinks={true}
         type={undefined}
         title='Resources'
         icon={icon} />
@@ -1318,7 +1401,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1326,6 +1409,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1381,7 +1465,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1389,6 +1473,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1436,7 +1521,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1444,6 +1529,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1488,7 +1574,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1496,6 +1582,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
@@ -1543,7 +1630,7 @@ describe('Inspector', function() {
         addGhostAndEcsUnits={sinon.stub()}
         addNotification={sinon.stub()}
         appState={appState}
-        charm={{}}
+        charm={{get: () => 'charmid', hasGetStarted: () => true}}
         clearState={sinon.stub()}
         createMachinesPlaceUnits={sinon.stub()}
         createRelation={sinon.stub()}
@@ -1551,6 +1638,7 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={sinon.stub()}
         displayPlans={true}
+        entityPath={'u/foo/bar'}
         envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}

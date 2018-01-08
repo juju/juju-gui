@@ -1,11 +1,11 @@
 .post-deployment {
-  max-height: calc(100% - 140px - 166px);
+  max-height: calc(100% - 140px - 100px);
   z-index: index($z-indexed-elements, post-deployment);
   width: auto;
   max-width: 295px;
   left: auto;
   right: 20px;
-  top: 166px;
+  top: 155px;
   height: auto;
   padding: 20px;
   overflow: auto;
