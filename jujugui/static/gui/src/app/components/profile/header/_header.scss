@@ -4,8 +4,14 @@
   padding-bottom: 30px;
   border-bottom: 1px solid $light-grey;
 
+  &__inner {
+    display: flex;
+  }
+
   &__close {
-    float: right;
+    position: absolute;
+    top: 16px;
+    right: 16px;
   }
 
   &__avatar {
@@ -13,7 +19,6 @@
     float: left;
     width: $size;
     height: $size;
-    margin-right: 20px;
     border-radius: 50%;
 
     &--default {
@@ -53,10 +58,25 @@
   }
 
   &__username {
+    color: #111;
     $size: 45px;
-    margin: 0;
+    margin: 0 0 12px;
     padding: 20px 0 0 0;
     font-size: $size;
-    line-height: $size;
+    line-height: 58.5px;
+  }
+
+  &__meta {
+    list-style: none;
+    margin-left: 16px;
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    &,
+    li:last-child {
+      margin-bottom: 0;
+    }
   }
 }
