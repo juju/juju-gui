@@ -47,9 +47,14 @@ describe('Profile Charm List', function() {
       assert.equal(user, 'hatch@external');
       cb(null, charms);
     };
+    let activeUsersProfile = true;
+    if (options.activeUsersProfile !== undefined) {
+      activeUsersProfile = options.activeUsersProfile;
+    }
     return jsTestUtils.shallowRender(
       <ProfileCharmList
         acl={options.acl || acl}
+        activeUsersProfile={activeUsersProfile}
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -245,6 +250,12 @@ describe('Profile Charm List', function() {
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('updates the header if it is not your profile', () => {
+    const renderer = renderComponent({activeUsersProfile: false});
+    const output = renderer.getRenderOutput();
+    assert.equal(output.props.children.props.children[0].props.children[0], 'Their');
   });
 
   it('shows the spinner when loading', () => {
