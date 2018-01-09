@@ -82,6 +82,7 @@ class Profile extends React.Component {
         }
       }]
     ]);
+
     if (this.props.showPay) {
       this.sectionsMap.set('payment', {
         label: 'Payment',
@@ -97,6 +98,15 @@ class Profile extends React.Component {
         }
       });
     }
+
+    // If viewing a user profile that is not yours then do not show the
+    // models or credentials lists.
+    if (props.controllerUser.split('@')[0] !== props.userInfo.profile) {
+      this.sectionsMap.delete('models');
+      this.sectionsMap.delete('credentials');
+      this.sectionsMap.delete('payment');
+    }
+
   }
   /**
     Send profile analytics.
