@@ -118,6 +118,12 @@ class GUIApp {
     this.bakery = newBakery(
       config, this.user, stateGetter, cookieSetter, webHandler);
     /**
+      An identity instance.
+      Used to retrieve information about the currently logged in user.
+      @type {Object}
+    */
+    this.identity = this._setupIdentity(config, window.jujulib.identity);
+    /**
       A charm store API client instance.
       Used to retrieve information about charms and bundles via the charm store.
       @type {Object}
@@ -333,6 +339,19 @@ class GUIApp {
     // addNotifications.
     this._bound.switchModel = utils.switchModel.bind(
       this, this.modelAPI, this._bound.addNotification);
+  }
+
+  /**
+    Creates a new instance of the Identity API. This method is idempotent.
+    @param {object} config The app instantiation configuration.
+    @param {Object} Identity The Identity class.
+    @return {Object} The existing or new instance of identity.
+  */
+  _setupIdentity(config, Identity) {
+    if (this.identity === undefined) {
+      this.identity = new Identity(config.identityURL, this.bakery);
+    }
+    return this.identity;
   }
 
   /**
