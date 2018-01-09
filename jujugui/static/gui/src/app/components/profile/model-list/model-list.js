@@ -264,9 +264,12 @@ class ProfileModelList extends React.Component {
             title="Start a new model"
             changeState={this.props.changeState}
             switchModel={this.props.switchModel} />
-          <span className="profile-model-list__header-title">
-            My models ({rowData.length})
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({rowData.length})
+            </span>
+          </h2>
         </div>
         {!rowData.length ? null : <BasicTable
           headerClasses={['profile__entity-table-header-row']}

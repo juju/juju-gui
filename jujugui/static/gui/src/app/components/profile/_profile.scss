@@ -10,6 +10,16 @@
     font-weight: 200;
   }
 
+  &__title {
+    margin-bottom: 25px;
+    font-size: 1.25em;
+
+    &-count {
+      margin-left: 0.25em;
+      color: $warm-grey;
+    }
+  }
+
   &__entity-table {
     &-header-row,
     &-row {

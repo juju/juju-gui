@@ -1,4 +1,9 @@
 .profile-charm-list {
+  &__title {
+    margin-bottom: 25px;
+    font-size: 1.5em;
+  }
+
   &__icon {
     border-radius: 50%;
     width: 20px;

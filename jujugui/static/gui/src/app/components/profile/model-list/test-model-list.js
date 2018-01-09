@@ -182,9 +182,12 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (4)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({4})
+            </span>
+          </h2>
         </div>
         <BasicTable
           headerClasses={['profile__entity-table-header-row']}
@@ -540,9 +543,12 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (0)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
         </div>
         {null}
       </div>
@@ -563,9 +569,12 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (0)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
         </div>
         {null}
       </div>
@@ -623,9 +632,12 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (1)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({1})
+            </span>
+          </h2>
         </div>
         <BasicTable
           headerClasses={['profile__entity-table-header-row']}

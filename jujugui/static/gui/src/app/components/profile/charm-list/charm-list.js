@@ -190,22 +190,30 @@ class ProfileCharmList extends React.Component {
         });
       });
       content = (
-        <BasicTable
-          headerClasses={['profile__entity-table-header-row']}
-          headerColumnClasses={['profile__entity-table-header-column']}
-          headers={[{
-            content: 'Name',
-            columnSize: 6
-          }, {
-            content: 'Series',
-            columnSize: 3
-          }, {
-            content: 'Release',
-            columnSize: 3
-          }]}
-          rowClasses={['profile__entity-table-row']}
-          rowColumnClasses={['profile__entity-table-column']}
-          rows={rows} />);
+        <div>
+          <h2 className="profile__title">
+            My charms
+            <span className="profile__title-count">
+              ({(this.state.data || []).length})
+            </span>
+          </h2>
+          <BasicTable
+            headerClasses={['profile__entity-table-header-row']}
+            headerColumnClasses={['profile__entity-table-header-column']}
+            headers={[{
+              content: 'Name',
+              columnSize: 6
+            }, {
+              content: 'Series',
+              columnSize: 3
+            }, {
+              content: 'Release',
+              columnSize: 3
+            }]}
+            rowClasses={['profile__entity-table-row']}
+            rowColumnClasses={['profile__entity-table-column']}
+            rows={rows} />
+        </div>);
     }
     return (
       <div className="profile-charm-list">
