@@ -49,7 +49,7 @@ var module = module;
           const data = JSON.parse(resp.target.responseText);
           callback(null, data);
         } catch (e) {
-          callback(e, null);
+          callback(e.toString(), null);
         }
       });
     }
