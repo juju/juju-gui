@@ -47,6 +47,10 @@ describe('Profile Charm List', function() {
       assert.equal(user, 'hatch@external');
       cb(null, charms);
     };
+    let isActiveUsersProfile = true;
+    if (options.isActiveUsersProfile !== undefined) {
+      isActiveUsersProfile = options.isActiveUsersProfile;
+    }
     return jsTestUtils.shallowRender(
       <ProfileCharmList
         acl={options.acl || acl}
@@ -59,6 +63,7 @@ describe('Profile Charm List', function() {
         }}
         deployTarget={options.deployTarget || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
+        isActiveUsersProfile={isActiveUsersProfile}
         user="hatch@external" />, true);
   }
   let acl;
@@ -245,6 +250,12 @@ describe('Profile Charm List', function() {
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('updates the header if it is not your profile', () => {
+    const renderer = renderComponent({isActiveUsersProfile: false});
+    const output = renderer.getRenderOutput();
+    assert.equal(output.props.children.props.children[0].props.children[0], 'Their');
   });
 
   it('shows the spinner when loading', () => {

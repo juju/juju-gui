@@ -189,10 +189,11 @@ class ProfileCharmList extends React.Component {
           key: charm.id
         });
       });
+      const prefix = this.props.isActiveUsersProfile ? 'My' : 'Their';
       content = (
         <div>
           <h2 className="profile__title">
-            My charms
+            {prefix} charms
             <span className="profile__title-count">
               ({(this.state.data || []).length})
             </span>
@@ -235,6 +236,7 @@ ProfileCharmList.propTypes = {
   }).isRequired,
   deployTarget: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
+  isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string
 };
 

@@ -71,6 +71,10 @@ describe('Profile Bundle List', function() {
       assert.equal(user, 'lazypower@external');
       cb(null, bundles);
     };
+    let isActiveUsersProfile = true;
+    if (options.isActiveUsersProfile !== undefined) {
+      isActiveUsersProfile = options.isActiveUsersProfile;
+    }
     return jsTestUtils.shallowRender(
       <ProfileBundleList
         acl={options.acl || acl}
@@ -84,6 +88,7 @@ describe('Profile Bundle List', function() {
         }}
         deployTarget={options.deployTarget || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
+        isActiveUsersProfile={isActiveUsersProfile}
         user="lazypower@external" />, true);
   }
 
@@ -274,6 +279,12 @@ describe('Profile Bundle List', function() {
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('updates the header if it is not your profile', () => {
+    const renderer = renderComponent({isActiveUsersProfile: false});
+    const output = renderer.getRenderOutput();
+    assert.equal(output.props.children.props.children[0].props.children[0], 'Their');
   });
 
   it('can display a spinner when loading', () => {

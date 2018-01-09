@@ -155,10 +155,11 @@ class ProfileBundleList extends React.Component {
           key: bundle.id
         };
       });
+      const prefix = this.props.isActiveUsersProfile ? 'My' : 'Their';
       content = (
         <div>
           <h2 className="profile__title">
-            My bundles
+            {prefix} bundles
             <span className="profile__title-count">
               ({(this.state.data || []).length})
             </span>
@@ -205,6 +206,7 @@ ProfileBundleList.propTypes = {
   }).isRequired,
   deployTarget: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
+  isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string
 };
 

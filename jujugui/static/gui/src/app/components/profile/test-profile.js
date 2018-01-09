@@ -29,7 +29,7 @@ describe('Profile', function() {
         }}
         controllerAPI={controllerAPI}
         controllerIsReady={sinon.stub()}
-        controllerUser="spinach"
+        controllerUser={options.controllerUser || 'spinach'}
         deployTarget={options.deployTarget || sinon.stub()}
         facadesExist={true}
         getModelName={options.getModelName || sinon.stub()}
@@ -106,6 +106,15 @@ describe('Profile', function() {
     const renderer = renderComponent({showPay: true});
     const instance = renderer.getMountedInstance();
     assert.isObject(instance.sectionsMap.get('payment'));
+  });
+
+  it('hides certain sections when viewing others profile pages', () => {
+    const renderer = renderComponent({
+      controllerUser: 'foo'
+    });
+    const instance = renderer.getMountedInstance();
+    const allowedKeys = ['charms', 'bundles'];
+    assert.deepEqual(Array.from(instance.sectionsMap.keys()), allowedKeys);
   });
 
 });
