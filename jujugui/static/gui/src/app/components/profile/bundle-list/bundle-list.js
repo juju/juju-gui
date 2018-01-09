@@ -182,7 +182,7 @@ class ProfileBundleList extends React.Component {
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
             rows={rows} />
-      </div>);
+        </div>);
     }
     return (
       <div className="profile-bundle-list">
