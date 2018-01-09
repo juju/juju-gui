@@ -79,4 +79,35 @@
       margin-bottom: 0;
     }
   }
+
+  &__menu {
+    list-style: none;
+    margin-left: auto;
+    padding-left: 16px;
+    border-left: 1px solid #ccc;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+
+    a {
+      color: #111;
+    }
+
+    li {
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0
+      }
+    }
+  }
+
+  &__menutitle {
+    border-bottom: 1px solid #ccc;
+    color: #111;
+    line-height: 42px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
 }

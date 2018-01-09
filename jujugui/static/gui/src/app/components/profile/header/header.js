@@ -44,6 +44,15 @@ class ProfileHeader extends React.Component {
             <li>email@address.com</li>
             <li>Company Ltd</li>
           </ul>
+          <ul className="profile-header__menu">
+            <li>
+              <h2 className="profile-header__menutitle">
+                <a href="/">jaas</a>
+              </h2>
+            </li>
+            <li><a href="https://jujucharms.com/home">Home</a></li>
+            <li><a href="https://jujucharms.com/jaas">About JAAS</a></li>
+          </ul>
         </div>
       </div>);
   }
