@@ -17,7 +17,8 @@ describe('init', () => {
       flags: {},
       gisf: false,
       plansURL: 'http://plans.example.com/',
-      termsURL: 'http://terms.example.com/'
+      termsURL: 'http://terms.example.com/',
+      identityURL: 'http://identity.example.com/'
     };
     // Overwrite any default values with those provided.
     const initConfig = Object.assign(defaults, config);
@@ -140,6 +141,24 @@ describe('init', () => {
           app.charmstore.url,
           'http://1.2.3.4/v5',
           'It should only ever create a single instance of the charmstore');
+      });
+    });
+
+    describe('_setupIdentity', () => {
+      it('is called on application instantiation', () => {
+        assert.isNotNull(app.identity);
+      });
+
+      it('is idempotent', () => {
+        // The identity attribute is undefined by default
+        assert.equal(typeof app.identity, 'object');
+        assert.equal(app.identity.url, 'http://identity.example.com/v1');
+        app._setupIdentity(
+          {identityURL: 'it broke'}, window.jujulib.identity);
+        assert.equal(
+          app.identity.url,
+          'http://identity.example.com/v1',
+          'It should only ever create a single instance of the identity service');
       });
     });
 

@@ -16,7 +16,8 @@ const createApp = (JujuGUI, config = {}) => {
     flags: {},
     gisf: false,
     plansURL: 'http://plans.example.com/',
-    termsURL: 'http://terms.example.com/'
+    termsURL: 'http://terms.example.com/',
+    identityURL: 'http://identity.example.com/'
   };
   // Overwrite any default values with those provided.
   const initConfig = Object.assign(defaults, config);

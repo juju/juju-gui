@@ -10,6 +10,7 @@ from pyramid.settings import asbool
 DEFAULT_BUNDLESERVICE_URL = 'https://api.jujucharms.com/bundleservice/'
 DEFAULT_CHARMSTORE_URL = 'https://api.jujucharms.com/charmstore/'
 DEFAULT_PLANS_URL = 'https://api.jujucharms.com/omnibus/'
+DEFAULT_IDENTITY_URL = 'https://api.jujucharms.com/identity/'
 DEFAULT_PAYMENT_URL = 'https://api.jujucharms.com/payment/'
 DEFAULT_TERMS_URL = 'https://api.jujucharms.com/terms/'
 
@@ -37,6 +38,7 @@ def update(settings):
                 default=DEFAULT_BUNDLESERVICE_URL)
     _update_url(settings, 'jujugui.charmstore_url',
                 default=DEFAULT_CHARMSTORE_URL)
+    _update_url(settings, 'jujugui.identity_url', default=DEFAULT_IDENTITY_URL)
     _update_url(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
     _update_url(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
     _update_url(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
