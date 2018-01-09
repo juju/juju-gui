@@ -18,7 +18,7 @@ const Panel = require('../panel/panel');
 class Profile extends React.Component {
   constructor(props) {
     super(props);
-    const activeUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
+    const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
     this.sectionsMap = new Map([
       ['models', {
         label: 'Models',
@@ -43,7 +43,7 @@ class Profile extends React.Component {
           return (
             <ProfileCharmList
               acl={this.props.acl}
-              activeUsersProfile={activeUsersProfile}
+              isActiveUsersProfile={isActiveUsersProfile}
               addNotification={this.props.addNotification}
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
@@ -60,7 +60,7 @@ class Profile extends React.Component {
           return (
             <ProfileBundleList
               acl={this.props.acl}
-              activeUsersProfile={activeUsersProfile}
+              isActiveUsersProfile={isActiveUsersProfile}
               addNotification={this.props.addNotification}
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
@@ -104,7 +104,7 @@ class Profile extends React.Component {
 
     // If viewing a user profile that is not yours then do not show the
     // models or credentials lists.
-    if (!activeUsersProfile) {
+    if (!isActiveUsersProfile) {
       this.sectionsMap.delete('models');
       this.sectionsMap.delete('credentials');
       this.sectionsMap.delete('payment');

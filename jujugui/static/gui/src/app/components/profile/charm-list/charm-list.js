@@ -189,7 +189,7 @@ class ProfileCharmList extends React.Component {
           key: charm.id
         });
       });
-      const prefix = this.props.activeUsersProfile ? 'My' : 'Their';
+      const prefix = this.props.isActiveUsersProfile ? 'My' : 'Their';
       content = (
         <div>
           <h2 className="profile__title">
@@ -227,7 +227,6 @@ ProfileCharmList.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
-  activeUsersProfile: PropTypes.bool.isRequired,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
@@ -237,6 +236,7 @@ ProfileCharmList.propTypes = {
   }).isRequired,
   deployTarget: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
+  isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string
 };
 
