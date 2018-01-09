@@ -90,16 +90,6 @@
           content: '';
         }
       }
-      &--disabled {
-        a {
-          cursor: default;
-          color: $color-brand;
-
-          &:hover {
-            text-decoration: none;
-          }
-        }
-      }
     }
   }
 }

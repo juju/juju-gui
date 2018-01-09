@@ -75,21 +75,21 @@ class InspectorHeader extends React.Component {
     if (!this.props.showLinks) {
       return;
     }
-    const classList = classNames(
-      'inspector-header__list-item',
-      {'inspector-header__list-item--disabled': !this.props.hasGetStarted});
+    const getStarted = !this.props.hasGetStarted ? '' : (
+      <li className="inspector-header__list-item">
+        <a onClick={this._navigateToGetStarted.bind(this)}>
+          Get started
+        </a>
+      </li>
+    );
     return (
       <ul className="inspector-header__inline-list">
-        <li className={classList}>
-          <a onClick={this._navigateToGetStarted.bind(this)}>
-            Get started
-          </a>
-        </li>
         <li className="inspector-header__list-item">
           <a onClick={this._navigateToCharmDetails.bind(this)}>
             Charm details
           </a>
         </li>
+        {getStarted}
       </ul>);
   }
 
