@@ -196,7 +196,7 @@ ProfileBundleList.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
-  activeUsersProfile: PropTypes.bool,
+  activeUsersProfile: PropTypes.bool.isRequired,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
