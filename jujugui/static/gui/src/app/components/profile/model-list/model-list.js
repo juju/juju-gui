@@ -163,15 +163,8 @@ class ProfileModelList extends React.Component {
             </a>),
           columnSize: 3
         }, {
-          content: (
-            <div>
-              <SvgIcon name={icons.get(profileUser.access)}
-                size="16" />
-              <span className="profile-model-list__username">
-                {username}
-              </span>
-            </div>),
-          columnSize: 3
+          content: username,
+          columnSize: 2
         }, {
           content: (
             <div>
@@ -181,6 +174,11 @@ class ProfileModelList extends React.Component {
               {model.provider}{region}
             </div>),
           columnSize: 3
+        }, {
+          content: (
+            <SvgIcon name={icons.get(profileUser.access)}
+              size="16" />),
+          columnSize: 1
         }, {
           content: (
             <DateDisplay
@@ -245,10 +243,13 @@ class ProfileModelList extends React.Component {
             columnSize: 3
           }, {
             content: 'Owner',
-            columnSize: 3
+            columnSize: 2
           }, {
             content: 'Machines, cloud/region',
             columnSize: 3
+          }, {
+            content: '',
+            columnSize: 1
           }, {
             content: 'Last accessed',
             columnSize: 2
