@@ -157,6 +157,8 @@ class ProfileBundleList extends React.Component {
       });
       content = (
         <BasicTable
+          headerClasses={['profile__entity-table-header-row']}
+          headerColumnClasses={['profile__entity-table-header-column']}
           headers={[{
             content: 'Name',
             columnSize: 8
@@ -170,6 +172,8 @@ class ProfileBundleList extends React.Component {
             content: 'Release',
             columnSize: 1
           }]}
+          rowClasses={['profile__entity-table-row']}
+          rowColumnClasses={['profile__entity-table-column']}
           rows={rows} />);
     }
     return (

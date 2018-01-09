@@ -74,6 +74,8 @@ describe('Profile Charm List', function() {
     const expected = (
       <div className="profile-charm-list">
         <BasicTable
+          headerClasses={['profile__entity-table-header-row']}
+          headerColumnClasses={['profile__entity-table-header-column']}
           headers={[{
             content: 'Name',
             columnSize: 6
@@ -84,6 +86,8 @@ describe('Profile Charm List', function() {
             content: 'Release',
             columnSize: 3
           }]}
+          rowClasses={['profile__entity-table-row']}
+          rowColumnClasses={['profile__entity-table-column']}
           rows={[{
             columns: [{
               content: (
