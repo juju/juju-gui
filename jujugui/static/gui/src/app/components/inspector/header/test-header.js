@@ -63,42 +63,32 @@ describe('InspectorHeader', () => {
     });
     expect(output.props.children[3]).toEqualJSX(
       <ul className="inspector-header__inline-list">
+        <li className="inspector-header__list-item">
+          <a onClick={sinon.stub()}>
+            Charm details
+          </a>
+        </li>
         <li className='inspector-header__list-item'>
           <a onClick={sinon.stub()}>
             Get started
           </a>
         </li>
+      </ul>);
+  });
+
+  it('does not show the Get Started link if not available', () => {
+    const output = renderComponent({
+      hasGetStarted: false,
+      showLinks: true
+    });
+    expect(output.props.children[3]).toEqualJSX(
+      <ul className="inspector-header__inline-list">
         <li className="inspector-header__list-item">
           <a onClick={sinon.stub()}>
             Charm details
           </a>
         </li>
       </ul>);
-  });
-
-  it('shows the Get Started link disabled if the charm is missind it', () => {
-    const output = renderComponent({
-      hasGetStarted: false,
-      showLinks: true
-    });
-    assert.equal(
-      output.props.children[3].props.children[0].props.className,
-      'inspector-header__list-item inspector-header__list-item--disabled');
-  });
-
-  it('clicking the Get Started link does nothing if it is disabled', () => {
-    const changeState = sinon.stub();
-    const output = renderComponent({
-      changeState,
-      charmId: 'charmid',
-      hasGetStarted: false,
-      showLinks: true
-    });
-    output.props.children[3].props.children[0].props.children.props.onClick({
-      preventDefault: sinon.stub(),
-      stopPropagation: sinon.stub()
-    });
-    assert.equal(changeState.callCount, 0);
   });
 
   it('clicking the Get Started link changes state to show the get started', () => {
@@ -110,7 +100,7 @@ describe('InspectorHeader', () => {
       hasGetStarted: true,
       showLinks: true
     });
-    output.props.children[3].props.children[0].props.children.props.onClick({
+    output.props.children[3].props.children[1].props.children.props.onClick({
       preventDefault: sinon.stub(),
       stopPropagation: sinon.stub()
     });
@@ -131,7 +121,7 @@ describe('InspectorHeader', () => {
       hasGetStarted: true,
       showLinks: true
     });
-    output.props.children[3].props.children[1].props.children.props.onClick({
+    output.props.children[3].props.children[0].props.children.props.onClick({
       preventDefault: sinon.stub(),
       stopPropagation: sinon.stub()
     });
