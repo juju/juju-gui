@@ -93,135 +93,147 @@ describe('Profile Bundle List', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-bundle-list">
-        <BasicTable
-          headers={[{
-            content: 'Name',
-            columnSize: 8
-          }, {
-            content: 'Machines',
-            columnSize: 2
-          }, {
-            content: 'Units',
-            columnSize: 1
-          }, {
-            content: 'Release',
-            columnSize: 1
-          }]}
-          rows={[{
-            columns: [{
-              content: (
-                <a className="cold-link"
-                  href="/gui/u/lazypower/logstash-core/bundle/1"
-                  onClick={sinon.stub()}>
-                  logstash-core
-                </a>),
-              columnSize: 4
+        <div>
+          <h2 className="profile__title">
+            My bundles
+            <span className="profile__title-count">
+              ({2})
+            </span>
+          </h2>
+          <BasicTable
+            headerClasses={['profile__entity-table-header-row']}
+            headerColumnClasses={['profile__entity-table-header-column']}
+            headers={[{
+              content: 'Name',
+              columnSize: 8
             }, {
-              content: (
-                <div>
-                  <img className="profile-bundle-list__icon"
-                    src="/charmstore/~lazypower/trusty/elasticsearch/icon.svg"
-                    title="elasticsearch" />
-                  <img className="profile-bundle-list__icon"
-                    src="/charmstore/trusty/kibana-10/icon.svg"
-                    title="kibana" />
-                  <img className="profile-bundle-list__icon"
-                    src="/charmstore/~lazypower/trusty/logstash-20/icon.svg"
-                    title="logstash" />
-                  <img className="profile-bundle-list__icon"
-                    src="/charmstore/~kwmonroe/trusty/openjdk/icon.svg"
-                    title="openjdk" />
-                </div>),
-              columnSize: 4
-            }, {
-              content: 2,
+              content: 'Machines',
               columnSize: 2
             }, {
-              content: 3,
+              content: 'Units',
               columnSize: 1
             }, {
-              content: '#1',
+              content: 'Release',
               columnSize: 1
-            }],
-            expandedContent: (
-              <ProfileExpandedContent
-                acl={instance.props.acl}
-                changeState={sinon.stub()}
-                deployTarget={instance.props.deployTarget}
-                entity={bundles[0]}
-                getDiagramURL={sinon.stub()}
-                getModelName={instance.props.getModelName}
-                topRow={(
+            }]}
+            rowClasses={['profile__entity-table-row']}
+            rowColumnClasses={['profile__entity-table-column']}
+            rows={[{
+              columns: [{
+                content: (
+                  <a className="cold-link"
+                    href="/gui/u/lazypower/logstash-core/bundle/1"
+                    onClick={sinon.stub()}>
+                    logstash-core
+                  </a>),
+                columnSize: 4
+              }, {
+                content: (
                   <div>
-                    <div className="eight-col profile-expanded-content__top-row">
-                      logstash-core
-                    </div>
-                    <div className="two-col profile-expanded-content__top-row">
-                      2
-                    </div>
-                    <div className="one-col profile-expanded-content__top-row">
-                      3
-                    </div>
-                    <div className="one-col last-col profile-expanded-content__top-row">
-                      #1
-                    </div>
-                  </div>)} />),
-            key: 'cs:~lazypower/bundle/logstash-core-1'
-          }, {
-            columns: [{
-              content: (
-                <a className="cold-link"
-                  href="/gui/u/lazypower/swarm-core/bundle/1"
-                  onClick={sinon.stub()}>
-                  swarm-core
-                </a>),
-              columnSize: 4
+                    <img className="profile-bundle-list__icon"
+                      src="/charmstore/~lazypower/trusty/elasticsearch/icon.svg"
+                      title="elasticsearch" />
+                    <img className="profile-bundle-list__icon"
+                      src="/charmstore/trusty/kibana-10/icon.svg"
+                      title="kibana" />
+                    <img className="profile-bundle-list__icon"
+                      src="/charmstore/~lazypower/trusty/logstash-20/icon.svg"
+                      title="logstash" />
+                    <img className="profile-bundle-list__icon"
+                      src="/charmstore/~kwmonroe/trusty/openjdk/icon.svg"
+                      title="openjdk" />
+                  </div>),
+                columnSize: 4
+              }, {
+                content: 2,
+                columnSize: 2
+              }, {
+                content: 3,
+                columnSize: 1
+              }, {
+                content: '#1',
+                columnSize: 1
+              }],
+              expandedContent: (
+                <ProfileExpandedContent
+                  acl={instance.props.acl}
+                  changeState={sinon.stub()}
+                  deployTarget={instance.props.deployTarget}
+                  entity={bundles[0]}
+                  getDiagramURL={sinon.stub()}
+                  getModelName={instance.props.getModelName}
+                  topRow={(
+                    <div>
+                      <div className="eight-col profile-expanded-content__top-row">
+                        logstash-core
+                      </div>
+                      <div className="two-col profile-expanded-content__top-row">
+                        2
+                      </div>
+                      <div className="one-col profile-expanded-content__top-row">
+                        3
+                      </div>
+                      <div className="one-col last-col profile-expanded-content__top-row">
+                        #1
+                      </div>
+                    </div>)} />),
+              key: 'cs:~lazypower/bundle/logstash-core-1'
             }, {
-              content: (
-                <div>
-                  <img className="profile-bundle-list__icon"
-                    src="/charmstore/~containers/trusty/consul/icon.svg"
-                    title="consul" />
-                  <img className="profile-bundle-list__icon"
-                    src="/charmstore/~lazypower/swarm/icon.svg"
-                    title="swarm" />
-                </div>),
-              columnSize: 4
-            }, {
-              content: 5,
-              columnSize: 2
-            }, {
-              content: 5,
-              columnSize: 1
-            }, {
-              content: '#1',
-              columnSize: 1
-            }],
-            expandedContent: (
-              <ProfileExpandedContent
-                acl={instance.props.acl}
-                changeState={sinon.stub()}
-                deployTarget={instance.props.deployTarget}
-                entity={bundles[1]}
-                getDiagramURL={sinon.stub()}
-                getModelName={instance.props.getModelName}
-                topRow={(
+              columns: [{
+                content: (
+                  <a className="cold-link"
+                    href="/gui/u/lazypower/swarm-core/bundle/1"
+                    onClick={sinon.stub()}>
+                    swarm-core
+                  </a>),
+                columnSize: 4
+              }, {
+                content: (
                   <div>
-                    <div className="eight-col profile-expanded-content__top-row">
-                      swarm-core
-                    </div>
-                    <div className="two-col profile-expanded-content__top-row">
-                      5
-                    </div>
-                    <div className="one-col profile-expanded-content__top-row">
-                      5
-                    </div>
-                    <div className="one-col last-col profile-expanded-content__top-row">
-                      #1
-                    </div>
-                  </div>)} />),
-            key: 'cs:~lazypower/bundle/swarm-core-1'
-          }]} />
+                    <img className="profile-bundle-list__icon"
+                      src="/charmstore/~containers/trusty/consul/icon.svg"
+                      title="consul" />
+                    <img className="profile-bundle-list__icon"
+                      src="/charmstore/~lazypower/swarm/icon.svg"
+                      title="swarm" />
+                  </div>),
+                columnSize: 4
+              }, {
+                content: 5,
+                columnSize: 2
+              }, {
+                content: 5,
+                columnSize: 1
+              }, {
+                content: '#1',
+                columnSize: 1
+              }],
+              expandedContent: (
+                <ProfileExpandedContent
+                  acl={instance.props.acl}
+                  changeState={sinon.stub()}
+                  deployTarget={instance.props.deployTarget}
+                  entity={bundles[1]}
+                  getDiagramURL={sinon.stub()}
+                  getModelName={instance.props.getModelName}
+                  topRow={(
+                    <div>
+                      <div className="eight-col profile-expanded-content__top-row">
+                        swarm-core
+                      </div>
+                      <div className="two-col profile-expanded-content__top-row">
+                        5
+                      </div>
+                      <div className="one-col profile-expanded-content__top-row">
+                        5
+                      </div>
+                      <div className="one-col last-col profile-expanded-content__top-row">
+                        #1
+                      </div>
+                    </div>)} />),
+              key: 'cs:~lazypower/bundle/swarm-core-1'
+            }]} />
+        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -233,21 +245,33 @@ describe('Profile Bundle List', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-bundle-list">
-        <BasicTable
-          headers={[{
-            content: 'Name',
-            columnSize: 8
-          }, {
-            content: 'Machines',
-            columnSize: 2
-          }, {
-            content: 'Units',
-            columnSize: 1
-          }, {
-            content: 'Release',
-            columnSize: 1
-          }]}
-          rows={[]} />
+        <div>
+          <h2 className="profile__title">
+            My bundles
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
+          <BasicTable
+            headerClasses={['profile__entity-table-header-row']}
+            headerColumnClasses={['profile__entity-table-header-column']}
+            headers={[{
+              content: 'Name',
+              columnSize: 8
+            }, {
+              content: 'Machines',
+              columnSize: 2
+            }, {
+              content: 'Units',
+              columnSize: 1
+            }, {
+              content: 'Release',
+              columnSize: 1
+            }]}
+            rowClasses={['profile__entity-table-row']}
+            rowColumnClasses={['profile__entity-table-column']}
+            rows={[]} />
+        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });

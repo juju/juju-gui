@@ -150,51 +150,80 @@ class ProfileModelList extends React.Component {
       const userIsAdmin = profileUser.access === 'admin';
       const username = owner === profileUsername ? 'Me' : owner;
       const region = model.region ? '/' + model.region : '';
+      const nameContent = (
+        <a href={path}
+          onClick={this.switchToModel.bind(this, {
+            name: model.name,
+            id: model.id,
+            owner
+          })}>
+          {model.name}
+        </a>);
+      const regionContent = (
+        <div>
+          <span className="profile-model-list__machine-number">
+            {model.numMachines}
+          </span>
+          {model.provider}{region}
+        </div>);
+      const accessContent = (
+        <SvgIcon
+          name={icons.get(profileUser.access)}
+          size="16" />);
+      const dateContent = (
+        <DateDisplay
+          date={model.lastConnection || '--'}
+          relative={true} />);
+      const destroyContent = userIsAdmin ? (
+        <a onClick={this._destroyModel.bind(this, model, bdRef)}>
+          <SvgIcon
+            name="delete_16"
+            size="16" />
+        </a>) : null;
       modelList.push({
         columns: [{
-          content: (
-            <a href={path}
-              onClick={this.switchToModel.bind(this, {
-                name: model.name,
-                id: model.id,
-                owner
-              })}>
-              {model.name}
-            </a>),
+          content: nameContent,
           columnSize: 3
         }, {
-          content: (
-            <div>
-              <SvgIcon name={icons.get(profileUser.access)}
-                size="16" />
-              <span className="profile-model-list__username">
-                {username}
-              </span>
-            </div>),
-          columnSize: 3
-        }, {
-          content: (
-            <div>
-              <span className="profile-model-list__machine-number">
-                {model.numMachines}
-              </span>
-              {model.provider}{region}
-            </div>),
-          columnSize: 3
-        }, {
-          content: (
-            <DateDisplay
-              date={model.lastConnection || '--'}
-              relative={true} />),
+          content: username,
           columnSize: 2
         }, {
-          content: userIsAdmin ? (
-            <a onClick={this._destroyModel.bind(this, model, bdRef)}>
-              <SvgIcon name="delete_16"
-                size="16" />
-            </a>) : null,
+          content: regionContent,
+          columnSize: 3
+        }, {
+          content: accessContent,
+          columnSize: 1
+        }, {
+          content: dateContent,
+          columnSize: 2
+        }, {
+          content: destroyContent,
           columnSize: 1
         }],
+        expandedContent: (
+          <div className="profile-model-list__expanded-content">
+            <div className="three-col">
+              {nameContent}
+            </div>
+            <div className="two-col">
+              {username}
+            </div>
+            <div className="three-col">
+              {regionContent}
+            </div>
+            <div className="one-col">
+              {accessContent}
+            </div>
+            <div className="two-col">
+              {dateContent}
+            </div>
+            <div className="one-col last-col">
+              {destroyContent}
+            </div>
+            <div className="three-col prepend-five profile-model-list__credential-name">
+              {model.credentialName}
+            </div>
+          </div>),
         key: model.name
       });
       return modelList;
@@ -235,20 +264,28 @@ class ProfileModelList extends React.Component {
             title="Start a new model"
             changeState={this.props.changeState}
             switchModel={this.props.switchModel} />
-          <span className="profile-model-list__header-title">
-            My models ({rowData.length})
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({rowData.length})
+            </span>
+          </h2>
         </div>
         {!rowData.length ? null : <BasicTable
+          headerClasses={['profile__entity-table-header-row']}
+          headerColumnClasses={['profile__entity-table-header-column']}
           headers={[{
             content: 'Name',
             columnSize: 3
           }, {
             content: 'Owner',
-            columnSize: 3
+            columnSize: 2
           }, {
             content: 'Machines, cloud/region',
             columnSize: 3
+          }, {
+            content: '',
+            columnSize: 1
           }, {
             content: 'Last accessed',
             columnSize: 2
@@ -256,6 +293,8 @@ class ProfileModelList extends React.Component {
             content: '',
             columnSize: 1
           }]}
+          rowClasses={['profile__entity-table-row']}
+          rowColumnClasses={['profile__entity-table-column']}
           rows={rowData} />}
         {this._generateNotification()}
       </div>);

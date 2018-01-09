@@ -182,20 +182,28 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (4)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({4})
+            </span>
+          </h2>
         </div>
         <BasicTable
+          headerClasses={['profile__entity-table-header-row']}
+          headerColumnClasses={['profile__entity-table-header-column']}
           headers={[{
             content: 'Name',
             columnSize: 3
           }, {
             content: 'Owner',
-            columnSize: 3
+            columnSize: 2
           }, {
             content: 'Machines, cloud/region',
             columnSize: 3
+          }, {
+            content: '',
+            columnSize: 1
           }, {
             content: 'Last accessed',
             columnSize: 2
@@ -203,6 +211,8 @@ describe('Profile Model List', function() {
             content: '',
             columnSize: 1
           }]}
+          rowClasses={['profile__entity-table-row']}
+          rowColumnClasses={['profile__entity-table-column']}
           rows={[{
             columns: [{
               content: (
@@ -212,15 +222,8 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: (
-                <div>
-                  <SvgIcon name='user_16'
-                    size="16" />
-                  <span className="profile-model-list__username">
-                    Me
-                  </span>
-                </div>),
-              columnSize: 3
+              content: 'Me',
+              columnSize: 2
             }, {
               content: (
                 <div>
@@ -230,6 +233,11 @@ describe('Profile Model List', function() {
                   ec2/eu-west-1
                 </div>),
               columnSize: 3
+            }, {
+              content: (
+                <SvgIcon name='user_16'
+                  size="16" />),
+              columnSize: 1
             }, {
               content: (
                 <DateDisplay
@@ -244,6 +252,46 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 1
             }],
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester/mymodel"
+                    onClick={sinon.stub()}>
+                      mymodel
+                  </a>
+                </div>
+                <div className="two-col">
+                  Me
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      0
+                    </span>
+                    ec2/eu-west-1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="2017-07-06T14:47:03.000Z"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col">
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon
+                      name="delete_16"
+                      size="16" />
+                  </a>
+                </div>
+                <div className="three-col prepend-five profile-model-list__credential-name">
+                  base
+                </div>
+              </div>),
             key: 'mymodel'
           }, {
             columns: [{
@@ -254,15 +302,8 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: (
-                <div>
-                  <SvgIcon name='user_16'
-                    size="16" />
-                  <span className="profile-model-list__username">
-                    Me
-                  </span>
-                </div>),
-              columnSize: 3
+              content: 'Me',
+              columnSize: 2
             }, {
               content: (
                 <div>
@@ -272,6 +313,11 @@ describe('Profile Model List', function() {
                   gce/us-central1
                 </div>),
               columnSize: 3
+            }, {
+              content: (
+                <SvgIcon name='user_16'
+                  size="16" />),
+              columnSize: 1
             }, {
               content: (
                 <DateDisplay
@@ -286,6 +332,46 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 1
             }],
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester/mymodel2"
+                    onClick={sinon.stub()}>
+                      mymodel2
+                  </a>
+                </div>
+                <div className="two-col">
+                  Me
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      0
+                    </span>
+                    gce/us-central1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="2017-07-06T16:26:47.000Z"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col">
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon
+                      name="delete_16"
+                      size="16" />
+                  </a>
+                </div>
+                <div className="three-col prepend-five profile-model-list__credential-name">
+                  admin
+                </div>
+              </div>),
             key: 'mymodel2'
           }, {
             columns: [{
@@ -296,15 +382,8 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: (
-                <div>
-                  <SvgIcon name='show_16'
-                    size="16" />
-                  <span className="profile-model-list__username">
-                    tester2
-                  </span>
-                </div>),
-              columnSize: 3
+              content: 'tester2',
+              columnSize: 2
             }, {
               content: (
                 <div>
@@ -316,6 +395,11 @@ describe('Profile Model List', function() {
               columnSize: 3
             }, {
               content: (
+                <SvgIcon name='show_16'
+                  size="16" />),
+              columnSize: 1
+            }, {
+              content: (
                 <DateDisplay
                   date='--'
                   relative={true} />),
@@ -324,6 +408,41 @@ describe('Profile Model List', function() {
               content: null,
               columnSize: 1
             }],
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester2/test-db"
+                    onClick={sinon.stub()}>
+                      test-db
+                  </a>
+                </div>
+                <div className="two-col">
+                  tester2
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      2
+                    </span>
+                    gce/us-east1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="show_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="--"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col">
+                </div>
+                <div className="three-col prepend-five profile-model-list__credential-name">
+                  google-dbtest
+                </div>
+              </div>),
             key: 'test-db'
           }, {
             columns: [{
@@ -334,15 +453,8 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: (
-                <div>
-                  <SvgIcon name='user_16'
-                    size="16" />
-                  <span className="profile-model-list__username">
-                    tester3
-                  </span>
-                </div>),
-              columnSize: 3
+              content: 'tester3',
+              columnSize: 2
             }, {
               content: (
                 <div>
@@ -352,6 +464,11 @@ describe('Profile Model List', function() {
                   gce/us-east1
                 </div>),
               columnSize: 3
+            }, {
+              content: (
+                <SvgIcon name='user_16'
+                  size="16" />),
+              columnSize: 1
             }, {
               content: (
                 <DateDisplay
@@ -366,6 +483,46 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 1
             }],
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester3/website"
+                    onClick={sinon.stub()}>
+                      website
+                  </a>
+                </div>
+                <div className="two-col">
+                  tester3
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      25
+                    </span>
+                    gce/us-east1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="2017-07-05T01:42:05.000Z"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col">
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon
+                      name="delete_16"
+                      size="16" />
+                  </a>
+                </div>
+                <div className="three-col prepend-five profile-model-list__credential-name">
+                  gce
+                </div>
+              </div>),
             key: 'website'
           }]} />
       </div>
@@ -386,9 +543,12 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (0)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
         </div>
         {null}
       </div>
@@ -409,9 +569,12 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (0)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
         </div>
         {null}
       </div>
@@ -469,20 +632,28 @@ describe('Profile Model List', function() {
             title="Start a new model"
             changeState={instance.props.changeState}
             switchModel={instance.props.switchModel} />
-          <span className="profile-model-list__header-title">
-          My models (1)
-          </span>
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({1})
+            </span>
+          </h2>
         </div>
         <BasicTable
+          headerClasses={['profile__entity-table-header-row']}
+          headerColumnClasses={['profile__entity-table-header-column']}
           headers={[{
             content: 'Name',
             columnSize: 3
           }, {
             content: 'Owner',
-            columnSize: 3
+            columnSize: 2
           }, {
             content: 'Machines, cloud/region',
             columnSize: 3
+          }, {
+            content: '',
+            columnSize: 1
           }, {
             content: 'Last accessed',
             columnSize: 2
@@ -490,6 +661,8 @@ describe('Profile Model List', function() {
             content: '',
             columnSize: 1
           }]}
+          rowClasses={['profile__entity-table-row']}
+          rowColumnClasses={['profile__entity-table-column']}
           rows={[{
             columns: [{
               content: (
@@ -499,15 +672,8 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 3
             }, {
-              content: (
-                <div>
-                  <SvgIcon name='user_16'
-                    size="16" />
-                  <span className="profile-model-list__username">
-                    Me
-                  </span>
-                </div>),
-              columnSize: 3
+              content: 'Me',
+              columnSize: 2
             }, {
               content: (
                 <div>
@@ -517,6 +683,11 @@ describe('Profile Model List', function() {
                   ec2/eu-west-1
                 </div>),
               columnSize: 3
+            }, {
+              content: (
+                <SvgIcon name='user_16'
+                  size="16" />),
+              columnSize: 1
             }, {
               content: (
                 <DateDisplay
@@ -531,6 +702,46 @@ describe('Profile Model List', function() {
                 </a>),
               columnSize: 1
             }],
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester/mymodel"
+                    onClick={sinon.stub()}>
+                      mymodel
+                  </a>
+                </div>
+                <div className="two-col">
+                  Me
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      0
+                    </span>
+                    ec2/eu-west-1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="2017-07-06T14:47:03.000Z"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col">
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon
+                      name="delete_16"
+                      size="16" />
+                  </a>
+                </div>
+                <div className="three-col prepend-five profile-model-list__credential-name">
+                  base
+                </div>
+              </div>),
             key: 'mymodel'
           }]} />
       </div>

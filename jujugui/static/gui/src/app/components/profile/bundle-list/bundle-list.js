@@ -156,21 +156,33 @@ class ProfileBundleList extends React.Component {
         };
       });
       content = (
-        <BasicTable
-          headers={[{
-            content: 'Name',
-            columnSize: 8
-          }, {
-            content: 'Machines',
-            columnSize: 2
-          }, {
-            content: 'Units',
-            columnSize: 1
-          }, {
-            content: 'Release',
-            columnSize: 1
-          }]}
-          rows={rows} />);
+        <div>
+          <h2 className="profile__title">
+            My bundles
+            <span className="profile__title-count">
+              ({(this.state.data || []).length})
+            </span>
+          </h2>
+          <BasicTable
+            headerClasses={['profile__entity-table-header-row']}
+            headerColumnClasses={['profile__entity-table-header-column']}
+            headers={[{
+              content: 'Name',
+              columnSize: 8
+            }, {
+              content: 'Machines',
+              columnSize: 2
+            }, {
+              content: 'Units',
+              columnSize: 1
+            }, {
+              content: 'Release',
+              columnSize: 1
+            }]}
+            rowClasses={['profile__entity-table-row']}
+            rowColumnClasses={['profile__entity-table-column']}
+            rows={rows} />
+        </div>);
     }
     return (
       <div className="profile-bundle-list">

@@ -9,4 +9,44 @@
     color: $link-color;
     font-weight: 200;
   }
+
+  &__title {
+    margin-bottom: 25px;
+    font-size: 1.25em;
+
+    &-count {
+      margin-left: 0.25em;
+      color: $warm-grey;
+    }
+  }
+
+  &__entity-table {
+    &-header-row,
+    &-row {
+      margin-bottom: 0;
+    }
+
+    &-header-row {
+      padding-bottom: 11px;
+    }
+
+    &-row {
+      padding: 11px 0;
+
+      &.basic-table__row--expandable {
+        &:hover {
+          background-color: #fff;
+        }
+      }
+
+      & > .expanding-row__expanded {
+        margin: 0;
+      }
+    }
+
+    &-header-column,
+    &-column {
+      margin-bottom: 0;
+    }
+  }
 }

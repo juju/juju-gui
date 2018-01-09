@@ -3,19 +3,15 @@
     float: right;
   }
 
-  &__header {
-    margin-bottom: 25px;
-
-    &-title {
-      font-size: 1.5em;
-    }
-  }
-
-  &__username {
-    margin-left: 14px;
-  }
-
   &__machine-number {
-    margin-right: 20px;
+    margin-right: 1em;
+  }
+
+  &__expanded-content {
+    padding: 20px;
+  }
+
+  &__credential-name {
+    padding-left: 1.5em;
   }
 }

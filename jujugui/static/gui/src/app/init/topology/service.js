@@ -1091,6 +1091,7 @@ class ServiceModule {
         inspector: null
       },
       hash: null,
+      profile: null,
       search: null,
       store: null
     });

@@ -102,6 +102,7 @@ describe('service module annotations', function() {
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       hash: null,
+      profile: null,
       root: null,
       user: null,
       gui: {
