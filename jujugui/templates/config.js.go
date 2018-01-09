@@ -10,6 +10,7 @@ var juju_config = {
     "charmstoreAPIPath": "v4",
     "charmstoreURL": "https://api.jujucharms.com/charmstore/",
     "bundleServiceURL": "https://api.jujucharms.com/bundleservice/",
+    "identityURL": "https://api.jujucharms.com/identity",
     "plansURL": "https://api.jujucharms.com/omnibus/",
     "paymentURL": "https://api.jujucharms.com/payment/",
     "termsURL": "https://api.jujucharms.com/terms/",
