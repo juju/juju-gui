@@ -155,10 +155,11 @@ class ProfileBundleList extends React.Component {
           key: bundle.id
         };
       });
+      const prefix = this.props.activeUsersProfile ? 'My' : 'Their';
       content = (
         <div>
           <h2 className="profile__title">
-            My bundles
+            {prefix} bundles
             <span className="profile__title-count">
               ({(this.state.data || []).length})
             </span>
@@ -195,6 +196,7 @@ ProfileBundleList.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
+  activeUsersProfile: PropTypes.bool,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
