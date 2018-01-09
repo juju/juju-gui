@@ -150,49 +150,80 @@ class ProfileModelList extends React.Component {
       const userIsAdmin = profileUser.access === 'admin';
       const username = owner === profileUsername ? 'Me' : owner;
       const region = model.region ? '/' + model.region : '';
+      const nameContent = (
+        <a href={path}
+          onClick={this.switchToModel.bind(this, {
+            name: model.name,
+            id: model.id,
+            owner
+          })}>
+          {model.name}
+        </a>);
+      const regionContent = (
+        <div>
+          <span className="profile-model-list__machine-number">
+            {model.numMachines}
+          </span>
+          {model.provider}{region}
+        </div>);
+      const accessContent = (
+        <SvgIcon
+          name={icons.get(profileUser.access)}
+          size="16" />);
+      const dateContent = (
+        <DateDisplay
+          date={model.lastConnection || '--'}
+          relative={true} />);
+      const destroyContent = userIsAdmin ? (
+        <a onClick={this._destroyModel.bind(this, model, bdRef)}>
+          <SvgIcon
+            name="delete_16"
+            size="16" />
+        </a>) : null;
       modelList.push({
         columns: [{
-          content: (
-            <a href={path}
-              onClick={this.switchToModel.bind(this, {
-                name: model.name,
-                id: model.id,
-                owner
-              })}>
-              {model.name}
-            </a>),
+          content: nameContent,
           columnSize: 3
         }, {
           content: username,
           columnSize: 2
         }, {
-          content: (
-            <div>
-              <span className="profile-model-list__machine-number">
-                {model.numMachines}
-              </span>
-              {model.provider}{region}
-            </div>),
+          content: regionContent,
           columnSize: 3
         }, {
-          content: (
-            <SvgIcon name={icons.get(profileUser.access)}
-              size="16" />),
+          content: accessContent,
           columnSize: 1
         }, {
-          content: (
-            <DateDisplay
-              date={model.lastConnection || '--'}
-              relative={true} />),
+          content: dateContent,
           columnSize: 2
         }, {
-          content: userIsAdmin ? (
-            <a onClick={this._destroyModel.bind(this, model, bdRef)}>
-              <SvgIcon name="delete_16"
-                size="16" />
-            </a>) : null,
+          content: destroyContent,
           columnSize: 1
         }],
+        expandedContent: (
+          <div className="profile-model-list__expanded-content">
+            <div className="three-col">
+              {nameContent}
+            </div>
+            <div className="two-col">
+              {username}
+            </div>
+            <div className="three-col">
+              {regionContent}
+            </div>
+            <div className="one-col">
+              {accessContent}
+            </div>
+            <div className="two-col">
+              {dateContent}
+            </div>
+            <div className="one-col last-col">
+              {destroyContent}
+            </div>
+            <div className="three-col prepend-five profile-model-list__credential-name">
+              {model.credentialName}
+            </div>
+          </div>),
         key: model.name
       });
       return modelList;

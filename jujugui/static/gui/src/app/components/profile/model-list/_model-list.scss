@@ -12,6 +12,14 @@
   }
 
   &__machine-number {
-    margin-right: 20px;
+    margin-right: 1em;
+  }
+
+  &__expanded-content {
+    padding: 20px;
+  }
+
+  &__credential-name {
+    padding-left: 1.5em;
   }
 }
