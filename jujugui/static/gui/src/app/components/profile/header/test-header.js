@@ -17,7 +17,7 @@ describe('Profile Header', function() {
         username="spinach" />);
     const expected = (
       <div className="profile-header twelve-col">
-        <div className="inner-wrapper">
+        <div className="inner-wrapper profile-header__inner">
           <div className="profile-header__close link"
             onClick={sinon.stub()}
             role="button"
@@ -30,9 +30,25 @@ describe('Profile Header', function() {
             'profile-header__avatar profile-header__avatar--default'}>
             <span className="profile-header__avatar-overlay"></span>
           </span>
-          <h1 className="profile-header__username">
-            spinach
-          </h1>
+          <ul className="profile-header__meta">
+            <li>
+              <h1 className="profile-header__username">
+                spinach
+              </h1>
+            </li>
+            <li><strong>First Surname</strong></li>
+            <li>email@address.com</li>
+            <li>Company Ltd</li>
+          </ul>
+          <ul className="profile-header__menu">
+            <li>
+              <h2 className="profile-header__menutitle">
+                <a href="/">jaas</a>
+              </h2>
+            </li>
+            <li><a href="https://jujucharms.com/home">Home</a></li>
+            <li><a href="https://jujucharms.com/jaas">About JAAS</a></li>
+          </ul>
         </div>
       </div>
     );
