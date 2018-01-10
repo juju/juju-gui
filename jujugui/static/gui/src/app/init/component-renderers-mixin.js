@@ -369,6 +369,7 @@ Browser: ${navigator.userAgent}`
           destroyModels={this._bound.destroyModels}
           facadesExist={facadesExist}
           getModelName={this._getModelName.bind(this)}
+          getUser={this.identity.getUser.bind(this.identity)}
           initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
           listModelsWithInfo={this._bound.listModelsWithInfo}
           payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
