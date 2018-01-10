@@ -42,6 +42,10 @@
       & > .expanding-row__expanded {
         margin: 0;
       }
+
+      & > .expanding-row--expanded .expanding-row__expanded {
+        margin: 12px 0;
+      }
     }
 
     &-header-column,
