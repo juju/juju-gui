@@ -138,7 +138,9 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
+          addNotification={this.props.addNotification}
           changeState={this.props.changeState}
+          getUser={this.props.getUser}
           username={this.props.userInfo.profile} />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
@@ -178,6 +180,7 @@ Profile.propTypes = {
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   getModelName: PropTypes.func.isRequired,
+  getUser: PropTypes.func.isRequired,
   initUtils: shapeup.shape({
     generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
