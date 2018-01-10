@@ -149,15 +149,19 @@ class ProfileCharmList extends React.Component {
           columns: [{
             content: (
               <div>
-                <div>
-                  {icon}
-                  <a href={`${this.props.baseURL}${path}`}
-                    key="link"
-                    onClick={this._navigateToCharm.bind(this, path)}>
-                    {charm.name}
-                  </a>
+                <div className="profile-charm-list__item">
+                  <div>
+                    {icon}
+                  </div>
+                  <div>
+                    <a href={`${this.props.baseURL}${path}`}
+                      key="link"
+                      onClick={this._navigateToCharm.bind(this, path)}>
+                      {charm.name}
+                    </a>
+                    {this._generateTags(charm.tags)}
+                  </div>
                 </div>
-                {this._generateTags(charm.tags)}
               </div>),
             columnSize: 6
           }, {
