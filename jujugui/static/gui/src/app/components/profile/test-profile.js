@@ -33,6 +33,7 @@ describe('Profile', function() {
         deployTarget={options.deployTarget || sinon.stub()}
         facadesExist={true}
         getModelName={options.getModelName || sinon.stub()}
+        getUser={options.getUser || sinon.stub()}
         initUtils={initUtils}
         listModelsWithInfo={sinon.stub()}
         payment={options.payment}
@@ -71,7 +72,9 @@ describe('Profile', function() {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
+          addNotification={sinon.stub()}
           changeState={sinon.stub()}
+          getUser={sinon.stub()}
           username="spinach" />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
