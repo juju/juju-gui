@@ -152,12 +152,11 @@ describe('init', () => {
       it('is idempotent', () => {
         // The identity attribute is undefined by default
         assert.equal(typeof app.identity, 'object');
-        assert.equal(app.identity.url, 'http://identity.example.com/v1');
         app._setupIdentity(
-          {identityURL: 'it broke'}, window.jujulib.identity);
-        assert.equal(
-          app.identity.url,
-          'http://identity.example.com/v1',
+          {getIdentityURL: () => 'broken'}, window.jujulib.identity);
+        assert.strictEqual(
+          app.identity.getIdentityURL(),
+          null,
           'It should only ever create a single instance of the identity service');
       });
     });
