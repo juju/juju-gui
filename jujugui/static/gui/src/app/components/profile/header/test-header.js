@@ -76,11 +76,11 @@ describe('Profile Header', function() {
     const output = jsTestUtils.shallowRender(
       <ProfileHeader
         changeState={sinon.stub()}
-        getUser={getUser}
+        getUser={() => {}}
         username="spinach" />);
     assert.equal(
       output.props.children.props.children[1].props.className,
-      'profile-header__avatar profile-header__avatar--hidden');
+      'profile-header__avatar profile-header__avatar--default profile-header__avatar--hidden');
   });
 
   it('displays the fallback gravatar if the user request fails', () => {
