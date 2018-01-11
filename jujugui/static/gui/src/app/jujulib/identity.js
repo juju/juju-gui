@@ -19,19 +19,26 @@ var module = module;
     Initializer.
 
     @function identity
-    @param url {String} The URL of the identity instance, including
-      scheme and port, and excluding the API version.
+    @param userStorage {Object} An object containing access to the identity url.
     @param bakery {Object} A bakery object for communicating with the identity
       instance.
     @returns {Object} A client object for making identity API calls.
   */
-  function identity(url, bakery) {
+  function identity(userStorage, bakery) {
     // Store the API URL (including version) handling missing trailing slash.
-    this.url = url.replace(/\/?$/, '/') + identityAPIVersion;
+    this.userStorage = userStorage;
     this.bakery = bakery;
   };
 
   identity.prototype = {
+
+    getIdentityURL: function() {
+      const identityURL = this.userStorage.identityURL();
+      if (identityURL === null) {
+        return null;
+      }
+      return `${identityURL}/${identityAPIVersion}`;
+    },
 
     /**
       Fetch the user data from the identity service
@@ -40,7 +47,12 @@ var module = module;
         Called with the call signature (error <Object>, userData <Object>).
     */
     getUser: function(userName, callback) {
-      return this.bakery.get(`${this.url}/u/${userName}`, null, (err, resp) => {
+      const identityURL = this.getIdentityURL();
+      if (identityURL === null) {
+        callback('no identity url available', null);
+        return null;
+      }
+      return this.bakery.get(`${identityURL}/u/${userName}`, null, (err, resp) => {
         if (err) {
           callback(err, null);
           return;
