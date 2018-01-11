@@ -1,12 +1,12 @@
 .profile-expanded-content {
-  padding: 20px;
+  padding: 20px 0;
 
   &__top-row {
     font-weight: 400;
     margin-bottom: 8px;
 
     &.last-col {
-      padding-left: 16px;
+      padding-left: 0;
     }
   }
 
@@ -25,6 +25,11 @@
   }
 
   &__entity-desc {
-    padding: 0 16px;
+    padding: 0 12px;
+  }
+
+  .button--positive {
+    position: relative;
+    right: 20px;
   }
 }
