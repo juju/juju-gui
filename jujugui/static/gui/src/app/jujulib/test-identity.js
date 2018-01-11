@@ -88,7 +88,7 @@ describe('jujulib identity service', () => {
       const identity = new window.jujulib.identity(userStorage, bakery);
       identity.getUser('hatch', (err, data) => {
         assert.deepEqual(
-          err, 'no identity url available');
+          err, 'no identity URL available');
         done();
       });
     });

@@ -19,7 +19,7 @@ var module = module;
     Initializer.
 
     @function identity
-    @param userStorage {Object} An object containing access to the identity url.
+    @param userStorage {Object} An object containing access to the identity URL.
     @param bakery {Object} A bakery object for communicating with the identity
       instance.
     @returns {Object} A client object for making identity API calls.
@@ -32,6 +32,11 @@ var module = module;
 
   identity.prototype = {
 
+    /**
+      Returns the proper URL for connecting to the identity API or null if There
+      is no base identityURL provided by the userStorage instance.
+      @return {String|null} The generated identity URL.
+    */
     getIdentityURL: function() {
       const identityURL = this.userStorage.identityURL();
       if (identityURL === null) {
@@ -49,7 +54,7 @@ var module = module;
     getUser: function(userName, callback) {
       const identityURL = this.getIdentityURL();
       if (identityURL === null) {
-        callback('no identity url available', null);
+        callback('no identity URL available', null);
         return null;
       }
       return this.bakery.get(`${identityURL}/u/${userName}`, null, (err, resp) => {
