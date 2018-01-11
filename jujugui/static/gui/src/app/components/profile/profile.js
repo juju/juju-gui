@@ -138,7 +138,6 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
-          addNotification={this.props.addNotification}
           changeState={this.props.changeState}
           getUser={this.props.getUser}
           username={this.props.userInfo.profile} />

@@ -72,7 +72,6 @@ describe('Profile', function() {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
-          addNotification={sinon.stub()}
           changeState={sinon.stub()}
           getUser={sinon.stub()}
           username="spinach" />
