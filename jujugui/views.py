@@ -101,7 +101,6 @@ def config(request):
         # The external services' URLs.
         'bundleServiceURL': settings['jujugui.bundleservice_url'],
         'charmstoreURL': settings['jujugui.charmstore_url'],
-        'identityURL': settings['jujugui.identity_url'],
         'plansURL': settings['jujugui.plans_url'],
         'paymentURL': settings['jujugui.payment_url'],
         'statsURL': settings['jujugui.stats_url'],

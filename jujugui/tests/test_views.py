@@ -136,7 +136,6 @@ class ConfigTests(ViewTestCase):
         self.assertEqual(options.DEFAULT_PLANS_URL, config['plansURL'])
         self.assertEqual('', config['statsURL'])
         self.assertEqual(options.DEFAULT_TERMS_URL, config['termsURL'])
-        self.assertEqual(options.DEFAULT_IDENTITY_URL, config['identityURL'])
         self.assertFalse(config['GTM_enabled'])
         # Note that here we are testing that the value is actually True or
         # False, not that it just evaluates to True/False(like in assertTrue).
