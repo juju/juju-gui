@@ -21,6 +21,14 @@
     height: $size;
     border-radius: 50%;
 
+    &--hidden {
+      visibility: hidden;
+    }
+
+    img {
+      border-radius: 50%;
+    }
+
     &--default {
       display: block;
       overflow: hidden;

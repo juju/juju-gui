@@ -1,20 +1,19 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 /** Header React component for use in the Profile component. */
 class ProfileHeader extends React.Component {
   constructor() {
     super();
-    this.xhrs = [];
     this.state = {
-      loadingUser: false,
-      user: null
+      user: null,
+      userRequested: false
     };
   }
 
@@ -22,21 +21,11 @@ class ProfileHeader extends React.Component {
     this._getUser();
   }
 
-  componentWillUnmount() {
-    this.xhrs.forEach(xhr => {
-      xhr && xhr.abort && xhr.abort();
-    });
-  }
-
   /**
     Get the identity user.
   */
   _getUser() {
-    this.setState({loadingUser: true}, () => {
-      const xhr = this.props.getUser(
-        this.props.username, this._getUserCallback.bind(this));
-      this.xhrs.push(xhr);
-    });
+    this.props.getUser(this.props.username, this._getUserCallback.bind(this));
   }
 
   /**
@@ -45,17 +34,13 @@ class ProfileHeader extends React.Component {
     @param {Array} modelList The list of models.
   */
   _getUserCallback(err, user) {
-    if (err) {
-      const message = 'Could not load the user.';
-      console.error(message, err);
-      this.props.addNotification({
-        title: message,
-        message: `${message}: ${err}`,
-        level: 'error'
-      });
-      return;
-    }
-    this.setState({loadingUser: false, user: user});
+    this.setState({userRequested: true}, () => {
+      if (err) {
+        console.log('unable to load user:', err);
+        return;
+      }
+      this.setState({user: user});
+    });
   }
 
   /**
@@ -74,27 +59,29 @@ class ProfileHeader extends React.Component {
   */
   _generateAvatar() {
     const user = this.state.user;
+    let content = <span className="profile-header__avatar-overlay"></span>;
     if (user && user.gravatar_id) {
-      return (
-        <span className="profile-header__avatar">
-          <img alt="Gravatar"
-            className="profile-header__avatar-gravatar"
-            src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />
-        </span>);
+      content = (
+        <img alt="Gravatar" className="profile-header__avatar-gravatar"
+          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />);
     }
+    const classes = classNames(
+      'profile-header__avatar', {
+        'profile-header__avatar--default': !user || !user.gravatar_id,
+        // If we haven't yet received a response about the user data, don't
+        // return an avatar so that we can avoid a flash of the 'fallback' icon.
+        'profile-header__avatar--hidden': !this.state.userRequested
+      });
     return (
-      <span className="profile-header__avatar profile-header__avatar--default">
-        <span className="profile-header__avatar-overlay"></span>
+      <span className={classes}>
+        {content}
       </span>);
   }
 
   render() {
-    let content;
-    if (this.state.loadingUser) {
-      content = (<Spinner />);
-    } else {
-      const user = this.state.user;
-      content = (
+    const user = this.state.user || {};
+    return (
+      <div className="profile-header twelve-col">
         <div className="inner-wrapper profile-header__inner">
           <div className="profile-header__close link"
             onClick={this._handleClose.bind(this)}
@@ -123,11 +110,7 @@ class ProfileHeader extends React.Component {
             <li><a href="https://jujucharms.com/home">Home</a></li>
             <li><a href="https://jujucharms.com/jaas">About JAAS</a></li>
           </ul>
-        </div>);
-    }
-    return (
-      <div className="profile-header twelve-col">
-        {content}
+        </div>
       </div>);
   }
 
