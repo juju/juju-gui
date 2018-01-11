@@ -4,7 +4,6 @@
 const React = require('react');
 
 const ProfileHeader = require('./header');
-const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -20,28 +19,18 @@ describe('Profile Header', function() {
     });
   });
 
-  it('displays a spinner when loading', () => {
-    const output = jsTestUtils.shallowRender(
-      <ProfileHeader
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        getUser={sinon.stub()}
-        username="spinach" />);
-    const expected = (
-      <div className="profile-header twelve-col">
-        <Spinner />
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
-  });
-
   it('can render', () => {
-    const output = jsTestUtils.shallowRender(
+    const renderer = jsTestUtils.shallowRender(
       <ProfileHeader
-        addNotification={sinon.stub()}
         changeState={sinon.stub()}
         getUser={getUser}
-        username="spinach" />);
+        username="spinach" />, true);
+    const instance = renderer.getMountedInstance();
+    // Triggering a componentWillMount before grabbing the rendered output so
+    // that the getUser call will have returned and rendered the gravatar UI.
+    // The following test tests the 'not yet returned' state.
+    instance.componentWillMount();
+    const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-header twelve-col">
         <div className="inner-wrapper profile-header__inner">
@@ -82,11 +71,37 @@ describe('Profile Header', function() {
     expect(output).toEqualJSX(expected);
   });
 
+  it('displays a hidden gravatar until the user request has returned', () => {
+    // For the test where it has returned successfully see the above tests.
+    const output = jsTestUtils.shallowRender(
+      <ProfileHeader
+        changeState={sinon.stub()}
+        getUser={getUser}
+        username="spinach" />);
+    assert.equal(
+      output.props.children.props.children[1].props.className,
+      'profile-header__avatar profile-header__avatar--hidden');
+  });
+
+  it('displays the fallback gravatar if the user request fails', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <ProfileHeader
+        changeState={sinon.stub()}
+        getUser={(u, c) => c(null, null)}
+        username="spinach" />, true);
+    renderer.getMountedInstance().componentWillMount();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <span className="profile-header__avatar profile-header__avatar--default">
+        <span className="profile-header__avatar-overlay"></span>
+      </span>);
+    expect(output.props.children.props.children[1]).toEqualJSX(expected);
+  });
+
   it('can close the profile', () => {
     const changeState = sinon.stub();
     const output = jsTestUtils.shallowRender(
       <ProfileHeader
-        addNotification={sinon.stub()}
         changeState={changeState}
         getUser={getUser}
         username="spinach" />);
@@ -96,35 +111,5 @@ describe('Profile Header', function() {
       hash: null,
       profile: null
     });
-  });
-
-  it('can display errors when deleting credentials', () => {
-    const addNotification = sinon.stub();
-    getUser.callsArgWith(1, 'Uh oh!', null);
-    jsTestUtils.shallowRender(
-      <ProfileHeader
-        addNotification={addNotification}
-        changeState={sinon.stub()}
-        getUser={getUser}
-        username="spinach" />);
-    assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(addNotification.args[0][0], {
-      title: 'Could not load the user.',
-      message: 'Could not load the user.: Uh oh!',
-      level: 'error'
-    });
-  });
-
-  it('can abort the requests when unmounting', () => {
-    const abort = sinon.stub();
-    getUser.returns({abort: abort});
-    const renderer = jsTestUtils.shallowRender(
-      <ProfileHeader
-        addNotification={sinon.stub()}
-        changeState={sinon.stub()}
-        getUser={getUser}
-        username="spinach" />, true);
-    renderer.unmount();
-    assert.equal(abort.callCount, 1);
   });
 });

@@ -117,7 +117,6 @@ class ProfileHeader extends React.Component {
 };
 
 ProfileHeader.propTypes = {
-  addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
