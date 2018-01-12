@@ -11,8 +11,26 @@
     text-align: right;
   }
 
+  .profile__entity-table-header-column:first-child,
+  .profile__entity-table-column:first-child {
+    padding-left: 16px;
+  }
+
   .expanding-row {
     padding-bottom: 0;
+  }
+
+  .profile-expanded-content {
+    padding-top: 12px;
+    padding-bottom: 0;
+  }
+
+  .profile-expanded-content .profile-expanded-content__top-row:first-child {
+    padding-left: 16px;
+  }
+
+  .entity-content__diagram {
+    margin-left: 16px;
   }
 
   .expanding-row--expanded .expanding-row__expanded {
