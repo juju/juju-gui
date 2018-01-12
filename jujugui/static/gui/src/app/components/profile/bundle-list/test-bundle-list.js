@@ -176,10 +176,12 @@ describe('Profile Bundle List', function() {
                       <div className="six-col profile-expanded-content__top-row">
                         logstash-core
                       </div>
-                      <div className="two-col profile-expanded-content__top-row u-align--right">
+                      <div
+                        className="two-col profile-expanded-content__top-row u-align--right">
                         2
                       </div>
-                      <div className="one-col profile-expanded-content__top-row u-align--right">
+                      <div
+                        className="one-col profile-expanded-content__top-row u-align--right">
                         3
                       </div>
                       <div className="three-col last-col profile-expanded-content__top-row">
@@ -232,10 +234,12 @@ describe('Profile Bundle List', function() {
                       <div className="six-col profile-expanded-content__top-row">
                         swarm-core
                       </div>
-                      <div className="two-col profile-expanded-content__top-row u-align--right">
+                      <div
+                        className="two-col profile-expanded-content__top-row u-align--right">
                         5
                       </div>
-                      <div className="one-col profile-expanded-content__top-row u-align--right">
+                      <div
+                        className="one-col profile-expanded-content__top-row u-align--right">
                         5
                       </div>
                       <div className="three-col last-col profile-expanded-content__top-row">
