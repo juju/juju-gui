@@ -112,13 +112,13 @@ class ProfileBundleList extends React.Component {
                 onClick={this._navigateToBundle.bind(this, path)}>
                 {bundle.name}
               </a>),
-            columnSize: 4
+            columnSize: 3
           }, {
             content: (
               <div>
                 {icons}
               </div>),
-            columnSize: 4
+            columnSize: 3
           }, {
             content: bundle.machineCount,
             columnSize: 2,
@@ -129,8 +129,7 @@ class ProfileBundleList extends React.Component {
             classes: ['u-align--right']
           }, {
             content: version,
-            columnSize: 1,
-            classes: ['u-align--right']
+            columnSize: 3
           }],
           expandedContent: (
             <ProfileExpandedContent
@@ -142,7 +141,7 @@ class ProfileBundleList extends React.Component {
               getModelName={this.props.getModelName}
               topRow={(
                 <div>
-                  <div className="eight-col profile-expanded-content__top-row">
+                  <div className="six-col profile-expanded-content__top-row">
                     {bundle.name}
                   </div>
                   <div className="two-col profile-expanded-content__top-row u-align--right">
@@ -151,7 +150,7 @@ class ProfileBundleList extends React.Component {
                   <div className="one-col profile-expanded-content__top-row u-align--right">
                     {bundle.unitCount}
                   </div>
-                  <div className="one-col last-col profile-expanded-content__top-row u-align--right">
+                  <div className="three-col last-col profile-expanded-content__top-row">
                     {version}
                   </div>
                 </div>)} />),
@@ -172,7 +171,7 @@ class ProfileBundleList extends React.Component {
             headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
               content: 'Name',
-              columnSize: 8,
+              columnSize: 6
             }, {
               content: 'Machines',
               columnSize: 2,
@@ -183,8 +182,7 @@ class ProfileBundleList extends React.Component {
               classes: ['u-align--right']
             }, {
               content: 'Release',
-              columnSize: 1,
-              classes: ['u-align--right']
+              columnSize: 3
             }]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}

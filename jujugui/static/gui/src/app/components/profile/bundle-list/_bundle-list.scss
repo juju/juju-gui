@@ -3,7 +3,7 @@
 
   &__icon {
     border-radius: 50%;
-    width: 20px;
+    width: 24px;
     margin: 0 4px 4px 0;
   }
 
@@ -11,7 +11,11 @@
     text-align: right;
   }
 
-  .expanding-row__expanded {
-    margin: 12px 0;
+  .expanding-row {
+    padding-bottom: 0;
+  }
+
+  .expanding-row--expanded .expanding-row__expanded {
+    margin: 12px 0 24px;
   }
 }
