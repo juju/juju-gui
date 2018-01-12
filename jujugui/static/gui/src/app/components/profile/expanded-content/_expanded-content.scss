@@ -1,8 +1,9 @@
 .profile-expanded-content {
-  padding: 20px;
+  padding: 12px;
 
   &__top-row {
     font-weight: 400;
+    margin-bottom: 12px;
   }
 
   &__permissions {
@@ -10,6 +11,7 @@
 
     &-title {
       margin-top: 20px;
+      font-weight: 400;
     }
   }
 

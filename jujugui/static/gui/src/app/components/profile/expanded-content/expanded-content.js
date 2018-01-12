@@ -89,7 +89,9 @@ class ProfileExpandedContent extends React.Component {
       <div className="profile-expanded-content">
         {this.props.topRow}
         <div className="six-col">
-          <p>{entity.description}</p>
+          {entity.description > 0 &&
+            <p>{entity.description}</p>
+          }
           {getDiagramURL ? (
             <EntityContentDiagram
               diagramUrl={getDiagramURL(entity.id)} />) : null}

@@ -121,13 +121,16 @@ class ProfileBundleList extends React.Component {
             columnSize: 4
           }, {
             content: bundle.machineCount,
-            columnSize: 2
+            columnSize: 2,
+            classes: ['u-align--right']
           }, {
             content: bundle.unitCount,
-            columnSize: 1
+            columnSize: 1,
+            classes: ['u-align--right']
           }, {
             content: version,
-            columnSize: 1
+            columnSize: 1,
+            classes: ['u-align--right']
           }],
           expandedContent: (
             <ProfileExpandedContent
@@ -142,13 +145,13 @@ class ProfileBundleList extends React.Component {
                   <div className="eight-col profile-expanded-content__top-row">
                     {bundle.name}
                   </div>
-                  <div className="two-col profile-expanded-content__top-row">
+                  <div className="two-col profile-expanded-content__top-row u-align--right">
                     {bundle.machineCount}
                   </div>
-                  <div className="one-col profile-expanded-content__top-row">
+                  <div className="one-col profile-expanded-content__top-row u-align--right">
                     {bundle.unitCount}
                   </div>
-                  <div className="one-col last-col profile-expanded-content__top-row">
+                  <div className="one-col last-col profile-expanded-content__top-row u-align--right">
                     {version}
                   </div>
                 </div>)} />),
@@ -169,16 +172,19 @@ class ProfileBundleList extends React.Component {
             headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
               content: 'Name',
-              columnSize: 8
+              columnSize: 8,
             }, {
               content: 'Machines',
-              columnSize: 2
+              columnSize: 2,
+              classes: ['u-align--right']
             }, {
               content: 'Units',
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-align--right']
             }, {
               content: 'Release',
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-align--right']
             }]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
