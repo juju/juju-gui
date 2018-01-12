@@ -51,6 +51,17 @@ describe('Profile expanded content', function() {
     },
     "name": "failtester"
   }`;
+  const rawCharmDataWithoutEntityDesc = `{
+    "bugUrl": "example.com/bugs",
+    "homepage": "example.com/",
+    "id": "cs:~hatch/precise/failtester-7",
+    "series": ["precise"],
+    "perm": {
+      "read": ["everyone", "hatch"],
+      "write": ["hatch"]
+    },
+    "name": "failtester"
+  }`;
   let acl;
 
   beforeEach(() => {
@@ -141,6 +152,72 @@ describe('Profile expanded content', function() {
         <div>Top row</div>
         <div className="six-col">
           <p className="profile-expanded-content__entity-desc">failtester description</p>
+          <EntityContentDiagram
+            diagramUrl="diagram.svg" />
+        </div>
+        <div className="six-col last-col">
+          <div>
+            <a href="example.com/bugs"
+              onClick={sinon.stub()}
+              target="_blank">
+              Bugs
+            </a>
+          </div>
+          <div>
+            <a href="example.com/"
+              onClick={sinon.stub()}
+              target="_blank">
+              Homepage
+            </a>
+          </div>
+          <p className="profile-expanded-content__permissions-title">
+            Writeable:
+          </p>
+          <ul className="profile-expanded-content__permissions">
+            <li className="profile-expanded-content__permission link"
+              onClick={sinon.stub()}
+              role="button"
+              tabIndex="0">
+              hatch
+            </li>
+          </ul>
+          <p className="profile-expanded-content__permissions-title">
+            Readable:
+          </p>
+          <ul className="profile-expanded-content__permissions">
+            <li className="profile-expanded-content__permission">
+              everyone
+            </li>
+            <li className="profile-expanded-content__permission link"
+              onClick={sinon.stub()}
+              role="button"
+              tabIndex="0">
+              hatch
+            </li>
+          </ul>
+        </div>
+        <div className="three-col prepend-nine last-col">
+          <GenericButton
+            action={sinon.stub()}
+            disabled={false}
+            tooltip="Add this bundle to your current model"
+            type="positive">
+            Add to snazzy-model
+          </GenericButton>
+        </div>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render for a charm without entity description', () => {
+    const renderer = renderComponent({
+      entity: rawCharmDataWithoutEntityDesc
+    });
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-expanded-content">
+        <div>Top row</div>
+        <div className="six-col">
           <EntityContentDiagram
             diagramUrl="diagram.svg" />
         </div>

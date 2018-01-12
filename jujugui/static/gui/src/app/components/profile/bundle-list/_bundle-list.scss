@@ -3,7 +3,42 @@
 
   &__icon {
     border-radius: 50%;
-    width: 20px;
+    width: 24px;
     margin: 0 4px 4px 0;
+  }
+
+  .u-align--right {
+    text-align: right;
+  }
+
+  .profile__entity-table-header-column:first-child,
+  .profile__entity-table-column:first-child {
+    padding-left: 16px;
+  }
+
+  .expanding-row {
+    padding-bottom: 0;
+  }
+
+  .profile-expanded-content {
+    padding-top: 12px;
+    padding-bottom: 0;
+  }
+
+  .profile-expanded-content .profile-expanded-content__top-row:first-child {
+    padding-left: 16px;
+  }
+
+  .entity-content__diagram {
+    margin-left: 16px;
+  }
+
+  .expanding-row--expanded .expanding-row__expanded {
+    margin: 12px 0 24px;
+  }
+
+  .profile-expanded-content__permissions-title {
+    margin-top: 16px;
+    margin-bottom: 8px;
   }
 }

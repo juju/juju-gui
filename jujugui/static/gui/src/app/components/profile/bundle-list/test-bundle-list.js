@@ -110,16 +110,18 @@ describe('Profile Bundle List', function() {
             headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
               content: 'Name',
-              columnSize: 8
+              columnSize: 6
             }, {
               content: 'Machines',
-              columnSize: 2
+              columnSize: 2,
+              classes: ['u-align--right']
             }, {
               content: 'Units',
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-align--right']
             }, {
               content: 'Release',
-              columnSize: 1
+              columnSize: 3
             }]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
@@ -131,7 +133,7 @@ describe('Profile Bundle List', function() {
                     onClick={sinon.stub()}>
                     logstash-core
                   </a>),
-                columnSize: 4
+                columnSize: 3
               }, {
                 content: (
                   <div>
@@ -148,16 +150,18 @@ describe('Profile Bundle List', function() {
                       src="/charmstore/~kwmonroe/trusty/openjdk/icon.svg"
                       title="openjdk" />
                   </div>),
-                columnSize: 4
+                columnSize: 3
               }, {
                 content: 2,
-                columnSize: 2
+                columnSize: 2,
+                classes: ['u-align--right']
               }, {
                 content: 3,
-                columnSize: 1
+                columnSize: 1,
+                classes: ['u-align--right']
               }, {
                 content: '#1',
-                columnSize: 1
+                columnSize: 3
               }],
               expandedContent: (
                 <ProfileExpandedContent
@@ -169,16 +173,18 @@ describe('Profile Bundle List', function() {
                   getModelName={instance.props.getModelName}
                   topRow={(
                     <div>
-                      <div className="eight-col profile-expanded-content__top-row">
+                      <div className="six-col profile-expanded-content__top-row">
                         logstash-core
                       </div>
-                      <div className="two-col profile-expanded-content__top-row">
+                      <div
+                        className="two-col profile-expanded-content__top-row u-align--right">
                         2
                       </div>
-                      <div className="one-col profile-expanded-content__top-row">
+                      <div
+                        className="one-col profile-expanded-content__top-row u-align--right">
                         3
                       </div>
-                      <div className="one-col last-col profile-expanded-content__top-row">
+                      <div className="three-col last-col profile-expanded-content__top-row">
                         #1
                       </div>
                     </div>)} />),
@@ -191,7 +197,7 @@ describe('Profile Bundle List', function() {
                     onClick={sinon.stub()}>
                     swarm-core
                   </a>),
-                columnSize: 4
+                columnSize: 3
               }, {
                 content: (
                   <div>
@@ -202,16 +208,18 @@ describe('Profile Bundle List', function() {
                       src="/charmstore/~lazypower/swarm/icon.svg"
                       title="swarm" />
                   </div>),
-                columnSize: 4
+                columnSize: 3
               }, {
                 content: 5,
-                columnSize: 2
+                columnSize: 2,
+                classes: ['u-align--right']
               }, {
                 content: 5,
-                columnSize: 1
+                columnSize: 1,
+                classes: ['u-align--right']
               }, {
                 content: '#1',
-                columnSize: 1
+                columnSize: 3
               }],
               expandedContent: (
                 <ProfileExpandedContent
@@ -223,16 +231,18 @@ describe('Profile Bundle List', function() {
                   getModelName={instance.props.getModelName}
                   topRow={(
                     <div>
-                      <div className="eight-col profile-expanded-content__top-row">
+                      <div className="six-col profile-expanded-content__top-row">
                         swarm-core
                       </div>
-                      <div className="two-col profile-expanded-content__top-row">
+                      <div
+                        className="two-col profile-expanded-content__top-row u-align--right">
                         5
                       </div>
-                      <div className="one-col profile-expanded-content__top-row">
+                      <div
+                        className="one-col profile-expanded-content__top-row u-align--right">
                         5
                       </div>
-                      <div className="one-col last-col profile-expanded-content__top-row">
+                      <div className="three-col last-col profile-expanded-content__top-row">
                         #1
                       </div>
                     </div>)} />),
@@ -262,16 +272,18 @@ describe('Profile Bundle List', function() {
             headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
               content: 'Name',
-              columnSize: 8
+              columnSize: 6
             }, {
               content: 'Machines',
-              columnSize: 2
+              columnSize: 2,
+              classes: ['u-align--right']
             }, {
               content: 'Units',
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-align--right']
             }, {
               content: 'Release',
-              columnSize: 1
+              columnSize: 3
             }]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
