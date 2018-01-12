@@ -79,6 +79,7 @@ describe('Profile expanded content', function() {
       <div className="profile-expanded-content">
         <div>Top row</div>
         <div className="six-col">
+          <p className="profile-expanded-content__entity-desc">logstash-core description</p>
           <EntityContentDiagram
             diagramUrl="diagram.svg" />
         </div>
@@ -139,6 +140,7 @@ describe('Profile expanded content', function() {
       <div className="profile-expanded-content">
         <div>Top row</div>
         <div className="six-col">
+          <p className="profile-expanded-content__entity-desc">failtester description</p>
           <EntityContentDiagram
             diagramUrl="diagram.svg" />
         </div>
