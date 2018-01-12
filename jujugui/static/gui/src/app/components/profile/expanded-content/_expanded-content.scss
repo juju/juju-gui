@@ -1,21 +1,35 @@
 .profile-expanded-content {
-  padding: 12px;
+  padding: 20px 0;
 
   &__top-row {
     font-weight: 400;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+
+    &.last-col {
+      padding-left: 0;
+    }
   }
 
   &__permissions {
     @extend %list-style;
 
     &-title {
-      margin-top: 20px;
       font-weight: 400;
+      margin-bottom: 8px;
+      margin-top: 16px;
     }
   }
 
   &__permission {
     margin: 0;
+  }
+
+  &__entity-desc {
+    padding: 0 12px 0 48px;
+  }
+
+  .button--positive {
+    position: relative;
+    right: 20px;
   }
 }

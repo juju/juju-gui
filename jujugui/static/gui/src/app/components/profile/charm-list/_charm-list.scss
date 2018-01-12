@@ -4,10 +4,16 @@
     font-size: 1.5em;
   }
 
+  &__item {
+    display: flex;
+  }
+
   &__icon {
     border-radius: 50%;
-    width: 20px;
-    margin-right: 10px;
+    width: 24px;
+    margin-bottom: auto;
+    margin-right: 12px;
+    margin-left: 12px;
     float: left;
   }
 

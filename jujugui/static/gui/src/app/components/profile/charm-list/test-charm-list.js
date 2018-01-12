@@ -104,14 +104,18 @@ describe('Profile Charm List', function() {
               columns: [{
                 content: (
                   <div>
-                    <div>
-                      <img className="profile-charm-list__icon"
-                        src="/charmstore/~hatch/precise/failtester-7/icon.svg"
-                        title="failtester" />
-                      <a href="/gui/u/hatch/failtester/precise/7"
-                        onClick={sinon.stub()}>
-                        failtester
-                      </a>
+                    <div className="profile-charm-list__item">
+                      <div>
+                        <img className="profile-charm-list__icon"
+                          src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                          title="failtester" />
+                      </div>
+                      <div>
+                        <a href="/gui/u/hatch/failtester/precise/7"
+                          onClick={sinon.stub()}>
+                          failtester
+                        </a>
+                      </div>
                     </div>
                   </div>),
                 columnSize: 6
@@ -148,29 +152,33 @@ describe('Profile Charm List', function() {
               columns: [{
                 content: (
                   <div>
-                    <div>
-                      <img className="profile-charm-list__icon"
-                        src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
-                        title="ghost" />
-                      <a href="/gui/u/hatch/ghost/xenial/3"
-                        onClick={sinon.stub()}>
-                        ghost
-                      </a>
+                    <div className="profile-charm-list__item">
+                      <div>
+                        <img className="profile-charm-list__icon"
+                          src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                          title="ghost" />
+                      </div>
+                      <div>
+                        <a href="/gui/u/hatch/ghost/xenial/3"
+                          onClick={sinon.stub()}>
+                          ghost
+                        </a>
+                        <ul className="profile-charm-list__tags">
+                          <li className="link profile-charm-list__tag"
+                            onClick={sinon.stub()}
+                            role="button"
+                            tabIndex="0">
+                            misc
+                          </li>
+                          <li className="link profile-charm-list__tag"
+                            onClick={sinon.stub()}
+                            role="button"
+                            tabIndex="0">
+                            ops
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                    <ul className="profile-charm-list__tags">
-                      <li className="link profile-charm-list__tag"
-                        onClick={sinon.stub()}
-                        role="button"
-                        tabIndex="0">
-                        misc
-                      </li>
-                      <li className="link profile-charm-list__tag"
-                        onClick={sinon.stub()}
-                        role="button"
-                        tabIndex="0">
-                        ops
-                      </li>
-                    </ul>
                   </div>),
                 columnSize: 6
               }, {
@@ -206,14 +214,18 @@ describe('Profile Charm List', function() {
               columns: [{
                 content: (
                   <div>
-                    <div>
-                      <img className="profile-charm-list__icon"
-                        src="/charmstore/~hatch/privghost-1/icon.svg"
-                        title="privghost" />
-                      <a href="/gui/u/hatch/privghost/1"
-                        onClick={sinon.stub()}>
-                        privghost
-                      </a>
+                    <div className="profile-charm-list__item">
+                      <div>
+                        <img className="profile-charm-list__icon"
+                          src="/charmstore/~hatch/privghost-1/icon.svg"
+                          title="privghost" />
+                      </div>
+                      <div>
+                        <a href="/gui/u/hatch/privghost/1"
+                          onClick={sinon.stub()}>
+                          privghost
+                        </a>
+                      </div>
                     </div>
                   </div>),
                 columnSize: 6

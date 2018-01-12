@@ -90,7 +90,7 @@ class ProfileExpandedContent extends React.Component {
         {this.props.topRow}
         <div className="six-col">
           {entity.description > 0 &&
-            <p>{entity.description}</p>
+            <p className="profile-expanded-content__entity-desc">{entity.description}</p>
           }
           {getDiagramURL ? (
             <EntityContentDiagram
