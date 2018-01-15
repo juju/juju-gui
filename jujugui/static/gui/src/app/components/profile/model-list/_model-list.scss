@@ -14,4 +14,20 @@
   &__credential-name {
     padding-left: 1.5em;
   }
+
+  .profile__entity-table-header-row {
+    padding: 0 16px 12px;
+  }
+
+  .expanding-row__initial > div {
+    padding: 0 16px;
+  }
+
+  .expanding-row--expanded .expanding-row__expanded {
+    margin: 24px 0;
+  }
+
+  .u-text-align--right {
+    text-align: right;
+  }
 }

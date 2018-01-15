@@ -198,7 +198,8 @@ class ProfileModelList extends React.Component {
           columnSize: 2
         }, {
           content: destroyContent,
-          columnSize: 1
+          columnSize: 1,
+          classes: ['u-text-align--right']
         }],
         expandedContent: (
           <div className="profile-model-list__expanded-content">
@@ -217,7 +218,7 @@ class ProfileModelList extends React.Component {
             <div className="two-col">
               {dateContent}
             </div>
-            <div className="one-col last-col">
+            <div className="one-col last-col u-text-align--right">
               {destroyContent}
             </div>
             <div className="three-col prepend-five profile-model-list__credential-name">
