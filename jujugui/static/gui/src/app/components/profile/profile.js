@@ -5,13 +5,13 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const AccountCredentials = require('../account/credentials/credentials');
 const AccountPayment = require('../account/payment/payment');
 const ProfileNavigation = require('./navigation/navigation');
 const ProfileHeader = require('./header/header');
 const ProfileModelList = require('./model-list/model-list');
 const ProfileCharmList = require('./charm-list/charm-list');
 const ProfileBundleList = require('./bundle-list/bundle-list');
+const ProfileCredentialList = require('./credential-list/credential-list');
 const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
@@ -31,7 +31,7 @@ class Profile extends React.Component {
               changeState={this.props.changeState}
               facadesExist={this.props.facadesExist}
               destroyModels={this.props.destroyModels}
-              listModelsWithInfo={this.props.listModelsWithInfo}
+              listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
               switchModel={this.props.switchModel}
               userInfo={this.props.userInfo} />);
         }
@@ -73,15 +73,14 @@ class Profile extends React.Component {
       ['credentials', {
         label: 'Cloud credentials',
         getComponent: () => {
+          const props = this.props;
+          const propTypes = ProfileCredentialList.propTypes;
           return (
-            <AccountCredentials
-              acl={this.props.acl}
-              addNotification={this.props.addNotification}
-              controllerAPI={this.props.controllerAPI}
-              controllerIsReady={this.props.controllerIsReady}
-              initUtils={this.props.initUtils}
-              sendAnalytics={this._sendAnalytics.bind(this)}
-              username={this.props.controllerUser} />);
+            <ProfileCredentialList
+              addNotification={props.addNotification}
+              controllerAPI={
+                shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
+              username={props.controllerUser} />);
         }
       }]
     ]);
@@ -169,6 +168,7 @@ Profile.propTypes = {
   controllerAPI: shapeup.shape({
     getCloudCredentialNames: PropTypes.func.isRequired,
     listClouds: PropTypes.func.isRequired,
+    listModelsWithInfo: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc,
     revokeCloudCredential: PropTypes.func.isRequired,
     updateCloudCredential: PropTypes.func.isRequired
@@ -186,7 +186,6 @@ Profile.propTypes = {
     reshape: shapeup.reshapeFunc,
     validateForm: PropTypes.func.isRequired
   }).isRequired,
-  listModelsWithInfo: PropTypes.func.isRequired,
   payment: shapeup.shape({
     addAddress: PropTypes.func,
     addBillingAddress: PropTypes.func,

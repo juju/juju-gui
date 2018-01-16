@@ -371,7 +371,6 @@ Browser: ${navigator.userAgent}`
           getModelName={this._getModelName.bind(this)}
           getUser={this.identity.getUser.bind(this.identity)}
           initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
-          listModelsWithInfo={this._bound.listModelsWithInfo}
           payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
           sendAnalytics={this.sendAnalytics}
           showPay={this.applicationConfig.flags.pay || false}
@@ -1270,9 +1269,7 @@ Browser: ${navigator.userAgent}`
     const modelAPI = this.modelAPI;
     const controllerAPI = this.controllerAPI;
     let showEnvSwitcher = true;
-    let listModelsWithInfo =
-      controllerAPI &&
-        controllerAPI.listModelsWithInfo.bind(this.controllerAPI);
+    let listModelsWithInfo = controllerAPI && this._bound.listModelsWithInfo;
     // If controller is undefined then do not render the switcher because
     // there is no controller to connect to. It will be undefined when the
     // breadcrumb is initially rendered because it hasn't yet been given
