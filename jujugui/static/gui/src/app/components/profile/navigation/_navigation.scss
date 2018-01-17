@@ -1,8 +1,15 @@
 .profile-navigation {
+  color: #111;
 
   &__list-item {
     list-style: none;
     cursor: pointer;
+
+    &:nth-child(4) {
+      border-top: 1px solid #cdcdcd;
+      padding-top: 12px;
+      margin-right: 24px;
+    }
 
     &.is-active {
       font-weight: 400;
