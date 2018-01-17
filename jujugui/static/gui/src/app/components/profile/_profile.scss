@@ -33,12 +33,6 @@
     &-row {
       padding: 12px 0;
 
-      &.basic-table__row--expandable {
-        &:hover {
-          background-color: #fff;
-        }
-      }
-
       & > .expanding-row__expanded {
         margin: 0;
       }
