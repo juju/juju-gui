@@ -117,7 +117,7 @@ class ProfileCredentialList extends React.Component {
 
   /**
     Creates the JSX content for the credential list.
-    @return {Function} The credential UI JSX.
+    @return {Object} The credential UI JSX.
   */
   _generateCredentialsList() {
     const state = this.state;

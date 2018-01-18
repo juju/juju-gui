@@ -74,6 +74,15 @@ describe('ProfileCredentialList', () => {
         username={options.username || 'foo@external'} />, true);
   }
 
+  /**
+    Some tasks are done async in the component. This method checks to see when
+    the component has registered that it has finished loading then calls
+    the supplied callback to complete the assertions
+    @param {Object} component The rendered React component.
+    @param {Function} callback The callback to call once the state changes
+      to loading: true.
+    @param {Integer} duration How long to wait before each iteration. Default 10ms.
+  */
   function loopCheck(component, callback, duration=10) {
     let loopCount = 0;
     const timer = setInterval(() => {
