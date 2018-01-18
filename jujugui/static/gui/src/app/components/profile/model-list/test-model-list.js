@@ -289,7 +289,12 @@ describe('Profile Model List', function() {
                   </a>
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  base
+                  <span className="link"
+                    onClick={sinon.stub()}
+                    role="button"
+                    tabIndex="0">
+                    base
+                  </span>
                 </div>
               </div>),
             key: 'mymodel'
@@ -369,7 +374,12 @@ describe('Profile Model List', function() {
                   </a>
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  admin
+                  <span className="link"
+                    onClick={sinon.stub()}
+                    role="button"
+                    tabIndex="0">
+                    admin
+                  </span>
                 </div>
               </div>),
             key: 'mymodel2'
@@ -440,7 +450,12 @@ describe('Profile Model List', function() {
                 <div className="one-col last-col">
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  google-dbtest
+                  <span className="link"
+                    onClick={sinon.stub()}
+                    role="button"
+                    tabIndex="0">
+                    google-dbtest
+                  </span>
                 </div>
               </div>),
             key: 'test-db'
@@ -520,7 +535,12 @@ describe('Profile Model List', function() {
                   </a>
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  gce
+                  <span className="link"
+                    onClick={sinon.stub()}
+                    role="button"
+                    tabIndex="0">
+                    gce
+                  </span>
                 </div>
               </div>),
             key: 'website'
@@ -739,7 +759,12 @@ describe('Profile Model List', function() {
                   </a>
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  base
+                  <span className="link"
+                    onClick={sinon.stub()}
+                    role="button"
+                    tabIndex="0">
+                    base
+                  </span>
                 </div>
               </div>),
             key: 'mymodel'
