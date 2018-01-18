@@ -5,7 +5,7 @@ env:
 plugins:
   - react
 parserOptions:
-  ecmaVersion: 6
+  ecmaVersion: 2017
   ecmaFeatures:
     jsx: true
 rules:
