@@ -127,6 +127,16 @@ class ProfileModelList extends React.Component {
   }
 
   /**
+    Navigate to a credential.
+    @param credential {String} The credential name.
+  */
+  _handleCredentialClick(credential) {
+    this.props.changeState({
+      hash: `credentials/${credential}`
+    });
+  }
+
+  /**
     Generates the list of models that are owned by the active user.
     @return {Object} The model list as JSX.
   */
@@ -221,7 +231,12 @@ class ProfileModelList extends React.Component {
               {destroyContent}
             </div>
             <div className="three-col prepend-five profile-model-list__credential-name">
-              {model.credentialName}
+              <span className="link"
+                onClick={this._handleCredentialClick.bind(this, model.credential)}
+                role="button"
+                tabIndex="0">
+                {model.credentialName}
+              </span>
             </div>
           </div>),
         key: model.name
