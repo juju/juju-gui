@@ -190,6 +190,37 @@ class ProfileModelList extends React.Component {
             name="delete_16"
             size="16" />
         </a>) : null;
+      // Only show the expanded content if the user is the model owner as we
+      // don't want to show other users' credential info.
+      const expandedContent = owner === profileUsername ? (
+        <div className="profile-model-list__expanded-content">
+          <div className="three-col">
+            {nameContent}
+          </div>
+          <div className="two-col">
+            {username}
+          </div>
+          <div className="three-col">
+            {regionContent}
+          </div>
+          <div className="one-col">
+            {accessContent}
+          </div>
+          <div className="two-col">
+            {dateContent}
+          </div>
+          <div className="one-col last-col u-text-align--right">
+            {destroyContent}
+          </div>
+          <div className="three-col prepend-five profile-model-list__credential-name">
+            <span className="link"
+              onClick={this._handleCredentialClick.bind(this, model.credential)}
+              role="button"
+              tabIndex="0">
+              {model.credentialName}
+            </span>
+          </div>
+        </div>) : null;
       modelList.push({
         columns: [{
           content: nameContent,
@@ -211,35 +242,7 @@ class ProfileModelList extends React.Component {
           columnSize: 1,
           classes: ['u-text-align--right']
         }],
-        expandedContent: (
-          <div className="profile-model-list__expanded-content">
-            <div className="three-col">
-              {nameContent}
-            </div>
-            <div className="two-col">
-              {username}
-            </div>
-            <div className="three-col">
-              {regionContent}
-            </div>
-            <div className="one-col">
-              {accessContent}
-            </div>
-            <div className="two-col">
-              {dateContent}
-            </div>
-            <div className="one-col last-col u-text-align--right">
-              {destroyContent}
-            </div>
-            <div className="three-col prepend-five profile-model-list__credential-name">
-              <span className="link"
-                onClick={this._handleCredentialClick.bind(this, model.credential)}
-                role="button"
-                tabIndex="0">
-                {model.credentialName}
-              </span>
-            </div>
-          </div>),
+        expandedContent: expandedContent,
         key: model.name
       });
       return modelList;
