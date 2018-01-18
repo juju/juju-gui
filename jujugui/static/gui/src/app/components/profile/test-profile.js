@@ -35,7 +35,6 @@ describe('Profile', function() {
         getModelName={options.getModelName || sinon.stub()}
         getUser={options.getUser || sinon.stub()}
         initUtils={initUtils}
-        listModelsWithInfo={sinon.stub()}
         payment={options.payment}
         showPay={options.showPay || false}
         stripe={options.stripe}
@@ -51,6 +50,7 @@ describe('Profile', function() {
     controllerAPI = {
       getCloudCredentialNames: sinon.stub(),
       listClouds: sinon.stub(),
+      listModelsWithInfo: sinon.stub(),
       reshape: shapeup.reshapeFunc,
       revokeCloudCredential: sinon.stub(),
       updateCloudCredential: sinon.stub()
@@ -88,7 +88,7 @@ describe('Profile', function() {
               changeState={instance.props.changeState}
               facadesExist={instance.props.facadesExist}
               destroyModels={instance.props.destroyModels}
-              listModelsWithInfo={instance.props.listModelsWithInfo}
+              listModelsWithInfo={instance.props.controllerAPI.listModelsWithInfo}
               switchModel={instance.props.switchModel}
               userInfo={instance.props.userInfo} />
           </div>
