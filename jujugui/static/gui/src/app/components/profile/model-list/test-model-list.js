@@ -14,7 +14,6 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Model List', function() {
   let listModelsWithInfo;
-
   // JSON dump of a test listModelsWithInfo call.
   // The first two records are owned by 'tester'.
   // The last two are shared with 'tester'.
@@ -250,7 +249,8 @@ describe('Profile Model List', function() {
                   <SvgIcon name="delete_16"
                     size="16" />
                 </a>),
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-text-align--right']
             }],
             expandedContent: (
               <div className="profile-model-list__expanded-content">
@@ -281,7 +281,7 @@ describe('Profile Model List', function() {
                     date="2017-07-06T14:47:03.000Z"
                     relative={true} />
                 </div>
-                <div className="one-col last-col">
+                <div className="one-col last-col u-text-align--right">
                   <a onClick={sinon.stub()}>
                     <SvgIcon
                       name="delete_16"
@@ -335,7 +335,8 @@ describe('Profile Model List', function() {
                   <SvgIcon name="delete_16"
                     size="16" />
                 </a>),
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-text-align--right']
             }],
             expandedContent: (
               <div className="profile-model-list__expanded-content">
@@ -366,7 +367,7 @@ describe('Profile Model List', function() {
                     date="2017-07-06T16:26:47.000Z"
                     relative={true} />
                 </div>
-                <div className="one-col last-col">
+                <div className="one-col last-col u-text-align--right">
                   <a onClick={sinon.stub()}>
                     <SvgIcon
                       name="delete_16"
@@ -416,7 +417,8 @@ describe('Profile Model List', function() {
               columnSize: 2
             }, {
               content: null,
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-text-align--right']
             }],
             expandedContent: (
               <div className="profile-model-list__expanded-content">
@@ -447,7 +449,7 @@ describe('Profile Model List', function() {
                     date="--"
                     relative={true} />
                 </div>
-                <div className="one-col last-col">
+                <div className="one-col last-col u-text-align--right">
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
                   <span className="link"
@@ -496,7 +498,8 @@ describe('Profile Model List', function() {
                   <SvgIcon name="delete_16"
                     size="16" />
                 </a>),
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-text-align--right']
             }],
             expandedContent: (
               <div className="profile-model-list__expanded-content">
@@ -527,7 +530,7 @@ describe('Profile Model List', function() {
                     date="2017-07-05T01:42:05.000Z"
                     relative={true} />
                 </div>
-                <div className="one-col last-col">
+                <div className="one-col last-col u-text-align--right">
                   <a onClick={sinon.stub()}>
                     <SvgIcon
                       name="delete_16"
@@ -720,7 +723,8 @@ describe('Profile Model List', function() {
                   <SvgIcon name="delete_16"
                     size="16" />
                 </a>),
-              columnSize: 1
+              columnSize: 1,
+              classes: ['u-text-align--right']
             }],
             expandedContent: (
               <div className="profile-model-list__expanded-content">
@@ -751,7 +755,7 @@ describe('Profile Model List', function() {
                     date="2017-07-06T14:47:03.000Z"
                     relative={true} />
                 </div>
-                <div className="one-col last-col">
+                <div className="one-col last-col u-text-align--right">
                   <a onClick={sinon.stub()}>
                     <SvgIcon
                       name="delete_16"
