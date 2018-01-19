@@ -18,6 +18,14 @@
 
   .expanding-row {
     padding-bottom: 0;
+
+    &__initial {
+      min-height: 35px;
+    }
+  }
+
+  .expanding-row--expanded .expanding-row__initial {
+    min-height: 0;
   }
 
   .profile-expanded-content {
