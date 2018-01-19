@@ -71,6 +71,7 @@ describe('ProfileCredentialList', () => {
       <ProfileCredentialList
         addNotification={options.addNotification || sinon.stub()}
         controllerAPI={options.controllerAPI || controllerAPI}
+        credential="azure_foo@external_cred1"
         username={options.username || 'foo@external'} />, true);
   }
 
@@ -190,6 +191,8 @@ describe('ProfileCredentialList', () => {
             <GenericButton>Add credentials</GenericButton>
           </div>
           <BasicTable
+            headerClasses={['profile__entity-table-header-row']}
+            headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
               content: 'Name',
               columnSize: 6
@@ -203,7 +206,10 @@ describe('ProfileCredentialList', () => {
               content: 'Action',
               columnSize: 1
             }]}
+            rowClasses={['profile__entity-table-row']}
+            rowColumnClasses={['profile__entity-table-column']}
             rows={[{
+              classes: null,
               columns: [{
                 content: 'cred1',
                 columnSize: 6
@@ -219,6 +225,7 @@ describe('ProfileCredentialList', () => {
               }],
               key: 'aws_foo@external_cred1'
             }, {
+              classes: null,
               columns: [{
                 content: 'testcred',
                 columnSize: 6
@@ -234,6 +241,7 @@ describe('ProfileCredentialList', () => {
               }],
               key: 'aws_foo@external_testcred'
             }, {
+              classes: ['profile-credential-list--highlighted'],
               columns: [{
                 content: 'cred1',
                 columnSize: 6
@@ -249,6 +257,7 @@ describe('ProfileCredentialList', () => {
               }],
               key: 'azure_foo@external_cred1'
             }, {
+              classes: null,
               columns: [{
                 content: 'admin',
                 columnSize: 6
