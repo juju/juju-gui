@@ -515,7 +515,8 @@ describe('EntityContent', function() {
                 <h3 className="section__title">
                   Embed this charm
                 </h3>
-                <p>Add this card to your website by copying the code below.
+                <p>
+                  Add this card to your website by copying the code below.
                   <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
@@ -659,7 +660,8 @@ describe('EntityContent', function() {
                 <h3 className="section__title">
                   Embed this charm
                 </h3>
-                <p>Add this card to your website by copying the code below.
+                <p>
+                  Add this card to your website by copying the code below.
                   <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
