@@ -121,4 +121,18 @@ describe('StringConfig', function() {
       output.props.children[1].props.className,
       'string-config--value');
   });
+
+  it('can handle empty strings with newlines', function() {
+    const renderer = jsTestUtils.shallowRender(
+      <StringConfig
+        config=""
+        option={option} />, true);
+    const instance = renderer.getMountedInstance();
+    instance._setValue('\n');
+    const output = renderer.getRenderOutput();
+    assert.equal(
+      output.props.children[1].props.className,
+      'string-config--value');
+    assert.equal(instance.getValue(), '');
+  });
 });
