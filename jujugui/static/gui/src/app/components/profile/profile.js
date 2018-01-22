@@ -80,6 +80,7 @@ class Profile extends React.Component {
               addNotification={props.addNotification}
               controllerAPI={
                 shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
+              credential={this._getProfileURL().subSection}
               username={props.controllerUser} />);
         }
       }]
@@ -125,13 +126,19 @@ class Profile extends React.Component {
     return "credentials".
     @returns {String} The active base section of the URL.
   */
-  _getActiveBase() {
-    return (this.props.activeSection || '').split('/')[0];
+  _getProfileURL() {
+    const URL = this.props.activeSection || '';
+    const parts = URL.split('/');
+    return {
+      full: URL,
+      activeSection: parts[0],
+      subSection: parts.length > 1 ? parts.slice(1, parts.length).join('/') : null
+    };
   }
 
   render() {
     const sectionsMap = this.sectionsMap;
-    let section = sectionsMap.get(this._getActiveBase());
+    let section = sectionsMap.get(this._getProfileURL().activeSection);
     let mapEntry;
     if (section === undefined) {
       // Grab the first element in the sectionsMap if the provided
@@ -153,7 +160,7 @@ class Profile extends React.Component {
           <div className="profile__content inner-wrapper">
             <ProfileNavigation
               // Use supplied activeSection or the key from the first map entry.
-              activeSection={this._getActiveBase() || mapEntry[0]}
+              activeSection={this._getProfileURL().activeSection || mapEntry[0]}
               changeState={this.props.changeState}
               sectionsMap={sectionsMap} />
             {section.getComponent()}

@@ -119,4 +119,28 @@ describe('Profile', function() {
     assert.deepEqual(Array.from(instance.sectionsMap.keys()), allowedKeys);
   });
 
+  it('correctly parses the URL', () => {
+    const renderer = renderComponent({
+      activeSection: 'credentials/aws_test'
+    });
+    const instance = renderer.getMountedInstance();
+    assert.deepEqual(instance._getProfileURL(), {
+      full: 'credentials/aws_test',
+      activeSection: 'credentials',
+      subSection: 'aws_test'
+    });
+  });
+
+  it('correctly parses the URL without a sub section', () => {
+    const renderer = renderComponent({
+      activeSection: 'credentials'
+    });
+    const instance = renderer.getMountedInstance();
+    assert.deepEqual(instance._getProfileURL(), {
+      full: 'credentials',
+      activeSection: 'credentials',
+      subSection: null
+    });
+  });
+
 });

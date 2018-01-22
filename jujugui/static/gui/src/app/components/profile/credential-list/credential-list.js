@@ -129,9 +129,11 @@ class ProfileCredentialList extends React.Component {
       return (<div>No credentials available</div>);
     }
     let rows = [];
+    const selectedCredential = this.props.credential;
 
     credentials.forEach((credential, key) => {
       rows.push({
+        classes: key === selectedCredential ? ['profile-credential-list--highlighted'] : null,
         columns: [{
           content: credential.displayName,
           columnSize: 6
@@ -164,6 +166,8 @@ class ProfileCredentialList extends React.Component {
 
     return (
       <BasicTable
+        headerClasses={['profile__entity-table-header-row']}
+        headerColumnClasses={['profile__entity-table-header-column']}
         headers={[{
           content: 'Name',
           columnSize: 6
@@ -177,6 +181,8 @@ class ProfileCredentialList extends React.Component {
           content: 'Action',
           columnSize: 1
         }]}
+        rowClasses={['profile__entity-table-row']}
+        rowColumnClasses={['profile__entity-table-column']}
         rows={rows} />
     );
   }
@@ -210,6 +216,7 @@ ProfileCredentialList.propTypes = {
     listClouds: PropTypes.func.isRequired,
     listModelsWithInfo: PropTypes.func.isRequired
   }),
+  credential: PropTypes.string,
   username: PropTypes.string.isRequired
 };
 
