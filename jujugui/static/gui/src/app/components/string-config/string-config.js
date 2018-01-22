@@ -44,9 +44,9 @@ class StringConfig extends React.Component {
   getValue() {
     const value = this.state.value;
     let cleanedValue = value;
-    // in Firefox an empty contenteditable value contains a newline.
-    if (value && value.toString() === '\n') {
-      cleanedValue = '';
+    // Firefox sometimes adds newlines in contenteditable fields.
+    if (value && value.toString().endsWith('\n')) {
+      cleanedValue = value.slice(0, value.length - 1);
     }
     return cleanedValue;
   }
@@ -61,7 +61,8 @@ class StringConfig extends React.Component {
       'string-config--value',
       {
         'string-config--changed':
-          (value && value.toString()) !== (config && config.toString()),
+          (value !== undefined && value !== null && value.toString()) !==
+          (config !== undefined && config !== null && config.toString()),
         'string-config--disabled': disabled
       });
     return (
