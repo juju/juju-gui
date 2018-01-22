@@ -236,8 +236,10 @@ describe('DeploymentSSHKey', function() {
       const output = comp.renderer.getRenderOutput();
       expect(output.props.children[2]).toEqualJSX(
         <Notification
-          content={<span><b>Error:</b>
-            <span>No keys found.
+          content={<span>
+            <b>Error:</b>
+            <span>
+              No keys found.
               <a className="link" href="https://github.com/settings/keys"
                 target="_blank">Create an SSH Key</a>.
             </span>

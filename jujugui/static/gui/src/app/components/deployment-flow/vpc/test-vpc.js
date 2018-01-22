@@ -42,7 +42,8 @@ describe('DeploymentVPC', function() {
     const expectedOutput = (
       <div className="twelve-col no-margin-bottom">
         <p>Juju uses your default VPC – or you can specify one here.</p>
-        <p>AWS accounts created since December 2013 have this –&nbsp;
+        <p>
+          AWS accounts created since December 2013 have this –&nbsp;
           older accounts may not.&nbsp;
           <a className="link"
             target="_blank" href={vpcLink}>Default VPC basics.</a>
