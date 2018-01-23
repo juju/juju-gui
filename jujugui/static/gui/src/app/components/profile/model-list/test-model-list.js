@@ -420,7 +420,41 @@ describe('Profile Model List', function() {
               columnSize: 1,
               classes: ['u-text-align--right']
             }],
-            expandedContent: null,
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester2/test-db"
+                    onClick={sinon.stub()}>
+                      test-db
+                  </a>
+                </div>
+                <div className="two-col">
+                  tester2
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      2
+                    </span>
+                    gce/us-east1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="show_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="--"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col u-text-align--right">
+                </div>
+                <div className="twelve-col">
+                  No additional information available on shared model.
+                </div>
+              </div>),
             key: 'test-db'
           }, {
             columns: [{
@@ -462,7 +496,46 @@ describe('Profile Model List', function() {
               columnSize: 1,
               classes: ['u-text-align--right']
             }],
-            expandedContent: null,
+            expandedContent: (
+              <div className="profile-model-list__expanded-content">
+                <div className="three-col">
+                  <a href="/gui/u/tester3/website"
+                    onClick={sinon.stub()}>
+                      website
+                  </a>
+                </div>
+                <div className="two-col">
+                  tester3
+                </div>
+                <div className="three-col">
+                  <div>
+                    <span className="profile-model-list__machine-number">
+                      25
+                    </span>
+                    gce/us-east1
+                  </div>
+                </div>
+                <div className="one-col">
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>
+                <div className="two-col">
+                  <DateDisplay
+                    date="2017-07-05T01:42:05.000Z"
+                    relative={true} />
+                </div>
+                <div className="one-col last-col u-text-align--right">
+                  <a onClick={sinon.stub()}>
+                    <SvgIcon
+                      name="delete_16"
+                      size="16" />
+                  </a>
+                </div>
+                <div className="twelve-col">
+                  No additional information available on shared model.
+                </div>
+              </div>),
             key: 'website'
           }]} />
       </div>
