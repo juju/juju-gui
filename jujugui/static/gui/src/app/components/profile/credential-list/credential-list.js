@@ -200,8 +200,10 @@ class ProfileCredentialList extends React.Component {
             </span>
           </h2>
         </div>
-        <div className="seven-col">
-          {addButton}
+        <div className="push-four four-col">
+          <div className="profile-credential-list__add">
+            {addButton}
+          </div>
         </div>
         {this._generateCredentialsList()}
       </div>

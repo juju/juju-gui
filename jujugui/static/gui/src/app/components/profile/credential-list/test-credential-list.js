@@ -187,8 +187,10 @@ describe('ProfileCredentialList', () => {
               </span>
             </h2>
           </div>
-          <div className="seven-col">
-            <GenericButton>Add credentials</GenericButton>
+          <div className="push-four four-col">
+            <div className="profile-credential-list__add">
+              <GenericButton>Add credentials</GenericButton>
+            </div>
           </div>
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
