@@ -58,9 +58,8 @@ class IconList extends React.Component {
     @returns {Object} The icon list JSX.
   */
   _generateIcons() {
-    const applications = this.props.entity.applications || [this.props.entity];
     let components = [];
-    applications.forEach(app => {
+    this.props.applications.forEach(app => {
       const src = app.iconPath ||
           'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
       components.push(
@@ -94,8 +93,12 @@ class IconList extends React.Component {
 };
 
 IconList.propTypes = {
+  applications: PropTypes.arrayOf(PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    iconPath: PropTypes.string,
+    id: PropTypes.string.isRequired
+  }).isRequired).isRequired,
   changeState: PropTypes.func.isRequired,
-  entity: PropTypes.object.isRequired,
   generatePath: PropTypes.func.isRequired
 };
 

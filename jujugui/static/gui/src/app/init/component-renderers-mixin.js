@@ -368,6 +368,7 @@ Browser: ${navigator.userAgent}`
           addToModel={this.addToModel.bind(this, charmstore)}
           destroyModels={this._bound.destroyModels}
           facadesExist={facadesExist}
+          generatePath={this.state.generatePath.bind(this.state)}
           getModelName={this._getModelName.bind(this)}
           getUser={this.identity.getUser.bind(this.identity)}
           initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}

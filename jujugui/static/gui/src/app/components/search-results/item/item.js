@@ -248,8 +248,8 @@ class SearchResultsItem extends React.Component {
         </div>
         <div className={this._generateCharmsClass()}>
           <IconList
+            applications={this.props.item.applications || [this.props.item]}
             changeState={this.props.changeState}
-            entity={this.props.item}
             generatePath={this.props.generatePath} />
         </div>
         <div className="two-col owner__column list-block__column">

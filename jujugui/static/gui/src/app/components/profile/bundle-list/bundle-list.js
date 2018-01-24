@@ -6,6 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
+const IconList = require('../../icon-list/icon-list');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
 
@@ -91,19 +92,19 @@ class ProfileBundleList extends React.Component {
       content = (<Spinner />);
     } else {
       const rows = (this.state.data || []).map(bundle => {
-        const applications = bundle.applications;
-        const icons = Object.keys(applications).map(name => {
-          const app = applications[name];
-          return (
-            <img className="profile-bundle-list__icon"
-              key={name}
-              src={`${this.props.charmstore.url}/${app.charm.replace('cs:', '')}/icon.svg`}
-              title={name} />);
-        });
         const url = window.jujulib.URL.fromLegacyString(bundle.id);
         const path = url.path();
         const version = `#${url.revision}`;
         const charmstore = this.props.charmstore;
+        const charmstoreURL = this.props.charmstore.url;
+        const applications = Object.keys(bundle.applications).map(name => {
+          const app = bundle.applications[name];
+          return {
+            displayName: name,
+            iconPath: `${charmstoreURL}/${app.charm.replace('cs:', '')}/icon.svg`,
+            id: app.charm
+          };
+        });
         return {
           columns: [{
             content: (
@@ -115,9 +116,10 @@ class ProfileBundleList extends React.Component {
             columnSize: 3
           }, {
             content: (
-              <div>
-                {icons}
-              </div>),
+              <IconList
+                applications={applications}
+                changeState={this.props.changeState}
+                generatePath={this.props.generatePath} />),
             columnSize: 3
           }, {
             content: bundle.machineCount,
@@ -209,6 +211,7 @@ ProfileBundleList.propTypes = {
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
   }).isRequired,
+  generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   user: PropTypes.string

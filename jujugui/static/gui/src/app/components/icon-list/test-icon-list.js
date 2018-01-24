@@ -12,17 +12,15 @@ describe('IconList', function() {
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
       <IconList
+        applications={options.applications || [{
+          displayName: 'mysql',
+          iconPath: 'mysql.svg',
+          id: 'cs:mysql'
+        }, {
+          displayName: 'wordpress',
+          id: 'cs:wordpress'
+        }]}
         changeState={options.changeState || sinon.stub()}
-        entity={options.entity || {
-          applications: [{
-            displayName: 'mysql',
-            iconPath: 'mysql.svg',
-            id: 'cs:mysql'
-          }, {
-            displayName: 'wordpress',
-            id: 'cs:wordpress'
-          }]
-        }}
         generatePath={
           options.generatePath || sinon.stub().returns('/charm/path')} />, true);
   }

@@ -95,8 +95,8 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="charm-logos__column list-block__column one-col">
           <IconList
+            applications={[item]}
             changeState={sinon.stub()}
-            entity={item}
             generatePath={sinon.stub()} />
         </div>
         <div className="two-col owner__column list-block__column">
@@ -160,8 +160,8 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="charm-logos__column list-block__column one-col">
           <IconList
+            applications={[item]}
             changeState={sinon.stub()}
-            entity={item}
             generatePath={sinon.stub()} />
         </div>
         <div className="two-col owner__column list-block__column">
@@ -235,8 +235,8 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="charm-logos__column list-block__column three-col">
           <IconList
+            applications={item.applications}
             changeState={sinon.stub()}
-            entity={item}
             generatePath={sinon.stub()} />
         </div>
         <div className="two-col owner__column list-block__column">
