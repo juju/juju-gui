@@ -13,11 +13,11 @@ const Spinner = require('../spinner/spinner');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('SearchResults', function() {
-  let series, acl, deployTarget, generatePath;
+  let series, acl, addToModel, generatePath;
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    deployTarget = sinon.stub();
+    addToModel = sinon.stub();
     generatePath = sinon.stub();
     series = {
       vivid: {name: 'Vivid Vervet 15.04'},
@@ -33,7 +33,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={sinon.stub()}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -55,7 +55,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -91,7 +91,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -147,7 +147,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -305,14 +305,14 @@ describe('SearchResults', function() {
                     <SearchResultsItem
                       acl={acl}
                       changeState={changeState}
-                      deployTarget={deployTarget}
+                      addToModel={addToModel}
                       generatePath={generatePath}
                       item={results[0]}
                       key="~test-owner/mysql-one" />
                     <SearchResultsItem
                       acl={acl}
                       changeState={changeState}
-                      deployTarget={deployTarget}
+                      addToModel={addToModel}
                       generatePath={generatePath}
                       item={results[1]}
                       key="~test-owner/mysql-two" />
@@ -335,14 +335,14 @@ describe('SearchResults', function() {
                       <SearchResultsItem
                         acl={acl}
                         changeState={changeState}
-                        deployTarget={deployTarget}
+                        addToModel={addToModel}
                         generatePath={generatePath}
                         item={results[2]}
                         key="~test-owner/mysql-three" />
                       <SearchResultsItem
                         acl={acl}
                         changeState={changeState}
-                        deployTarget={deployTarget}
+                        addToModel={addToModel}
                         generatePath={generatePath}
                         item={results[3]}
                         key="~test-owner/mysql-four" />
@@ -362,7 +362,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={deployTarget}
+          addToModel={addToModel}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -386,7 +386,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={deployTarget}
+          addToModel={addToModel}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -413,7 +413,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -428,7 +428,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -732,7 +732,7 @@ describe('SearchResults', function() {
           acl={acl}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
-          deployTarget={sinon.stub()}
+          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}

@@ -1484,7 +1484,7 @@ class GUIApp {
       // infinitely updating state.
       return;
     }
-    this.deployTarget(this.charmstore, ddData.id);
+    this.addToModel(this.charmstore, ddData.id);
     this.state.changeState({
       gui: {
         deploy: JSON.stringify(ddData)
@@ -1508,7 +1508,7 @@ class GUIApp {
         deployTarget: null
       }
     });
-    this.deployTarget(this.charmstore, state.special['deployTarget']);
+    this.addToModel(this.charmstore, state.special['deployTarget']);
     next();
   }
 
@@ -1517,7 +1517,7 @@ class GUIApp {
     @param {Object} charmstore The charmstore instance to fetch the entity.
     @param {String} entityId The entity id to deploy.
   */
-  deployTarget(charmstore, entityId) {
+  addToModel(charmstore, entityId) {
     /**
       Handles parsing and displaying the failure notification returned from
       the charmstore api.

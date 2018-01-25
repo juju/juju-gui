@@ -466,7 +466,7 @@ class SearchResults extends React.Component {
           <SearchResultsItem
             acl={this.props.acl}
             changeState={this.props.changeState}
-            deployTarget={this.props.deployTarget}
+            addToModel={this.props.addToModel}
             generatePath={this.props.generatePath}
             item={item}
             key={item.storeId + i} />))}
@@ -518,7 +518,7 @@ class SearchResults extends React.Component {
             <SearchResultsItem
               acl={this.props.acl}
               changeState={this.props.changeState}
-              deployTarget={this.props.deployTarget}
+              addToModel={this.props.addToModel}
               generatePath={this.props.generatePath}
               item={item}
               key={item.storeId + i} />))}
@@ -559,9 +559,9 @@ class SearchResults extends React.Component {
 
 SearchResults.propTypes = {
   acl: PropTypes.object.isRequired,
+  addToModel: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
-  deployTarget: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getName: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,

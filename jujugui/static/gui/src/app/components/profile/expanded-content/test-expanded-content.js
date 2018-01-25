@@ -74,7 +74,7 @@ describe('Profile expanded content', function() {
       <ProfileExpandedContent
         acl={options.acl || acl}
         changeState={options.changeState || sinon.stub()}
-        deployTarget={options.deployTarget || sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         entity={entity}
         getDiagramURL={options.getDiagramURL || sinon.stub().returns('diagram.svg')}
         getModelName={options.getModelName || sinon.stub().returns('snazzy-model')}
@@ -277,16 +277,16 @@ describe('Profile expanded content', function() {
 
   it('can deploy an entity', () => {
     const changeState = sinon.stub();
-    const deployTarget = sinon.stub();
+    const addToModel = sinon.stub();
     const renderer = renderComponent({
       changeState: changeState,
-      deployTarget: deployTarget,
+      addToModel: addToModel,
       entity: rawBundleData
     });
     const output = renderer.getRenderOutput();
     output.props.children[3].props.children.props.action();
-    assert.equal(deployTarget.callCount, 1);
-    assert.equal(deployTarget.args[0][0], 'cs:~lazypower/bundle/logstash-core-1');
+    assert.equal(addToModel.callCount, 1);
+    assert.equal(addToModel.args[0][0], 'cs:~lazypower/bundle/logstash-core-1');
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       hash: null,

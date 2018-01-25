@@ -365,7 +365,7 @@ Browser: ${navigator.userAgent}`
             shapeup.fromShape(this.controllerAPI, Profile.propTypes.controllerAPI)}
           controllerIsReady={this._controllerIsReady.bind(this)}
           controllerUser={this.user.controller.user}
-          deployTarget={this.deployTarget.bind(this, charmstore)}
+          addToModel={this.addToModel.bind(this, charmstore)}
           destroyModels={this._bound.destroyModels}
           facadesExist={facadesExist}
           getModelName={this._getModelName.bind(this)}
@@ -661,7 +661,7 @@ Browser: ${navigator.userAgent}`
         apiUrl={charmstore.url}
         charmstoreSearch={charmstore.search.bind(charmstore)}
         clearLightbox={this._clearLightbox.bind(this)}
-        deployTarget={this.deployTarget.bind(this, charmstore)}
+        addToModel={this.addToModel.bind(this, charmstore)}
         displayLightbox={this._displayLightbox.bind(this)}
         series={viewUtils.getSeriesList()}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(

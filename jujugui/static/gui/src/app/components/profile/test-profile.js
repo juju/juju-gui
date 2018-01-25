@@ -30,7 +30,7 @@ describe('Profile', function() {
         controllerAPI={controllerAPI}
         controllerIsReady={sinon.stub()}
         controllerUser={options.controllerUser || 'spinach'}
-        deployTarget={options.deployTarget || sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         facadesExist={true}
         getModelName={options.getModelName || sinon.stub()}
         getUser={options.getUser || sinon.stub()}
