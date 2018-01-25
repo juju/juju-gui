@@ -73,11 +73,12 @@ class DeploymentSSHKey extends React.Component {
         };
       }
     }
-    this.setState({error: (<span>Key is invalid. Please
-    ensure you have copied the key correctly.
-      <br />The key should be in the format&nbsp;
-      <code>ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvvy/8OHTchL2XhNxE0Fu5...</code>
-    </span>)});
+    this.setState({error: (
+      <span>
+        Key is invalid. Please ensure you have copied the key correctly.
+        <br />The key should be in the format&nbsp;
+        <code>ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvvy/8OHTchL2XhNxE0Fu5...</code>
+      </span>)});
     return false;
   }
 

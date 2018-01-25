@@ -451,13 +451,8 @@ describe('Profile Model List', function() {
                 </div>
                 <div className="one-col last-col u-text-align--right">
                 </div>
-                <div className="three-col prepend-five profile-model-list__credential-name">
-                  <span className="link"
-                    onClick={sinon.stub()}
-                    role="button"
-                    tabIndex="0">
-                    google-dbtest
-                  </span>
+                <div className="twelve-col">
+                  No additional information available on shared model.
                 </div>
               </div>),
             key: 'test-db'
@@ -537,13 +532,8 @@ describe('Profile Model List', function() {
                       size="16" />
                   </a>
                 </div>
-                <div className="three-col prepend-five profile-model-list__credential-name">
-                  <span className="link"
-                    onClick={sinon.stub()}
-                    role="button"
-                    tabIndex="0">
-                    gce
-                  </span>
+                <div className="twelve-col">
+                  No additional information available on shared model.
                 </div>
               </div>),
             key: 'website'

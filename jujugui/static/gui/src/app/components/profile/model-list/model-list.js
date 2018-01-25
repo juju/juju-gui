@@ -190,6 +190,23 @@ class ProfileModelList extends React.Component {
             name="delete_16"
             size="16" />
         </a>) : null;
+      let expandedContent;
+      if (owner === profileUsername) {
+        expandedContent = (
+          <div className="three-col prepend-five profile-model-list__credential-name">
+            <span className="link"
+              onClick={this._handleCredentialClick.bind(this, model.credential)}
+              role="button"
+              tabIndex="0">
+              {model.credentialName}
+            </span>
+          </div>);
+      } else {
+        expandedContent = (
+          <div className="twelve-col">
+            No additional information available on shared model.
+          </div>);
+      }
       modelList.push({
         columns: [{
           content: nameContent,
@@ -231,14 +248,7 @@ class ProfileModelList extends React.Component {
             <div className="one-col last-col u-text-align--right">
               {destroyContent}
             </div>
-            <div className="three-col prepend-five profile-model-list__credential-name">
-              <span className="link"
-                onClick={this._handleCredentialClick.bind(this, model.credential)}
-                role="button"
-                tabIndex="0">
-                {model.credentialName}
-              </span>
-            </div>
+            {expandedContent}
           </div>),
         key: model.name
       });
