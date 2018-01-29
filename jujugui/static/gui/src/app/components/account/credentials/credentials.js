@@ -269,16 +269,6 @@ class AccountCredentials extends React.Component {
   }
 
   /**
-    Store the selected credential in state.
-
-    @method _setCredential
-    @param {String} credential The selected credential.
-  */
-  _setCredential(credential) {
-    this.setState({credential: credential});
-  }
-
-  /**
     Generate a form to add credentials.
 
     @method _generateAddCredentials
@@ -353,10 +343,32 @@ class AccountCredentials extends React.Component {
         this._generateDeploymentCredentialAdd({
           cloud,
           name: credential.name,
-          close: this._handleEditCredential.bind(this)
+          onCancel: this._handleEditCredential.bind(this),
+          onCredentialUpdated: this._onCredentialUpdated.bind(this)
         })
       ]);
     }
+  }
+
+  /**
+    Handle a credential having been updated.
+    @param credential {String} The name of the updated credential.
+  */
+  _onCredentialUpdated(credential) {
+    // Load the credentials again so that the list will contain the updates.
+    this._getClouds();
+    this._handleEditCredential(credential);
+  }
+
+  /**
+    Handle a credential having been created.
+    @param credential {String} The name of the newly created credential.
+  */
+  _onCredentialAdded(credential) {
+    // Load the credentials again so that the list will contain the newly
+    // added credential.
+    this._getClouds();
+    this._toggleAdd();
   }
 
   /**
@@ -371,16 +383,16 @@ class AccountCredentials extends React.Component {
         key="deployment-credential-add"
         acl={this.props.acl}
         addNotification={this.props.addNotification}
-        close={overrides.close || this._toggleAdd.bind(this)}
         cloud={overrides.cloud || this.state.cloud}
         credentialName={overrides.name}
         credentials={this.state.credentials.map(credential =>
           credential.name)}
         getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
-        getCredentials={this._getClouds.bind(this)}
+        onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
+        onCredentialUpdated={
+          overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        setCredential={this._setCredential.bind(this)}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
         user={this.props.username}
         validateForm={this.props.initUtils.validateForm} />);

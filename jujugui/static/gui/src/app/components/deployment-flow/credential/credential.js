@@ -260,6 +260,19 @@ class DeploymentCredential extends React.Component {
   }
 
   /**
+    Handle a credential having been created.
+    @param credential {String} The name of the newly created credential.
+  */
+  _onCredentialUpdated(credential) {
+    // Load the credentials again so that the list will contain the newly
+    // added credential.
+    this._getCredentials(
+      this.props.generateCloudCredentialName(
+        this.props.cloud.name, this.props.user, credential));
+    this._toggleAdd();
+  }
+
+  /**
     Generate the form for adding a credential.
 
     @method _generateAdd
@@ -273,16 +286,15 @@ class DeploymentCredential extends React.Component {
       <DeploymentCredentialAdd
         acl={this.props.acl}
         addNotification={this.props.addNotification}
-        close={this._toggleAdd.bind(this)}
         cloud={this.props.cloud}
         credentials={this.state.credentials.map(credential =>
           credential.displayName)}
         getCloudProviderDetails={this.props.getCloudProviderDetails}
         generateCloudCredentialName={this.props.generateCloudCredentialName}
-        getCredentials={this._getCredentials.bind(this)}
-        hideCancel={!this.state.credentials.length}
+        onCancel={
+          this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
+        onCredentialUpdated={this._onCredentialUpdated.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        setCredential={this.props.setCredential}
         updateCloudCredential={this.props.updateCloudCredential}
         user={this.props.user}
         validateForm={this.props.validateForm} />);
