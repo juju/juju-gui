@@ -31,6 +31,10 @@
   .profile-expanded-content {
     padding-top: 12px;
     padding-bottom: 0;
+
+    .cold-link {
+      color: #111;
+    }
   }
 
   .profile-expanded-content .profile-expanded-content__top-row:first-child {

@@ -174,7 +174,11 @@ describe('Profile Bundle List', function() {
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
-                        logstash-core
+                        <a className="cold-link"
+                          href="/gui/u/lazypower/logstash-core/bundle/1"
+                          onClick={sinon.stub()}>
+                          logstash-core
+                        </a>
                       </div>
                       <div
                         className="two-col profile-expanded-content__top-row u-align--right">
@@ -232,7 +236,11 @@ describe('Profile Bundle List', function() {
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
-                        swarm-core
+                        <a className="cold-link"
+                          href="/gui/u/lazypower/swarm-core/bundle/1"
+                          onClick={sinon.stub()}>
+                          swarm-core
+                        </a>
                       </div>
                       <div
                         className="two-col profile-expanded-content__top-row u-align--right">
