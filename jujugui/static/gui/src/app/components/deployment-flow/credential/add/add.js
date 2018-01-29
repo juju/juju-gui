@@ -103,12 +103,7 @@ class DeploymentCredentialAdd extends React.Component {
       });
       return;
     }
-    // Load the credentials again so that the list will contain the newly
-    // added credential.
-    this.props.getCredentials(
-      this.props.generateCloudCredentialName(
-        this.props.cloud.name, this.props.user, credential));
-    this.props.close();
+    this.props.onCredentialUpdated(credential);
   }
 
   /**
@@ -233,9 +228,9 @@ class DeploymentCredentialAdd extends React.Component {
       title: `${prefix} cloud credential`,
       type: 'inline-positive'
     }];
-    if (!props.hideCancel) {
+    if (props.onCancel) {
       buttons.unshift({
-        action: () => { props.close(true); },
+        action: props.onCancel.bind(this),
         title: 'Cancel',
         type: 'inline-neutral'
       });
@@ -306,16 +301,14 @@ class DeploymentCredentialAdd extends React.Component {
 DeploymentCredentialAdd.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  close: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   credentialName: PropTypes.string,
   credentials: PropTypes.array.isRequired,
   generateCloudCredentialName: PropTypes.func.isRequired,
   getCloudProviderDetails: PropTypes.func.isRequired,
-  getCredentials: PropTypes.func.isRequired,
-  hideCancel: PropTypes.bool,
+  onCancel: PropTypes.func,
+  onCredentialUpdated: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
-  setCredential: PropTypes.func.isRequired,
   updateCloudCredential: PropTypes.func.isRequired,
   user: PropTypes.string,
   validateForm: PropTypes.func.isRequired
