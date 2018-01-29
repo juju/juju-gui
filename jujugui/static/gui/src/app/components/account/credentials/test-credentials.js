@@ -553,13 +553,13 @@ describe('AccountCredentials', () => {
             <DeploymentCredentialAdd
               acl={acl}
               addNotification={addNotification}
-              close={instance._toggleAdd}
               cloud={{title: 'aws'}}
               credentialName={undefined}
               credentials={['test1', 'test2']}
               getCloudProviderDetails={initUtils.getCloudProviderDetails}
               generateCloudCredentialName={generateCloudCredentialName}
-              getCredentials={instance._getClouds}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
               sendAnalytics={sendAnalytics}
               setCredential={instance._setCredential}
               updateCloudCredential={updateCloudCredential}
@@ -591,7 +591,7 @@ describe('AccountCredentials', () => {
     // Close the form.
     output = comp.renderer.getRenderOutput();
     output.props.children[1].props.children[1].props.children
-      .props.children[2].props.close();
+      .props.children[2].props.onCancel();
     assert.isNull(instance.state.cloud);
   });
 });
