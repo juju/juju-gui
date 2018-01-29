@@ -269,16 +269,6 @@ class AccountCredentials extends React.Component {
   }
 
   /**
-    Store the selected credential in state.
-
-    @method _setCredential
-    @param {String} credential The selected credential.
-  */
-  _setCredential(credential) {
-    this.setState({credential: credential});
-  }
-
-  /**
     Generate a form to add credentials.
 
     @method _generateAddCredentials
@@ -403,7 +393,6 @@ class AccountCredentials extends React.Component {
         onCredentialUpdated={
           overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        setCredential={this._setCredential.bind(this)}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
         user={this.props.username}
         validateForm={this.props.initUtils.validateForm} />);

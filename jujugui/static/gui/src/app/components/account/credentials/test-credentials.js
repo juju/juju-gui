@@ -561,7 +561,6 @@ describe('AccountCredentials', () => {
               onCancel={sinon.stub()}
               onCredentialUpdated={sinon.stub()}
               sendAnalytics={sendAnalytics}
-              setCredential={instance._setCredential}
               updateCloudCredential={updateCloudCredential}
               user="spinach@external"
               validateForm={validateForm} />

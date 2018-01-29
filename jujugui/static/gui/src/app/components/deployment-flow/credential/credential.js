@@ -295,7 +295,6 @@ class DeploymentCredential extends React.Component {
           this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
         onCredentialUpdated={this._onCredentialUpdated.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        setCredential={this.props.setCredential}
         updateCloudCredential={this.props.updateCloudCredential}
         user={this.props.user}
         validateForm={this.props.validateForm} />);

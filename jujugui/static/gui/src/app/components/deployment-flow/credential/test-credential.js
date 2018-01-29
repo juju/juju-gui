@@ -102,7 +102,6 @@ describe('DeploymentCredential', function() {
             onCancel={null}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
-            setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -223,7 +222,6 @@ describe('DeploymentCredential', function() {
             onCancel={null}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
-            setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -501,7 +499,6 @@ describe('DeploymentCredential', function() {
             onCancel={sinon.stub()}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
-            setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
