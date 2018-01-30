@@ -95,15 +95,13 @@ describe('DeploymentCredential', function() {
             acl={acl}
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
-            close={instance._toggleAdd}
             cloud={cloud}
             credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
-            getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
-            hideCancel={true}
+            onCancel={null}
+            onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
-            setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -217,15 +215,13 @@ describe('DeploymentCredential', function() {
             acl={acl}
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
-            close={instance._toggleAdd}
             cloud={{name: 'test'}}
             credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
-            getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
-            hideCancel={true}
+            onCancel={null}
+            onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
-            setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -496,15 +492,13 @@ describe('DeploymentCredential', function() {
             acl={acl}
             addNotification={props.addNotification}
             updateCloudCredential={updateCloudCredential}
-            close={instance._toggleAdd}
             cloud={cloud}
             credentials={['default']}
             generateCloudCredentialName={generateCloudCredentialName}
-            getCredentials={instance._getCredentials}
             getCloudProviderDetails={getCloudProviderDetails}
-            hideCancel={false}
+            onCancel={sinon.stub()}
+            onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
-            setCredential={setCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>

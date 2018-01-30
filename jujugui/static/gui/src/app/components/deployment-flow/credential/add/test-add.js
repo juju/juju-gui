@@ -84,14 +84,13 @@ describe('DeploymentCredentialAdd', function() {
         acl={acl}
         addNotification={options.addNotification || sinon.stub()}
         updateCloudCredential={options.updateCloudCredential || sinon.stub()}
-        close={sinon.stub()}
         cloud={options.cloud || null}
         credentialName={options.credentialName || undefined}
         credentials={options.credentials || []}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
-        getCredentials={options.getCredentials || sinon.stub()}
-        hideCancel={options.hideCancel || false}
+        onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
+        onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
@@ -242,7 +241,7 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can render without a cancel button', function() {
     const comp = renderComponent({
-      hideCancel: true
+      onCancel: null
     });
     const buttons = comp.output.props.children[3].props.children.props.buttons;
     assert.deepEqual(buttons, [{
@@ -260,12 +259,12 @@ describe('DeploymentCredentialAdd', function() {
         acl={acl}
         addNotification={sinon.stub()}
         updateCloudCredential={sinon.stub()}
-        close={close}
         cloud={{name: 'aws', cloudType: 'ec2'}}
         credentials={[]}
         getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
-        getCredentials={sinon.stub()}
+        onCancel={null}
+        onCredentialUpdated={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         user="user-admin"
@@ -740,10 +739,10 @@ describe('DeploymentCredentialAdd', function() {
 
   it('can add the credentials', function() {
     const updateCloudCredential = sinon.stub().callsArg(3);
-    const getCredentials = sinon.stub();
+    const onCredentialUpdated = sinon.stub();
     const comp = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
-      getCredentials,
+      onCredentialUpdated,
       updateCloudCredential,
       generateCloudCredentialName: sinon.stub().returns('new@test'),
       validateForm: sinon.stub().returns(true)
@@ -788,8 +787,8 @@ describe('DeploymentCredentialAdd', function() {
       'project-id': 'project id',
       'password': 'password'
     });
-    assert.equal(getCredentials.callCount, 1, 'getCredentials not called');
-    assert.equal(getCredentials.args[0][0], 'new@test');
+    assert.equal(onCredentialUpdated.callCount, 1, 'getCredentials not called');
+    assert.equal(onCredentialUpdated.args[0][0], 'new@test');
   });
 
   it('properly unescapes necessary fields', function() {
