@@ -181,7 +181,12 @@ class ProfileCharmList extends React.Component {
               topRow={(
                 <div>
                   <div className="six-col profile-expanded-content__top-row">
-                    {icon} {charm.name}
+                    {icon}
+                    <a href={`${this.props.baseURL}${path}`}
+                      key="link"
+                      onClick={this._navigateToCharm.bind(this, path)}>
+                      {charm.name}
+                    </a>
                   </div>
                   <div className="three-col profile-expanded-content__top-row">
                     {series}
