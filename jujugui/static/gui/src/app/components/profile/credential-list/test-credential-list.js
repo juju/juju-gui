@@ -223,7 +223,8 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: '...',
-                columnSize: 1
+                columnSize: 2,
+                classes: ['u-align-text--right']
               }],
               key: 'aws_foo@external_cred1'
             }, {
@@ -239,7 +240,8 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: '...',
-                columnSize: 1
+                columnSize: 2,
+                classes: ['u-align-text--right']
               }],
               key: 'aws_foo@external_testcred'
             }, {
@@ -255,7 +257,8 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: '...',
-                columnSize: 1
+                columnSize: 2,
+                classes: ['u-align-text--right']
               }],
               key: 'azure_foo@external_cred1'
             }, {
@@ -271,7 +274,8 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: '...',
-                columnSize: 1
+                columnSize: 2,
+                classes: ['u-align-text--right']
               }],
               key: 'google_foo@external_admin'
             }
