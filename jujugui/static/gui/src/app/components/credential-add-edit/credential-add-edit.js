@@ -12,9 +12,8 @@ const Spinner = require('../spinner/spinner');
 
 // List, add and remove cloud credentials in the account page.
 class CredentialAddEdit extends React.Component {
-  constructor() {
-    super();
-    this.xhrs = [];
+  constructor(props) {
+    super(props);
     this.state = {
       clouds: [],
       cloud: null,
@@ -26,18 +25,12 @@ class CredentialAddEdit extends React.Component {
     this._getClouds();
   }
 
-  componentWillUnmount() {
-    this.xhrs.forEach(xhr => {
-      xhr && xhr.abort && xhr.abort();
-    });
-  }
-
   /**
     Retrieve the list of clouds.
   */
   _getClouds() {
     this.setState({loading: true}, () => {
-      const xhr = this.props.controllerAPI.listClouds((error, clouds) => {
+      this.props.controllerAPI.listClouds((error, clouds) => {
         if (error) {
           const message = 'Unable to list clouds';
           this.props.addNotification({
@@ -53,7 +46,6 @@ class CredentialAddEdit extends React.Component {
           loading: false
         });
       });
-      this.xhrs.push(xhr);
     });
   }
 

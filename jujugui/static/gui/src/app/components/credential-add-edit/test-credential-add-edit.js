@@ -218,12 +218,4 @@ describe('CredentialAddEdit', () => {
       level: 'error'
     });
   });
-
-  it('can abort requests when unmounting', () => {
-    const abort = sinon.stub();
-    controllerAPI.listClouds.returns({abort: abort});
-    const comp = renderComponent();
-    comp.renderer.unmount();
-    assert.equal(abort.callCount, 1);
-  });
 });
