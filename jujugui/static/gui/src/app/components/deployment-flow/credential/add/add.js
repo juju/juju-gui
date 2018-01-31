@@ -262,17 +262,20 @@ class DeploymentCredentialAdd extends React.Component {
     const credentialName = props.credentialName;
     return (
       <div className="deployment-credential-add twelve-col">
-        <h4>{`Create new ${title} credential`}</h4>
-        <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link" href={info && info.signupUrl}
-            target="_blank">
-            Sign up for {title}
-            &nbsp;
-            <SvgIcon
-              name="external-link-16"
-              size="12" />
-          </a>
-        </div>
+        <h4>
+          {`${credentialName ? 'Update' : 'Create new'} ${title} credential`}
+        </h4>
+        {credentialName ? null : (
+          <div className="twelve-col deployment-credential-add__signup">
+            <a className="deployment-credential-add__link" href={info && info.signupUrl}
+              target="_blank">
+              Sign up for {title}
+              &nbsp;
+              <SvgIcon
+                name="external-link-16"
+                size="12" />
+            </a>
+          </div>)}
         <form className="twelve-col">
           <div className="six-col last-col">
             <GenericInput

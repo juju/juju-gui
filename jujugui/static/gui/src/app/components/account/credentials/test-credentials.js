@@ -6,8 +6,7 @@ const shapeup = require('shapeup');
 
 const AccountCredentials = require('./credentials');
 const ButtonRow = require('../../button-row/button-row');
-const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
-const DeploymentCredentialAdd = require('../../deployment-flow/credential/add/add');
+const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
@@ -96,7 +95,23 @@ describe('AccountCredentials', () => {
           expanded={false}>
           <div></div>
           <div className="twelve-col">
-            {null}
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: controllerAPI.listClouds,
+                reshape: sinon.stub(),
+                updateCloudCredential: controllerAPI.updateCloudCredential
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={[]}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="spinach@external" />
           </div>
         </ExpandingRow>
         <Spinner />
@@ -126,7 +141,23 @@ describe('AccountCredentials', () => {
           expanded={false}>
           <div></div>
           <div className="twelve-col">
-            {null}
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: controllerAPI.listClouds,
+                reshape: sinon.stub(),
+                updateCloudCredential: controllerAPI.updateCloudCredential
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={['localcred']}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="spinach@external" />
           </div>
         </ExpandingRow>
         <ul className="user-profile__list twelve-col">
@@ -192,7 +223,23 @@ describe('AccountCredentials', () => {
           expanded={false}>
           <div></div>
           <div className="twelve-col">
-            {null}
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: controllerAPI.listClouds,
+                reshape: sinon.stub(),
+                updateCloudCredential: controllerAPI.updateCloudCredential
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={['test1', 'test2']}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="spinach@external" />
           </div>
         </ExpandingRow>
         <ul className="user-profile__list twelve-col">
@@ -280,7 +327,23 @@ describe('AccountCredentials', () => {
           expanded={false}>
           <div></div>
           <div className="twelve-col">
-            {null}
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: controllerAPI.listClouds,
+                reshape: sinon.stub(),
+                updateCloudCredential: controllerAPI.updateCloudCredential
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={[]}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="spinach@external" />
           </div>
         </ExpandingRow>
         <div>
@@ -408,7 +471,23 @@ describe('AccountCredentials', () => {
           expanded={false}>
           <div></div>
           <div className="twelve-col">
-            {null}
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: controllerAPI.listClouds,
+                reshape: sinon.stub(),
+                updateCloudCredential: controllerAPI.updateCloudCredential
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={['test2']}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="spinach@external" />
           </div>
         </ExpandingRow>
         <ul className="user-profile__list twelve-col">
@@ -416,7 +495,7 @@ describe('AccountCredentials', () => {
             <span className="six-col user-profile__list-col">
               Name
             </span>
-            <span className="six-col last-col  user-profile__list-col">
+            <span className="six-col last-col user-profile__list-col">
               Provider
             </span>
           </li>
@@ -486,18 +565,23 @@ describe('AccountCredentials', () => {
           expanded={true}>
           <div></div>
           <div className="twelve-col">
-            <div>
-              {null}
-              <DeploymentCloud
-                acl={acl}
-                addNotification={addNotification}
-                cloud={null}
-                controllerIsReady={controllerIsReady}
-                listClouds={sinon.stub()}
-                getCloudProviderDetails={initUtils.getCloudProviderDetails}
-                setCloud={instance._setCloud} />
-              {null}
-            </div>
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: controllerAPI.listClouds,
+                reshape: sinon.stub(),
+                updateCloudCredential: controllerAPI.updateCloudCredential
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={[]}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="spinach@external" />
           </div>
         </ExpandingRow>
         <div>
@@ -505,92 +589,5 @@ describe('AccountCredentials', () => {
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
-  });
-
-  it('can display correctly with a chosen cloud', () => {
-    const addNotification = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    const updateCloudCredential = sinon.stub();
-    const validateForm = sinon.stub();
-    const sendAnalytics = sinon.stub();
-    const comp = renderComponent({
-      addNotification,
-      generateCloudCredentialName,
-      updateCloudCredential,
-      validateForm,
-      sendAnalytics
-    });
-    const instance = comp.instance;
-    let output = comp.output;
-    output.props.children[0].props.children[1].props.children.props.action();
-    instance._setCloud({title: 'aws'});
-    output = comp.renderer.getRenderOutput();
-    const expected = (
-      <ExpandingRow
-        classes={{'twelve-col': true}}
-        clickable={false}
-        expanded={true}>
-        <div></div>
-        <div className="twelve-col">
-          <div>
-            <div className="account__credentials-choose-cloud">
-              <GenericButton
-                action={
-                  output.props.children[1].props.children[1].props.children
-                    .props.children[0].props.children.props.action}
-                type="inline-neutral">
-                Change cloud
-              </GenericButton>
-            </div>
-            <DeploymentCloud
-              acl={acl}
-              addNotification={addNotification}
-              cloud={{title: 'aws'}}
-              controllerIsReady={controllerIsReady}
-              listClouds={sinon.stub()}
-              getCloudProviderDetails={initUtils.getCloudProviderDetails}
-              setCloud={instance._setCloud} />
-            <DeploymentCredentialAdd
-              acl={acl}
-              addNotification={addNotification}
-              cloud={{title: 'aws'}}
-              credentialName={undefined}
-              credentials={['test1', 'test2']}
-              getCloudProviderDetails={initUtils.getCloudProviderDetails}
-              generateCloudCredentialName={generateCloudCredentialName}
-              onCancel={sinon.stub()}
-              onCredentialUpdated={sinon.stub()}
-              sendAnalytics={sendAnalytics}
-              updateCloudCredential={updateCloudCredential}
-              user="spinach@external"
-              validateForm={validateForm} />
-          </div>
-        </div>
-      </ExpandingRow>);
-    expect(output.props.children[1]).toEqualJSX(expected);
-  });
-
-  it('clears the cloud when the form is closed', () => {
-    controllerAPI.getCloudCredentialNames = sinon.stub().callsArgWith(1, null, []);
-    const addNotification = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    const updateCloudCredential = sinon.stub();
-    const validateForm = sinon.stub();
-    const comp = renderComponent({
-      addNotification,
-      generateCloudCredentialName,
-      updateCloudCredential,
-      validateForm
-    });
-    const instance = comp.instance;
-    let output = comp.output;
-    // Open the form.
-    output.props.children[0].props.children[1].props.children.props.action();
-    instance._setCloud({title: 'aws'});
-    // Close the form.
-    output = comp.renderer.getRenderOutput();
-    output.props.children[1].props.children[1].props.children
-      .props.children[2].props.onCancel();
-    assert.isNull(instance.state.cloud);
   });
 });
