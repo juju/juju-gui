@@ -99,7 +99,6 @@ class CredentialAddEdit extends React.Component {
             this.state.clouds[credential.cloud] : this.state.cloud}
         credentialName={credential && credential.name || null}
         credentials={this.props.credentials}
-        editing={!!credential}
         getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
         onCancel={this.props.onCancel}

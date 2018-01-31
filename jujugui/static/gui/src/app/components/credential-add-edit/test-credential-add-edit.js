@@ -152,7 +152,6 @@ describe('CredentialAddEdit', () => {
           cloud={{cloudType: 'aws'}}
           credentialName="cred-name"
           credentials={['test1', 'test2']}
-          editing={true}
           getCloudProviderDetails={sinon.stub()}
           generateCloudCredentialName={sinon.stub()}
           onCancel={sinon.stub()}
