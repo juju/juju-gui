@@ -12,6 +12,7 @@ const ProfileModelList = require('./model-list/model-list');
 const ProfileCharmList = require('./charm-list/charm-list');
 const ProfileBundleList = require('./bundle-list/bundle-list');
 const ProfileCredentialList = require('./credential-list/credential-list');
+const ProfileInvoiceList = require('./invoice-list/invoice-list');
 const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
@@ -98,6 +99,16 @@ class Profile extends React.Component {
               stripe={this.props.stripe}
               username={this.props.userInfo.profile}
               validateForm={this.props.initUtils.validateForm} />);
+        }
+      });
+
+      this.sectionsMap.set('invoices', {
+        label: 'Invoices',
+        getComponent: () => {
+          return (
+            <ProfileInvoiceList
+              baseURL={this.props.baseURL}
+              user={this.props.userInfo.external} />);
         }
       });
     }
