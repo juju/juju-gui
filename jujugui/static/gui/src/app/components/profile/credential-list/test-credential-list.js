@@ -7,14 +7,19 @@ const ReactTestUtils = require('react-dom/test-utils');
 
 const ProfileCredentialList = require('./credential-list');
 const BasicTable = require('../../basic-table/basic-table');
+const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
+const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('ProfileCredentialList', () => {
-  let cloudData, credentialData, modelData;
+  let acl, cloudData, controllerAPI, credentialData, initUtils, modelData;
 
   beforeEach(() => {
+    acl = {
+      isReadOnly: sinon.stub()
+    };
     cloudData = {
       aws: {cloudType: 'ec2'},
       azure: {cloudType: 'azure'},
@@ -45,33 +50,43 @@ describe('ProfileCredentialList', () => {
       credential: 'some other credential',
       name: 'sharedmodel1'
     }];
+    controllerAPI = {
+      listClouds: callback => callback(null, cloudData),
+      getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
+      listModelsWithInfo: callback => callback(null, modelData),
+      updateCloudCredential: sinon.stub()
+    };
+    initUtils = {
+      generateCloudCredentialName: sinon.stub(),
+      getCloudProviderDetails: sinon.stub(),
+      reshape: sinon.stub(),
+      validateForm: sinon.stub()
+    };
   });
 
   function renderComponentToDOM(options = {}) {
-    const controllerAPI = {
-      listClouds: callback => callback(null, cloudData),
-      getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
-      listModelsWithInfo: callback => callback(null, modelData)
-    };
     const component = ReactTestUtils.renderIntoDocument(
       <ProfileCredentialList
+        acl={acl}
         addNotification={options.addNotification || sinon.stub()}
         controllerAPI={options.controllerAPI || controllerAPI}
+        controllerIsReady={options.controllerIsReady || sinon.stub()}
+        initUtils={options.initUtils || initUtils}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
         username={options.username || 'foo@external'} />);
     return component;
   }
 
   function shallowRenderComponent(options = {}) {
-    const controllerAPI = {
-      listClouds: callback => callback(null, cloudData),
-      getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
-      listModelsWithInfo: callback => callback(null, modelData)
-    };
     return jsTestUtils.shallowRender(
       <ProfileCredentialList
+        acl={acl}
         addNotification={options.addNotification || sinon.stub()}
         controllerAPI={options.controllerAPI || controllerAPI}
         credential="azure_foo@external_cred1"
+        controllerIsReady={options.controllerIsReady || sinon.stub()}
+        initUtils={options.initUtils || initUtils}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
         username={options.username || 'foo@external'} />, true);
   }
 
@@ -134,8 +149,10 @@ describe('ProfileCredentialList', () => {
     const component = renderComponentToDOM({addNotification, controllerAPI});
     loopCheck(component, () => {
       const errorMsg = 'Unable to fetch credential data';
-      assert.equal(addNotification.callCount, 1);
-      assert.deepEqual(addNotification.args[0][0], {
+      // As this is using renderIntoDocument then presumably child components
+      // could also call addNotification.
+      assert.equal(addNotification.callCount >= 1, true);
+      assert.deepEqual(addNotification.args[addNotification.args.length - 1][0], {
         title: errorMsg,
         message: errorMsg,
         level: 'error'
@@ -146,20 +163,13 @@ describe('ProfileCredentialList', () => {
   }
 
   it('throws a notification if listClouds request fail', done => {
-    const controllerAPI = {
-      listClouds: callback => callback('error', null),
-      getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
-      listModelsWithInfo: callback => callback(null, modelData)
-    };
+    controllerAPI.listClouds = callback => callback('error', null);
     testRequestErrorNotification(controllerAPI, done);
   });
 
   it('throws a notification if getCloudCredentialNames request fail', done => {
-    const controllerAPI = {
-      listClouds: callback => callback(null, cloudData),
-      getCloudCredentialNames: (clouds, callback) => callback('error', credentialData),
-      listModelsWithInfo: callback => callback(null, modelData)
-    };
+    controllerAPI.getCloudCredentialNames = (clouds, callback) =>
+      callback('error', credentialData);
     testRequestErrorNotification(controllerAPI, done);
   });
 
@@ -167,7 +177,8 @@ describe('ProfileCredentialList', () => {
     const controllerAPI = {
       listClouds: callback => callback(null, cloudData),
       getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
-      listModelsWithInfo: callback => callback('error', modelData)
+      listModelsWithInfo: callback => callback('error', modelData),
+      updateCloudCredential: sinon.stub()
     };
     testRequestErrorNotification(controllerAPI, done);
   });
@@ -175,7 +186,7 @@ describe('ProfileCredentialList', () => {
   it('can render', done => {
     const renderer = shallowRenderComponent();
     const instance = renderer.getMountedInstance();
-    instance.componentDidMount().then(() => {
+    instance._getClouds().then(() => {
       const output = renderer.getRenderOutput();
       const expected = (
         <div className="profile-credential-list">
@@ -189,9 +200,37 @@ describe('ProfileCredentialList', () => {
           </div>
           <div className="push-four four-col">
             <div className="profile-credential-list__add">
-              <GenericButton>Add credentials</GenericButton>
+              <GenericButton
+                action={sinon.stub()}
+                type="inline-neutral">
+                Add credentials
+              </GenericButton>
             </div>
           </div>
+          <ExpandingRow
+            classes={{'twelve-col': true}}
+            clickable={false}
+            expanded={this.state.showAdd}>
+            <div></div>
+            <div className="twelve-col">
+              <CredentialAddEdit
+                key="deployment-credential-add"
+                acl={acl}
+                addNotification={sinon.stub()}
+                controllerAPI={{
+                  listClouds: sinon.stub(),
+                  updateCloudCredential: sinon.stub()
+                }}
+                controllerIsReady={sinon.stub()}
+                credential=""
+                credentials={[]}
+                initUtils={initUtils}
+                onCancel={sinon.stub()}
+                onCredentialUpdated={sinon.stub()}
+                sendAnalytics={sinon.stub()}
+                username="spinach@external" />
+            </div>
+          </ExpandingRow>
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
@@ -279,8 +318,7 @@ describe('ProfileCredentialList', () => {
         </div>
       );
       expect(output).toEqualJSX(expected);
-      done();
-    });
+    }).finally(done);
   });
 
 });
