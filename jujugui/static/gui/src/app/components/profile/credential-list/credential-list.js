@@ -158,7 +158,8 @@ class ProfileCredentialList extends React.Component {
           columnSize: 2
         }, {
           content: '...',
-          columnSize: 1
+          columnSize: 2,
+          classes: ['u-align-text--right']
         }],
         key
       });
