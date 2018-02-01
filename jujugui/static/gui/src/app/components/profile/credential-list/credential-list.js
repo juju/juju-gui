@@ -6,19 +6,29 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
+const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
+const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const Spinner = require('../../spinner/spinner');
+
+// Define the name of the lxd cloud.
+const LOCAL_CLOUD = 'localhost';
 
 class ProfileCredentialList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       credentialMap: new Map(),
-      loading: true
+      loading: true,
+      showAdd: false
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this._getClouds();
+  }
+
+  async _getClouds() {
     const props = this.props;
     try {
       const clouds = await this._listClouds();
@@ -116,6 +126,70 @@ class ProfileCredentialList extends React.Component {
   }
 
   /**
+    Show the add credentials form.
+  */
+  _toggleAdd() {
+    this.setState({showAdd: !this.state.showAdd});
+  }
+
+  /**
+    Generate a form to add credentials.
+  */
+  _generateAddCredentials() {
+    return (
+      <ExpandingRow
+        classes={{'twelve-col': true}}
+        clickable={false}
+        expanded={this.state.showAdd}>
+        <div></div>
+        <div className="twelve-col">
+          {this._generateDeploymentCredentialAdd()}
+        </div>
+      </ExpandingRow>);
+  }
+
+  /**
+    Handle a credential having been created.
+    @param credential {String} The name of the newly created credential.
+  */
+  _onCredentialAdded(credential) {
+    // Load the credentials again so that the list will contain the newly
+    // added credential.
+    this._getClouds();
+    this._toggleAdd();
+  }
+
+  /**
+    Generate the add credentials UI with any supplied overrides depending
+    on where it is to be rendered.
+    @param {Object} overrides The overrides for the default props.
+    @return {Object} React component for DeploymentCredentialAdd
+  */
+  _generateDeploymentCredentialAdd(overrides={}) {
+    const controllerAPI = this.props.controllerAPI;
+    const credentials = this.state.credentials;
+    return (
+      <CredentialAddEdit
+        key="deployment-credential-add"
+        acl={this.props.acl}
+        addNotification={this.props.addNotification}
+        controllerAPI={shapeup.addReshape({
+          listClouds: controllerAPI.listClouds.bind(controllerAPI),
+          updateCloudCredential: controllerAPI.updateCloudCredential.bind(controllerAPI)
+        })}
+        controllerIsReady={this.props.controllerIsReady}
+        credential={overrides.credential}
+        credentials={
+          credentials ? Array.from(credentials).map(credential => credential.name) : []}
+        initUtils={this.props.initUtils}
+        onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
+        onCredentialUpdated={
+          overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
+        sendAnalytics={this.props.sendAnalytics}
+        username={this.props.username} />);
+  }
+
+  /**
     Creates the JSX content for the credential list.
     @return {Object} The credential UI JSX.
   */
@@ -188,8 +262,16 @@ class ProfileCredentialList extends React.Component {
   }
 
   render() {
+    const clouds = this.state.clouds;
     let addButton = (
-      <GenericButton>Add credentials</GenericButton>);
+      <GenericButton
+        action={this._toggleAdd.bind(this)}
+        type="inline-neutral">
+        Add credentials
+      </GenericButton>);
+    if (clouds && clouds[LOCAL_CLOUD]) {
+      addButton = null;
+    }
     return (
       <div className="profile-credential-list">
         <div className="four-col">
@@ -205,6 +287,7 @@ class ProfileCredentialList extends React.Component {
             {addButton}
           </div>
         </div>
+        {this._generateAddCredentials()}
         {this._generateCredentialsList()}
       </div>
     );
@@ -212,13 +295,25 @@ class ProfileCredentialList extends React.Component {
 }
 
 ProfileCredentialList.propTypes = {
+  acl: shapeup.shape({
+    isReadOnly: PropTypes.func.isRequired
+  }).isRequired,
   addNotification: PropTypes.func.isRequired,
   controllerAPI: shapeup.shape({
     getCloudCredentialNames: PropTypes.func.isRequired,
     listClouds: PropTypes.func.isRequired,
-    listModelsWithInfo: PropTypes.func.isRequired
+    listModelsWithInfo: PropTypes.func.isRequired,
+    updateCloudCredential: PropTypes.func.isRequired
   }),
+  controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
+  initUtils: shapeup.shape({
+    generateCloudCredentialName: PropTypes.func.isRequired,
+    getCloudProviderDetails: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    validateForm: PropTypes.func.isRequired
+  }).isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
 };
 

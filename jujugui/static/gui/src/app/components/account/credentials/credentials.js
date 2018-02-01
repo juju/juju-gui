@@ -251,9 +251,7 @@ class AccountCredentials extends React.Component {
     @method _toggleAdd
   */
   _toggleAdd() {
-    // The cloud needs to be reset so that when the form is shown it doesn't
-    // show the last selected cloud.
-    this.setState({showAdd: !this.state.showAdd, cloud: null});
+    this.setState({showAdd: !this.state.showAdd});
   }
 
   /**
