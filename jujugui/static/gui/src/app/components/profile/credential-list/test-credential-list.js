@@ -259,9 +259,18 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: 'testmodel1',
-                columnSize: 2
+                columnSize: 3
               }, {
-                content: '...',
+                content: (
+                  <MoreMenu
+                    icon="contextual-menu-horizontal"
+                    items={[{
+                      label: 'Edit',
+                      action: () => {}
+                    }, {
+                      label: 'Delete',
+                      action: () => {}
+                    }]} />),
                 columnSize: 1
               }],
               key: 'aws_foo@external_cred1'
@@ -275,9 +284,18 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: '-',
-                columnSize: 2
+                columnSize: 3
               }, {
-                content: '...',
+                content: (
+                  <MoreMenu
+                    icon="contextual-menu-horizontal"
+                    items={[{
+                      label: 'Edit',
+                      action: () => {}
+                    }, {
+                      label: 'Delete',
+                      action: () => {}
+                    }]} />),
                 columnSize: 1
               }],
               key: 'aws_foo@external_testcred'
@@ -291,9 +309,18 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: 'testmodel2',
-                columnSize: 2
+                columnSize: 3
               }, {
-                content: '...',
+                content: (
+                  <MoreMenu
+                    icon="contextual-menu-horizontal"
+                    items={[{
+                      label: 'Edit',
+                      action: () => {}
+                    }, {
+                      label: 'Delete',
+                      action: () => {}
+                    }]} />),
                 columnSize: 1
               }],
               key: 'azure_foo@external_cred1'
@@ -307,9 +334,18 @@ describe('ProfileCredentialList', () => {
                 columnSize: 2
               }, {
                 content: '-',
-                columnSize: 2
+                columnSize: 3
               }, {
-                content: '...',
+                content: (
+                  <MoreMenu
+                    icon="contextual-menu-horizontal"
+                    items={[{
+                      label: 'Edit',
+                      action: () => {}
+                    }, {
+                      label: 'Delete',
+                      action: () => {}
+                    }]} />),
                 columnSize: 1
               }],
               key: 'google_foo@external_admin'
