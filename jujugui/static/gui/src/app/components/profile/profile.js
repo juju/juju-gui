@@ -77,10 +77,14 @@ class Profile extends React.Component {
           const propTypes = ProfileCredentialList.propTypes;
           return (
             <ProfileCredentialList
+              acl={props.acl}
               addNotification={props.addNotification}
               controllerAPI={
                 shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
+              controllerIsReady={props.controllerIsReady}
               credential={this._getProfileURL().subSection}
+              initUtils={props.initUtils}
+              sendAnalytics={this._sendAnalytics.bind(this)}
               username={props.controllerUser} />);
         }
       }]
