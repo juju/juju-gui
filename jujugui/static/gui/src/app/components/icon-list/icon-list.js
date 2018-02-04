@@ -8,8 +8,8 @@ const React = require('react');
   Display a list of icons for an entity.
 */
 class IconList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
 
   /**
@@ -18,13 +18,7 @@ class IconList extends React.Component {
     @returns {Object} The store state.
   */
   _generateStoreState(id) {
-    // TODO frankban: it should be clear whether this id is legacy or not.
-    let url;
-    try {
-      url = window.jujulib.URL.fromLegacyString(id);
-    } catch(_) {
-      url = window.jujulib.URL.fromString(id);
-    }
+    const url = window.jujulib.URL.fromAnyString(id);
     return {
       profile: null,
       search: null,
