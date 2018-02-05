@@ -42,20 +42,27 @@ class StringConfig extends React.Component {
     @method getValue
   */
   getValue() {
-    return this.state.value;
+    const value = this.state.value;
+    let cleanedValue = value;
+    // Firefox sometimes adds newlines in contenteditable fields.
+    if (value && value.toString().endsWith('\n')) {
+      cleanedValue = value.slice(0, value.length - 1);
+    }
+    return cleanedValue;
   }
 
   render() {
     var disabled = this.props.disabled;
     var type = this.props.option.type;
     var typeString = type ? ` (${type})` : '';
-    const value = this.state.value;
+    const value = this.getValue();
     const config = this.props.config;
     var classes = classNames(
       'string-config--value',
       {
         'string-config--changed':
-          (value && value.toString()) !== (config && config.toString()),
+          (value !== undefined && value !== null && value.toString()) !==
+          (config !== undefined && config !== null && config.toString()),
         'string-config--disabled': disabled
       });
     return (
