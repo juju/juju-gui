@@ -799,6 +799,11 @@ class GUIApp {
       }));
   }
 
+  /**
+    After logging into the controller continue with the application dispatching.
+    @param {Promise} entityPromise
+    @param {Object} evt
+  */
   _controllerLoginHandler(entityPromise, evt) {
     const state = this.state;
     this.anonymousMode = false;
@@ -813,8 +818,17 @@ class GUIApp {
     // data with the storefront backend and ensure we're already
     // logged into the charmstore.
     if (this.applicationConfig.gisf) {
-      this._sendGISFPostBack();
+      this._sendGISFPostBack(() => {
+        // We can only request the updated config file after the storefront has
+        // been notified of the users login information.
+        this.reloadConfigFile(document);
+      });
       this._ensureLoggedIntoCharmstore();
+    } else {
+      // If this isn't embedded in the storefront then go fetch the config again
+      // as the login is then handled by the controller which will have already
+      // been updated by this point.
+      this.reloadConfigFile(document);
     }
 
     // If state has a `next` property then that overrides all defaults.
@@ -1360,8 +1374,9 @@ class GUIApp {
     Sends the discharge token via POST to the storefront. This is used
     when the GUI is operating in GISF mode, allowing a shared login between
     the GUI and the storefront.
+    @param {Function} callback (optional) The callback to call after the post response.
   */
-  _sendGISFPostBack() {
+  _sendGISFPostBack(callback) {
     const dischargeToken = this.user.getMacaroon('identity');
     if (!dischargeToken) {
       console.error('no discharge token in local storage after login');
@@ -1379,7 +1394,7 @@ class GUIApp {
     webhandler.sendPostRequest(
       '/_login',
       {'Content-Type': 'application/x-www-form-urlencoded'},
-      content);
+      content, null, null, null, null, callback);
   }
 
   /**
@@ -1632,6 +1647,30 @@ class GUIApp {
       const gisfLogoutUrl = config.gisfLogout || '';
       window.location.assign(window.location.origin + gisfLogoutUrl);
     }
+  }
+
+  /**
+    Removes and re-adds the config.js file from the DOM to update its values.
+    Because this file uses 'var' to define the juju_config variable it will
+    redefine the global.
+    This will re-dispatch the application but will not re-initialize it.
+    @param {Object} doc The html document.
+  */
+  reloadConfigFile(doc) {
+    // Fetch the url for the config file from the DOM. This is necessary because
+    // the config path is defined on render by the various deployment environments.
+    const oldScript = doc.querySelector('script[data=config]');
+    // Remove the old config script tag and add it back again for it to re-fetch.
+    const script= doc.createElement('script');
+    script.setAttribute('data', 'config');
+    script.src = oldScript.src;
+    script.onload = () => {
+      // Update the application config to the new global config value.
+      this.applicationConfig = juju_config; // eslint-disable-line
+      this.state.dispatch();
+    };
+    oldScript.parentNode.removeChild(oldScript);
+    doc.getElementsByTagName('head')[0].appendChild(script);
   }
 
   /**

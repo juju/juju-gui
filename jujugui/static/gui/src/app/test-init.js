@@ -1102,6 +1102,7 @@ describe('init', () => {
       app._renderUserMenu = sinon.stub();
       app.maskVisibility = sinon.stub();
       app.loginToAPIs = sinon.stub();
+      app.reloadConfigFile = sinon.stub();
     };
 
     beforeEach(() => {
@@ -1242,6 +1243,11 @@ describe('init', () => {
         const args = app.state.changeState.args[0];
         assert.equal(args.length, 1, 'changeState num args');
         assert.deepEqual(args[0], {root: null}, 'changeState args');
+        // We are testing this here because this gets called when successfully
+        // logging into a controller and this is typically done from an anonymous
+        // state, even if the user is logging in on the initial load, the app
+        // execution is similar.
+        assert.equal(app.reloadConfigFile.callCount, 1);
         done();
       };
       app.controllerAPI.after('connectedChange', evt => {

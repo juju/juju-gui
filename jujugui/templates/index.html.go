@@ -48,7 +48,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Make sure the config is loaded before other JS for use in the page
          below.
     -->
-    <script src="{{.configURL}}"></script>
+    <script  data="config" src="{{.configURL}}"></script>
     <script type="text/javascript">
         window.GUI_VERSION = {'version': '', 'commit': ''};
     </script>
