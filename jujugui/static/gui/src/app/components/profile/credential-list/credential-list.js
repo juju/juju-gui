@@ -9,6 +9,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
+const MoreMenu = require('../../more-menu/more-menu');
 const Spinner = require('../../spinner/spinner');
 
 // Define the name of the lxd cloud.
@@ -229,9 +230,18 @@ class ProfileCredentialList extends React.Component {
                 return `${modelCount} Models`;
             }
           }(),
-          columnSize: 2
+          columnSize: 3
         }, {
-          content: '...',
+          content: (
+            <MoreMenu
+              icon="contextual-menu-horizontal"
+              items={[{
+                label: 'Edit',
+                action: () => {}
+              }, {
+                label: 'Delete',
+                action: () => {}
+              }]} />),
           columnSize: 1
         }],
         key
