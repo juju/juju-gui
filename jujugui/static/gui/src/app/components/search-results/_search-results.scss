@@ -143,13 +143,6 @@
         line-height: 1.3;
       }
 
-      .list-icons__image {
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        border-radius: 50%;
-      }
-
       .charm-name__column {
         margin-bottom: 0;
       }
@@ -259,7 +252,11 @@
     }
 
     .charm-logos__column {
+      position: relative;
+      // Raise the logos links above the main row link.
+      z-index: 2;
       margin-bottom: 8px;
+      text-align: right;
     }
 
     .list-block__column {

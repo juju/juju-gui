@@ -1,0 +1,16 @@
+.icon-list {
+  @extend list-style;
+  margin: 0;
+
+  &__item {
+    display: inline-block;
+    margin: 0 10px 10px 0;
+  }
+
+  &__image {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+}

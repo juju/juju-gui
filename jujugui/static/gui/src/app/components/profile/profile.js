@@ -61,12 +61,13 @@ class Profile extends React.Component {
           return (
             <ProfileBundleList
               acl={this.props.acl}
+              addToModel={this.props.addToModel}
               isActiveUsersProfile={isActiveUsersProfile}
               addNotification={this.props.addNotification}
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-              addToModel={this.props.addToModel}
+              generatePath={this.props.generatePath}
               getModelName={this.props.getModelName}
               user={this.props.userInfo.external} />);
         }
@@ -209,6 +210,7 @@ Profile.propTypes = {
   controllerUser: PropTypes.string.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
+  generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,
   initUtils: shapeup.shape({
