@@ -89,7 +89,6 @@ class ProfileInvoiceList extends React.Component {
     if (this.state.loading) {
       content = (<Spinner />);
     } else {
-      const path = 'invoice/id';
       const rows = (this.props.data || this.state.data).map(invoice => {
         return {
           columns: [{
@@ -98,7 +97,7 @@ class ProfileInvoiceList extends React.Component {
           }, {
             content: (
               <a
-                href={`${this.props.baseURL}${path}`}>
+                href='#invoices/42'>
                 {invoice.number}
               </a>),
             columnSize: 3
