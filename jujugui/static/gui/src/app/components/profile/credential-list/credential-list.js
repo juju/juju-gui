@@ -35,8 +35,14 @@ class ProfileCredentialList extends React.Component {
       const clouds = await this._listClouds();
       const credentialMap = await this._getCloudCredentialNames(props.username, clouds);
       const credentialToModel = await this._fetchAndFilterModelsByCredential();
-      credentialToModel.forEach((modelNames, credentialKey) =>
-        credentialMap.get(credentialKey).models = modelNames);
+      credentialToModel.forEach((modelNames, credentialKey) => {
+        if (!credentialMap.has(credentialKey)) {
+          // A model was created with a key which no longer exists so we cannot
+          // assign the models to that non-existant key.
+          return;
+        }
+        credentialKey = credentialMap.get(credentialKey).models = modelNames;
+      });
       this.setState({
         credentialMap,
         loading: false
