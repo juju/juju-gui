@@ -328,4 +328,131 @@ describe('BasicTable', function() {
       </ul>);
     expect(output).toEqualJSX(expected);
   });
+
+  it('can expand content using a prop', function() {
+    rows = [{
+      classes: ['first-row-class'],
+      columns: [{
+        content: (<span>row 1 column 1</span>),
+        columnSize: 3,
+        classes: ['r1c1class1', 'r1c1class2']
+      }, {
+        content: 'row 1 column 2',
+        columnSize: 3
+      }],
+      expandedContent: (<div>Expanded content!</div>),
+      expandedContentExpanded: true,
+      key: 'row-one-key'
+    }];
+    const renderer = jsTestUtils.shallowRender(
+      <BasicTable
+        headers={headers}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ul className="basic-table twelve-col">
+        <li className="twelve-col basic-table__header"
+          key='basic-table-header'
+          style={{zIndex: 1}}>
+          <div className="three-col class1 class2"
+            key="column-1">
+            Column 1
+          </div>
+          <div className="last-col four-col"
+            key="column-2">
+            <span>Column 2</span>
+          </div>
+        </li>
+        <ExpandingRow
+          classes={{
+            'basic-table__row': true,
+            'basic-table__row--clickable': true,
+            'basic-table__row--expandable': true,
+            'first-row-class': true,
+            'twelve-col': true
+          }}
+          expanded={true}
+          key="row-one-key"
+          style={{zIndex: 1}}>
+          <div>
+            <div className="three-col r1c1class1 r1c1class2"
+              key="column-1">
+              <span>row 1 column 1</span>
+            </div>
+            <div className="last-col three-col"
+              key="column-2">
+              row 1 column 2
+            </div>
+          </div>
+          <div>
+            <div>Expanded content!</div>
+          </div>
+        </ExpandingRow>
+      </ul>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can make a row not clickable', function() {
+    rows = [{
+      classes: ['first-row-class'],
+      columns: [{
+        content: (<span>row 1 column 1</span>),
+        columnSize: 3,
+        classes: ['r1c1class1', 'r1c1class2']
+      }, {
+        content: 'row 1 column 2',
+        columnSize: 3
+      }],
+      expandedContent: (<div>Expanded content!</div>),
+      key: 'row-one-key',
+      rowClickable: false
+    }];
+    const renderer = jsTestUtils.shallowRender(
+      <BasicTable
+        headers={headers}
+        rows={rows} />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ul className="basic-table twelve-col">
+        <li className="twelve-col basic-table__header"
+          key='basic-table-header'
+          style={{zIndex: 1}}>
+          <div className="three-col class1 class2"
+            key="column-1">
+            Column 1
+          </div>
+          <div className="last-col four-col"
+            key="column-2">
+            <span>Column 2</span>
+          </div>
+        </li>
+        <ExpandingRow
+          classes={{
+            'basic-table__row': true,
+            'basic-table__row--clickable': false,
+            'basic-table__row--expandable': true,
+            'first-row-class': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={undefined}
+          key="row-one-key"
+          style={{zIndex: 1}}>
+          <div>
+            <div className="three-col r1c1class1 r1c1class2"
+              key="column-1">
+              <span>row 1 column 1</span>
+            </div>
+            <div className="last-col three-col"
+              key="column-2">
+              row 1 column 2
+            </div>
+          </div>
+          <div>
+            <div>Expanded content!</div>
+          </div>
+        </ExpandingRow>
+      </ul>);
+    expect(output).toEqualJSX(expected);
+  });
 });
