@@ -20,6 +20,7 @@ class ProfileCredentialList extends React.Component {
     super(props);
     this.state = {
       credentialMap: new Map(),
+      editCredential: null,
       loading: true,
       showAdd: false
     };
@@ -140,6 +141,14 @@ class ProfileCredentialList extends React.Component {
   }
 
   /**
+    Sets the state for editCredential using the supplied credentialId.
+    @param {String} credentialId The credential ID to edit.
+  */
+  _setEditCredential(credentialId = null) {
+    this.setState({editCredential: credentialId});
+  }
+
+  /**
     Generate a form to add credentials.
   */
   _generateAddCredentials() {
@@ -150,9 +159,33 @@ class ProfileCredentialList extends React.Component {
         expanded={this.state.showAdd}>
         <div></div>
         <div className="twelve-col">
-          {this._generateDeploymentCredentialAdd()}
+          {this._generateCredentialForm()}
         </div>
       </ExpandingRow>);
+  }
+
+  /**
+    Generates the edit credential UI elements.
+    @param {Object} credential The credential details of the credential being
+      edited.
+    @return {Array} The elements for the edit credential UI.
+  */
+  _generateEditCredentials(credential) {
+    return this._generateCredentialForm({
+      credential: credential,
+      onCancel: this._setEditCredential.bind(this),
+      onCredentialUpdated: this._onCredentialEdited.bind(this)
+    });
+  }
+
+  /**
+    Handle a credential having been updated.
+    @param credential {String} The name of the updated credential.
+  */
+  _onCredentialEdited(credential) {
+    // Load the credentials again so that the list will contain the updates.
+    this._getClouds();
+    this._setEditCredential();
   }
 
   /**
@@ -172,7 +205,7 @@ class ProfileCredentialList extends React.Component {
     @param {Object} overrides The overrides for the default props.
     @return {Object} React component for DeploymentCredentialAdd
   */
-  _generateDeploymentCredentialAdd(overrides={}) {
+  _generateCredentialForm(overrides={}) {
     const controllerAPI = this.props.controllerAPI;
     const credentials = this.state.credentials;
     return (
@@ -243,14 +276,17 @@ class ProfileCredentialList extends React.Component {
               icon="contextual-menu-horizontal"
               items={[{
                 label: 'Edit',
-                action: () => {}
+                action: this._setEditCredential.bind(this, key)
               }, {
                 label: 'Delete',
                 action: () => {}
               }]} />),
           columnSize: 1
         }],
-        key
+        expandedContent: this._generateEditCredentials(credential),
+        expandedContentExpanded: this.state.editCredential === key,
+        key,
+        rowClickable: false
       });
     });
 
