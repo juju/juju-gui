@@ -46,7 +46,7 @@
     "eslint": "4.15.0",
     "eslint-plugin-react": "7.5.1",
     "expect.js": "0.3.1",
-    "jasmine-core": "2.7.0",
+    "jasmine-core": "^2.9.0",
     "karma": "1.7.0",
     "karma-browserify": "^5.1.1",
     "karma-chai-sinon": "0.1.5",
