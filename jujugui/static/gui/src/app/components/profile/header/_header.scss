@@ -66,7 +66,7 @@
   }
 
   &__username {
-    color: #111;
+    color: $color-dark;
     $size: 45px;
     margin: 0 0 12px;
     padding: 20px 0 0 0;
@@ -99,7 +99,12 @@
     }
 
     a {
-      color: #111;
+      color: $color-dark;
+
+      &:hover {
+        color: $link-blue;
+        text-decoration: underline;
+      }
     }
 
     li {
@@ -113,7 +118,7 @@
 
   &__menutitle {
     border-bottom: 1px solid #ccc;
-    color: #111;
+    color: $color-dark;
     line-height: 42px;
     margin-bottom: 16px;
     padding-bottom: 16px;

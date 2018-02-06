@@ -886,4 +886,139 @@ describe('DeploymentCredentialAdd', function() {
       level: 'error'
     }, 'Notification message does not match expected');
   });
+
+  it('can render for updating a credential', function() {
+    const comp = renderComponent({
+      cloud: {name: 'google', cloudType: 'gce'},
+      credentialName: 'cred1',
+      credentials: ['cred1']
+    });
+    const instance = comp.instance;
+    const output = comp.output;
+    const buttons = output.props.children[3].props.children.props.buttons;
+    const expected = (
+      <div className="deployment-credential-add twelve-col">
+        <h4>Update Google Compute Engine credential</h4>
+        {null}
+        <form className="twelve-col">
+          <div className="six-col last-col">
+            <GenericInput
+              disabled={true}
+              label="Project ID (credential name)"
+              required={true}
+              ref="credentialName"
+              value="cred1"
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }, {
+                regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
+                error: 'This field must only contain upper and lowercase ' +
+                  'letters, numbers, and hyphens. It must not start or ' +
+                  'end with a hyphen.'
+              }, {
+                check: value => output.props.children[2].props.children[0]
+                  .props.children.props.validate[2].check,
+                error: 'You already have a credential with this name.'
+              }]} />
+          </div>
+          <h3 className="deployment-panel__section-title twelve-col">
+            Enter credentials
+          </h3>
+          <div className="deployment-credential-add__credentials">
+            <div className="six-col">
+              a message
+              <InsetSelect
+                disabled={false}
+                label="Authentication type"
+                onChange={instance._handleAuthChange}
+                options={[{
+                  label: 'oauth2',
+                  value: 'oauth2'
+                }, {
+                  label: 'jsonfile',
+                  value: 'jsonfile'
+                }]} />
+              {[<GenericInput
+                autocomplete={undefined}
+                disabled={false}
+                key="client-id"
+                label="Client ID"
+                multiLine={undefined}
+                required={true}
+                ref="client-id"
+                type={undefined}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />,
+              <GenericInput
+                autocomplete={undefined}
+                disabled={false}
+                key="client-email"
+                label="Client e-mail address"
+                multiLine={undefined}
+                required={true}
+                ref="client-email"
+                type={undefined}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />,
+              <GenericInput
+                autocomplete={undefined}
+                disabled={false}
+                key="private-key"
+                label="Private key"
+                multiLine={true}
+                required={true}
+                ref="private-key"
+                type={undefined}
+                validate={[{
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }]} />,
+              <GenericInput
+                autocomplete={undefined}
+                disabled={false}
+                key="project-id"
+                label="Project ID"
+                multiLine={undefined}
+                required={false}
+                ref="project-id"
+                type={undefined}
+                validate={undefined} />,
+              <GenericInput
+                autocomplete={undefined}
+                disabled={false}
+                key="password"
+                label="Password"
+                multiLine={undefined}
+                required={false}
+                ref="password"
+                type="password"
+                validate={undefined} />
+              ]}
+            </div>
+            <div className="deployment-flow__notice six-col last-col">
+              <p className="deployment-flow__notice-content">
+                <SvgIcon
+                  name="general-action-blue"
+                  size="16" />
+                Credentials are stored securely on our servers and we will
+                notify you by email whenever they are changed or deleted.
+                You can see where they are used and manage or remove them via
+                the account page.
+              </p>
+            </div>
+          </div>
+        </form>
+        <div className={
+          'deployment-credential-add__buttons twelve-col last-col'}>
+          <ButtonRow
+            buttons={buttons} />
+        </div>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
 });

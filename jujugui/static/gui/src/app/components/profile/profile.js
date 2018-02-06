@@ -12,6 +12,7 @@ const ProfileModelList = require('./model-list/model-list');
 const ProfileCharmList = require('./charm-list/charm-list');
 const ProfileBundleList = require('./bundle-list/bundle-list');
 const ProfileCredentialList = require('./credential-list/credential-list');
+const ProfileInvoiceList = require('./invoice-list/invoice-list');
 const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
@@ -60,12 +61,13 @@ class Profile extends React.Component {
           return (
             <ProfileBundleList
               acl={this.props.acl}
+              addToModel={this.props.addToModel}
               isActiveUsersProfile={isActiveUsersProfile}
               addNotification={this.props.addNotification}
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-              addToModel={this.props.addToModel}
+              generatePath={this.props.generatePath}
               getModelName={this.props.getModelName}
               user={this.props.userInfo.external} />);
         }
@@ -77,10 +79,14 @@ class Profile extends React.Component {
           const propTypes = ProfileCredentialList.propTypes;
           return (
             <ProfileCredentialList
+              acl={props.acl}
               addNotification={props.addNotification}
               controllerAPI={
                 shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
+              controllerIsReady={props.controllerIsReady}
               credential={this._getProfileURL().subSection}
+              initUtils={props.initUtils}
+              sendAnalytics={this._sendAnalytics.bind(this)}
               username={props.controllerUser} />);
         }
       }]
@@ -98,6 +104,16 @@ class Profile extends React.Component {
               stripe={this.props.stripe}
               username={this.props.userInfo.profile}
               validateForm={this.props.initUtils.validateForm} />);
+        }
+      });
+
+      this.sectionsMap.set('invoices', {
+        label: 'Invoices',
+        getComponent: () => {
+          return (
+            <ProfileInvoiceList
+              baseURL={this.props.baseURL}
+              user={this.props.userInfo.external} />);
         }
       });
     }
@@ -194,6 +210,7 @@ Profile.propTypes = {
   controllerUser: PropTypes.string.isRequired,
   destroyModels: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
+  generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,
   initUtils: shapeup.shape({

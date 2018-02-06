@@ -5,6 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
+const IconList = require('../../icon-list/icon-list');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const ProfileBundleList = require('./bundle-list');
 const Spinner = require('../../spinner/spinner');
@@ -79,6 +80,7 @@ describe('Profile Bundle List', function() {
       <ProfileBundleList
         acl={options.acl || acl}
         addNotification={sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
@@ -86,7 +88,7 @@ describe('Profile Bundle List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
-        addToModel={options.addToModel || sinon.stub()}
+        generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         user="lazypower@external" />, true);
@@ -136,20 +138,26 @@ describe('Profile Bundle List', function() {
                 columnSize: 3
               }, {
                 content: (
-                  <div>
-                    <img className="profile-bundle-list__icon"
-                      src="/charmstore/~lazypower/trusty/elasticsearch/icon.svg"
-                      title="elasticsearch" />
-                    <img className="profile-bundle-list__icon"
-                      src="/charmstore/trusty/kibana-10/icon.svg"
-                      title="kibana" />
-                    <img className="profile-bundle-list__icon"
-                      src="/charmstore/~lazypower/trusty/logstash-20/icon.svg"
-                      title="logstash" />
-                    <img className="profile-bundle-list__icon"
-                      src="/charmstore/~kwmonroe/trusty/openjdk/icon.svg"
-                      title="openjdk" />
-                  </div>),
+                  <IconList
+                    applications={[{
+                      displayName: 'elasticsearch',
+                      iconPath: '/charmstore/~lazypower/trusty/elasticsearch/icon.svg',
+                      id: 'cs:~lazypower/trusty/elasticsearch'
+                    }, {
+                      displayName: 'kibana',
+                      iconPath: '/charmstore/trusty/kibana-10/icon.svg',
+                      id: 'cs:trusty/kibana-10'
+                    }, {
+                      displayName: 'logstash',
+                      iconPath: '/charmstore/~lazypower/trusty/logstash-20/icon.svg',
+                      id: 'cs:~lazypower/trusty/logstash-20'
+                    }, {
+                      displayName: 'openjdk',
+                      iconPath: '/charmstore/~kwmonroe/trusty/openjdk/icon.svg',
+                      id: 'cs:~kwmonroe/trusty/openjdk'
+                    }]}
+                    changeState={sinon.stub()}
+                    generatePath={sinon.stub()} />),
                 columnSize: 3
               }, {
                 content: 2,
@@ -204,14 +212,18 @@ describe('Profile Bundle List', function() {
                 columnSize: 3
               }, {
                 content: (
-                  <div>
-                    <img className="profile-bundle-list__icon"
-                      src="/charmstore/~containers/trusty/consul/icon.svg"
-                      title="consul" />
-                    <img className="profile-bundle-list__icon"
-                      src="/charmstore/~lazypower/swarm/icon.svg"
-                      title="swarm" />
-                  </div>),
+                  <IconList
+                    applications={[{
+                      displayName: 'consul',
+                      iconPath: '/charmstore/~containers/trusty/consul/icon.svg',
+                      id: 'cs:~containers/trusty/consul'
+                    }, {
+                      displayName: 'swarm',
+                      iconPath: '/charmstore/~lazypower/swarm/icon.svg',
+                      id: 'cs:~lazypower/swarm'
+                    }]}
+                    changeState={sinon.stub()}
+                    generatePath={sinon.stub()} />),
                 columnSize: 3
               }, {
                 content: 5,

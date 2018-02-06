@@ -114,7 +114,7 @@ class MoreMenu extends React.Component {
           role="button"
           tabIndex="0">
           <SvgIcon
-            name="contextual-menu-16"
+            name={this.props.icon || 'contextual-menu-16'}
             size="16" />
         </span>
         {this._generateMenu()}
@@ -125,6 +125,7 @@ class MoreMenu extends React.Component {
 
 MoreMenu.propTypes = {
   activeItem: PropTypes.string,
+  icon: PropTypes.string,
   items: PropTypes.array.isRequired
 };
 

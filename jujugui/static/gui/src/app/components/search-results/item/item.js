@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericButton = require('../../generic-button/generic-button');
+const IconList = require('../../icon-list/icon-list');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 class SearchResultsItem extends React.Component {
@@ -44,39 +45,6 @@ class SearchResultsItem extends React.Component {
             href={this.props.generatePath({search: {tags: tag}})}
             onClick={this._handleTagClick.bind(this, tag)}>
             {tag}
-          </a>
-        </li>
-      );
-    }, this);
-    return components;
-  }
-
-  /**
-    Generate the elements for the icon list.
-
-    @method _generateIconList
-    @returns {String} The generated elements.
-  */
-  _generateIconList() {
-    var applications = this.props.item.applications || [this.props.item];
-    var components = [];
-    applications.forEach(function(service) {
-      var src = service.iconPath ||
-          'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
-      components.push(
-        <li className="list-icons__item tooltip"
-          key={service.displayName}>
-          <a className="list-block__list--item-link"
-            href={this._generateStoreURL(service.id)}
-            onClick={this._handleItemClick.bind(this, service.id)}>
-            <img src={src}
-              className="list-icons__image"
-              alt={service.displayName} />
-            <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                {service.displayName}
-              </span>
-            </span>
           </a>
         </li>
       );
@@ -279,9 +247,10 @@ class SearchResultsItem extends React.Component {
           </ul>
         </div>
         <div className={this._generateCharmsClass()}>
-          <ul className="list-icons clearfix">
-            {this._generateIconList()}
-          </ul>
+          <IconList
+            applications={this.props.item.applications || [this.props.item]}
+            changeState={this.props.changeState}
+            generatePath={this.props.generatePath} />
         </div>
         <div className="two-col owner__column list-block__column">
           <p className="cell">

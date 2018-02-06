@@ -6,8 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
-const DeploymentCloud = require('../../deployment-flow/cloud/cloud');
-const DeploymentCredentialAdd = require('../../deployment-flow/credential/add/add');
+const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const Popup = require('../../popup/popup');
@@ -22,7 +21,6 @@ class AccountCredentials extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      cloud: null,
       clouds: [],
       credentials: [],
       loading: false,
@@ -253,19 +251,7 @@ class AccountCredentials extends React.Component {
     @method _toggleAdd
   */
   _toggleAdd() {
-    // The cloud needs to be reset so that when the form is shown it doesn't
-    // show the last selected cloud.
-    this.setState({showAdd: !this.state.showAdd, cloud: null});
-  }
-
-  /**
-    Store the selected cloud in state.
-
-    @method _setCloud
-    @param {String} cloud The selected cloud.
-  */
-  _setCloud(cloud) {
-    this.setState({cloud: cloud});
+    this.setState({showAdd: !this.state.showAdd});
   }
 
   /**
@@ -274,28 +260,6 @@ class AccountCredentials extends React.Component {
     @method _generateAddCredentials
   */
   _generateAddCredentials() {
-    let content = null;
-    let addForm = null;
-    let chooseCloud = null;
-    if (this.state.showAdd && this.state.cloud) {
-      addForm = this._generateDeploymentCredentialAdd();
-      chooseCloud = (
-        <div className="account__credentials-choose-cloud">
-          <GenericButton
-            action={this._setCloud.bind(this, null)}
-            type="inline-neutral">
-            Change cloud
-          </GenericButton>
-        </div>);
-    }
-    if (this.state.showAdd) {
-      content = (
-        <div>
-          {chooseCloud}
-          {this._generateDeploymentCloud()}
-          {addForm}
-        </div>);
-    }
     return (
       <ExpandingRow
         classes={{'twelve-col': true}}
@@ -303,29 +267,9 @@ class AccountCredentials extends React.Component {
         expanded={this.state.showAdd}>
         <div></div>
         <div className="twelve-col">
-          {content}
+          {this._generateDeploymentCredentialAdd()}
         </div>
       </ExpandingRow>);
-  }
-
-  /**
-    Generates the cloud logo element.
-    @param {Object} overrides Any overrides that need to be passed in depending
-      on where the component is being used.
-    @return {Object} React component for DeploymentCloud.
-  */
-  _generateDeploymentCloud(overrides = {}) {
-    const props = this.props;
-    return (
-      <DeploymentCloud
-        key="deployment-cloud"
-        acl={props.acl}
-        addNotification={props.addNotification}
-        cloud={overrides.cloud || this.state.cloud}
-        controllerIsReady={props.controllerIsReady}
-        listClouds={props.controllerAPI.listClouds}
-        getCloudProviderDetails={props.initUtils.getCloudProviderDetails}
-        setCloud={this._setCloud.bind(this)} />);
   }
 
   /**
@@ -337,16 +281,11 @@ class AccountCredentials extends React.Component {
   _generateEditCredentials(credential) {
     const credentialId = this.state.editCredential;
     if (credentialId && credentialId === credential.id) {
-      const cloud = this.state.clouds[credential.cloud];
-      return ([
-        this._generateDeploymentCloud({cloud}),
-        this._generateDeploymentCredentialAdd({
-          cloud,
-          name: credential.name,
-          onCancel: this._handleEditCredential.bind(this),
-          onCredentialUpdated: this._onCredentialUpdated.bind(this)
-        })
-      ]);
+      return this._generateDeploymentCredentialAdd({
+        credential: credential,
+        onCancel: this._handleEditCredential.bind(this),
+        onCredentialUpdated: this._onCredentialUpdated.bind(this)
+      });
     }
   }
 
@@ -378,24 +317,25 @@ class AccountCredentials extends React.Component {
     @return {Object} React component for DeploymentCredentialAdd
   */
   _generateDeploymentCredentialAdd(overrides = {}) {
+    const controllerAPI = this.props.controllerAPI;
     return (
-      <DeploymentCredentialAdd
+      <CredentialAddEdit
         key="deployment-credential-add"
         acl={this.props.acl}
         addNotification={this.props.addNotification}
-        cloud={overrides.cloud || this.state.cloud}
-        credentialName={overrides.name}
-        credentials={this.state.credentials.map(credential =>
-          credential.name)}
-        getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
-        generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
+        controllerAPI={shapeup.addReshape({
+          listClouds: controllerAPI.listClouds.bind(controllerAPI),
+          updateCloudCredential: controllerAPI.updateCloudCredential.bind(controllerAPI)
+        })}
+        controllerIsReady={this.props.controllerIsReady}
+        credential={overrides.credential}
+        credentials={this.state.credentials.map(credential => credential.name)}
+        initUtils={this.props.initUtils}
         onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
         onCredentialUpdated={
           overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
-        user={this.props.username}
-        validateForm={this.props.initUtils.validateForm} />);
+        username={this.props.username} />);
   }
 
   render() {

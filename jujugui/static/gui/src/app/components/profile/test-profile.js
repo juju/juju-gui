@@ -32,6 +32,7 @@ describe('Profile', function() {
         controllerUser={options.controllerUser || 'spinach'}
         addToModel={options.addToModel || sinon.stub()}
         facadesExist={true}
+        generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         getUser={options.getUser || sinon.stub()}
         initUtils={initUtils}

@@ -4,6 +4,7 @@
 const React = require('react');
 
 const GenericButton = require('../../generic-button/generic-button');
+const IconList = require('../../icon-list/icon-list');
 const SearchResultsItem = require('./item');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -45,7 +46,6 @@ describe('SearchResultsItem', function() {
         item={item} />);
     const tags = output.props.children[1].props.children[1].props.children;
     const series = output.props.children[2].props.children.props.children;
-    const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
     var expected = (
@@ -94,26 +94,10 @@ describe('SearchResultsItem', function() {
           </ul>
         </div>
         <div className="charm-logos__column list-block__column one-col">
-          <ul className="list-icons clearfix">
-            {[
-              <li className="list-icons__item tooltip"
-                key="mysql">
-                <a className="list-block__list--item-link"
-                  href="/u/spinach/apache2"
-                  onClick={icons[0].props.children.props.onClick}>
-                  <img src={
-                    'static/gui/build/app/assets/images/non-sprites/' +
-                    'charm_160.svg'}
-                  className="list-icons__image"
-                  alt="mysql" />
-                  <span className="tooltip__tooltip">
-                    <span className="tooltip__inner tooltip__inner--down">
-                      mysql
-                    </span>
-                  </span>
-                </a>
-              </li>]}
-          </ul>
+          <IconList
+            applications={[item]}
+            changeState={sinon.stub()}
+            generatePath={sinon.stub()} />
         </div>
         <div className="two-col owner__column list-block__column">
           <p className="cell">
@@ -153,7 +137,6 @@ describe('SearchResultsItem', function() {
         addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
-    const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
     var expected = (
@@ -176,26 +159,10 @@ describe('SearchResultsItem', function() {
           </ul>
         </div>
         <div className="charm-logos__column list-block__column one-col">
-          <ul className="list-icons clearfix">
-            {[
-              <li className="list-icons__item tooltip"
-                key="mysql">
-                <a className="list-block__list--item-link"
-                  href="/u/spinach/apache2"
-                  onClick={icons[0].props.children.props.onClick}>
-                  <img src={
-                    'static/gui/build/app/assets/images/non-sprites/' +
-                    'charm_160.svg'}
-                  className="list-icons__image"
-                  alt="mysql" />
-                  <span className="tooltip__tooltip">
-                    <span className="tooltip__inner tooltip__inner--down">
-                      mysql
-                    </span>
-                  </span>
-                </a>
-              </li>]}
-          </ul>
+          <IconList
+            applications={[item]}
+            changeState={sinon.stub()}
+            generatePath={sinon.stub()} />
         </div>
         <div className="two-col owner__column list-block__column">
           <p className="cell">
@@ -245,7 +212,6 @@ describe('SearchResultsItem', function() {
         addToModel={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
-    const icons = output.props.children[3].props.children.props.children;
     const owner = output.props.children[4].props.children.props.children[1];
     const deploy = output.props.children[5].props.children;
     var expected = (
@@ -268,38 +234,10 @@ describe('SearchResultsItem', function() {
           </ul>
         </div>
         <div className="charm-logos__column list-block__column three-col">
-          <ul className="list-icons clearfix">
-            <li className="list-icons__item tooltip"
-              key="wordpress">
-              <a className="list-block__list--item-link"
-                href="/u/spinach/apache2"
-                onClick={icons[0].props.children.props.onClick}>
-                <img src="wordpress.svg"
-                  className="list-icons__image"
-                  alt="wordpress" />
-                <span className="tooltip__tooltip">
-                  <span className="tooltip__inner tooltip__inner--down">
-                    wordpress
-                  </span>
-                </span>
-              </a>
-            </li>
-            <li className="list-icons__item tooltip"
-              key="apache2">
-              <a className="list-block__list--item-link"
-                href="/u/spinach/apache2"
-                onClick={icons[1].props.children.props.onClick}>
-                <img src="apache2.svg"
-                  className="list-icons__image"
-                  alt="apache2" />
-                <span className="tooltip__tooltip">
-                  <span className="tooltip__inner tooltip__inner--down">
-                    apache2
-                  </span>
-                </span>
-              </a>
-            </li>
-          </ul>
+          <IconList
+            applications={item.applications}
+            changeState={sinon.stub()}
+            generatePath={sinon.stub()} />
         </div>
         <div className="two-col owner__column list-block__column">
           <p className="cell">
