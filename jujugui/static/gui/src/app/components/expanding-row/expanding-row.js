@@ -90,7 +90,8 @@ class ExpandingRow extends React.Component {
   render() {
     return (
       <li className={this._generateClasses()}
-        onClick={this.props.clickable ? this._toggle.bind(this) : undefined}>
+        onClick={this.props.clickable ? this._toggle.bind(this) : undefined}
+        style={this.props.style}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           {this.props.children[0]}
         </div>
@@ -112,7 +113,8 @@ ExpandingRow.propTypes = {
   ]),
   classes: PropTypes.object,
   clickable: PropTypes.bool,
-  expanded: PropTypes.bool
+  expanded: PropTypes.bool,
+  style: PropTypes.object
 };
 
 ExpandingRow.defaultProps = {

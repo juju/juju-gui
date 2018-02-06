@@ -58,9 +58,11 @@ class BasicTable extends React.Component {
     Generate a row.
     @param isHeader {Boolean} Whether this is a header row.
     @param row {Object} The row contents, key etc.
+    @param index {Int} The positional index.
+    @param rowCount {Int} The number of rows.
     @returns {Object} The row to render.
   */
-  _generateRow(isHeader, row) {
+  _generateRow(isHeader, row, index = 0, rowCount = 1) {
     let columnList;
     if (isHeader) {
       columnList = row;
@@ -96,10 +98,14 @@ class BasicTable extends React.Component {
     });
     const defaultRowClasses = this.props.rowClasses || [];
     const rowClasses = row.classes || [];
+    const style = {zIndex: rowCount - index};
     if (row.expandedContent) {
+      const rowClickable = (
+        row.rowClickable !== undefined ? row.rowClickable : !!row.expandedContent);
       let classes = {
         'basic-table__row': true,
         'basic-table__row--expandable': true,
+        'basic-table__row--clickable': rowClickable,
         'first-row-class': true,
         'twelve-col': true
       };
@@ -109,7 +115,10 @@ class BasicTable extends React.Component {
       return (
         <ExpandingRow
           classes={classes}
-          key={row.key}>
+          clickable={rowClickable}
+          expanded={row.expandedContentExpanded}
+          key={row.key}
+          style={style}>
           <div>
             {columns}
           </div>
@@ -128,7 +137,8 @@ class BasicTable extends React.Component {
         });
       return (
         <li className={classes}
-          key={isHeader ? 'basic-table-header' : row.key}>
+          key={isHeader ? 'basic-table-header' : row.key}
+          style={style}>
           {this._generateAnchor(row.clickState)}
           {columns}
         </li>);
@@ -147,7 +157,7 @@ class BasicTable extends React.Component {
     if (this.props.sort) {
       rows.sort(this.props.sort);
     }
-    return rows.map(row => this._generateRow(false, row));
+    return rows.map((row, i) => this._generateRow(false, row, i, rows.length));
   }
 
   render() {
@@ -198,10 +208,15 @@ BasicTable.propTypes = {
     }).isRequired).isRequired,
     // Content to be displayed when the row is toggled.
     expandedContent: PropTypes.any,
+    // Set the expanded content state from outside the table.
+    expandedContentExpanded: PropTypes.bool,
     // Extra data that can be used when ordering, sorting etc.
     extraData: PropTypes.any,
     // The row key, used for React indexing and sorting.
-    key: PropTypes.string.isRequired
+    key: PropTypes.string.isRequired,
+    // Whether the row can be toggled by clicking on it. If this is not set the
+    // value will be controlled by whether there is expandable content.
+    rowClickable: PropTypes.bool
   }).isRequired).isRequired,
   // A method to sort the rows by. The row object is provided to the sort
   // method.

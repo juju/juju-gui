@@ -23,7 +23,8 @@ describe('ExpandingRow', () => {
     var expected = (
       <li className={
         'expanding-row twelve-col extraClass expanding-row--clickable'}
-      onClick={instance._toggle}>
+      onClick={instance._toggle}
+      style={undefined}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
         </div>
@@ -54,7 +55,8 @@ describe('ExpandingRow', () => {
       <li className={
         'expanding-row twelve-col expanding-row--expanded ' +
           'expanding-row--clickable'}
-      onClick={instance._toggle}>
+      onClick={instance._toggle}
+      style={undefined}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
         </div>
@@ -87,7 +89,8 @@ describe('ExpandingRow', () => {
       <li className={
         'expanding-row twelve-col expanding-row--expanded ' +
         'expanding-row--clickable'}
-      onClick={instance._toggle}>
+      onClick={instance._toggle}
+      style={undefined}>
         {output.props.children}
       </li>);
     expect(output).toEqualJSX(expected);
@@ -134,7 +137,8 @@ describe('ExpandingRow', () => {
     var output = renderer.getRenderOutput();
     var expected = (
       <li className="expanding-row twelve-col"
-        onClick={undefined}>
+        onClick={undefined}
+        style={undefined}>
         {output.props.children}
       </li>);
     expect(output).toEqualJSX(expected);
