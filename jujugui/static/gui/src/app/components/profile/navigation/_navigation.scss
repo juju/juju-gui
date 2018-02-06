@@ -13,6 +13,17 @@
 
     &.is-active {
       font-weight: 400;
+
+      &:hover {
+        color: $color-dark;
+        text-decoration: none;
+        cursor: default;
+      }
+    }
+
+    &:hover {
+      color: $link-blue;
+      text-decoration: underline;
     }
   }
 

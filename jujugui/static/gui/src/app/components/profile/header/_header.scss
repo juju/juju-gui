@@ -99,7 +99,11 @@
     }
 
     a {
-      color: #111;
+      color: $link-blue;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     li {
