@@ -234,8 +234,16 @@ describe('Profile Model List', function() {
               columnSize: 3
             }, {
               content: (
-                <SvgIcon name='user_16'
-                  size="16" />),
+                <div className="profile-model-list__access tooltip">
+                  <span className="tooltip__tooltip">
+                    <span className="tooltip__inner tooltip__inner--down">
+                      admin
+                    </span>
+                  </span>
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>),
               columnSize: 1
             }, {
               content: (
@@ -272,9 +280,16 @@ describe('Profile Model List', function() {
                   </div>
                 </div>
                 <div className="one-col">
-                  <SvgIcon
-                    name="user_16"
-                    size="16" />
+                  <div className="profile-model-list__access tooltip">
+                    <span className="tooltip__tooltip">
+                      <span className="tooltip__inner tooltip__inner--down">
+                        admin
+                      </span>
+                    </span>
+                    <SvgIcon
+                      name="user_16"
+                      size="16" />
+                  </div>
                 </div>
                 <div className="two-col">
                   <DateDisplay
@@ -320,8 +335,16 @@ describe('Profile Model List', function() {
               columnSize: 3
             }, {
               content: (
-                <SvgIcon name='user_16'
-                  size="16" />),
+                <div className="profile-model-list__access tooltip">
+                  <span className="tooltip__tooltip">
+                    <span className="tooltip__inner tooltip__inner--down">
+                      admin
+                    </span>
+                  </span>
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>),
               columnSize: 1
             }, {
               content: (
@@ -358,9 +381,16 @@ describe('Profile Model List', function() {
                   </div>
                 </div>
                 <div className="one-col">
-                  <SvgIcon
-                    name="user_16"
-                    size="16" />
+                  <div className="profile-model-list__access tooltip">
+                    <span className="tooltip__tooltip">
+                      <span className="tooltip__inner tooltip__inner--down">
+                        admin
+                      </span>
+                    </span>
+                    <SvgIcon
+                      name="user_16"
+                      size="16" />
+                  </div>
                 </div>
                 <div className="two-col">
                   <DateDisplay
@@ -406,8 +436,16 @@ describe('Profile Model List', function() {
               columnSize: 3
             }, {
               content: (
-                <SvgIcon name='show_16'
-                  size="16" />),
+                <div className="profile-model-list__access tooltip">
+                  <span className="tooltip__tooltip">
+                    <span className="tooltip__inner tooltip__inner--down">
+                      read
+                    </span>
+                  </span>
+                  <SvgIcon
+                    name="show_16"
+                    size="16" />
+                </div>),
               columnSize: 1
             }, {
               content: (
@@ -440,9 +478,16 @@ describe('Profile Model List', function() {
                   </div>
                 </div>
                 <div className="one-col">
-                  <SvgIcon
-                    name="show_16"
-                    size="16" />
+                  <div className="profile-model-list__access tooltip">
+                    <span className="tooltip__tooltip">
+                      <span className="tooltip__inner tooltip__inner--down">
+                        read
+                      </span>
+                    </span>
+                    <SvgIcon
+                      name="show_16"
+                      size="16" />
+                  </div>
                 </div>
                 <div className="two-col">
                   <DateDisplay
@@ -478,8 +523,16 @@ describe('Profile Model List', function() {
               columnSize: 3
             }, {
               content: (
-                <SvgIcon name='user_16'
-                  size="16" />),
+                <div className="profile-model-list__access tooltip">
+                  <span className="tooltip__tooltip">
+                    <span className="tooltip__inner tooltip__inner--down">
+                      admin
+                    </span>
+                  </span>
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>),
               columnSize: 1
             }, {
               content: (
@@ -516,9 +569,16 @@ describe('Profile Model List', function() {
                   </div>
                 </div>
                 <div className="one-col">
-                  <SvgIcon
-                    name="user_16"
-                    size="16" />
+                  <div className="profile-model-list__access tooltip">
+                    <span className="tooltip__tooltip">
+                      <span className="tooltip__inner tooltip__inner--down">
+                        admin
+                      </span>
+                    </span>
+                    <SvgIcon
+                      name="user_16"
+                      size="16" />
+                  </div>
                 </div>
                 <div className="two-col">
                   <DateDisplay
@@ -698,8 +758,16 @@ describe('Profile Model List', function() {
               columnSize: 3
             }, {
               content: (
-                <SvgIcon name='user_16'
-                  size="16" />),
+                <div className="profile-model-list__access tooltip">
+                  <span className="tooltip__tooltip">
+                    <span className="tooltip__inner tooltip__inner--down">
+                      admin
+                    </span>
+                  </span>
+                  <SvgIcon
+                    name="user_16"
+                    size="16" />
+                </div>),
               columnSize: 1
             }, {
               content: (
@@ -736,9 +804,16 @@ describe('Profile Model List', function() {
                   </div>
                 </div>
                 <div className="one-col">
-                  <SvgIcon
-                    name="user_16"
-                    size="16" />
+                  <div className="profile-model-list__access tooltip">
+                    <span className="tooltip__tooltip">
+                      <span className="tooltip__inner tooltip__inner--down">
+                        admin
+                      </span>
+                    </span>
+                    <SvgIcon
+                      name="user_16"
+                      size="16" />
+                  </div>
                 </div>
                 <div className="two-col">
                   <DateDisplay
