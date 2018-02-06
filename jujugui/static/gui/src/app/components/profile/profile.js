@@ -13,6 +13,7 @@ const ProfileCharmList = require('./charm-list/charm-list');
 const ProfileBundleList = require('./bundle-list/bundle-list');
 const ProfileCredentialList = require('./credential-list/credential-list');
 const ProfileInvoiceList = require('./invoice-list/invoice-list');
+const Invoice = require('../invoice/invoice');
 const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
@@ -158,8 +159,8 @@ class Profile extends React.Component {
     const info = this._getSectionInfo();
     if (info.active === 'invoices' && info.sub !== null) {
       return (
-        <Panel instanceName="invoice-detail" visible={true}>
-          <div className="twelve-col">Hello I am your invoice!</div>
+        <Panel instanceName="invoice" visible={true}>
+          <Invoice />
         </Panel>
       );
     }

@@ -1,0 +1,90 @@
+.invoice {
+  @extend %floating-panel;
+  min-height: 500vh;
+  width: 100vw;
+  z-index: index($z-indexed-elements, invoice);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  @media (min-width: 400px) {
+    background: $light-mid-grey;
+  }
+
+  &__inner {
+    padding: 1.5rem;
+
+    @media (min-width: 400px) {
+      background-color: $light-grey;
+      box-shadow: 3px 3px 15px 3px rgba(0,0,0,0.25);
+      margin: 2rem;
+      width: calc(100% - 4rem);
+      padding: 2rem;
+    }
+  }
+
+  &__label {
+    color: $dark-warm-grey;
+  }
+
+  &__heading {
+    border-top: 1px solid $light-mid-grey;
+    font-size: 2rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  &__number {
+    font-size: 1.25rem;
+  }
+
+  &__logo {
+    width: 80px;
+  }
+
+  &__info {
+    border-top: 1px solid $light-mid-grey;
+    margin-top: 1rem;
+  }
+
+  &__address {
+    width: 100%;
+    margin: 1rem 0;
+
+    & > * {
+      display: block;
+      width: 100%;
+      margin-bottom: .25rem;
+    }
+  }
+
+  &__meta {
+    display: flex;
+
+    &__col {
+      flex: 1;
+
+      span {
+        display: block;
+        margin-bottom: .5rem;
+        text-align: right;
+      }
+    }
+  }
+
+  &__summary {
+    border-top: 1px solid $light-mid-grey;
+    margin-top: 1rem;
+    padding: 1rem 0;
+
+    * {
+      display: block;
+    }
+  }
+
+  .u-btn-mar {
+    margin-bottom: 1rem;
+  }
+}
