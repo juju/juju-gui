@@ -203,7 +203,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={unitStatus}
         title='Units'
         icon={icon} />
@@ -290,7 +290,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Configure'
         icon={icon} />
@@ -386,7 +386,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={headerType}
         title={title}
         icon={icon} />
@@ -791,7 +791,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Scale'
         icon={icon} />
@@ -874,7 +874,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Expose'
         icon={icon} />
@@ -955,7 +955,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Relations'
         icon={icon} />
@@ -1032,7 +1032,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Relate to'
         icon={icon} />
@@ -1113,7 +1113,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='spouse-name'
         icon={icon} />
@@ -1198,7 +1198,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Plan'
         icon={icon} />
@@ -1277,7 +1277,7 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Change version'
         icon={icon} />
@@ -1369,7 +1369,7 @@ describe('Inspector', function() {
         charmId="demo"
         entityPath="u/foo/bar"
         hasGetStarted={true}
-        showLinks={true}
+        showLinks={false}
         type={undefined}
         title='Resources'
         icon={icon} />
