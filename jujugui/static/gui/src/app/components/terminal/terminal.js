@@ -121,10 +121,12 @@ class Terminal extends React.Component {
       // 1000 is the code for a normal closure, anything above that is abnormal.
       if (evt && evt.code > 1000) {
         // It is not a normal closure so we should issue an error.
+        const msg = 'Terminal connection unexpectedly closed.';
+        term.writeln(msg + ' Close and re-open the terminal window to reconnect.');
         console.log(evt);
         props.addNotification({
-          title: 'Terminal connection unexpectedly closed.',
-          message: 'Terminal connection unexpectedly closed.',
+          title: msg,
+          message: msg,
           level: 'error'
         });
       }
