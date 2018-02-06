@@ -229,7 +229,7 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__machine-number">
                     {0}
                   </span>
-                  ec2/eu-west-1
+                  aws/eu-west-1
                 </div>),
               columnSize: 3
             }, {
@@ -268,7 +268,7 @@ describe('Profile Model List', function() {
                     <span className="profile-model-list__machine-number">
                       0
                     </span>
-                    ec2/eu-west-1
+                    aws/eu-west-1
                   </div>
                 </div>
                 <div className="one-col">
@@ -315,7 +315,7 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__machine-number">
                     {0}
                   </span>
-                  gce/us-central1
+                  google/us-central1
                 </div>),
               columnSize: 3
             }, {
@@ -354,7 +354,7 @@ describe('Profile Model List', function() {
                     <span className="profile-model-list__machine-number">
                       0
                     </span>
-                    gce/us-central1
+                    google/us-central1
                   </div>
                 </div>
                 <div className="one-col">
@@ -401,7 +401,7 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__machine-number">
                     {2}
                   </span>
-                  gce/us-east1
+                  google/us-east1
                 </div>),
               columnSize: 3
             }, {
@@ -436,7 +436,7 @@ describe('Profile Model List', function() {
                     <span className="profile-model-list__machine-number">
                       2
                     </span>
-                    gce/us-east1
+                    google/us-east1
                   </div>
                 </div>
                 <div className="one-col">
@@ -473,7 +473,7 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__machine-number">
                     {25}
                   </span>
-                  gce/us-east1
+                  google/us-east1
                 </div>),
               columnSize: 3
             }, {
@@ -512,7 +512,7 @@ describe('Profile Model List', function() {
                     <span className="profile-model-list__machine-number">
                       25
                     </span>
-                    gce/us-east1
+                    google/us-east1
                   </div>
                 </div>
                 <div className="one-col">
@@ -693,7 +693,7 @@ describe('Profile Model List', function() {
                   <span className="profile-model-list__machine-number">
                     {0}
                   </span>
-                  ec2/eu-west-1
+                  aws/eu-west-1
                 </div>),
               columnSize: 3
             }, {
@@ -732,7 +732,7 @@ describe('Profile Model List', function() {
                     <span className="profile-model-list__machine-number">
                       0
                     </span>
-                    ec2/eu-west-1
+                    aws/eu-west-1
                   </div>
                 </div>
                 <div className="one-col">
