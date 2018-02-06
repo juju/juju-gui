@@ -47,7 +47,8 @@ class Inspector extends React.Component {
     const appState = this.props.appState;
     const changeState = appState.changeState.bind(appState);
     const state = {
-      activeComponent: appState.current.gui.inspector.activeComponent
+      activeComponent: appState.current.gui.inspector.activeComponent,
+      showHeaderLinks: false
     };
     const stateHistory = appState.history;
     const prevState = stateHistory[stateHistory.length-2];
@@ -86,6 +87,7 @@ class Inspector extends React.Component {
             showPlans={this.props.showPlans} />,
           backState: backState
         };
+        state.showHeaderLinks = true;
         break;
       case 'units':
         var unitStatus = appState.current.gui.inspector.units;
@@ -367,7 +369,7 @@ class Inspector extends React.Component {
           changeState={this.props.appState.changeState.bind(this.props.appState)}
           entityPath={this.props.entityPath}
           hasGetStarted={this.props.charm.hasGetStarted()}
-          showLinks={true}
+          showLinks={this.state.showHeaderLinks}
           icon={this.state.activeChild.icon}
           title={this.state.activeChild.title}
           type={this.state.activeChild.headerType} />
