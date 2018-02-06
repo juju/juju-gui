@@ -144,6 +144,36 @@ describe('ProfileCredentialList', () => {
     });
   });
 
+  it('does not fail if models exist with unkonwn credentials', done => {
+    // Add a non-shared model without a matching credential. This is not-shared
+    // because the owner is the owner defined in these tests foo@external.
+    modelData.push({
+      owner: 'foo@external',
+      credential: 'a missing credential',
+      name: 'modelwithmissingcred'
+    });
+    const component = renderComponentToDOM();
+    loopCheck(component, () => {
+      assert.equal(component.state.loading, false);
+      // Check that the map has the proper values.
+      const map = component.state.credentialMap;
+      assert.deepEqual(
+        map.get('aws_foo@external_cred1'),
+        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
+      assert.deepEqual(
+        map.get('aws_foo@external_testcred'),
+        {cloud: 'aws', displayName: 'testcred'});
+      assert.deepEqual(
+        map.get('azure_foo@external_cred1'),
+        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
+      assert.deepEqual(
+        map.get('google_foo@external_admin'),
+        {cloud: 'google', displayName: 'admin'});
+      removeComponent(component);
+      done();
+    });
+  });
+
   function testRequestErrorNotification(controllerAPI, done) {
     const addNotification = sinon.stub();
     const component = renderComponentToDOM({addNotification, controllerAPI});
