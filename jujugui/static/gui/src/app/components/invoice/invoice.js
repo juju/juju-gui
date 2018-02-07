@@ -102,9 +102,8 @@ class Invoice extends React.Component {
         </div>);
     }
     return (
-      <div>
-        {content}
-      </div>);
+      {content}
+    );
   }
 };
 
