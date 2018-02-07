@@ -1,11 +1,12 @@
 #deployment-bar-container {
-  height: 40px;
-  margin-bottom: 20px;
+  height: 0;
 }
 
 .deployment-bar {
-  float: right;
   position: relative;
+  height: 0;
+  top: -60px;
+  float: right;
   right: 20px;
 
   &__deploy {
