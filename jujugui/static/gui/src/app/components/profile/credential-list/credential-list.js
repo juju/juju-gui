@@ -22,7 +22,7 @@ class ProfileCredentialList extends React.Component {
     this.state = {
       credentialMap: new Map(),
       editCredential: null,
-      loading: true,
+      loading: false,
       removeCredential: null,
       showAdd: false
     };
@@ -34,6 +34,8 @@ class ProfileCredentialList extends React.Component {
 
   async _getClouds() {
     const props = this.props;
+
+    this.setState({loading: true});
     try {
       const clouds = await this._listClouds();
       const credentialMap = await this._getCloudCredentialNames(props.username, clouds);
@@ -214,8 +216,7 @@ class ProfileCredentialList extends React.Component {
     @param credential {String} The name of the newly created credential.
   */
   _onCredentialDeleted(credential) {
-    // Remove the credential from the list.
-    this.state.credentialMap.delete(credential);
+    this._getClouds();
     this._setDeleteCredential();
   }
 
@@ -263,7 +264,7 @@ class ProfileCredentialList extends React.Component {
         credential={credential}
         onCancel={this._setDeleteCredential.bind(this)}
         onCredentialDeleted={this._onCredentialDeleted.bind(this)}
-        revokeCloudCredential={this.props.controllerAPI .revokeCloudCredential} />);
+        revokeCloudCredential={this.props.controllerAPI.revokeCloudCredential} />);
   }
 
   /**
