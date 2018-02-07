@@ -20,11 +20,6 @@ class UserMenu extends React.Component {
     this._toggleDropdown();
   }
 
-  _handleAccountClick() {
-    this.props.navigateUserAccount();
-    this._toggleDropdown();
-  }
-
   render() {
     const controllerAPI = this.props.controllerAPI;
     const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
@@ -41,12 +36,6 @@ class UserMenu extends React.Component {
               role="button"
               onClick={this._handleProfileClick.bind(this)}>Profile</a>
           </li>,
-          this.props.showAccount ? (<li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="account">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={this._handleAccountClick.bind(this)}>Account</a>
-          </li>) : null,
           <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="help">
             <a className="dropdown-menu__list-item-link"
@@ -66,9 +55,7 @@ UserMenu.propTypes = {
   LogoutLink: PropTypes.object,
   USSOLoginLink: PropTypes.object,
   controllerAPI: PropTypes.object,
-  navigateUserAccount: PropTypes.func.isRequired,
   navigateUserProfile: PropTypes.func.isRequired,
-  showAccount: PropTypes.bool,
   showHelp: PropTypes.func.isRequired
 };
 

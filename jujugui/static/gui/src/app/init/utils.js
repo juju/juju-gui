@@ -558,49 +558,7 @@ utils.showProfile = (changeState, username) => {
     root: null,
     store: null,
     search: null,
-    account: null,
     user: null
-  });
-};
-
-/**
-  Navigate to the account, displaying a confirmation if there are
-  uncommitted changes.
-
-  @param {Object} ecs Reference to the ecs.
-  @param {Function} changeState The method for changing the app state.
-*/
-utils.showAccount = (ecs, changeState) => {
-  const currentChangeSet = ecs.getCurrentChangeSet();
-  // If there are uncommitted changes then show a confirmation popup.
-  if (Object.keys(currentChangeSet).length > 0) {
-    utils._showUncommittedConfirm(
-      utils._showAccount.bind(this, ecs, changeState, true));
-    return;
-  }
-  // If there are no uncommitted changes then switch right away.
-  utils._showAccount(ecs, changeState, false);
-};
-
-/**
-  Navigate to the account, hiding the uncommitted confirmation if necessary.
-
-  @param {Object} ecs Reference to the ecs.
-  @param {Function} changeState The method for changing the app state.
-  @param {Boolean} clear Whether to clear the ecs.
-*/
-utils._showAccount = (ecs, changeState, clear=false) => {
-  utils._hidePopup();
-  if (clear) {
-    // Have to go ahead and clear the ECS otherwise future navigation will
-    // pop up the uncommitted changes confirmation again.
-    ecs.clear();
-  }
-  changeState({
-    profile: null,
-    model: null,
-    root: 'account',
-    store: null
   });
 };
 

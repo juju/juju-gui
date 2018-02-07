@@ -23,7 +23,6 @@ const viewUtils = require('../views/utils');
 const endpointUtils = require('./endpoint-utils');
 const WebHandler = require('../store/env/web-handler');
 
-const Account = require('../components/account/account');
 const AddedServicesList = require('../components/added-services-list/added-services-list');
 const Charmbrowser = require('../components/charmbrowser/charmbrowser');
 const DeploymentBar = require('../components/deployment-bar/deployment-bar');
@@ -344,10 +343,10 @@ Browser: ${navigator.userAgent}`
         getModelName={this._getModelName.bind(this)}
         getUser={this.identity.getUser.bind(this.identity)}
         initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
-        payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
+        payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
         sendAnalytics={this.sendAnalytics}
         showPay={this.applicationConfig.flags.pay || false}
-        stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
+        stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
         switchModel={this._bound.switchModel}
         userInfo={this._getUserInfo(state)} />,
       document.getElementById('top-page-container'));
@@ -1161,30 +1160,17 @@ Browser: ${navigator.userAgent}`
       }
       initUtils.showProfile(this._bound.changeState, username);
     };
-    const navigateUserAccount = () => {
-      const username = this.user.displayName;
-      if (!username) {
-        return;
-      }
-      initUtils.showAccount(
-        this.modelAPI && this.modelAPI.get('ecs'),
-        this._bound.changeState);
-    };
 
     const showHelp = () => {
       this.state.changeState({
         help: true
       });
     };
-    const flags = this.applicationConfig.flags;
+
     ReactDOM.render(<UserMenu
       controllerAPI={controllerAPI}
       LogoutLink={LogoutLink}
-      navigateUserAccount={navigateUserAccount}
       navigateUserProfile={navigateUserProfile}
-      // The account functionality is available in the new profile so don't
-      // need to show the account link when the flag is on.
-      showAccount={!flags.profile}
       showHelp={showHelp}
       USSOLoginLink={_USSOLoginLink} />, linkContainer);
   }

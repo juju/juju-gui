@@ -26,9 +26,7 @@ describe('UserMenu', () => {
         LogoutLink={options.LogoutLink || logoutLink}
         USSOLoginLink={USSOLoginLink}
         controllerAPI={controllerAPI}
-        navigateUserAccount={sinon.stub()}
         navigateUserProfile={sinon.stub()}
-        showAccount={true}
         showHelp={sinon.stub()} />, true);
     return {
       renderer: renderer,
@@ -39,7 +37,6 @@ describe('UserMenu', () => {
 
   it('can render without the account link', () => {
     const c = renderComponent({
-      showAccount: false,
       userIsAuthenticated: false
     });
     const expected = (
@@ -54,12 +51,6 @@ describe('UserMenu', () => {
             <a className="dropdown-menu__list-item-link"
               role="button"
               onClick={c.instance._handleProfileClick}>Profile</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="account">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={c.instance._handleAccountClick}>Account</a>
           </li>,
           <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="help">
@@ -96,12 +87,6 @@ describe('UserMenu', () => {
               onClick={c.instance._handleProfileClick}>Profile</a>
           </li>,
           <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="account">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={c.instance._handleAccountClick}>Account</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="help">
             <a className="dropdown-menu__list-item-link"
               onClick={c.instance.props.showHelp} role="button">
@@ -136,12 +121,6 @@ describe('UserMenu', () => {
               onClick={c.instance._handleProfileClick}>Profile</a>
           </li>,
           <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="account">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={c.instance._handleAccountClick}>Account</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
             role="menuitem" tabIndex="0" key="help">
             <a className="dropdown-menu__list-item-link"
               onClick={c.instance.props.showHelp} role="button">
@@ -167,18 +146,6 @@ describe('UserMenu', () => {
     };
     c.output.props.listItems[0].props.children.props.onClick.call(c.instance);
     assert.equal(c.instance.props.navigateUserProfile.callCount, 1);
-    assert.equal(c.instance.refs.buttonDropdown._toggleDropdown.callCount, 1);
-  });
-
-  it('navigates to the user account when clicked', () => {
-    const c = renderComponent();
-    c.instance.refs = {
-      buttonDropdown: {
-        _toggleDropdown: sinon.stub()
-      }
-    };
-    c.output.props.listItems[1].props.children.props.onClick.call(c.instance);
-    assert.equal(c.instance.props.navigateUserAccount.callCount, 1);
     assert.equal(c.instance.refs.buttonDropdown._toggleDropdown.callCount, 1);
   });
 
