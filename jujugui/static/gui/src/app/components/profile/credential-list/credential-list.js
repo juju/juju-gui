@@ -10,7 +10,7 @@ const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const MoreMenu = require('../../more-menu/more-menu');
-const ProfileCredentialListAdd = require('./add/add');
+const ProfileCredentialListDelete = require('./delete/delete');
 const Spinner = require('../../spinner/spinner');
 
 // Define the name of the lxd cloud.
@@ -258,7 +258,7 @@ class ProfileCredentialList extends React.Component {
       return null;
     }
     return (
-      <ProfileCredentialListAdd
+      <ProfileCredentialListDelete
         addNotification={this.props.addNotification}
         credential={credential}
         onCancel={this._setDeleteCredential.bind(this)}

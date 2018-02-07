@@ -4,14 +4,14 @@
 const React = require('react');
 
 const Popup = require('../../../popup/popup');
-const ProfileCredentialListAdd = require('./add');
+const ProfileCredentialListDelete = require('./delete');
 
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
-describe('ProfileCredentialListAdd', () => {
+describe('ProfileCredentialListDelete', () => {
   function renderComponent(options = {}) {
     const renderer = jsTestUtils.shallowRender(
-      <ProfileCredentialListAdd
+      <ProfileCredentialListDelete
         addNotification={options.addNotification || sinon.stub()}
         credential="google_foo@external_admin"
         onCancel={options.onCancel || sinon.stub()}

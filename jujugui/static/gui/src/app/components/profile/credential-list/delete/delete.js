@@ -6,7 +6,7 @@ const React = require('react');
 
 const Popup = require('../../../popup/popup');
 
-class ProfileCredentialListAdd extends React.Component {
+class ProfileCredentialListDelete extends React.Component {
   /**
     Handle deleting a credential.
 
@@ -51,7 +51,7 @@ class ProfileCredentialListAdd extends React.Component {
   }
 }
 
-ProfileCredentialListAdd.propTypes = {
+ProfileCredentialListDelete.propTypes = {
   addNotification: PropTypes.func.isRequired,
   credential: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
@@ -59,4 +59,4 @@ ProfileCredentialListAdd.propTypes = {
   revokeCloudCredential: PropTypes.func.isRequired
 };
 
-module.exports = ProfileCredentialListAdd;
+module.exports = ProfileCredentialListDelete;

@@ -11,7 +11,7 @@ const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const MoreMenu = require('../../more-menu/more-menu');
 const ProfileCredentialList = require('./credential-list');
-const ProfileCredentialListAdd = require('./add/add');
+const ProfileCredentialListDelete = require('./delete/delete');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -489,7 +489,7 @@ describe('ProfileCredentialList', () => {
     return instance._getClouds().then(() => {
       const output = renderer.getRenderOutput();
       const expected = (
-        <ProfileCredentialListAdd
+        <ProfileCredentialListDelete
           addNotification={sinon.stub()}
           credential="google_foo@external_admin"
           onCancel={sinon.stub()}
