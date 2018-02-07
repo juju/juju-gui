@@ -10,6 +10,7 @@ const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const MoreMenu = require('../../more-menu/more-menu');
+const ProfileCredentialListAdd = require('./add/add');
 const Spinner = require('../../spinner/spinner');
 
 // Define the name of the lxd cloud.
@@ -22,6 +23,7 @@ class ProfileCredentialList extends React.Component {
       credentialMap: new Map(),
       editCredential: null,
       loading: true,
+      removeCredential: null,
       showAdd: false
     };
   }
@@ -149,6 +151,14 @@ class ProfileCredentialList extends React.Component {
   }
 
   /**
+    Handle deleting a credential.
+    @param credential {String} A credential id.
+  */
+  _setDeleteCredential(credential = null) {
+    this.setState({removeCredential: credential});
+  }
+
+  /**
     Generate a form to add credentials.
   */
   _generateAddCredentials() {
@@ -200,6 +210,16 @@ class ProfileCredentialList extends React.Component {
   }
 
   /**
+    Handle a credential having been created.
+    @param credential {String} The name of the newly created credential.
+  */
+  _onCredentialDeleted(credential) {
+    // Remove the credential from the list.
+    this.state.credentialMap.delete(credential);
+    this._setDeleteCredential();
+  }
+
+  /**
     Generate the add credentials UI with any supplied overrides depending
     on where it is to be rendered.
     @param {Object} overrides The overrides for the default props.
@@ -207,7 +227,7 @@ class ProfileCredentialList extends React.Component {
   */
   _generateCredentialForm(overrides={}) {
     const controllerAPI = this.props.controllerAPI;
-    const credentials = this.state.credentials;
+    const credentials = this.state.credentialMap;
     return (
       <CredentialAddEdit
         key="deployment-credential-add"
@@ -220,13 +240,30 @@ class ProfileCredentialList extends React.Component {
         controllerIsReady={this.props.controllerIsReady}
         credential={overrides.credential}
         credentials={
-          credentials ? Array.from(credentials).map(credential => credential.name) : []}
+          credentials ? Array.from(credentials).map(credential => credential[0]) : []}
         initUtils={this.props.initUtils}
         onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
         onCredentialUpdated={
           overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
         username={this.props.username} />);
+  }
+
+  /**
+    Display a component for deleting a credential.
+  */
+  _generateDeleteCredential() {
+    const credential = this.state.removeCredential;
+    if (!credential) {
+      return null;
+    }
+    return (
+      <ProfileCredentialListAdd
+        addNotification={this.props.addNotification}
+        credential={credential}
+        onCancel={this._setDeleteCredential.bind(this)}
+        onCredentialDeleted={this._onCredentialDeleted.bind(this)}
+        revokeCloudCredential={this.props.controllerAPI .revokeCloudCredential} />);
   }
 
   /**
@@ -279,7 +316,7 @@ class ProfileCredentialList extends React.Component {
                 action: this._setEditCredential.bind(this, key)
               }, {
                 label: 'Delete',
-                action: () => {}
+                action: this._setDeleteCredential.bind(this, key)
               }]} />),
           columnSize: 1
         }],
@@ -341,6 +378,7 @@ class ProfileCredentialList extends React.Component {
         </div>
         {this._generateAddCredentials()}
         {this._generateCredentialsList()}
+        {this._generateDeleteCredential()}
       </div>
     );
   }
@@ -355,6 +393,7 @@ ProfileCredentialList.propTypes = {
     getCloudCredentialNames: PropTypes.func.isRequired,
     listClouds: PropTypes.func.isRequired,
     listModelsWithInfo: PropTypes.func.isRequired,
+    revokeCloudCredential: PropTypes.func.isRequired,
     updateCloudCredential: PropTypes.func.isRequired
   }),
   controllerIsReady: PropTypes.func.isRequired,

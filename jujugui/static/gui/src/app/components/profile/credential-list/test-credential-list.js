@@ -5,12 +5,13 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
 
-const ProfileCredentialList = require('./credential-list');
 const BasicTable = require('../../basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const MoreMenu = require('../../more-menu/more-menu');
+const ProfileCredentialList = require('./credential-list');
+const ProfileCredentialListAdd = require('./add/add');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -55,6 +56,7 @@ describe('ProfileCredentialList', () => {
       listClouds: callback => callback(null, cloudData),
       getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
       listModelsWithInfo: callback => callback(null, modelData),
+      revokeCloudCredential: sinon.stub(),
       updateCloudCredential: sinon.stub()
     };
     initUtils = {
@@ -209,6 +211,7 @@ describe('ProfileCredentialList', () => {
       listClouds: callback => callback(null, cloudData),
       getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
       listModelsWithInfo: callback => callback('error', modelData),
+      revokeCloudCredential: sinon.stub(),
       updateCloudCredential: sinon.stub()
     };
     testRequestErrorNotification(controllerAPI, done);
@@ -255,7 +258,9 @@ describe('ProfileCredentialList', () => {
                 }}
                 controllerIsReady={sinon.stub()}
                 credential={undefined}
-                credentials={[]}
+                credentials={[
+                  'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                  'azure_foo@external_cred1', 'google_foo@external_admin']}
                 initUtils={initUtils}
                 onCancel={sinon.stub()}
                 onCredentialUpdated={sinon.stub()}
@@ -317,7 +322,9 @@ describe('ProfileCredentialList', () => {
                   }}
                   controllerIsReady={sinon.stub()}
                   credential={{cloud: 'aws', displayName: 'cred1', models: ['testmodel1']}}
-                  credentials={[]}
+                  credentials={[
+                    'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                    'azure_foo@external_cred1', 'google_foo@external_admin']}
                   initUtils={initUtils}
                   onCancel={sinon.stub()}
                   onCredentialUpdated={sinon.stub()}
@@ -362,7 +369,9 @@ describe('ProfileCredentialList', () => {
                   }}
                   controllerIsReady={sinon.stub()}
                   credential={{cloud: 'aws', displayName: 'testcred'}}
-                  credentials={[]}
+                  credentials={[
+                    'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                    'azure_foo@external_cred1', 'google_foo@external_admin']}
                   initUtils={initUtils}
                   onCancel={sinon.stub()}
                   onCredentialUpdated={sinon.stub()}
@@ -407,7 +416,9 @@ describe('ProfileCredentialList', () => {
                   }}
                   controllerIsReady={sinon.stub()}
                   credential={{cloud: 'azure', displayName: 'cred1', models: ['testmodel2']}}
-                  credentials={[]}
+                  credentials={[
+                    'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                    'azure_foo@external_cred1', 'google_foo@external_admin']}
                   initUtils={initUtils}
                   onCancel={sinon.stub()}
                   onCredentialUpdated={sinon.stub()}
@@ -452,7 +463,9 @@ describe('ProfileCredentialList', () => {
                   }}
                   controllerIsReady={sinon.stub()}
                   credential={{cloud: 'google', displayName: 'admin'}}
-                  credentials={[]}
+                  credentials={[
+                    'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                    'azure_foo@external_cred1', 'google_foo@external_admin']}
                   initUtils={initUtils}
                   onCancel={sinon.stub()}
                   onCredentialUpdated={sinon.stub()}
@@ -466,6 +479,24 @@ describe('ProfileCredentialList', () => {
         </div>
       );
       expect(output).toEqualJSX(expected);
+    });
+  });
+
+  it('can show the UI to delete a credential', () => {
+    const renderer = shallowRenderComponent();
+    const instance = renderer.getMountedInstance();
+    instance._setDeleteCredential('google_foo@external_admin');
+    return instance._getClouds().then(() => {
+      const output = renderer.getRenderOutput();
+      const expected = (
+        <ProfileCredentialListAdd
+          addNotification={sinon.stub()}
+          credential="google_foo@external_admin"
+          onCancel={sinon.stub()}
+          onCredentialDeleted={sinon.stub()}
+          revokeCloudCredential={sinon.stub()} />
+      );
+      expect(output.props.children[4]).toEqualJSX(expected);
     });
   });
 
