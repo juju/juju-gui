@@ -53,7 +53,6 @@ const Status = require('../components/status/status');
 const SvgIcon = require('../components/svg-icon/svg-icon');
 const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
-const UserProfile = require('../components/user-profile/user-profile');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
 
@@ -320,67 +319,38 @@ Browser: ${navigator.userAgent}`
         }
       });
     }
-    const charmstore = this.charmstore;
-    const currentModel = this.modelUUID;
     // NOTE: we need to clone this.get('users') below; passing in without
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
-    let profile = (
-      <UserProfile
-        acl={this.acl}
+    const charmstore = this.charmstore;
+    const payment = this.payment;
+    const stripe = this.stripe;
+    ReactDOM.render(
+      <Profile
+        acl={shapeup.fromShape(this.acl, Profile.propTypes.acl)}
+        activeSection={state.hash}
         addNotification={this._bound.addNotification}
-        charmstore={charmstore}
-        currentModel={currentModel}
-        d3={yui.d3}
-        facadesExist={facadesExist}
-        listBudgets={this.plans.listBudgets.bind(this.plans)}
-        listModelsWithInfo={
-          this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI)}
-        getKpiMetrics={this.plans.getKpiMetrics.bind(this.plans)}
+        baseURL={this.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
-        destroyModels={
-          this.controllerAPI.destroyModels.bind(this.controllerAPI)}
-        getAgreements={this.terms.getAgreements.bind(this.terms)}
-        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-        interactiveLogin={this.applicationConfig.interactiveLogin}
-        pluralize={initUtils.pluralize.bind(this)}
-        setPageTitle={this.setPageTitle}
-        staticURL={this.applicationConfig.staticURL}
-        storeUser={this.storeUser.bind(this)}
+        charmstore={charmstore}
+        controllerAPI={
+          shapeup.fromShape(this.controllerAPI, Profile.propTypes.controllerAPI)}
+        controllerIsReady={this._controllerIsReady.bind(this)}
+        controllerUser={this.user.controller.user}
+        addToModel={this.addToModel.bind(this, charmstore)}
+        destroyModels={this._bound.destroyModels}
+        facadesExist={facadesExist}
+        generatePath={this.state.generatePath.bind(this.state)}
+        getModelName={this._getModelName.bind(this)}
+        getUser={this.identity.getUser.bind(this.identity)}
+        initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
+        payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
+        sendAnalytics={this.sendAnalytics}
+        showPay={this.applicationConfig.flags.pay || false}
+        stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
         switchModel={this._bound.switchModel}
-        userInfo={this._getUserInfo(state)} />);
-
-    if (this.applicationConfig.flags.profile) {
-      const payment = this.payment;
-      const stripe = this.stripe;
-      profile = (
-        <Profile
-          acl={shapeup.fromShape(this.acl, Profile.propTypes.acl)}
-          activeSection={state.hash}
-          addNotification={this._bound.addNotification}
-          baseURL={this.applicationConfig.baseUrl}
-          changeState={this._bound.changeState}
-          charmstore={charmstore}
-          controllerAPI={
-            shapeup.fromShape(this.controllerAPI, Profile.propTypes.controllerAPI)}
-          controllerIsReady={this._controllerIsReady.bind(this)}
-          controllerUser={this.user.controller.user}
-          addToModel={this.addToModel.bind(this, charmstore)}
-          destroyModels={this._bound.destroyModels}
-          facadesExist={facadesExist}
-          generatePath={this.state.generatePath.bind(this.state)}
-          getModelName={this._getModelName.bind(this)}
-          getUser={this.identity.getUser.bind(this.identity)}
-          initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
-          payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
-          sendAnalytics={this.sendAnalytics}
-          showPay={this.applicationConfig.flags.pay || false}
-          stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
-          switchModel={this._bound.switchModel}
-          userInfo={this._getUserInfo(state)} />);
-    }
-
-    ReactDOM.render(profile, document.getElementById('top-page-container'));
+        userInfo={this._getUserInfo(state)} />,
+      document.getElementById('top-page-container'));
   }
   /**
     The cleanup dispatcher for the user profile path.
