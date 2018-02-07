@@ -15,6 +15,8 @@
 
   &__inner {
     padding: 1.5rem;
+    overflow-y: auto;
+    height: calc(100vh - 4rem);
 
     @media (min-width: 400px) {
       background-color: $light-grey;
