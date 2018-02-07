@@ -10,6 +10,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
+const MoreMenu = require('../../more-menu/more-menu');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -213,10 +214,10 @@ describe('ProfileCredentialList', () => {
     testRequestErrorNotification(controllerAPI, done);
   });
 
-  it('can render', done => {
+  it('can render', () => {
     const renderer = shallowRenderComponent();
     const instance = renderer.getMountedInstance();
-    instance._getClouds().then(() => {
+    return instance._getClouds().then(() => {
       const output = renderer.getRenderOutput();
       const expected = (
         <div className="profile-credential-list">
@@ -240,7 +241,7 @@ describe('ProfileCredentialList', () => {
           <ExpandingRow
             classes={{'twelve-col': true}}
             clickable={false}
-            expanded={this.state.showAdd}>
+            expanded={false}>
             <div></div>
             <div className="twelve-col">
               <CredentialAddEdit
@@ -249,16 +250,17 @@ describe('ProfileCredentialList', () => {
                 addNotification={sinon.stub()}
                 controllerAPI={{
                   listClouds: sinon.stub(),
+                  reshape: sinon.stub(),
                   updateCloudCredential: sinon.stub()
                 }}
                 controllerIsReady={sinon.stub()}
-                credential=""
+                credential={undefined}
                 credentials={[]}
                 initUtils={initUtils}
                 onCancel={sinon.stub()}
                 onCredentialUpdated={sinon.stub()}
                 sendAnalytics={sinon.stub()}
-                username="spinach@external" />
+                username="foo@external" />
             </div>
           </ExpandingRow>
           <BasicTable
@@ -303,7 +305,27 @@ describe('ProfileCredentialList', () => {
                     }]} />),
                 columnSize: 1
               }],
-              key: 'aws_foo@external_cred1'
+              expandedContent: (
+                <CredentialAddEdit
+                  key="deployment-credential-add"
+                  acl={acl}
+                  addNotification={sinon.stub()}
+                  controllerAPI={{
+                    listClouds: sinon.stub(),
+                    reshape: sinon.stub(),
+                    updateCloudCredential: sinon.stub()
+                  }}
+                  controllerIsReady={sinon.stub()}
+                  credential={{cloud: 'aws', displayName: 'cred1', models: ['testmodel1']}}
+                  credentials={[]}
+                  initUtils={initUtils}
+                  onCancel={sinon.stub()}
+                  onCredentialUpdated={sinon.stub()}
+                  sendAnalytics={sinon.stub()}
+                  username="foo@external" />),
+              expandedContentExpanded: false,
+              key: 'aws_foo@external_cred1',
+              rowClickable: false
             }, {
               classes: null,
               columns: [{
@@ -328,7 +350,27 @@ describe('ProfileCredentialList', () => {
                     }]} />),
                 columnSize: 1
               }],
-              key: 'aws_foo@external_testcred'
+              expandedContent: (
+                <CredentialAddEdit
+                  key="deployment-credential-add"
+                  acl={acl}
+                  addNotification={sinon.stub()}
+                  controllerAPI={{
+                    listClouds: sinon.stub(),
+                    reshape: sinon.stub(),
+                    updateCloudCredential: sinon.stub()
+                  }}
+                  controllerIsReady={sinon.stub()}
+                  credential={{cloud: 'aws', displayName: 'testcred'}}
+                  credentials={[]}
+                  initUtils={initUtils}
+                  onCancel={sinon.stub()}
+                  onCredentialUpdated={sinon.stub()}
+                  sendAnalytics={sinon.stub()}
+                  username="foo@external" />),
+              expandedContentExpanded: false,
+              key: 'aws_foo@external_testcred',
+              rowClickable: false
             }, {
               classes: ['profile-credential-list--highlighted'],
               columns: [{
@@ -353,7 +395,27 @@ describe('ProfileCredentialList', () => {
                     }]} />),
                 columnSize: 1
               }],
-              key: 'azure_foo@external_cred1'
+              expandedContent: (
+                <CredentialAddEdit
+                  key="deployment-credential-add"
+                  acl={acl}
+                  addNotification={sinon.stub()}
+                  controllerAPI={{
+                    listClouds: sinon.stub(),
+                    reshape: sinon.stub(),
+                    updateCloudCredential: sinon.stub()
+                  }}
+                  controllerIsReady={sinon.stub()}
+                  credential={{cloud: 'azure', displayName: 'cred1', models: ['testmodel2']}}
+                  credentials={[]}
+                  initUtils={initUtils}
+                  onCancel={sinon.stub()}
+                  onCredentialUpdated={sinon.stub()}
+                  sendAnalytics={sinon.stub()}
+                  username="foo@external" />),
+              expandedContentExpanded: false,
+              key: 'azure_foo@external_cred1',
+              rowClickable: false
             }, {
               classes: null,
               columns: [{
@@ -378,13 +440,33 @@ describe('ProfileCredentialList', () => {
                     }]} />),
                 columnSize: 1
               }],
-              key: 'google_foo@external_admin'
+              expandedContent: (
+                <CredentialAddEdit
+                  key="deployment-credential-add"
+                  acl={acl}
+                  addNotification={sinon.stub()}
+                  controllerAPI={{
+                    listClouds: sinon.stub(),
+                    reshape: sinon.stub(),
+                    updateCloudCredential: sinon.stub()
+                  }}
+                  controllerIsReady={sinon.stub()}
+                  credential={{cloud: 'google', displayName: 'admin'}}
+                  credentials={[]}
+                  initUtils={initUtils}
+                  onCancel={sinon.stub()}
+                  onCredentialUpdated={sinon.stub()}
+                  sendAnalytics={sinon.stub()}
+                  username="foo@external" />),
+              expandedContentExpanded: false,
+              key: 'google_foo@external_admin',
+              rowClickable: false
             }
             ]} />
         </div>
       );
       expect(output).toEqualJSX(expected);
-    }).finally(done);
+    });
   });
 
 });

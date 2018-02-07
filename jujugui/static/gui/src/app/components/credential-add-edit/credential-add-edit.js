@@ -89,7 +89,8 @@ class CredentialAddEdit extends React.Component {
         cloud={
           credential && credential.cloud ?
             this.state.clouds[credential.cloud] : this.state.cloud}
-        credentialName={credential && credential.name || null}
+        credentialName={
+          credential && (credential.name || credential.displayName) || null}
         credentials={this.props.credentials}
         getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
