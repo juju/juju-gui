@@ -177,9 +177,16 @@ class ProfileModelList extends React.Component {
           {model.provider}{region}
         </div>);
       const accessContent = (
-        <SvgIcon
-          name={icons.get(profileUser.access)}
-          size="16" />);
+        <div className="profile-model-list__access tooltip">
+          <span className="tooltip__tooltip">
+            <span className="tooltip__inner tooltip__inner--down">
+              {profileUser.access}
+            </span>
+          </span>
+          <SvgIcon
+            name={icons.get(profileUser.access)}
+            size="16" />
+        </div>);
       const dateContent = (
         <DateDisplay
           date={model.lastConnection || '--'}
