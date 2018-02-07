@@ -1,6 +1,10 @@
 .profile-bundle-list {
   width: 766px;
 
+  .icon-list__item {
+    margin: 0 4px 0 0;
+  }
+
   &__icon {
     border-radius: 50%;
     width: 24px;
@@ -29,8 +33,10 @@
   }
 
   .profile-expanded-content {
-    padding-top: 12px;
-    padding-bottom: 0;
+
+    &__entity-desc {
+      padding: 0 12px 0 18px;
+    }
   }
 
   .profile-expanded-content .profile-expanded-content__top-row:first-child {
@@ -38,15 +44,12 @@
   }
 
   .entity-content__diagram {
+    margin-bottom: -1.2rem;
     margin-left: 16px;
+    padding-bottom: 0;
   }
 
   .expanding-row--expanded .expanding-row__expanded {
-    margin: 12px 0 24px;
-  }
-
-  .profile-expanded-content__permissions-title {
-    margin-top: 16px;
-    margin-bottom: 8px;
+    margin: 4px 0 16px;
   }
 }

@@ -138,7 +138,11 @@ describe('Profile Charm List', function() {
                       <div className="six-col profile-expanded-content__top-row">
                         <img className="profile-charm-list__icon"
                           src="/charmstore/~hatch/precise/failtester-7/icon.svg"
-                          title="failtester" /> failtester
+                          title="failtester" />
+                        <a href="/gui/u/hatch/failtester/precise/7"
+                          onClick={sinon.stub()}>
+                          failtester
+                        </a>
                       </div>
                       <div className="three-col profile-expanded-content__top-row">
                         precise
@@ -200,7 +204,11 @@ describe('Profile Charm List', function() {
                       <div className="six-col profile-expanded-content__top-row">
                         <img className="profile-charm-list__icon"
                           src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
-                          title="ghost" /> ghost
+                          title="ghost" />
+                        <a href="/gui/u/hatch/ghost/xenial/3"
+                          onClick={sinon.stub()}>
+                          ghost
+                        </a>
                       </div>
                       <div className="three-col profile-expanded-content__top-row">
                         xenial
@@ -248,7 +256,11 @@ describe('Profile Charm List', function() {
                       <div className="six-col profile-expanded-content__top-row">
                         <img className="profile-charm-list__icon"
                           src="/charmstore/~hatch/privghost-1/icon.svg"
-                          title="privghost" /> privghost
+                          title="privghost" />
+                        <a href="/gui/u/hatch/privghost/1"
+                          onClick={sinon.stub()}>
+                          privghost
+                        </a>
                       </div>
                       <div className="three-col profile-expanded-content__top-row">
                         xenial, trusty

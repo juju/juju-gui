@@ -13,6 +13,11 @@
 
   &__expanded-content {
     padding: 20px 16px;
+
+    a {
+      color: #111;
+      font-weight: 400;
+    }
   }
 
   &__credential-name {

@@ -108,7 +108,7 @@ class ProfileBundleList extends React.Component {
         return {
           columns: [{
             content: (
-              <a className="cold-link"
+              <a
                 href={`${this.props.baseURL}${path}`}
                 onClick={this._navigateToBundle.bind(this, path)}>
                 {bundle.name}
@@ -144,7 +144,11 @@ class ProfileBundleList extends React.Component {
               topRow={(
                 <div>
                   <div className="six-col profile-expanded-content__top-row">
-                    {bundle.name}
+                    <a
+                      href={`${this.props.baseURL}${path}`}
+                      onClick={this._navigateToBundle.bind(this, path)}>
+                      {bundle.name}
+                    </a>
                   </div>
                   <div className="two-col profile-expanded-content__top-row u-align--right">
                     {bundle.machineCount}
