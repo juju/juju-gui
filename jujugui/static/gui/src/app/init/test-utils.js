@@ -554,7 +554,6 @@ describe('init utils', () => {
         root: null,
         store: null,
         search: null,
-        account: null,
         user: null
       }]);
     });
