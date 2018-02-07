@@ -174,7 +174,7 @@ class ProfileModelList extends React.Component {
           <span className="profile-model-list__machine-number">
             {model.numMachines}
           </span>
-          {model.provider}{region}
+          {model.cloud || model.provider}{region}
         </div>);
       const accessContent = (
         <div className="profile-model-list__access tooltip">
