@@ -679,50 +679,6 @@ Browser: ${navigator.userAgent}`
       document.getElementById('charmbrowser-container'));
     next();
   }
-  /**
-    Renders the account component.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _renderAccount(state, next) {
-    const controllerAPI = this.controllerAPI;
-    const payment = this.payment;
-    const stripe = this.stripe;
-    if (!controllerAPI || !controllerAPI.userIsAuthenticated) {
-      // If the controller isn't ready yet then don't render anything.
-      return;
-    }
-    // When going to the account view, we are theoretically no longer
-    // connected to any model.
-    this.modelUUID = null;
-    ReactDOM.render(
-      <Account
-        acl={this.acl}
-        addNotification={this._bound.addNotification}
-        changeState={this._bound.changeState}
-        controllerAPI={shapeup.fromShape(controllerAPI, Account.propTypes.controllerAPI)}
-        controllerIsReady={this._controllerIsReady.bind(this)}
-        initUtils={shapeup.fromShape(initUtils, Account.propTypes.initUtils)}
-        payment={payment && shapeup.fromShape(payment, Account.propTypes.payment)}
-        sendAnalytics={this.sendAnalytics}
-        showPay={this.applicationConfig.flags.pay || false}
-        stripe={stripe && shapeup.fromShape(stripe, Account.propTypes.stripe)}
-        user={this.user.controller.user}
-        userInfo={this._getUserInfo(state)} />,
-      document.getElementById('top-page-container'));
-    next();
-  }
-
-  /**
-    The cleanup dispatcher for the account path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearAccount(state, next) {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('top-page-container'));
-    next();
-  }
 
   _clearAllGUIComponents(state, next) {
     const noop = () => {};

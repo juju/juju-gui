@@ -515,9 +515,6 @@ class GUIApp {
       ['search',
         this._renderCharmbrowser.bind(this),
         this._clearCharmbrowser.bind(this)],
-      ['account',
-        this._renderAccount.bind(this),
-        this._clearAccount.bind(this)],
       ['help',
         this._renderHelp.bind(this),
         this._clearHelp.bind(this)],
@@ -571,9 +568,6 @@ class GUIApp {
         this._handleLogout();
         this.state.changeState({root: 'login'});
         return;
-        break;
-      case 'account':
-        this._renderAccount(state, next);
         break;
       case 'new':
         // When going to disconnected mode we need to be disconnected from
@@ -642,7 +636,6 @@ class GUIApp {
     @param {Function} next - Run the next route handler, if any.
   */
   _clearRoot(state, next) {
-    this._clearAccount(state, next);
     this._clearCharmbrowser(state, next);
     this._clearLogin(state, next);
     next();
