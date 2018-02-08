@@ -320,6 +320,7 @@ class GUIApp {
 
   /**
     Perform any processing or modification on the application config values.
+    @param {Object} config The object that will be used for the applicationConfig.
     @returns {Object} A processed applicationConfig
   */
   _processApplicationConfig(config) {
