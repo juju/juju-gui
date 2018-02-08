@@ -86,7 +86,7 @@ class ProfileHeader extends React.Component {
   _generateMenuListItems() {
     if (this.props.gisf) {
       return [
-        <li key="jaas">
+        <li key="controller">
           <h2 className="profile-header__menutitle">
             <a href="/">jaas</a>
           </h2>
@@ -95,7 +95,7 @@ class ProfileHeader extends React.Component {
         <li key="aboutjaas"><a href="https://jujucharms.com/jaas">About JAAS</a></li>];
     }
     return [
-      <li key="jaas">
+      <li key="controller">
         <h2 className="profile-header__menutitle">
           {this.props.controllerIP}
         </h2>
