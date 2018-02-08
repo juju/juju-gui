@@ -29,12 +29,14 @@ describe('Profile', function() {
         }}
         controllerAPI={controllerAPI}
         controllerIsReady={sinon.stub()}
+        controllerIP={'1.2.3.4'}
         controllerUser={options.controllerUser || 'spinach'}
         addToModel={options.addToModel || sinon.stub()}
         facadesExist={true}
         generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         getUser={options.getUser || sinon.stub()}
+        gisf={true}
         initUtils={initUtils}
         payment={options.payment}
         showPay={options.showPay || false}
@@ -74,7 +76,9 @@ describe('Profile', function() {
         visible={true}>
         <ProfileHeader
           changeState={sinon.stub()}
+          controllerIP={'1.2.3.4'}
           getUser={sinon.stub()}
+          gisf={true}
           username="spinach" />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">

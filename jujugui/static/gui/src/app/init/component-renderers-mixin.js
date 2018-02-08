@@ -334,6 +334,9 @@ Browser: ${navigator.userAgent}`
         charmstore={charmstore}
         controllerAPI={
           shapeup.fromShape(this.controllerAPI, Profile.propTypes.controllerAPI)}
+        controllerIP={
+          this.controllerAPI.get('socket_url')
+            .replace('wss://', '').replace('ws://', '').split(':')[0]}
         controllerIsReady={this._controllerIsReady.bind(this)}
         controllerUser={this.user.controller.user}
         addToModel={this.addToModel.bind(this, charmstore)}
@@ -342,6 +345,7 @@ Browser: ${navigator.userAgent}`
         generatePath={this.state.generatePath.bind(this.state)}
         getModelName={this._getModelName.bind(this)}
         getUser={this.identity.getUser.bind(this.identity)}
+        gisf={this.applicationConfig.gisf}
         initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
         sendAnalytics={this.sendAnalytics}

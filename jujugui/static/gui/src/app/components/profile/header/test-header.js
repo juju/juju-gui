@@ -23,7 +23,9 @@ describe('Profile Header', function() {
     const renderer = jsTestUtils.shallowRender(
       <ProfileHeader
         changeState={sinon.stub()}
+        controllerIP={'1.2.3.4'}
         getUser={getUser}
+        gisf={true}
         username="spinach" />, true);
     const instance = renderer.getMountedInstance();
     // Triggering a componentWillMount before grabbing the rendered output so
@@ -64,6 +66,59 @@ describe('Profile Header', function() {
             </li>
             <li><a href="https://jujucharms.com/home">Home</a></li>
             <li><a href="https://jujucharms.com/jaas">About JAAS</a></li>
+          </ul>
+        </div>
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('displays a different link list for non-jaas', () => {
+    const renderer = jsTestUtils.shallowRender(
+      <ProfileHeader
+        changeState={sinon.stub()}
+        controllerIP={'1.2.3.4'}
+        getUser={getUser}
+        gisf={false}
+        username="spinach" />, true);
+    const instance = renderer.getMountedInstance();
+    // Triggering a componentWillMount before grabbing the rendered output so
+    // that the getUser call will have returned and rendered the gravatar UI.
+    // The following test tests the 'not yet returned' state.
+    instance.componentWillMount();
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-header twelve-col">
+        <div className="inner-wrapper profile-header__inner">
+          <div className="profile-header__close link"
+            onClick={sinon.stub()}
+            role="button"
+            tabIndex="0">
+            <SvgIcon
+              name="close_16"
+              size="20" />
+          </div>
+          <span className="profile-header__avatar">
+            <img alt="Gravatar"
+              className="profile-header__avatar-gravatar"
+              src="https://www.gravatar.com/avatar/id123" />
+          </span>
+          <ul className="profile-header__meta">
+            <li>
+              <h1 className="profile-header__username">
+                spinach
+              </h1>
+            </li>
+            <li><strong>Geoffrey Spinach</strong></li>
+            <li>spinach@example.com</li>
+          </ul>
+          <ul className="profile-header__menu">
+            <li key="controller">
+              <h2 className="profile-header__menutitle">
+                1.2.3.4
+              </h2>
+            </li>
+            <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>
           </ul>
         </div>
       </div>
