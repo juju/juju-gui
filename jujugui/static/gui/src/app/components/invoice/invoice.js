@@ -4,6 +4,7 @@
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
+const BasicTable = require('../basic-table/basic-table');
 
 /**
   React component used to display a list of the users invoices in their profile.
@@ -13,7 +14,11 @@ class Invoice extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: [],
+      data: [{
+        id: 1
+      }, {
+        id: 2
+      }],
       loading: false
     };
   }
@@ -23,6 +28,23 @@ class Invoice extends React.Component {
     if (this.state.loading) {
       content = (<Spinner />);
     } else {
+      const rows = (this.state.data).map(invoice => {
+        return {
+          columns: [{
+            content: 'Ubuntu Advantage Essential',
+            columnSize: 3
+          }, {
+            content: '$0.09 per machine-hour',
+            columnSize: 3
+          }, {
+            content: '28,499 hours',
+            columnSize: 3
+          }, {
+            content: '$32,888',
+            columnSize: 3
+          }]
+        };
+      });
       content = (
         <div className="invoice__inner">
           <header className="invoice__header">
@@ -81,83 +103,109 @@ class Invoice extends React.Component {
                 <span className="invoice__value">£394.90</span>
               </div>
             </div>
-
-            <div className="invoice__summary">
-              <span className="invoice__label u-btn-mar">
-                Services during the period
-              </span>
-              <span className="invoice__value u-btn-mar">
-                1st December 2017 - 31st January 2018
-              </span>
-              <span className="invoice__label u-btn-mar">
-                Questions?
-              </span>
-              <span className="invoice__value u-btn-mar">
-                <a href="mailto:accountsrecievable@canonical.com">
-                  accountsrecievable@canonical.com
-                </a>
-              </span>
-            </div>
-            <div className="invoice__meta">
-              <div className="invoice__meta__col">
-                <span className="invoice__label u-btn-mar">Total:</span>
-                <span className="invoice__label u-btn-mar">Paid by card:</span>
-              </div>
-              <div className="invoice__meta__col">
-                <span className="invoice__value u-emphasis-value">
-                  <strong>$3,077.93</strong>
+            <hr />
+            <div className="invoice__rel-wrap clearfix">
+              <div className="invoice__summary">
+                <span className="invoice__label u-btn-mar">
+                  Services during the period
                 </span>
-                <span className="invoice__value">xxxx xxxx xxxx 1234</span>
+                <span className="invoice__value u-btn-mar">
+                  1st December 2017 - 31st January 2018
+                </span>
+                <span className="invoice__label u-btn-mar">
+                  Questions?
+                </span>
+                <span className="invoice__value u-btn-mar">
+                  <a href="mailto:accountsrecievable@canonical.com">
+                    accountsrecievable@canonical.com
+                  </a>
+                </span>
+              </div>
+              <div className="invoice__meta">
+                <div className="invoice__meta__col">
+                  <span className="invoice__label u-btn-mar">Total:</span>
+                  <span className="invoice__label u-btn-mar">Paid by card:</span>
+                </div>
+                <div className="invoice__meta__col">
+                  <span className="invoice__value u-emphasis-value">
+                    <strong>$3,077.93</strong>
+                  </span>
+                  <span className="invoice__value">xxxx xxxx xxxx 1234</span>
+                </div>
               </div>
             </div>
             <hr />
             <h2 className="u-btn-mar">Details</h2>
-            <div className="invoice__billing-package">
-              <p><strong>Ubuntu Advantage Essential</strong></p>
-              <p>$0.09 per machine hour</p>
-              <p>Model: fx-staging-ldn</p>
-              <div className="invoice__meta">
-                <div className="invoice__meta__col">
-                  <span className="invoice__label u-text-align--left">28.999 hours</span>
+
+            <div className="invoice-details-sm-screen">
+              <div className="invoice__billing-package">
+                <p><strong>Ubuntu Advantage Essential</strong></p>
+                <p>$0.09 per machine hour</p>
+                <p>Model: fx-staging-ldn</p>
+                <div className="invoice__meta">
+                  <div className="invoice__meta__col">
+                    <span className="invoice__label u-text-align--left">28.999 hours</span>
+                  </div>
+                  <div className="invoice__meta__col">
+                    <span className="invoice__value">$2,567.94</span>
+                  </div>
                 </div>
-                <div className="invoice__meta__col">
-                  <span className="invoice__value">$2,567.94</span>
+
+                <p>Model: version neo</p>
+                <div className="invoice__meta">
+                  <div className="invoice__meta__col">
+                    <span className="invoice__label u-text-align--left">28.999 hours</span>
+                  </div>
+                  <div className="invoice__meta__col">
+                    <span className="invoice__value">$2,567.94</span>
+                  </div>
                 </div>
               </div>
-
-              <p>Model: version neo</p>
-              <div className="invoice__meta">
-                <div className="invoice__meta__col">
-                  <span className="invoice__label u-text-align--left">28.999 hours</span>
+              <div className="invoice__billing-package">
+                <p><strong>Ubuntu Advantage Advanced</strong></p>
+                <p>$0.09 per machine hour</p>
+                <p>Model: fx-staging-ldn</p>
+                <div className="invoice__meta">
+                  <div className="invoice__meta__col">
+                    <span className="invoice__label u-text-align--left">28.999 hours</span>
+                  </div>
+                  <div className="invoice__meta__col">
+                    <span className="invoice__value">$2,567.94</span>
+                  </div>
                 </div>
-                <div className="invoice__meta__col">
-                  <span className="invoice__value">$2,567.94</span>
+
+                <p>Model: version neo</p>
+                <div className="invoice__meta">
+                  <div className="invoice__meta__col">
+                    <span className="invoice__label u-text-align--left">28.999 hours</span>
+                  </div>
+                  <div className="invoice__meta__col">
+                    <span className="invoice__value">$2,567.94</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="invoice__billing-package">
-              <p><strong>Ubuntu Advantage Advanced</strong></p>
-              <p>$0.09 per machine hour</p>
-              <p>Model: fx-staging-ldn</p>
-              <div className="invoice__meta">
-                <div className="invoice__meta__col">
-                  <span className="invoice__label u-text-align--left">28.999 hours</span>
-                </div>
-                <div className="invoice__meta__col">
-                  <span className="invoice__value">$2,567.94</span>
-                </div>
-              </div>
-
-              <p>Model: version neo</p>
-              <div className="invoice__meta">
-                <div className="invoice__meta__col">
-                  <span className="invoice__label u-text-align--left">28.999 hours</span>
-                </div>
-                <div className="invoice__meta__col">
-                  <span className="invoice__value">$2,567.94</span>
-                </div>
-              </div>
+            <div className="invoice-details-lrg-screen clearfix">
+              <BasicTable
+                headerClasses={['profile__entity-table-header-row']}
+                headerColumnClasses={['profile__entity-table-header-column']}
+                headers={[{
+                  content: 'Item',
+                  columnSize: 3
+                }, {
+                  content: 'Unit price',
+                  columnSize: 3
+                }, {
+                  content: 'Quantity',
+                  columnSize: 3
+                }, {
+                  content: 'Amount',
+                  columnSize: 3
+                }]}
+                rowClasses={['profile__entity-table-row']}
+                rowColumnClasses={['profile__entity-table-column']}
+                rows={rows} />
             </div>
             <hr />
 
@@ -170,24 +218,26 @@ class Invoice extends React.Component {
                 alt="Canonical logo" />
             </div>
 
-            <div className="u-btn-mar u-block-children">
-              <span className="invoice__label">UK Company Number</span>
-              <span className="invoice__value">06870835</span>
-            </div>
+            <div className="invoice__footer">
+              <div className="u-btn-mar u-block-children invoice__footer__col">
+                <span className="invoice__label">UK Company Number</span>
+                <span className="invoice__value">06870835</span>
+              </div>
 
-            <div className="u-btn-mar u-block-children">
-              <span className="invoice__label">VAT Number</span>
-              <span className="invoice__value">GB 003232247</span>
-            </div>
+              <div className="u-btn-mar u-block-children invoice__footer__col">
+                <span className="invoice__label">VAT Number</span>
+                <span className="invoice__value">GB 003232247</span>
+              </div>
 
-            <div className="u-btn-mar u-block-children">
-              <span className="invoice__label">Registered office</span>
-              <span className="invoice__value">5th Floor</span>
-              <span className="invoice__value">Bluefin Building</span>
-              <span className="invoice__value">110 Southwark Street</span>
-              <span className="invoice__value">London</span>
-              <span className="invoice__value">SE1 0SU</span>
-              <span className="invoice__value">UK</span>
+              <div className="u-btn-mar u-block-children invoice__footer__col">
+                <span className="invoice__label">Registered office</span>
+                <span className="invoice__value">5th Floor</span>
+                <span className="invoice__value">Bluefin Building</span>
+                <span className="invoice__value">110 Southwark Street</span>
+                <span className="invoice__value">London</span>
+                <span className="invoice__value">SE1 0SU</span>
+                <span className="invoice__value">UK</span>
+              </div>
             </div>
 
           </div>

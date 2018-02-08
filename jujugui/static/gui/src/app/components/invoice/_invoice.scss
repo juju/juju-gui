@@ -1,3 +1,5 @@
+$invoice-bp: 600px;
+
 .invoice {
   @extend %floating-panel;
   min-height: 500vh;
@@ -9,7 +11,7 @@
   top: 0;
   right: 0;
 
-  @media (min-width: 400px) {
+  @media (min-width: $invoice-bp) {
     background: $light-mid-grey;
   }
 
@@ -17,11 +19,12 @@
     padding: 1.5rem;
     overflow-y: auto;
     height: calc(100vh - 4rem);
+    max-width: 1200px;
 
-    @media (min-width: 400px) {
+    @media (min-width: $invoice-bp) {
       background-color: $light-grey;
       box-shadow: 3px 3px 15px 3px rgba(0,0,0,0.25);
-      margin: 2rem;
+      margin: 2rem auto;
       width: calc(100% - 4rem);
       padding: 2rem;
     }
@@ -31,11 +34,35 @@
     color: $dark-warm-grey;
   }
 
+  &__header {
+    position: relative;
+
+    @media (min-width: $invoice-bp) {
+
+      .invoice__meta {
+        position: relative;
+        top: 3rem;
+      }
+    }
+  }
+
   &__heading {
     border-top: 1px solid $light-mid-grey;
     font-size: 2rem;
     margin-top: 1rem;
     padding-top: 1rem;
+
+    @media (min-width: $invoice-bp) {
+      position: absolute;
+      top: 6rem;
+      left: 0;
+      width: 100%;
+
+      .invoice__meta {
+        position: relative;
+        top: 3rem;
+      }
+    }
   }
 
   &__logo {
@@ -45,6 +72,12 @@
   &__info {
     border-top: 1px solid $light-mid-grey;
     margin-top: 1rem;
+
+    @media (min-width: $invoice-bp) {
+      position: relative;
+      padding-top: 2rem;
+    }
+
   }
 
   &__address {
@@ -56,10 +89,17 @@
       width: 100%;
       margin-bottom: .25rem;
     }
+
+    @media (min-width: $invoice-bp) {
+      position: absolute;
+      top: 1rem;
+      left: 0;
+    }
   }
 
   &__meta {
     display: flex;
+    min-height: 120px;
 
     &__col {
       flex: 1;
@@ -69,16 +109,34 @@
         margin-bottom: .5rem;
         text-align: right;
       }
+
+      @media (min-width: $invoice-bp) {
+
+        &:first-child {
+          flex: 7.5;
+        }
+
+        &:last-child {
+          flex: 2.5;
+        }
+      }
     }
   }
 
   &__summary {
-    border-top: 1px solid $light-mid-grey;
     margin-top: 1rem;
     padding: 1rem 0;
 
     * {
       display: block;
+    }
+
+    @media (min-width: $invoice-bp) {
+      margin-top: 0;
+      padding-top: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
 
@@ -86,6 +144,14 @@
     border: 1px solid $light-mid-grey;
     margin-bottom: 1rem;
     padding: 1rem;
+
+    .invoice__meta {
+      min-height: 0;
+    }
+  }
+
+  &__rel-wrap {
+    position: relative;
   }
 
   .u-btn-mar {
@@ -109,5 +175,30 @@
     border: 0;
     border-top: 1px solid $light-mid-grey;
     margin: 2rem 0;
+  }
+}
+
+
+.invoice-details-lrg-screen {
+  display: none;
+}
+
+@media (min-width: $invoice-bp) {
+
+  .invoice-details-sm-screen {
+    display: none;
+  }
+
+  .invoice-details-lrg-screen {
+    display: block;
+  }
+
+  .invoice__footer {
+    display: flex;
+    width: 100%;
+
+    &__col {
+      flex: 1;
+    }
   }
 }
