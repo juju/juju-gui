@@ -38,10 +38,6 @@
     padding-top: 1rem;
   }
 
-  &__number {
-    font-size: 1.25rem;
-  }
-
   &__logo {
     width: 80px;
   }
@@ -86,7 +82,32 @@
     }
   }
 
+  &__billing-package {
+    border: 1px solid $light-mid-grey;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
   .u-btn-mar {
     margin-bottom: 1rem;
+  }
+
+  .u-block-children * {
+    display: block;
+    margin-bottom: .25rem;
+  }
+
+  .u-emphasis-value {
+    font-size: 1.25rem;
+  }
+
+  .u-text-align--left {
+    text-align: left;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid $light-mid-grey;
+    margin: 2rem 0;
   }
 }
