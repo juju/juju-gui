@@ -136,8 +136,8 @@ class PaymentDetails extends React.Component {
 
   render() {
     return (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Account details
         </h2>
         {this._generateDetails()}

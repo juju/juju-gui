@@ -65,8 +65,8 @@ describe('PaymentMethods', () => {
         validateForm={validateForm} />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Payment details
         </h2>
         <ul className="user-profile__list twelve-col">
@@ -103,8 +103,8 @@ describe('PaymentMethods', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Payment details
         </h2>
         <div className="payment-methods__no-methods">

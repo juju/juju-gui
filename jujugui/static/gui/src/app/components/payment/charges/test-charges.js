@@ -62,8 +62,8 @@ describe('PaymentCharges', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="payment-charges">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Charges
           </h2>
           <ul className="user-profile__list twelve-col">
@@ -176,8 +176,8 @@ describe('PaymentCharges', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="payment-charges">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Charges
           </h2>
           <div>
@@ -208,8 +208,8 @@ describe('PaymentCharges', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="payment-charges">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Charges
           </h2>
           <ul className="user-profile__list twelve-col">

@@ -77,8 +77,8 @@ describe('PaymentDetails', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Account details
         </h2>
         <div className="payment-details-view twelve-col">

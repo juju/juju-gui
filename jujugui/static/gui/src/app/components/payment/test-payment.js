@@ -166,8 +166,8 @@ describe('Payment', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <div className="payment">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Payment details
           </h2>
           <div className="payment__no-user">
@@ -204,8 +204,8 @@ describe('Payment', function() {
     output = renderer.getRenderOutput();
     const expected = (
       <div className="payment">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Payment details
           </h2>
           <div className="twelve-col">

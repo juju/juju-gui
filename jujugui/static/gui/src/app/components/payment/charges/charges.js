@@ -221,8 +221,8 @@ class PaymentCharges extends React.Component {
   render() {
     return (
       <div className="payment-charges">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Charges
           </h2>
           {this._generateCharges()}

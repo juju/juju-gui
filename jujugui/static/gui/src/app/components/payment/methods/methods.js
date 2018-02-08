@@ -231,8 +231,8 @@ class PaymentMethods extends React.Component {
     const content = this.state.showAdd ?
       this._generateAddPaymentMethod() : this._generatePaymentMethods();
     return (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Payment details
         </h2>
         {content}
