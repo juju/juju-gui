@@ -66,11 +66,15 @@
     bottom: 0;
     right: 0;
     left: 0;
-    padding-top: $navbar-height;
     background-color: rgba(247, 247, 247, 0.7);
     box-shadow: none;
 
     .panel-component__inner {
+      position: absolute;
+      top: $navbar-height;
+      bottom: 0;
+      right: 0;
+      left: 0;
       background-color: $canvas-background;
       border-top: 1px solid $mid-grey;
       // Clearfix.
