@@ -35,7 +35,7 @@ class GUIApp {
       here to avoid having to pass it around.
       @type {Object}
     */
-    this.applicationConfig = config;
+    this.applicationConfig = this._processApplicationConfig(config);
     /**
       Holds the modelUUID the application should connect to. It's possible that
       this value and the value in the modelAPI instance will differ as another
@@ -316,6 +316,20 @@ class GUIApp {
     if (result.error) {
       console.error(result.error);
     }
+  }
+
+  /**
+    Perform any processing or modification on the application config values.
+    @param {Object} config The object that will be used for the applicationConfig.
+    @returns {Object} A processed applicationConfig
+  */
+  _processApplicationConfig(config) {
+    // We don't want to have to check if flags is defined everywhere in the
+    // application, so if none is defined, then define an empty object.
+    if (!config.flags) {
+      config.flags = {};
+    }
+    return config;
   }
 
   /**
@@ -1659,7 +1673,7 @@ class GUIApp {
     script.src = oldScript.src;
     script.onload = () => {
       // Update the application config to the new global config value.
-      this.applicationConfig = juju_config; // eslint-disable-line
+      this.applicationConfig = this._processApplicationConfig(juju_config); // eslint-disable-line
       this.state.dispatch();
     };
     oldScript.parentNode.removeChild(oldScript);

@@ -66,6 +66,10 @@ describe('init', () => {
       container.getAttribute('class').should.include('container');
     });
 
+    it('has flags defined in the application config if none provided', () => {
+      assert.deepEqual(app.applicationConfig.flags, {});
+    });
+
     describe('MAAS support', () => {
       let maasNode;
 
