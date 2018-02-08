@@ -355,9 +355,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'environment-change-set',
             'yui-patches'], function(Y) {
           window.yui = Y;
-          if (!juju_config.flags) {
-            juju_config.flags = {};
-          }
           const JujuGUI = require('init');
           window.JujuGUI = new JujuGUI(juju_config);
 
