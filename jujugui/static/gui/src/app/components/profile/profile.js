@@ -170,7 +170,9 @@ class Profile extends React.Component {
         visible={true}>
         <ProfileHeader
           changeState={this.props.changeState}
+          controllerIP={this.props.controllerIP}
           getUser={this.props.getUser}
+          gisf={this.props.gisf}
           username={this.props.userInfo.profile} />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
@@ -206,6 +208,7 @@ Profile.propTypes = {
     revokeCloudCredential: PropTypes.func.isRequired,
     updateCloudCredential: PropTypes.func.isRequired
   }).isRequired,
+  controllerIP: PropTypes.string,
   controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
   destroyModels: PropTypes.func.isRequired,
@@ -213,6 +216,7 @@ Profile.propTypes = {
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,
+  gisf: PropTypes.bool.isRequired,
   initUtils: shapeup.shape({
     generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,

@@ -78,6 +78,31 @@ class ProfileHeader extends React.Component {
       </span>);
   }
 
+  /**
+    Generates the list of menu items for the header depending on the truthyness
+    of the gisf prop.
+    @return {Array} The list in JSX.
+  */
+  _generateMenuListItems() {
+    if (this.props.gisf) {
+      return [
+        <li key="jaas">
+          <h2 className="profile-header__menutitle">
+            <a href="/">jaas</a>
+          </h2>
+        </li>,
+        <li key="home"><a href="https://jujucharms.com/home">Home</a></li>,
+        <li key="aboutjaas"><a href="https://jujucharms.com/jaas">About JAAS</a></li>];
+    }
+    return [
+      <li key="jaas">
+        <h2 className="profile-header__menutitle">
+          {this.props.controllerIP}
+        </h2>
+      </li>,
+      <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>];
+  }
+
   render() {
     const user = this.state.user || {};
     return (
@@ -102,13 +127,7 @@ class ProfileHeader extends React.Component {
             <li>{user.email}</li>
           </ul>
           <ul className="profile-header__menu">
-            <li>
-              <h2 className="profile-header__menutitle">
-                <a href="/">jaas</a>
-              </h2>
-            </li>
-            <li><a href="https://jujucharms.com/home">Home</a></li>
-            <li><a href="https://jujucharms.com/jaas">About JAAS</a></li>
+            {this._generateMenuListItems()}
           </ul>
         </div>
       </div>);
@@ -118,7 +137,9 @@ class ProfileHeader extends React.Component {
 
 ProfileHeader.propTypes = {
   changeState: PropTypes.func.isRequired,
+  controllerIP: PropTypes.string,
   getUser: PropTypes.func.isRequired,
+  gisf: PropTypes.bool,
   username: PropTypes.string.isRequired
 };
 
