@@ -142,6 +142,27 @@ describe('jujulib payment service', function() {
     });
   });
 
+  it('can return correctly when getting a non-existent user', function(done) {
+    const bakery = {
+      get: function(path, headers, callback) {
+        assert.equal(
+          path,
+          'http://1.2.3.4/' +
+          window.jujulib.paymentAPIVersion +
+          '/u/spinach');
+        const xhr = makeXHRRequest();
+        callback(null, xhr);
+      }
+    };
+    const payment = new window.jujulib.payment(
+      'http://1.2.3.4/', bakery);
+    payment.getUser('spinach', function(error, user) {
+      assert.strictEqual(error, null);
+      assert.deepEqual(user, null);
+      done();
+    });
+  });
+
   it('can handle missing fields when getting a user', function(done) {
     const bakery = {
       get: function(path, headers, callback) {

@@ -3,13 +3,13 @@
 
 const React = require('react');
 
-const AccountPaymentMethodCard = require('./card');
-const GenericButton = require('../../../../generic-button/generic-button');
-const SvgIcon = require('../../../../svg-icon/svg-icon');
+const PaymentMethodCard = require('./card');
+const GenericButton = require('../../../generic-button/generic-button');
+const SvgIcon = require('../../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
-describe('AccountPaymentMethodCard', () => {
+describe('PaymentMethodCard', () => {
   let card;
 
   beforeEach(() => {
@@ -35,32 +35,32 @@ describe('AccountPaymentMethodCard', () => {
 
   it('can render', () => {
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         card={card} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__payment-card twelve-col">
+      <div className="payment-card twelve-col">
         <div className="eight-col">
-          <div className="account__payment-card-wrapper"
+          <div className="payment-card-wrapper"
             onClick={instance._handleCardClick}>
-            <div className="account__payment-card-container">
-              <div className="account__payment-card-front">
-                <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-name">
+            <div className="payment-card-container">
+              <div className="payment-card-front">
+                <div className="payment-card-overlay"></div>
+                <div className="payment-card-name">
                   MR G Spinach
                 </div>
               </div>
-              <div className="account__payment-card-back">
-                <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-number">
+              <div className="payment-card-back">
+                <div className="payment-card-overlay"></div>
+                <div className="payment-card-number">
                   xxxx xxxx xxxx {1234}
                 </div>
-                <div className="account__payment-card-bottom">
-                  <div className="account__payment-card-expiry">
+                <div className="payment-card-bottom">
+                  <div className="payment-card-expiry">
                     {3}/{2017}
                   </div>
-                  <div className="account__payment-card-brand">
+                  <div className="payment-card-brand">
                     <SvgIcon
                       size="40"
                       name="card-fancy" />
@@ -69,7 +69,7 @@ describe('AccountPaymentMethodCard', () => {
               </div>
             </div>
           </div>
-          <div className="account__payment-card-info">
+          <div className="payment-card-info">
             <h4>Card address</h4>
             <p>1 Maple</p>
             <p>St</p>
@@ -85,14 +85,14 @@ describe('AccountPaymentMethodCard', () => {
   it('can render the actions', () => {
     const updatePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         card={card}
         removePaymentMethod={sinon.stub()}
         updatePaymentMethod={updatePaymentMethod} />, true);
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="four-col last-col account__payment-card-actions">
+      <div className="four-col last-col payment-card-actions">
         <GenericButton
           action={instance._removePaymentMethod}
           type="inline-neutral">
@@ -109,7 +109,7 @@ describe('AccountPaymentMethodCard', () => {
 
   it('can render when flipped', () => {
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         card={card} />, true);
     let output = component.getRenderOutput();
     output.props.children[0].props.children[0].props.onClick(
@@ -117,14 +117,14 @@ describe('AccountPaymentMethodCard', () => {
     output = component.getRenderOutput();
     assert.equal(
       output.props.children[0].props.children[0].props.className,
-      'account__payment-card-wrapper account__payment-card-wrapper--flipped');
+      'payment-card-wrapper payment-card-wrapper--flipped');
   });
 
   it('can remove the payment method', () => {
     const onPaymentMethodRemoved = sinon.stub();
     const removePaymentMethod = sinon.stub().callsArgWith(2, null);
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         addNotification={sinon.stub()}
         card={card}
         onPaymentMethodRemoved={onPaymentMethodRemoved}
@@ -142,7 +142,7 @@ describe('AccountPaymentMethodCard', () => {
     const addNotification = sinon.stub();
     const removePaymentMethod = sinon.stub().callsArgWith(2, 'Uh oh!');
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         addNotification={addNotification}
         card={card}
         onPaymentMethodRemoved={sinon.stub()}
@@ -162,7 +162,7 @@ describe('AccountPaymentMethodCard', () => {
     const abort = sinon.stub();
     const removePaymentMethod = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         addNotification={sinon.stub()}
         card={card}
         onPaymentMethodRemoved={sinon.stub()}

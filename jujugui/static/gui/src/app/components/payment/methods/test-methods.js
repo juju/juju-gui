@@ -4,16 +4,16 @@
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../../generic-button/generic-button');
-const ExpandingRow = require('../../../expanding-row/expanding-row');
-const CardForm = require('../../../card-form/card-form');
-const AddressForm = require('../../../address-form/address-form');
-const AccountPaymentMethod = require('./method/method');
-const AccountPaymentMethods = require('./methods');
+const GenericButton = require('../../generic-button/generic-button');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const CardForm = require('../../card-form/card-form');
+const AddressForm = require('../../address-form/address-form');
+const PaymentMethod = require('./method/method');
+const PaymentMethods = require('./methods');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../utils/component-test-utils');
 
-describe('AccountPaymentMethods', () => {
+describe('PaymentMethods', () => {
   let acl, payment, stripe, user;
 
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe('AccountPaymentMethods', () => {
     const updateUser = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -65,12 +65,12 @@ describe('AccountPaymentMethods', () => {
         validateForm={validateForm} />, true);
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Payment details
         </h2>
         <ul className="user-profile__list twelve-col">
-          {[<AccountPaymentMethod
+          {[<PaymentMethod
             acl={acl}
             addNotification={addNotification}
             key="method1"
@@ -91,7 +91,7 @@ describe('AccountPaymentMethods', () => {
 
   it('can render when there are no payment methods', () => {
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -103,11 +103,11 @@ describe('AccountPaymentMethods', () => {
     const instance = component.getMountedInstance();
     const output = component.getRenderOutput();
     const expected = (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Payment details
         </h2>
-        <div className="account__payment-no-methods">
+        <div className="payment-methods__no-methods">
           You do not have a payment method.
           <GenericButton
             action={instance._toggleAdd}
@@ -123,7 +123,7 @@ describe('AccountPaymentMethods', () => {
     const abort = sinon.stub();
     stripe.createToken = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -153,7 +153,7 @@ describe('AccountPaymentMethods', () => {
     const createCardElement = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -172,8 +172,8 @@ describe('AccountPaymentMethods', () => {
         clickable={false}
         expanded={true}>
         <div></div>
-        <div className="account__payment-form">
-          <div className="account__payment-form-fields">
+        <div className="payment-methods__form">
+          <div className="payment-methods__form-fields">
             <CardForm
               acl={acl}
               createCardElement={createCardElement}
@@ -181,7 +181,7 @@ describe('AccountPaymentMethods', () => {
               validateForm={validateForm} />
             <label htmlFor="cardAddressSame">
               <input checked={true}
-                className="account__payment-form-checkbox"
+                className="payment-methods__form-checkbox"
                 id="cardAddressSame"
                 name="cardAddressSame"
                 onChange={instance._handleCardSameChange}
@@ -191,7 +191,7 @@ describe('AccountPaymentMethods', () => {
             </label>
             {null}
           </div>
-          <div className="twelve-col account__payment-form-buttons">
+          <div className="twelve-col payment-methods__form-buttons">
             <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
@@ -214,7 +214,7 @@ describe('AccountPaymentMethods', () => {
     const validateForm = sinon.stub();
     const getCountries = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -240,8 +240,8 @@ describe('AccountPaymentMethods', () => {
         clickable={false}
         expanded={true}>
         <div></div>
-        <div className="account__payment-form">
-          <div className="account__payment-form-fields">
+        <div className="payment-methods__form">
+          <div className="payment-methods__form-fields">
             <CardForm
               acl={acl}
               createCardElement={createCardElement}
@@ -249,7 +249,7 @@ describe('AccountPaymentMethods', () => {
               validateForm={validateForm} />
             <label htmlFor="cardAddressSame">
               <input checked={false}
-                className="account__payment-form-checkbox"
+                className="payment-methods__form-checkbox"
                 id="cardAddressSame"
                 name="cardAddressSame"
                 onChange={instance._handleCardSameChange}
@@ -266,7 +266,7 @@ describe('AccountPaymentMethods', () => {
               showPhone={false}
               validateForm={validateForm} />
           </div>
-          <div className="twelve-col account__payment-form-buttons">
+          <div className="twelve-col payment-methods__form-buttons">
             <GenericButton
               action={instance._toggleAdd}
               type="inline-neutral">
@@ -287,7 +287,7 @@ describe('AccountPaymentMethods', () => {
     stripe.createToken = sinon.stub().callsArgWith(2, null, {id: 'token123'});
     payment.createPaymentMethod = sinon.stub().callsArg(2, null, null);
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -317,7 +317,7 @@ describe('AccountPaymentMethods', () => {
     payment.createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const updateUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -363,7 +363,7 @@ describe('AccountPaymentMethods', () => {
     payment.createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const updateUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -428,7 +428,7 @@ describe('AccountPaymentMethods', () => {
     payment.createPaymentMethod = sinon.stub().callsArg(2, null, null);
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -463,7 +463,7 @@ describe('AccountPaymentMethods', () => {
     payment.createPaymentMethod = sinon.stub().callsArgWith(3, 'Uh oh!', null);
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethods
+      <PaymentMethods
         acl={acl}
         addNotification={addNotification}
         payment={payment}

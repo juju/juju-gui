@@ -5,11 +5,11 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../../generic-button/generic-button');
-const GenericInput = require('../../../generic-input/generic-input');
-const AccountPaymentDetailsAddress = require('./address/address');
+const GenericButton = require('../../generic-button/generic-button');
+const GenericInput = require('../../generic-input/generic-input');
+const PaymentDetailsAddress = require('./address/address');
 
-class AccountPaymentDetails extends React.Component {
+class PaymentDetails extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -46,8 +46,8 @@ class AccountPaymentDetails extends React.Component {
     const business = user.business;
     const disabled = this.props.acl.isReadOnly();
     return (
-      <div className="account__payment-details-view twelve-col">
-        <div className="account__payment-details-fields">
+      <div className="payment-details-view twelve-col">
+        <div className="payment-details-fields">
           <GenericInput
             disabled={true}
             label="Name"
@@ -73,7 +73,7 @@ class AccountPaymentDetails extends React.Component {
             <GenericButton
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
-              extraClasses="account__payment-details-title-button"
+              extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>)}
@@ -85,7 +85,7 @@ class AccountPaymentDetails extends React.Component {
             <GenericButton
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
-              extraClasses="account__payment-details-title-button"
+              extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>)}
@@ -105,7 +105,7 @@ class AccountPaymentDetails extends React.Component {
   _generateAddresses(addresses, billing=false) {
     let list = addresses.map(address => {
       return (
-        <AccountPaymentDetailsAddress
+        <PaymentDetailsAddress
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           addAddress={
@@ -129,15 +129,15 @@ class AccountPaymentDetails extends React.Component {
           validateForm={this.props.validateForm} />);
     });
     return (
-      <ul className="account__payment-details-addresses">
+      <ul className="payment-details-addresses">
         {list}
       </ul>);
   }
 
   render() {
     return (
-      <div className="account__section">
-        <h2 className="account__title twelve-col">
+      <div className="payment__section">
+        <h2 className="payment__title twelve-col">
           Account details
         </h2>
         {this._generateDetails()}
@@ -146,7 +146,7 @@ class AccountPaymentDetails extends React.Component {
   }
 };
 
-AccountPaymentDetails.propTypes = {
+PaymentDetails.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   payment: shapeup.shape({
@@ -165,4 +165,4 @@ AccountPaymentDetails.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-module.exports = AccountPaymentDetails;
+module.exports = PaymentDetails;

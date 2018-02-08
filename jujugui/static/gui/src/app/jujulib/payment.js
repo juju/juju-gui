@@ -700,6 +700,9 @@ var module = module;
       @returns {Object} A parsed user object.
     */
     _parseUser: function(user) {
+      if (!user) {
+        return null;
+      }
       return {
         nickname: user.nickname || null,
         name: user.name || null,

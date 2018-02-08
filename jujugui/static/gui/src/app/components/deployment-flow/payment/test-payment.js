@@ -3,7 +3,7 @@
 
 const React = require('react');
 
-const AccountPaymentMethodCard = require('../../account/payment/methods/card/card');
+const PaymentMethodCard = require('../../payment/methods/card/card');
 const DeploymentPayment = require('./payment');
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
 const Spinner = require('../../spinner/spinner');
@@ -87,7 +87,7 @@ describe('DeploymentPayment', function() {
         <ul className="deployment-payment__methods twelve-col">
           {[<li className="deployment-payment__method"
             key="Company0">
-            <AccountPaymentMethodCard
+            <PaymentMethodCard
               card={{name: 'Company'}} />
           </li>]}
         </ul>

@@ -4,10 +4,10 @@
 const React = require('react');
 
 const ReceiptPopup = require('./receipt-popup');
-const Spinner = require('../../../../spinner/spinner');
-const Popup = require('../../../../popup/popup');
+const Spinner = require('../../../spinner/spinner');
+const Popup = require('../../../popup/popup');
 
-const jsTestUtils = require('../../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('ReceiptPopup', function() {
 

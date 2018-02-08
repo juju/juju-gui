@@ -5,10 +5,10 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../../../../generic-button/generic-button');
-const SvgIcon = require('../../../../svg-icon/svg-icon');
+const GenericButton = require('../../../generic-button/generic-button');
+const SvgIcon = require('../../../svg-icon/svg-icon');
 
-class AccountPaymentMethodCard extends React.Component {
+class PaymentMethodCard extends React.Component {
   constructor() {
     super();
     this.xhrs = [];
@@ -81,7 +81,7 @@ class AccountPaymentMethodCard extends React.Component {
       return null;
     }
     return (
-      <div className="four-col last-col account__payment-card-actions">
+      <div className="four-col last-col payment-card-actions">
         <GenericButton
           action={this._removePaymentMethod.bind(this)}
           type="inline-neutral">
@@ -98,40 +98,40 @@ class AccountPaymentMethodCard extends React.Component {
   render() {
     const card = this.props.card;
     const cardClasses = classNames(
-      'account__payment-card-wrapper',
-      {'account__payment-card-wrapper--flipped': this.state.cardFlipped}
+      'payment-card-wrapper',
+      {'payment-card-wrapper--flipped': this.state.cardFlipped}
     );
     const address = card.address;
     const line2 = address.line2 ? (<p>{address.line2}</p>) : null;
     return (
-      <div className="account__payment-card twelve-col">
+      <div className="payment-card twelve-col">
         <div className="eight-col">
           <div className={cardClasses}
             onClick={this._handleCardClick.bind(this)}>
-            <div className="account__payment-card-container">
-              <div className="account__payment-card-front">
-                <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-name">
+            <div className="payment-card-container">
+              <div className="payment-card-front">
+                <div className="payment-card-overlay"></div>
+                <div className="payment-card-name">
                   {card.cardHolder}
                 </div>
               </div>
-              <div className="account__payment-card-back">
-                <div className="account__payment-card-overlay"></div>
-                <div className="account__payment-card-number">
+              <div className="payment-card-back">
+                <div className="payment-card-overlay"></div>
+                <div className="payment-card-number">
                   xxxx xxxx xxxx {card.last4}
                 </div>
-                <div className="account__payment-card-bottom">
-                  <div className="account__payment-card-expiry">
+                <div className="payment-card-bottom">
+                  <div className="payment-card-expiry">
                     {card.month}/{card.year}
                   </div>
-                  <div className="account__payment-card-brand">
+                  <div className="payment-card-brand">
                     {this._generateLogo()}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="account__payment-card-info">
+          <div className="payment-card-info">
             <h4>Card address</h4>
             <p>{address.line1}</p>
             {line2}
@@ -144,7 +144,7 @@ class AccountPaymentMethodCard extends React.Component {
   }
 };
 
-AccountPaymentMethodCard.propTypes = {
+PaymentMethodCard.propTypes = {
   addNotification: PropTypes.func,
   card: PropTypes.object.isRequired,
   onPaymentMethodRemoved: PropTypes.func,
@@ -153,4 +153,4 @@ AccountPaymentMethodCard.propTypes = {
   username: PropTypes.string
 };
 
-module.exports = AccountPaymentMethodCard;
+module.exports = PaymentMethodCard;

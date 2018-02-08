@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const AccountPayment = require('../account/payment/payment');
+const Payment = require('../payment/payment');
 const ProfileNavigation = require('./navigation/navigation');
 const ProfileHeader = require('./header/header');
 const ProfileModelList = require('./model-list/model-list');
@@ -97,7 +97,7 @@ class Profile extends React.Component {
         label: 'Payment',
         getComponent: () => {
           return (
-            <AccountPayment
+            <Payment
               acl={this.props.acl}
               addNotification={this.props.addNotification}
               payment={this.props.payment}

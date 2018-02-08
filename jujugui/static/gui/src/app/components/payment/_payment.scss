@@ -1,0 +1,16 @@
+.payment {
+  &__no-user {
+    .button--inline-neutral {
+      margin-left: 20px;
+    }
+  }
+
+  &__section {
+    margin-bottom: 40px;
+  }
+
+  &__title {
+    font-size: 1.375rem;
+    margin-top: 10px;
+  }
+}

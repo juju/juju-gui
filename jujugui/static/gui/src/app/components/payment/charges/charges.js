@@ -6,12 +6,12 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
-const DateDisplay = require('../../../date-display/date-display');
-const ExpandingRow = require('../../../expanding-row/expanding-row');
-const GenericButton = require('../../../generic-button/generic-button');
-const Spinner = require('../../../spinner/spinner');
+const DateDisplay = require('../../date-display/date-display');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
+const Spinner = require('../../spinner/spinner');
 
-class AccountPaymentCharges extends React.Component {
+class PaymentCharges extends React.Component {
   constructor() {
     super();
     this.xhrs = [];
@@ -75,7 +75,7 @@ class AccountPaymentCharges extends React.Component {
   _generateLineItems(lineItems) {
     if (!lineItems || !lineItems.length) {
       return (
-        <div className="account-payment-charges__line-items">
+        <div className="payment-charges__line-items">
           There are no items for this charge.
         </div>);
     }
@@ -98,7 +98,7 @@ class AccountPaymentCharges extends React.Component {
         </li>);
     });
     return (
-      <div className="account-payment-charges__line-items">
+      <div className="payment-charges__line-items">
         <h4>Charges for:</h4>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
@@ -220,9 +220,9 @@ class AccountPaymentCharges extends React.Component {
 
   render() {
     return (
-      <div className="account-payment-charges">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+      <div className="payment-charges">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Charges
           </h2>
           {this._generateCharges()}
@@ -233,7 +233,7 @@ class AccountPaymentCharges extends React.Component {
   }
 };
 
-AccountPaymentCharges.propTypes = {
+PaymentCharges.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   payment: shapeup.shape({
@@ -244,4 +244,4 @@ AccountPaymentCharges.propTypes = {
   username: PropTypes.string.isRequired
 };
 
-module.exports = AccountPaymentCharges;
+module.exports = PaymentCharges;

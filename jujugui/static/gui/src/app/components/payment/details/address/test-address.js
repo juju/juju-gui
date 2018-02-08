@@ -3,14 +3,14 @@
 
 const React = require('react');
 
-const AccountPaymentDetailsAddress = require('./address');
-const AddressForm = require('../../../../address-form/address-form');
-const ExpandingRow = require('../../../../expanding-row/expanding-row');
-const GenericButton = require('../../../../generic-button/generic-button');
+const PaymentDetailsAddress = require('./address');
+const AddressForm = require('../../../address-form/address-form');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const GenericButton = require('../../../generic-button/generic-button');
 
-const jsTestUtils = require('../../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
-describe('AccountPaymentDetailsAddress', () => {
+describe('PaymentDetailsAddress', () => {
   let acl, address, newAddress;
 
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const getCountries = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetailsAddress
+      <PaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={addNotification}
@@ -61,7 +61,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const expected = (
       <ExpandingRow
         classes={{
-          'account-payment-details-address': true,
+          'payment-details-address': true,
           'twelve-col': true
         }}
         clickable={false}
@@ -70,7 +70,7 @@ describe('AccountPaymentDetailsAddress', () => {
           disabled={true}
           address={address}
           getCountries={getCountries} />
-        <div className="twelve-col account-payment-details-address__edit">
+        <div className="twelve-col payment-details-address__edit">
           <AddressForm
             addNotification={addNotification}
             address={address}
@@ -79,7 +79,7 @@ describe('AccountPaymentDetailsAddress', () => {
             ref="addressForm"
             validateForm={validateForm} />
           <div className={
-            'twelve-col account-payment-details-address__buttons'}>
+            'twelve-col payment-details-address__buttons'}>
             <GenericButton
               action={close}
               disabled={false}
@@ -101,7 +101,7 @@ describe('AccountPaymentDetailsAddress', () => {
   it('can cancel the form', () => {
     const close = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetailsAddress
+      <PaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}
@@ -122,7 +122,7 @@ describe('AccountPaymentDetailsAddress', () => {
   it('can validate the form', () => {
     const removeAddress = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetailsAddress
+      <PaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}
@@ -145,7 +145,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const close = sinon.stub();
     const updated = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetailsAddress
+      <PaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}
@@ -178,7 +178,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const updateAddress = sinon.stub().callsArgWith(3, 'Uh oh!');
     const addNotification = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetailsAddress
+      <PaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={addNotification}
@@ -211,7 +211,7 @@ describe('AccountPaymentDetailsAddress', () => {
     const abort = sinon.stub();
     const updateAddress = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetailsAddress
+      <PaymentDetailsAddress
         acl={acl}
         addAddress={sinon.stub()}
         addNotification={sinon.stub()}

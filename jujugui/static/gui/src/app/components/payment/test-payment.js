@@ -4,17 +4,17 @@
 const React = require('react');
 const shapeup = require('shapeup');
 
-const AccountPayment = require('./payment');
-const Spinner = require('../../spinner/spinner');
-const AccountPaymentCharges = require('./charges/charges');
-const AccountPaymentDetails = require('./details/details');
-const AccountPaymentMethods = require('./methods/methods');
-const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
-const GenericButton = require('../../generic-button/generic-button');
+const Payment = require('./payment');
+const Spinner = require('../spinner/spinner');
+const PaymentCharges = require('./charges/charges');
+const PaymentDetails = require('./details/details');
+const PaymentMethods = require('./methods/methods');
+const CreatePaymentUser = require('../create-payment-user/create-payment-user');
+const GenericButton = require('../generic-button/generic-button');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
+const jsTestUtils = require('../../utils/component-test-utils');
 
-describe('AccountPayment', function() {
+describe('Payment', function() {
   let acl, getCountries, payment, stripe, user;
 
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe('AccountPayment', function() {
   it('can display a loading spinner', function() {
     payment.getUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <AccountPayment
+      <Payment
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -65,7 +65,7 @@ describe('AccountPayment', function() {
         validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment">
+      <div className="payment">
         <Spinner />
       </div>);
     expect(output).toEqualJSX(expected);
@@ -76,7 +76,7 @@ describe('AccountPayment', function() {
     const validateForm = sinon.stub();
     const updateUser = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <AccountPayment
+      <Payment
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -85,9 +85,9 @@ describe('AccountPayment', function() {
         validateForm={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment">
+      <div className="payment">
         <div>
-          <AccountPaymentMethods
+          <PaymentMethods
             acl={acl}
             addNotification={addNotification}
             payment={{
@@ -102,7 +102,7 @@ describe('AccountPayment', function() {
             updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
-          <AccountPaymentDetails
+          <PaymentDetails
             acl={acl}
             addNotification={addNotification}
             payment={{
@@ -119,7 +119,7 @@ describe('AccountPayment', function() {
             updateUser={updateUser}
             username="spinach"
             validateForm={validateForm} />
-          <AccountPaymentCharges
+          <PaymentCharges
             acl={acl}
             addNotification={addNotification}
             payment={{
@@ -137,7 +137,7 @@ describe('AccountPayment', function() {
     payment.getUser = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     const addNotification = sinon.stub();
     jsTestUtils.shallowRender(
-      <AccountPayment
+      <Payment
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -155,7 +155,7 @@ describe('AccountPayment', function() {
   it('can display a message if there is no user', function() {
     payment.getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
-      <AccountPayment
+      <Payment
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -165,12 +165,12 @@ describe('AccountPayment', function() {
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+      <div className="payment">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Payment details
           </h2>
-          <div className="account-payment__no-user">
+          <div className="payment__no-user">
             You are not set up to make payments.
             <GenericButton
               action={instance._toggleAdd}
@@ -191,7 +191,7 @@ describe('AccountPayment', function() {
     const createCardElement = sinon.stub();
     payment.getUser = sinon.stub().callsArgWith(1, null, null);
     const renderer = jsTestUtils.shallowRender(
-      <AccountPayment
+      <Payment
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -203,9 +203,9 @@ describe('AccountPayment', function() {
     output.props.children.props.children[1].props.children[1].props.action();
     output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment">
-        <div className="account__section">
-          <h2 className="account__title twelve-col">
+      <div className="payment">
+        <div className="payment__section">
+          <h2 className="payment__title twelve-col">
             Payment details
           </h2>
           <div className="twelve-col">
@@ -229,7 +229,7 @@ describe('AccountPayment', function() {
     const abort = sinon.stub();
     payment.getUser = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <AccountPayment
+      <Payment
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
