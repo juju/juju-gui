@@ -4,14 +4,14 @@
 const React = require('react');
 const shapeup = require('shapeup');
 
-const AccountPaymentDetails = require('./details');
-const GenericButton = require('../../../generic-button/generic-button');
-const GenericInput = require('../../../generic-input/generic-input');
-const AccountPaymentDetailsAddress = require('./address/address');
+const PaymentDetails = require('./details');
+const GenericButton = require('../../generic-button/generic-button');
+const GenericInput = require('../../generic-input/generic-input');
+const PaymentDetailsAddress = require('./address/address');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../utils/component-test-utils');
 
-describe('AccountPaymentDetails', () => {
+describe('PaymentDetails', () => {
   let acl, payment;
 
   beforeEach(() => {
@@ -66,7 +66,7 @@ describe('AccountPaymentDetails', () => {
       }]
     };
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentDetails
+      <PaymentDetails
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -81,8 +81,8 @@ describe('AccountPaymentDetails', () => {
         <h2 className="account__title twelve-col">
           Account details
         </h2>
-        <div className="account__payment-details-view twelve-col">
-          <div className="account__payment-details-fields">
+        <div className="payment-details-view twelve-col">
+          <div className="payment-details-fields">
             <GenericInput
               disabled={true}
               label="Name"
@@ -105,13 +105,13 @@ describe('AccountPaymentDetails', () => {
             <GenericButton
               action={instance._toggleAddressEdit}
               disabled={false}
-              extraClasses="account__payment-details-title-button"
+              extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>
           </h4>
-          <ul className="account__payment-details-addresses">
-            {[<AccountPaymentDetailsAddress
+          <ul className="payment-details-addresses">
+            {[<PaymentDetailsAddress
               acl={acl}
               addNotification={addNotification}
               addAddress={addAddress}
@@ -140,13 +140,13 @@ describe('AccountPaymentDetails', () => {
             <GenericButton
               action={instance._toggleBillingAddressEdit}
               disabled={false}
-              extraClasses="account__payment-details-title-button"
+              extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
             </GenericButton>
           </h4>
-          <ul className="account__payment-details-addresses">
-            {[<AccountPaymentDetailsAddress
+          <ul className="payment-details-addresses">
+            {[<PaymentDetailsAddress
               acl={acl}
               addNotification={addNotification}
               addAddress={addBillingAddress}

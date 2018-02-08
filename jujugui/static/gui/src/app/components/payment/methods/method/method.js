@@ -5,13 +5,13 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../../../generic-button/generic-button');
-const GenericInput = require('../../../../generic-input/generic-input');
-const ExpandingRow = require('../../../../expanding-row/expanding-row');
-const AddressForm = require('../../../../address-form/address-form');
-const AccountPaymentMethodCard = require('../card/card');
+const GenericButton = require('../../../generic-button/generic-button');
+const GenericInput = require('../../../generic-input/generic-input');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const AddressForm = require('../../../address-form/address-form');
+const PaymentMethodCard = require('../card/card');
 
-class AccountPaymentMethod extends React.Component {
+class PaymentMethod extends React.Component {
   constructor() {
     super();
     this.xhrs = [];
@@ -33,7 +33,7 @@ class AccountPaymentMethod extends React.Component {
   */
   _generatePaymentMethod() {
     return (
-      <AccountPaymentMethodCard
+      <PaymentMethodCard
         addNotification={this.props.addNotification}
         card={this.props.paymentMethod}
         onPaymentMethodRemoved={this.props.updateUser}
@@ -90,7 +90,7 @@ class AccountPaymentMethod extends React.Component {
     // Zero pad the month if it is less than 10.
     const month = `0${paymentMethod.month}`.slice(-2);
     return (
-      <div className="account-payment-method__form">
+      <div className="payment-method__form">
         <AddressForm
           address={paymentMethod.address}
           disabled={this.props.acl.isReadOnly()}
@@ -115,7 +115,7 @@ class AccountPaymentMethod extends React.Component {
             }]}
             value={`${month}/${paymentMethod.year}`} />
         </div>
-        <div className="twelve-col account-payment-method__buttons">
+        <div className="twelve-col payment-method__buttons">
           <GenericButton
             action={this._toggleForm.bind(this)}
             type="inline-neutral">
@@ -142,7 +142,7 @@ class AccountPaymentMethod extends React.Component {
         clickable={false}
         expanded={true}>
         <div></div>
-        <div className="account-payment-method">
+        <div className="payment-method">
           {content}
         </div>
       </ExpandingRow>
@@ -150,7 +150,7 @@ class AccountPaymentMethod extends React.Component {
   }
 };
 
-AccountPaymentMethod.propTypes = {
+PaymentMethod.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   payment: shapeup.shape({
@@ -165,4 +165,4 @@ AccountPaymentMethod.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-module.exports = AccountPaymentMethod;
+module.exports = PaymentMethod;

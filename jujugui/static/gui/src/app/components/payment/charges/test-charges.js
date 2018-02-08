@@ -4,16 +4,16 @@
 const React = require('react');
 const shapeup = require('shapeup');
 
-const AccountPaymentCharges = require('./charges');
+const PaymentCharges = require('./charges');
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
-const DateDisplay = require('../../../date-display/date-display');
-const ExpandingRow = require('../../../expanding-row/expanding-row');
-const GenericButton = require('../../../generic-button/generic-button');
-const Spinner = require('../../../spinner/spinner');
+const DateDisplay = require('../../date-display/date-display');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const GenericButton = require('../../generic-button/generic-button');
+const Spinner = require('../../spinner/spinner');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../utils/component-test-utils');
 
-describe('AccountPaymentCharges', function() {
+describe('PaymentCharges', function() {
   let acl, payment;
 
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe('AccountPaymentCharges', function() {
 
   it('can display the loading spinner', function() {
     const renderer = jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -54,14 +54,14 @@ describe('AccountPaymentCharges', function() {
       }]
     }]);
     const renderer = jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment-charges">
+      <div className="payment-charges">
         <div className="account__section">
           <h2 className="account__title twelve-col">
             Charges
@@ -122,7 +122,7 @@ describe('AccountPaymentCharges', function() {
                 </div>
               </div>
               <div className="twelve-col">
-                <div className="account-payment-charges__line-items">
+                <div className="payment-charges__line-items">
                   <h4>Charges for:</h4>
                   <ul className="user-profile__list twelve-col">
                     <li className="user-profile__list-header twelve-col">
@@ -168,14 +168,14 @@ describe('AccountPaymentCharges', function() {
   it('can display when there are no charges', function() {
     payment.getCharges = sinon.stub().callsArgWith(1, null, []);
     const renderer = jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment-charges">
+      <div className="payment-charges">
         <div className="account__section">
           <h2 className="account__title twelve-col">
             Charges
@@ -200,14 +200,14 @@ describe('AccountPaymentCharges', function() {
       lineItems: []
     }]);
     const renderer = jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
         username="spinach" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="account-payment-charges">
+      <div className="payment-charges">
         <div className="account__section">
           <h2 className="account__title twelve-col">
             Charges
@@ -268,7 +268,7 @@ describe('AccountPaymentCharges', function() {
                 </div>
               </div>
               <div className="twelve-col">
-                <div className="account-payment-charges__line-items">
+                <div className="payment-charges__line-items">
                   There are no items for this charge.
                 </div>
               </div>
@@ -284,7 +284,7 @@ describe('AccountPaymentCharges', function() {
     const addNotification = sinon.stub();
     payment.getCharges = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -310,7 +310,7 @@ describe('AccountPaymentCharges', function() {
     const addNotification = sinon.stub();
     const getReceipt = sinon.stub();
     const renderer = jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -334,7 +334,7 @@ describe('AccountPaymentCharges', function() {
     const abort = sinon.stub();
     payment.getCharges = sinon.stub().returns({abort: abort});
     const renderer = jsTestUtils.shallowRender(
-      <AccountPaymentCharges
+      <PaymentCharges
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}

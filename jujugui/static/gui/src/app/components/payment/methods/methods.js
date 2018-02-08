@@ -5,13 +5,13 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../../generic-button/generic-button');
-const ExpandingRow = require('../../../expanding-row/expanding-row');
-const CardForm = require('../../../card-form/card-form');
-const AddressForm = require('../../../address-form/address-form');
-const AccountPaymentMethod = require('./method/method');
+const GenericButton = require('../../generic-button/generic-button');
+const ExpandingRow = require('../../expanding-row/expanding-row');
+const CardForm = require('../../card-form/card-form');
+const AddressForm = require('../../address-form/address-form');
+const PaymentMethod = require('./method/method');
 
-class AccountPaymentMethods extends React.Component {
+class PaymentMethods extends React.Component {
   constructor() {
     super();
     this.xhrs = [];
@@ -36,7 +36,7 @@ class AccountPaymentMethods extends React.Component {
     const user = this.props.paymentUser;
     if (!user.paymentMethods.length) {
       return (
-        <div className="account__payment-no-methods">
+        <div className="payment-methods__no-methods">
           You do not have a payment method.
           <GenericButton
             action={this._toggleAdd.bind(this)}
@@ -48,7 +48,7 @@ class AccountPaymentMethods extends React.Component {
     const payment = this.props.payment;
     const methods = user.paymentMethods.map(method => {
       return (
-        <AccountPaymentMethod
+        <PaymentMethod
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           payment={payment && shapeup.addReshape({
@@ -192,8 +192,8 @@ class AccountPaymentMethods extends React.Component {
         clickable={false}
         expanded={true}>
         <div></div>
-        <div className="account__payment-form">
-          <div className="account__payment-form-fields">
+        <div className="payment-methods__form">
+          <div className="payment-methods__form-fields">
             <CardForm
               acl={this.props.acl}
               createCardElement={this.props.stripe.createCardElement}
@@ -201,7 +201,7 @@ class AccountPaymentMethods extends React.Component {
               validateForm={this.props.validateForm} />
             <label htmlFor="cardAddressSame">
               <input checked={this.state.cardAddressSame}
-                className="account__payment-form-checkbox"
+                className="payment-methods__form-checkbox"
                 id="cardAddressSame"
                 name="cardAddressSame"
                 onChange={this._handleCardSameChange.bind(this)}
@@ -211,7 +211,7 @@ class AccountPaymentMethods extends React.Component {
             </label>
             {this._generateCardAddressFields()}
           </div>
-          <div className="twelve-col account__payment-form-buttons">
+          <div className="twelve-col payment-methods__form-buttons">
             <GenericButton
               action={this._toggleAdd.bind(this)}
               type="inline-neutral">
@@ -241,7 +241,7 @@ class AccountPaymentMethods extends React.Component {
   }
 };
 
-AccountPaymentMethods.propTypes = {
+PaymentMethods.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   payment: shapeup.shape({
@@ -262,4 +262,4 @@ AccountPaymentMethods.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-module.exports = AccountPaymentMethods;
+module.exports = PaymentMethods;

@@ -4,16 +4,16 @@
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../../../generic-button/generic-button');
-const GenericInput = require('../../../../generic-input/generic-input');
-const ExpandingRow = require('../../../../expanding-row/expanding-row');
-const AddressForm = require('../../../../address-form/address-form');
-const AccountPaymentMethodCard = require('../card/card');
-const AccountPaymentMethod = require('./method');
+const GenericButton = require('../../../generic-button/generic-button');
+const GenericInput = require('../../../generic-input/generic-input');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const AddressForm = require('../../../address-form/address-form');
+const PaymentMethodCard = require('../card/card');
+const PaymentMethod = require('./method');
 
-const jsTestUtils = require('../../../../../utils/component-test-utils');
+const jsTestUtils = require('../../../../utils/component-test-utils');
 
-describe('AccountPaymentMethod', () => {
+describe('PaymentMethod', () => {
   let acl, payment, paymentMethod, refs;
 
   beforeEach(() => {
@@ -63,7 +63,7 @@ describe('AccountPaymentMethod', () => {
     const updateUser = sinon.stub();
     const removePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethod
+      <PaymentMethod
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -82,8 +82,8 @@ describe('AccountPaymentMethod', () => {
         clickable={false}
         expanded={true}>
         <div></div>
-        <div className="account-payment-method">
-          <AccountPaymentMethodCard
+        <div className="payment-method">
+          <PaymentMethodCard
             addNotification={addNotification}
             card={paymentMethod}
             onPaymentMethodRemoved={updateUser}
@@ -100,7 +100,7 @@ describe('AccountPaymentMethod', () => {
     const getCountries = sinon.stub();
     const validateForm = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethod
+      <PaymentMethod
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -113,7 +113,7 @@ describe('AccountPaymentMethod', () => {
     output.props.children[1].props.children.props.updatePaymentMethod();
     output = component.getRenderOutput();
     const expected = (
-      <div className="account-payment-method__form">
+      <div className="payment-method__form">
         <AddressForm
           address={paymentMethod.address}
           disabled={false}
@@ -138,7 +138,7 @@ describe('AccountPaymentMethod', () => {
             }]}
             value="04/22" />
         </div>
-        <div className="twelve-col account-payment-method__buttons">
+        <div className="twelve-col payment-method__buttons">
           <GenericButton
             action={instance._toggleForm}
             type="inline-neutral">
@@ -157,7 +157,7 @@ describe('AccountPaymentMethod', () => {
   it('validates the form when updating the payment method', () => {
     payment.updatePaymentMethod = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethod
+      <PaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -179,7 +179,7 @@ describe('AccountPaymentMethod', () => {
     payment.updatePaymentMethod = sinon.stub().callsArgWith(4, null);
     const updateUser = sinon.stub();
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethod
+      <PaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}
@@ -217,7 +217,7 @@ describe('AccountPaymentMethod', () => {
     const addNotification = sinon.stub();
     payment.updatePaymentMethod = sinon.stub().callsArgWith(4, 'Uh oh!');
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethod
+      <PaymentMethod
         acl={acl}
         addNotification={addNotification}
         payment={payment}
@@ -244,7 +244,7 @@ describe('AccountPaymentMethod', () => {
     const abort = sinon.stub();
     payment.updatePaymentMethod = sinon.stub().returns({abort: abort});
     const component = jsTestUtils.shallowRender(
-      <AccountPaymentMethod
+      <PaymentMethod
         acl={acl}
         addNotification={sinon.stub()}
         payment={payment}

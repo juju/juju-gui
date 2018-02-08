@@ -4,11 +4,11 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const AddressForm = require('../../../../address-form/address-form');
-const ExpandingRow = require('../../../../expanding-row/expanding-row');
-const GenericButton = require('../../../../generic-button/generic-button');
+const AddressForm = require('../../../address-form/address-form');
+const ExpandingRow = require('../../../expanding-row/expanding-row');
+const GenericButton = require('../../../generic-button/generic-button');
 
-class AccountPaymentDetailsAddress extends React.Component {
+class PaymentDetailsAddress extends React.Component {
   constructor() {
     super();
     this.xhrs = [];
@@ -55,7 +55,7 @@ class AccountPaymentDetailsAddress extends React.Component {
     return (
       <ExpandingRow
         classes={{
-          'account-payment-details-address': true,
+          'payment-details-address': true,
           'twelve-col': true
         }}
         clickable={false}
@@ -64,7 +64,7 @@ class AccountPaymentDetailsAddress extends React.Component {
           disabled={true}
           address={this.props.address}
           getCountries={this.props.getCountries} />
-        <div className="twelve-col account-payment-details-address__edit">
+        <div className="twelve-col payment-details-address__edit">
           <AddressForm
             addNotification={this.props.addNotification}
             address={this.props.address}
@@ -73,7 +73,7 @@ class AccountPaymentDetailsAddress extends React.Component {
             ref="addressForm"
             validateForm={this.props.validateForm} />
           <div className={
-            'twelve-col account-payment-details-address__buttons'}>
+            'twelve-col payment-details-address__buttons'}>
             <GenericButton
               action={this.props.close}
               disabled={disabled}
@@ -93,7 +93,7 @@ class AccountPaymentDetailsAddress extends React.Component {
   }
 };
 
-AccountPaymentDetailsAddress.propTypes = {
+PaymentDetailsAddress.propTypes = {
   acl: PropTypes.object.isRequired,
   addAddress: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
@@ -108,4 +108,4 @@ AccountPaymentDetailsAddress.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-module.exports = AccountPaymentDetailsAddress;
+module.exports = PaymentDetailsAddress;

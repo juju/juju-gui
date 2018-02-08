@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const AccountPaymentMethodCard = require('../../account/payment/methods/card/card');
+const PaymentMethodCard = require('../../payment/methods/card/card');
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
 const Spinner = require('../../spinner/spinner');
 
@@ -65,7 +65,7 @@ class DeploymentPayment extends React.Component {
       return (
         <li className="deployment-payment__method"
           key={method.name + i}>
-          <AccountPaymentMethodCard
+          <PaymentMethodCard
             card={method} />
         </li>);
     });

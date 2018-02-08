@@ -1,15 +1,15 @@
-.account__payment {
-  &-details {
+.payment-methods {
+  &__details {
     padding: 20px;
   }
 
-  &-no-methods {
+  &__no-methods {
     .button--inline-neutral {
       margin-left: 20px;
     }
   }
 
-  &-form {
+  &__form {
     padding: 20px;
 
     &-fields {

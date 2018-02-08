@@ -1,14 +1,14 @@
 // Components
 
 @import '../../components/accordion-section/accordion-section';
-@import '../../components/account/payment/payment';
-@import '../../components/account/payment/charges/charges';
-@import '../../components/account/payment/charges/receipt-popup/receipt-popup';
-@import '../../components/account/payment/details/details';
-@import '../../components/account/payment/details/address/address';
-@import '../../components/account/payment/methods/methods';
-@import '../../components/account/payment/methods/method/method';
-@import '../../components/account/payment/methods/card/card';
+@import '../../components/payment/payment';
+@import '../../components/payment/charges/charges';
+@import '../../components/payment/charges/receipt-popup/receipt-popup';
+@import '../../components/payment/details/details';
+@import '../../components/payment/details/address/address';
+@import '../../components/payment/methods/methods';
+@import '../../components/payment/methods/method/method';
+@import '../../components/payment/methods/card/card';
 @import '../../components/added-services-list/added-services-list';
 @import '../../components/address-form/address-form';
 @import '../../components/basic-table/basic-table';

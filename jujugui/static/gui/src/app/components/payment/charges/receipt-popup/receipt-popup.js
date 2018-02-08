@@ -4,8 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Spinner = require('../../../../spinner/spinner');
-const Popup = require('../../../../popup/popup');
+const Spinner = require('../../../spinner/spinner');
+const Popup = require('../../../popup/popup');
 
 class ReceiptPopup extends React.Component {
   constructor() {

@@ -1,5 +1,5 @@
 // Flipping inspired by https://davidwalsh.name/css-flip.
-.account__payment-card {
+.payment-card {
   $width: 300px;
   $height: 200px;
 
@@ -12,7 +12,7 @@
     cursor: pointer;
 
     &--flipped {
-      .account__payment-card-container {
+      .payment-card-container {
         transform: rotateY(180deg);
       }
     }

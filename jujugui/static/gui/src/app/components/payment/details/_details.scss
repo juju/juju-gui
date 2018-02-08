@@ -1,4 +1,4 @@
-.account__payment-details {
+.payment-details {
   &-addresses {
     @extend %list-style;
 
@@ -12,6 +12,6 @@
   }
 }
 
-.account__payment-details-view .account__payment-details-title-button {
+.payment-details-view .payment-details-title-button {
   margin-left: 20px;
 }

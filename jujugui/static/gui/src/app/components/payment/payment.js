@@ -5,14 +5,14 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Spinner = require('../../spinner/spinner');
-const AccountPaymentCharges = require('./charges/charges');
-const AccountPaymentDetails = require('./details/details');
-const AccountPaymentMethods = require('./methods/methods');
-const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
-const GenericButton = require('../../generic-button/generic-button');
+const Spinner = require('../spinner/spinner');
+const PaymentCharges = require('./charges/charges');
+const PaymentDetails = require('./details/details');
+const PaymentMethods = require('./methods/methods');
+const CreatePaymentUser = require('../create-payment-user/create-payment-user');
+const GenericButton = require('../generic-button/generic-button');
 
-class AccountPayment extends React.Component {
+class Payment extends React.Component {
   constructor() {
     super();
     this.xhrs = [];
@@ -99,7 +99,7 @@ class AccountPayment extends React.Component {
     const payment = this.props.payment;
     return (
       <div>
-        <AccountPaymentMethods
+        <PaymentMethods
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           payment={payment && shapeup.addReshape({
@@ -113,7 +113,7 @@ class AccountPayment extends React.Component {
           updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
-        <AccountPaymentDetails
+        <PaymentDetails
           acl={this.props.acl}
           payment={payment && shapeup.addReshape({
             addAddress: payment.addAddress.bind(payment),
@@ -129,7 +129,7 @@ class AccountPayment extends React.Component {
           updateUser={this._getUser.bind(this)}
           username={this.props.username}
           validateForm={this.props.validateForm} />
-        <AccountPaymentCharges
+        <PaymentCharges
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           payment={payment && shapeup.addReshape({
@@ -177,7 +177,7 @@ class AccountPayment extends React.Component {
         <h2 className="account__title twelve-col">
           Payment details
         </h2>
-        <div className="account-payment__no-user">
+        <div className="payment__no-user">
           You are not set up to make payments.
           <GenericButton
             action={this._toggleAdd.bind(this)}
@@ -201,14 +201,14 @@ class AccountPayment extends React.Component {
       content = this._generateNoUser();
     }
     return (
-      <div className="account-payment">
+      <div className="payment">
         {content}
       </div>
     );
   }
 };
 
-AccountPayment.propTypes = {
+Payment.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   payment: shapeup.shape({
@@ -237,4 +237,4 @@ AccountPayment.propTypes = {
   validateForm: PropTypes.func.isRequired
 };
 
-module.exports = AccountPayment;
+module.exports = Payment;
