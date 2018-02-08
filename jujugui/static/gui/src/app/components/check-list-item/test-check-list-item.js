@@ -101,7 +101,7 @@ describe('CheckListItem', () => {
         action={sinon.stub()}
         id="apache/2"
         whenChanged={sinon.stub()} />);
-    assert.equal(output.props.children.props.htmlFor, '');
+    assert.equal(output.props.children.props.htmlFor, undefined);
   });
 
   it('has a nav class if it is a nav element', () => {
