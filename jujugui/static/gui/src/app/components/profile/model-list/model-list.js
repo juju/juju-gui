@@ -272,6 +272,12 @@ class ProfileModelList extends React.Component {
   switchToModel(model, e) {
     e.preventDefault();
     e.stopPropagation(); // Required to avoid react error about root DOM node.
+    // We call a changeState here to close the profile even though the util
+    // switchModel calls its own version of changeState. This is because
+    // switchModel does nothing if you're already connected to the model.
+    // This is the correct thing to do but we still want to close the profile
+    // in this case.
+    this.props.changeState({profile: null});
     this.props.switchModel(model);
   }
 

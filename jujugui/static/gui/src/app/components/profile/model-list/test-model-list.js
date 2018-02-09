@@ -166,7 +166,7 @@ describe('Profile Model List', function() {
         facadesExist={true}
         listModelsWithInfo={options.listModelsWithInfo || listModelsWithInfo}
         destroyModels={sinon.stub()}
-        switchModel={sinon.stub()}
+        switchModel={options.switchModel || sinon.stub()}
         userInfo={{profile: 'tester'}} />, true);
   }
 
@@ -854,5 +854,30 @@ describe('Profile Model List', function() {
       </div>
     );
     expect(output).toEqualJSX(expected);
+  });
+
+  it('switches to a model that has been clicked on', () => {
+    const switchModel = sinon.stub();
+    const changeState = sinon.stub();
+    const e = {
+      preventDefault: sinon.stub(),
+      stopPropagation: sinon.stub()
+    };
+    const renderer = renderComponent({
+      switchModel: switchModel,
+      changeState: changeState
+    });
+    const output = renderer.getRenderOutput();
+    output.props.children[1].props.rows[0].columns[0].content.props.onClick(e);
+    assert.equal(e.preventDefault.callCount, 1);
+    assert.equal(e.stopPropagation.callCount, 1);
+    assert.equal(changeState.callCount, 1, 'changeState not called');
+    assert.deepEqual(changeState.args[0], [{profile: null}]);
+    assert.equal(switchModel.callCount, 1, 'switchModel not called');
+    assert.deepEqual(switchModel.args[0], [{
+      name: 'mymodel',
+      id: '2f929db7-08a1-4a75-8733-3a0352a6e9f5',
+      owner: 'tester'
+    }]);
   });
 });
