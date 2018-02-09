@@ -160,7 +160,7 @@ ${this.props.youtubeAPIKey}`,
               <a
                 className="link"
                 href="https://jujucharms.com/docs/stable/getting-started"
-                target="_blank">Read the JAAS docs
+                target="_blank">Read the {this.props.gisf ? 'JAAS' : 'Juju'} docs
               </a>.
             </p>
           </VanillaCard>
