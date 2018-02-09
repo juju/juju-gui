@@ -36,7 +36,9 @@ class CheckListItem extends React.Component {
     @returns {String} The id of the element or a blank string.
   */
   _generateId(id) {
-    return this.props.action ? '' : id;
+    // Firefox does not link empty htmlFor properties so set it to undefined so
+    // the property does not get set.
+    return this.props.action ? undefined : id;
   }
 
   /**
