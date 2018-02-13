@@ -178,13 +178,18 @@ class ProfileCredentialList extends React.Component {
 
   /**
     Generates the edit credential UI elements.
-    @param {Object} credential The credential details of the credential being
+    @param {Object} credentialName The name of the credential being
+      edited.
+    @param {Object} credentialName The id of the credential being
       edited.
     @return {Array} The elements for the edit credential UI.
   */
-  _generateEditCredentials(credential) {
+  _generateEditCredentials(name, id) {
+    if (id !== this.state.editCredential) {
+      return null;
+    }
     return this._generateCredentialForm({
-      credential: credential,
+      credential: name,
       onCancel: this._setEditCredential.bind(this),
       onCredentialUpdated: this._onCredentialEdited.bind(this)
     });
@@ -321,7 +326,7 @@ class ProfileCredentialList extends React.Component {
               }]} />),
           columnSize: 1
         }],
-        expandedContent: this._generateEditCredentials(credential),
+        expandedContent: this._generateEditCredentials(credential, key),
         expandedContentExpanded: this.state.editCredential === key,
         key,
         rowClickable: false
