@@ -178,10 +178,8 @@ class ProfileCredentialList extends React.Component {
 
   /**
     Generates the edit credential UI elements.
-    @param {Object} credentialName The name of the credential being
-      edited.
-    @param {Object} credentialName The id of the credential being
-      edited.
+    @param name {Object} The name of the credential being edited.
+    @param id {Object} The id of the credential being edited.
     @return {Array} The elements for the edit credential UI.
   */
   _generateEditCredentials(name, id) {
