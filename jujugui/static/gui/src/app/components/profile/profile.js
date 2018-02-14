@@ -46,11 +46,13 @@ class Profile extends React.Component {
               acl={this.props.acl}
               isActiveUsersProfile={isActiveUsersProfile}
               addNotification={this.props.addNotification}
+              bakery={this.props.bakery}
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
               addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}
+              storeUser={this.props.storeUser}
               user={this.props.userInfo.external} />);
         }
       }],
@@ -64,11 +66,13 @@ class Profile extends React.Component {
               addToModel={this.props.addToModel}
               isActiveUsersProfile={isActiveUsersProfile}
               addNotification={this.props.addNotification}
+              bakery={this.props.bakery}
               baseURL={this.props.baseURL}
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
               generatePath={this.props.generatePath}
               getModelName={this.props.getModelName}
+              storeUser={this.props.storeUser}
               user={this.props.userInfo.external} />);
         }
       }],
@@ -197,6 +201,7 @@ Profile.propTypes = {
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  bakery: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
@@ -242,6 +247,7 @@ Profile.propTypes = {
   }),
   sendAnalytics: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
+  storeUser: PropTypes.func.isRequired,
   stripe: shapeup.shape({
     createCardElement: PropTypes.func,
     createToken: PropTypes.func,

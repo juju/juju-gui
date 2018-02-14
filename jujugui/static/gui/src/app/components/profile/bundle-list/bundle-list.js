@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
+const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
 
@@ -86,10 +87,48 @@ class ProfileBundleList extends React.Component {
     this.props.changeState({profile: null, store: path, hash: null});
   }
 
+  /**
+    Generate the main title.
+    @returns {Object} JSX for the title.
+  */
+  _generateTitle() {
+    return (
+      <h2 className="profile__title">
+        {this.props.isActiveUsersProfile ? 'My' : 'Their'} bundles
+        <span className="profile__title-count">
+          ({(this.state.data || []).length})
+        </span>
+      </h2>);
+  }
+
   render() {
     let content;
     if (this.state.loading) {
       content = (<Spinner />);
+    } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
+      if (!this.props.user) {
+        content = (
+          <ProfileCharmstoreLogin
+            addNotification={this.props.addNotification}
+            bakery={this.props.bakery}
+            changeState={this.props.changeState}
+            charmstore={shapeup.fromShape(this.props.charmstore,
+              ProfileCharmstoreLogin.propTypes.charmstore)}
+            storeUser={this.props.storeUser}
+            type="bundles" />);
+      } else {
+        content = (
+          <div>
+            {this._generateTitle()}
+            <p>
+              Learn about&nbsp;
+              <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
+                target="_blank">
+                writing your own bundle
+              </a>.
+            </p>
+          </div>);
+      }
     } else {
       const rows = (this.state.data || []).map(bundle => {
         const url = window.jujulib.URL.fromLegacyString(bundle.id);
@@ -163,15 +202,9 @@ class ProfileBundleList extends React.Component {
           key: bundle.id
         };
       });
-      const prefix = this.props.isActiveUsersProfile ? 'My' : 'Their';
       content = (
         <div>
-          <h2 className="profile__title">
-            {prefix} bundles
-            <span className="profile__title-count">
-              ({(this.state.data || []).length})
-            </span>
-          </h2>
+          {this._generateTitle()}
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
@@ -208,16 +241,19 @@ ProfileBundleList.propTypes = {
   }).frozen.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  bakery: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     getDiagramURL: PropTypes.func.isRequired,
+    getMacaroon: PropTypes.func.isRequired,
     list: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
   }).isRequired,
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
+  storeUser: PropTypes.func.isRequired,
   user: PropTypes.string
 };
 
