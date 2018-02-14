@@ -650,7 +650,6 @@ class GUIApp {
     @param {Function} next - Run the next route handler, if any.
   */
   _clearRoot(state, next) {
-    this._clearCharmbrowser(state, next);
     this._clearLogin(state, next);
     next();
   }

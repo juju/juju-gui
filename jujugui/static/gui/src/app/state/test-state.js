@@ -1359,9 +1359,16 @@ describe('State', () => {
         location: {href: '/u/hatch/staging/i/applications/inspector/ghost'}
       });
       const pushStub = sinon.stub(state, '_pushState');
-      state.dispatch();
+      state.bootstrap();
       const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
+      // The location value will create a state which looks like
+      // {user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost'}}
+      // In the changeState however we are calling null on `gui.inspector` by
+      // doing this we exersize the nullkey filtering for only calling dispatchers
+      // for state values that exist. The root cleanup dispatcher should
+      // not be called.
       state.changeState({
+        root: null,
         gui: {
           inspector: null,
           applications: null
@@ -1380,7 +1387,7 @@ describe('State', () => {
         location: {href: '/i/machines'}
       });
       const pushStub = sinon.stub(state, '_pushState');
-      state.dispatch();
+      state.bootstrap();
       const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
       state.changeState({
         root: 'store',
