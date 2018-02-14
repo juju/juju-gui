@@ -105,7 +105,7 @@ class FileField extends React.Component {
     const contents = this.state.contents;
     let element, id;
     if (label) {
-      id = label.replace(' ', '-');
+      id = label.split(' ').join('-');
       if (contents) {
         label = 'File stored.';
       }
