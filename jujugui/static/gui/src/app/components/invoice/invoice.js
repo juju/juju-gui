@@ -50,7 +50,8 @@ class Invoice extends React.Component {
           <header className="invoice__header">
             <img
               className="invoice__logo"
-              src="https://assets.ubuntu.com/v1/5fe74a5b-logo-juju.svg" />
+              src="https://assets.ubuntu.com/v1/7e21b535-logo-juju.svg"
+              alt="Juju logo" />
 
             <h1 className="invoice__heading">Invoice</h1>
 
@@ -106,20 +107,24 @@ class Invoice extends React.Component {
             <hr />
             <div className="invoice__rel-wrap clearfix">
               <div className="invoice__summary">
-                <span className="invoice__label u-btn-mar">
-                  Services during the period
-                </span>
-                <span className="invoice__value u-btn-mar">
-                  1st December 2017 - 31st January 2018
-                </span>
-                <span className="invoice__label u-btn-mar">
-                  Questions?
-                </span>
-                <span className="invoice__value u-btn-mar">
-                  <a href="mailto:accountsrecievable@canonical.com">
-                    accountsrecievable@canonical.com
-                  </a>
-                </span>
+                <div className="u-btn-mar">
+                  <span className="invoice__label">
+                    Services during the period
+                  </span>
+                  <span className="invoice__value">
+                    1st December 2017 - 31st January 2018
+                  </span>
+                </div>
+                <div className="u-btn-mar">
+                  <span className="invoice__label">
+                    Questions?
+                  </span>
+                  <span className="invoice__value">
+                    <a href="mailto:accountsrecievable@canonical.com">
+                      accountsrecievable@canonical.com
+                    </a>
+                  </span>
+                </div>
               </div>
               <div className="invoice__meta">
                 <div className="invoice__meta__col">
@@ -135,13 +140,12 @@ class Invoice extends React.Component {
               </div>
             </div>
             <hr />
-            <h2 className="u-btn-mar">Details</h2>
-
+            <h3 className="u-btn-mar invoice-details__title">Details</h3>
             <div className="invoice-details-sm-screen">
               <div className="invoice__billing-package">
                 <p><strong>Ubuntu Advantage Essential</strong></p>
                 <p>$0.09 per machine hour</p>
-                <p>Model: fx-staging-ldn</p>
+                <p className="invoice__billing-package__model-name">Model: fx-staging-ldn</p>
                 <div className="invoice__meta">
                   <div className="invoice__meta__col">
                     <span className="invoice__label u-text-align--left">28.999 hours</span>
@@ -150,8 +154,7 @@ class Invoice extends React.Component {
                     <span className="invoice__value">$2,567.94</span>
                   </div>
                 </div>
-
-                <p>Model: version neo</p>
+                <p className="invoice__billing-package__model-name">Model: version neo</p>
                 <div className="invoice__meta">
                   <div className="invoice__meta__col">
                     <span className="invoice__label u-text-align--left">28.999 hours</span>
@@ -213,7 +216,7 @@ class Invoice extends React.Component {
 
             <div className="u-btn-mar">
               <img
-                width="200"
+                width="120"
                 src="https://assets.ubuntu.com/v1/5d6da5c4-logo-canonical-aubergine.svg"
                 alt="Canonical logo" />
             </div>

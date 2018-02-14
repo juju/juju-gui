@@ -11,21 +11,14 @@ $invoice-bp: 600px;
   top: 0;
   right: 0;
 
-  @media (min-width: $invoice-bp) {
-    background: $light-mid-grey;
-  }
-
   &__inner {
     padding: 1.5rem;
     overflow-y: auto;
     height: calc(100vh - 4rem);
-    max-width: 1200px;
 
     @media (min-width: $invoice-bp) {
-      background-color: $light-grey;
-      box-shadow: 3px 3px 15px 3px rgba(0,0,0,0.25);
       margin: 2rem auto;
-      width: calc(100% - 4rem);
+      max-width: 1200px;
       padding: 2rem;
     }
   }
@@ -48,9 +41,8 @@ $invoice-bp: 600px;
 
   &__heading {
     border-top: 1px solid $light-mid-grey;
-    font-size: 2rem;
+    font-size: 2.8rem;
     margin-top: 1rem;
-    padding-top: 1rem;
 
     @media (min-width: $invoice-bp) {
       position: absolute;
@@ -71,7 +63,7 @@ $invoice-bp: 600px;
 
   &__info {
     border-top: 1px solid $light-mid-grey;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 
     @media (min-width: $invoice-bp) {
       position: relative;
@@ -99,7 +91,6 @@ $invoice-bp: 600px;
 
   &__meta {
     display: flex;
-    min-height: 120px;
 
     &__col {
       flex: 1;
@@ -131,6 +122,17 @@ $invoice-bp: 600px;
       display: block;
     }
 
+    .u-emphasis-value {
+      margin-top: -1rem;
+    }
+
+    @media (max-width: $invoice-bp) {
+
+      .invoice__label {
+        margin-bottom: .5rem;
+      }
+    }
+
     @media (min-width: $invoice-bp) {
       margin-top: 0;
       padding-top: 0;
@@ -148,6 +150,14 @@ $invoice-bp: 600px;
     .invoice__meta {
       min-height: 0;
     }
+
+    p {
+      font-size: 1rem;
+    }
+
+    &__model-name {
+      margin-bottom: .25rem;
+    }
   }
 
   &__rel-wrap {
@@ -164,7 +174,7 @@ $invoice-bp: 600px;
   }
 
   .u-emphasis-value {
-    font-size: 1.25rem;
+    font-size: 2rem;
   }
 
   .u-text-align--left {
@@ -174,7 +184,7 @@ $invoice-bp: 600px;
   hr {
     border: 0;
     border-top: 1px solid $light-mid-grey;
-    margin: 2rem 0;
+    margin: 2rem 0 1rem;
   }
 }
 
@@ -183,7 +193,11 @@ $invoice-bp: 600px;
   display: none;
 }
 
-@media (min-width: $invoice-bp) {
+.invoice-details__title {
+  font-size: 20px;
+}
+
+@media (min-width: 768px) {
 
   .invoice-details-sm-screen {
     display: none;
