@@ -263,37 +263,16 @@ const State = class State {
         return {error, state};
       }
     }
-
-    /**
-      Extract out the state path for the dispatcher key.
-      @param {Object} state - The app state.
-    */
-    function extract(state) {
-      let allKeys = [];
-      function concat(state, keys = []) {
-        Object.keys(state).forEach(key => {
-          keys.push(key);
-          if (typeof state[key] === 'object' && state[key] !== null) {
-            concat(state[key], keys);
-          } else {
-            allKeys.push(keys.join('.'));
-          }
-          keys.pop();
-        });
-      }
-      concat(state);
-      return allKeys;
-    }
     if (updateState) {
       this._appStateHistory.push(state);
     }
-    const stateKeys = extract(state);
+    const stateKeys = this._extractKeys(state);
     if (backDispatch) {
       // When we go back we need to get the list of sections that have changed
       // between the old a new state. We need to null out those sections so that
       // they are removed from the state. This is done by filtering the old keys
       // and removing those that exist in the new keys.
-      nullKeys = extract(this.previous).filter(
+      nullKeys = this._extractKeys(this.previous).filter(
         key => stateKeys.indexOf(key) === -1);
     }
     // First run all of the 'null state' dispatchers to clear out the old
@@ -451,9 +430,18 @@ const State = class State {
       return prune(obj);
     }
 
-    const mergedState = merge(
-      // Clone the current state so we don't end up clobbering old states.
-      merge({}, this.current), changes);
+    // Clone the current state so we don't end up clobbering old states.
+    const mergedState = merge(merge({}, this.current), changes);
+
+    const existingKeys = this._extractKeys(this.current);
+    // There is no need to call the cleanup methods for state keys if that
+    // state was not active. This will allow calls to changeState with
+    // extraneous nulled keys with no adverse side effects if the cleanup
+    // method is not idempotent. For example, if state is {root: 'bar'} and
+    // a changeState({gui: null}) is called, it will not call the gui
+    // cleanup method as the state did not exist to be cleaned up.
+    nullKeys = nullKeys.filter(nullKey =>
+      existingKeys.some(existingKey => existingKey.indexOf(nullKey) === 0));
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
@@ -469,6 +457,28 @@ const State = class State {
     if (error !== null) {
       console.error(error);
     }
+  }
+
+  /**
+    Extract out the state key paths from the state.
+    @param {Object} state - The app state.
+    @return {Array} A lost of the state keys.
+  */
+  _extractKeys(state) {
+    let allKeys = [];
+    function concat(state, keys = []) {
+      Object.keys(state).forEach(key => {
+        keys.push(key);
+        if (typeof state[key] === 'object' && state[key] !== null) {
+          concat(state[key], keys);
+        } else {
+          allKeys.push(keys.join('.'));
+        }
+        keys.pop();
+      });
+    }
+    concat(state);
+    return allKeys;
   }
 
   /**
