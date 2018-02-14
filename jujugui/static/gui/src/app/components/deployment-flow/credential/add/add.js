@@ -204,8 +204,8 @@ class DeploymentCredentialAdd extends React.Component {
           {this._generateAuthSelect()}
           {fields}
         </div>
-        <div className="deployment-flow__notice six-col last-col">
-          <p className="deployment-flow__notice-content">
+        <div className="deployment-credential-add__notice prepend-one five-col last-col">
+          <p className="deployment-credential-add__notice-content">
             <SvgIcon
               name="general-action-blue"
               size="16" />

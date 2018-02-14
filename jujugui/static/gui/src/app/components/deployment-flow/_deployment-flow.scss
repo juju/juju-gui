@@ -20,18 +20,6 @@
     }
   }
 
-  &__notice {
-    &-content {
-      padding: 0 0 0 26px;
-    }
-
-    .svg-icon {
-      margin-left: -26px;
-      margin-right: 10px;
-      vertical-align: text-bottom;
-    }
-  }
-
   &__service-title {
     .button--inline-neutral {
       font-size: $base;
