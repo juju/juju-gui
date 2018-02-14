@@ -330,6 +330,7 @@ Browser: ${navigator.userAgent}`
         activeSection={state.hash}
         addNotification={this._bound.addNotification}
         baseURL={this.applicationConfig.baseUrl}
+        bakery={this.bakery}
         changeState={this._bound.changeState}
         charmstore={charmstore}
         controllerAPI={
@@ -350,6 +351,7 @@ Browser: ${navigator.userAgent}`
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
         sendAnalytics={this.sendAnalytics}
         showPay={this.applicationConfig.flags.pay || false}
+        storeUser={this.storeUser.bind(this)}
         stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
         switchModel={this._bound.switchModel}
         userInfo={this._getUserInfo(state)} />,
