@@ -35,6 +35,12 @@ $invoice-bp: 600px;
       .invoice__meta {
         position: relative;
         top: 3rem;
+        min-height: 3rem;
+      }
+
+      .u-emphasis-value {
+        position: relative;
+        top: -1rem;
       }
     }
   }
@@ -46,7 +52,7 @@ $invoice-bp: 600px;
 
     @media (min-width: $invoice-bp) {
       position: absolute;
-      top: 6rem;
+      top: 2.25rem;
       left: 0;
       width: 100%;
 
@@ -67,6 +73,7 @@ $invoice-bp: 600px;
 
     @media (min-width: $invoice-bp) {
       position: relative;
+      margin-top: 3.5rem;
       padding-top: 2rem;
     }
 
@@ -122,8 +129,11 @@ $invoice-bp: 600px;
       display: block;
     }
 
-    .u-emphasis-value {
-      margin-top: -1rem;
+    & + .invoice__meta .u-emphasis-value {
+
+      @media (min-width: $invoice-bp) {
+        margin-top: -.75rem;
+      }
     }
 
     @media (max-width: $invoice-bp) {
@@ -133,12 +143,21 @@ $invoice-bp: 600px;
       }
     }
 
+
     @media (min-width: $invoice-bp) {
       margin-top: 0;
       padding-top: 0;
       position: absolute;
       top: 0;
       left: 0;
+
+      .invoice__label {
+        margin-bottom: .5rem;
+      }
+
+      & + .invoice__meta {
+        padding-bottom: 2rem;
+      }
     }
   }
 
@@ -162,6 +181,10 @@ $invoice-bp: 600px;
 
   &__rel-wrap {
     position: relative;
+
+    @media (min-width: $invoice-bp) {
+      padding-top: .5rem;
+    }
   }
 
   .u-btn-mar {
@@ -195,6 +218,10 @@ $invoice-bp: 600px;
 
 .invoice-details__title {
   font-size: 20px;
+
+  @media (min-width: $invoice-bp) {
+    font-size: 23px;
+  }
 }
 
 @media (min-width: 768px) {
