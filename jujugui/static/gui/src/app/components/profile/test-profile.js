@@ -20,10 +20,12 @@ describe('Profile', function() {
         acl={options.acl || acl}
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
+        bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
           getDiagramURL: sinon.stub(),
+          getMacaroon: sinon.stub(),
           list: sinon.stub(),
           url: '/charmstore'
         }}
@@ -40,6 +42,7 @@ describe('Profile', function() {
         initUtils={initUtils}
         payment={options.payment}
         showPay={options.showPay || false}
+        storeUser={options.storeUser || sinon.stub()}
         stripe={options.stripe}
         destroyModels={sinon.stub()}
         sendAnalytics={sinon.stub()}

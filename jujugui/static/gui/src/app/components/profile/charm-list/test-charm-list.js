@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmList = require('./charm-list');
+const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
 
@@ -55,16 +56,20 @@ describe('Profile Charm List', function() {
       <ProfileCharmList
         acl={options.acl || acl}
         addNotification={sinon.stub()}
+        bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
+          getMacaroon: options.getMacaroon || sinon.stub(),
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
         addToModel={options.addToModel || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
-        user="hatch@external" />, true);
+        storeUser={options.storeUser || sinon.stub()}
+        user={
+          options.user !== undefined ? options.user : 'hatch@external'} />, true);
   }
   let acl;
 
@@ -272,6 +277,51 @@ describe('Profile Charm List', function() {
               key: 'cs:~hatch/privghost-1'
             }]} />
         </div>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can render when there are no charms', () => {
+    const renderer = renderComponent({
+      charmstoreList: sinon.stub().callsArgWith(1, null, null)
+    });
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-charm-list">
+        <div>
+          <h2 className="profile__title">
+            My charms
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
+          <p>
+            Learn about&nbsp;
+            <a href="https://jujucharms.com/docs/stable/developer-getting-started"
+              target="_blank">
+              writing your own charm
+            </a>.
+          </p>
+        </div>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can display a login message', () => {
+    const renderer = renderComponent({
+      charmstoreList: sinon.stub().callsArgWith(1, null, null),
+      user: null
+    });
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-charm-list">
+        <ProfileCharmstoreLogin
+          addNotification={sinon.stub()}
+          bakery={{}}
+          changeState={sinon.stub()}
+          charmstore={{getMacaroon: sinon.stub()}}
+          storeUser={sinon.stub()}
+          type="charms" />
       </div>);
     expect(output).toEqualJSX(expected);
   });

@@ -6,6 +6,7 @@ const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
+const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const ProfileBundleList = require('./bundle-list');
 const Spinner = require('../../spinner/spinner');
@@ -81,17 +82,21 @@ describe('Profile Bundle List', function() {
         acl={options.acl || acl}
         addNotification={sinon.stub()}
         addToModel={options.addToModel || sinon.stub()}
+        bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         charmstore={{
           getDiagramURL: options.getDiagramURL || sinon.stub().returns('diagram.svg'),
+          getMacaroon: options.getMacaroon || sinon.stub(),
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
         generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
-        user="lazypower@external" />, true);
+        storeUser={options.storeUser || sinon.stub()}
+        user={
+          options.user !== undefined ? options.user : 'lazypower@external'} />, true);
   }
 
   it('can render', () => {
@@ -287,28 +292,33 @@ describe('Profile Bundle List', function() {
               ({0})
             </span>
           </h2>
-          <BasicTable
-            headerClasses={['profile__entity-table-header-row']}
-            headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Name',
-              columnSize: 6
-            }, {
-              content: 'Machines',
-              columnSize: 2,
-              classes: ['u-align--right']
-            }, {
-              content: 'Units',
-              columnSize: 1,
-              classes: ['u-align--right']
-            }, {
-              content: 'Release',
-              columnSize: 3
-            }]}
-            rowClasses={['profile__entity-table-row']}
-            rowColumnClasses={['profile__entity-table-column']}
-            rows={[]} />
+          <p>
+            Learn about&nbsp;
+            <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
+              target="_blank">
+              writing your own bundle
+            </a>.
+          </p>
         </div>
+      </div>);
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('can display a login message', () => {
+    const renderer = renderComponent({
+      charmstoreList: sinon.stub().callsArgWith(1, null, null),
+      user: null
+    });
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <div className="profile-bundle-list">
+        <ProfileCharmstoreLogin
+          addNotification={sinon.stub()}
+          bakery={{}}
+          changeState={sinon.stub()}
+          charmstore={{getMacaroon: sinon.stub()}}
+          storeUser={sinon.stub()}
+          type="bundles" />
       </div>);
     expect(output).toEqualJSX(expected);
   });
