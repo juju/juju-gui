@@ -167,7 +167,7 @@ describe('Profile Model List', function() {
         listModelsWithInfo={options.listModelsWithInfo || listModelsWithInfo}
         destroyModels={sinon.stub()}
         switchModel={options.switchModel || sinon.stub()}
-        userInfo={{profile: 'tester'}} />, true);
+        userInfo={options.userInfo || {profile: 'tester'}} />, true);
   }
 
   it('can render', () => {
@@ -598,6 +598,31 @@ describe('Profile Model List', function() {
               </div>),
             key: 'website'
           }]} />
+      </div>
+    );
+    expect(output).toEqualJSX(expected);
+  });
+
+  it('does not break for superusers', () => {
+    // Users with access to all models but no models of their own, or shared with them.
+    const renderer = renderComponent({userInfo: {profile: 'some-superuser'}});
+    const output = renderer.getRenderOutput();
+    const instance = renderer.getMountedInstance();
+    const expected = (
+      <div className="profile-model-list">
+        <div className="profile-model-list__header twelve-col">
+          <CreateModelButton
+            title="Start a new model"
+            changeState={instance.props.changeState}
+            switchModel={instance.props.switchModel} />
+          <h2 className="profile__title">
+            My models
+            <span className="profile__title-count">
+              ({0})
+            </span>
+          </h2>
+        </div>
+        {null}
       </div>
     );
     expect(output).toEqualJSX(expected);
