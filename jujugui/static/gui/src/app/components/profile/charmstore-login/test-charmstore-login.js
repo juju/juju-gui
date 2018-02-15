@@ -40,12 +40,14 @@ describe('ProfileCharmstoreLogin ', function() {
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span className="link"
+            onClick={sinon.stub()}
             role="button"
             tabIndex="0">
             login
           </span>&nbsp;
           to the&nbsp;
           <span className="link"
+            onClick={sinon.stub()}
             role="button"
             tabIndex="0">
             charm store
@@ -74,12 +76,14 @@ describe('ProfileCharmstoreLogin ', function() {
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span className="link"
+            onClick={sinon.stub()}
             role="button"
             tabIndex="0">
             login
           </span>&nbsp;
           to the&nbsp;
           <span className="link"
+            onClick={sinon.stub()}
             role="button"
             tabIndex="0">
             charm store
@@ -153,6 +157,20 @@ describe('ProfileCharmstoreLogin ', function() {
       title: 'Cannot retrieve charm store macaroon',
       message: 'Cannot retrieve charm store macaroon: Uh oh!',
       level: 'error'
+    });
+  });
+
+  it('can show the store', () => {
+    const changeState = sinon.stub();
+    const renderer = renderComponent({
+      changeState
+    });
+    const output = renderer.getRenderOutput();
+    output.props.children[2].props.children[3].props.onClick();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      profile: null,
+      store: ''
     });
   });
 });
