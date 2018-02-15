@@ -37,6 +37,10 @@ class ProfileCharmstoreLogin extends React.Component {
     });
   }
 
+  _openStore() {
+    this.props.changeState({profile: null, store: ''});
+  }
+
   render() {
     return (
       <div className="profile-charmstore-login">
@@ -53,12 +57,14 @@ class ProfileCharmstoreLogin extends React.Component {
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span className="link"
+            onClick={this._interactiveLogin.bind(this)}
             role="button"
             tabIndex="0">
             login
           </span>&nbsp;
           to the&nbsp;
           <span className="link"
+            onClick={this._openStore.bind(this)}
             role="button"
             tabIndex="0">
             charm store
