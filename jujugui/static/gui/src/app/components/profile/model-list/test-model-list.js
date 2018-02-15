@@ -605,27 +605,46 @@ describe('Profile Model List', function() {
 
   it('does not break for superusers', () => {
     // Users with access to all models but no models of their own, or shared with them.
-    const renderer = renderComponent({userInfo: {profile: 'some-superuser'}});
+    const models = JSON.parse(rawModelData);
+    models.push(JSON.parse(`{
+      "id": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
+      "name": "mymodel-foo",
+      "series": "xenial",
+      "provider": "ec2",
+      "uuid": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
+      "agentVersion": "",
+      "sla": "",
+      "slaOwner": "",
+      "status": "available",
+      "statusInfo": "",
+      "controllerUUID": "a030379a-940f-4760-8fce-3062b41a04e9",
+      "owner": "'somesuperuser'@external",
+      "credential": "aws_tester@external_base",
+      "credentialName": "base",
+      "region": "eu-west-1",
+      "cloud": "aws",
+      "numMachines": 0,
+      "users": [{
+        "name": "somesuperuser@external",
+        "displayName": "somesuperuser",
+        "domain": "Ubuntu SSO",
+        "lastConnection": "2017-07-06T14:47:03.000Z",
+        "access": "admin"
+      }],
+      "life": "alive",
+      "isAlive": true,
+      "isController": false,
+      "lastConnection": "2017-07-06T14:47:03.000Z"
+    }`));
+    const renderer = renderComponent({
+      listModelsWithInfo: sinon.stub().callsArgWith(0, null, models),
+      userInfo: {profile: 'somesuperuser'}
+    });
     const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
-    const expected = (
-      <div className="profile-model-list">
-        <div className="profile-model-list__header twelve-col">
-          <CreateModelButton
-            title="Start a new model"
-            changeState={instance.props.changeState}
-            switchModel={instance.props.switchModel} />
-          <h2 className="profile__title">
-            My models
-            <span className="profile__title-count">
-              ({0})
-            </span>
-          </h2>
-        </div>
-        {null}
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+    // It should only show the single model that they explicitly own.
+    assert.equal(
+      output.props.children[0].props.children[1].props.children[1].props.children[1],
+      1);
   });
 
   it('can render without any models', () => {
