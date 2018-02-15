@@ -34,8 +34,9 @@ class ProfileCredentialList extends React.Component {
 
   async _getClouds() {
     const props = this.props;
-
-    this.setState({loading: true});
+    // Close the edit credentials form in case it was left open. We don't want
+    // it to reopen after the credentials load.
+    this.setState({loading: true, editCredential: null});
     try {
       const clouds = await this._listClouds();
       const credentialMap = await this._getCloudCredentialNames(props.username, clouds);
