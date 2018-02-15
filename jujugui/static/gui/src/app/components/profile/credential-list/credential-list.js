@@ -164,6 +164,9 @@ class ProfileCredentialList extends React.Component {
     Generate a form to add credentials.
   */
   _generateAddCredentials() {
+    // Only generate the form when we want to display it so that it gets
+    // rerendered and therefore the fields cleared between uses.
+    const form = this.state.showAdd ? this._generateCredentialForm() : null;
     return (
       <ExpandingRow
         classes={{'twelve-col': true}}
@@ -171,7 +174,7 @@ class ProfileCredentialList extends React.Component {
         expanded={this.state.showAdd}>
         <div></div>
         <div className="twelve-col">
-          {this._generateCredentialForm()}
+          {form}
         </div>
       </ExpandingRow>);
   }

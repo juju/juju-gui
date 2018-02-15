@@ -246,27 +246,7 @@ describe('ProfileCredentialList', () => {
             clickable={false}
             expanded={false}>
             <div></div>
-            <div className="twelve-col">
-              <CredentialAddEdit
-                key="deployment-credential-add"
-                acl={acl}
-                addNotification={sinon.stub()}
-                controllerAPI={{
-                  listClouds: sinon.stub(),
-                  reshape: sinon.stub(),
-                  updateCloudCredential: sinon.stub()
-                }}
-                controllerIsReady={sinon.stub()}
-                credential={undefined}
-                credentials={[
-                  'aws_foo@external_cred1', 'aws_foo@external_testcred',
-                  'azure_foo@external_cred1', 'google_foo@external_admin']}
-                initUtils={initUtils}
-                onCancel={sinon.stub()}
-                onCredentialUpdated={sinon.stub()}
-                sendAnalytics={sinon.stub()}
-                username="foo@external" />
-            </div>
+            <div className="twelve-col"></div>
           </ExpandingRow>
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
@@ -403,6 +383,45 @@ describe('ProfileCredentialList', () => {
         </div>
       );
       expect(output).toEqualJSX(expected);
+    });
+  });
+
+  it('can show the add form', () => {
+    const renderer = shallowRenderComponent();
+    const instance = renderer.getMountedInstance();
+    return instance._getClouds().then(() => {
+      let output = renderer.getRenderOutput();
+      output.props.children[1].props.children.props.children.props.action();
+      output = renderer.getRenderOutput();
+      const expected = (
+        <ExpandingRow
+          classes={{'twelve-col': true}}
+          clickable={false}
+          expanded={true}>
+          <div></div>
+          <div className="twelve-col">
+            <CredentialAddEdit
+              key="deployment-credential-add"
+              acl={acl}
+              addNotification={sinon.stub()}
+              controllerAPI={{
+                listClouds: sinon.stub(),
+                reshape: sinon.stub(),
+                updateCloudCredential: sinon.stub()
+              }}
+              controllerIsReady={sinon.stub()}
+              credential={undefined}
+              credentials={[
+                'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                'azure_foo@external_cred1', 'google_foo@external_admin']}
+              initUtils={initUtils}
+              onCancel={sinon.stub()}
+              onCredentialUpdated={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              username="foo@external" />
+          </div>
+        </ExpandingRow>);
+      expect(output.props.children[2]).toEqualJSX(expected);
     });
   });
 
