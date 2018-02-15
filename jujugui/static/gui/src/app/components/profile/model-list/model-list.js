@@ -159,7 +159,7 @@ class ProfileModelList extends React.Component {
       // undefined.
       const profileUser = model.users.find(user => user.displayName === profileUsername);
       if (profileUser === undefined) {
-        return;
+        return modelList;
       }
       const bdRef = `mymodel-button-dropdown-${index}`;
       const owner = model.owner.replace('@external', '') || profileUsername;
