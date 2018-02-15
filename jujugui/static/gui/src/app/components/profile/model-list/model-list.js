@@ -153,10 +153,17 @@ class ProfileModelList extends React.Component {
       if (!model.isAlive) {
         return modelList;
       }
+      // It is possible that the user is a superuser with no models but has
+      // access to all of the models. In which case the user objects for the
+      // model will not list their user name and the profileUser will be
+      // undefined.
+      const profileUser = model.users.find(user => user.displayName === profileUsername);
+      if (profileUser === undefined) {
+        return;
+      }
       const bdRef = `mymodel-button-dropdown-${index}`;
       const owner = model.owner.replace('@external', '') || profileUsername;
       const path = `${this.props.baseURL}u/${owner}/${model.name}`;
-      const profileUser = model.users.find(user => user.displayName === profileUsername);
       const userIsAdmin = profileUser.access === 'admin';
       const username = owner === profileUsername ? 'Me' : owner;
       const region = model.region ? '/' + model.region : '';
