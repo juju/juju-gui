@@ -409,8 +409,8 @@ describe('ProfileCredentialList', () => {
   it('can show the edit form', () => {
     const renderer = shallowRenderComponent();
     const instance = renderer.getMountedInstance();
-    instance._setEditCredential('aws_foo@external_cred1');
     return instance._getClouds().then(() => {
+      instance._setEditCredential('aws_foo@external_cred1');
       const output = renderer.getRenderOutput();
       const expected = (
         <BasicTable
