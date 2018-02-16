@@ -6,6 +6,7 @@ const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const GenericButton = require('../../generic-button/generic-button');
+const Link = require('../../link/link');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -76,6 +77,7 @@ describe('Profile expanded content', function() {
         changeState={options.changeState || sinon.stub()}
         addToModel={options.addToModel || sinon.stub()}
         entity={entity}
+        generatePath={options.generatePath || sinon.stub()}
         getDiagramURL={options.getDiagramURL || sinon.stub().returns('diagram.svg')}
         getModelName={options.getModelName || sinon.stub().returns('snazzy-model')}
         topRow={options.topRow || (<div>Top row</div>)} />, true);
@@ -113,11 +115,16 @@ describe('Profile expanded content', function() {
             Writeable:
           </p>
           <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              lazypower
+            <li className="profile-expanded-content__permission"
+              key="lazypower">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'lazypower'
+                }}
+                generatePath={sinon.stub()}>
+                lazypower
+              </Link>
             </li>
           </ul>
           <p className="profile-expanded-content__permissions-title">
@@ -174,11 +181,16 @@ describe('Profile expanded content', function() {
             Writeable:
           </p>
           <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              hatch
+            <li className="profile-expanded-content__permission"
+              key="hatch">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'hatch'
+                }}
+                generatePath={sinon.stub()}>
+                hatch
+              </Link>
             </li>
           </ul>
           <p className="profile-expanded-content__permissions-title">
@@ -188,11 +200,16 @@ describe('Profile expanded content', function() {
             <li className="profile-expanded-content__permission">
               everyone
             </li>
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              hatch
+            <li className="profile-expanded-content__permission"
+              key="hatch">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'hatch'
+                }}
+                generatePath={sinon.stub()}>
+                hatch
+              </Link>
             </li>
           </ul>
         </div>
@@ -240,11 +257,16 @@ describe('Profile expanded content', function() {
             Writeable:
           </p>
           <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              hatch
+            <li className="profile-expanded-content__permission"
+              key="hatch">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'hatch'
+                }}
+                generatePath={sinon.stub()}>
+                hatch
+              </Link>
             </li>
           </ul>
           <p className="profile-expanded-content__permissions-title">
@@ -254,11 +276,16 @@ describe('Profile expanded content', function() {
             <li className="profile-expanded-content__permission">
               everyone
             </li>
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              hatch
+            <li className="profile-expanded-content__permission"
+              key="hatch">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'hatch'
+                }}
+                generatePath={sinon.stub()}>
+                hatch
+              </Link>
             </li>
           </ul>
         </div>
@@ -301,11 +328,16 @@ describe('Profile expanded content', function() {
             Writeable:
           </p>
           <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              hatch
+            <li className="profile-expanded-content__permission"
+              key="hatch">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'hatch'
+                }}
+                generatePath={sinon.stub()}>
+                hatch
+              </Link>
             </li>
           </ul>
           <p className="profile-expanded-content__permissions-title">
@@ -315,11 +347,16 @@ describe('Profile expanded content', function() {
             <li className="profile-expanded-content__permission">
               everyone
             </li>
-            <li className="profile-expanded-content__permission link"
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0">
-              hatch
+            <li className="profile-expanded-content__permission"
+              key="hatch">
+              <Link changeState={sinon.stub()}
+                clickState={{
+                  hash: null,
+                  profile: 'hatch'
+                }}
+                generatePath={sinon.stub()}>
+                hatch
+              </Link>
             </li>
           </ul>
         </div>

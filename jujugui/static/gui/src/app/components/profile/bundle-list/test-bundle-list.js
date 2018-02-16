@@ -182,6 +182,7 @@ describe('Profile Bundle List', function() {
                   changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
                   entity={bundles[0]}
+                  generatePath={sinon.stub()}
                   getDiagramURL={sinon.stub()}
                   getModelName={instance.props.getModelName}
                   topRow={(
@@ -248,6 +249,7 @@ describe('Profile Bundle List', function() {
                   changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
                   entity={bundles[1]}
+                  generatePath={sinon.stub()}
                   getDiagramURL={sinon.stub()}
                   getModelName={instance.props.getModelName}
                   topRow={(
