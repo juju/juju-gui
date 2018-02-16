@@ -1,3 +1,11 @@
+- 2.12.0:
+  - The user profile has been completely redesigned.
+  - Added 'Charm Details' link to the application inspector.
+  - Added 'Get Started' link to the application inspector for charms which have a getstarted.md file.
+  - (Fix) Application configuration in the inspector now properly handles empty fields in FireFox.
+  - (Fix) Updated the messaging when the jujushell terminal is disconnected unexpectedly.
+  - (Fix) Logout link is no longer hidden in the user dropdown menu.
+
 - 2.11.3:
   - (Fix) Update marked to 0.3.9 to fix a security bug.
 
