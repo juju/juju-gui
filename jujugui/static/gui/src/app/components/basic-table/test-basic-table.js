@@ -59,8 +59,7 @@ describe('BasicTable', function() {
     const expected = (
       <ul className="basic-table twelve-col">
         <li className="twelve-col  basic-table__header"
-          key='basic-table-header'
-          style={{zIndex: 1}}>
+          key='basic-table-header'>
           <div className="three-col class1 class2"
             key="column-1">
             Column 1
@@ -71,8 +70,7 @@ describe('BasicTable', function() {
           </div>
         </li>
         <li className="twelve-col   basic-table__row"
-          key="row-one-key"
-          style={{zIndex: 3}}>
+          key="row-one-key">
           <div className="three-col r1c1class1 r1c1class2"
             key="column-1">
             <span>row 1 column 1</span>
@@ -83,16 +81,14 @@ describe('BasicTable', function() {
           </div>
         </li>
         <li className="twelve-col   basic-table__row"
-          key="row-two-key"
-          style={{zIndex: 2}}>
+          key="row-two-key">
           <div className="last-col seven-col"
             key="column-1">
             row 2 column 1
           </div>
         </li>
         <li className="twelve-col   basic-table__row"
-          key="row-three-key"
-          style={{zIndex: 1}}>
+          key="row-three-key">
           <div className="three-col"
             key="column-1">
             row 3 column 1
@@ -127,8 +123,7 @@ describe('BasicTable', function() {
     const expected = (
       <ul className="basic-table twelve-col table-class">
         <li className="twelve-col header-class  basic-table__header"
-          key='basic-table-header'
-          style={{zIndex: 1}}>
+          key='basic-table-header'>
           <div className="three-col class1 class2 header-column"
             key="column-1">
             Column 1
@@ -139,8 +134,7 @@ describe('BasicTable', function() {
           </div>
         </li>
         <li className="twelve-col row-class  basic-table__row"
-          key="row-one-key"
-          style={{zIndex: 3}}>
+          key="row-one-key">
           <div className="three-col r1c1class1 r1c1class2 row-column"
             key="column-1">
             <span>row 1 column 1</span>
@@ -151,16 +145,14 @@ describe('BasicTable', function() {
           </div>
         </li>
         <li className="twelve-col row-class second-row-class basic-table__row"
-          key="row-two-key"
-          style={{zIndex: 2}}>
+          key="row-two-key">
           <div className="last-col seven-col row-column"
             key="column-1">
             row 2 column 1
           </div>
         </li>
         <li className="twelve-col row-class  basic-table__row"
-          key="row-three-key"
-          style={{zIndex: 1}}>
+          key="row-three-key">
           <div className="three-col row-column"
             key="column-1">
             row 3 column 1
@@ -230,8 +222,7 @@ describe('BasicTable', function() {
     const rowItems = output.props.children[1];
     const expected = (
       <li className="twelve-col basic-table__row"
-        key="row-one-key"
-        style={{zIndex: 3}}>
+        key="row-one-key">
         <a className="basic-table__row-link"
           href="http://example.com"
           onClick={sinon.stub()}></a>
@@ -289,8 +280,7 @@ describe('BasicTable', function() {
     const expected = (
       <ul className="basic-table twelve-col">
         <li className="twelve-col basic-table__header"
-          key='basic-table-header'
-          style={{zIndex: 1}}>
+          key='basic-table-header'>
           <div className="three-col class1 class2"
             key="column-1">
             Column 1
@@ -309,8 +299,7 @@ describe('BasicTable', function() {
             'twelve-col': true
           }}
           expanded={undefined}
-          key="row-one-key"
-          style={{zIndex: 1}}>
+          key="row-one-key">
           <div>
             <div className="three-col r1c1class1 r1c1class2"
               key="column-1">
@@ -352,8 +341,7 @@ describe('BasicTable', function() {
     const expected = (
       <ul className="basic-table twelve-col">
         <li className="twelve-col basic-table__header"
-          key='basic-table-header'
-          style={{zIndex: 1}}>
+          key='basic-table-header'>
           <div className="three-col class1 class2"
             key="column-1">
             Column 1
@@ -372,8 +360,7 @@ describe('BasicTable', function() {
             'twelve-col': true
           }}
           expanded={true}
-          key="row-one-key"
-          style={{zIndex: 1}}>
+          key="row-one-key">
           <div>
             <div className="three-col r1c1class1 r1c1class2"
               key="column-1">
@@ -415,8 +402,7 @@ describe('BasicTable', function() {
     const expected = (
       <ul className="basic-table twelve-col">
         <li className="twelve-col basic-table__header"
-          key='basic-table-header'
-          style={{zIndex: 1}}>
+          key='basic-table-header'>
           <div className="three-col class1 class2"
             key="column-1">
             Column 1
@@ -436,8 +422,7 @@ describe('BasicTable', function() {
           }}
           clickable={false}
           expanded={undefined}
-          key="row-one-key"
-          style={{zIndex: 1}}>
+          key="row-one-key">
           <div>
             <div className="three-col r1c1class1 r1c1class2"
               key="column-1">
