@@ -98,7 +98,6 @@ class BasicTable extends React.Component {
     });
     const defaultRowClasses = this.props.rowClasses || [];
     const rowClasses = row.classes || [];
-    const style = {zIndex: rowCount - index};
     if (row.expandedContent) {
       const rowClickable = (
         row.rowClickable !== undefined ? row.rowClickable : !!row.expandedContent);
@@ -117,8 +116,7 @@ class BasicTable extends React.Component {
           classes={classes}
           clickable={rowClickable}
           expanded={row.expandedContentExpanded}
-          key={row.key}
-          style={style}>
+          key={row.key}>
           <div>
             {columns}
           </div>
@@ -137,8 +135,7 @@ class BasicTable extends React.Component {
         });
       return (
         <li className={classes}
-          key={isHeader ? 'basic-table-header' : row.key}
-          style={style}>
+          key={isHeader ? 'basic-table-header' : row.key}>
           {this._generateAnchor(row.clickState)}
           {columns}
         </li>);
