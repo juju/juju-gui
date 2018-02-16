@@ -49,6 +49,13 @@ describe('Profile', function() {
         switchModel={sinon.stub()}
         userInfo={{profile: 'spinach'}} />, true);
   }
+
+  // Return the sectionsMap stored in the given component.
+  function getSectionsMap(comp) {
+    const navigation = comp.props.children[1].props.children.props.children[0];
+    return navigation.props.sectionsMap;
+  }
+
   let acl, controllerAPI, initUtils;
 
   beforeEach(() => {
@@ -86,9 +93,9 @@ describe('Profile', function() {
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
             <ProfileNavigation
-              activeSection={instance.sectionsMap.entries().next().value[0]}
+              activeSection="models"
               changeState={instance.props.changeState}
-              sectionsMap={instance.sectionsMap} />
+              sectionsMap={new Map()} />
             <ProfileModelList
               acl={instance.props.acl}
               addNotification={instance.props.addNotification}
@@ -108,29 +115,25 @@ describe('Profile', function() {
 
   it('does not show the payments section when the flag is off', () => {
     const renderer = renderComponent();
-    const instance = renderer.getMountedInstance();
-    assert.isUndefined(instance.sectionsMap.get('payment'));
+    const sectionsMap = getSectionsMap(renderer.getRenderOutput());
+    assert.strictEqual(sectionsMap.get('payment'), undefined);
   });
 
-  it('can show the payments section when the flag is on', () => {
+  it('shows the payments section when the flag is on', () => {
     const renderer = renderComponent({showPay: true});
-    const instance = renderer.getMountedInstance();
-    assert.isObject(instance.sectionsMap.get('payment'));
+    const sectionsMap = getSectionsMap(renderer.getRenderOutput());
+    assert.isObject(sectionsMap.get('payment'));
   });
 
   it('hides certain sections when viewing others profile pages', () => {
-    const renderer = renderComponent({
-      controllerUser: 'foo'
-    });
-    const instance = renderer.getMountedInstance();
+    const renderer = renderComponent({controllerUser: 'foo'});
+    const sectionsMap = getSectionsMap(renderer.getRenderOutput());
     const allowedKeys = ['charms', 'bundles'];
-    assert.deepEqual(Array.from(instance.sectionsMap.keys()), allowedKeys);
+    assert.deepEqual(Array.from(sectionsMap.keys()), allowedKeys);
   });
 
   it('correctly parses the URL', () => {
-    const renderer = renderComponent({
-      activeSection: 'credentials/aws_test'
-    });
+    const renderer = renderComponent({activeSection: 'credentials/aws_test'});
     const instance = renderer.getMountedInstance();
     assert.deepEqual(instance._getProfileURL(), {
       full: 'credentials/aws_test',
