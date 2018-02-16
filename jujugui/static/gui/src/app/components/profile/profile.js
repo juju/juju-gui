@@ -17,121 +17,7 @@ const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-    const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
-    this.sectionsMap = new Map([
-      ['models', {
-        label: 'Models',
-        getComponent: () => {
-          return (
-            <ProfileModelList
-              acl={this.props.acl}
-              addNotification={this.props.addNotification}
-              baseURL={this.props.baseURL}
-              changeState={this.props.changeState}
-              facadesExist={this.props.facadesExist}
-              destroyModels={this.props.destroyModels}
-              listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
-              switchModel={this.props.switchModel}
-              userInfo={this.props.userInfo} />);
-        }
-      }],
-      ['charms', {
-        label: 'Charms',
-        getComponent: () => {
-          const propTypes = ProfileCharmList.propTypes;
-          return (
-            <ProfileCharmList
-              acl={this.props.acl}
-              isActiveUsersProfile={isActiveUsersProfile}
-              addNotification={this.props.addNotification}
-              bakery={this.props.bakery}
-              baseURL={this.props.baseURL}
-              changeState={this.props.changeState}
-              charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-              addToModel={this.props.addToModel}
-              generatePath={this.props.generatePath}
-              getModelName={this.props.getModelName}
-              storeUser={this.props.storeUser}
-              user={this.props.userInfo.external} />);
-        }
-      }],
-      ['bundles', {
-        label: 'Bundles',
-        getComponent: () => {
-          const propTypes = ProfileBundleList.propTypes;
-          return (
-            <ProfileBundleList
-              acl={this.props.acl}
-              addToModel={this.props.addToModel}
-              isActiveUsersProfile={isActiveUsersProfile}
-              addNotification={this.props.addNotification}
-              bakery={this.props.bakery}
-              baseURL={this.props.baseURL}
-              changeState={this.props.changeState}
-              charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-              generatePath={this.props.generatePath}
-              getModelName={this.props.getModelName}
-              storeUser={this.props.storeUser}
-              user={this.props.userInfo.external} />);
-        }
-      }],
-      ['credentials', {
-        label: 'Cloud credentials',
-        getComponent: () => {
-          const props = this.props;
-          const propTypes = ProfileCredentialList.propTypes;
-          return (
-            <ProfileCredentialList
-              acl={props.acl}
-              addNotification={props.addNotification}
-              controllerAPI={
-                shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
-              controllerIsReady={props.controllerIsReady}
-              credential={this._getProfileURL().subSection}
-              initUtils={props.initUtils}
-              sendAnalytics={this._sendAnalytics.bind(this)}
-              username={props.controllerUser} />);
-        }
-      }]
-    ]);
 
-    if (this.props.showPay) {
-      this.sectionsMap.set('payment', {
-        label: 'Payment',
-        getComponent: () => {
-          return (
-            <Payment
-              acl={this.props.acl}
-              addNotification={this.props.addNotification}
-              payment={this.props.payment}
-              stripe={this.props.stripe}
-              username={this.props.userInfo.profile}
-              validateForm={this.props.initUtils.validateForm} />);
-        }
-      });
-
-      this.sectionsMap.set('invoices', {
-        label: 'Invoices',
-        getComponent: () => {
-          return (
-            <ProfileInvoiceList
-              baseURL={this.props.baseURL}
-              user={this.props.userInfo.external} />);
-        }
-      });
-    }
-
-    // If viewing a user profile that is not yours then do not show the
-    // models or credentials lists.
-    if (!isActiveUsersProfile) {
-      this.sectionsMap.delete('models');
-      this.sectionsMap.delete('credentials');
-      this.sectionsMap.delete('payment');
-    }
-
-  }
   /**
     Send profile analytics.
     @param {String} action Some identifiable action.
@@ -158,7 +44,110 @@ class Profile extends React.Component {
   }
 
   render() {
-    const sectionsMap = this.sectionsMap;
+    const props = this.props;
+    const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
+    const sectionsMap = new Map();
+    if (isActiveUsersProfile) {
+      sectionsMap.set('models', {
+        label: 'Models',
+        getComponent: () => {
+          return (
+            <ProfileModelList
+              acl={props.acl}
+              addNotification={props.addNotification}
+              baseURL={props.baseURL}
+              changeState={props.changeState}
+              facadesExist={props.facadesExist}
+              destroyModels={props.destroyModels}
+              listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
+              switchModel={props.switchModel}
+              userInfo={props.userInfo} />);
+        }
+      });
+    }
+    sectionsMap.set('charms', {
+      label: 'Charms',
+      getComponent: () => {
+        const propTypes = ProfileCharmList.propTypes;
+        return (
+          <ProfileCharmList
+            acl={props.acl}
+            isActiveUsersProfile={isActiveUsersProfile}
+            addNotification={props.addNotification}
+            bakery={props.bakery}
+            baseURL={props.baseURL}
+            changeState={props.changeState}
+            charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
+            addToModel={props.addToModel}
+            generatePath={props.generatePath}
+            getModelName={props.getModelName}
+            storeUser={props.storeUser}
+            user={props.userInfo.external} />);
+      }
+    });
+    sectionsMap.set('bundles', {
+      label: 'Bundles',
+      getComponent: () => {
+        const propTypes = ProfileBundleList.propTypes;
+        return (
+          <ProfileBundleList
+            acl={props.acl}
+            addToModel={props.addToModel}
+            isActiveUsersProfile={isActiveUsersProfile}
+            addNotification={props.addNotification}
+            bakery={props.bakery}
+            baseURL={props.baseURL}
+            changeState={props.changeState}
+            charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
+            generatePath={props.generatePath}
+            getModelName={props.getModelName}
+            storeUser={props.storeUser}
+            user={props.userInfo.external} />);
+      }
+    });
+    if (isActiveUsersProfile) {
+      sectionsMap.set('credentials', {
+        label: 'Cloud credentials',
+        getComponent: () => {
+          const propTypes = ProfileCredentialList.propTypes;
+          return (
+            <ProfileCredentialList
+              acl={props.acl}
+              addNotification={props.addNotification}
+              controllerAPI={
+                shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
+              controllerIsReady={props.controllerIsReady}
+              credential={this._getProfileURL().subSection}
+              initUtils={props.initUtils}
+              sendAnalytics={this._sendAnalytics.bind(this)}
+              username={props.controllerUser} />);
+        }
+      });
+    }
+    if (isActiveUsersProfile && props.showPay) {
+      sectionsMap.set('payment', {
+        label: 'Payment',
+        getComponent: () => {
+          return (
+            <Payment
+              acl={props.acl}
+              addNotification={props.addNotification}
+              payment={props.payment}
+              stripe={props.stripe}
+              username={props.userInfo.profile}
+              validateForm={props.initUtils.validateForm} />);
+        }
+      });
+      sectionsMap.set('invoices', {
+        label: 'Invoices',
+        getComponent: () => {
+          return (
+            <ProfileInvoiceList
+              baseURL={props.baseURL}
+              user={props.userInfo.external} />);
+        }
+      });
+    }
     let section = sectionsMap.get(this._getProfileURL().activeSection);
     let mapEntry;
     if (section === undefined) {
@@ -174,17 +163,17 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
-          changeState={this.props.changeState}
-          controllerIP={this.props.controllerIP}
-          getUser={this.props.getUser}
-          gisf={this.props.gisf}
-          username={this.props.userInfo.profile} />
+          changeState={props.changeState}
+          controllerIP={props.controllerIP}
+          getUser={props.getUser}
+          gisf={props.gisf}
+          username={props.userInfo.profile} />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
             <ProfileNavigation
               // Use supplied activeSection or the key from the first map entry.
               activeSection={this._getProfileURL().activeSection || mapEntry[0]}
-              changeState={this.props.changeState}
+              changeState={props.changeState}
               sectionsMap={sectionsMap} />
             {section.getComponent()}
           </div>
