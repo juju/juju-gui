@@ -97,20 +97,22 @@ class ProfileExpandedContent extends React.Component {
               diagramUrl={getDiagramURL(entity.id)} />) : null}
         </div>
         <div className="six-col last-col">
-          <div>
-            <a href={entity.bugUrl}
-              onClick={this._stopPropagation.bind(this)}
-              target="_blank">
-              Bugs
-            </a>
-          </div>
-          <div>
-            <a href={entity.homepage}
-              onClick={this._stopPropagation.bind(this)}
-              target="_blank">
-              Homepage
-            </a>
-          </div>
+          {entity.bugUrl ? (
+            <div>
+              <a href={entity.bugUrl}
+                onClick={this._stopPropagation.bind(this)}
+                target="_blank">
+                Bugs
+              </a>
+            </div>) : null}
+          {entity.homepage ? (
+            <div>
+              <a href={entity.homepage}
+                onClick={this._stopPropagation.bind(this)}
+                target="_blank">
+                Homepage
+              </a>
+            </div>) : null}
           <p className="profile-expanded-content__permissions-title">
             Writeable:
           </p>
