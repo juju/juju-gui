@@ -51,6 +51,7 @@ class Profile extends React.Component {
               changeState={this.props.changeState}
               charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
               addToModel={this.props.addToModel}
+              generatePath={this.props.generatePath}
               getModelName={this.props.getModelName}
               storeUser={this.props.storeUser}
               user={this.props.userInfo.external} />);

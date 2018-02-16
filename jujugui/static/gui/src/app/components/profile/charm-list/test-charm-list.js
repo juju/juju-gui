@@ -65,6 +65,7 @@ describe('Profile Charm List', function() {
           url: '/charmstore'
         }}
         addToModel={options.addToModel || sinon.stub()}
+        generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         storeUser={options.storeUser || sinon.stub()}
@@ -137,6 +138,7 @@ describe('Profile Charm List', function() {
                   changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
                   entity={charms[0]}
+                  generatePath={sinon.stub()}
                   getModelName={instance.props.getModelName}
                   topRow={(
                     <div>
@@ -203,6 +205,7 @@ describe('Profile Charm List', function() {
                   changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
                   entity={charms[1]}
+                  generatePath={sinon.stub()}
                   getModelName={instance.props.getModelName}
                   topRow={(
                     <div>
@@ -255,6 +258,7 @@ describe('Profile Charm List', function() {
                   changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
                   entity={charms[2]}
+                  generatePath={sinon.stub()}
                   getModelName={instance.props.getModelName}
                   topRow={(
                     <div>
