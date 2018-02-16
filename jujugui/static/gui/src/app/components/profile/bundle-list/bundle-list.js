@@ -177,6 +177,7 @@ class ProfileBundleList extends React.Component {
               acl={this.props.acl}
               changeState={this.props.changeState}
               entity={bundle}
+              generatePath={this.props.generatePath}
               getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
               addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}

@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const GenericButton = require('../../generic-button/generic-button');
+const Link = require('../../link/link');
 
 /**
   Display extra info for a charm or bundle in a user profile.
@@ -58,12 +59,16 @@ class ProfileExpandedContent extends React.Component {
           </li>);
       }
       return (
-        <li className="profile-expanded-content__permission link"
-          key={username}
-          onClick={this._navigateToProfile.bind(this, username)}
-          role="button"
-          tabIndex="0">
-          {username}
+        <li className="profile-expanded-content__permission"
+          key={username}>
+          <Link changeState={this.props.changeState}
+            clickState={{
+              hash: null,
+              profile: username
+            }}
+            generatePath={this.props.generatePath}>
+            {username}
+          </Link>
         </li>);
     });
     if (items.length === 0) {
@@ -143,6 +148,7 @@ ProfileExpandedContent.propTypes = {
   addToModel: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   entity: PropTypes.object.isRequired,
+  generatePath: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func,
   getModelName: PropTypes.func.isRequired,
   topRow: PropTypes.object.isRequired
