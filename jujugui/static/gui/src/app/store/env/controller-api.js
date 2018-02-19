@@ -867,14 +867,23 @@ YUI.add('juju-controller-api', function(Y) {
         callback(null, results);
       };
 
-      // Send the API request.
+      // Prepare the API request. The keys used in this API call changed from
+      // facade version 3 to 4.
+      let modelsKey = 'models';
+      let tagKey = 'model-tag';
+      const lastFacadeVersion = this.findFacadeVersion('ModelManager');
+      if (lastFacadeVersion !== null && lastFacadeVersion < 4) {
+        modelsKey = 'entities';
+        tagKey = 'tag';
+      }
       const entities = ids.map(function(id) {
-        return {tag: tags.build(tags.MODEL, id)};
+        return {[tagKey]: tags.build(tags.MODEL, id)};
       });
+      // Send the API request.
       this._send_rpc({
         type: 'ModelManager',
         request: 'DestroyModels',
-        params: {entities: entities}
+        params: {[modelsKey]: entities}
       }, handler);
     },
 

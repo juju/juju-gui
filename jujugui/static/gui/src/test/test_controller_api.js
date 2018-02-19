@@ -57,7 +57,7 @@ describe('Controller API', function() {
       Cloud: [1],
       Controller: [3],
       MigrationTarget: [1],
-      ModelManager: [2],
+      ModelManager: [4],
       Pinger: [1],
       UserManager: [1]
     });
@@ -245,7 +245,7 @@ describe('Controller API', function() {
         response: {
           'user-info': {},
           'controller-tag': 'controller-42',
-          facades: [{name: 'ModelManager', versions: [2]}]
+          facades: [{name: 'ModelManager', versions: [4]}]
         }
       });
       assert.strictEqual(fired, true);
@@ -262,7 +262,7 @@ describe('Controller API', function() {
         response: {
           'user-info': {},
           'controller-tag': 'controller-42',
-          facades: [{name: 'ModelManager', versions: [2]}]
+          facades: [{name: 'ModelManager', versions: [4]}]
         }
       });
       assert.isFalse(controllerAPI.failedAuthentication);
@@ -296,7 +296,7 @@ describe('Controller API', function() {
       conn.msg({'request-id': 1, response: {
         facades: [
           {name: 'Client', versions: [0]},
-          {name: 'ModelManager', versions: [2]}
+          {name: 'ModelManager', versions: [4]}
         ],
         'controller-tag': 'controller-42',
         'user-info': {'controller-access': 'add-model', 'model-access': ''}
@@ -310,7 +310,7 @@ describe('Controller API', function() {
       conn.msg({'request-id': 1, response: {
         facades: [
           {name: 'Client', versions: [0]},
-          {name: 'ModelManager', versions: [2]}
+          {name: 'ModelManager', versions: [4]}
         ],
         'controller-tag': 'controller-42',
         'user-info': {'controller-access': 'addmodel', 'model-access': ''}
@@ -439,7 +439,7 @@ describe('Controller API', function() {
           'controller-tag': 'controller-42',
           facades: [
             {name: 'Client', versions: [42, 47]},
-            {name: 'ModelManager', versions: [2]}
+            {name: 'ModelManager', versions: [4]}
           ]
         }
       });
@@ -450,7 +450,7 @@ describe('Controller API', function() {
       assert.deepEqual(creds.macaroons, ['macaroon', 'discharge']);
       assert.deepEqual(controllerAPI.get('facades'), {
         Client: [42, 47],
-        ModelManager: [2]
+        ModelManager: [4]
       });
     });
 
@@ -468,7 +468,7 @@ describe('Controller API', function() {
           'controller-tag': 'controller-42',
           facades: [
             {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [2]}
+            {name: 'ModelManager', versions: [4]}
           ]
         }
       });
@@ -479,7 +479,7 @@ describe('Controller API', function() {
       assert.deepEqual(creds.macaroons, ['already stored', 'macaroons']);
       assert.deepEqual(controllerAPI.get('facades'), {
         Client: [0],
-        ModelManager: [2]
+        ModelManager: [4]
       });
     });
 
@@ -632,7 +632,33 @@ describe('Controller API', function() {
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
+          request: 'DestroyModels',
+          params: {models: [
+            {'model-tag': 'model-default'}
+          ]},
+          'request-id': 1
+        });
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+    });
+
+    it('destroys models with API facade < 4', done => {
+      controllerAPI.set('facades', {ModelManager: [3]});
+      // Perform the request.
+      controllerAPI.destroyModels(['default'], (err, results) => {
+        assert.strictEqual(err, null);
+        assert.deepEqual(results, {default: null});
+        assert.strictEqual(conn.messages.length, 1);
+        const msg = conn.last_message();
+        assert.deepEqual(msg, {
+          type: 'ModelManager',
+          version: 3,
           request: 'DestroyModels',
           params: {entities: [
             {tag: 'model-default'}
@@ -657,11 +683,11 @@ describe('Controller API', function() {
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'DestroyModels',
-          params: {entities: [
-            {tag: 'model-test-1'},
-            {tag: 'model-test-2'}
+          params: {models: [
+            {'model-tag': 'model-test-1'},
+            {'model-tag': 'model-test-2'}
           ]},
           'request-id': 1
         });
@@ -762,7 +788,7 @@ describe('Controller API', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ModelInfo',
           params: {entities: [{tag: 'model-' + id}]},
           'request-id': 1
@@ -893,7 +919,7 @@ describe('Controller API', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ModelInfo',
           params: {entities: [
             {tag: 'model-' + id1},
@@ -1043,14 +1069,14 @@ describe('Controller API', function() {
         assert.equal(conn.messages.length, 2);
         assert.deepEqual(conn.messages[0], {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ListModels',
           params: {tag: 'user-who@external'},
           'request-id': 1
         });
         assert.deepEqual(conn.messages[1], {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ModelInfo',
           params: {entities: [{tag: 'model-5bea955d-1'}]},
           'request-id': 2
@@ -1180,14 +1206,14 @@ describe('Controller API', function() {
         assert.equal(conn.messages.length, 2);
         assert.deepEqual(conn.messages[0], {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ListModels',
           params: {tag: 'user-dalek@external'},
           'request-id': 1
         });
         assert.deepEqual(conn.messages[1], {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ModelInfo',
           params: {entities: [
             {tag: 'model-5bea955d-1'},
@@ -1380,7 +1406,7 @@ describe('Controller API', function() {
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'CreateModel',
           params: {
             name: 'mymodel',
@@ -1419,7 +1445,7 @@ describe('Controller API', function() {
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'CreateModel',
           params: {
             name: 'mymodel',
@@ -1459,7 +1485,7 @@ describe('Controller API', function() {
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'CreateModel',
           params: {
             name: 'mymodel',
@@ -1522,7 +1548,7 @@ describe('Controller API', function() {
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
-          version: 2,
+          version: 4,
           request: 'ListModels',
           params: {tag: 'user-who'},
           'request-id': 1
@@ -2207,7 +2233,7 @@ describe('Controller API', function() {
           'request-id': 1,
           type: 'ModelManager',
           request: 'ModifyModelAccess',
-          version: 2,
+          version: 4,
           params: {
             changes: [
               {
@@ -2295,7 +2321,7 @@ describe('Controller API', function() {
           'request-id': 1,
           type: 'ModelManager',
           request: 'ModifyModelAccess',
-          version: 2,
+          version: 4,
           params: {
             changes: [
               {
