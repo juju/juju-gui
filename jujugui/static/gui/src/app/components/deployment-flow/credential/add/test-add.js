@@ -106,9 +106,8 @@ describe('DeploymentCredentialAdd', function() {
     const cloud = getCloudProviderDetails('gce');
     const comp = renderComponent();
     const instance = comp.instance;
-    const buttons = comp.output.props.children[3].props.children.props.buttons;
     const expected = (
-      <div className="deployment-credential-add twelve-col">
+      <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
           <a className="deployment-credential-add__link" href={cloud.signupUrl}
@@ -120,7 +119,8 @@ describe('DeploymentCredentialAdd', function() {
               size="12" />
           </a>
         </div>
-        <form className="twelve-col">
+        <form className="twelve-col no-margin-bottom"
+          onSubmit={sinon.stub()}>
           <div className="six-col last-col">
             <GenericInput
               disabled={false}
@@ -230,12 +230,20 @@ describe('DeploymentCredentialAdd', function() {
               </p>
             </div>
           </div>
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            <ButtonRow
+              buttons={[{
+                action: sinon.stub(),
+                title: 'Cancel',
+                type: 'inline-neutral'
+              }, {
+                submit: true,
+                title: 'Add cloud credential',
+                type: 'inline-positive'
+              }]} />
+          </div>
         </form>
-        <div className={
-          'deployment-credential-add__buttons twelve-col last-col'}>
-          <ButtonRow
-            buttons={buttons} />
-        </div>
       </div>);
     expect(comp.output).toEqualJSX(expected);
   });
@@ -244,9 +252,9 @@ describe('DeploymentCredentialAdd', function() {
     const comp = renderComponent({
       onCancel: null
     });
-    const buttons = comp.output.props.children[3].props.children.props.buttons;
+    const buttons = comp.output.props.children[2].props.children[3].props
+      .children.props.buttons;
     assert.deepEqual(buttons, [{
-      action: buttons[0].action,
       submit: true,
       title: 'Add cloud credential',
       type: 'inline-positive'
@@ -272,9 +280,8 @@ describe('DeploymentCredentialAdd', function() {
         validateForm={sinon.stub()} />);
     const cloud = getCloudProviderDetails('ec2');
     const output = comp.renderer.getRenderOutput();
-    const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
-      <div className="deployment-credential-add twelve-col">
+      <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Amazon Web Services credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
           <a className="deployment-credential-add__link" href={cloud.signupUrl}
@@ -286,7 +293,8 @@ describe('DeploymentCredentialAdd', function() {
               size="12" />
           </a>
         </div>
-        <form className="twelve-col">
+        <form className="twelve-col no-margin-bottom"
+          onSubmit={sinon.stub()}>
           <div className="six-col last-col">
             <GenericInput
               disabled={false}
@@ -353,12 +361,16 @@ describe('DeploymentCredentialAdd', function() {
               </p>
             </div>
           </div>
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            <ButtonRow
+              buttons={[{
+                submit: true,
+                title: 'Add cloud credential',
+                type: 'inline-positive'
+              }]} />
+          </div>
         </form>
-        <div className={
-          'deployment-credential-add__buttons twelve-col last-col'}>
-          <ButtonRow
-            buttons={buttons} />
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -371,9 +383,8 @@ describe('DeploymentCredentialAdd', function() {
     });
     const instance = comp.instance;
     const output = comp.output;
-    const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
-      <div className="deployment-credential-add twelve-col">
+      <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
           <a className="deployment-credential-add__link" href={cloud.signupUrl}
@@ -385,7 +396,8 @@ describe('DeploymentCredentialAdd', function() {
               size="12" />
           </a>
         </div>
-        <form className="twelve-col">
+        <form className="twelve-col no-margin-bottom"
+          onSubmit={sinon.stub()}>
           <div className="six-col last-col">
             <GenericInput
               disabled={false}
@@ -498,12 +510,20 @@ describe('DeploymentCredentialAdd', function() {
               </p>
             </div>
           </div>
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            <ButtonRow
+              buttons={[{
+                action: sinon.stub(),
+                title: 'Cancel',
+                type: 'inline-neutral'
+              }, {
+                submit: true,
+                title: 'Add cloud credential',
+                type: 'inline-positive'
+              }]} />
+          </div>
         </form>
-        <div className={
-          'deployment-credential-add__buttons twelve-col last-col'}>
-          <ButtonRow
-            buttons={buttons} />
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -516,9 +536,8 @@ describe('DeploymentCredentialAdd', function() {
     const instance = comp.instance;
     instance.setState({authType: 'jsonfile'});
     const output = comp.renderer.getRenderOutput();
-    const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
-      <div className="deployment-credential-add twelve-col">
+      <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
           <a className="deployment-credential-add__link" href={cloud.signupUrl}
@@ -530,7 +549,8 @@ describe('DeploymentCredentialAdd', function() {
               size="12" />
           </a>
         </div>
-        <form className="twelve-col">
+        <form className="twelve-col no-margin-bottom"
+          onSubmit={sinon.stub()}>
           <div className="six-col last-col">
             <GenericInput
               disabled={false}
@@ -590,12 +610,20 @@ describe('DeploymentCredentialAdd', function() {
               </p>
             </div>
           </div>
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            <ButtonRow
+              buttons={[{
+                action: sinon.stub(),
+                title: 'Cancel',
+                type: 'inline-neutral'
+              }, {
+                submit: true,
+                title: 'Add cloud credential',
+                type: 'inline-positive'
+              }]} />
+          </div>
         </form>
-        <div className={
-          'deployment-credential-add__buttons twelve-col last-col'}>
-          <ButtonRow
-            buttons={buttons} />
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -608,9 +636,8 @@ describe('DeploymentCredentialAdd', function() {
     });
     const instance = comp.instance;
     const output = comp.output;
-    const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
-      <div className="deployment-credential-add twelve-col">
+      <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
           <a className="deployment-credential-add__link" href={cloud.signupUrl}
@@ -622,7 +649,8 @@ describe('DeploymentCredentialAdd', function() {
               size="12" />
           </a>
         </div>
-        <form className="twelve-col">
+        <form className="twelve-col no-margin-bottom"
+          onSubmit={sinon.stub()}>
           <div className="six-col last-col">
             <GenericInput
               disabled={true}
@@ -732,12 +760,20 @@ describe('DeploymentCredentialAdd', function() {
               </p>
             </div>
           </div>
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            <ButtonRow
+              buttons={[{
+                action: sinon.stub(),
+                title: 'Cancel',
+                type: 'inline-neutral'
+              }, {
+                submit: true,
+                title: 'Add cloud credential',
+                type: 'inline-positive'
+              }]} />
+          </div>
         </form>
-        <div className={
-          'deployment-credential-add__buttons twelve-col last-col'}>
-          <ButtonRow
-            buttons={buttons} />
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -777,7 +813,61 @@ describe('DeploymentCredentialAdd', function() {
         getValue: sinon.stub().returns('password')
       }
     };
-    instance._handleAddCredentials();
+    instance._handleAddCredentials({preventDefault: sinon.stub()});
+    assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
+    assert.deepEqual(sendAnalytics.args[0],
+      ['Button click', 'Add credentials']);
+    assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
+    const args = updateCloudCredential.args[0];
+    assert.equal(args[0], 'new@test');
+    assert.equal(args[1], 'oauth2');
+    assert.deepEqual(args[2], {
+      'client-id': 'client id',
+      'client-email': 'client email',
+      'private-key': 'private key',
+      'project-id': 'project id',
+      'password': 'password'
+    });
+    assert.equal(onCredentialUpdated.callCount, 1, 'getCredentials not called');
+    assert.equal(onCredentialUpdated.args[0][0], 'new@test');
+  });
+
+  it('can add the credentials buy submitting the form', () => {
+    const updateCloudCredential = sinon.stub().callsArg(3);
+    const onCredentialUpdated = sinon.stub();
+    const comp = renderComponent({
+      cloud: {name: 'google', cloudType: 'gce'},
+      onCredentialUpdated,
+      updateCloudCredential,
+      generateCloudCredentialName: sinon.stub().returns('new@test'),
+      validateForm: sinon.stub().returns(true)
+    });
+    const instance = comp.instance;
+    instance.refs = {
+      'credentialName': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('new@test')
+      },
+      'client-id': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client id')
+      },
+      'client-email': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client email')
+      },
+      'private-key': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('private key')
+      },
+      'project-id': {
+        getValue: sinon.stub().returns('project id')
+      },
+      'password': {
+        getValue: sinon.stub().returns('password')
+      }
+    };
+    comp.output.props.children[2].props.onSubmit({preventDefault: sinon.stub()});
     assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
       ['Button click', 'Add credentials']);
@@ -831,7 +921,7 @@ describe('DeploymentCredentialAdd', function() {
         getValue: sinon.stub().returns('password')
       }
     };
-    instance._handleAddCredentials();
+    instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(updateCloudCredential.callCount, 1);
     assert.equal(updateCloudCredential.args[0][2]['private-key'], 'foo \n');
   });
@@ -843,7 +933,7 @@ describe('DeploymentCredentialAdd', function() {
       cloud: {name: 'google', cloudType: 'gce'},
       validateForm: sinon.stub().returns(false)
     });
-    comp.instance._handleAddCredentials();
+    comp.instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(updateCloudCredential.callCount, 0);
   });
 
@@ -883,7 +973,7 @@ describe('DeploymentCredentialAdd', function() {
         getValue: sinon.stub().returns('password')
       }
     };
-    instance._handleAddCredentials();
+    instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.isTrue(addNotification.called, 'addNotification was not called');
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not add credential',
@@ -900,12 +990,12 @@ describe('DeploymentCredentialAdd', function() {
     });
     const instance = comp.instance;
     const output = comp.output;
-    const buttons = output.props.children[3].props.children.props.buttons;
     const expected = (
-      <div className="deployment-credential-add twelve-col">
+      <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Update Google Compute Engine credential</h4>
         {null}
-        <form className="twelve-col">
+        <form className="twelve-col no-margin-bottom"
+          onSubmit={sinon.stub()}>
           <div className="six-col last-col">
             <GenericInput
               disabled={true}
@@ -1018,12 +1108,20 @@ describe('DeploymentCredentialAdd', function() {
               </p>
             </div>
           </div>
+          <div className={
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            <ButtonRow
+              buttons={[{
+                action: sinon.stub(),
+                title: 'Cancel',
+                type: 'inline-neutral'
+              }, {
+                submit: true,
+                title: 'Update cloud credential',
+                type: 'inline-positive'
+              }]} />
+          </div>
         </form>
-        <div className={
-          'deployment-credential-add__buttons twelve-col last-col'}>
-          <ButtonRow
-            buttons={buttons} />
-        </div>
       </div>);
     expect(output).toEqualJSX(expected);
   });
