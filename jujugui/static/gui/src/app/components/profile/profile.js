@@ -167,7 +167,7 @@ class Profile extends React.Component {
           controllerIP={props.controllerIP}
           getUser={props.getUser}
           gisf={props.gisf}
-          username={props.userInfo.profile} />
+          userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
             <ProfileNavigation
@@ -244,15 +244,11 @@ Profile.propTypes = {
     reshape: shapeup.reshapeFunc
   }),
   switchModel: PropTypes.func.isRequired,
-  // userInfo must have the following attributes:
-  // - external: the external user name to use for retrieving data, for
-  //   instance, from the charm store. Might be null if the user is being
-  //   displayed for the current user and they are not authenticated to
-  //   the charm store;
-  // - isCurrent: whether the profile is being displayed for the currently
-  //   authenticated user;
-  // - profile: the user name for whom profile details must be displayed.
-  userInfo: PropTypes.object.isRequired
+  userInfo: shapeup.shape({
+    external: PropTypes.string,
+    isCurrent: PropTypes.bool.isRequired,
+    profile: PropTypes.string.isRequired
+  }).isRequired
 };
 
 module.exports = Profile;

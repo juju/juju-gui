@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -25,7 +26,7 @@ class ProfileHeader extends React.Component {
     Get the identity user.
   */
   _getUser() {
-    this.props.getUser(this.props.username, this._getUserCallback.bind(this));
+    this.props.getUser(this.props.userInfo.profile, this._getUserCallback.bind(this));
   }
 
   /**
@@ -83,9 +84,13 @@ class ProfileHeader extends React.Component {
     of the gisf prop.
     @return {Array} The list in JSX.
   */
-  _generateMenuListItems() {
+  _generateControllerDetails() {
+    if (!this.props.userInfo.isCurrent) {
+      return null;
+    }
+    let items;
     if (this.props.gisf) {
-      return [
+      items = [
         <li key="controller">
           <h2 className="profile-header__menutitle">
             <a href="/">jaas</a>
@@ -93,14 +98,19 @@ class ProfileHeader extends React.Component {
         </li>,
         <li key="home"><a href="https://jujucharms.com/home">Home</a></li>,
         <li key="aboutjaas"><a href="https://jujucharms.com/jaas">About JAAS</a></li>];
+    } else {
+      items = [
+        <li key="controller">
+          <h2 className="profile-header__menutitle">
+            {this.props.controllerIP}
+          </h2>
+        </li>,
+        <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>];
     }
-    return [
-      <li key="controller">
-        <h2 className="profile-header__menutitle">
-          {this.props.controllerIP}
-        </h2>
-      </li>,
-      <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>];
+    return (
+      <ul className="profile-header__menu">
+        {items}
+      </ul>);
   }
 
   render() {
@@ -120,15 +130,13 @@ class ProfileHeader extends React.Component {
           <ul className="profile-header__meta">
             <li>
               <h1 className="profile-header__username">
-                {this.props.username}
+                {this.props.userInfo.profile}
               </h1>
             </li>
             <li><strong>{user.fullname}</strong></li>
             <li>{user.email}</li>
           </ul>
-          <ul className="profile-header__menu">
-            {this._generateMenuListItems()}
-          </ul>
+          {this._generateControllerDetails()}
         </div>
       </div>);
   }
@@ -140,7 +148,10 @@ ProfileHeader.propTypes = {
   controllerIP: PropTypes.string,
   getUser: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
-  username: PropTypes.string.isRequired
+  userInfo: shapeup.shape({
+    isCurrent: PropTypes.bool.isRequired,
+    profile: PropTypes.string.isRequired
+  }).isRequired
 };
 
 module.exports = ProfileHeader;
