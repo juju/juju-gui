@@ -47,7 +47,10 @@ describe('Profile', function() {
         destroyModels={sinon.stub()}
         sendAnalytics={sinon.stub()}
         switchModel={sinon.stub()}
-        userInfo={{profile: 'spinach'}} />, true);
+        userInfo={{
+          isCurrent: true,
+          profile: 'spinach'
+        }} />, true);
   }
 
   // Return the sectionsMap stored in the given component.
@@ -89,7 +92,7 @@ describe('Profile', function() {
           controllerIP={'1.2.3.4'}
           getUser={sinon.stub()}
           gisf={true}
-          username="spinach" />
+          userInfo={instance.props.userInfo} />
         <div className="twelve-col">
           <div className="profile__content inner-wrapper">
             <ProfileNavigation
