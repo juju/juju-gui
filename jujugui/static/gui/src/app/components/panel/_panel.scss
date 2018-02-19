@@ -69,7 +69,7 @@
     background-color: rgba(247, 247, 247, 0.7);
     box-shadow: none;
 
-    .panel-component__inner {
+    & > .panel-component__inner {
       position: absolute;
       top: $navbar-height;
       bottom: 0;
