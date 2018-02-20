@@ -324,6 +324,7 @@ Browser: ${navigator.userAgent}`
     const charmstore = this.charmstore;
     const payment = this.payment;
     const stripe = this.stripe;
+    const userInfo = this._getUserInfo(state);
     ReactDOM.render(
       <Profile
         acl={shapeup.fromShape(this.acl, Profile.propTypes.acl)}
@@ -354,7 +355,7 @@ Browser: ${navigator.userAgent}`
         storeUser={this.storeUser.bind(this)}
         stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
         switchModel={this._bound.switchModel}
-        userInfo={this._getUserInfo(state)} />,
+        userInfo={shapeup.fromShape(userInfo, Profile.propTypes.userInfo)} />,
       document.getElementById('top-page-container'));
   }
   /**
