@@ -1,3 +1,10 @@
+- 2.12.1:
+  - Only show the controller info on the current user's profile.
+  - Juju Shell can now handle possible initial welcome message.
+  - The credentials forms can now be submitted by pressing enter.
+  - Small styling updates.
+  - (Fix) Update the DestroyModels API call for the new Juju API.
+
 - 2.12.0:
   - The user profile has been completely redesigned.
   - Added 'Charm Details' link to the application inspector.
