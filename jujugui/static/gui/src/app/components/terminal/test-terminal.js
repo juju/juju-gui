@@ -90,7 +90,7 @@ describe('Terminal', () => {
       code: 'ok',
       message: 'these are\nthe voyages\n\n'
     }, [
-      ['connected to temporary workspace'],
+      ['connected to workspace'],
       ['these are'],
       ['the voyages']
     ]);
@@ -101,7 +101,7 @@ describe('Terminal', () => {
       code: 'ok',
       message: 'session is ready'
     }, [
-      ['connected to temporary workspace'],
+      ['connected to workspace'],
       ['session is ready']
     ]);
   });
@@ -112,7 +112,7 @@ describe('Terminal', () => {
       code: 'ok',
       message: ''
     }, [
-      ['connected to temporary workspace']
+      ['connected to workspace']
     ]);
   });
 

@@ -43,7 +43,7 @@ class Terminal extends React.Component {
   componentDidMount() {
     const props = this.props;
     const term = new XTerm();
-    term.write('Connecting... ');
+    term.writeln('connecting (this operation could take a minute)... ');
     this.term = term;
     term.open(
       ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
@@ -144,7 +144,7 @@ class Terminal extends React.Component {
     @param {String} message The optional response message from the server.
   */
   _welcome(term, message) {
-    term.writeln('connected to temporary workspace');
+    term.writeln('connected to workspace');
     const msg = message.replace(/\s+$/, '');
     // Split and write each line to avoid xterm weird text formatting.
     const lines = msg ? msg.split('\n') : [];
