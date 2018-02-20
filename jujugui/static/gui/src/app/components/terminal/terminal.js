@@ -43,7 +43,7 @@ class Terminal extends React.Component {
   componentDidMount() {
     const props = this.props;
     const term = new XTerm();
-    term.write('Connecting... ');
+    term.writeln('connecting (this operation could take a minute)... ');
     this.term = term;
     term.open(
       ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
@@ -53,12 +53,12 @@ class Terminal extends React.Component {
     const creds = props.creds;
     ws.onopen = () => {
       ws.send(JSON.stringify({
-        operation: 'login',
+        operation: OP_LOGIN,
         username: creds.user,
         password: creds.password,
         macaroons: creds.macaroons
       }));
-      ws.send(JSON.stringify({operation: 'start'}));
+      ws.send(JSON.stringify({operation: OP_START}));
     };
     ws.onerror = err => {
       console.error('WebSocket error:', err);
@@ -70,7 +70,7 @@ class Terminal extends React.Component {
     };
     ws.onmessage = evt => {
       const resp = JSON.parse(evt.data);
-      if (resp.code === 'error') {
+      if (resp.code === CODE_ERR) {
         console.error(resp.message);
         props.addNotification({
           title: 'Error talking to the terminal server',
@@ -112,9 +112,12 @@ class Terminal extends React.Component {
             }
           }
       }
-      if (resp.code === 'ok' && resp.message === 'session is ready') {
+      if (resp.code === CODE_OK && (
+        resp.message === 'session is ready' || // Legacy API.
+        resp.operation === OP_START // New supported API.
+      )) {
         term.terminadoAttach(ws);
-        term.writeln('connected to temporary workspace.\n');
+        this._welcome(term, resp.message);
       }
     };
     ws.onclose = evt => {
@@ -133,6 +136,22 @@ class Terminal extends React.Component {
     };
 
     this.attachResizeListener();
+  }
+
+  /**
+    Write a welcome message to the given term instance.
+    @param {Object} term The xterm instance.
+    @param {String} message The optional response message from the server.
+  */
+  _welcome(term, message) {
+    term.writeln('connected to workspace');
+    const msg = message.replace(/\s+$/, '');
+    // Split and write each line to avoid xterm weird text formatting.
+    const lines = msg ? msg.split('\n') : [];
+    for (let i = 0; i < lines.length; i++) {
+      term.writeln(lines[i]);
+    }
+    term.write('\n');
   }
 
   /**
@@ -253,5 +272,11 @@ Terminal.propTypes = {
     macaroons: PropTypes.object
   })
 };
+
+// Define jujushell API operations and codes.
+const OP_LOGIN = 'login';
+const OP_START = 'start';
+const CODE_OK = 'ok';
+const CODE_ERR = 'error';
 
 module.exports = Terminal;

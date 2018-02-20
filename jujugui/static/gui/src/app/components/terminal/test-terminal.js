@@ -84,6 +84,67 @@ describe('Terminal', () => {
     assert.deepEqual(websocket.prototype.close.args[0], [1000]);
   });
 
+  it('displays a welcome message when the session is ready', () => {
+    checkWelcomeMessage({
+      operation: 'start',
+      code: 'ok',
+      message: 'these are\nthe voyages\n\n'
+    }, [
+      ['connected to workspace'],
+      ['these are'],
+      ['the voyages']
+    ]);
+  });
+
+  it('displays a welcome message when the session is ready (legacy)', () => {
+    checkWelcomeMessage({
+      code: 'ok',
+      message: 'session is ready'
+    }, [
+      ['connected to workspace'],
+      ['session is ready']
+    ]);
+  });
+
+  it('does not display a welcome message if not present', () => {
+    checkWelcomeMessage({
+      operation: 'start',
+      code: 'ok',
+      message: ''
+    }, [
+      ['connected to workspace']
+    ]);
+  });
+
+  // Check that a welcome message is written using term.writeln with the given
+  // calls after receiving the given response from the server.
+  function checkWelcomeMessage(response, expectedCalls) {
+    setupWebsocket();
+    const component = ReactTestUtils.renderIntoDocument(
+      <Terminal
+        addNotification={sinon.stub()}
+        address="1.2.3.4:123"
+        changeState={sinon.stub()}
+        creds={{
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={websocket} />
+    );
+    const term = component.term;
+    term.terminadoAttach = sinon.stub();
+    term.writeln = sinon.stub();
+    // Simulate that the server session is ready.
+    component.ws.onmessage({data: JSON.stringify(response)});
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
+    // The connection has bee hijacked.
+    assert.equal(term.terminadoAttach.callCount, 1, 'terminadoAttach callCount');
+    // The welcome message has been displayed.
+    assert.equal(term.writeln.callCount, expectedCalls.length, 'writeln callCount');
+    assert.deepEqual(term.writeln.args, expectedCalls);
+  }
+
   it('sends supplied commands when it is set up', () => {
     setupWebsocket();
     const component = ReactTestUtils.renderIntoDocument(
