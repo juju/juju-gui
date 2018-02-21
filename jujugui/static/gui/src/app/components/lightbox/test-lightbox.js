@@ -119,18 +119,12 @@ describe('Lightbox', function() {
             <div className="lightbox__navigation">
               <button disabled
                 className="lightbox__navigation-previous"
-                style={{
-                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-                }}
                 onClick={instance._goToSlide.bind(instance, -1)}>
-                Previous
+                <SvgIcon name="chevron_down_16" width="16" />
               </button>
               <button className="lightbox__navigation-next"
-                style={{
-                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-                }}
                 onClick={instance._goToSlide.bind(instance, 1)}>
-                Next
+                <SvgIcon name="chevron_down_16" width="16" />
               </button>
               <ul className="lightbox__navigation-bullets">
                 <li className="lightbox__navigation-bullet is-active"
@@ -173,18 +167,12 @@ describe('Lightbox', function() {
           <div className="lightbox__content">
             <div className="lightbox__navigation">
               <button className="lightbox__navigation-previous"
-                style={{
-                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-                }}
                 onClick={instance._goToSlide.bind(instance, -1)}>
-                Previous
+                <SvgIcon name="chevron_down_16" width="16" />
               </button>
               <button className="lightbox__navigation-next"
-                style={{
-                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-                }}
                 onClick={instance._goToSlide.bind(instance, 1)}>
-                Next
+                <SvgIcon name="chevron_down_16" width="16" />
               </button>
               <ul className="lightbox__navigation-bullets">
                 <li className="lightbox__navigation-bullet"
@@ -227,19 +215,13 @@ describe('Lightbox', function() {
           <div className="lightbox__content">
             <div className="lightbox__navigation">
               <button className="lightbox__navigation-previous"
-                style={{
-                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-                }}
                 onClick={instance._goToSlide.bind(instance, -1)}>
-                Previous
+                <SvgIcon name="chevron_down_16" width="16" />
               </button>
               <button disabled
                 className="lightbox__navigation-next"
-                style={{
-                  backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-                }}
                 onClick={instance._goToSlide.bind(instance, 1)}>
-                Next
+                <SvgIcon name="chevron_down_16" width="16" />
               </button>
               <ul className="lightbox__navigation-bullets">
                 <li className="lightbox__navigation-bullet"
