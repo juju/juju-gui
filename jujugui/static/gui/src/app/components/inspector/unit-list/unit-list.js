@@ -294,7 +294,8 @@ class UnitList extends React.Component {
   _generateScaleService() {
     // Don't show the scale service if we're viewing a status list (e.g.
     // errors) or if the service is a subordinate.
-    if (this.props.unitStatus || this.props.service.get('subordinate')) {
+    if (this.props.unitStatus || this.props.service.get('subordinate') ||
+        this.props.acl.isReadOnly()) {
       return;
     }
     return (
