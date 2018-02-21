@@ -19,6 +19,7 @@
     float: left;
     width: $size;
     height: $size;
+    margin-top: 7px;
     border-radius: 50%;
 
     &--hidden {
@@ -68,10 +69,13 @@
   &__username {
     color: $color-dark;
     $size: 45px;
-    margin: 0 0 12px;
-    padding: 20px 0 0 0;
-    font-size: $size;
-    line-height: 58.5px;
+    margin: 20px 0 12px;
+
+    h1 {
+      padding: 0;
+      font-size: $size;
+      line-height: 58.5px;
+    }
   }
 
   &__meta {
