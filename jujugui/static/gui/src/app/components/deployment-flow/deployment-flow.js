@@ -320,7 +320,7 @@ class DeploymentFlow extends React.Component {
     if (!this._deploymentAllowed()) {
       // This should never happen, as in these cases the deployment button is
       // disabled.
-      console.log('deploy button clicked but it should have been disabled');
+      console.error('deploy button clicked but it should have been disabled');
       return;
     }
     this.setState({deploying: true});
@@ -930,7 +930,13 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    const deployTitle = this.state.deploying ? 'Deploying...' : 'Deploy';
+    const deploying = this.state.deploying;
+    let deployTitle;
+    if (this.props.modelCommitted) {
+      deployTitle = deploying ? 'Committing...' : 'Commit';
+    } else {
+      deployTitle = deploying ? 'Deploying...' : 'Deploy';
+    }
     const classes = classNames(
       'inner-wrapper',
       'deployment-flow__deploy',

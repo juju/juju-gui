@@ -822,7 +822,32 @@ describe('DeploymentFlow', function() {
       .children[1].props.children;
 
     assert.equal(deployButton.props.disabled, true);
-    assert.equal(deployButton.props.children, 'Deploying...');
+    assert.equal(deployButton.props.children, 'Committing...');
+  });
+
+  it('shows a commit button if the model is committed', function() {
+    const charmsGetById = sinon.stub().withArgs('service1').returns({
+      get: sinon.stub().withArgs('terms').returns([])
+    });
+    const renderer = createDeploymentFlow({
+      charmsGetById: charmsGetById,
+      cloud: {name: 'cloud'},
+      credential: 'cred',
+      deploy: sinon.stub(), // Don't trigger a re-render by calling callback.
+      modelCommitted: true,
+      region: 'north'
+    });
+    let output = renderer.getRenderOutput();
+    const deployButton = output.props.children[9].props.children.props
+      .children[1].props.children;
+    const expected = (
+      <GenericButton
+        action={sinon.stub()}
+        disabled={false}
+        type="positive">
+        Commit
+      </GenericButton>);
+    expect(deployButton).toEqualJSX(expected);
   });
 
   it('can deploy with SSH keys', function() {
