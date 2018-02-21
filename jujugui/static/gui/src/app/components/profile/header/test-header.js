@@ -47,16 +47,29 @@ describe('Profile Header', function() {
               name="close_16"
               size="20" />
           </div>
-          <span className="profile-header__avatar">
-            <img alt="Gravatar"
-              className="profile-header__avatar-gravatar"
-              src="https://www.gravatar.com/avatar/id123" />
+          <span className="profile-header__avatar tooltip">
+            <a href="http://gravatar.com/"
+              target="_blank">
+              <img alt="Gravatar"
+                className="profile-header__avatar-gravatar"
+                src="https://www.gravatar.com/avatar/id123" />
+            </a>
+            <span className="tooltip__tooltip">
+              <span className="tooltip__inner tooltip__inner--down">
+                Edit your <strong>Gravatar</strong>
+              </span>
+            </span>
           </span>
           <ul className="profile-header__meta">
-            <li>
-              <h1 className="profile-header__username">
+            <li className="profile-header__username tooltip">
+              <h1>
                 spinach
               </h1>
+              <span className="tooltip__tooltip">
+                <span className="tooltip__inner tooltip__inner--down">
+                  Your Ubuntu One <strong>account details</strong>
+                </span>
+              </span>
             </li>
             <li><strong>Geoffrey Spinach</strong></li>
             <li>spinach@example.com</li>
@@ -76,7 +89,7 @@ describe('Profile Header', function() {
     expect(output).toEqualJSX(expected);
   });
 
-  it('does not show controller info for other users', () => {
+  it('can render correctly for the non-logged in user', () => {
     const renderer = jsTestUtils.shallowRender(
       <ProfileHeader
         changeState={sinon.stub()}
@@ -107,8 +120,8 @@ describe('Profile Header', function() {
               src="https://www.gravatar.com/avatar/id123" />
           </span>
           <ul className="profile-header__meta">
-            <li>
-              <h1 className="profile-header__username">
+            <li className="profile-header__username">
+              <h1>
                 notspinach
               </h1>
             </li>
@@ -139,42 +152,16 @@ describe('Profile Header', function() {
     instance.componentWillMount();
     const output = renderer.getRenderOutput();
     const expected = (
-      <div className="profile-header twelve-col">
-        <div className="inner-wrapper profile-header__inner">
-          <div className="profile-header__close link"
-            onClick={sinon.stub()}
-            role="button"
-            tabIndex="0">
-            <SvgIcon
-              name="close_16"
-              size="20" />
-          </div>
-          <span className="profile-header__avatar">
-            <img alt="Gravatar"
-              className="profile-header__avatar-gravatar"
-              src="https://www.gravatar.com/avatar/id123" />
-          </span>
-          <ul className="profile-header__meta">
-            <li>
-              <h1 className="profile-header__username">
-                spinach
-              </h1>
-            </li>
-            <li><strong>Geoffrey Spinach</strong></li>
-            <li>spinach@example.com</li>
-          </ul>
-          <ul className="profile-header__menu">
-            <li key="controller">
-              <h2 className="profile-header__menutitle">
-                1.2.3.4
-              </h2>
-            </li>
-            <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>
-          </ul>
-        </div>
-      </div>
+      <ul className="profile-header__menu">
+        <li key="controller">
+          <h2 className="profile-header__menutitle">
+            1.2.3.4
+          </h2>
+        </li>
+        <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>
+      </ul>
     );
-    expect(output).toEqualJSX(expected);
+    expect(output.props.children.props.children[3]).toEqualJSX(expected);
   });
 
   it('displays a hidden gravatar until the user request has returned', () => {
@@ -189,7 +176,8 @@ describe('Profile Header', function() {
         }} />);
     assert.equal(
       output.props.children.props.children[1].props.className,
-      'profile-header__avatar profile-header__avatar--default profile-header__avatar--hidden');
+      'profile-header__avatar tooltip profile-header__avatar--default ' +
+      'profile-header__avatar--hidden');
   });
 
   it('displays the fallback gravatar if the user request fails', () => {
@@ -204,8 +192,16 @@ describe('Profile Header', function() {
     renderer.getMountedInstance().componentWillMount();
     const output = renderer.getRenderOutput();
     const expected = (
-      <span className="profile-header__avatar profile-header__avatar--default">
-        <span className="profile-header__avatar-overlay"></span>
+      <span className="profile-header__avatar tooltip profile-header__avatar--default">
+        <a href="http://gravatar.com/"
+          target="_blank">
+          <span className="profile-header__avatar-overlay"></span>
+        </a>
+        <span className="tooltip__tooltip">
+          <span className="tooltip__inner tooltip__inner--down">
+            Edit your <strong>Gravatar</strong>
+          </span>
+        </span>
       </span>);
     expect(output.props.children.props.children[1]).toEqualJSX(expected);
   });
