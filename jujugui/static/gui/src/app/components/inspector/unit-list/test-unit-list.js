@@ -187,6 +187,24 @@ describe('UnitList', () => {
     assert.equal(output.props.children.props.children[3].props.children, '5');
   });
 
+  it('does not show the scaling link when read only', () => {
+    acl.isReadOnly.returns(true);
+    const units = [{
+      displayName: 'mysql/0'
+    }];
+    const output = jsTestUtils.shallowRender(
+      <UnitList
+        acl={acl}
+        changeState={sinon.stub()}
+        destroyUnits={sinon.stub()}
+        envResolved={sinon.stub()}
+        service={service}
+        units={units}
+        whenChanged={sinon.stub()} />);
+    const scaling = output.props.children[0];
+    assert.equal(scaling, null);
+  });
+
   it('renders the Scale Application action component', () => {
     var units = [{
       displayName: 'mysql/0'
