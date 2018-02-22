@@ -127,9 +127,10 @@ class DeploymentSSHKey extends React.Component {
       }
     });
     this.props.setSSHKeys(SSHkeys);
-    this.setState({SSHkeys: SSHkeys, buttonDisabled: true});
+    this.setState({SSHkeys: SSHkeys});
     this.refs.githubUsername.setValue(null);
     this.refs.githubUsername.focus();
+    this._updateButtonState();
   }
 
   /**
@@ -356,16 +357,17 @@ class DeploymentSSHKey extends React.Component {
     @return {Object} The React button element.
   */
   _generateAddKeyButton() {
-    const title = this.state.addSource === 'manual' ? 'Add Key' : 'Add Keys';
+    const title = this.state.addSource === 'manual' ? 'Add key' : 'Add keys';
     const disabled = this.state.buttonDisabled;
-    return (<div className="right">
-      <GenericButton
-        action={this._handleAddMoreKeys.bind(this)}
-        disabled={disabled}
-        type="positive">
-        {title}
-      </GenericButton>
-    </div>);
+    return (
+      <div className="right">
+        <GenericButton
+          action={this._handleAddMoreKeys.bind(this)}
+          disabled={disabled}
+          type="positive">
+          {title}
+        </GenericButton>
+      </div>);
   }
 
   /**
@@ -397,10 +399,11 @@ class DeploymentSSHKey extends React.Component {
   */
   _generateError() {
     if (this.state.error) {
-      const content = <span><b>Error:</b> {this.state.error}</span>;
-      return (<Notification
-        content={content}
-        type="negative" />);
+      const content = (<span><b>Error:</b> {this.state.error}</span>);
+      return (
+        <Notification
+          content={content}
+          type="negative" />);
     }
     return false;
   }
