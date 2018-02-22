@@ -98,7 +98,7 @@ describe('DeploymentSSHKey', function() {
             <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
               disabled
-              type="positive">Add Keys</GenericButton>
+              type="positive">Add keys</GenericButton>
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@ describe('DeploymentSSHKey', function() {
           <div className="right">
             <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
-              type="positive">Add Keys</GenericButton>
+              type="positive">Add keys</GenericButton>
           </div>
         </div>
       </div>
@@ -209,7 +209,7 @@ describe('DeploymentSSHKey', function() {
             <GenericButton
               action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
               disabled
-              type="positive">Add Keys</GenericButton>
+              type="positive">Add keys</GenericButton>
           </div>
         </div>
       </div>
@@ -347,6 +347,31 @@ describe('DeploymentSSHKey', function() {
           {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
           {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
         ]);
+    });
+
+    it('disables the add key button after keys stored', function() {
+      const comp = render('gce');
+      let githubUsername = 'spinach';
+      comp.instance.refs = {
+        githubUsername: {
+          getValue: () => githubUsername,
+          focus: sinon.stub(),
+          setValue: value => {
+            githubUsername = value;
+          }
+        }
+      };
+      comp.instance.componentDidUpdate();
+      let output = comp.renderer.getRenderOutput();
+      let button = output.props.children[3].props.children[2].props.children;
+      assert.equal(button.props.disabled, false);
+      comp.instance._addGithubKeysCallback(null, [
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
+      ]);
+      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
+      output = comp.renderer.getRenderOutput();
+      button = output.props.children[3].props.children[2].props.children;
+      assert.equal(button.props.disabled, true);
     });
   });
 
@@ -561,7 +586,7 @@ describe('DeploymentSSHKey', function() {
           action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
           disabled={true}
           type="positive">
-          Add Keys
+          Add keys
         </GenericButton>
       </div>
     );
@@ -578,7 +603,7 @@ describe('DeploymentSSHKey', function() {
           action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
           disabled={false}
           type="positive">
-          Add Keys
+          Add keys
         </GenericButton>
       </div>
     );
