@@ -83,11 +83,11 @@ describe('DeploymentCredentialAdd', function() {
       forms: {
         'access-key': [{
           id: 'access-key',
-          title: 'The EC2 access key'
+          title: 'The MAAS access key'
         }, {
           autocomplete: false,
           id: 'secret-key',
-          title: 'The EC2 secret key'
+          title: 'The MAAS secret key'
         }]
       },
       message: 'a message'
@@ -1146,6 +1146,6 @@ describe('DeploymentCredentialAdd', function() {
     const comp = renderComponent({
       cloud: {name: 'maas', cloudType: 'maas'}
     });
-    assert.equal(comp.output.props.children[1], null);
+    assert.strictEqual(comp.output.props.children[1], null);
   });
 });
