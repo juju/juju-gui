@@ -259,14 +259,15 @@ class DeploymentCredentialAdd extends React.Component {
       });
     }
     const credentialName = props.credentialName;
+    const signupURL = info && info.signupUrl;
     return (
       <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>
           {`${credentialName ? 'Update' : 'Create new'} ${title} credential`}
         </h4>
-        {credentialName ? null : (
+        {credentialName || !signupURL ? null : (
           <div className="twelve-col deployment-credential-add__signup">
-            <a className="deployment-credential-add__link" href={info && info.signupUrl}
+            <a className="deployment-credential-add__link" href={signupURL}
               target="_blank">
               Sign up for {title}
               &nbsp;
