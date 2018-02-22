@@ -72,20 +72,14 @@ class Lightbox extends React.Component {
         <button
           disabled={this.state.activeSlide === 0}
           onClick={this._goToSlide.bind(this, -1)}
-          className="lightbox__navigation-previous"
-          style={{
-            backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-          }}>
-          Previous
+          className="lightbox__navigation-previous">
+          <SvgIcon name="chevron_down_16" width="16" />
         </button>
         <button
           disabled={this.state.activeSlide === this.state.lastSlide}
           onClick={this._goToSlide.bind(this, 1)}
-          className="lightbox__navigation-next"
-          style={{
-            backgroundImage: 'url(/static/gui/build/app/assets/svgs/chevron_down_16.svg)'
-          }}>
-          Next
+          className="lightbox__navigation-next">
+          <SvgIcon name="chevron_down_16" width="16" />
         </button>
         <ul className="lightbox__navigation-bullets">
           {bullets}

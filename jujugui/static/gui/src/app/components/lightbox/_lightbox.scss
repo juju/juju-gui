@@ -83,21 +83,19 @@
       display: block;
       border-radius: 3rem;
       overflow: hidden;
-      text-indent: -9999px;
       margin: 0;
       padding: 0;
       text-align: center;
       top: 50%;
       margin-top: -1.5rem;
-      background: {
-        color: $white;
-        position: 1rem 1.1rem;
-        repeat: no-repeat;
-      }
 
       &[disabled] {
         opacity: .5;
         cursor: default;
+      }
+
+      .svg-icon {
+        margin-bottom: -4px;
       }
     }
 
