@@ -76,6 +76,22 @@ describe('DeploymentCredentialAdd', function() {
       },
       message: 'a message'
     });
+    getCloudProviderDetails.withArgs('maas').returns({
+      id: 'maas',
+      showLogo: false,
+      title: 'MAAS',
+      forms: {
+        'access-key': [{
+          id: 'access-key',
+          title: 'The MAAS access key'
+        }, {
+          autocomplete: false,
+          id: 'secret-key',
+          title: 'The MAAS secret key'
+        }]
+      },
+      message: 'a message'
+    });
   });
 
   function renderComponent(options = {}) {
@@ -1124,5 +1140,12 @@ describe('DeploymentCredentialAdd', function() {
         </form>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('does not show a signup url if the cloud does not have one', () => {
+    const comp = renderComponent({
+      cloud: {name: 'maas', cloudType: 'maas'}
+    });
+    assert.strictEqual(comp.output.props.children[1], null);
   });
 });
