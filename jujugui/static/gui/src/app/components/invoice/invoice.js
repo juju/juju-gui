@@ -50,7 +50,7 @@ class Invoice extends React.Component {
           <header className="invoice__header">
             <img
               className="invoice__logo"
-              src="https://assets.ubuntu.com/v1/7e21b535-logo-juju.svg"
+              src="https://assets.ubuntu.com/v1/dc0fe093-juju-logo.svg"
               alt="Juju logo" />
 
             <h1 className="invoice__heading">Invoice</h1>
