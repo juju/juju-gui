@@ -58,7 +58,7 @@ class Profile extends React.Component {
               baseURL={props.baseURL}
               changeState={props.changeState}
               facadesExist={props.facadesExist}
-              destroyModels={props.destroyModels}
+              destroyModel={props.destroyModel}
               listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
               switchModel={props.switchModel}
               userInfo={props.userInfo} />);
@@ -206,7 +206,7 @@ Profile.propTypes = {
   controllerIP: PropTypes.string,
   controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
-  destroyModels: PropTypes.func.isRequired,
+  destroyModel: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
