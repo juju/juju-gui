@@ -591,6 +591,34 @@ describe('DeploymentFlow', function() {
       'Deploy model - is DD - is model update - doesn\'t have USSO']);
   });
 
+  it('Enables the deploy button if deploying fails', function() {
+    const charmsGetById = sinon.stub().withArgs('service1').returns({
+      get: sinon.stub().withArgs('terms').returns([])
+    });
+    const deploy = sinon.stub().callsArgWith(0, 'Uh oh!');
+    const renderer = createDeploymentFlow({
+      charmsGetById: charmsGetById,
+      cloud: {name: 'cloud'},
+      credential: 'cred',
+      deploy,
+      modelCommitted: true,
+      region: 'north'
+    });
+    const instance = renderer.getMountedInstance();
+    const props = instance.props;
+    let output = renderer.getRenderOutput();
+    // Click to deploy.
+    let deployButton = output.props.children[9].props.children.props.children[1]
+      .props.children;
+    deployButton.props.action();
+    assert.equal(deploy.callCount, 1);
+    assert.equal(props.changeState.callCount, 0);
+    output = renderer.getRenderOutput();
+    deployButton = output.props.children[9].props.children.props.children[1]
+      .props.children;
+    assert.equal(deployButton.props.disabled, false);
+  });
+
   it('increases stats when deploying', function() {
     const charmsGetById = sinon.stub().withArgs('service1').returns({
       get: sinon.stub().withArgs('terms').returns([])
