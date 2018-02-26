@@ -356,7 +356,7 @@ utils._destroyServiceCallback = (service, db, callback, evt) => {
 */
 utils.destroyModel = (
   destroyModels, modelAPI, switchModel, modelUUID, callback=null, clearProfileState=true) => {
-  // If the current model is being destroyed the disconnect first.
+  // If the current model is being destroyed then disconnect first.
   if (modelAPI.get('modelUUID') === modelUUID) {
     switchModel(null, false, clearProfileState);
   }
