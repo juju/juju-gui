@@ -282,15 +282,12 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
-    Handle closing the panel when the close button is clicked.
-
-    @method _handleClose
+    The function to be called after deploy.
     @param {String} err An error if deployment failed, null otherwise.
   */
-  _handleClose(err) {
+  _deployCallback(err) {
     if (err) {
-      // Error handling is already done by the original deploy callback.
-      // Here we need to just prevent the deployment flow to close.
+      this.setState({deploying: false});
       return;
     }
     this.props.changeState({
@@ -380,7 +377,7 @@ class DeploymentFlow extends React.Component {
       args.config['vpc-id-force'] = this.state.vpcIdForce;
     }
     const deploy = this.props.deploy.bind(
-      this, this._handleClose.bind(this), true, this.props.modelName, args);
+      this, this._deployCallback.bind(this), true, this.props.modelName, args);
     if (this.state.newTerms.length > 0) {
       const terms = this.state.newTerms.map(term => {
         const args = {
