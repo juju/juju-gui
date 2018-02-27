@@ -115,9 +115,9 @@ class ProfileCharmList extends React.Component {
     if (!tags || !tags.length) {
       return null;
     }
-    const tagList = tags.map(tag => (
+    const tagList = tags.map((tag, i) => (
       <li className="link profile-charm-list__tag"
-        key={tag}
+        key={tag + i}
         onClick={this._handleTagClick.bind(this, tag)}
         role="button"
         tabIndex="0">
@@ -141,6 +141,22 @@ class ProfileCharmList extends React.Component {
           ({(this.state.data || []).length})
         </span>
       </h2>);
+  }
+
+  /**
+    Sort by the key attribute.
+    @param {Object} a The first value.
+    @param {Object} b The second value.
+    @returns {Array} The sorted array.
+  */
+  _byName(a, b) {
+    if (a.extraData < b.extraData) {
+      return -1;
+    }
+    if (a.extraData > b.extraData) {
+      return 1;
+    }
+    return 0;
   }
 
   render() {
@@ -235,6 +251,7 @@ class ProfileCharmList extends React.Component {
                     {version}
                   </div>
                 </div>)} />),
+          extraData: charm.name,
           key: charm.id
         });
       });
@@ -256,7 +273,8 @@ class ProfileCharmList extends React.Component {
             }]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
-            rows={rows} />
+            rows={rows}
+            sort={this._byName.bind(this)} />
         </div>);
     }
     return (

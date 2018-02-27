@@ -50,17 +50,12 @@ class ProfileExpandedContent extends React.Component {
     @returns {Object} The list as JSX.
   */
   _generatePermissions(permissions) {
-    let items = permissions.map(username => {
+    let items = permissions.map((username, i) => {
+      let content;
       if (username === 'everyone') {
-        return (
-          <li className="profile-expanded-content__permission"
-            key={username}>
-            {username}
-          </li>);
-      }
-      return (
-        <li className="profile-expanded-content__permission"
-          key={username}>
+        content = username;
+      } else {
+        content = (
           <Link changeState={this.props.changeState}
             clickState={{
               hash: null,
@@ -68,7 +63,12 @@ class ProfileExpandedContent extends React.Component {
             }}
             generatePath={this.props.generatePath}>
             {username}
-          </Link>
+          </Link>);
+      }
+      return (
+        <li className="profile-expanded-content__permission"
+          key={username + i}>
+          {content}
         </li>);
     });
     if (items.length === 0) {
