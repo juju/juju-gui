@@ -206,6 +206,7 @@ describe('Profile Bundle List', function() {
                         #1
                       </div>
                     </div>)} />),
+              extraData: 'logstash-core',
               key: 'cs:~lazypower/bundle/logstash-core-1'
             }, {
               columns: [{
@@ -273,8 +274,10 @@ describe('Profile Bundle List', function() {
                         #1
                       </div>
                     </div>)} />),
+              extraData: 'swarm-core',
               key: 'cs:~lazypower/bundle/swarm-core-1'
-            }]} />
+            }]}
+            sort={sinon.stub()} />
         </div>
       </div>);
     expect(output).toEqualJSX(expected);

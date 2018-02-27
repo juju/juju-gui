@@ -158,6 +158,7 @@ describe('Profile Charm List', function() {
                         #7
                       </div>
                     </div>)} />),
+              extraData: 'failtester',
               key: 'cs:~hatch/precise/failtester-7'
             }, {
               columns: [{
@@ -225,6 +226,7 @@ describe('Profile Charm List', function() {
                         #3
                       </div>
                     </div>)} />),
+              extraData: 'ghost',
               key: 'cs:~hatch/xenial/ghost-3'
             }, {
               columns: [{
@@ -278,8 +280,10 @@ describe('Profile Charm List', function() {
                         #1
                       </div>
                     </div>)} />),
+              extraData: 'privghost',
               key: 'cs:~hatch/privghost-1'
-            }]} />
+            }]}
+            sort={sinon.stub()} />
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
