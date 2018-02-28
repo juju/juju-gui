@@ -173,6 +173,45 @@ describe('init', () => {
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
       });
     });
+
+    describe('model events', () => {
+      it('syncs app relation lists when relations are added', () => {
+        const django = app.db.services.add({
+          id: 'django', charm: 'cs:trusty/django-1', icon: 'django.svg'});
+        const apache2 = app.db.services.add({
+          id: 'apache2', charm: 'cs:trusty/apache2-0', icon: 'apache2.svg'});
+        assert.equal(django.get('relations').size(), 0);
+        assert.equal(apache2.get('relations').size(), 0);
+        app.db.relations.create({
+          relation_id: 'id',
+          type: 'type',
+          endpoints: [['django', {}], ['apache2', {}]],
+          pending: false,
+          scope: 'scope'
+        });
+        assert.equal(django.get('relations').size(), 1);
+        assert.equal(apache2.get('relations').size(), 1);
+      });
+
+      it('syncs app relation lists when relations are removed', () => {
+        const django = app.db.services.add({
+          id: 'django', charm: 'cs:trusty/django-1', icon: 'django.svg'});
+        const apache2 = app.db.services.add({
+          id: 'apache2', charm: 'cs:trusty/apache2-0', icon: 'apache2.svg'});
+        const relation = app.db.relations.create({
+          relation_id: 'id',
+          type: 'type',
+          endpoints: [['django', {}], ['apache2', {}]],
+          pending: false,
+          scope: 'scope'
+        });
+        assert.equal(django.get('relations').size(), 1);
+        assert.equal(apache2.get('relations').size(), 1);
+        app.db.relations.remove(relation);
+        assert.equal(django.get('relations').size(), 0);
+        assert.equal(apache2.get('relations').size(), 0);
+      });
+    });
   });
 
   describe('File drag over notification system', () => {
