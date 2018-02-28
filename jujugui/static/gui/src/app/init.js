@@ -276,6 +276,9 @@ class GUIApp {
     this.db.relations.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
+    this.db.relations.after(
+      ['add', 'remove'],
+      this._syncAppRelations, this);
     this.db.environment.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
@@ -316,6 +319,25 @@ class GUIApp {
     if (result.error) {
       console.error(result.error);
     }
+  }
+
+  /**
+    Sync relation changes to the app relation stores.
+    @param evt {Object} The change event.
+  */
+  _syncAppRelations(evt) {
+    const relation = evt.model;
+    const endpoints = relation.get('endpoints');
+    endpoints.forEach(endpoint => {
+      const appId = endpoint[0];
+      const app = this.db.services.getById(appId);
+      const appRelations = app.get('relations');
+      if (evt.type === 'relationList:add') {
+        appRelations.add(relation);
+      } else if (evt.type === 'relationList:remove') {
+        appRelations.remove(relation);
+      }
+    });
   }
 
   /**
