@@ -87,9 +87,9 @@ class ProfileModelList extends React.Component {
       title: 'Destroy',
       action: () => {
         this.setState({notification: null});
-        this.props.destroyModels([model.uuid], () => {
+        this.props.destroyModel(model.uuid, () => {
           this._fetchModels(this.props.facadesExist);
-        });
+        }, false);
       },
       type: 'destructive'
     }];
@@ -353,7 +353,7 @@ ProfileModelList.propTypes = {
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
-  destroyModels: PropTypes.func.isRequired,
+  destroyModel: PropTypes.func.isRequired,
   facadesExist: PropTypes.bool.isRequired,
   listModelsWithInfo: PropTypes.func.isRequired,
   models: PropTypes.array,

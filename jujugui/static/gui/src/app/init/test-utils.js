@@ -236,6 +236,37 @@ describe('init utils', () => {
     });
   });
 
+  describe('destroyModel', () => {
+    it('can destroy a model', () => {
+      const destroyModels = sinon.stub().callsArg(1);
+      const modelAPI = {
+        get: sinon.stub().returns('differentUUID')
+      };
+      const switchModel = sinon.stub();
+      const callback = sinon.stub();
+      utils.destroyModel(destroyModels, modelAPI, switchModel, 'someuuid', callback);
+      assert.equal(destroyModels.callCount, 1);
+      assert.deepEqual(destroyModels.args[0][0], ['someuuid']);
+      assert.equal(callback.callCount, 1);
+      assert.equal(switchModel.callCount, 0);
+    });
+
+    it('disconnects when destroying the current model', () => {
+      const destroyModels = sinon.stub().callsArg(1);
+      const modelAPI = {
+        get: sinon.stub().returns('someuuid')
+      };
+      const switchModel = sinon.stub();
+      const callback = sinon.stub();
+      utils.destroyModel(destroyModels, modelAPI, switchModel, 'someuuid', callback, false);
+      assert.equal(destroyModels.callCount, 1);
+      assert.deepEqual(destroyModels.args[0][0], ['someuuid']);
+      assert.equal(callback.callCount, 1);
+      assert.equal(switchModel.callCount, 1);
+      assert.deepEqual(switchModel.args[0], [null, false, false]);
+    });
+  });
+
   describe('getUnitStatusCounts', () => {
     it('generate a list of status by unit counts', () => {
       const units = [
@@ -384,7 +415,7 @@ describe('init utils', () => {
       utils.switchModel.call(app, env, sinon.stub(), model);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
-      assert.deepEqual(switchArgs, [env, model]);
+      assert.deepEqual(switchArgs, [env, model, true]);
     });
 
     it('does not switch to the current model', () => {
@@ -453,7 +484,7 @@ describe('init utils', () => {
       utils.switchModel.call(app, env, sinon.stub(), null);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
-      assert.deepEqual(switchArgs, [env, null]);
+      assert.deepEqual(switchArgs, [env, null, true]);
     });
 
     it('can switch models', () => {

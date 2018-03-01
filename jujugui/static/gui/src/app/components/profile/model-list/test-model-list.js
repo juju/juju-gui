@@ -165,7 +165,7 @@ describe('Profile Model List', function() {
         changeState={options.changeState || sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={options.listModelsWithInfo || listModelsWithInfo}
-        destroyModels={sinon.stub()}
+        destroyModel={sinon.stub()}
         switchModel={options.switchModel || sinon.stub()}
         userInfo={options.userInfo || {profile: 'tester'}} />, true);
   }

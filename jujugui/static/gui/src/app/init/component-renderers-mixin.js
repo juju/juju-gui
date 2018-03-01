@@ -342,7 +342,9 @@ Browser: ${navigator.userAgent}`
         controllerIsReady={this._controllerIsReady.bind(this)}
         controllerUser={this.user.controller.user}
         addToModel={this.addToModel.bind(this, charmstore)}
-        destroyModels={this._bound.destroyModels}
+        destroyModel={
+          initUtils.destroyModel.bind(
+            initUtils, this._bound.destroyModels, this.modelAPI, this._bound.switchModel)}
         facadesExist={facadesExist}
         generatePath={this.state.generatePath.bind(this.state)}
         getModelName={this._getModelName.bind(this)}

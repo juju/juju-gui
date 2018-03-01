@@ -345,6 +345,25 @@ utils._destroyServiceCallback = (service, db, callback, evt) => {
 };
 
 /**
+  Remove a model.
+  @param destroyModels {Function} The controller API method to destroy models.
+  @param modelAPI {Object} The model API.
+  @param switchModel {Function} The method for switching models.
+  @param modelUUID {String} The UUID for the model to destroy.
+  @param callback {Function} The function to call after destroying the model.
+  @param {Boolean} clearProfileState Whether to close the profile if the model
+    is destroyed.
+*/
+utils.destroyModel = (
+  destroyModels, modelAPI, switchModel, modelUUID, callback=null, clearProfileState=true) => {
+  // If the current model is being destroyed then disconnect first.
+  if (modelAPI.get('modelUUID') === modelUUID) {
+    switchModel(null, false, clearProfileState);
+  }
+  destroyModels([modelUUID], () => callback && callback());
+};
+
+/**
   Fire the clearState event.
   @param {Object} topo The topology object.
 */
@@ -439,9 +458,10 @@ utils.compareSemver = (a, b) => {
     - owner: the user owning the model, like "admin" or "who@external".
   @param {Boolean} confirmUncommitted Whether to show a confirmation if there
     are uncommitted changes.
+  @param {Boolean} clearProfileState Whether to close the profile.
 */
 utils.switchModel = function(
-  modelAPI, addNotification, model, confirmUncommitted=true) {
+  modelAPI, addNotification, model, confirmUncommitted=true, clearProfileState=true) {
   if (model && model.id === this.modelUUID) {
     // There is nothing to be done as we are already connected to the model.
     // Note that this check is always false when switching models from the
@@ -457,7 +477,7 @@ utils.switchModel = function(
     });
     return;
   }
-  const switchModel = utils._switchModel.bind(this, modelAPI, model);
+  const switchModel = utils._switchModel.bind(this, modelAPI, model, clearProfileState);
   const currentChangeSet = modelAPI.get('ecs').getCurrentChangeSet();
   // If there are uncommitted changes then show a confirmation popup.
   if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -510,21 +530,24 @@ utils._hidePopup = () => {
     - name: the model name;
     - id: the model unique identifier;
     - owner: the user owning the model, like "admin" or "who@external".
+  @param {Boolean} clearProfileState Whether to close the profile.
 */
-utils._switchModel = function(env, model) {
+utils._switchModel = function(env, model, clearProfileState=true) {
   // Remove the switch model confirmation popup if it has been displayed to
   // the user.
   utils._hidePopup();
   const current = this.state.current;
   const newState = {
-    profile: null,
     gui: {
       status: null,
       inspector: null
     },
-    root: null,
-    hash: null
+    root: null
   };
+  if (clearProfileState) {
+    newState.profile = null;
+    newState.hash = null;
+  }
   let name = '';
   let uuid = '';
   if (model) {

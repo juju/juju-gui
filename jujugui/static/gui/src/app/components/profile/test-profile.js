@@ -44,7 +44,7 @@ describe('Profile', function() {
         showPay={options.showPay || false}
         storeUser={options.storeUser || sinon.stub()}
         stripe={options.stripe}
-        destroyModels={sinon.stub()}
+        destroyModel={sinon.stub()}
         sendAnalytics={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={{
@@ -105,7 +105,7 @@ describe('Profile', function() {
               baseURL={instance.props.baseURL}
               changeState={instance.props.changeState}
               facadesExist={instance.props.facadesExist}
-              destroyModels={instance.props.destroyModels}
+              destroyModel={instance.props.destroyModel}
               listModelsWithInfo={instance.props.controllerAPI.listModelsWithInfo}
               switchModel={instance.props.switchModel}
               userInfo={instance.props.userInfo} />
