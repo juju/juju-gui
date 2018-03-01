@@ -1017,6 +1017,7 @@ Browser: ${navigator.userAgent}`
         gtmEnabled={this.applicationConfig.GTM_enabled}
         listBudgets={this.plans.listBudgets.bind(this.plans)}
         listClouds={controllerAPI.listClouds.bind(controllerAPI)}
+        listModelsWithInfo={this._bound.listModelsWithInfo}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         loginToController={loginToController}
         makeEntityModel={jujulibConversionUtils.makeEntityModel}
