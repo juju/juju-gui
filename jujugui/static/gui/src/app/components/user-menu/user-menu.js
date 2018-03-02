@@ -15,7 +15,6 @@ const UserMenu = props => {
   return (
     <ButtonDropdown
       classes={['user-menu']}
-      ref="buttonDropdown"
       icon={showLogin ? props.USSOLoginLink : 'user_16'}
       disableDropdown={showLogin}
       listItems={[{

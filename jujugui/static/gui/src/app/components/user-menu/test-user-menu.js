@@ -26,7 +26,7 @@ describe('UserMenu', () => {
         LogoutLink={options.LogoutLink || logoutLink}
         USSOLoginLink={USSOLoginLink}
         controllerAPI={controllerAPI}
-        navigateUserProfile={sinon.stub()}
+        navigateUserProfile={options.navigateUserProfile || sinon.stub()}
         showHelp={sinon.stub()} />, true);
     return {
       renderer: renderer,
@@ -42,7 +42,6 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        ref="buttonDropdown"
         icon={loginLink}
         disableDropdown={true}
         listItems={[{
@@ -66,7 +65,6 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        ref="buttonDropdown"
         icon={loginLink}
         disableDropdown={true}
         listItems={[{
@@ -90,7 +88,6 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        ref="buttonDropdown"
         icon="user_16"
         disableDropdown={false}
         listItems={[{
@@ -108,9 +105,10 @@ describe('UserMenu', () => {
   });
 
   it('navigates to user profile when clicked', () => {
-    const c = renderComponent();
+    const navigateUserProfile = sinon.stub();
+    const c = renderComponent({ navigateUserProfile });
     c.output.props.listItems[0].action();
-    assert.equal(c.instance.props.navigateUserProfile.callCount, 1);
+    assert.equal(navigateUserProfile.callCount, 1);
   });
 
 });
