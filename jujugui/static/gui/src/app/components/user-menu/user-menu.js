@@ -29,24 +29,15 @@ class UserMenu extends React.Component {
         ref="buttonDropdown"
         icon={showLogin ? this.props.USSOLoginLink : 'user_16'}
         disableDropdown={showLogin}
-        listItems={[
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="profile">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={this._handleProfileClick.bind(this)}>Profile</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="help">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={this.props.showHelp.bind(this)}>GUI help</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="logout">
-            {this.props.LogoutLink}
-          </li>
-        ]}
+        listItems={[{
+          action: this.props.navigateUserProfile,
+          label: 'Profile'
+        }, {
+          action: this.props.showHelp,
+          label: 'GUI help'
+        }, {
+          element: this.props.LogoutLink
+        }]}
         tooltip={showLogin ? '' : 'user'} />);
   }
 };
