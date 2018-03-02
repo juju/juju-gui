@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 
 const MachineViewMachineUnitGlobals = {};
 
@@ -80,12 +80,13 @@ class MachineViewMachineUnit extends React.Component {
     if (this.props.machineType === 'container') {
       var menuItems = [{
         label: 'Destroy',
-        action: !this.props.acl.isReadOnly() &&
-          this.props.removeUnit.bind(null, unit.id)
+        action: (!this.props.acl.isReadOnly() &&
+          this.props.removeUnit.bind(null, unit.id)) || null
       }];
       menu = (
-        <MoreMenu
-          items={menuItems} />);
+        <ButtonDropdown
+          classes={['machine-view__machine-dropdown']}
+          listItems={menuItems} />);
       title = unit.displayName;
     }
     // Wrap the returned components in the drag source method.

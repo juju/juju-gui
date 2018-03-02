@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const ButtonRow = require('../../button-row/button-row');
 const Constraints = require('../../constraints/constraints');
 const MachineViewMachine = require('./machine');
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -103,8 +103,9 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
-        <MoreMenu
-          items={[{
+        <ButtonDropdown
+          classes={['machine-view__machine-dropdown']}
+          listItems={[{
             label: 'Destroy',
             action: instance._destroyMachine
           }]} />
@@ -463,8 +464,9 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
-        <MoreMenu
-          items={[{
+        <ButtonDropdown
+          classes={['machine-view__machine-dropdown']}
+          listItems={[{
             label: 'Destroy',
             action: instance._destroyMachine
           }]} />
@@ -552,8 +554,9 @@ describe('MachineViewMachine', function() {
         onClick={instance._handleSelectMachine}
         role="button"
         tabIndex="0">
-        <MoreMenu
-          items={[{
+        <ButtonDropdown
+          classes={['machine-view__machine-dropdown']}
+          listItems={[{
             label: 'Destroy',
             action: instance._destroyMachine
           }]} />
@@ -637,7 +640,7 @@ describe('MachineViewMachine', function() {
         sendAnalytics={sendAnalytics}
         showConstraints={true}
         type="machine" />);
-    output.props.children[0].props.items[0].action();
+    output.props.children[0].props.listItems[0].action();
     assert.equal(destroyMachines.callCount, 1);
     assert.deepEqual(destroyMachines.args[0][0], ['new0']);
   });
@@ -740,13 +743,14 @@ describe('MachineViewMachine', function() {
         type="machine" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <MoreMenu
-        items={[{
+      <ButtonDropdown
+        classes={['machine-view__machine-dropdown']}
+        listItems={[{
           label: 'Destroy',
-          action: false
+          action: null
         }, {
           label: 'Update constraints',
-          action: false
+          action: null
         }]} />);
     expect(output.props.children[0]).toEqualJSX(expected);
   });
@@ -788,7 +792,7 @@ describe('MachineViewMachine', function() {
         type="machine" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
-    output.props.children[0].props.items[1].action();
+    output.props.children[0].props.listItems[1].action();
     output = renderer.getRenderOutput();
     const expected = (
       <div className="add-machine__constraints">
@@ -860,7 +864,7 @@ describe('MachineViewMachine', function() {
         type="machine" />, true);
     const instance = renderer.getMountedInstance();
     let output = renderer.getRenderOutput();
-    output.props.children[0].props.items[1].action();
+    output.props.children[0].props.listItems[1].action();
     output = renderer.getRenderOutput();
     instance._updateConstraints({
       arch: 'i386',

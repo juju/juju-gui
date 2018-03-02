@@ -194,7 +194,7 @@ ButtonDropdown.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
-  ]).isRequired,
+  ]),
   // The listItems prop isn't required because this component is also used to
   // display just the 'login' link. At which point the drop down is disabled
   // and there are no list items.
@@ -208,7 +208,8 @@ ButtonDropdown.propTypes = {
 };
 
 ButtonDropdown.defaultProps = {
-  disableDropdown: false
+  disableDropdown: false,
+  icon: 'contextual-menu-16'
 };
 
 module.exports = ButtonDropdown;

@@ -9,7 +9,7 @@ const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
 const Constraints = require('../../constraints/constraints');
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
 const MachineViewMachineGlobals = {};
@@ -248,13 +248,13 @@ class MachineViewMachine extends React.Component {
     var machine = this.props.machineAPI.machine;
     var menuItems = [{
       label: 'Destroy',
-      action: !this.props.acl.isReadOnly() && this._destroyMachine.bind(this)
+      action: (!this.props.acl.isReadOnly() && this._destroyMachine.bind(this)) || null
     }];
     if (this.props.type === 'machine' &&
         machine.commitStatus === 'uncommitted') {
       menuItems.push({
         label: 'Update constraints',
-        action: !this.props.acl.isReadOnly() && this._toggleForm.bind(this)
+        action: (!this.props.acl.isReadOnly() && this._toggleForm.bind(this)) || null
       });
     }
     // Wrap the returned components in the drop target method.
@@ -263,8 +263,9 @@ class MachineViewMachine extends React.Component {
         onClick={this._handleSelectMachine.bind(this)}
         role="button"
         tabIndex="0">
-        <MoreMenu
-          items={menuItems} />
+        <ButtonDropdown
+          classes={['machine-view__machine-dropdown']}
+          listItems={menuItems} />
         <div className="machine-view__machine-name">
           {this.props.machineAPI.machine.displayName}
         </div>

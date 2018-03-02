@@ -47,4 +47,9 @@
   .constraints .constraints__select {
     @extend %constraints-select
   }
+
+  &-dropdown {
+    float: right;
+    margin-top: -7px;
+  }
 }
