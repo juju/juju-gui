@@ -9,7 +9,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const ProfileCredentialList = require('./credential-list');
 const ProfileCredentialListDelete = require('./delete/delete');
 
@@ -279,9 +279,9 @@ describe('ProfileCredentialList', () => {
                 columnSize: 3
               }, {
                 content: (
-                  <MoreMenu
+                  <ButtonDropdown
                     icon="contextual-menu-horizontal"
-                    items={[{
+                    listItems={[{
                       label: 'Edit',
                       action: sinon.stub()
                     }, {
@@ -307,9 +307,9 @@ describe('ProfileCredentialList', () => {
                 columnSize: 3
               }, {
                 content: (
-                  <MoreMenu
+                  <ButtonDropdown
                     icon="contextual-menu-horizontal"
-                    items={[{
+                    listItems={[{
                       label: 'Edit',
                       action: sinon.stub()
                     }, {
@@ -335,9 +335,9 @@ describe('ProfileCredentialList', () => {
                 columnSize: 3
               }, {
                 content: (
-                  <MoreMenu
+                  <ButtonDropdown
                     icon="contextual-menu-horizontal"
-                    items={[{
+                    listItems={[{
                       label: 'Edit',
                       action: sinon.stub()
                     }, {
@@ -363,9 +363,9 @@ describe('ProfileCredentialList', () => {
                 columnSize: 3
               }, {
                 content: (
-                  <MoreMenu
+                  <ButtonDropdown
                     icon="contextual-menu-horizontal"
-                    items={[{
+                    listItems={[{
                       label: 'Edit',
                       action: sinon.stub()
                     }, {
@@ -463,9 +463,9 @@ describe('ProfileCredentialList', () => {
               columnSize: 3
             }, {
               content: (
-                <MoreMenu
+                <ButtonDropdown
                   icon="contextual-menu-horizontal"
-                  items={[{
+                  listItems={[{
                     label: 'Edit',
                     action: sinon.stub()
                   }, {
@@ -510,9 +510,9 @@ describe('ProfileCredentialList', () => {
               columnSize: 3
             }, {
               content: (
-                <MoreMenu
+                <ButtonDropdown
                   icon="contextual-menu-horizontal"
-                  items={[{
+                  listItems={[{
                     label: 'Edit',
                     action: sinon.stub()
                   }, {
@@ -538,9 +538,9 @@ describe('ProfileCredentialList', () => {
               columnSize: 3
             }, {
               content: (
-                <MoreMenu
+                <ButtonDropdown
                   icon="contextual-menu-horizontal"
-                  items={[{
+                  listItems={[{
                     label: 'Edit',
                     action: sinon.stub()
                   }, {
@@ -566,9 +566,9 @@ describe('ProfileCredentialList', () => {
               columnSize: 3
             }, {
               content: (
-                <MoreMenu
+                <ButtonDropdown
                   icon="contextual-menu-horizontal"
-                  items={[{
+                  listItems={[{
                     label: 'Edit',
                     action: sinon.stub()
                   }, {
