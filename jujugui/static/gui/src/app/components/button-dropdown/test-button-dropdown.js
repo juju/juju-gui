@@ -28,8 +28,8 @@ describe('Button Dropdown', function() {
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     const expected = (
-      <div className="button-dropdown">
-        <span className="button-dropdown__button extra-classes"
+      <div className="button-dropdown extra-classes">
+        <span className="button-dropdown__button"
           onClick={instance._toggleDropdown}
           role="button"
           tabIndex="0"
@@ -57,8 +57,8 @@ describe('Button Dropdown', function() {
     instance.setState({showDropdown: true}, () => {
       const output = renderer.getRenderOutput();
       const expected = (
-        <div className="button-dropdown">
-          <span className="button-dropdown__button extra-classes button-dropdown__show-menu"
+        <div className="button-dropdown extra-classes">
+          <span className="button-dropdown__button button-dropdown__show-menu"
             onClick={instance._toggleDropdown}
             role="button"
             tabIndex="0"
@@ -76,7 +76,6 @@ describe('Button Dropdown', function() {
             </span>
           </span>
           <DropdownMenu
-            classes={['extra-classes']}
             handleClickOutside={output.props.children[1].props.handleClickOutside}>
             item1
           </DropdownMenu>
@@ -93,8 +92,8 @@ describe('Button Dropdown', function() {
     const output = renderer.getRenderOutput();
     const instance = renderer.getMountedInstance();
     const expected = (
-      <div className="button-dropdown">
-        <span className="button-dropdown__button extra-classes"
+      <div className="button-dropdown extra-classes">
+        <span className="button-dropdown__button"
           onClick={instance._toggleDropdown}
           role="button"
           tabIndex="0"
@@ -118,14 +117,14 @@ describe('Button Dropdown', function() {
     const renderer = renderComponent({
       disableDropdown: true
     });
-    const classlist = 'button-dropdown__button extra-classes button-dropdown__show-menu button-dropdown__button-with-text'; //eslint-disable-line max-len
+    const classlist = 'button-dropdown__button button-dropdown__show-menu button-dropdown__button-with-text'; //eslint-disable-line max-len
     const instance = renderer.getMountedInstance();
     // We're setting the state to showDropdown but because it is disabled
     // the drop down is not rendered.
     instance.setState({showDropdown: true}, () => {
       const output = renderer.getRenderOutput();
       const expected = (
-        <div className="button-dropdown">
+        <div className="button-dropdown extra-classes">
           <span className={classlist}
             onClick={instance._toggleDropdown}
             role="button"

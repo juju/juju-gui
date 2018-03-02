@@ -1,9 +1,11 @@
 .user-menu {
-  &.button-dropdown {
+  .button-dropdown {
     &__button {
+      margin: 10px 0 10px 10px;
       border-radius: 2px;
       border-right-width: 0;
       border: 1px solid $color-mid-light;
+      background-color: $canvas-background;
 
       &:hover {
         background-color: $white;

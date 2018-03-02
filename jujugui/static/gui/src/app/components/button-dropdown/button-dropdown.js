@@ -54,7 +54,6 @@ class ButtonDropdown extends React.Component {
     const props = this.props;
     return (
       <DropdownMenu
-        classes={props.classes}
         handleClickOutside={this._handleDropdownClickOutside.bind(this)}>
         {props.listItems}
       </DropdownMenu>);
@@ -101,16 +100,19 @@ class ButtonDropdown extends React.Component {
   */
   _getClassNames() {
     return classNames(
-      'button-dropdown__button',
-      this.props.classes, {
+      'button-dropdown__button', {
         'button-dropdown__show-menu': this.state.showDropdown,
         'button-dropdown__button-with-text': this.props.disableDropdown
       });
   }
 
   render() {
+    const classes = classNames(
+      'button-dropdown',
+      this.props.classes
+    );
     return (
-      <div className="button-dropdown">
+      <div className={classes}>
         <span className={this._getClassNames()}
           onClick={this._toggleDropdown.bind(this)}
           role="button"
