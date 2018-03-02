@@ -15,10 +15,22 @@ describe('Button Dropdown', function() {
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
       <ButtonDropdown
+        activeItem="i4"
         classes={['extra-classes']}
         disableDropdown={options.disableDropdown || false}
         icon={options.icon || 'icon_16'}
-        listItems={['item1']}
+        listItems={options.listItems || [{
+          action: sinon.stub(),
+          label: 'item1'
+        }, {
+          label: 'item2'
+        }, {
+          element: (<span>item3</span>)
+        }, {
+          action: sinon.stub(),
+          id: 'i4',
+          label: 'item4'
+        }]}
         tooltip="more" />, true);
   }
 
@@ -77,7 +89,40 @@ describe('Button Dropdown', function() {
           </span>
           <DropdownMenu
             handleClickOutside={output.props.children[1].props.handleClickOutside}>
-            item1
+            {[
+              <li className="dropdown-menu__list-item"
+                key="item1"
+                role="menuitem"
+                tabIndex="0">
+                <a className="dropdown-menu__list-item-link"
+                  role="button"
+                  onClick={sinon.stub()}>
+                  item1
+                </a>
+              </li>,
+              <li className="dropdown-menu__list-item dropdown-menu__list-item--inactive"
+                key="item2"
+                role="menuitem"
+                tabIndex="0">
+                item2
+              </li>,
+              <li className="dropdown-menu__list-item"
+                key="item-2"
+                role="menuitem"
+                tabIndex="0">
+                <span>item3</span>
+              </li>,
+              <li className="dropdown-menu__list-item dropdown-menu__list-item--active"
+                key="i4"
+                role="menuitem"
+                tabIndex="0">
+                <a className="dropdown-menu__list-item-link"
+                  role="button"
+                  onClick={sinon.stub()}>
+                  item4
+                </a>
+              </li>
+            ]}
           </DropdownMenu>
         </div>
       );

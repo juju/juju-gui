@@ -35,6 +35,15 @@
     margin: 0;
     padding: 0;
 
+    &--active .dropdown-menu__list-item-link {
+      color: $ubuntu-orange;
+    }
+
+    &--inactive {
+      color: $dark-grey;
+      padding: 7px 20px;
+    }
+
     &-link {
       display: block;
       padding: 10px 20px 10px;

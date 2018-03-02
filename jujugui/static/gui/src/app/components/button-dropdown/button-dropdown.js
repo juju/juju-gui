@@ -6,6 +6,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const shapeup = require('shapeup');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 const DropdownMenu = require('../dropdown-menu/dropdown-menu');
@@ -43,6 +44,64 @@ class ButtonDropdown extends React.Component {
   }
 
   /**
+    Call the supplied action when an item is clicked
+
+    @method _handleItemClick
+    @param {Function} action The action to call
+  */
+  _handleItemClick(action) {
+    if (action) {
+      action();
+      this._toggleDropdown();
+    }
+  }
+
+  /**
+    Generate the classes for the menu item.
+    @param {Object} item The menu item.
+    @returns {String} The collection of class names.
+  */
+  _generateItemClasses(item) {
+    return classNames(
+      'dropdown-menu__list-item',
+      {
+        'dropdown-menu__list-item--active':
+          item.id && this.props.activeItem === item.id,
+        'dropdown-menu__list-item--inactive': !item.action && !item.element
+      }
+    );
+  }
+
+  /**
+    Generate the menu items.
+    @returns {Object} The item components.
+  */
+  _generateItems() {
+    return this.props.listItems.map((item, i) => {
+      let content;
+      if (item.element) {
+        content = item.element;
+      } else if (item.action) {
+        content = (
+          <a className="dropdown-menu__list-item-link"
+            role="button"
+            onClick={this._handleItemClick.bind(this, item.action)}>
+            {item.label}
+          </a>);
+      } else {
+        content = item.label;
+      }
+      return (
+        <li className={this._generateItemClasses(item)}
+          key={item.id || item.label || ('item-' + i)}
+          role="menuitem"
+          tabIndex="0">
+          {content}
+        </li>);
+    });
+  }
+
+  /**
     Generates the drop down menu if the state has showDropdown true and the
     disableDropdown prop is not true.
     @return {Object} The dropdown React component.
@@ -51,11 +110,10 @@ class ButtonDropdown extends React.Component {
     if (!this.state.showDropdown || this.props.disableDropdown) {
       return null;
     }
-    const props = this.props;
     return (
       <DropdownMenu
         handleClickOutside={this._handleDropdownClickOutside.bind(this)}>
-        {props.listItems}
+        {this._generateItems()}
       </DropdownMenu>);
   }
 
@@ -130,6 +188,7 @@ class ButtonDropdown extends React.Component {
 };
 
 ButtonDropdown.propTypes = {
+  activeItem: PropTypes.string,
   classes: PropTypes.array,
   disableDropdown: PropTypes.bool,
   icon: PropTypes.oneOfType([
@@ -139,8 +198,12 @@ ButtonDropdown.propTypes = {
   // The listItems prop isn't required because this component is also used to
   // display just the 'login' link. At which point the drop down is disabled
   // and there are no list items.
-  // The list items needs to be an array of <li>.
-  listItems: PropTypes.array,
+  listItems: PropTypes.arrayOf(shapeup.shape({
+    action: PropTypes.func,
+    element: PropTypes.object,
+    id: PropTypes.string,
+    label: PropTypes.string
+  })),
   tooltip: PropTypes.string
 };
 
