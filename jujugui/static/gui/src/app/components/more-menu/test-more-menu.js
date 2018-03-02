@@ -4,102 +4,72 @@
 const React = require('react');
 
 const MoreMenu = require('./more-menu');
-const SvgIcon = require('../svg-icon/svg-icon');
+const ButtonDropdown = require('../button-dropdown/button-dropdown');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('MoreMenu', function() {
 
-  it('can render as closed', function() {
-    var menuItems = [{
+  it('can render', function() {
+    const menuItems = [{
       label: 'Add machine',
       action: sinon.stub()
     }, {
       label: 'Add container'
     }];
-    var renderer = jsTestUtils.shallowRender(
-      // Have to access the wrapped component as we don't want to test the click
-      // outside wrapper.
-      <MoreMenu.WrappedComponent
+    const renderer = jsTestUtils.shallowRender(
+      <MoreMenu
         items={menuItems}
         title="Sandbox" />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="more-menu">
-        <span className="more-menu__toggle"
-          onClick={instance._handleToggleMenu}
-          role="button"
-          tabIndex="0">
-          <SvgIcon
-            name="contextual-menu-16"
-            size="16" />
-        </span>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('can be opened', function() {
-    var menuItems = [{
-      label: 'Add machine',
-      action: sinon.stub()
-    }, {
-      label: 'Add container'
-    }];
-    var renderer = jsTestUtils.shallowRender(
-      <MoreMenu.WrappedComponent
-        items={menuItems}
-        title="Sandbox" />, true);
-    var instance = renderer.getMountedInstance();
-    instance._handleToggleMenu();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="more-menu more-menu--active">
-        <span className="more-menu__toggle"
-          onClick={instance._handleToggleMenu}
-          role="button"
-          tabIndex="0">
-          <SvgIcon
-            name="contextual-menu-16"
-            size="16" />
-        </span>
-        <ul className="more-menu__menu">
-          <li className="more-menu__menu-item"
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ButtonDropdown
+        classes={['more-menu']}
+        icon="contextual-menu-16"
+        listItems={[
+          <li className="more-menu__menu-item dropdown-menu__list-item"
             key="Add machine"
-            onClick={output.props.children[1].props.children[0].props.onClick}
-            role="button"
+            role="menuitem"
             tabIndex="0">
+            <a className="dropdown-menu__list-item-link"
+              role="button"
+              onClick={sinon.stub()}>
               Add machine
-          </li>
-          <li className="more-menu__menu-item more-menu__menu-item--inactive"
+            </a>
+          </li>,
+          <li className="more-menu__menu-item dropdown-menu__list-item more-menu__menu-item--inactive" //eslint-disable-line max-len
             key="Add container"
-            onClick={output.props.children[1].props.children[1].props.onClick}
-            role="button"
+            role="menuitem"
             tabIndex="0">
-              Add container
+            Add container
           </li>
-        </ul>
-      </div>);
+        ]}
+        ref="buttonDropdown" />);
     expect(output).toEqualJSX(expected);
   });
 
   it('can call the action on an item', function() {
-    var action = sinon.stub();
-    var menuItems = [{
+    const action = sinon.stub();
+    const menuItems = [{
       label: 'Add machine',
       action: action
     }, {
       label: 'Add container'
     }];
-    var renderer = jsTestUtils.shallowRender(
-      <MoreMenu.WrappedComponent
+    const renderer = jsTestUtils.shallowRender(
+      <MoreMenu
         items={menuItems}
         title="Sandbox" />, true);
-    var instance = renderer.getMountedInstance();
-    instance._handleToggleMenu();
-    var output = renderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.onClick();
+    const instance = renderer.getMountedInstance();
+    const _toggleDropdown = sinon.stub();
+    instance.refs = {
+      buttonDropdown: {
+        _toggleDropdown
+      }
+    };
+    const output = renderer.getRenderOutput();
+    output.props.listItems[0].props.children.props.onClick();
     assert.equal(action.callCount, 1);
+    assert.equal(_toggleDropdown.callCount, 1);
   });
 });

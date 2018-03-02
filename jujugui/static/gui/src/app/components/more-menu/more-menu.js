@@ -5,35 +5,9 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const enhanceWithClickOutside = require('../../init/react-click-outside');
-
-const SvgIcon = require('../svg-icon/svg-icon');
+const ButtonDropdown = require('../button-dropdown/button-dropdown');
 
 class MoreMenu extends React.Component {
-  constructor() {
-    super();
-    this.state = {menuOpen: false};
-  }
-
-  /**
-    Close the more menu when there is a click outside of the component.
-    Called by the component wrapper.
-
-    @method handleClickOutside
-    @param {Object} e The click event
-  */
-  handleClickOutside(e) {
-    this.setState({menuOpen: false});
-  }
-
-  /**
-    Toggle the menu open or closed.
-
-    @method _handleToggleMenu
-  */
-  _handleToggleMenu() {
-    this.setState({menuOpen: !this.state.menuOpen});
-  }
 
   /**
     Call the supplied action when an item is clicked
@@ -44,7 +18,7 @@ class MoreMenu extends React.Component {
   _handleItemClick(action) {
     if (action) {
       action();
-      this.setState({menuOpen: false});
+      this.refs.buttonDropdown._toggleDropdown();
     }
   }
 
@@ -57,7 +31,9 @@ class MoreMenu extends React.Component {
   */
   _generateItemClasses(item) {
     return classNames(
-      'more-menu__menu-item', {
+      'more-menu__menu-item',
+      'dropdown-menu__list-item',
+      {
         'more-menu__menu-item--active':
           item.id && this.props.activeItem === item.id,
         'more-menu__menu-item--inactive': !item.action
@@ -66,59 +42,34 @@ class MoreMenu extends React.Component {
   }
 
   /**
-    Generate the menu.
-
-    @method _generateMenu
-    @returns {Object} The menu components.
+    Generate the menu items.
+    @returns {Object} The item components.
   */
-  _generateMenu() {
-    if (!this.state.menuOpen) {
-      return;
-    }
-    var components = [];
-    this.props.items.forEach(item => {
-      components.push(
+  _generateItems() {
+    return this.props.items.map(item => {
+      const content = item.action ? (
+        <a className="dropdown-menu__list-item-link"
+          role="button"
+          onClick={this._handleItemClick.bind(this, item.action)}>
+          {item.label}
+        </a>) : item.label;
+      return (
         <li className={this._generateItemClasses(item)}
           key={item.label}
-          onClick={this._handleItemClick.bind(this, item.action)}
-          role="button"
+          role="menuitem"
           tabIndex="0">
-          {item.label}
+          {content}
         </li>);
     });
-    return (
-      <ul className="more-menu__menu">
-        {components}
-      </ul>);
-  }
-
-  /**
-    Generate the classes for the menu.
-
-    @method _generateClasses
-    @returns {Object} The collection of classes.
-  */
-  _generateClasses() {
-    return classNames(
-      'more-menu', {
-        'more-menu--active': this.state.menuOpen
-      }
-    );
   }
 
   render() {
     return (
-      <div className={this._generateClasses()}>
-        <span className="more-menu__toggle"
-          onClick={this._handleToggleMenu.bind(this)}
-          role="button"
-          tabIndex="0">
-          <SvgIcon
-            name={this.props.icon || 'contextual-menu-16'}
-            size="16" />
-        </span>
-        {this._generateMenu()}
-      </div>
+      <ButtonDropdown
+        classes={['more-menu']}
+        icon={this.props.icon || 'contextual-menu-16'}
+        listItems={this._generateItems()}
+        ref="buttonDropdown" />
     );
   }
 };
@@ -129,4 +80,4 @@ MoreMenu.propTypes = {
   items: PropTypes.array.isRequired
 };
 
-module.exports = enhanceWithClickOutside(MoreMenu);
+module.exports = MoreMenu;

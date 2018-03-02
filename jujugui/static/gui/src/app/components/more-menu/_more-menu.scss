@@ -1,56 +1,25 @@
 .more-menu {
-  position: relative;
+  .dropdown-menu {
+    right: -5px;
 
-  &__toggle {
-    cursor: pointer;
+    &__list-item-link {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
   }
 
   &__menu {
-    @extend %floating-panel;
-    position: absolute;
-    z-index: index($z-indexed-elements, more-menu);
-    right: -10px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-
-    &:before {
-      @include diamond($white);
-      top: -6px;
-      right: 12px;
-      width: 10px;
-      height: 10px;
-      border-width: 1px 0 0 1px;
-      border-style: solid;
-      border-color: rgba(0, 0, 0, .1);
-    }
-
     &-item {
-      position: relative;
-      // The items need to be above the diamond.
-      z-index: 1;
-      padding: 7px 20px;
       white-space: nowrap;
       margin-bottom: 0;
 
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: $hover-background;
-        cursor: pointer;
-      }
-
-      &--active {
+      &--active .dropdown-menu__list-item-link {
         color: $ubuntu-orange;
       }
 
       &--inactive {
         color: $dark-grey;
-
-        &:hover {
-          background-color: transparent;
-          cursor: default;
-        }
+        padding: 7px 20px;
       }
     }
   }
@@ -68,10 +37,6 @@
     &--active {
       display: block;
     }
-
-    &__menu {
-      top: 25px;
-    }
   }
 
   &-unit:hover,
@@ -88,5 +53,6 @@
 .machine-view__unplaced-unit {
   .more-menu {
     float: right;
+    margin-top: -7px;
   }
 }
