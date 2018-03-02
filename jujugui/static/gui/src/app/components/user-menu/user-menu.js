@@ -9,37 +9,25 @@ const ButtonDropdown = require('../button-dropdown/button-dropdown');
   Provides a user menu to the header - shows Profile, Account and Logout links.
   If user is not logged in the user icon is replaced with a login button.
 */
-class UserMenu extends React.Component {
-
-  _toggleDropdown() {
-    this.refs.buttonDropdown._toggleDropdown();
-  }
-
-  _handleProfileClick() {
-    this.props.navigateUserProfile();
-    this._toggleDropdown();
-  }
-
-  render() {
-    const controllerAPI = this.props.controllerAPI;
-    const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
-    return (
-      <ButtonDropdown
-        classes={['user-menu']}
-        ref="buttonDropdown"
-        icon={showLogin ? this.props.USSOLoginLink : 'user_16'}
-        disableDropdown={showLogin}
-        listItems={[{
-          action: this.props.navigateUserProfile,
-          label: 'Profile'
-        }, {
-          action: this.props.showHelp,
-          label: 'GUI help'
-        }, {
-          element: this.props.LogoutLink
-        }]}
-        tooltip={showLogin ? '' : 'user'} />);
-  }
+const UserMenu = props => {
+  const controllerAPI = props.controllerAPI;
+  const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
+  return (
+    <ButtonDropdown
+      classes={['user-menu']}
+      ref="buttonDropdown"
+      icon={showLogin ? props.USSOLoginLink : 'user_16'}
+      disableDropdown={showLogin}
+      listItems={[{
+        action: props.navigateUserProfile,
+        label: 'Profile'
+      }, {
+        action: props.showHelp,
+        label: 'GUI help'
+      }, {
+        element: props.LogoutLink
+      }]}
+      tooltip={showLogin ? '' : 'user'} />);
 };
 
 UserMenu.propTypes = {
