@@ -81,13 +81,12 @@ function _onMachineCreated(db, machine, response) {
     });
     shouldDestroy = true;
   }
-  var createdMachineName = createdMachine.name;
+  const createdMachineName = createdMachine.name;
   if (createdMachineName) {
-    machine = db.machines.updateModelId(
-      machine, createdMachineName, true);
+    const updatedMachine = db.machines.updateModelId(machine, createdMachineName, true);
     // We need to revive the model so that the change event triggers
     // the token UI to re-render.
-    var machineModel = db.machines.revive(machine);
+    const machineModel = db.machines.revive(updatedMachine);
     var parentId;
     // The createdMachineName may be a container so it will be in the format
     // machine/type/number. If it is then we just need the parent machine
