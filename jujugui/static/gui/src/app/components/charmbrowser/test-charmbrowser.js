@@ -244,6 +244,7 @@ describe('Charmbrowser', function() {
             scrollCharmbrowser={instance._scrollCharmbrowser}
             setPageTitle={setPageTitle}
             showTerms={showTerms}
+            staticURL="http://example.com"
             urllib={urllib} />
         </div>
       </Panel>);

@@ -13,6 +13,7 @@ const EntityContentReadme = require('./readme/readme');
 const EntityContentRelations = require('./relations/relations');
 const EntityFiles = require('./files/files');
 const EntityResources = require('./resources/resources');
+const ExpertCard = require('../../expert-card/expert-card');
 const Spinner = require('../../spinner/spinner');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
@@ -125,6 +126,7 @@ describe('EntityContent', function() {
               </div>
             </div>
             <div className="four-col last-col">
+              {null}
               <div className="section">
                 <h3 className="section__title">
                   Contribute
@@ -157,7 +159,7 @@ describe('EntityContent', function() {
                   Embed this charm
                 </h3>
                 <p>
-                  Add this card to your website by copying the code below.
+                  Add this card to your website by copying the code below.&nbsp;
                   <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
@@ -195,7 +197,7 @@ describe('EntityContent', function() {
         showTerms={sinon.stub()}
         staticURL="http://example.com" />);
     const innerWrapper = output.props.children[0].props.children;
-    const cardWrapper = innerWrapper.props.children[1].props.children[4];
+    const cardWrapper = innerWrapper.props.children[1].props.children[5];
     const script = cardWrapper.props.children[2];
     const card = cardWrapper.props.children[4];
     const expected = (
@@ -418,7 +420,7 @@ describe('EntityContent', function() {
         </ul>
       </div>);
     const innerWrapper = output.props.children[0].props.children;
-    const contribute = innerWrapper.props.children[1].props.children[0];
+    const contribute = innerWrapper.props.children[1].props.children[1];
     expect(contribute).toEqualJSX(expected);
   });
 
@@ -484,6 +486,7 @@ describe('EntityContent', function() {
                 scrollCharmbrowser={scrollCharmbrowser} />
             </div>
             <div className="four-col last-col">
+              {null}
               <div className="section">
                 <h3 className="section__title">
                   Contribute
@@ -516,7 +519,7 @@ describe('EntityContent', function() {
                   Embed this charm
                 </h3>
                 <p>
-                  Add this card to your website by copying the code below.
+                  Add this card to your website by copying the code below.&nbsp;
                   <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
@@ -566,7 +569,8 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
-        showTerms={sinon.stub()} />);
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />);
     const expected = (
       <div className="entity-content">
         <div className="row">
@@ -634,6 +638,9 @@ describe('EntityContent', function() {
               </div>
             </div>
             <div className="four-col last-col">
+              <ExpertCard
+                expert="test-owner"
+                staticURL="http://example.com" />
               <div className="section">
                 <h3 className="section__title">
                   Contribute
@@ -661,7 +668,7 @@ describe('EntityContent', function() {
                   Embed this charm
                 </h3>
                 <p>
-                  Add this card to your website by copying the code below.
+                  Add this card to your website by copying the code below.&nbsp;
                   <a className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
@@ -725,7 +732,7 @@ describe('EntityContent', function() {
       </div>);
     const innerWrapper = output.props.children[0].props.children;
     const parent = innerWrapper.props.children[1];
-    expect(parent.props.children[0]).toEqualJSX(expected);
+    expect(parent.props.children[1]).toEqualJSX(expected);
   });
 
   it('doesn\'t show relations when they don\'t exist', function() {
@@ -751,7 +758,7 @@ describe('EntityContent', function() {
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const innerWrapper = output.props.children[0].props.children;
-    const relationsComponent = innerWrapper.props.children[1].props.children[2];
+    const relationsComponent = innerWrapper.props.children[1].props.children[3];
     assert.equal(relationsComponent, undefined);
   });
 
@@ -937,5 +944,79 @@ describe('EntityContent', function() {
     const innerWrapper = output.props.children[0].props.children;
     const plansOutput = innerWrapper.props.children[0].props.children[3];
     assert.strictEqual(plansOutput, undefined);
+  });
+
+  it('can display an expert card for a bundle', () => {
+    mockEntity = jsTestUtils.makeEntity(true);
+    const renderer = jsTestUtils.shallowRender(
+      <EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ExpertCard
+        expert="test-owner"
+        staticURL="http://example.com" />);
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
+    expect(parent.props.children[0]).toEqualJSX(expected);
+  });
+
+  it('can display an expert card for a charm with plans', () => {
+    mockEntity = jsTestUtils.makeEntity();
+    const renderer = jsTestUtils.shallowRender(
+      <EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
+        getFile={sinon.stub()}
+        hasPlans={true}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ExpertCard
+        expert="test-owner"
+        staticURL="http://example.com" />);
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
+    expect(parent.props.children[0]).toEqualJSX(expected);
+  });
+
+  it('does not display an expert card for a charm with no plans', () => {
+    mockEntity = jsTestUtils.makeEntity();
+    const renderer = jsTestUtils.shallowRender(
+      <EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
+    assert.strictEqual(parent.props.children[0], null);
   });
 });

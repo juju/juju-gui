@@ -12,6 +12,7 @@ const EntityContentDescription = require('./description/description');
 const EntityContentDiagram = require('./diagram/diagram');
 const EntityContentReadme = require('./readme/readme');
 const EntityContentRelations = require('./relations/relations');
+const ExpertCard = require('../../expert-card/expert-card');
 const EntityFiles = require('./files/files');
 const EntityResources = require('./resources/resources');
 const Spinner = require('../../spinner/spinner');
@@ -458,6 +459,20 @@ class EntityContent extends React.Component {
   }
 
   /**
+    Generate the expert details
+  */
+  _generateExpert() {
+    const entityModel = this.props.entityModel;
+    if (!this.props.hasPlans && entityModel.get('entityType') === 'charm') {
+      return null;
+    }
+    return (
+      <ExpertCard
+        expert={entityModel.get('owner')}
+        staticURL={this.props.staticURL} />);
+  }
+
+  /**
     Transform and generate the price list from a provided string of prices.
 
     @method _generatePriceList
@@ -616,6 +631,7 @@ class EntityContent extends React.Component {
               {this._generateOptionsList(entityModel)}
             </div>
             <div className="four-col last-col">
+              {this._generateExpert()}
               {this._generateActions()}
               {this._generateResources()}
               {this._showEntityRelations()}
@@ -653,7 +669,8 @@ EntityContent.propTypes = {
   pluralize: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
-  showTerms: PropTypes.func.isRequired
+  showTerms: PropTypes.func.isRequired,
+  staticURL: PropTypes.string
 };
 
 module.exports = EntityContent;
