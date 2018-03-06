@@ -62,7 +62,7 @@ describe('ExpertCard', function() {
           <GenericButton
             action={sinon.stub()}
             type="positive">
-            Show contact details..
+            Show contact details&hellip;
           </GenericButton>
         </div>
       </div>);
