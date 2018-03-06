@@ -114,7 +114,8 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms} />
+            showTerms={showTerms}
+            staticURL="http://example.com" />
         </div>
       </div>
     );
@@ -267,7 +268,8 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms} />
+            showTerms={showTerms}
+            staticURL="http://example.com" />
         </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
@@ -443,7 +445,8 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms} />
+            showTerms={showTerms}
+            staticURL="http://example.com" />
         </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
@@ -544,7 +547,8 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
-            showTerms={showTerms} />
+            showTerms={showTerms}
+            staticURL="http://example.com" />
         </div>
       </div>);
     expect(output).toEqualJSX(expectedOutput);
