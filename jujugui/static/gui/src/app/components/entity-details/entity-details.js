@@ -137,8 +137,6 @@ class EntityDetails extends React.Component {
   /**
     Callback for when an entity has been successfully fetched. Though the
     data passed in is an Array of models, only the first model is used.
-
-    @method _fetchCallback
     @param {String} error An error message, or null if there's no error.
     @param {Array} models A list of the entity models found.
   */

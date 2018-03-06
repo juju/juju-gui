@@ -126,10 +126,7 @@ describe('EntityContent', function() {
               </div>
             </div>
             <div className="four-col last-col">
-              <ExpertCard
-                entityName="django"
-                expert="test-owner"
-                staticURL="http://example.com" />
+              {null}
               <div className="section">
                 <h3 className="section__title">
                   Contribute
@@ -489,10 +486,7 @@ describe('EntityContent', function() {
                 scrollCharmbrowser={scrollCharmbrowser} />
             </div>
             <div className="four-col last-col">
-              <ExpertCard
-                entityName="django"
-                expert="test-owner"
-                staticURL="http://example.com" />
+              {null}
               <div className="section">
                 <h3 className="section__title">
                   Contribute
@@ -645,7 +639,6 @@ describe('EntityContent', function() {
             </div>
             <div className="four-col last-col">
               <ExpertCard
-                entityName="django-cluster"
                 expert="test-owner"
                 staticURL="http://example.com" />
               <div className="section">
@@ -951,5 +944,79 @@ describe('EntityContent', function() {
     const innerWrapper = output.props.children[0].props.children;
     const plansOutput = innerWrapper.props.children[0].props.children[3];
     assert.strictEqual(plansOutput, undefined);
+  });
+
+  it('can display an expert card for a bundle', () => {
+    mockEntity = jsTestUtils.makeEntity(true);
+    const renderer = jsTestUtils.shallowRender(
+      <EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ExpertCard
+        expert="test-owner"
+        staticURL="http://example.com" />);
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
+    expect(parent.props.children[0]).toEqualJSX(expected);
+  });
+
+  it('can display an expert card for a charm with plans', () => {
+    mockEntity = jsTestUtils.makeEntity();
+    const renderer = jsTestUtils.shallowRender(
+      <EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
+        getFile={sinon.stub()}
+        hasPlans={true}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const expected = (
+      <ExpertCard
+        expert="test-owner"
+        staticURL="http://example.com" />);
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
+    expect(parent.props.children[0]).toEqualJSX(expected);
+  });
+
+  it('does not display an expert card for a charm with no plans', () => {
+    mockEntity = jsTestUtils.makeEntity();
+    const renderer = jsTestUtils.shallowRender(
+      <EntityContent
+        addNotification={sinon.stub()}
+        apiUrl="http://example.com"
+        changeState={sinon.stub()}
+        entityModel={mockEntity}
+        getDiagramURL={sinon.stub().returns('testRef')}
+        getFile={sinon.stub()}
+        hasPlans={false}
+        pluralize={sinon.stub()}
+        renderMarkdown={sinon.stub()}
+        scrollCharmbrowser={sinon.stub()}
+        showTerms={sinon.stub()}
+        staticURL="http://example.com" />, true);
+    const output = renderer.getRenderOutput();
+    const innerWrapper = output.props.children[0].props.children;
+    const parent = innerWrapper.props.children[1];
+    assert.strictEqual(parent.props.children[0], null);
   });
 });

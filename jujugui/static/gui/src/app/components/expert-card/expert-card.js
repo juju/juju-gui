@@ -9,7 +9,6 @@ const SvgIcon = require('../svg-icon/svg-icon');
 
 const experts = {
   spicule: {
-    supportedEntities: ['drillbit'],
     logo: 'spicule.png',
     highlights: [
       'Machine learning',
@@ -111,7 +110,7 @@ class ExpertCard extends React.Component {
 
   render() {
     const expert = experts[this.props.expert];
-    if (!expert || !expert.supportedEntities.includes(this.props.entityName)) {
+    if (!expert) {
       return null;
     }
     const logo = `${this.props.staticURL}/static/gui/build/app/assets/images/` +
@@ -133,7 +132,6 @@ class ExpertCard extends React.Component {
 };
 
 ExpertCard.propTypes = {
-  entityName: PropTypes.string.isRequired,
   expert: PropTypes.string.isRequired,
   staticURL: PropTypes.string
 };

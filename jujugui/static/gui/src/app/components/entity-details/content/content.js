@@ -463,12 +463,11 @@ class EntityContent extends React.Component {
   */
   _generateExpert() {
     const entityModel = this.props.entityModel;
-    // if (!this.props.hasPlans || entityModel.get('entityType') === 'bundle') {
-    //   return null;
-    // }
+    if (!this.props.hasPlans && entityModel.get('entityType') === 'charm') {
+      return null;
+    }
     return (
       <ExpertCard
-        entityName={entityModel.get('name')}
         expert={entityModel.get('owner')}
         staticURL={this.props.staticURL} />);
   }

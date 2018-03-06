@@ -13,7 +13,6 @@ describe('ExpertCard', function() {
   function renderComponent(options={}) {
     return jsTestUtils.shallowRender(
       <ExpertCard
-        entityName={options.entityName || 'drillbit'}
         expert={options.expert || 'spicule'}
         staticURL="/media" />, true);
   }
@@ -71,12 +70,6 @@ describe('ExpertCard', function() {
 
   it('can render without a matching expert', () => {
     const renderer = renderComponent({ expert: 'spinach' });
-    const output = renderer.getRenderOutput();
-    assert.strictEqual(output, null);
-  });
-
-  it('can render without a matching entity', () => {
-    const renderer = renderComponent({ entityName: 'apache2' });
     const output = renderer.getRenderOutput();
     assert.strictEqual(output, null);
   });
