@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <title>tick-icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Update-to-1.1-pages---final" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Partner/home-contact-details-open-(GA-event)" transform="translate(-557.000000, -697.000000)">
+            <g id="SKILLS" transform="translate(557.000000, 637.000000)">
+                <g transform="translate(0.000000, 55.000000)" id="List-with-icon">
+                    <g>
+                        <g id="tick-icon" transform="translate(0.000000, 5.000000)">
+                            <g id="tick-grey">
+                                <circle id="Background" fill="#666666" cx="7" cy="7" r="7"></circle>
+                                <polygon id="Icon" fill="#FFFFFF" points="6.101 10.813 2.408 8.105 3.592 6.492 5.899 8.187 10.293 3.793 11.707 5.207"></polygon>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

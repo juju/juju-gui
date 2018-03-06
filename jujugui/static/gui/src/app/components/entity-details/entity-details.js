@@ -37,6 +37,7 @@ class EntityDetails extends React.Component {
     });
     this.props.setPageTitle();
   }
+
   /**
     Generates the state for the search results.
 
@@ -100,7 +101,8 @@ class EntityDetails extends React.Component {
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
-              showTerms={this.props.showTerms} />
+              showTerms={this.props.showTerms}
+              staticURL={this.props.staticURL} />
           </div>
         );
         break;
@@ -136,7 +138,7 @@ class EntityDetails extends React.Component {
     Callback for when an entity has been successfully fetched. Though the
     data passed in is an Array of models, only the first model is used.
 
-    @method fetchSuccess
+    @method _fetchCallback
     @param {String} error An error message, or null if there's no error.
     @param {Array} models A list of the entity models found.
   */
@@ -270,6 +272,7 @@ EntityDetails.propTypes = {
   scrollPosition: PropTypes.number.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
+  staticURL: PropTypes.string,
   urllib: PropTypes.func.isRequired
 };
 

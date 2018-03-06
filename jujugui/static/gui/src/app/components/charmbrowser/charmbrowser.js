@@ -189,6 +189,7 @@ class Charmbrowser extends React.Component {
             scrollCharmbrowser={this._scrollCharmbrowser.bind(this)}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}
+            staticURL={this.props.staticURL}
             urllib={this.props.urllib} />
         );
         break;
