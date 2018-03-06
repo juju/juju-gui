@@ -64,7 +64,7 @@ class ExpertCard extends React.Component {
         <GenericButton
           action={this._showContact.bind(this)}
           type="positive">
-          Show contact details..
+          Show contact details&hellip;
         </GenericButton>
       </div>);
   }

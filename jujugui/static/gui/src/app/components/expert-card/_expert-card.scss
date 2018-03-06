@@ -12,7 +12,7 @@
     padding: 10px 12px;
     background-color: $light-grey;
     font-size: 14px;
-    line-height: 14px;
+    line-height: 13px;
     text-transform: uppercase;
 
     &:after {
@@ -40,9 +40,6 @@
     }
   }
 
-  &__initial {
-  }
-
   &__highlights {
     @extend %list-style;
     margin-bottom: 30px;
@@ -53,8 +50,10 @@
   }
 
   &__contact {
+    @extend %fade-in;
+
     &-description {
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
 
     &-items {
