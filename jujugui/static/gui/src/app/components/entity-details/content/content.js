@@ -469,6 +469,7 @@ class EntityContent extends React.Component {
     return (
       <ExpertCard
         expert={entityModel.get('owner')}
+        sendAnalytics={this.props.sendAnalytics}
         staticURL={this.props.staticURL} />);
   }
 
@@ -669,6 +670,7 @@ EntityContent.propTypes = {
   pluralize: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string
 };

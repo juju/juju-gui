@@ -101,6 +101,7 @@ class EntityDetails extends React.Component {
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
+              sendAnalytics={this.props.sendAnalytics}
               showTerms={this.props.showTerms}
               staticURL={this.props.staticURL} />
           </div>
@@ -268,6 +269,7 @@ EntityDetails.propTypes = {
   renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string,

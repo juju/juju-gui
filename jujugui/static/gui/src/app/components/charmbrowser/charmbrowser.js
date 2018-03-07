@@ -177,6 +177,7 @@ class Charmbrowser extends React.Component {
             getFile={this.props.getFile}
             hash={currentState.hash}
             scrollPosition={this.state.scrollPosition}
+            sendAnalytics={this.props.sendAnalytics}
             renderMarkdown={this.props.renderMarkdown}
             id={id}
             // This is used to force a component remount when the entity
@@ -240,6 +241,7 @@ Charmbrowser.propTypes = {
   listPlansForCharm: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
+  sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
