@@ -14,6 +14,7 @@ describe('ExpertCard', function() {
     return jsTestUtils.shallowRender(
       <ExpertCard
         expert={options.expert || 'spicule'}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
         staticURL="/media" />, true);
   }
 
@@ -130,5 +131,13 @@ describe('ExpertCard', function() {
         </div>
       </div>);
     expect(output).toEqualJSX(expected);
+  });
+
+  it('can send analytics when the ', () => {
+    const sendAnalytics = sinon.stub();
+    const renderer = renderComponent({ sendAnalytics });
+    let output = renderer.getRenderOutput();
+    output.props.children[2].props.children[1].props.action();
+    assert.equal(sendAnalytics.callCount, 1);
   });
 });
