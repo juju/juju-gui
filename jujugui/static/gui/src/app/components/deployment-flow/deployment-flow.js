@@ -602,6 +602,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentModelName
           acl={this.props.acl}
           ddEntity={this.state.ddEntity}
+          listModelsWithInfo={this.props.listModelsWithInfo}
           modelName={this.props.modelName}
           setModelName={this.props.setModelName} />
       </DeploymentSection>);
@@ -1106,6 +1107,7 @@ DeploymentFlow.propTypes = {
   isLoggedIn: PropTypes.func.isRequired,
   listBudgets: PropTypes.func.isRequired,
   listClouds: PropTypes.func,
+  listModelsWithInfo: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
   loginToController: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,

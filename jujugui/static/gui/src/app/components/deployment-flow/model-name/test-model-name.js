@@ -20,6 +20,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={null}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -37,6 +38,9 @@ describe('DeploymentModelName', () => {
             regex: /\S+/,
             error: 'This field is required.'
           }, {
+            check: sinon.stub(),
+            error: 'You already have a model with that name.'
+          }, {
             regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
             error: 'This field must only contain lowercase ' +
               'letters, numbers, and hyphens. It must not start or ' +
@@ -53,6 +57,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={null}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -70,6 +75,9 @@ describe('DeploymentModelName', () => {
             regex: /\S+/,
             error: 'This field is required.'
           }, {
+            check: sinon.stub(),
+            error: 'You already have a model with that name.'
+          }, {
             regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
             error: 'This field must only contain lowercase ' +
               'letters, numbers, and hyphens. It must not start or ' +
@@ -85,6 +93,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={{get: sinon.stub().returns('snazzy-bundle')}}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
@@ -96,6 +105,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={null}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
@@ -110,6 +120,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={null}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={setModelName} />, true);
     const output = renderer.getRenderOutput();
@@ -128,6 +139,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={null}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={setModelName} />, true);
     const output = renderer.getRenderOutput();
@@ -142,6 +154,7 @@ describe('DeploymentModelName', () => {
       <DeploymentModelName
         acl={acl}
         ddEntity={null}
+        listModelsWithInfo={sinon.stub()}
         modelName="mymodel"
         setModelName={setModelName} />, true);
     const output = renderer.getRenderOutput();
@@ -151,5 +164,19 @@ describe('DeploymentModelName', () => {
       }
     });
     assert.equal(setModelName.callCount, 0);
+  });
+
+  it('can validate that names are unique', function() {
+    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, [{name: 'mymodel'}]);
+    const renderer = jsTestUtils.shallowRender(
+      <DeploymentModelName
+        acl={acl}
+        ddEntity={null}
+        listModelsWithInfo={listModelsWithInfo}
+        modelName="mymodel"
+        setModelName={sinon.stub()} />, true);
+    const instance = renderer.getMountedInstance();
+    instance.componentDidMount();
+    assert.equal(instance._validateIsDuplicate('mymodel'), true);
   });
 });

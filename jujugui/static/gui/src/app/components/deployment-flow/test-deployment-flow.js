@@ -96,6 +96,7 @@ const createDeploymentFlow = (props = {}) => {
     isLoggedIn: sinon.stub().returns(true),
     listBudgets: sinon.stub(),
     listClouds: sinon.stub(),
+    listModelsWithInfo: sinon.stub(),
     listPlansForCharm: sinon.stub(),
     loginToController: sinon.stub(),
     makeEntityModel: sinon.stub(),
@@ -172,6 +173,7 @@ describe('DeploymentFlow', function() {
           <DeploymentModelName
             acl={props.acl}
             ddEntity={null}
+            listModelsWithInfo={sinon.stub()}
             modelName="Pavlova"
             setModelName={props.setModelName} />
         </DeploymentSection>

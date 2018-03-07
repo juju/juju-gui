@@ -7,12 +7,29 @@ const React = require('react');
 const GenericInput = require('../../generic-input/generic-input');
 
 class DeploymentModelName extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modelNames: []
+    };
+  }
 
   componentDidMount() {
     const modelName = this.refs.modelName;
     if (modelName) {
       modelName.focus();
     }
+    this._getModels();
+  }
+
+  /**
+    Get the user's models
+  */
+  _getModels() {
+    this.props.listModelsWithInfo((error, models) => {
+      const modelNames = models.map(model => model.name);
+      this.setState({ modelNames });
+    });
   }
 
   /**
@@ -30,6 +47,15 @@ class DeploymentModelName extends React.Component {
     if (modelName !== '') {
       this.props.setModelName(modelName);
     }
+  }
+
+  /**
+    Check that the model name does not match an existing model.
+    @param value {String} The model name to check.
+    @returns
+  */
+  _validateIsDuplicate(name) {
+    return this.state.modelNames.includes(name);
   }
 
   render() {
@@ -53,6 +79,9 @@ class DeploymentModelName extends React.Component {
             regex: /\S+/,
             error: 'This field is required.'
           }, {
+            check: this._validateIsDuplicate.bind(this),
+            error: 'You already have a model with that name.'
+          }, {
             regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
             error: 'This field must only contain lowercase ' +
               'letters, numbers, and hyphens. It must not start or ' +
@@ -67,6 +96,7 @@ class DeploymentModelName extends React.Component {
 DeploymentModelName.propTypes = {
   acl: PropTypes.object.isRequired,
   ddEntity: PropTypes.object,
+  listModelsWithInfo: PropTypes.func.isRequired,
   modelName: PropTypes.string.isRequired,
   setModelName: PropTypes.func.isRequired
 };
