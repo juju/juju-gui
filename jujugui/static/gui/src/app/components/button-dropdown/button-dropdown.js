@@ -45,8 +45,6 @@ class ButtonDropdown extends React.Component {
 
   /**
     Call the supplied action when an item is clicked
-
-    @method _handleItemClick
     @param {Function} action The action to call
   */
   _handleItemClick(action) {
