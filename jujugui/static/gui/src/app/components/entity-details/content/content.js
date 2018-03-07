@@ -12,7 +12,7 @@ const EntityContentDescription = require('./description/description');
 const EntityContentDiagram = require('./diagram/diagram');
 const EntityContentReadme = require('./readme/readme');
 const EntityContentRelations = require('./relations/relations');
-const ExpertCard = require('../../expert-card/expert-card');
+const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
 const EntityFiles = require('./files/files');
 const EntityResources = require('./resources/resources');
 const Spinner = require('../../spinner/spinner');
@@ -467,7 +467,7 @@ class EntityContent extends React.Component {
       return null;
     }
     return (
-      <ExpertCard
+      <ExpertContactCard
         expert={entityModel.get('owner')}
         sendAnalytics={this.props.sendAnalytics}
         staticURL={this.props.staticURL} />);

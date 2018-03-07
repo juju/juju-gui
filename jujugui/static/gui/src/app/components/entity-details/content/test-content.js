@@ -13,7 +13,7 @@ const EntityContentReadme = require('./readme/readme');
 const EntityContentRelations = require('./relations/relations');
 const EntityFiles = require('./files/files');
 const EntityResources = require('./resources/resources');
-const ExpertCard = require('../../expert-card/expert-card');
+const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
 const Spinner = require('../../spinner/spinner');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
@@ -648,7 +648,7 @@ describe('EntityContent', function() {
               </div>
             </div>
             <div className="four-col last-col">
-              <ExpertCard
+              <ExpertContactCard
                 expert="test-owner"
                 sendAnalytics={sinon.stub()}
                 staticURL="http://example.com" />
@@ -981,7 +981,7 @@ describe('EntityContent', function() {
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <ExpertCard
+      <ExpertContactCard
         expert="test-owner"
         sendAnalytics={sinon.stub()}
         staticURL="http://example.com" />);
@@ -1009,7 +1009,7 @@ describe('EntityContent', function() {
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <ExpertCard
+      <ExpertContactCard
         expert="test-owner"
         sendAnalytics={sinon.stub()}
         staticURL="http://example.com" />);
