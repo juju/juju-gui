@@ -657,6 +657,7 @@ Browser: ${navigator.userAgent}`
         deployService={this.deployService.bind(this)}
         appState={this.state}
         utils={initUtils}
+        sendAnalytics={this.sendAnalytics}
         staticURL={this.applicationConfig.staticURL || ''}
         charmstoreURL={
           viewUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}

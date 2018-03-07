@@ -58,6 +58,7 @@ describe('Charmbrowser', function() {
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         renderMarkdown={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         series={series}
         setPageTitle={setPageTitle}
         showTerms={sinon.stub()}
@@ -125,6 +126,7 @@ describe('Charmbrowser', function() {
         listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
         renderMarkdown={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         series={seriesList}
         setPageTitle={setPageTitle}
         showTerms={sinon.stub()}
@@ -203,6 +205,7 @@ describe('Charmbrowser', function() {
         makeEntityModel={makeEntityModel}
         utils={utils}
         renderMarkdown={renderMarkdown}
+        sendAnalytics={sinon.stub()}
         series={{}}
         setPageTitle={setPageTitle}
         showTerms={showTerms}
@@ -242,6 +245,7 @@ describe('Charmbrowser', function() {
             addNotification={addNotification}
             pluralize={utils.pluralize}
             scrollCharmbrowser={instance._scrollCharmbrowser}
+            sendAnalytics={sinon.stub()}
             setPageTitle={setPageTitle}
             showTerms={showTerms}
             staticURL="http://example.com"
@@ -278,6 +282,7 @@ describe('Charmbrowser', function() {
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.stub()}
         renderMarkdown={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         series={{}}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}

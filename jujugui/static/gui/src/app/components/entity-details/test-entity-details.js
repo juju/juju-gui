@@ -66,6 +66,7 @@ describe('EntityDetails', function() {
         addNotification={addNotification}
         makeEntityModel={makeEntityModel}
         scrollCharmbrowser={scrollCharmbrowser}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com"
@@ -114,6 +115,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
+            sendAnalytics={sinon.stub()}
             showTerms={showTerms}
             staticURL="http://example.com" />
         </div>
@@ -153,6 +155,7 @@ describe('EntityDetails', function() {
         pluralize={pluralize}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -221,6 +224,7 @@ describe('EntityDetails', function() {
         addNotification={addNotification}
         makeEntityModel={makeEntityModel}
         scrollCharmbrowser={scrollCharmbrowser}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -268,6 +272,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
+            sendAnalytics={sinon.stub()}
             showTerms={showTerms}
             staticURL="http://example.com" />
         </div>
@@ -307,6 +312,7 @@ describe('EntityDetails', function() {
         pluralize={pluralize}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -341,6 +347,7 @@ describe('EntityDetails', function() {
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -397,6 +404,7 @@ describe('EntityDetails', function() {
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -445,6 +453,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
+            sendAnalytics={sinon.stub()}
             showTerms={showTerms}
             staticURL="http://example.com" />
         </div>
@@ -499,6 +508,7 @@ describe('EntityDetails', function() {
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
         scrollPosition={100}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -547,6 +557,7 @@ describe('EntityDetails', function() {
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
             scrollCharmbrowser={scrollCharmbrowser}
+            sendAnalytics={sinon.stub()}
             showTerms={showTerms}
             staticURL="http://example.com" />
         </div>
@@ -581,6 +592,7 @@ describe('EntityDetails', function() {
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={100}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"
@@ -624,6 +636,7 @@ describe('EntityDetails', function() {
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={100}
+        sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com"

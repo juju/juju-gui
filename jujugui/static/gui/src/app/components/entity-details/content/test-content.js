@@ -69,6 +69,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
@@ -194,6 +195,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />);
     const innerWrapper = output.props.children[0].props.children;
@@ -234,6 +236,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -281,6 +284,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
@@ -316,6 +320,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -346,6 +351,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com" />, true);
     renderer.getRenderOutput();
@@ -373,6 +379,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={showTerms}
         staticURL="http://example.com" />, true);
     renderer.unmount();
@@ -394,6 +401,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -452,6 +460,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const instance = renderer.getMountedInstance();
@@ -569,6 +578,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />);
     const expected = (
@@ -640,6 +650,7 @@ describe('EntityContent', function() {
             <div className="four-col last-col">
               <ExpertCard
                 expert="test-owner"
+                sendAnalytics={sinon.stub()}
                 staticURL="http://example.com" />
               <div className="section">
                 <h3 className="section__title">
@@ -705,6 +716,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -754,6 +766,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -795,6 +808,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -907,6 +921,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -938,6 +953,7 @@ describe('EntityContent', function() {
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
@@ -960,12 +976,14 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <ExpertCard
         expert="test-owner"
+        sendAnalytics={sinon.stub()}
         staticURL="http://example.com" />);
     const innerWrapper = output.props.children[0].props.children;
     const parent = innerWrapper.props.children[1];
@@ -986,12 +1004,14 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
     const expected = (
       <ExpertCard
         expert="test-owner"
+        sendAnalytics={sinon.stub()}
         staticURL="http://example.com" />);
     const innerWrapper = output.props.children[0].props.children;
     const parent = innerWrapper.props.children[1];
@@ -1012,6 +1032,7 @@ describe('EntityContent', function() {
         pluralize={sinon.stub()}
         renderMarkdown={sinon.stub()}
         scrollCharmbrowser={sinon.stub()}
+        sendAnalytics={sinon.stub()}
         showTerms={sinon.stub()}
         staticURL="http://example.com" />, true);
     const output = renderer.getRenderOutput();
