@@ -17,6 +17,9 @@ module.exports = {
     phoneNumbers: [
       'UK +44 (0)1603 327762',
       'US +1 8448141689'
-    ]
+    ],
+    storeDescription: (
+      'Learn how Spicule and Canonical can help solve your Big Data ' +
+      'challenges with JAAS:')
   }
 };
