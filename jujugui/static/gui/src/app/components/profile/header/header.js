@@ -128,16 +128,6 @@ class ProfileHeader extends React.Component {
 
   render() {
     const user = this.state.user || {};
-    const isCurrent = this.props.userInfo.isCurrent;
-    const tooltip = isCurrent ? (
-      <span className="tooltip__tooltip">
-        <span className="tooltip__inner tooltip__inner--down">
-          Your Ubuntu One <strong>account details</strong>
-        </span>
-      </span>) : null;
-    const classes = classNames('profile-header__username', {
-      tooltip: isCurrent
-    });
     return (
       <div className="profile-header twelve-col">
         <div className="inner-wrapper profile-header__inner">
@@ -151,11 +141,10 @@ class ProfileHeader extends React.Component {
           </div>
           {this._generateAvatar()}
           <ul className="profile-header__meta">
-            <li className={classes}>
+            <li className="profile-header__username">
               <h1>
                 {this.props.userInfo.profile}
               </h1>
-              {tooltip}
             </li>
             <li><strong>{user.fullname}</strong></li>
             <li>{user.email}</li>

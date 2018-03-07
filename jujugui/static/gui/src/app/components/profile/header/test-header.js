@@ -61,15 +61,10 @@ describe('Profile Header', function() {
             </span>
           </span>
           <ul className="profile-header__meta">
-            <li className="profile-header__username tooltip">
+            <li className="profile-header__username">
               <h1>
                 spinach
               </h1>
-              <span className="tooltip__tooltip">
-                <span className="tooltip__inner tooltip__inner--down">
-                  Your Ubuntu One <strong>account details</strong>
-                </span>
-              </span>
             </li>
             <li><strong>Geoffrey Spinach</strong></li>
             <li>spinach@example.com</li>
