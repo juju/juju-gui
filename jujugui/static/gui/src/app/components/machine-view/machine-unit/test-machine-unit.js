@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const MachineViewMachineUnit = require('./machine-unit');
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -93,10 +93,11 @@ describe('MachineViewMachineUnit', function() {
             title="django/7" />
         </span>
         {'django/7'}
-        <MoreMenu
-          items={[{
+        <ButtonDropdown
+          classes={['machine-view__machine-dropdown']}
+          listItems={[{
             label: 'Destroy',
-            action: output.props.children[2].props.items[0].action
+            action: output.props.children[2].props.listItems[0].action
           }]} />
       </li>);
     assert.deepEqual(output, expected);
@@ -117,12 +118,13 @@ describe('MachineViewMachineUnit', function() {
         service={service}
         unit={unit} />);
     const expected = (
-      <MoreMenu
-        items={[{
+      <ButtonDropdown
+        classes={['machine-view__machine-dropdown']}
+        listItems={[{
           label: 'Destroy',
-          action: false
+          action: null
         }]} />);
-    assert.deepEqual(output.props.children[2], expected);
+    expect(output.props.children[2]).toEqualJSX(expected);
   });
 
   it('can display in dragged mode', function() {
@@ -204,7 +206,7 @@ describe('MachineViewMachineUnit', function() {
         sendAnalytics={sendAnalytics}
         service={service}
         unit={unit} />);
-    output.props.children[2].props.items[0].action();
+    output.props.children[2].props.listItems[0].action();
     assert.equal(removeUnit.callCount, 1);
   });
 });

@@ -88,4 +88,23 @@
     list-style: none;
     margin-left: 0;
   }
+
+  &-dropdown {
+    display: none;
+    float: right;
+
+    .button-dropdown__show-menu {
+      display: block;
+    }
+  }
+
+  &-unit:hover,
+  &--selected:not(.machine-view__machine--root),
+  &:focus:not(.machine-view__machine--root),
+  &:active:not(.machine-view__machine--root),
+  &:hover:not(.machine-view__machine--root) {
+    > .machine-view__machine-dropdown {
+      display: block;
+    }
+  }
 }

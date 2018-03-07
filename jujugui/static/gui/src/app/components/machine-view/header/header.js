@@ -8,7 +8,7 @@ const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const GenericButton = require('../../generic-button/generic-button');
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 const MachineViewHeaderGlobals = {};
@@ -69,9 +69,10 @@ class MachineViewHeader extends React.Component {
     var toggle = this.props.toggle;
     if (menuItems) {
       return (
-        <MoreMenu
+        <ButtonDropdown
           activeItem={this.props.activeMenuItem}
-          items={menuItems} />);
+          classes={['machine-view__header-dropdown']}
+          listItems={menuItems} />);
     } else if (toggle) {
       var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
       return (

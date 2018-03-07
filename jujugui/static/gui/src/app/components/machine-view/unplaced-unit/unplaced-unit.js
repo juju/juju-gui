@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewAddMachine = require('../add-machine/add-machine');
 
 const MachineViewUnplacedUnitGlobals = {};
@@ -109,10 +109,10 @@ class MachineViewUnplacedUnit extends React.Component {
     const unit = unitAPI.unit;
     const menuItems = [{
       label: 'Deploy to...',
-      action: !isReadOnly && this._togglePlaceUnit.bind(this)
+      action: (!isReadOnly && this._togglePlaceUnit.bind(this)) || null
     }, {
       label: 'Destroy',
-      action: !isReadOnly && unitAPI.removeUnit.bind(null, unit.id)
+      action: (!isReadOnly && unitAPI.removeUnit.bind(null, unit.id)) || null
     }];
     // Wrap the returned components in the drag source method.
     return props.connectDragSource(
@@ -120,8 +120,9 @@ class MachineViewUnplacedUnit extends React.Component {
         <img src={unitAPI.icon} alt={unit.displayName}
           className="machine-view__unplaced-unit-icon" />
         {unit.displayName}
-        <MoreMenu
-          items={menuItems} />
+        <ButtonDropdown
+          classes={['machine-view__unplaced-unit-dropdown']}
+          listItems={menuItems} />
         {this._generatePlaceUnit()}
         <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>

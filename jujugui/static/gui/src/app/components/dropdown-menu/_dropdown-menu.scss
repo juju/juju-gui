@@ -1,7 +1,7 @@
 .dropdown-menu {
   box-sizing: border-box;
   min-width: 10rem;
-  right: 0;
+  right: -5px;
   padding: 10px 0;
   z-index: 1;
 
@@ -27,13 +27,22 @@
 
   &__list {
     list-style-type: none;
-    margin-left: 0;
+    margin: 0;
   }
 
   &__list-item {
     padding: 10px 20px 10px;
     margin: 0;
     padding: 0;
+
+    &--active .dropdown-menu__list-item-link {
+      color: $ubuntu-orange;
+    }
+
+    &--inactive {
+      color: $dark-grey;
+      padding: 7px 20px;
+    }
 
     &-link {
       display: block;

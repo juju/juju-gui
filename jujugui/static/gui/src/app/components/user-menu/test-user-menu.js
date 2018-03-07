@@ -26,7 +26,7 @@ describe('UserMenu', () => {
         LogoutLink={options.LogoutLink || logoutLink}
         USSOLoginLink={USSOLoginLink}
         controllerAPI={controllerAPI}
-        navigateUserProfile={sinon.stub()}
+        navigateUserProfile={options.navigateUserProfile || sinon.stub()}
         showHelp={sinon.stub()} />, true);
     return {
       renderer: renderer,
@@ -42,28 +42,17 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        ref="buttonDropdown"
         icon={loginLink}
         disableDropdown={true}
-        listItems={[
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="profile">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={c.instance._handleProfileClick}>Profile</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="help">
-            <a className="dropdown-menu__list-item-link"
-              onClick={c.instance.props.showHelp} role="button">
-                GUI help
-            </a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="logout">
-            {logoutLink}
-          </li>
-        ]}
+        listItems={[{
+          action: sinon.stub(),
+          label: 'Profile'
+        }, {
+          action: sinon.stub(),
+          label: 'GUI help'
+        }, {
+          element: logoutLink
+        }]}
         tooltip={''} />
     );
     expect(c.output).toEqualJSX(expected);
@@ -76,28 +65,17 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        ref="buttonDropdown"
         icon={loginLink}
         disableDropdown={true}
-        listItems={[
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="profile">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={c.instance._handleProfileClick}>Profile</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="help">
-            <a className="dropdown-menu__list-item-link"
-              onClick={c.instance.props.showHelp} role="button">
-                GUI help
-            </a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="logout">
-            {logoutLink}
-          </li>
-        ]}
+        listItems={[{
+          action: sinon.stub(),
+          label: 'Profile'
+        }, {
+          action: sinon.stub(),
+          label: 'GUI help'
+        }, {
+          element: logoutLink
+        }]}
         tooltip={''} />
     );
     expect(c.output).toEqualJSX(expected);
@@ -110,43 +88,27 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        ref="buttonDropdown"
         icon="user_16"
         disableDropdown={false}
-        listItems={[
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="profile">
-            <a className="dropdown-menu__list-item-link"
-              role="button"
-              onClick={c.instance._handleProfileClick}>Profile</a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="help">
-            <a className="dropdown-menu__list-item-link"
-              onClick={c.instance.props.showHelp} role="button">
-                GUI help
-            </a>
-          </li>,
-          <li className="dropdown-menu__list-item"
-            role="menuitem" tabIndex="0" key="logout">
-            {logoutLink}
-          </li>
-        ]}
+        listItems={[{
+          action: sinon.stub(),
+          label: 'Profile'
+        }, {
+          action: sinon.stub(),
+          label: 'GUI help'
+        }, {
+          element: logoutLink
+        }]}
         tooltip="user" />
     );
     expect(c.output).toEqualJSX(expected);
   });
 
   it('navigates to user profile when clicked', () => {
-    const c = renderComponent();
-    c.instance.refs = {
-      buttonDropdown: {
-        _toggleDropdown: sinon.stub()
-      }
-    };
-    c.output.props.listItems[0].props.children.props.onClick.call(c.instance);
-    assert.equal(c.instance.props.navigateUserProfile.callCount, 1);
-    assert.equal(c.instance.refs.buttonDropdown._toggleDropdown.callCount, 1);
+    const navigateUserProfile = sinon.stub();
+    const c = renderComponent({ navigateUserProfile });
+    c.output.props.listItems[0].action();
+    assert.equal(navigateUserProfile.callCount, 1);
   });
 
 });

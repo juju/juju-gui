@@ -6,9 +6,7 @@
     @extend .tooltip;
     display: inline-block;
     transition: background-color .2s;
-    background-color: $canvas-background;
     padding: 11px;
-    margin: 10px 0 10px 10px;
     cursor: pointer;
     // scss-lint:disable ImportantRule
     color: $warm-grey !important;
@@ -33,7 +31,6 @@
   }
 
   &__show-menu {
-    background-color: $white;
     // scss-lint:disable ImportantRule
     color: $dark-warm-grey !important;
     // scss-lint:enable ImportantRule

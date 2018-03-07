@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const MachineViewUnplacedUnit = require('./unplaced-unit');
-const MoreMenu = require('../../more-menu/more-menu');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -49,13 +49,14 @@ describe('MachineViewUnplacedUnit', function() {
         <img src="icon.svg" alt="django/7"
           className="machine-view__unplaced-unit-icon" />
         django/7
-        <MoreMenu
-          items={[{
+        <ButtonDropdown
+          classes={['machine-view__unplaced-unit-dropdown']}
+          listItems={[{
             label: 'Deploy to...',
             action: instance._togglePlaceUnit
           }, {
             label: 'Destroy',
-            action: output.props.children[2].props.items[1].action
+            action: output.props.children[2].props.listItems[1].action
           }]} />
         {undefined}
         <div className="machine-view__unplaced-unit-drag-state"></div>
@@ -119,7 +120,7 @@ describe('MachineViewUnplacedUnit', function() {
           selectMachine: sinon.stub(),
           unit: unit
         }} />);
-    output.props.children[2].props.items[1].action();
+    output.props.children[2].props.listItems[1].action();
     assert.equal(removeUnit.callCount, 1);
     assert.equal(removeUnit.args[0][0], 'django/7');
   });
@@ -151,13 +152,14 @@ describe('MachineViewUnplacedUnit', function() {
         }} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
-      <MoreMenu
-        items={[{
+      <ButtonDropdown
+        classes={['machine-view__unplaced-unit-dropdown']}
+        listItems={[{
           label: 'Deploy to...',
-          action: false
+          action: null
         }, {
           label: 'Destroy',
-          action: false
+          action: null
         }]} />);
     expect(output.props.children[2]).toEqualJSX(expected);
   });

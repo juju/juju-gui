@@ -6,10 +6,10 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
+const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
-const MoreMenu = require('../../more-menu/more-menu');
 const ProfileCredentialListDelete = require('./delete/delete');
 const Spinner = require('../../spinner/spinner');
 
@@ -317,9 +317,9 @@ class ProfileCredentialList extends React.Component {
           columnSize: 3
         }, {
           content: (
-            <MoreMenu
+            <ButtonDropdown
               icon="contextual-menu-horizontal"
-              items={[{
+              listItems={[{
                 label: 'Edit',
                 action: this._setEditCredential.bind(this, key)
               }, {
