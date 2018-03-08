@@ -251,7 +251,7 @@ class ServiceOverview extends React.Component {
   _destroyService() {
     // db, env, and service have already been bound to this function in
     // the app.js definition.
-    this.props.destroyService();
+    this.props.destroyService(this.props.service);
   }
 
   _generateDelete(render, readOnly) {
