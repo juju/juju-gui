@@ -21,7 +21,7 @@ describe('Store', function() {
         apiVersion={apiVersion}
         setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
-    assert.equal(output.props.children[0].props.children.length, 3);
+    assert.equal(output.props.children[0].props.children.length, 4);
   });
 
   it('can skip openstack feature in gisf', () => {

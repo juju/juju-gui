@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
 class Store extends React.Component {
   componentDidMount() {
@@ -254,7 +255,7 @@ class Store extends React.Component {
         data-query="kubernetes"
         className={
           `box box--kubernetes align-center ${
-            this.props.gisf ? 'six-col' : 'four-col'
+            this.props.gisf ? 'four-col' : 'four-col'
           }`}>
         <img src={this._generateLocalImagePath('k8-image.png')}
           alt="Kubernetes" className="box__image" />
@@ -281,8 +282,8 @@ class Store extends React.Component {
         data-query="hadoop"
         className={
           `box box--kubernetes align-center ${
-            this.props.gisf ? 'six-col' : 'four-col'
-          } last-col`}>
+            this.props.gisf ? 'four-col' : 'four-col'
+          }`}>
         <div className="box--hadoop-container">
           <img src={this._generateLocalImagePath('hadoop-elephant.png')}
             alt="Hadoop" className="box__image" />
@@ -294,11 +295,16 @@ class Store extends React.Component {
       </div>
     );
 
-    return (<div className="row equal-height">
-      {kubernetes}
-      {openstack}
-      {bigdata}
-    </div>);
+    return (
+      <div className="row equal-height">
+        {kubernetes}
+        {openstack}
+        {bigdata}
+        <ExpertStoreCard
+          expert="spicule"
+          classes={['four-col', 'last-col', 'box--expert']}
+          staticURL={this.props.staticURL} />
+      </div>);
   }
 
   /**

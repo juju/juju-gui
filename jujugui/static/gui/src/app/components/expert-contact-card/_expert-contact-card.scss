@@ -1,0 +1,44 @@
+.expert-contact-card {
+  &__highlights {
+    @extend %list-style;
+    margin-bottom: 30px;
+  }
+
+  &__highlight {
+    margin-bottom: 10px;
+  }
+
+  &__contact {
+    @extend %fade-in;
+
+    &-description {
+      margin-bottom: 24px;
+    }
+
+    &-items {
+      @extend %list-style;
+    }
+
+    &-item {
+      margin-bottom: 10px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__phone-numbers {
+    @extend %list-style;
+    display: inline-block;
+  }
+
+  &__phone-number {
+    margin-bottom: 2px;
+  }
+
+  .svg-icon {
+    margin: 4px 12px 0 0;
+    vertical-align: top;
+  }
+}
