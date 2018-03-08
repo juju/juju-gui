@@ -803,7 +803,7 @@ YUI.add('environment-change-set', function(Y) {
       var modelId = this.changeSet[recordKey].command.options.modelId;
       var model = db.services.getById(modelId);
       var units = model.get('units');
-      var relations = model.get('relations');
+      const relations = db.relations.get_relations_for_service(model);
       // Remove the unplaced service units
       units.each(function(unit) {
         db.removeUnits(unit);

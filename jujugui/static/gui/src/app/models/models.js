@@ -189,26 +189,8 @@ YUI.add('juju-models', function(Y) {
       // The units model list is also created here to avoid having to check
       // for it's existence in multiple places in the app.
       this.setAttrs({
-        units: new models.ServiceUnitList({preventDirectChanges: true}),
-        relations: new models.RelationList()
+        units: new models.ServiceUnitList({preventDirectChanges: true})
       });
-      this._events = [];
-      this._bindAttributes();
-    },
-
-    /**
-      Sets up the attribute event listeners
-
-      @method _bindAttributes
-    */
-    _bindAttributes: function() {
-      // This allows the databinding engine to react to a relation change on
-      // any of this services relations.
-      this._events.push(
-        this.get('relations').on(
-          ['*:change', '*:add', '*:remove'], function(e) {
-            this.set('relationChangeTrigger', e);
-          }, this));
     },
 
     /**
@@ -269,29 +251,18 @@ YUI.add('juju-models', function(Y) {
       using the supplied relationId.
 
       @method removeRelations
+      @param {Object} db The application DB.
       @param {String} relationId The id of the relation to remove.
     */
-    removeRelations: function(relationId) {
-      var relations = this.get('relations');
+    removeRelations: function(db, relationId) {
+      const relations = db.relations.get_relations_for_service(this);
       relations.some(function(rel) {
         if (rel.get('relation_id') === relationId) {
           relations.remove(rel);
           return true;
         }
       });
-    },
-
-    /**
-      Detaches all of the events in the models _event property
-
-      @method destructor
-    */
-    destructor: function() {
-      this._events.forEach(function(event) {
-        event.detach();
-      });
     }
-
   }, {
     ATTRS: {
       /**
@@ -473,28 +444,6 @@ YUI.add('juju-models', function(Y) {
         @type {ServiceUnitList}
       */
       units: {},
-
-      /**
-        The services current relations. This is kept in sync with the
-        db.relations modellist
-
-        @attribute relations
-        @default {}
-        @type {RelationList}
-      */
-      relations: {},
-
-      /**
-        When there is a change to the relation or to any units in the relation
-        this value is changed to trigger changes in the inspector.
-
-        @attribute relationChangeTrigger
-        @default {}
-        @type {Object}
-      */
-      relationChangeTrigger: {
-        value: {}
-      },
 
       /**
         An aggregate of the relation errors that we use to trigger
@@ -1377,7 +1326,6 @@ YUI.add('juju-models', function(Y) {
       var previous_unit_count = service.get('unit_count');
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate[0]);
-      service.set('relationChangeTrigger', { error: aggregate[1] });
       // Set Google Analytics tracking event.
       if (previous_unit_count !== sum && window._gaq) {
         window._gaq.push(['_trackEvent', 'Service Stats', 'Update',
@@ -1966,7 +1914,7 @@ YUI.add('juju-models', function(Y) {
             // The tests don't always add services so we check if they exist
             // first before trying to remove them
             if (service) {
-              service.removeRelations(data);
+              service.removeRelations(db, data);
             } else {
               // fixTests
               console.error('Relation added without matching service');
@@ -1982,7 +1930,8 @@ YUI.add('juju-models', function(Y) {
           // Because some of the tests add relations without services
           // it's possible that a service will be null
           if (service) {
-            _process_delta(service.get('relations'), action, data, db);
+            const relations = db.relations.get_relations_for_service(service, true);
+            _process_delta(relations, action, data, db);
           } else {
             // fixTests
             console.error('Relation added without matching service');

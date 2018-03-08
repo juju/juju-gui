@@ -429,34 +429,6 @@ describe('test_model.js', function() {
       assert.equal(dirtyFields.length, 0);
     });
 
-    it('services have unit and relation modellists', function() {
-      var service = new models.Service();
-      assert.equal(service.get('units') instanceof
-                   models.ServiceUnitList, true);
-      assert.equal(service.get('relations') instanceof
-                   models.RelationList, true);
-    });
-
-    it('relation changes on service update relationChangeTrigger',
-      function(done) {
-        var service = new models.Service();
-        var relations = service.get('relations');
-        var handler = relations.on(
-          '*:add', function() {
-            // This means that it will update the aggregate
-            // relations for databinding
-            handler.detach();
-            const relationChangeTrigger = service.get(
-              'relationChangeTrigger');
-            assert.equal(
-              typeof relationChangeTrigger === 'object' &&
-                  relationChangeTrigger !== null,
-              true);
-            done();
-          });
-        relations.add(new models.Relation());
-      });
-
     it('service unit objects should parse the service name from unit id',
       function() {
         var service_unit = {id: 'mysql/0'};
