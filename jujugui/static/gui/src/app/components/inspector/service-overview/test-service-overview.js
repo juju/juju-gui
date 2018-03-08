@@ -897,6 +897,5 @@ describe('ServiceOverview', function() {
     // Simulate the confirm click.
     output.props.children[2].props.children.props.buttons[0].action();
     assert.equal(destroyService.callCount, 1);
-    assert.deepEqual(destroyService.args[0][0], fakeService);
   });
 });

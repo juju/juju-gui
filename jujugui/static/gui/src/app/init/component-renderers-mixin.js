@@ -832,7 +832,7 @@ Browser: ${navigator.userAgent}`
             this, db, model, service)}
           createRelation={relationUtils.createRelation.bind(this, db, model)}
           destroyService={initUtils.destroyService.bind(
-            this, db, model)}
+            this, db, model, service)}
           destroyRelations={relationUtils.destroyRelations.bind(
             this, db, model)}
           destroyUnits={model.remove_units.bind(model)}
