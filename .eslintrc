@@ -38,6 +38,7 @@ rules:
   react/prop-types: 2
   react/sort-prop-types: 2
   react/jsx-closing-bracket-location: ["error", "after-props"]
+  react/jsx-sort-props: [2, {ignoreCase: true}]
   react/jsx-tag-spacing: ["error", {beforeSelfClosing: "always"}]
   react/jsx-uses-react: 2
   react/jsx-uses-vars: 2
