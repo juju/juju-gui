@@ -17,13 +17,13 @@ class AddedServicesList extends React.Component {
           // of the final deployed service id structure and we want react
           // to treat them as the same record instead of re-rendering
           // when they key changes.
-          key={service.get('name')}
-          hovered={service.get('id') === this.props.hoveredId}
           changeState={this.props.changeState}
           getUnitStatusCounts={this.props.getUnitStatusCounts}
-          ref={'AddedServicesListItem-' + service.get('id')}
+          hovered={service.get('id') === this.props.hoveredId}
           hoverService={this.props.hoverService}
+          key={service.get('name')}
           panToService={this.props.panToService}
+          ref={'AddedServicesListItem-' + service.get('id')}
           service={service} />);
     });
     return items;

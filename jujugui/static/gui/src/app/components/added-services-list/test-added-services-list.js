@@ -2,13 +2,25 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const AddedServicesList = require('./added-services-list');
 const AddedServicesListItem = require('./item/item');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('AddedServicesList', () => {
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <AddedServicesList
+      updateUnitFlags={options.updateUnitFlags || sinon.stub()}
+      findRelatedServices={options.findRelatedServices || sinon.stub()}
+      findUnrelatedServices={options.findUnrelatedServices || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      hoverService={options.hoverService || sinon.stub()}
+      hoveredId={options.hoveredId || 'mysql'}
+      getUnitStatusCounts={options.getUnitStatusCounts || sinon.stub()}
+      panToService={options.panToService || sinon.stub()}
+      services={options.services || sinon.stub()} />
+  );
 
   it('generates a list of added services list items', () => {
     var allServices = [{get: () => 1}, {get: () => 2}, {get: () => 3}];
@@ -17,57 +29,40 @@ describe('AddedServicesList', () => {
         allServices.forEach(cb);
       }
     };
-
-    var changeState = sinon.stub();
-    var getUnitStatusCounts = sinon.stub();
-    var hoverService = sinon.stub();
-    var panToService = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <AddedServicesList
-        updateUnitFlags={sinon.stub()}
-        findRelatedServices={sinon.stub()}
-        findUnrelatedServices={sinon.stub()}
-        changeState={changeState}
-        hoverService={hoverService}
-        hoveredId="mysql"
-        getUnitStatusCounts={getUnitStatusCounts}
-        panToService={panToService}
-        services={services} />, true);
-
-    var output = renderer.getRenderOutput();
-
-    var expected = (
+    const wrapper = renderComponent({ services });
+    const instance = wrapper.instance();
+    const expected = (
       <div className="inspector-view">
         <ul className="added-services-list inspector-view__list">
           <AddedServicesListItem
-            key={allServices[0].get()}
-            changeState={changeState}
-            getUnitStatusCounts={getUnitStatusCounts}
+            changeState={instance.props.changeState}
+            getUnitStatusCounts={instance.props.getUnitStatusCounts}
             hovered={false}
+            hoverService={instance.props.hoverService}
+            key={allServices[0].get()}
+            panToService={instance.props.panToService}
             ref={'AddedServicesListItem-' + allServices[0].get()}
-            hoverService={hoverService}
-            panToService={panToService}
             service={allServices[0]} />
           <AddedServicesListItem
-            key={allServices[1].get()}
-            changeState={changeState}
-            getUnitStatusCounts={getUnitStatusCounts}
+            changeState={instance.props.changeState}
+            getUnitStatusCounts={instance.props.getUnitStatusCounts}
             hovered={false}
+            hoverService={instance.props.hoverService}
+            key={allServices[1].get()}
+            panToService={instance.props.panToService}
             ref={'AddedServicesListItem-' + allServices[1].get()}
-            hoverService={hoverService}
-            panToService={panToService}
             service={allServices[1]} />
           <AddedServicesListItem
-            key={allServices[2].get()}
-            changeState={changeState}
-            getUnitStatusCounts={getUnitStatusCounts}
+            changeState={instance.props.changeState}
+            getUnitStatusCounts={instance.props.getUnitStatusCounts}
             hovered={false}
+            hoverService={instance.props.hoverService}
+            key={allServices[2].get()}
+            panToService={instance.props.panToService}
             ref={'AddedServicesListItem-' + allServices[2].get()}
-            hoverService={hoverService}
-            panToService={panToService}
             service={allServices[2]} />
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 });
