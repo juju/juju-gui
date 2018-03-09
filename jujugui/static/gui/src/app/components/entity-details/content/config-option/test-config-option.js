@@ -21,8 +21,8 @@ describe('EntityContentConfigOption', function() {
         option={option} />);
     assert.deepEqual(output,
       <div className="entity-content__config-option">
-        <dt id="charm-config-password"
-          className="entity-content__config-name">
+        <dt className="entity-content__config-name"
+          id="charm-config-password">
             password
         </dt>
         <dd className="entity-content__config-description">
@@ -51,8 +51,8 @@ describe('EntityContentConfigOption', function() {
         option={option} />);
     assert.deepEqual(output,
       <div className="entity-content__config-option">
-        <dt id="charm-config-password"
-          className="entity-content__config-name">
+        <dt className="entity-content__config-name"
+          id="charm-config-password">
             password
         </dt>
         <dd className="entity-content__config-description">

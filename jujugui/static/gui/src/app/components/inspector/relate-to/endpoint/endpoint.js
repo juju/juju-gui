@@ -48,8 +48,8 @@ class InspectorRelateToEndpoint extends React.Component {
     return relations.map((relation, index) => {
       return (<CheckListItem
         key={index}
-        ref={`InspectorRelateToEndpoint-${index}`}
         label={`${relation[0].name} → ${relation[1].name}`}
+        ref={`InspectorRelateToEndpoint-${index}`}
         whenChanged={this._updateActiveCount.bind(this)} />);
     });
   }

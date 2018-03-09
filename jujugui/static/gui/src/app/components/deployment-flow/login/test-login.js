@@ -72,9 +72,9 @@ describe('DeploymentLogin', function() {
           <div className="deployment-login__login">
             <USSOLoginLink
               addNotification={addNotification}
-              gisf={true}
               callback={callback}
               displayType="button"
+              gisf={true}
               loginToController={loginToController}>
               Login
             </USSOLoginLink>
@@ -83,9 +83,9 @@ describe('DeploymentLogin', function() {
             Do not have an account?
             <USSOLoginLink
               addNotification={addNotification}
-              gisf={true}
               callback={callback}
               displayType="text"
+              gisf={true}
               loginToController={loginToController}>
               Sign up
             </USSOLoginLink>
@@ -117,18 +117,18 @@ describe('DeploymentLogin', function() {
           </span>
           <USSOLoginLink
             addNotification={addNotification}
-            gisf={true}
             callback={callback}
             displayType="button"
+            gisf={true}
             loginToController={loginToController}>
             Sign up
           </USSOLoginLink>
           or&nbsp;
           <USSOLoginLink
             addNotification={addNotification}
-            gisf={true}
             callback={callback}
             displayType="text"
+            gisf={true}
             loginToController={loginToController}>
             log in
           </USSOLoginLink>

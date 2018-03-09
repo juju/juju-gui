@@ -13,13 +13,13 @@ describe('AddedServicesListItem', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <AddedServicesListItem
-      focusService={options.focusService || sinon.stub()}
-      unfocusService={options.unfocusService || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
+      focusService={options.focusService || sinon.stub()}
       getUnitStatusCounts={options.getUnitStatusCounts || getUnitStatusCounts()}
       hoverService={options.hoverService || sinon.stub()}
       panToService={options.panToService || sinon.stub()}
-      service={options.service || mockService} />
+      service={options.service || mockService}
+      unfocusService={options.unfocusService || sinon.stub()} />
   );
 
   beforeEach(function() {
@@ -45,9 +45,9 @@ describe('AddedServicesListItem', function() {
         onClick={wrapper.prop('onClick')}
         onMouseEnter={wrapper.prop('onMouseEnter')}
         onMouseLeave={wrapper.prop('onMouseLeave')}
-        tabIndex="0"
-        role="button">
-        <img src="icon.gif" className="inspector-view__item-icon" />
+        role="button"
+        tabIndex="0">
+        <img className="inspector-view__item-icon" src="icon.gif" />
         <span className="inspector-view__item-count">2</span>
         {' '}
         <span className="inspector-view__item-name">

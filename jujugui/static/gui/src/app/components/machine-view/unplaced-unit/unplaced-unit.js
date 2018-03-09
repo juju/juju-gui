@@ -117,8 +117,8 @@ class MachineViewUnplacedUnit extends React.Component {
     // Wrap the returned components in the drag source method.
     return props.connectDragSource(
       <li className={this._generateClasses()}>
-        <img src={unitAPI.icon} alt={unit.displayName}
-          className="machine-view__unplaced-unit-icon" />
+        <img alt={unit.displayName} className="machine-view__unplaced-unit-icon"
+          src={unitAPI.icon} />
         {unit.displayName}
         <ButtonDropdown
           classes={['machine-view__unplaced-unit-dropdown']}

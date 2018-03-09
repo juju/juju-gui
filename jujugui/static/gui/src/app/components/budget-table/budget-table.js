@@ -19,11 +19,11 @@ class BudgetTable extends React.Component {
         <BudgetTableRow
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          key={i}
           allocationEditable={this.props.allocationEditable}
           charmsGetById={this.props.charmsGetById}
           extraInfo={
             this.props.extraInfo && this.props.extraInfo[service.get('name')]}
+          key={i}
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this.props.parseTermId}
           plansEditable={this.props.plansEditable}

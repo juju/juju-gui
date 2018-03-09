@@ -17,8 +17,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -34,19 +34,19 @@ describe('GenericInput', function() {
         htmlFor="Region">
           Region
         </label>
-        <input className="generic-input__field"
+        <input aria-invalid={false}
           autoComplete="off"
+          className="generic-input__field"
           defaultValue="default"
           disabled={false}
           id="Region"
-          placeholder="us-central-1"
-          required={true}
-          onChange={instance._callOnChange}
-          onKeyUp={instance._keyUpHandler}
-          onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
-          aria-invalid={false}
+          onChange={instance._callOnChange}
+          onFocus={instance._focusHandler}
+          onKeyUp={instance._keyUpHandler}
+          placeholder="us-central-1"
           ref="field"
+          required={true}
           type="text" />
         {undefined}
         {null}
@@ -63,8 +63,8 @@ describe('GenericInput', function() {
         label="Region"
         multiLine={true}
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -80,15 +80,15 @@ describe('GenericInput', function() {
         htmlFor="Region">
           Region
         </label>
-        <div className="generic-input__multiline-field"
+        <div aria-invalid={false}
+          className="generic-input__multiline-field"
           contentEditable={true}
-          id="Region"
           dangerouslySetInnerHTML={{__html: 'default'}}
-          onChange={instance._handleDIVOnchange}
-          onKeyUp={instance._keyUpHandler}
-          onFocus={instance._focusHandler}
+          id="Region"
           onBlur={instance._blurHandler}
-          aria-invalid={false}
+          onChange={instance._handleDIVOnchange}
+          onFocus={instance._focusHandler}
+          onKeyUp={instance._keyUpHandler}
           ref="field">
         </div>
         {undefined}
@@ -104,8 +104,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         type="password"
         validate={[]}
         value="default" />, true);
@@ -119,19 +119,19 @@ describe('GenericInput', function() {
         htmlFor="Region">
           Region
         </label>
-        <input className="generic-input__field"
+        <input aria-invalid={false}
           autoComplete="on"
+          className="generic-input__field"
           defaultValue="default"
           disabled={false}
           id="Region"
-          placeholder="us-central-1"
-          required={true}
-          onChange={instance._callOnChange}
-          onKeyUp={instance._keyUpHandler}
-          onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
-          aria-invalid={false}
+          onChange={instance._callOnChange}
+          onFocus={instance._focusHandler}
+          onKeyUp={instance._keyUpHandler}
+          placeholder="us-central-1"
           ref="field"
+          required={true}
           type="password" />
         {undefined}
         {null}
@@ -146,8 +146,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -164,8 +164,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -184,8 +184,8 @@ describe('GenericInput', function() {
         label="Region"
         multiLine={true}
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -204,8 +204,8 @@ describe('GenericInput', function() {
         label="Region"
         multiLine={true}
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -222,8 +222,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -235,8 +235,8 @@ describe('GenericInput', function() {
     const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
-          role="alert"
-          key="This field is required.">
+          key="This field is required."
+          role="alert">
           This field is required.
         </li>]}
       </ul>
@@ -250,8 +250,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           check: value => value === 'spinach',
           error: 'That username is taken.'
@@ -263,8 +263,8 @@ describe('GenericInput', function() {
     const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
-          role="alert"
-          key="This value is invalid.">
+          key="This value is invalid."
+          role="alert">
           That username is taken.
         </li>]}
       </ul>
@@ -278,8 +278,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={undefined} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {field: {value: ''}};
@@ -294,8 +294,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -308,8 +308,8 @@ describe('GenericInput', function() {
     const expected = (
       <ul className="generic-input__errors">
         {[<li className="generic-input__error"
-          role="alert"
-          key="This field is required.">
+          key="This field is required."
+          role="alert">
           This field is required.
         </li>]}
       </ul>
@@ -322,8 +322,8 @@ describe('GenericInput', function() {
       <GenericInput
         disabled={false}
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -334,19 +334,19 @@ describe('GenericInput', function() {
     const expected = (
       <div className="generic-input">
         {undefined}
-        <input className="generic-input__field"
+        <input aria-invalid={false}
           autoComplete="on"
+          className="generic-input__field"
           defaultValue="default"
           disabled={false}
           id={undefined}
-          placeholder="us-central-1"
-          required={true}
-          onChange={instance._callOnChange}
-          onKeyUp={instance._keyUpHandler}
-          onFocus={instance._focusHandler}
           onBlur={instance._blurHandler}
-          aria-invalid={false}
+          onChange={instance._callOnChange}
+          onFocus={instance._focusHandler}
+          onKeyUp={instance._keyUpHandler}
+          placeholder="us-central-1"
           ref="field"
+          required={true}
           type="text" />
         {undefined}
         {null}
@@ -360,8 +360,8 @@ describe('GenericInput', function() {
       <GenericInput
         disabled={false}
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -380,8 +380,8 @@ describe('GenericInput', function() {
         disabled={false}
         inlineErrorIcon={true}
         placeholder="placeholder"
-        required={true}
         ref="test"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -403,8 +403,8 @@ describe('GenericInput', function() {
         disabled={false}
         label="Region"
         placeholder="us-central-1"
-        required={true}
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -422,10 +422,10 @@ describe('GenericInput', function() {
       <GenericInput
         disabled={false}
         label="Region"
-        placeholder="us-central-1"
-        required={true}
         onBlur={updateModelName}
+        placeholder="us-central-1"
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'
@@ -444,10 +444,10 @@ describe('GenericInput', function() {
       <GenericInput
         disabled={false}
         label="Region"
-        placeholder="us-central-1"
-        required={true}
         onKeyUp={updateModelName}
+        placeholder="us-central-1"
         ref="templateRegion"
+        required={true}
         validate={[{
           regex: /\S+/,
           error: 'This field is required.'

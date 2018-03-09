@@ -19,9 +19,9 @@ describe('DirectDeploy', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
+        entityModel={null}
         generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        entityModel={null}
         renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -48,9 +48,9 @@ describe('DirectDeploy', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
+        entityModel={null}
         generatePath={sinon.stub()}
         getDiagramURL={sinon.stub()}
-        entityModel={null}
         renderMarkdown={sinon.stub()} />, true);
     const output = renderer.getRenderOutput();
     const expected = (
@@ -84,9 +84,9 @@ describe('DirectDeploy', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:apache-21'}}
+        entityModel={charm}
         generatePath={sinon.stub().returns('http://example.com/')}
         getDiagramURL={sinon.stub()}
-        entityModel={charm}
         renderMarkdown={renderMarkdown} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
@@ -150,9 +150,9 @@ describe('DirectDeploy', function() {
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
+        entityModel={bundle}
         generatePath={sinon.stub().returns('http://example.com/')}
         getDiagramURL={getDiagramURL}
-        entityModel={bundle}
         renderMarkdown={renderMarkdown} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();

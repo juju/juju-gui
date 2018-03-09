@@ -41,14 +41,14 @@ class HeaderBreadcrumb extends React.Component {
         <EnvSwitcher
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          user={this.props.user}
           changeState={this.props.changeState}
           environmentName={this.props.modelName}
           humanizeTimestamp={this.props.humanizeTimestamp}
           listModelsWithInfo={this.props.listModelsWithInfo}
           modelCommitted={this.props.modelCommitted}
           setModelName={this.props.setModelName}
-          switchModel={this.props.switchModel} />
+          switchModel={this.props.switchModel}
+          user={this.props.user} />
       </li>);
   }
 
@@ -124,8 +124,8 @@ class HeaderBreadcrumb extends React.Component {
     return (
       <li className="header-breadcrumb__list-item">
         <a className={linkClasses}
-          onClick={onClick}
           href={profileUrl}
+          onClick={onClick}
           title={username}>
           {username}
         </a>

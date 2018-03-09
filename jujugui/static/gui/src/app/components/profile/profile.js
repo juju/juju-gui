@@ -57,8 +57,8 @@ class Profile extends React.Component {
               addNotification={props.addNotification}
               baseURL={props.baseURL}
               changeState={props.changeState}
-              facadesExist={props.facadesExist}
               destroyModel={props.destroyModel}
+              facadesExist={props.facadesExist}
               listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
               switchModel={props.switchModel}
               userInfo={props.userInfo} />);
@@ -72,15 +72,15 @@ class Profile extends React.Component {
         return (
           <ProfileCharmList
             acl={props.acl}
-            isActiveUsersProfile={isActiveUsersProfile}
             addNotification={props.addNotification}
+            addToModel={props.addToModel}
             bakery={props.bakery}
             baseURL={props.baseURL}
             changeState={props.changeState}
             charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
-            addToModel={props.addToModel}
             generatePath={props.generatePath}
             getModelName={props.getModelName}
+            isActiveUsersProfile={isActiveUsersProfile}
             storeUser={props.storeUser}
             user={props.userInfo.external} />);
       }
@@ -92,15 +92,15 @@ class Profile extends React.Component {
         return (
           <ProfileBundleList
             acl={props.acl}
-            addToModel={props.addToModel}
-            isActiveUsersProfile={isActiveUsersProfile}
             addNotification={props.addNotification}
+            addToModel={props.addToModel}
             bakery={props.bakery}
             baseURL={props.baseURL}
             changeState={props.changeState}
             charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
             generatePath={props.generatePath}
             getModelName={props.getModelName}
+            isActiveUsersProfile={isActiveUsersProfile}
             storeUser={props.storeUser}
             user={props.userInfo.external} />);
       }

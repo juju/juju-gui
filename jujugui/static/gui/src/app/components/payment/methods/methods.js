@@ -51,12 +51,12 @@ class PaymentMethods extends React.Component {
         <PaymentMethod
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          key={method.id}
           payment={payment && shapeup.addReshape({
             getCountries: payment.getCountries.bind(payment),
             removePaymentMethod: payment.removePaymentMethod.bind(payment),
             updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
           })}
-          key={method.id}
           paymentMethod={method}
           updateUser={this.props.updateUser}
           username={this.props.username}
@@ -168,8 +168,8 @@ class PaymentMethods extends React.Component {
     }
     return (
       <AddressForm
-        disabled={this.props.acl.isReadOnly()}
         addNotification={this.props.addNotification}
+        disabled={this.props.acl.isReadOnly()}
         getCountries={this.props.payment.getCountries}
         ref="cardAddress"
         showName={false}

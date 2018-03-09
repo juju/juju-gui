@@ -15,8 +15,8 @@ class ExpertStoreCard extends React.Component {
     }
     return (
       <ExpertCard
-        expert={expert}
         classes={this.props.classes}
+        expert={expert}
         staticURL={this.props.staticURL}>
         <div className="expert-store-card">
           <p className="expert-store-card__description">

@@ -245,14 +245,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
       <OverviewAction
+        action={output.props.children[1].props.children[0].props.action}
         icon="units"
         key="Units"
-        title="Units"
-        value={2}
-        valueType="all"
         linkAction={undefined}
         linkTitle={undefined}
-        action={output.props.children[1].props.children[0].props.action} />);
+        title="Units"
+        value={2}
+        valueType="all" />);
   });
 
   it('shows the all units action even if there are no units', function() {
@@ -273,14 +273,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[0],
       <OverviewAction
+        action={output.props.children[1].props.children[0].props.action}
         icon="units"
         key="Units"
-        title="Units"
-        value={0}
-        valueType="all"
         linkAction={undefined}
         linkTitle={undefined}
-        action={output.props.children[1].props.children[0].props.action} />);
+        title="Units"
+        value={0}
+        valueType="all" />);
   });
 
   it('navigates to the unit list when All Units is clicked', function() {
@@ -298,13 +298,13 @@ describe('ServiceOverview', function() {
       <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
-        clearState={sinon.stub()}
+        changeState={changeState}
         charm={fakeCharm}
+        clearState={sinon.stub()}
         destroyService={sinon.stub()}
         displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"
-        changeState={changeState}
         service={service}
         serviceRelations={[1]}
         showActivePlan={sinon.stub()}
@@ -351,14 +351,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <OverviewAction
+        action={output.props.children[1].props.children[1].props.action}
+        icon={undefined}
         key="Uncommitted"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Uncommitted"
         value={2}
-        icon={undefined}
-        action={output.props.children[1].props.children[1].props.action}
-        valueType="uncommitted"
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType="uncommitted" />);
   });
 
   it('shows the pending units action', function() {
@@ -382,14 +382,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <OverviewAction
+        action={output.props.children[1].props.children[1].props.action}
+        icon={undefined}
         key="Pending"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Pending"
         value={1}
-        icon={undefined}
-        action={output.props.children[1].props.children[1].props.action}
-        valueType='pending'
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType='pending' />);
   });
 
   it('shows the errors units action', function() {
@@ -413,14 +413,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <OverviewAction
+        action={output.props.children[1].props.children[1].props.action}
+        icon={undefined}
         key="Errors"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Errors"
         value={1}
-        icon={undefined}
-        action={output.props.children[1].props.children[1].props.action}
-        valueType="error"
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType="error" />);
   });
 
   it('shows the configure action', function() {
@@ -441,14 +441,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[1],
       <OverviewAction
+        action={output.props.children[1].props.children[1].props.action}
+        icon="configure"
         key="Configure"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Configure"
         value={undefined}
-        icon="configure"
-        action={output.props.children[1].props.children[1].props.action}
-        valueType={undefined}
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType={undefined} />);
   });
 
   it('shows the relations action if there are relations', function() {
@@ -478,14 +478,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[2],
       <OverviewAction
+        action={output.props.children[1].props.children[2].props.action}
+        icon="relations"
         key="Relations"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Relations"
         value={undefined}
-        icon="relations"
-        action={output.props.children[1].props.children[2].props.action}
-        valueType={undefined}
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType={undefined} />);
   });
 
   it('shows the expose action if the service is committed', function() {
@@ -517,14 +517,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[3],
       <OverviewAction
+        action={output.props.children[1].props.children[3].props.action}
+        icon="exposed_16"
         key="Expose"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Expose"
         value="On"
-        icon="exposed_16"
-        action={output.props.children[1].props.children[3].props.action}
-        valueType={undefined}
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType={undefined} />);
     assert.equal(output.props.children[1].props.children.length, 6);
   });
 
@@ -557,14 +557,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[4],
       <OverviewAction
+        action={output.props.children[1].props.children[4].props.action}
+        icon="resources_16"
         key="Resources"
+        linkAction={undefined}
+        linkTitle={undefined}
         title="Resources"
         value={undefined}
-        icon="resources_16"
-        action={output.props.children[1].props.children[4].props.action}
-        valueType={undefined}
-        linkAction={undefined}
-        linkTitle={undefined} />);
+        valueType={undefined} />);
   });
 
   it('does not show the resources action if there are none', function() {
@@ -632,14 +632,14 @@ describe('ServiceOverview', function() {
         showPlans={false} />);
     assert.deepEqual(output.props.children[1].props.children[5],
       <OverviewAction
+        action={output.props.children[1].props.children[5].props.action}
+        icon="change-version"
         key="Change version"
-        title="Change version"
         linkAction={output.props.children[1].props.children[5].props.linkAction}
         linkTitle="django/xenial/42"
-        icon="change-version"
-        action={output.props.children[1].props.children[5].props.action}
-        valueType={undefined}
-        value={undefined} />);
+        title="Change version"
+        value={undefined}
+        valueType={undefined} />);
     assert.equal(output.props.children[1].props.children.length, 6);
   });
 
@@ -660,11 +660,11 @@ describe('ServiceOverview', function() {
       <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
-        clearState={sinon.stub()}
+        changeState={changeState}
         charm={fakeCharm}
+        clearState={sinon.stub()}
         destroyService={sinon.stub()}
         displayPlans={false}
-        changeState={changeState}
         getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"
         service={service}
@@ -787,8 +787,8 @@ describe('ServiceOverview', function() {
         charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts()}
         displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
@@ -814,8 +814,8 @@ describe('ServiceOverview', function() {
         charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts()}
         displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
@@ -845,9 +845,9 @@ describe('ServiceOverview', function() {
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
       <InspectorConfirm
+        buttons={[]}
         message={confirmMessage}
-        open={true}
-        buttons={[]} />);
+        open={true} />);
   });
 
   it('hides the confirmation when not deleted', function() {
@@ -859,8 +859,8 @@ describe('ServiceOverview', function() {
         charm={fakeCharm}
         clearState={sinon.stub()}
         destroyService={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts()}
         displayPlans={false}
+        getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"
         service={fakeService}
         serviceRelations={[]}
@@ -870,9 +870,9 @@ describe('ServiceOverview', function() {
       + ' on next deployment.';
     assert.deepEqual(output.props.children[0],
       <InspectorConfirm
+        buttons={[]}
         message={confirmMessage}
-        open={false}
-        buttons={[]} />);
+        open={false} />);
   });
 
   it('calls the destroy service method if destroy is clicked', function() {
@@ -883,10 +883,10 @@ describe('ServiceOverview', function() {
       <ServiceOverview
         acl={acl}
         addNotification={sinon.stub()}
-        charm={fakeCharm}
-        destroyService={destroyService}
-        clearState={clearState}
         changeState={changeState}
+        charm={fakeCharm}
+        clearState={clearState}
+        destroyService={destroyService}
         displayPlans={false}
         getUnitStatusCounts={getUnitStatusCounts()}
         modelUUID="abc123"

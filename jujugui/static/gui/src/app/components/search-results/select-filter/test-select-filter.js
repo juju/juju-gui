@@ -21,17 +21,17 @@ describe('SearchResultsSelectFilter', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsSelectFilter
         changeState={changeState}
-        label="Sort by"
+        currentValue={null}
         filter='sort'
         items={sortItems}
-        currentValue={null} />);
+        label="Sort by" />);
     assert.deepEqual(output,
       <div className="list-block__sort">
         {'Sort by'}:
-        <select onChange={output.props.children[2].props.onChange}
-          defaultValue={null}>
-          <option value="-downloads" key="-downloads">Most popular</option>
-          <option value="downloads" key="downloads">Least popular</option>
+        <select defaultValue={null}
+          onChange={output.props.children[2].props.onChange}>
+          <option key="-downloads" value="-downloads">Most popular</option>
+          <option key="downloads" value="downloads">Least popular</option>
         </select>
       </div>);
   });
@@ -48,17 +48,17 @@ describe('SearchResultsSelectFilter', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsSelectFilter
         changeState={changeState}
-        label="Sort by"
+        currentValue="downloads"
         filter='sort'
         items={sortItems}
-        currentValue="downloads" />);
+        label="Sort by" />);
     assert.deepEqual(output,
       <div className="list-block__sort">
         {'Sort by'}:
-        <select onChange={output.props.children[2].props.onChange}
-          defaultValue="downloads">
-          <option value="-downloads" key="-downloads">Most popular</option>
-          <option value="downloads" key="downloads">Least popular</option>
+        <select defaultValue="downloads"
+          onChange={output.props.children[2].props.onChange}>
+          <option key="-downloads" value="-downloads">Most popular</option>
+          <option key="downloads" value="downloads">Least popular</option>
         </select>
       </div>);
   });
@@ -75,10 +75,10 @@ describe('SearchResultsSelectFilter', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsSelectFilter
         changeState={changeState}
-        label="Sort by"
+        currentValue={null}
         filter='sort'
         items={sortItems}
-        currentValue={null} />);
+        label="Sort by" />);
     output.props.children[2].props.onChange({
       currentTarget: {
         value: 'downloads'

@@ -43,8 +43,8 @@ describe('Lightbox', function() {
     const renderer = jsTestUtils.shallowRender(
       <Lightbox
         caption="Test caption"
-        extraClasses={['testing']}
-        close={close}>
+        close={close}
+        extraClasses={['testing']}>
         Hi
       </Lightbox>, true);
     const output = renderer.getRenderOutput();
@@ -117,8 +117,8 @@ describe('Lightbox', function() {
           onClick={instance._stopPropagation}>
           <div className="lightbox__content">
             <div className="lightbox__navigation">
-              <button disabled
-                className="lightbox__navigation-previous"
+              <button className="lightbox__navigation-previous"
+                disabled
                 onClick={instance._goToSlide.bind(instance, -1)}>
                 <SvgIcon name="chevron_down_16" width="16" />
               </button>
@@ -218,8 +218,8 @@ describe('Lightbox', function() {
                 onClick={instance._goToSlide.bind(instance, -1)}>
                 <SvgIcon name="chevron_down_16" width="16" />
               </button>
-              <button disabled
-                className="lightbox__navigation-next"
+              <button className="lightbox__navigation-next"
+                disabled
                 onClick={instance._goToSlide.bind(instance, 1)}>
                 <SvgIcon name="chevron_down_16" width="16" />
               </button>

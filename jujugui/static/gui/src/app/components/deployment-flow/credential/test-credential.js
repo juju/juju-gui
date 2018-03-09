@@ -33,17 +33,17 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        controllerIsReady={sinon.stub().returns(true)}
         cloud={cloud}
+        controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
         getCloudCredentialNames={sinon.stub()}
+        getCloudCredentials={sinon.stub()}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -67,18 +67,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={updateCloudCredential}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -94,7 +94,6 @@ describe('DeploymentCredential', function() {
           <DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
-            updateCloudCredential={updateCloudCredential}
             cloud={cloud}
             credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
@@ -102,6 +101,7 @@ describe('DeploymentCredential', function() {
             onCancel={null}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
+            updateCloudCredential={updateCloudCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -118,20 +118,20 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         credential="lxd_admin@local_default"
         editable={false}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         region="north-north-west"
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={updateCloudCredential}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -187,18 +187,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
         cloud={{name: 'test'}}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, [])}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={updateCloudCredential}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -214,7 +214,6 @@ describe('DeploymentCredential', function() {
           <DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
-            updateCloudCredential={updateCloudCredential}
             cloud={{name: 'test'}}
             credentials={[]}
             generateCloudCredentialName={generateCloudCredentialName}
@@ -222,6 +221,7 @@ describe('DeploymentCredential', function() {
             onCancel={null}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
+            updateCloudCredential={updateCloudCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -236,18 +236,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -299,18 +299,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     assert.equal(setCredential.callCount, 1);
@@ -327,18 +327,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
@@ -358,18 +358,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
@@ -422,18 +422,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -463,18 +463,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={updateCloudCredential}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -491,7 +491,6 @@ describe('DeploymentCredential', function() {
           <DeploymentCredentialAdd
             acl={acl}
             addNotification={props.addNotification}
-            updateCloudCredential={updateCloudCredential}
             cloud={cloud}
             credentials={['default']}
             generateCloudCredentialName={generateCloudCredentialName}
@@ -499,6 +498,7 @@ describe('DeploymentCredential', function() {
             onCancel={sinon.stub()}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sendAnalytics}
+            updateCloudCredential={updateCloudCredential}
             user={user}
             validateForm={validateForm} />
         </ExpandingRow>
@@ -517,18 +517,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={updateCloudCredential}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={getCloudProviderDetails}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={setRegion}
+        updateCloudCredential={updateCloudCredential}
         user={user}
         validateForm={validateForm} />, true);
     var instance = renderer.getMountedInstance();
@@ -544,19 +544,19 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         credential={credential}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={setCredential}
         setRegion={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
@@ -584,17 +584,17 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={addNotification}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getCloudCredentialNames={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);
@@ -611,18 +611,18 @@ describe('DeploymentCredential', function() {
       <DeploymentCredential
         acl={acl}
         addNotification={addNotification}
-        updateCloudCredential={sinon.stub()}
         cloud={cloud}
         controllerIsReady={sinon.stub().returns(true)}
         editable={true}
         generateCloudCredentialName={sinon.stub()}
-        getCloudCredentials={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
         getCloudCredentialNames={
           sinon.stub().callsArgWith(1, null, credentialNames)}
+        getCloudCredentials={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
         getCloudProviderDetails={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
         setRegion={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
         user={user}
         validateForm={sinon.stub()} />);
     assert.equal(addNotification.callCount, 1);

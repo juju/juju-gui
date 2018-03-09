@@ -25,8 +25,8 @@ describe('GenericButton', function() {
     var callbackStub = sinon.stub();
     var output = jsTestUtils.shallowRender(
       <GenericButton
-        disabled={true}
-        action={callbackStub} />);
+        action={callbackStub}
+        disabled={true} />);
     output.props.onClick({
       stopPropagation: sinon.stub()
     });
@@ -76,8 +76,8 @@ describe('GenericButton', function() {
       </GenericButton>);
     const expected = (
       <button className="button--neutral"
-        title="My tooltip"
         onClick={output.props.onClick}
+        title="My tooltip"
         type="button">
         My action
       </button>);
@@ -109,8 +109,8 @@ describe('GenericButton', function() {
     );
     const expected = (
       <button className="button--neutral"
-        title={undefined}
         onClick={output.props.onClick}
+        title={undefined}
         type="button">
         Hello, world.
       </button>);
@@ -125,8 +125,8 @@ describe('GenericButton', function() {
       </GenericButton>);
     const expected = (
       <button className="button--neutral"
-        title={undefined}
         onClick={output.props.onClick}
+        title={undefined}
         type="button">
         My action
       </button>);
@@ -141,8 +141,8 @@ describe('GenericButton', function() {
       </GenericButton>);
     const expected = (
       <button className="button--neutral button--disabled"
-        title={undefined}
         onClick={output.props.onClick}
+        title={undefined}
         type="button">
         My action
       </button>);
@@ -157,8 +157,8 @@ describe('GenericButton', function() {
       </GenericButton>);
     const expected = (
       <button className="button--neutral button--large"
-        title={undefined}
         onClick={output.props.onClick}
+        title={undefined}
         type="button">
         My action
       </button>);

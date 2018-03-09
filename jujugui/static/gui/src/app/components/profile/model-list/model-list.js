@@ -307,9 +307,9 @@ class ProfileModelList extends React.Component {
       <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
-            title="Start a new model"
             changeState={this.props.changeState}
-            switchModel={this.props.switchModel} />
+            switchModel={this.props.switchModel}
+            title="Start a new model" />
           <h2 className="profile__title">
             My models
             <span className="profile__title-count">

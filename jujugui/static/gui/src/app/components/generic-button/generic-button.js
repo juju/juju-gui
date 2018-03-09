@@ -43,8 +43,8 @@ class GenericButton extends React.Component {
   render() {
     return (
       <button className={this._generateClasses()}
-        title={this.props.tooltip}
         onClick={this._handleClick.bind(this)}
+        title={this.props.tooltip}
         type={this.props.submit ? 'submit' : 'button'}>
         {this.props.children}
       </button>

@@ -92,8 +92,8 @@ class InspectorRelations extends React.Component {
         className='select-all'
         disabled={disabled}
         key={ref+'1'}
-        ref={ref}
         label='Select all relations'
+        ref={ref}
         whenChanged={this._selectAllRelations.bind(this)} />
     ];
 
@@ -104,8 +104,8 @@ class InspectorRelations extends React.Component {
           action={this._handleRelationClick.bind(this, index)}
           disabled={disabled}
           key={relation.id}
-          ref={ref}
           label={this._generateRelationLabel(relation)}
+          ref={ref}
           whenChanged={this._updateActiveCount.bind(this)} />);
     }, this);
     return components;

@@ -32,13 +32,13 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="new"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     var instance = shallowRenderer.getMountedInstance();
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
@@ -65,34 +65,34 @@ describe('LocalInspector', function() {
           <ul className="local-inspector__list">
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={true}
-                  disabled={false}
+                <input defaultChecked={true} disabled={false}
+                  name="action"
                   onChange={
                     options[0].props.children.props.children[0]
-                      .props.onChange} />
+                      .props.onChange}
+                  type="radio" />
                 Deploy local
               </label>
             </li>
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={false}
-                  disabled={false}
+                <input defaultChecked={false} disabled={false}
+                  name="action"
                   onChange={
                     options[1].props.children.props.children[0]
-                      .props.onChange} />
+                      .props.onChange}
+                  type="radio" />
                 Upgrade local
               </label>
             </li>
           </ul>
           <div>
             <p>Choose a series to deploy this charm</p>
-            <select ref="series" defaultValue="trusty"
-              className="local-inspector__series"
-              disabled={false}>
-              <option value="vivid" key="vivid">Vivid Vervet 15.04</option>
-              <option value="wily" key="wily">Wily Werewolf 15.10</option>
+            <select className="local-inspector__series" defaultValue="trusty"
+              disabled={false}
+              ref="series">
+              <option key="vivid" value="vivid">Vivid Vervet 15.04</option>
+              <option key="wily" value="wily">Wily Werewolf 15.10</option>
             </select>
           </div>
         </div>
@@ -122,13 +122,13 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="update"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     var instance = shallowRenderer.getMountedInstance();
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
@@ -155,23 +155,23 @@ describe('LocalInspector', function() {
           <ul className="local-inspector__list">
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={false}
-                  disabled={false}
+                <input defaultChecked={false} disabled={false}
+                  name="action"
                   onChange={
                     options[0].props.children.props.children[0]
-                      .props.onChange} />
+                      .props.onChange}
+                  type="radio" />
                 Deploy local
               </label>
             </li>
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={true}
-                  disabled={false}
+                <input defaultChecked={true} disabled={false}
+                  name="action"
                   onChange={
                     options[1].props.children.props.children[0]
-                      .props.onChange} />
+                      .props.onChange}
+                  type="radio" />
                 Upgrade local
               </label>
             </li>
@@ -181,17 +181,17 @@ describe('LocalInspector', function() {
             <ul className="local-inspector__list">
               <li key="apache2-2">
                 <label>
-                  <input type="checkbox" data-id="apache2-2"
-                    disabled={false}
-                    ref="service-apache2-2" />
+                  <input data-id="apache2-2" disabled={false}
+                    ref="service-apache2-2"
+                    type="checkbox" />
                   apache2
                 </label>
               </li>
               <li key="mysql-1">
                 <label>
-                  <input type="checkbox" data-id="mysql-1"
-                    disabled={false}
-                    ref="service-mysql-1" />
+                  <input data-id="mysql-1" disabled={false}
+                    ref="service-mysql-1"
+                    type="checkbox" />
                   mysql
                 </label>
               </li>
@@ -224,13 +224,13 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="new"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     var output = shallowRenderer.getRenderOutput();
     var options = output.props.children[1].props.children[1].props.children;
     options[1].props.children.props.children[0].props.onChange();
@@ -246,17 +246,17 @@ describe('LocalInspector', function() {
             <ul className="local-inspector__list">
               <li key="apache2-2">
                 <label>
-                  <input type="checkbox" data-id="apache2-2"
-                    disabled={false}
-                    ref="service-apache2-2" />
+                  <input data-id="apache2-2" disabled={false}
+                    ref="service-apache2-2"
+                    type="checkbox" />
                   apache2
                 </label>
               </li>
               <li key="mysql-1">
                 <label>
-                  <input type="checkbox" data-id="mysql-1"
-                    disabled={false}
-                    ref="service-mysql-1" />
+                  <input data-id="mysql-1" disabled={false}
+                    ref="service-mysql-1"
+                    type="checkbox" />
                   mysql
                 </label>
               </li>
@@ -280,13 +280,13 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="new"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     var instance = shallowRenderer.getMountedInstance();
     var output = shallowRenderer.getRenderOutput();
     instance.refs = {series: {value: 'wily'}};
@@ -315,13 +315,13 @@ describe('LocalInspector', function() {
     const shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="update"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     const instance = shallowRenderer.getMountedInstance();
     const output = shallowRenderer.getRenderOutput();
     instance.refs = {
@@ -355,13 +355,13 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="new"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     var output = shallowRenderer.getRenderOutput();
     output.props.children[2].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
@@ -384,13 +384,13 @@ describe('LocalInspector', function() {
     var shallowRenderer = jsTestUtils.shallowRender(
       <LocalInspector
         acl={acl}
+        changeState={changeState}
         file={file}
-        series={series}
         localType="new"
+        series={series}
         services={services}
-        uploadLocalCharm={uploadLocalCharm}
         upgradeServiceUsingLocalCharm={upgradeServiceUsingLocalCharm}
-        changeState={changeState} />, true);
+        uploadLocalCharm={uploadLocalCharm} />, true);
     var instance = shallowRenderer.getMountedInstance();
     var output = shallowRenderer.getRenderOutput();
     var buttons = [{
@@ -417,34 +417,34 @@ describe('LocalInspector', function() {
           <ul className="local-inspector__list">
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={true}
-                  disabled={true}
+                <input defaultChecked={true} disabled={true}
+                  name="action"
                   onChange={
                     options[0].props.children.props.children[0]
-                      .props.onChange} />
+                      .props.onChange}
+                  type="radio" />
                 Deploy local
               </label>
             </li>
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={false}
-                  disabled={true}
+                <input defaultChecked={false} disabled={true}
+                  name="action"
                   onChange={
                     options[1].props.children.props.children[0]
-                      .props.onChange} />
+                      .props.onChange}
+                  type="radio" />
                 Upgrade local
               </label>
             </li>
           </ul>
           <div>
             <p>Choose a series to deploy this charm</p>
-            <select ref="series" defaultValue="trusty"
-              className="local-inspector__series"
-              disabled={true}>
-              <option value="vivid" key="vivid">Vivid Vervet 15.04</option>
-              <option value="wily" key="wily">Wily Werewolf 15.10</option>
+            <select className="local-inspector__series" defaultValue="trusty"
+              disabled={true}
+              ref="series">
+              <option key="vivid" value="vivid">Vivid Vervet 15.04</option>
+              <option key="wily" value="wily">Wily Werewolf 15.10</option>
             </select>
           </div>
         </div>

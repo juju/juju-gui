@@ -83,23 +83,23 @@ describe('InspectorRelations', function() {
           className='select-all'
           disabled={false}
           key='select-all1'
-          ref='select-all'
           label='Select all relations'
+          ref='select-all'
           whenChanged={
             output.props.children[1].props.children[0].props.whenChanged
           } />
         <CheckListItem
           action={output.props.children[1].props.children[1].props.action}
           disabled={false}
-          label={'django:django'}
           key={relations[0].id}
+          label={'django:django'}
           ref='CheckListItem-mysql'
           whenChanged={instance._updateActiveCount} />
         <CheckListItem
           action={output.props.children[1].props.children[2].props.action}
           disabled={false}
-          label={'django:django'}
           key={relations[1].id}
+          label={'django:django'}
           ref='CheckListItem-postgresql'
           whenChanged={instance._updateActiveCount} />
       </ul>
@@ -195,23 +195,23 @@ describe('InspectorRelations', function() {
           className='select-all'
           disabled={true}
           key='select-all1'
-          ref='select-all'
           label='Select all relations'
+          ref='select-all'
           whenChanged={
             output.props.children[1].props.children[0].props.whenChanged
           } />
         <CheckListItem
           action={output.props.children[1].props.children[1].props.action}
           disabled={true}
-          label={'django:django'}
           key={relations[0].id}
+          label={'django:django'}
           ref='CheckListItem-mysql'
           whenChanged={instance._updateActiveCount} />
         <CheckListItem
           action={output.props.children[1].props.children[2].props.action}
           disabled={true}
-          label={'django:django'}
           key={relations[1].id}
+          label={'django:django'}
           ref='CheckListItem-postgresql'
           whenChanged={instance._updateActiveCount} />
       </ul>

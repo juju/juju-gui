@@ -47,26 +47,26 @@ describe('Constraints', function() {
       <div className="constraints">
         <select
           className="constraints__select"
-          ref="seriesConstraintSelect"
           defaultValue={undefined}
           disabled={false}
-          key="seriesConstraintSelect"
           id="series-constraint"
+          key="seriesConstraintSelect"
           name="series-constraint"
-          onChange={comp.instance._handleValueChanged}>
+          onChange={comp.instance._handleValueChanged}
+          ref="seriesConstraintSelect">
           <option key="default" value="">Optionally choose a series</option>
           {seriesOptions}
         </select>
         {[
           <select
             className="constraints__select"
-            ref="archConstraintSelect"
             defaultValue={undefined}
             disabled={false}
-            key="archConstraintSelect"
             id="arch-constraint"
+            key="archConstraintSelect"
             name="arch-constraint"
-            onChange={comp.instance._handleValueChanged}>
+            onChange={comp.instance._handleValueChanged}
+            ref="archConstraintSelect">
             <option key="default" value="">
               Optionally choose an architecture
             </option>
@@ -74,56 +74,56 @@ describe('Constraints', function() {
             <option key="i386" value="i386">i386</option>
           </select>,
           <div key="cpu-constraint-div">
-            <label htmlFor="cpu-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cpu-constraint">
               CPU (GHZ)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="cpuConstraintInput" />
+              ref="cpuConstraintInput"
+              type="text" />
           </div>,
           <div key="cores-constraint-div">
-            <label htmlFor="cores-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cores-constraint">
               Cores
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput" />
+              ref="coresConstraintInput"
+              type="text" />
           </div>,
           <div key="mem-constraint-div">
-            <label htmlFor="mem-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="mem-constraint">
               Ram (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput" />
+              ref="memConstraintInput"
+              type="text" />
           </div>,
           <div key="disk-constraint-div">
-            <label htmlFor="disk-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="disk-constraint">
               Disk (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput" />
+              ref="diskConstraintInput"
+              type="text" />
           </div>
         ]}
       </div>);
@@ -145,26 +145,26 @@ describe('Constraints', function() {
       <div className="constraints">
         <select
           className="constraints__select"
-          ref="seriesConstraintSelect"
           defaultValue="zesty"
           disabled={false}
-          key="seriesConstraintSelect"
           id="series-constraint"
+          key="seriesConstraintSelect"
           name="series-constraint"
-          onChange={comp.instance._handleValueChanged}>
+          onChange={comp.instance._handleValueChanged}
+          ref="seriesConstraintSelect">
           <option key="default" value="">Optionally choose a series</option>
           {seriesOptions}
         </select>
         {[
           <select
             className="constraints__select"
-            ref="archConstraintSelect"
             defaultValue="amd64"
             disabled={false}
-            key="archConstraintSelect"
             id="arch-constraint"
+            key="archConstraintSelect"
             name="arch-constraint"
-            onChange={comp.instance._handleValueChanged}>
+            onChange={comp.instance._handleValueChanged}
+            ref="archConstraintSelect">
             <option key="default" value="">
               Optionally choose an architecture
             </option>
@@ -172,56 +172,56 @@ describe('Constraints', function() {
             <option key="i386" value="i386">i386</option>
           </select>,
           <div key="cpu-constraint-div">
-            <label htmlFor="cpu-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cpu-constraint">
               CPU (GHZ)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={1000}
               disabled={false}
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="cpuConstraintInput" />
+              ref="cpuConstraintInput"
+              type="text" />
           </div>,
           <div key="cores-constraint-div">
-            <label htmlFor="cores-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cores-constraint">
               Cores
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={2}
               disabled={false}
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput" />
+              ref="coresConstraintInput"
+              type="text" />
           </div>,
           <div key="mem-constraint-div">
-            <label htmlFor="mem-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="mem-constraint">
               Ram (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={1024}
               disabled={false}
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput" />
+              ref="memConstraintInput"
+              type="text" />
           </div>,
           <div key="disk-constraint-div">
-            <label htmlFor="disk-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="disk-constraint">
               Disk (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={2048}
               disabled={false}
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput" />
+              ref="diskConstraintInput"
+              type="text" />
           </div>
         ]}
       </div>);
@@ -235,43 +235,43 @@ describe('Constraints', function() {
         {undefined}
         {[
           <div key="cores-constraint-div">
-            <label htmlFor="cores-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cores-constraint">
               Cores
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput" />
+              ref="coresConstraintInput"
+              type="text" />
           </div>,
           <div key="mem-constraint-div">
-            <label htmlFor="mem-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="mem-constraint">
               Ram (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput" />
+              ref="memConstraintInput"
+              type="text" />
           </div>,
           <div key="disk-constraint-div">
-            <label htmlFor="disk-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="disk-constraint">
               Disk (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput" />
+              ref="diskConstraintInput"
+              type="text" />
           </div>
         ]}
       </div>);
@@ -284,13 +284,13 @@ describe('Constraints', function() {
       <div className="constraints">
         <select
           className="constraints__select"
-          ref="seriesConstraintSelect"
           defaultValue={undefined}
           disabled={false}
-          key="seriesConstraintSelect"
           id="series-constraint"
+          key="seriesConstraintSelect"
           name="series-constraint"
-          onChange={comp.instance._handleValueChanged}>
+          onChange={comp.instance._handleValueChanged}
+          ref="seriesConstraintSelect">
           <option key="default" value="">Optionally choose a series</option>
           {seriesOptions}
         </select>
@@ -319,26 +319,26 @@ describe('Constraints', function() {
       <div className="constraints">
         <select
           className="constraints__select"
-          ref="seriesConstraintSelect"
           defaultValue={undefined}
           disabled={true}
-          key="seriesConstraintSelect"
           id="series-constraint"
+          key="seriesConstraintSelect"
           name="series-constraint"
-          onChange={comp.instance._handleValueChanged}>
+          onChange={comp.instance._handleValueChanged}
+          ref="seriesConstraintSelect">
           <option key="default" value="">Optionally choose a series</option>
           {seriesOptions}
         </select>
         {[
           <select
             className="constraints__select"
-            ref="archConstraintSelect"
             defaultValue={undefined}
             disabled={true}
-            key="archConstraintSelect"
             id="arch-constraint"
+            key="archConstraintSelect"
             name="arch-constraint"
-            onChange={comp.instance._handleValueChanged}>
+            onChange={comp.instance._handleValueChanged}
+            ref="archConstraintSelect">
             <option key="default" value="">
               Optionally choose an architecture
             </option>
@@ -346,56 +346,56 @@ describe('Constraints', function() {
             <option key="i386" value="i386">i386</option>
           </select>,
           <div key="cpu-constraint-div">
-            <label htmlFor="cpu-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cpu-constraint">
               CPU (GHZ)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={true}
               id="cpu-constraint"
               name="cpu-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="cpuConstraintInput" />
+              ref="cpuConstraintInput"
+              type="text" />
           </div>,
           <div key="cores-constraint-div">
-            <label htmlFor="cores-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="cores-constraint">
               Cores
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={true}
               id="cores-constraint"
               name="cores-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="coresConstraintInput" />
+              ref="coresConstraintInput"
+              type="text" />
           </div>,
           <div key="mem-constraint-div">
-            <label htmlFor="mem-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="mem-constraint">
               Ram (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={true}
               id="mem-constraint"
               name="mem-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="memConstraintInput" />
+              ref="memConstraintInput"
+              type="text" />
           </div>,
           <div key="disk-constraint-div">
-            <label htmlFor="disk-constraint" className="constraints__label">
+            <label className="constraints__label" htmlFor="disk-constraint">
               Disk (MB)
             </label>
-            <input type="text"
-              className="constraints__input"
+            <input className="constraints__input"
               defaultValue={undefined}
               disabled={true}
               id="disk-constraint"
               name="disk-constraint"
               onChange={comp.instance._handleValueChanged}
-              ref="diskConstraintInput" />
+              ref="diskConstraintInput"
+              type="text" />
           </div>
         ]}
       </div>);
@@ -407,8 +407,8 @@ describe('Constraints', function() {
     // not yet support simulating change events.
     testUtils.renderIntoDocument(
       <Constraints
-        valuesChanged={valuesChanged}
-        series={series} />
+        series={series}
+        valuesChanged={valuesChanged} />
     );
     assert.equal(valuesChanged.callCount, 1, 'valuesChanged.callCount');
     const args = valuesChanged.args[0];
@@ -428,8 +428,8 @@ describe('Constraints', function() {
     // not yet support simulating change events.
     const output = testUtils.renderIntoDocument(
       <Constraints
-        valuesChanged={valuesChanged}
-        series={series} />
+        series={series}
+        valuesChanged={valuesChanged} />
     );
     const refs = output.refs;
     refs.seriesConstraintSelect.value = 'xenial';

@@ -35,11 +35,11 @@ class MachineViewScaleUp extends React.Component {
           <input
             className="machine-view__scale-up-unit-input"
             disabled={this.props.acl.isReadOnly()}
+            min="0"
             placeholder="units"
             ref={'scaleUpUnit-' + service.get('id')}
-            type="number"
-            min="0"
-            step="1" />
+            step="1"
+            type="number" />
         </li>);
     });
     return (

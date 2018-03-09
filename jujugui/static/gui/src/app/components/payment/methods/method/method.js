@@ -92,9 +92,9 @@ class PaymentMethod extends React.Component {
     return (
       <div className="payment-method__form">
         <AddressForm
+          addNotification={this.props.addNotification}
           address={paymentMethod.address}
           disabled={this.props.acl.isReadOnly()}
-          addNotification={this.props.addNotification}
           getCountries={this.props.payment.getCountries}
           ref="cardAddress"
           showName={false}

@@ -73,13 +73,13 @@ class EnvList extends React.Component {
       }
       return (
         <li className="env-list__environment"
-          role="menuitem"
-          tabIndex="0"
           data-id={model.uuid}
           data-name={model.name}
           data-owner={model.owner}
+          key={model.uuid}
           onClick={this._handleModelClick.bind(this)}
-          key={model.uuid}>
+          role="menuitem"
+          tabIndex="0">
           {name}
           <div className="env-list__last-connected">
             {lastConnected}
@@ -120,12 +120,12 @@ class EnvList extends React.Component {
   */
   _generateModels() {
     return (
-      <ul className="env-list"
-        role="menubar"
-        id="environmentSwitcherMenu"
-        aria-expanded="true"
+      <ul aria-expanded="true"
         aria-hidden="false"
-        aria-labelledby="environmentSwitcherToggle">
+        aria-labelledby="environmentSwitcherToggle"
+        className="env-list"
+        id="environmentSwitcherMenu"
+        role="menubar">
         {this.generateModelList()}
       </ul>
     );
@@ -143,12 +143,12 @@ class EnvList extends React.Component {
     if (user) {
       createNew = (
         <CreateModelButton
-          type="neutral"
-          title="Start a new model"
-          disabled={!canAddModels}
+          action={this._handleNewModelClick.bind(this)}
           changeState={this.props.changeState}
+          disabled={!canAddModels}
           switchModel={this.props.switchModel}
-          action={this._handleNewModelClick.bind(this)} />);
+          title="Start a new model"
+          type="neutral" />);
     }
     return (
       <Panel

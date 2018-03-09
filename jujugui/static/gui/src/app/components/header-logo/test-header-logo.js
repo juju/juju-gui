@@ -20,9 +20,9 @@ describe('HeaderLogo', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <a href="/" onClick={showProfile} role="button" title="Home">
-        <SvgIcon name="juju-logo"
-          className="svg-icon"
-          width="90" height="35" />
+        <SvgIcon className="svg-icon"
+          height="35"
+          name="juju-logo" width="90" />
       </a>);
     expect(output).toEqualJSX(expected);
   });
@@ -37,9 +37,9 @@ describe('HeaderLogo', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <a href="/u/hatch" onClick={showProfile} role="button" title="Home">
-        <SvgIcon name="juju-logo"
-          className="svg-icon"
-          width="90" height="35" />
+        <SvgIcon className="svg-icon"
+          height="35"
+          name="juju-logo" width="90" />
       </a>);
     expect(output).toEqualJSX(expected);
   });

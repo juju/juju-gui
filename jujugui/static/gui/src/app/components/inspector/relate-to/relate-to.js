@@ -47,9 +47,9 @@ class InspectorRelateTo extends React.Component {
           data-id={data.id}
           key={data.id + index}
           onClick={this._relateToItemAction.bind(this)}
-          tabIndex="0"
-          role="button">
-          <img src={data.icon} className="inspector-view__item-icon" />
+          role="button"
+          tabIndex="0">
+          <img className="inspector-view__item-icon" src={data.icon} />
           {data.name}
         </li>);
     });

@@ -23,11 +23,11 @@ describe('UserMenu', () => {
     };
     const renderer = jsTestUtils.shallowRender(
       <UserMenu
-        LogoutLink={options.LogoutLink || logoutLink}
-        USSOLoginLink={USSOLoginLink}
         controllerAPI={controllerAPI}
+        LogoutLink={options.LogoutLink || logoutLink}
         navigateUserProfile={options.navigateUserProfile || sinon.stub()}
-        showHelp={sinon.stub()} />, true);
+        showHelp={sinon.stub()}
+        USSOLoginLink={USSOLoginLink} />, true);
     return {
       renderer: renderer,
       output: renderer.getRenderOutput(),
@@ -42,8 +42,8 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        icon={loginLink}
         disableDropdown={true}
+        icon={loginLink}
         listItems={[{
           action: sinon.stub(),
           label: 'Profile'
@@ -65,8 +65,8 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        icon={loginLink}
         disableDropdown={true}
+        icon={loginLink}
         listItems={[{
           action: sinon.stub(),
           label: 'Profile'
@@ -88,8 +88,8 @@ describe('UserMenu', () => {
     const expected = (
       <ButtonDropdown
         classes={['user-menu']}
-        icon="user_16"
         disableDropdown={false}
+        icon="user_16"
         listItems={[{
           action: sinon.stub(),
           label: 'Profile'

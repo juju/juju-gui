@@ -266,9 +266,9 @@ class SearchResultsItem extends React.Component {
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
           <GenericButton
-            extraClasses="list-block__list--item-deploy-link"
             action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
+            extraClasses="list-block__list--item-deploy-link"
             type="inline-neutral">
             <SvgIcon
               name="add-icon"

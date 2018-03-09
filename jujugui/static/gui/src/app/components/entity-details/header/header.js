@@ -158,9 +158,9 @@ class EntityHeader extends React.Component {
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
         <GenericButton
-          ref="deployAction"
           action={this._handleDeployClick.bind(this)}
           disabled={this.props.acl.isReadOnly()}
+          ref="deployAction"
           tooltip={
             `Add this ${entity.type} to ` +
             `${modelName ? 'your current' : 'a new'} model`}
@@ -287,7 +287,7 @@ class EntityHeader extends React.Component {
     }
     const url = props.urllib.fromLegacyString(lastRevision);
     return (
-      <li key={lastRevision} className="entity-header__series">
+      <li className="entity-header__series" key={lastRevision}>
         <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
             Latest version (#{url.revision})
         </span>
@@ -339,7 +339,7 @@ class EntityHeader extends React.Component {
     }
     series = !Array.isArray(series) ? [series] : series;
     return series.map(series =>
-      <li key={series} className="entity-header__series">{series}</li>);
+      <li className="entity-header__series" key={series}>{series}</li>);
   }
 
   /**
@@ -359,7 +359,7 @@ class EntityHeader extends React.Component {
       // Capitalize channel names.
       return name.charAt(0).toUpperCase() + name.slice(1);
     }).join(', ');
-    return <li key={names} className="entity-header__channels">{names}</li>;
+    return <li className="entity-header__channels" key={names}>{names}</li>;
   }
 
   render() {
@@ -378,8 +378,8 @@ class EntityHeader extends React.Component {
     ].join('');
 
     if (entity.type !== 'bundle') {
-      icon = (<img src={entity.iconPath} alt={entity.displayName}
-        width="96" className="entity-header__icon" />);
+      icon = (<img alt={entity.displayName} className="entity-header__icon"
+        src={entity.iconPath} width="96" />);
     }
     return (
       <div className="row-hero"
@@ -414,18 +414,18 @@ class EntityHeader extends React.Component {
               {this._generateCounts()}
               <ul className="entity-header__social-list">
                 <li>
-                  <a id="item-twitter"
-                    target="_blank"
-                    href={twitterUrl}>
+                  <a href={twitterUrl}
+                    id="item-twitter"
+                    target="_blank">
                     <SvgIcon
                       name="icon-social-twitter"
                       size="36" />
                   </a>
                 </li>
                 <li>
-                  <a id="item-googleplus"
-                    target="_blank"
-                    href={googlePlusUrl}>
+                  <a href={googlePlusUrl}
+                    id="item-googleplus"
+                    target="_blank">
                     <SvgIcon
                       name="icon-social-google"
                       size="36" />

@@ -679,10 +679,10 @@ describe('MachineViewMachine', function() {
         modelAPI={{
           destroyMachines: sinon.stub()
         }}
-        type="container"
         parseConstraints={sinon.stub()}
         sendAnalytics={sendAnalytics}
-        showConstraints={true} />, true);
+        showConstraints={true}
+        type="container" />, true);
     const output = renderer.getRenderOutput();
     output.props.children[3].props.children[0].props.removeUnit();
     assert.equal(removeUnit.callCount, 1);

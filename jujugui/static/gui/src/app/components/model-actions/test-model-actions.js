@@ -25,9 +25,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -37,8 +37,8 @@ describe('ModelActions', function() {
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
-            <SvgIcon name="export_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="export_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -50,8 +50,8 @@ describe('ModelActions', function() {
             onClick={instance._handleImportClick}
             role="button"
             tabIndex="0">
-            <SvgIcon name="import_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="import_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -63,8 +63,8 @@ describe('ModelActions', function() {
             onClick={instance.props.sharingVisibility}
             role="button"
             tabIndex="0">
-            <SvgIcon name="share_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="share_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -73,11 +73,11 @@ describe('ModelActions', function() {
             </span>
           </span>
         </div>
-        <input className="model-actions__file"
-          type="file"
+        <input accept=".zip,.yaml,.yml"
+          className="model-actions__file"
           onChange={instance._handleImportFile}
-          accept=".zip,.yaml,.yml"
-          ref="file-input" />
+          ref="file-input"
+          type="file" />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -92,9 +92,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -104,8 +104,8 @@ describe('ModelActions', function() {
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
-            <SvgIcon name="export_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="export_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -117,8 +117,8 @@ describe('ModelActions', function() {
             onClick={instance._handleImportClick}
             role="button"
             tabIndex="0">
-            <SvgIcon name="import_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="import_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -130,8 +130,8 @@ describe('ModelActions', function() {
             onClick={instance.props.sharingVisibility}
             role="button"
             tabIndex="0">
-            <SvgIcon name="share_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="share_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -143,8 +143,8 @@ describe('ModelActions', function() {
             onClick={instance._handleTerminalClick}
             role="button"
             tabIndex="0">
-            <SvgIcon name="code-snippet_24"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="code-snippet_24"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -153,11 +153,11 @@ describe('ModelActions', function() {
             </span>
           </span>
         </div>
-        <input className="model-actions__file"
-          type="file"
+        <input accept=".zip,.yaml,.yml"
+          className="model-actions__file"
           onChange={instance._handleImportFile}
-          accept=".zip,.yaml,.yml"
-          ref="file-input" />
+          ref="file-input"
+          type="file" />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -173,9 +173,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={exportEnvironmentFile}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />);
     output.props.children[0].props.children[0].props.onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
   });
@@ -193,11 +193,11 @@ describe('ModelActions', function() {
         changeState={sinon.stub()}
         displayTerminalButton={false}
         exportEnvironmentFile={exportEnvironmentFile}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
-        userIsAuthenticated={true}
-        sharingVisibility={sinon.stub()} />, true);
+        importBundleFile={importBundleFile}
+        renderDragOverNotification={renderDragOverNotification}
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {'file-input': {click: fileClick}};
     var output = shallowRenderer.getRenderOutput();
@@ -217,11 +217,11 @@ describe('ModelActions', function() {
         changeState={sinon.stub()}
         displayTerminalButton={false}
         exportEnvironmentFile={exportEnvironmentFile}
-        renderDragOverNotification={renderDragOverNotification}
-        importBundleFile={importBundleFile}
         hideDragOverNotification={hideDragOverNotification}
-        userIsAuthenticated={true}
-        sharingVisibility={sinon.stub()} />, true);
+        importBundleFile={importBundleFile}
+        renderDragOverNotification={renderDragOverNotification}
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />, true);
     var instance = shallowRenderer.getMountedInstance();
     instance.refs = {
       'file-input': {files: ['apache2.yaml']}
@@ -243,9 +243,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
@@ -255,8 +255,8 @@ describe('ModelActions', function() {
             onClick={instance._handleExport}
             role="button"
             tabIndex="0">
-            <SvgIcon name="export_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="export_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -268,8 +268,8 @@ describe('ModelActions', function() {
             onClick={false}
             role="button"
             tabIndex="0">
-            <SvgIcon name="import_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="import_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -281,8 +281,8 @@ describe('ModelActions', function() {
             onClick={instance.props.sharingVisibility}
             role="button"
             tabIndex="0">
-            <SvgIcon name="share_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="share_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -291,11 +291,11 @@ describe('ModelActions', function() {
             </span>
           </span>
         </div>
-        <input className="model-actions__file"
-          type="file"
+        <input accept=".zip,.yaml,.yml"
+          className="model-actions__file"
           onChange={null}
-          accept=".zip,.yaml,.yml"
-          ref="file-input" />
+          ref="file-input"
+          type="file" />
       </div>);
     expect(output).toEqualJSX(expected);
   });
@@ -310,9 +310,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={false} />, true);
     const output = renderer.getRenderOutput();
     const sharing = output.props.children[0].props.children[2];
     assert.isNull(sharing);
@@ -328,9 +328,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={true} />, true);
     const output = renderer.getRenderOutput();
     const sharing = output.props.children[0].props.children[2];
     assert.isNull(sharing);
@@ -347,9 +347,9 @@ describe('ModelActions', function() {
         exportEnvironmentFile={sinon.stub()}
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
-        userIsAuthenticated={true}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sharingVisibility} />, true);
+        sharingVisibility={sharingVisibility}
+        userIsAuthenticated={true} />, true);
     const output = renderer.getRenderOutput();
     const sharingButton = output.props.children[0].props.children[2];
     assert.notEqual(sharingButton, undefined);
@@ -368,9 +368,9 @@ describe('ModelActions', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         loadingModel={true}
-        userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={false} />, true);
     const output = renderer.getRenderOutput();
     const className = 'model-actions--loading-model';
     const classFound = output.props.className.indexOf(className) >= 0;
@@ -388,9 +388,9 @@ describe('ModelActions', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         loadingModel={false}
-        userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={false} />, true);
     const output = renderer.getRenderOutput();
     const className = 'model-actions--loading-model';
     const classFound = output.props.className.indexOf(className) >= 0;
@@ -408,9 +408,9 @@ describe('ModelActions', function() {
         hideDragOverNotification={sinon.stub()}
         importBundleFile={sinon.stub()}
         loadingModel={false}
-        userIsAuthenticated={false}
         renderDragOverNotification={sinon.stub()}
-        sharingVisibility={sinon.stub()} />, true);
+        sharingVisibility={sinon.stub()}
+        userIsAuthenticated={false} />, true);
     const output = renderer.getRenderOutput();
     const className = 'model-actions--loading-model';
     const classFound = output.props.className.indexOf(className) >= 0;

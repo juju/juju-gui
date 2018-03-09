@@ -35,16 +35,16 @@ describe('NotificationList', function() {
     const items = [
       <NotificationListItem
         key={notification.timestamp}
-        timestamp={notification.timestamp}
+        message={notification.message}
         ref={'NotificationListItem' + notification.timestamp}
         removeNotification={children[0].props.removeNotification}
-        message={notification.message}
         timeout={undefined}
+        timestamp={notification.timestamp}
         type={notification.level} />];
     const expected = (
       <ul className="notification-list"
-        onMouseOver={instance._clearTimeouts}
-        onMouseOut={instance._restartTimeouts}>
+        onMouseOut={instance._restartTimeouts}
+        onMouseOver={instance._clearTimeouts}>
         {items}
       </ul>
     );
@@ -96,8 +96,8 @@ describe('NotificationList', function() {
     const timeout = 500;
     const renderer = jsTestUtils.shallowRender(
       <NotificationList
-        timeout={timeout}
-        notification={notification} />, this);
+        notification={notification}
+        timeout={timeout} />, this);
     const instance = renderer.getMountedInstance();
     const key = 'NotificationListItem' + notification.timestamp;
     const refs = {};
@@ -119,8 +119,8 @@ describe('NotificationList', function() {
     const timeout = 500;
     const renderer = jsTestUtils.shallowRender(
       <NotificationList
-        timeout={timeout}
-        notification={notification} />, this);
+        notification={notification}
+        timeout={timeout} />, this);
     const instance = renderer.getMountedInstance();
     const key = 'NotificationListItem' + notification.timestamp;
     const refs = {};

@@ -151,9 +151,9 @@ class EntityContent extends React.Component {
       }
       const title = (
         <span>
-          <img className="entity-content__config-image"
-            src={applicationIcons[id]}
-            alt={application} width="26" />
+          <img alt={application}
+            className="entity-content__config-image"
+            src={applicationIcons[id]} width="26" />
           {application}</span>
       );
       if (optionsList) {
@@ -165,8 +165,8 @@ class EntityContent extends React.Component {
       }
       return (
         <AccordionSection
-          title={title}
-          key={application}>
+          key={application}
+          title={title}>
           {optionsList}
         </AccordionSection>);
     });
@@ -191,8 +191,8 @@ class EntityContent extends React.Component {
     if (optionsList) {
       const title = isCharm ? 'Configuration' : 'Bundle configuration';
       return (
-        <div id="configuration"
-          className="entity-content__configuration">
+        <div className="entity-content__configuration"
+          id="configuration">
           <h3 className="entity-content__header">{title}</h3>
           {optionsList}
         </div>
@@ -211,7 +211,7 @@ class EntityContent extends React.Component {
   _generateList(list, handler) {
     return list.map(function(item, i) {
       return [i > 0 ? ', ' : ''].concat(
-        <a key={item + i} data-id={item} className="link" onClick={handler}>
+        <a className="link" data-id={item} key={item + i} onClick={handler}>
           {item}
         </a>
       );
@@ -347,8 +347,8 @@ class EntityContent extends React.Component {
     return (
       <EntityContentDiagram
         clearLightbox={this.props.clearLightbox}
-        displayLightbox={this.props.displayLightbox}
         diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
+        displayLightbox={this.props.displayLightbox}
         isExpandable={true}
         isRow={false}
         title={entity.displayName} />);
@@ -440,16 +440,16 @@ class EntityContent extends React.Component {
         <ul className="section__list">
           {bugLink ? (
             <li className="section__list-item">
-              <a href={bugLink}
-                className="link"
+              <a className="link"
+                href={bugLink}
                 target="_blank">
                 Submit a bug
               </a>
             </li>) : undefined}
           {homepageLink ? (
             <li className="section__list-item">
-              <a href={homepageLink}
-                className="link"
+              <a className="link"
+                href={homepageLink}
                 target="_blank">
                 Project homepage
               </a>
@@ -552,8 +552,8 @@ class EntityContent extends React.Component {
         </div>);
     });
     return (
-      <div id="plans"
-        className="row entity-content__plans">
+      <div className="row entity-content__plans"
+        id="plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
@@ -592,8 +592,8 @@ class EntityContent extends React.Component {
         </h3>
         <p>
           Add this card to your website by copying the code below.&nbsp;
-          <a href="https://jujucharms.com/community/cards" target="_blank"
-            className="entity-content__card-cta">
+          <a className="entity-content__card-cta" href="https://jujucharms.com/community/cards"
+            target="_blank">
             Learn more
           </a>.
         </p>

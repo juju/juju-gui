@@ -30,8 +30,8 @@ describe('InsetSelect', function() {
           disabled={undefined}
           id="Spork!"
           onChange={instance._callOnChange}
-          required={undefined}
-          ref="field">
+          ref="field"
+          required={undefined}>
           {[<option
             key="splade0"
             value="splade">
@@ -104,8 +104,8 @@ describe('InsetSelect', function() {
           disabled={undefined}
           id={undefined}
           onChange={instance._callOnChange}
-          required={undefined}
-          ref="field">
+          ref="field"
+          required={undefined}>
           {[<option
             key="splade0"
             value="splade">

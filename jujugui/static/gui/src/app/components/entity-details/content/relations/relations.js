@@ -72,11 +72,11 @@ class EntityContentRelations extends React.Component {
       const type = this.role === 'requirer' ? 'requires' : 'provides';
       components.push(
         <li className={classes}
-          role="button"
-          tabIndex="0"
+          key={relation.name}
           onClick={this._handleRelationClick.bind(
             this, type, relation.interface)}
-          key={relation.name}>
+          role="button"
+          tabIndex="0">
           {relation.name}: {relation.interface}
         </li>
       );
@@ -88,8 +88,8 @@ class EntityContentRelations extends React.Component {
       components.push(
         <li className="section__list-item" key="show-more">
           <button className="button--inline-neutral"
-            role="button"
-            onClick={this._handleViewMore.bind(this)}>
+            onClick={this._handleViewMore.bind(this)}
+            role="button">
             {buttonText}
           </button>
         </li>

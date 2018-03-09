@@ -162,8 +162,8 @@ describe('DeploymentFlow', function() {
         changeState={props.changeState}
         isDirectDeploy={false}
         loggedIn={true}
-        title="Pavlova"
-        sendAnalytics={sinon.stub()}>
+        sendAnalytics={sinon.stub()}
+        title="Pavlova">
         <DeploymentSection
           completed={true}
           instance="deployment-model-name"
@@ -187,8 +187,8 @@ describe('DeploymentFlow', function() {
             addNotification={props.addNotification}
             cloud={null}
             controllerIsReady={props.controllerIsReady}
-            listClouds={props.listClouds}
             getCloudProviderDetails={props.getCloudProviderDetails}
+            listClouds={props.listClouds}
             setCloud={instance._setCloud} />
         </DeploymentSection>
         <DeploymentSection
@@ -198,13 +198,13 @@ describe('DeploymentFlow', function() {
           showCheck={true}
           title={<span>Add public SSH keys <em>(optional)</em></span>}>
           <DeploymentSSHKey
-            WebHandler={props.WebHandler}
             addNotification={props.addNotification}
             cloud={null}
             getGithubSSHKeys={props.getGithubSSHKeys}
-            setSSHKeys={instance._setSSHKeys}
             setLaunchpadUsernames={instance._setLaunchpadUsernames}
-            username={undefined} />
+            setSSHKeys={instance._setSSHKeys}
+            username={undefined}
+            WebHandler={props.WebHandler} />
         </DeploymentSection>
         {undefined}
         <DeploymentSection
@@ -307,9 +307,9 @@ describe('DeploymentFlow', function() {
         addNotification={addNotification}
         changeState={changeState}
         ddData={{id: 'cs:bundle/kubernetes-core-8'}}
+        entityModel={entityModel}
         generatePath={sinon.stub()}
         getDiagramURL={instance.props.getDiagramURL}
-        entityModel={entityModel}
         renderMarkdown={renderMarkdown} />
     );
   });
@@ -508,9 +508,9 @@ describe('DeploymentFlow', function() {
     const expected = (
       <div className="deployment-flow__deploy-option">
         <input className="deployment-flow__deploy-checkbox"
-          onChange={instance._handleTermsAgreement}
           disabled={false}
           id="terms"
+          onChange={instance._handleTermsAgreement}
           type="checkbox" />
         <label className="deployment-flow__deploy-label"
           htmlFor="terms">

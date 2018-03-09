@@ -41,8 +41,8 @@ class Logout extends React.Component {
     return (
       <a className={this._generateClasses()}
         href={logoutUrl}
-        target={target}
-        onClick={this._handleClick.bind(this)}>
+        onClick={this._handleClick.bind(this)}
+        target={target}>
         Logout
       </a>
     );

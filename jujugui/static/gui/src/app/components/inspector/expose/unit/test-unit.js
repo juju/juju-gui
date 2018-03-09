@@ -30,9 +30,9 @@ describe('InspectorExposeUnit', function() {
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
     var expected = (
-      <li className="inspector-expose__unit" tabIndex="0" role="button"
-        data-id="django/1"
-        onClick={action}>
+      <li className="inspector-expose__unit" data-id="django/1" onClick={action}
+        role="button"
+        tabIndex="0">
         <div className="inspector-expose__unit-detail">
               django/1
         </div>
@@ -74,10 +74,10 @@ describe('InspectorExposeUnit', function() {
         unit={unit} />);
     var expected = (
       <li className="inspector-expose__unit"
-        tabIndex="0"
-        role="button"
         data-id="django/1"
-        onClick={action}>
+        onClick={action}
+        role="button"
+        tabIndex="0">
         <div className="inspector-expose__unit-detail">
               django/1
         </div>

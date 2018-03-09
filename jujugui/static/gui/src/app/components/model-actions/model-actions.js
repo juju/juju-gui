@@ -82,8 +82,8 @@ class ModelActions extends React.Component {
           onClick={props.sharingVisibility}
           role="button"
           tabIndex="0">
-          <SvgIcon name="share_16"
-            className="model-actions__icon"
+          <SvgIcon className="model-actions__icon"
+            name="share_16"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -101,8 +101,8 @@ class ModelActions extends React.Component {
           onClick={this._handleTerminalClick.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon name="code-snippet_24"
-            className="model-actions__icon"
+          <SvgIcon className="model-actions__icon"
+            name="code-snippet_24"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -119,8 +119,8 @@ class ModelActions extends React.Component {
             onClick={this._handleExport.bind(this)}
             role="button"
             tabIndex="0">
-            <SvgIcon name="export_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="export_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -132,8 +132,8 @@ class ModelActions extends React.Component {
             onClick={!isReadOnly && this._handleImportClick.bind(this)}
             role="button"
             tabIndex="0">
-            <SvgIcon name="import_16"
-              className="model-actions__icon"
+            <SvgIcon className="model-actions__icon"
+              name="import_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -144,11 +144,11 @@ class ModelActions extends React.Component {
           {shareAction}
           {terminalAction}
         </div>
-        <input className="model-actions__file"
-          type="file"
+        <input accept=".zip,.yaml,.yml"
+          className="model-actions__file"
           onChange={isReadOnly ? null : this._handleImportFile.bind(this)}
-          accept=".zip,.yaml,.yml"
-          ref="file-input" />
+          ref="file-input"
+          type="file" />
       </div>
     );
   }

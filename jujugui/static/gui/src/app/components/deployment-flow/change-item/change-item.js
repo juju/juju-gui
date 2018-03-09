@@ -18,11 +18,11 @@ class DeploymentChangeItem extends React.Component {
     var node;
     var className = 'deployment-change-item__icon';
     if (icon.indexOf('.svg') > -1) {
-      node = <img src={icon} alt="" className={className} />;
+      node = <img alt="" className={className} src={icon} />;
     } else {
       node = (
-        <SvgIcon name={icon}
-          className={className}
+        <SvgIcon className={className}
+          name={icon}
           size="16" />);
     }
     return node;

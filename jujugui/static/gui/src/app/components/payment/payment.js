@@ -115,6 +115,7 @@ class Payment extends React.Component {
           validateForm={this.props.validateForm} />
         <PaymentDetails
           acl={this.props.acl}
+          addNotification={this.props.addNotification}
           payment={payment && shapeup.addReshape({
             addAddress: payment.addAddress.bind(payment),
             addBillingAddress: payment.addBillingAddress.bind(payment),
@@ -124,7 +125,6 @@ class Payment extends React.Component {
             updateAddress: payment.updateAddress.bind(payment),
             updateBillingAddress: payment.updateBillingAddress.bind(payment)
           })}
-          addNotification={this.props.addNotification}
           paymentUser={this.state.paymentUser}
           updateUser={this._getUser.bind(this)}
           username={this.props.username}

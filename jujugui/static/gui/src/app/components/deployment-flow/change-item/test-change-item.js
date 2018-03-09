@@ -29,8 +29,8 @@ describe('DeploymentChangeItem', function() {
     const expected = (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
-          <SvgIcon name="my-icon"
-            className="deployment-change-item__icon"
+          <SvgIcon className="deployment-change-item__icon"
+            name="my-icon"
             size="16" />
           Django was added
           <span className="deployment-change-item__change-command">
@@ -51,8 +51,8 @@ describe('DeploymentChangeItem', function() {
     const expected = (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
-          <img src="my-icon.svg" alt=""
-            className="deployment-change-item__icon" />
+          <img alt="" className="deployment-change-item__icon"
+            src="my-icon.svg" />
           Django was added
           <span className="deployment-change-item__change-command">
             juju deploy cs:django
@@ -73,8 +73,8 @@ describe('DeploymentChangeItem', function() {
     const expected = (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
-          <img src="my-icon.svg" alt=""
-            className="deployment-change-item__icon" />
+          <img alt="" className="deployment-change-item__icon"
+            src="my-icon.svg" />
           Django was added
           <span className="deployment-change-item__change-command">
             juju deploy cs:django

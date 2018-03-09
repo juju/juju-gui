@@ -67,11 +67,11 @@ describe('PostDeployment', () => {
 
     expect(output).toEqualJSX(
       <Panel
-        instanceName="post-deployment"
         extraClasses="post-deployment"
+        instanceName="post-deployment"
         visible={true}>
-        <span className="close" tabIndex="0" role="button"
-          onClick={instance._closePostDeployment}>
+        <span className="close" onClick={instance._closePostDeployment} role="button"
+          tabIndex="0">
           <SvgIcon name="close_16"
             size="16" />
         </span>
@@ -91,11 +91,11 @@ describe('PostDeployment', () => {
     const output = rendered.renderer.getRenderOutput();
     expect(output).toEqualJSX(
       <Panel
-        instanceName="post-deployment"
         extraClasses="post-deployment"
+        instanceName="post-deployment"
         visible={true}>
-        <span className="close" tabIndex="0" role="button"
-          onClick={instance._closePostDeployment}>
+        <span className="close" onClick={instance._closePostDeployment} role="button"
+          tabIndex="0">
           <SvgIcon name="close_16"
             size="16" />
         </span>

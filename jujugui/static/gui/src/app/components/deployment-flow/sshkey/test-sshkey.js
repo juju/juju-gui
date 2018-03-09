@@ -33,13 +33,13 @@ describe('DeploymentSSHKey', function() {
     }
     const renderer = jsTestUtils.shallowRender(
       <DeploymentSSHKey
-        WebHandler={sinon.stub()}
         addNotification={addNotification}
         cloud={cloud}
         getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
-        setSSHKeys={setSSHKeys}
         setLaunchpadUsernames={setLaunchpadUsernames}
-        username={username} />, true);
+        setSSHKeys={setSSHKeys}
+        username={username}
+        WebHandler={sinon.stub()} />, true);
     return {
       instance: renderer.getMountedInstance(),
       output: renderer.getRenderOutput(),
@@ -66,7 +66,6 @@ describe('DeploymentSSHKey', function() {
           <div className="three-col no-margin-bottom">
             <InsetSelect
               disabled={false}
-              ref="sshSource"
               label="Source"
               onChange={comp.instance._handleSourceChange.bind(comp.instance)}
               options={[
@@ -82,16 +81,17 @@ describe('DeploymentSSHKey', function() {
                   label: 'Launchpad',
                   value: 'launchpad'
                 }
-              ]} />
+              ]}
+              ref="sshSource" />
           </div>
           <div className="three-col last-col no-margin-bottom">
             <GenericInput
-              ref="githubUsername"
               autocomplete
               key="githubUsername"
               label="GitHub username"
               onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
+              ref="githubUsername"
               type="text" />
           </div>
           <div className="right">
@@ -126,7 +126,6 @@ describe('DeploymentSSHKey', function() {
           <div className="three-col no-margin-bottom">
             <InsetSelect
               disabled={false}
-              ref="sshSource"
               label="Source"
               onChange={comp.instance._handleSourceChange.bind(comp.instance)}
               options={[
@@ -142,18 +141,19 @@ describe('DeploymentSSHKey', function() {
                   label: 'Launchpad',
                   value: 'launchpad'
                 }
-              ]} />
+              ]}
+              ref="sshSource" />
           </div>
           <div className="three-col last-col no-margin-bottom">
             <GenericInput
-              ref="launchpadUsername"
               autocomplete
               key="launchpadUsername"
               label="Launchpad username"
               onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
-              value="rose"
-              type="text" />
+              ref="launchpadUsername"
+              type="text"
+              value="rose" />
           </div>
           <div className="right">
             <GenericButton
@@ -178,7 +178,6 @@ describe('DeploymentSSHKey', function() {
         <div className="twelve-col no-margin-bottom">
           <div className="three-col no-margin-bottom">
             <InsetSelect
-              ref="sshSource"
               label="Source"
               onChange={comp.instance._handleSourceChange.bind(comp.instance)}
               options={[
@@ -194,15 +193,16 @@ describe('DeploymentSSHKey', function() {
                   label: 'Launchpad',
                   value: 'launchpad'
                 }
-              ]} />
+              ]}
+              ref="sshSource" />
           </div>
           <div className="three-col last-col no-margin-bottom">
             <GenericInput
-              ref="githubUsername"
               autocomplete
               label="GitHub username"
               onKeyUp={comp.instance._onKeyUp.
                 bind(comp.instance)}
+              ref="githubUsername"
               type="text" />
           </div>
           <div className="right">

@@ -51,9 +51,9 @@ describe('MachineViewColumn', function() {
           droppable={true}
           dropUnit={dropUnit}
           menuItems={menuItems}
+          sendAnalytics={sendAnalytics}
           title="Sandbox"
           toggle={toggle}
-          sendAnalytics={sendAnalytics}
           type="machine" />
         <div className="machine-view__column-content">
           <div>contents</div>

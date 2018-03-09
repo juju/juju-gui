@@ -24,9 +24,9 @@ describe('FileField', function() {
           className="file-field__field"
           disabled={false}
           id="Dingo"
-          required={true}
           onChange={instance.validate}
           ref="field"
+          required={true}
           type="file" />
         <label className="file-field__label"
           htmlFor="Dingo">
@@ -85,9 +85,9 @@ describe('FileField', function() {
           className="file-field__field"
           disabled={false}
           id="Dingo"
-          required={true}
           onChange={instance.validate}
           ref="field"
+          required={true}
           type="file" />
         <label className="file-field__label"
           htmlFor="Dingo">
@@ -121,9 +121,9 @@ describe('FileField', function() {
           className="file-field__field"
           disabled={false}
           id="Dingo"
-          required={true}
           onChange={instance.validate}
           ref="field"
+          required={true}
           type="file" />
         <label className="file-field__label"
           htmlFor="Dingo">
@@ -155,9 +155,9 @@ describe('FileField', function() {
           className="file-field__field"
           disabled={false}
           id="Dingo"
-          required={true}
           onChange={instance.validate}
           ref="field"
+          required={true}
           type="file" />
         <label className="file-field__label"
           htmlFor="Dingo">

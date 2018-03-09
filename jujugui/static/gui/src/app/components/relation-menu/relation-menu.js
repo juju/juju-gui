@@ -75,13 +75,13 @@ const RelationMenu = function(props) {
           data-relationid={relation.id}
           key={relation.id}>
           {_generateIcon(relation)}
-          <span data-endpoint={relation.sourceId}
-            className={sourceClasses}>
+          <span className={sourceClasses}
+            data-endpoint={relation.sourceId}>
             {_getRealServiceName(relation.sourceId, relation)}
           </span>
           {' '}-{' '}
-          <span data-endpoint={relation.targetId}
-            className={targetClasses}>
+          <span className={targetClasses}
+            data-endpoint={relation.targetId}>
             {_getRealServiceName(relation.targetId, relation)}
           </span>
           <span className="relation-remove link">

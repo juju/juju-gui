@@ -36,18 +36,18 @@ describe('HeaderBreadcrumb', () => {
         acl={acl}
         addNotification={addNotification}
         appState={appState}
-        user={attrs.user}
         changeState={changeState}
         humanizeTimestamp={humanizeTimestamp}
-        loadingModel={attrs.loadingModel}
         listModelsWithInfo={listModelsWithInfo}
-        modelName={attrs.modelName}
+        loadingModel={attrs.loadingModel}
         modelCommitted={attrs.modelCommitted}
+        modelName={attrs.modelName}
         modelOwner={attrs.modelOwner}
         setModelName={attrs.setModelName || sinon.stub()}
         showEnvSwitcher={attrs.showEnvSwitcher}
         showProfile={showProfile}
-        switchModel={switchModel} />, true);
+        switchModel={switchModel}
+        user={attrs.user} />, true);
     const output = renderer.getRenderOutput();
     const userSection = output.props.children[1].props.children[0];
     let clickUser = null;
@@ -77,9 +77,9 @@ describe('HeaderBreadcrumb', () => {
         <ul className="header-breadcrumb__list" data-username="who">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
+              href="/u/who"
               onClick={comp.clickUser}
-              title="who"
-              href="/u/who">
+              title="who">
               who
             </a>
           </li>
@@ -87,14 +87,14 @@ describe('HeaderBreadcrumb', () => {
             <EnvSwitcher
               acl={acl}
               addNotification={addNotification}
-              user={{username: 'who@external', displayName: 'who'}}
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
               modelCommitted={true}
               setModelName={setModelName}
-              switchModel={switchModel} />
+              switchModel={switchModel}
+              user={{username: 'who@external', displayName: 'who'}} />
           </li>
         </ul>
       </div>
@@ -118,9 +118,9 @@ describe('HeaderBreadcrumb', () => {
         <ul className="header-breadcrumb__list" data-username="dalek">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
+              href="/u/rose"
               onClick={comp.clickUser}
-              title="rose"
-              href="/u/rose">
+              title="rose">
               rose
             </a>
           </li>
@@ -128,14 +128,14 @@ describe('HeaderBreadcrumb', () => {
             <EnvSwitcher
               acl={acl}
               addNotification={addNotification}
-              user={{username: 'dalek@external', displayName: 'dalek'}}
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
               modelCommitted={true}
               setModelName={setModelName}
-              switchModel={switchModel} />
+              switchModel={switchModel}
+              user={{username: 'dalek@external', displayName: 'dalek'}} />
           </li>
         </ul>
       </div>
@@ -159,9 +159,9 @@ describe('HeaderBreadcrumb', () => {
         <ul className="header-breadcrumb__list" data-username="dalek">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
+              href="/u/cyberman"
               onClick={comp.clickUser}
-              title="cyberman"
-              href="/u/cyberman">
+              title="cyberman">
               cyberman
             </a>
           </li>
@@ -169,14 +169,14 @@ describe('HeaderBreadcrumb', () => {
             <EnvSwitcher
               acl={acl}
               addNotification={addNotification}
-              user={user}
               changeState={changeState}
               environmentName={'mymodel'}
               humanizeTimestamp={humanizeTimestamp}
               listModelsWithInfo={listModelsWithInfo}
               modelCommitted={true}
               setModelName={sinon.stub()}
-              switchModel={switchModel} />
+              switchModel={switchModel}
+              user={user} />
           </li>
         </ul>
       </div>

@@ -101,9 +101,9 @@ class AddedServicesListItem extends React.Component {
         onClick={this._onClickHandler.bind(this)}
         onMouseEnter={this._onMouseEnter.bind(this)}
         onMouseLeave={this._onMouseLeave.bind(this)}
-        tabIndex="0"
-        role="button">
-        <img src={service.icon} className="inspector-view__item-icon" />
+        role="button"
+        tabIndex="0">
+        <img className="inspector-view__item-icon" src={service.icon} />
         <span className="inspector-view__item-count">
           {service.unit_count}
         </span>

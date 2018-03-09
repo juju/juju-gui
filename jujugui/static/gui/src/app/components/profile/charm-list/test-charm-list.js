@@ -56,6 +56,7 @@ describe('Profile Charm List', function() {
       <ProfileCharmList
         acl={options.acl || acl}
         addNotification={sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -64,7 +65,6 @@ describe('Profile Charm List', function() {
           list: options.charmstoreList || charmstoreList,
           url: '/charmstore'
         }}
-        addToModel={options.addToModel || sinon.stub()}
         generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
@@ -135,8 +135,8 @@ describe('Profile Charm List', function() {
               expandedContent: (
                 <ProfileExpandedContent
                   acl={instance.props.acl}
-                  changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
+                  changeState={sinon.stub()}
                   entity={charms[0]}
                   generatePath={sinon.stub()}
                   getModelName={instance.props.getModelName}
@@ -203,8 +203,8 @@ describe('Profile Charm List', function() {
               expandedContent: (
                 <ProfileExpandedContent
                   acl={instance.props.acl}
-                  changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
+                  changeState={sinon.stub()}
                   entity={charms[1]}
                   generatePath={sinon.stub()}
                   getModelName={instance.props.getModelName}
@@ -257,8 +257,8 @@ describe('Profile Charm List', function() {
               expandedContent: (
                 <ProfileExpandedContent
                   acl={instance.props.acl}
-                  changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
+                  changeState={sinon.stub()}
                   entity={charms[2]}
                   generatePath={sinon.stub()}
                   getModelName={instance.props.getModelName}

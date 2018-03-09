@@ -81,30 +81,30 @@ describe('UnitList', () => {
     const expected = (
       <ul className="unit-list__units">
         {[<CheckListItem
-          disabled={false}
-          ref="select-all"
-          key="select-all"
-          className="select-all"
-          label="Select all units"
           aside="2"
+          className="select-all"
+          disabled={false}
+          key="select-all"
+          label="Select all units"
+          ref="select-all"
           whenChanged={children[0].props.whenChanged} />,
         <CheckListItem
-          disabled={false}
-          key={units[0].displayName}
-          ref={refs[0]}
-          label={units[0].displayName}
           action={children[1].props.action}
+          disabled={false}
           extraInfo={undefined}
           id="mysql/0"
+          key={units[0].displayName}
+          label={units[0].displayName}
+          ref={refs[0]}
           whenChanged={instance._updateActiveCount} />,
         <CheckListItem
-          disabled={false}
-          key={units[1].displayName}
-          ref={refs[1]}
-          label={units[1].displayName}
           action={children[2].props.action}
+          disabled={false}
           extraInfo={undefined}
           id="mysql/1"
+          key={units[1].displayName}
+          label={units[1].displayName}
+          ref={refs[1]}
           whenChanged={instance._updateActiveCount} />]}
       </ul>);
     expect(output.props.children[1]).toEqualJSX(expected);
@@ -127,8 +127,8 @@ describe('UnitList', () => {
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
         service={{}}
-        unitStatus='error'
         units={units}
+        unitStatus='error'
         whenChanged={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     var output = renderer.getRenderOutput();
@@ -141,37 +141,37 @@ describe('UnitList', () => {
       <ul className="unit-list__units">
         {[<CheckListItem
           aside="1"
+          className="select-all"
           disabled={false}
-          ref="select-all-0"
           key="select-all-0"
           label="hook failed: install"
-          className="select-all"
+          ref="select-all-0"
           whenChanged={children[0].props.whenChanged} />,
         <CheckListItem
-          disabled={false}
-          key={units[0].displayName}
-          ref={refs[0]}
-          label={units[0].displayName}
           action={children[1].props.action}
+          disabled={false}
           extraInfo={undefined}
           id="mysql/0"
+          key={units[0].displayName}
+          label={units[0].displayName}
+          ref={refs[0]}
           whenChanged={instance._updateActiveCount} />,
         <CheckListItem
           aside="1"
+          className="select-all"
           disabled={false}
-          ref="select-all-1"
           key="select-all-1"
           label="hook failed: config-changed"
-          className="select-all"
+          ref="select-all-1"
           whenChanged={children[2].props.whenChanged} />,
         <CheckListItem
-          disabled={false}
-          key={units[1].displayName}
-          ref={refs[1]}
-          label={units[1].displayName}
           action={children[3].props.action}
+          disabled={false}
           extraInfo={undefined}
           id="mysql/1"
+          key={units[1].displayName}
+          label={units[1].displayName}
+          ref={refs[1]}
           whenChanged={instance._updateActiveCount} />]}
       </ul>);
     expect(output.props.children[1]).toEqualJSX(expected);
@@ -239,8 +239,8 @@ describe('UnitList', () => {
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
         service={service}
-        unitStatus="pending"
         units={units}
+        unitStatus="pending"
         whenChanged={sinon.stub()} />);
     const expected = (
       <div className="unit-list">
@@ -323,8 +323,8 @@ describe('UnitList', () => {
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
         service={service}
-        unitStatus={null}
         units={units}
+        unitStatus={null}
         whenChanged={sinon.stub()} />);
     output.props.children[1].props.children[1].props.action({
       currentTarget: {
@@ -359,8 +359,8 @@ describe('UnitList', () => {
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
         service={service}
-        unitStatus={null}
         units={units}
+        unitStatus={null}
         whenChanged={sinon.stub()} />);
     output.props.children[1].props.children[1].props.action({
       currentTarget: {
@@ -418,8 +418,8 @@ describe('UnitList', () => {
         destroyUnits={sinon.stub()}
         envResolved={sinon.stub()}
         service={{}}
-        unitStatus='error'
         units={units}
+        unitStatus='error'
         whenChanged={sinon.stub()} />);
     var buttonItems = output.props.children[2].props.buttons;
     var buttons = [{
@@ -466,8 +466,8 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
+        destroyUnits={destroyUnits}
         envResolved={envResolved}
         service={service}
         units={units}
@@ -506,8 +506,8 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
+        destroyUnits={destroyUnits}
         envResolved={envResolved}
         service={service}
         units={units}
@@ -540,8 +540,8 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
+        destroyUnits={destroyUnits}
         envResolved={sinon.stub()}
         service={service}
         units={units}
@@ -568,8 +568,8 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
+        destroyUnits={destroyUnits}
         envResolved={sinon.stub()}
         service={service}
         units={units}
@@ -607,12 +607,12 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={sinon.stub()}
-        unitStatus='error'
-        envResolved={envResolved}
         changeState={changeState}
+        destroyUnits={sinon.stub()}
+        envResolved={envResolved}
         service={service}
         units={units}
+        unitStatus='error'
         whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
@@ -648,12 +648,12 @@ describe('UnitList', () => {
     const output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={sinon.stub()}
-        unitStatus='error'
-        envResolved={envResolved}
         changeState={changeState}
+        destroyUnits={sinon.stub()}
+        envResolved={envResolved}
         service={service}
         units={units}
+        unitStatus='error'
         whenChanged={sinon.stub()} />);
     const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
@@ -688,12 +688,12 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={sinon.stub()}
-        unitStatus='error'
-        envResolved={envResolved}
         changeState={changeState}
+        destroyUnits={sinon.stub()}
+        envResolved={envResolved}
         service={service}
         units={units}
+        unitStatus='error'
         whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
@@ -730,12 +730,12 @@ describe('UnitList', () => {
     var output = testUtils.renderIntoDocument(
       <UnitList
         acl={acl}
-        destroyUnits={sinon.stub()}
-        unitStatus='error'
-        envResolved={envResolved}
         changeState={changeState}
+        destroyUnits={sinon.stub()}
+        envResolved={envResolved}
         service={service}
         units={units}
+        unitStatus='error'
         whenChanged={sinon.stub()} />);
     var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
       output, 'input');
@@ -777,30 +777,30 @@ describe('UnitList', () => {
     const list = (
       <ul className="unit-list__units">
         {[<CheckListItem
-          disabled={true}
-          ref="select-all"
-          key="select-all"
-          className="select-all"
-          label="Select all units"
           aside="2"
+          className="select-all"
+          disabled={true}
+          key="select-all"
+          label="Select all units"
+          ref="select-all"
           whenChanged={children[0].props.whenChanged} />,
         <CheckListItem
-          disabled={true}
-          key={units[0].displayName}
-          ref={refs[0]}
-          label={units[0].displayName}
           action={children[1].props.action}
+          disabled={true}
           extraInfo={undefined}
           id="mysql/0"
+          key={units[0].displayName}
+          label={units[0].displayName}
+          ref={refs[0]}
           whenChanged={instance._updateActiveCount} />,
         <CheckListItem
-          disabled={true}
-          key={units[1].displayName}
-          ref={refs[1]}
-          label={units[1].displayName}
           action={children[2].props.action}
+          disabled={true}
           extraInfo={undefined}
           id="mysql/1"
+          key={units[1].displayName}
+          label={units[1].displayName}
+          ref={refs[1]}
           whenChanged={instance._updateActiveCount} />]}
       </ul>);
     expect(output.props.children[1]).toEqualJSX(list);

@@ -31,9 +31,9 @@ describe('SearchResults', function() {
       var output = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={sinon.stub()}
           charmstoreSearch={sinon.stub()}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -53,9 +53,9 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -89,9 +89,9 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}
@@ -145,9 +145,9 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -280,16 +280,16 @@ describe('SearchResults', function() {
                   <form>
                     <SearchResultsSelectFilter
                       changeState={changeState}
-                      label="Sort by"
+                      currentValue="-name"
                       filter='sort'
                       items={sortItems}
-                      currentValue="-name" />
+                      label="Sort by" />
                     <SearchResultsSelectFilter
                       changeState={changeState}
-                      label="Series"
+                      currentValue="wily"
                       filter='series'
                       items={seriesItems}
-                      currentValue="wily" />
+                      label="Series" />
                   </form>
                 </div>
               </div>
@@ -304,15 +304,15 @@ describe('SearchResults', function() {
                   <ul className="list-block__list">
                     <SearchResultsItem
                       acl={acl}
-                      changeState={changeState}
                       addToModel={addToModel}
+                      changeState={changeState}
                       generatePath={generatePath}
                       item={results[0]}
                       key="~test-owner/mysql-one" />
                     <SearchResultsItem
                       acl={acl}
-                      changeState={changeState}
                       addToModel={addToModel}
+                      changeState={changeState}
                       generatePath={generatePath}
                       item={results[1]}
                       key="~test-owner/mysql-two" />
@@ -334,15 +334,15 @@ describe('SearchResults', function() {
                     <ul className="list-block__list">
                       <SearchResultsItem
                         acl={acl}
-                        changeState={changeState}
                         addToModel={addToModel}
+                        changeState={changeState}
                         generatePath={generatePath}
                         item={results[2]}
                         key="~test-owner/mysql-three" />
                       <SearchResultsItem
                         acl={acl}
-                        changeState={changeState}
                         addToModel={addToModel}
+                        changeState={changeState}
                         generatePath={generatePath}
                         item={results[3]}
                         key="~test-owner/mysql-four" />
@@ -360,9 +360,9 @@ describe('SearchResults', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={addToModel}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
-          addToModel={addToModel}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -384,9 +384,9 @@ describe('SearchResults', function() {
       const shallowRenderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={addToModel}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
-          addToModel={addToModel}
           generatePath={generatePath}
           getName={getName}
           makeEntityModel={makeEntityModel}
@@ -411,9 +411,9 @@ describe('SearchResults', function() {
       const renderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -426,9 +426,9 @@ describe('SearchResults', function() {
       renderer.render(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={sinon.stub()}
           charmstoreSearch={charmstoreSearch}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={makeEntityModel}
@@ -730,9 +730,9 @@ describe('SearchResults', function() {
       var shallowRenderer = jsTestUtils.shallowRender(
         <SearchResults
           acl={acl}
+          addToModel={sinon.stub()}
           changeState={changeState}
           charmstoreSearch={charmstoreSearch}
-          addToModel={sinon.stub()}
           generatePath={generatePath}
           getName={sinon.stub()}
           makeEntityModel={sinon.stub()}

@@ -62,8 +62,8 @@ describe('PaymentMethodCard', () => {
                   </div>
                   <div className="payment-card-brand">
                     <SvgIcon
-                      size="40"
-                      name="card-fancy" />
+                      name="card-fancy"
+                      size="40" />
                   </div>
                 </div>
               </div>

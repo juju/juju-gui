@@ -53,9 +53,9 @@ class EnvSizeDisplay extends React.Component {
   _generateStatus() {
     return (
       <li className={this._genClasses('status')}>
-        <a data-view="status"
-          onClick={this._changeEnvironmentView.bind(this)}
-          className="env-size-display__link">
+        <a className="env-size-display__link"
+          data-view="status"
+          onClick={this._changeEnvironmentView.bind(this)}>
           status
         </a>
       </li>);
@@ -70,17 +70,17 @@ class EnvSizeDisplay extends React.Component {
       <div className="env-size-display">
         <ul className="env-size-display__list">
           <li className={this._genClasses('application')}>
-            <a data-view="application"
-              onClick={this._changeEnvironmentView.bind(this)}
-              className="env-size-display__link">
+            <a className="env-size-display__link"
+              data-view="application"
+              onClick={this._changeEnvironmentView.bind(this)}>
               {serviceCount}&nbsp;
               {pluralize('application', serviceCount)}
             </a>
           </li>
           <li className={this._genClasses('machines')}>
-            <a data-view="machines"
-              onClick={this._changeEnvironmentView.bind(this)}
-              className="env-size-display__link">
+            <a className="env-size-display__link"
+              data-view="machines"
+              onClick={this._changeEnvironmentView.bind(this)}>
               {machineCount}&nbsp;
               {pluralize('machine', machineCount)}
             </a>

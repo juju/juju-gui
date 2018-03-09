@@ -57,16 +57,16 @@ class LocalInspector extends React.Component {
         var series = this.props.series;
         var seriesOptions = Object.keys(series).map(key => {
           return (
-            <option value={key} key={key}>
+            <option key={key} value={key}>
               {series[key].name}
             </option>);
         });
         component = (
           <div>
             <p>Choose a series to deploy this charm</p>
-            <select ref="series" defaultValue="trusty"
-              className="local-inspector__series"
-              disabled={this.props.acl.isReadOnly()}>
+            <select className="local-inspector__series" defaultValue="trusty"
+              disabled={this.props.acl.isReadOnly()}
+              ref="series">
               {seriesOptions}
             </select>
           </div>
@@ -103,9 +103,9 @@ class LocalInspector extends React.Component {
       items.push(
         <li key={serviceId}>
           <label>
-            <input type="checkbox" data-id={serviceId}
-              disabled={props.acl.isReadOnly()}
-              ref={'service-' + serviceId} />
+            <input data-id={serviceId} disabled={props.acl.isReadOnly()}
+              ref={'service-' + serviceId}
+              type="checkbox" />
             {service.get('name')}
           </label>
         </li>
@@ -184,20 +184,20 @@ class LocalInspector extends React.Component {
           <ul className="local-inspector__list">
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={localType === 'new'}
-                  disabled={isReadOnly}
-                  onChange={this._changeActiveComponent.bind(this, 'new')} />
+                <input defaultChecked={localType === 'new'} disabled={isReadOnly}
+                  name="action"
+                  onChange={this._changeActiveComponent.bind(this, 'new')}
+                  type="radio" />
                 Deploy local
               </label>
             </li>
             <li>
               <label>
-                <input type="radio" name="action"
-                  defaultChecked={localType === 'update'}
-                  disabled={isReadOnly}
+                <input defaultChecked={localType === 'update'} disabled={isReadOnly}
+                  name="action"
                   onChange={
-                    this._changeActiveComponent.bind(this, 'update')} />
+                    this._changeActiveComponent.bind(this, 'update')}
+                  type="radio" />
                 Upgrade local
               </label>
             </li>

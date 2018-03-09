@@ -107,11 +107,11 @@ describe('MachineViewScaleUp', function() {
             <input
               className="machine-view__scale-up-unit-input"
               disabled={false}
+              min="0"
               placeholder="units"
               ref="scaleUpUnit-111111$"
-              type="number"
-              min="0"
-              step="1" />
+              step="1"
+              type="number" />
           </li>
           <li className="machine-view__scale-up-unit"
             key="222222$">
@@ -125,11 +125,11 @@ describe('MachineViewScaleUp', function() {
             <input
               className="machine-view__scale-up-unit-input"
               disabled={false}
+              min="0"
               placeholder="units"
               ref="scaleUpUnit-222222$"
-              type="number"
-              min="0"
-              step="1" />
+              step="1"
+              type="number" />
           </li>
         </ul>
         <ButtonRow buttons={[{
@@ -177,11 +177,11 @@ describe('MachineViewScaleUp', function() {
             <input
               className="machine-view__scale-up-unit-input"
               disabled={true}
+              min="0"
               placeholder="units"
               ref="scaleUpUnit-111111$"
-              type="number"
-              min="0"
-              step="1" />
+              step="1"
+              type="number" />
           </li>
           <li className="machine-view__scale-up-unit"
             key="222222$">
@@ -195,11 +195,11 @@ describe('MachineViewScaleUp', function() {
             <input
               className="machine-view__scale-up-unit-input"
               disabled={true}
+              min="0"
               placeholder="units"
               ref="scaleUpUnit-222222$"
-              type="number"
-              min="0"
-              step="1" />
+              step="1"
+              type="number" />
           </li>
         </ul>
         <ButtonRow buttons={[{

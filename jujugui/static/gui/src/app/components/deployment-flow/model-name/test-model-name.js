@@ -29,10 +29,10 @@ describe('DeploymentModelName', () => {
           disabled={false}
           key="modelName"
           label="Model name"
-          required={true}
-          onChange={sinon.stub()}
           onBlur={sinon.stub()}
+          onChange={sinon.stub()}
           ref="modelName"
+          required={true}
           validate={[{
             regex: /\S+/,
             error: 'This field is required.'
@@ -62,10 +62,10 @@ describe('DeploymentModelName', () => {
           disabled={true}
           key="modelName"
           label="Model name"
-          required={true}
-          onChange={sinon.stub()}
           onBlur={sinon.stub()}
+          onChange={sinon.stub()}
           ref="modelName"
+          required={true}
           validate={[{
             regex: /\S+/,
             error: 'This field is required.'

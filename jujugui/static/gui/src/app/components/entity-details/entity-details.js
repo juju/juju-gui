@@ -73,14 +73,14 @@ class EntityDetails extends React.Component {
           <div>
             <EntityHeader
               acl={this.props.acl}
-              entityModel={entityModel}
               addNotification={this.props.addNotification}
-              importBundleYAML={this.props.importBundleYAML}
+              changeState={this.props.changeState}
+              deployService={this.props.deployService}
+              entityModel={entityModel}
               getBundleYAML={this.props.getBundleYAML}
               getModelName={this.props.getModelName}
               hasPlans={this.state.hasPlans}
-              changeState={this.props.changeState}
-              deployService={this.props.deployService}
+              importBundleYAML={this.props.importBundleYAML}
               plans={this.state.plans}
               pluralize={this.props.pluralize}
               scrollPosition={this.props.scrollPosition}
@@ -91,15 +91,15 @@ class EntityDetails extends React.Component {
               changeState={this.props.changeState}
               clearLightbox={this.props.clearLightbox}
               displayLightbox={this.props.displayLightbox}
+              entityModel={entityModel}
               flags={this.props.flags}
               getDiagramURL={this.props.getDiagramURL}
               getFile={this.props.getFile}
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
-              renderMarkdown={this.props.renderMarkdown}
-              entityModel={entityModel}
               plans={this.state.plans}
               pluralize={this.props.pluralize}
+              renderMarkdown={this.props.renderMarkdown}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
               sendAnalytics={this.props.sendAnalytics}
               showTerms={this.props.showTerms}

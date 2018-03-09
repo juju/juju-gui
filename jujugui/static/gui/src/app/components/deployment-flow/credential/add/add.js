@@ -178,8 +178,8 @@ class DeploymentCredentialAdd extends React.Component {
               disabled={isReadOnly}
               key={field.id}
               label={`Upload ${info.title} .json auth-file`}
-              required={required}
-              ref={field.id} />
+              ref={field.id}
+              required={required} />
           </div>);
       }
       return (
@@ -189,8 +189,8 @@ class DeploymentCredentialAdd extends React.Component {
           key={field.id}
           label={field.title}
           multiLine={field.multiLine}
-          required={required}
           ref={field.id}
+          required={required}
           type={field.type}
           validate={required ? [{
             regex: /\S+/,
@@ -282,8 +282,8 @@ class DeploymentCredentialAdd extends React.Component {
             <GenericInput
               disabled={props.acl.isReadOnly() || !!credentialName}
               label={credentialNameLabel}
-              required={true}
               ref="credentialName"
+              required={true}
               validate={nameValidators}
               value={credentialName} />
           </div>

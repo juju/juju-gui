@@ -70,13 +70,13 @@ describe('CredentialAddEdit', () => {
     const expected = (
       <div className="credential-add-edit">
         <DeploymentCloud
-          key="deployment-cloud"
           acl={acl}
           addNotification={sinon.stub()}
           cloud={null}
           controllerIsReady={sinon.stub()}
-          listClouds={sinon.stub()}
           getCloudProviderDetails={sinon.stub()}
+          key="deployment-cloud"
+          listClouds={sinon.stub()}
           setCloud={sinon.stub()} />
       </div>);
     expect(comp.output).toEqualJSX(expected);
@@ -108,23 +108,23 @@ describe('CredentialAddEdit', () => {
             </GenericButton>
           </div>
           <DeploymentCloud
-            key="deployment-cloud"
             acl={acl}
             addNotification={sinon.stub()}
             cloud={{title: 'aws'}}
             controllerIsReady={sinon.stub()}
-            listClouds={sinon.stub()}
             getCloudProviderDetails={sinon.stub()}
+            key="deployment-cloud"
+            listClouds={sinon.stub()}
             setCloud={sinon.stub()} />
           <DeploymentCredentialAdd
-            key="deployment-credential-add"
             acl={acl}
             addNotification={sinon.stub()}
             cloud={{title: 'aws'}}
             credentialName={null}
             credentials={['test1', 'test2']}
-            getCloudProviderDetails={sinon.stub()}
             generateCloudCredentialName={sinon.stub()}
+            getCloudProviderDetails={sinon.stub()}
+            key="deployment-credential-add"
             onCancel={sinon.stub()}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sinon.stub()}
@@ -146,14 +146,14 @@ describe('CredentialAddEdit', () => {
     const expected = (
       <div className="credential-add-edit">
         <DeploymentCredentialAdd
-          key="deployment-credential-add"
           acl={acl}
           addNotification={sinon.stub()}
           cloud={{cloudType: 'aws'}}
           credentialName="cred-name"
           credentials={['test1', 'test2']}
-          getCloudProviderDetails={sinon.stub()}
           generateCloudCredentialName={sinon.stub()}
+          getCloudProviderDetails={sinon.stub()}
+          key="deployment-credential-add"
           onCancel={sinon.stub()}
           onCredentialUpdated={sinon.stub()}
           sendAnalytics={sinon.stub()}
@@ -179,23 +179,23 @@ describe('CredentialAddEdit', () => {
         <div>
           {null}
           <DeploymentCloud
-            key="deployment-cloud"
             acl={acl}
             addNotification={sinon.stub()}
             cloud={{title: 'aws'}}
             controllerIsReady={sinon.stub()}
-            listClouds={sinon.stub()}
             getCloudProviderDetails={sinon.stub()}
+            key="deployment-cloud"
+            listClouds={sinon.stub()}
             setCloud={sinon.stub()} />
           <DeploymentCredentialAdd
-            key="deployment-credential-add"
             acl={acl}
             addNotification={sinon.stub()}
             cloud={{title: 'aws'}}
             credentialName={null}
             credentials={['test1', 'test2']}
-            getCloudProviderDetails={sinon.stub()}
             generateCloudCredentialName={sinon.stub()}
+            getCloudProviderDetails={sinon.stub()}
+            key="deployment-credential-add"
             onCancel={sinon.stub()}
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sinon.stub()}

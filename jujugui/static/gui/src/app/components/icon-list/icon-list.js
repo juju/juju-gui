@@ -62,9 +62,9 @@ class IconList extends React.Component {
           <a className="icon-list__link"
             href={this._generateStoreURL(app.id)}
             onClick={this._handleItemClick.bind(this, app.id)}>
-            <img src={src}
+            <img alt={app.displayName}
               className="icon-list__image"
-              alt={app.displayName} />
+              src={src} />
             <span className="tooltip__tooltip">
               <span className="tooltip__inner tooltip__inner--down">
                 {app.displayName}

@@ -113,8 +113,8 @@ describe('PaymentDetails', () => {
           <ul className="payment-details-addresses">
             {[<PaymentDetailsAddress
               acl={acl}
-              addNotification={addNotification}
               addAddress={addAddress}
+              addNotification={addNotification}
               address={{
                 name: 'Geoffrey Spinach',
                 line1: '10 Maple St',
@@ -148,8 +148,8 @@ describe('PaymentDetails', () => {
           <ul className="payment-details-addresses">
             {[<PaymentDetailsAddress
               acl={acl}
-              addNotification={addNotification}
               addAddress={addBillingAddress}
+              addNotification={addNotification}
               address={{
                 name: 'Bruce Dundee',
                 line1: '9 Kangaroo St',

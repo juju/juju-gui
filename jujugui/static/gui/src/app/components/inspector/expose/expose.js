@@ -39,8 +39,8 @@ class InspectorExpose extends React.Component {
     this.props.units.toArray().forEach(function(unit) {
       units.push(
         <InspectorExposeUnit
-          key={unit.id}
           action={this._unitItemAction.bind(this)}
+          key={unit.id}
           unit={unit} />);
     }, this);
     return units;
@@ -105,13 +105,13 @@ class InspectorExpose extends React.Component {
       <div className="inspector-expose">
         <div className="inspector-expose__control">
           <BooleanConfig
+            config={this.props.service.get('exposed')}
             disabled={this.props.acl.isReadOnly()}
             key={toggle.key}
-            ref={toggle.key}
-            option={toggle}
-            onChange={this._handleExposeChange.bind(this)}
             label="Expose application"
-            config={this.props.service.get('exposed')} />
+            onChange={this._handleExposeChange.bind(this)}
+            option={toggle}
+            ref={toggle.key} />
         </div>
         <p className="inspector-expose__warning">
             Exposing this application may make it publicly accessible from

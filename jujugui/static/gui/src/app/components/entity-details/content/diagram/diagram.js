@@ -13,7 +13,7 @@ class EntityContentDiagram extends React.PureComponent {
   */
   _handleExpand() {
     this.props.displayLightbox(
-      <object type="image/svg+xml" data={this.props.diagramUrl} />,
+      <object data={this.props.diagramUrl} type="image/svg+xml" />,
       this.props.title
     );
   }
@@ -26,8 +26,10 @@ class EntityContentDiagram extends React.PureComponent {
   _generateExpandButton() {
     if (this.props.isExpandable) {
       return (
-        <button role="button" className="entity-content__diagram-expand"
-          onClick={this._handleExpand.bind(this)}>
+        <button
+          className="entity-content__diagram-expand"
+          onClick={this._handleExpand.bind(this)}
+          role="button">
           <SvgIcon name="fullscreen-grey_16" size="12" />
         </button>
       );
@@ -42,9 +44,9 @@ class EntityContentDiagram extends React.PureComponent {
     );
     return (
       <div className={classes}>
-        <object type="image/svg+xml" data={this.props.diagramUrl}
+        <object className="entity-content__diagram-image" data={this.props.diagramUrl}
           title={this.props.title}
-          className="entity-content__diagram-image" />
+          type="image/svg+xml" />
         {this._generateExpandButton()}
       </div>
     );

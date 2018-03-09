@@ -46,25 +46,25 @@ describe('DeploymentVPC', function() {
           AWS accounts created since December 2013 have this –&nbsp;
           older accounts may not.&nbsp;
           <a className="link"
-            target="_blank" href={vpcLink}>Default VPC basics.</a>
+            href={vpcLink} target="_blank">Default VPC basics.</a>
         </p>
         <div className="six-col">
           <GenericInput
-            label="VPC ID"
             key="vpcId"
-            ref="vpcId"
+            label="VPC ID"
             multiLine={false}
             onBlur={comp.instance._onInputBlur}
             onKeyUp={comp.instance._onInputKeyUp}
+            ref="vpcId"
             required={false} />
           <label>
             <input
-              type="checkbox"
+              checked={false}
+              disabled={true}
               id="vpcIdForce"
               onChange={comp.instance._onCheckboxChange}
               onClick={comp.instance._onCheckboxClick}
-              checked={false}
-              disabled={true} />
+              type="checkbox" />
             &nbsp;
             Always use this ID
           </label>

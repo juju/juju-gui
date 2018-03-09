@@ -57,13 +57,13 @@ class Constraints extends React.Component {
       series = (
         <select
           className="constraints__select"
-          ref="seriesConstraintSelect"
           defaultValue={props.currentSeries}
           disabled={disabled}
-          key="seriesConstraintSelect"
           id="series-constraint"
+          key="seriesConstraintSelect"
           name="series-constraint"
-          onChange={this._handleValueChanged.bind(this)}>
+          onChange={this._handleValueChanged.bind(this)}
+          ref="seriesConstraintSelect">
           <option key="default" value="">Optionally choose a series</option>
           {seriesOptions}
         </select>
@@ -74,13 +74,13 @@ class Constraints extends React.Component {
     const arch = (
       <select
         className="constraints__select"
-        ref="archConstraintSelect"
-        disabled={disabled}
         defaultValue={constraints.arch}
-        key="archConstraintSelect"
+        disabled={disabled}
         id="arch-constraint"
+        key="archConstraintSelect"
         name="arch-constraint"
-        onChange={this._handleValueChanged.bind(this)}>
+        onChange={this._handleValueChanged.bind(this)}
+        ref="archConstraintSelect">
         <option key="default" value="">
           Optionally choose an architecture
         </option>
@@ -90,62 +90,62 @@ class Constraints extends React.Component {
     );
     const cpu = (
       <div key="cpu-constraint-div">
-        <label htmlFor="cpu-constraint" className="constraints__label">
+        <label className="constraints__label" htmlFor="cpu-constraint">
           CPU (GHZ)
         </label>
-        <input type="text"
-          className="constraints__input"
+        <input className="constraints__input"
           defaultValue={constraints['cpu-power']}
           disabled={disabled}
           id="cpu-constraint"
           name="cpu-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="cpuConstraintInput" />
+          ref="cpuConstraintInput"
+          type="text" />
       </div>
     );
     const cores = (
       <div key="cores-constraint-div">
-        <label htmlFor="cores-constraint" className="constraints__label">
+        <label className="constraints__label" htmlFor="cores-constraint">
           Cores
         </label>
-        <input type="text"
-          className="constraints__input"
+        <input className="constraints__input"
           defaultValue={constraints['cpu-cores']}
           disabled={disabled}
           id="cores-constraint"
           name="cores-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="coresConstraintInput" />
+          ref="coresConstraintInput"
+          type="text" />
       </div>
     );
     const mem = (
       <div key="mem-constraint-div">
-        <label htmlFor="mem-constraint" className="constraints__label">
+        <label className="constraints__label" htmlFor="mem-constraint">
           Ram (MB)
         </label>
-        <input type="text"
-          className="constraints__input"
+        <input className="constraints__input"
           defaultValue={constraints.mem}
           disabled={disabled}
           id="mem-constraint"
           name="mem-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="memConstraintInput" />
+          ref="memConstraintInput"
+          type="text" />
       </div>
     );
     const disk = (
       <div key="disk-constraint-div">
-        <label htmlFor="disk-constraint" className="constraints__label">
+        <label className="constraints__label" htmlFor="disk-constraint">
           Disk (MB)
         </label>
-        <input type="text"
-          className="constraints__input"
+        <input className="constraints__input"
           defaultValue={constraints['root-disk']}
           disabled={disabled}
           id="disk-constraint"
           name="disk-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="diskConstraintInput" />
+          ref="diskConstraintInput"
+          type="text" />
       </div>
     );
     let parts = [arch, cpu, cores, mem, disk];

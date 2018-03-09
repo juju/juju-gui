@@ -20,6 +20,7 @@ describe('Profile', function() {
         acl={options.acl || acl}
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
         bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -30,10 +31,10 @@ describe('Profile', function() {
           url: '/charmstore'
         }}
         controllerAPI={controllerAPI}
-        controllerIsReady={sinon.stub()}
         controllerIP={'1.2.3.4'}
+        controllerIsReady={sinon.stub()}
         controllerUser={options.controllerUser || 'spinach'}
-        addToModel={options.addToModel || sinon.stub()}
+        destroyModel={sinon.stub()}
         facadesExist={true}
         generatePath={options.generatePath || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
@@ -41,11 +42,10 @@ describe('Profile', function() {
         gisf={true}
         initUtils={initUtils}
         payment={options.payment}
+        sendAnalytics={sinon.stub()}
         showPay={options.showPay || false}
         storeUser={options.storeUser || sinon.stub()}
         stripe={options.stripe}
-        destroyModel={sinon.stub()}
-        sendAnalytics={sinon.stub()}
         switchModel={sinon.stub()}
         userInfo={{
           isCurrent: true,
@@ -104,8 +104,8 @@ describe('Profile', function() {
               addNotification={instance.props.addNotification}
               baseURL={instance.props.baseURL}
               changeState={instance.props.changeState}
-              facadesExist={instance.props.facadesExist}
               destroyModel={instance.props.destroyModel}
+              facadesExist={instance.props.facadesExist}
               listModelsWithInfo={instance.props.controllerAPI.listModelsWithInfo}
               switchModel={instance.props.switchModel}
               userInfo={instance.props.userInfo} />

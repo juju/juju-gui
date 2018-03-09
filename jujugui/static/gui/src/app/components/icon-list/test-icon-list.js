@@ -35,9 +35,9 @@ describe('IconList', function() {
           <a className="icon-list__link"
             href="/charm/path"
             onClick={sinon.stub()}>
-            <img src="mysql.svg"
+            <img alt='mysql'
               className="icon-list__image"
-              alt='mysql' />
+              src="mysql.svg" />
             <span className="tooltip__tooltip">
               <span className="tooltip__inner tooltip__inner--down">
                 mysql
@@ -50,9 +50,9 @@ describe('IconList', function() {
           <a className="icon-list__link"
             href="/charm/path"
             onClick={sinon.stub()}>
-            <img src="static/gui/build/app/assets/images/non-sprites/charm_160.svg"
+            <img alt='wordpress'
               className="icon-list__image"
-              alt='wordpress' />
+              src="static/gui/build/app/assets/images/non-sprites/charm_160.svg" />
             <span className="tooltip__tooltip">
               <span className="tooltip__inner tooltip__inner--down">
                 wordpress

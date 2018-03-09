@@ -74,8 +74,8 @@ describe('Profile expanded content', function() {
     return jsTestUtils.shallowRender(
       <ProfileExpandedContent
         acl={options.acl || acl}
-        changeState={options.changeState || sinon.stub()}
         addToModel={options.addToModel || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
         entity={entity}
         generatePath={options.generatePath || sinon.stub()}
         getDiagramURL={options.getDiagramURL || sinon.stub().returns('diagram.svg')}

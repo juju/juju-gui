@@ -40,8 +40,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     const tags = output.props.children[1].props.children[1].props.children;
@@ -112,9 +112,9 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
           <GenericButton
-            extraClasses="list-block__list--item-deploy-link"
             action={deploy.props.action}
             disabled={false}
+            extraClasses="list-block__list--item-deploy-link"
             type="inline-neutral">
             <SvgIcon
               name="add-icon"
@@ -133,8 +133,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     const owner = output.props.children[4].props.children.props.children[1];
@@ -177,9 +177,9 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
           <GenericButton
-            extraClasses="list-block__list--item-deploy-link"
             action={deploy.props.action}
             disabled={false}
+            extraClasses="list-block__list--item-deploy-link"
             type="inline-neutral">
             <SvgIcon
               name="add-icon"
@@ -208,8 +208,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     const owner = output.props.children[4].props.children.props.children[1];
@@ -252,9 +252,9 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
           <GenericButton
-            extraClasses="list-block__list--item-deploy-link"
             action={deploy.props.action}
             disabled={false}
+            extraClasses="list-block__list--item-deploy-link"
             type="inline-neutral">
             <SvgIcon
               name="add-icon"
@@ -272,8 +272,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     output.props.children[0].props.onClick({preventDefault: preventDefault});
@@ -292,8 +292,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     const series = output.props.children[2].props.children.props.children;
@@ -321,8 +321,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     output.props.children[1].props.children[1].props.children[0].props.children
@@ -348,8 +348,8 @@ describe('SearchResultsItem', function() {
     const output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={sinon.stub()}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     output.props.children[4].props.children.props.children[1]
@@ -366,8 +366,8 @@ describe('SearchResultsItem', function() {
     const output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={sinon.stub()}
         addToModel={sinon.stub()}
+        changeState={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
 
@@ -383,8 +383,8 @@ describe('SearchResultsItem', function() {
     var output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={sinon.stub()}
         addToModel={sinon.stub()}
+        changeState={sinon.stub()}
         generatePath={generatePath}
         item={item} />);
 
@@ -401,8 +401,8 @@ describe('SearchResultsItem', function() {
     const output = jsTestUtils.shallowRender(
       <SearchResultsItem
         acl={acl}
-        changeState={changeState}
         addToModel={addToModel}
+        changeState={changeState}
         generatePath={generatePath}
         item={item} />);
     output.props.children[5].props.children.props.action();

@@ -59,19 +59,19 @@ describe('Configuration', function() {
     const output = renderer.getRenderOutput();
     expect(output.props.children[0].props.children[4][0]).toEqualJSX(
       <StringConfig
+        config={option1key}
         key="Config-option1"
-        ref="Config-option1"
         onChange={instance._handleOnChange}
         option={{
           description: 'description 1',
           key: 'option1',
           type: 'string'
         }}
-        config={option1key} />);
+        ref="Config-option1" />);
     expect(output.props.children[0].props.children[4][1]).toEqualJSX(
       <BooleanConfig
+        config={option2key}
         key="Config-option2"
-        ref="Config-option2"
         label="option2:"
         onChange={instance._handleOnChange}
         option={{
@@ -79,7 +79,7 @@ describe('Configuration', function() {
           key: 'option2',
           type: 'boolean'
         }}
-        config={option2key} />);
+        ref="Config-option2" />);
   });
 
   it('displays the save button when there are changes', function() {
@@ -918,19 +918,19 @@ describe('Configuration', function() {
     output = shallowRenderer.getRenderOutput();
     expect(output.props.children[0].props.children[4][0]).toEqualJSX(
       <StringConfig
+        config="my apache2"
         key="Config-option1"
-        ref="Config-option1"
         onChange={instance._handleOnChange}
         option={{
           description: 'description 1',
           key: 'option1',
           type: 'string'
         }}
-        config="my apache2" />);
+        ref="Config-option1" />);
     expect(output.props.children[0].props.children[4][1]).toEqualJSX(
       <BooleanConfig
+        config={false}
         key="Config-option2"
-        ref="Config-option2"
         label="option2:"
         onChange={instance._handleOnChange}
         option={{
@@ -938,7 +938,7 @@ describe('Configuration', function() {
           key: 'option2',
           type: 'boolean'
         }}
-        config={false} />);
+        ref="Config-option2" />);
   });
 
   it('does not try to apply the config for the wrong charm', function() {
@@ -1060,15 +1060,15 @@ describe('Configuration', function() {
       <div className="inspector-config">
         <div className="inspector-config__fields">
           <StringConfig
+            config="abc123$"
             disabled={true}
-            ref="ServiceName"
             onChange={instance._handleOnChange}
             option={{
               key: 'Application name',
               description: 'Specify a custom application name. The application'
                 + ' name cannot be changed once it has been deployed.'
             }}
-            config="abc123$" />
+            ref="ServiceName" />
           {undefined}
           <form ref="file-form">
             <input
@@ -1083,28 +1083,28 @@ describe('Configuration', function() {
           </div>
           {[
             <StringConfig
+              config={option1key}
               disabled={true}
               key="Config-option1"
-              ref="Config-option1"
               onChange={instance._handleOnChange}
               option={{
                 description: 'description 1',
                 key: 'option1',
                 type: 'string'
               }}
-              config={option1key} />,
+              ref="Config-option1" />,
             <BooleanConfig
+              config={option2key}
               disabled={true}
               key="Config-option2"
-              ref="Config-option2"
+              label="option2:"
               onChange={instance._handleOnChange}
               option={{
                 description: 'description 2',
                 key: 'option2',
                 type: 'boolean'
               }}
-              label="option2:"
-              config={option2key} />
+              ref="Config-option2" />
           ]}
         </div>
         <div className={

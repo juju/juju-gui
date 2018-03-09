@@ -37,17 +37,17 @@ describe('EntityContentRelations', function() {
         </h3>
         <ul className="section__list" ref="list">
           <li className="link section__list-item"
-            role="button"
-            tabIndex="0"
+            key="http"
             onClick={output.props.children[1].props.children[0].props.onClick}
-            key="http">
+            role="button"
+            tabIndex="0">
             {'http'}: {'http'}
           </li>
           <li className="link section__list-item"
-            role="button"
-            tabIndex="0"
+            key="cache"
             onClick={output.props.children[1].props.children[1].props.onClick}
-            key="cache">
+            role="button"
+            tabIndex="0">
             {'cache'}: {'cache'}
           </li>
         </ul>
@@ -115,24 +115,24 @@ describe('EntityContentRelations', function() {
           </h3>
           <ul className="section__list" ref="list">
             <li className="link section__list-item"
-              role="button"
-              tabIndex="0"
+              key="http"
               onClick={output.props.children[1].props.children[0].props.onClick}
-              key="http">
+              role="button"
+              tabIndex="0">
               {'http'}: {'http'}
             </li>
             <li className="link section__list-item"
-              role="button"
-              tabIndex="0"
+              key="http2"
               onClick={output.props.children[1].props.children[1].props.onClick}
-              key="http2">
+              role="button"
+              tabIndex="0">
               {'http2'}: {'http2'}
             </li>
             <li className="link section__list-item hidden"
-              role="button"
-              tabIndex="0"
+              key="cache"
               onClick={output.props.children[1].props.children[2].props.onClick}
-              key="cache">
+              role="button"
+              tabIndex="0">
               {'cache'}: {'cache'}
             </li>
             <li className="section__list-item">
@@ -172,24 +172,24 @@ describe('EntityContentRelations', function() {
           </h3>
           <ul className="section__list" ref="list">
             <li className="link section__list-item"
-              role="button"
-              tabIndex="0"
+              key="http"
               onClick={output.props.children[1].props.children[0].props.onClick}
-              key="http">
+              role="button"
+              tabIndex="0">
               {'http'}: {'http'}
             </li>
             <li className="link section__list-item"
-              role="button"
-              tabIndex="0"
+              key="http2"
               onClick={output.props.children[1].props.children[1].props.onClick}
-              key="http2">
+              role="button"
+              tabIndex="0">
               {'http2'}: {'http2'}
             </li>
             <li className="link section__list-item"
-              role="button"
-              tabIndex="0"
+              key="cache"
               onClick={output.props.children[1].props.children[2].props.onClick}
-              key="cache">
+              role="button"
+              tabIndex="0">
               {'cache'}: {'cache'}
             </li>
             <li className="section__list-item">

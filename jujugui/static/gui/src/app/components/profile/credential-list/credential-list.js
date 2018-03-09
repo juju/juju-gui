@@ -238,7 +238,6 @@ class ProfileCredentialList extends React.Component {
     const credentials = this.state.credentialMap;
     return (
       <CredentialAddEdit
-        key="deployment-credential-add"
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         controllerAPI={shapeup.addReshape({
@@ -250,6 +249,7 @@ class ProfileCredentialList extends React.Component {
         credentials={
           credentials ? Array.from(credentials).map(credential => credential[0]) : []}
         initUtils={this.props.initUtils}
+        key="deployment-credential-add"
         onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
         onCredentialUpdated={
           overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}

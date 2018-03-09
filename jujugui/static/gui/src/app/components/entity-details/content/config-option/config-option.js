@@ -26,8 +26,8 @@ class EntityContentConfigOption extends React.Component {
     var option = this.props.option;
     return (
       <div className="entity-content__config-option">
-        <dt id={'charm-config-' + option.name}
-          className="entity-content__config-name">
+        <dt className="entity-content__config-name"
+          id={'charm-config-' + option.name}>
           {option.name}
         </dt>
         <dd className="entity-content__config-description">

@@ -16,9 +16,9 @@ describe('Help', () => {
       changeState={sinon.stub()}
       displayShortcutsModal={sinon.stub()}
       gisf={true}
-      user={{user: true}}
+      sendGetRequest={sinon.stub()}
       staticURL=""
-      sendGetRequest={sinon.stub()} />, true);
+      user={{user: true}} />, true);
     const output = renderer.getRenderOutput();
     expect(
       output
@@ -42,10 +42,10 @@ describe('Help', () => {
                     name="search_16"
                     size="16" />
                 </button>
-                <input ref={sinon.stub()}
-                  className="header-search__input"
+                <input className="header-search__input"
                   name="text"
                   placeholder="Search the docs"
+                  ref={sinon.stub()}
                   type="search" />
               </form>
             </div>
@@ -158,9 +158,9 @@ describe('Help', () => {
       changeState={sinon.stub()}
       displayShortcutsModal={sinon.stub()}
       gisf={false}
-      user={{user: true}}
+      sendGetRequest={sinon.stub()}
       staticURL=""
-      sendGetRequest={sinon.stub()} />, true);
+      user={{user: true}} />, true);
     const output = renderer.getRenderOutput();
     expect(
       output
@@ -184,10 +184,10 @@ describe('Help', () => {
                     name="search_16"
                     size="16" />
                 </button>
-                <input ref={sinon.stub()}
-                  className="header-search__input"
+                <input className="header-search__input"
                   name="text"
                   placeholder="Search the docs"
+                  ref={sinon.stub()}
                   type="search" />
               </form>
             </div>

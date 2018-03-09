@@ -15,8 +15,8 @@ const UserMenu = props => {
   return (
     <ButtonDropdown
       classes={['user-menu']}
-      icon={showLogin ? props.USSOLoginLink : 'user_16'}
       disableDropdown={showLogin}
+      icon={showLogin ? props.USSOLoginLink : 'user_16'}
       listItems={[{
         action: props.navigateUserProfile,
         label: 'Profile'

@@ -12,11 +12,11 @@ describe('SvgIcon', function() {
   it('can render an icon', function() {
     var output = jsTestUtils.shallowRender(
       <SvgIcon
-        size="24"
-        name="icon-name" />);
+        name="icon-name"
+        size="24" />);
     assert.deepEqual(output,
-      <svg className="svg-icon" viewBox='0 0 24 24'
-        style={{width: '24px', height: '24px'}}>
+      <svg className="svg-icon" style={{width: '24px', height: '24px'}}
+        viewBox='0 0 24 24'>
         <use xlinkHref="#icon-name" />
       </svg>);
   });
@@ -24,12 +24,12 @@ describe('SvgIcon', function() {
   it('can set a width and height', function() {
     var output = jsTestUtils.shallowRender(
       <SvgIcon
-        width="24"
         height="44"
-        name="icon-name" />);
+        name="icon-name"
+        width="24" />);
     assert.deepEqual(output,
-      <svg className="svg-icon" viewBox='0 0 24 44'
-        style={{width: '24px', height: '44px'}}>
+      <svg className="svg-icon" style={{width: '24px', height: '44px'}}
+        viewBox='0 0 24 44'>
         <use xlinkHref="#icon-name" />
       </svg>);
   });
@@ -39,8 +39,8 @@ describe('SvgIcon', function() {
       <SvgIcon
         name="icon-name" />);
     assert.deepEqual(output,
-      <svg className="svg-icon" viewBox='0 0 16 16'
-        style={{width: '16px', height: '16px'}}>
+      <svg className="svg-icon" style={{width: '16px', height: '16px'}}
+        viewBox='0 0 16 16'>
         <use xlinkHref="#icon-name" />
       </svg>);
   });
@@ -48,12 +48,12 @@ describe('SvgIcon', function() {
   it('can set a class', function() {
     var output = jsTestUtils.shallowRender(
       <SvgIcon
-        size="24"
         className="extra-class"
-        name="icon-name" />);
+        name="icon-name"
+        size="24" />);
     assert.deepEqual(output,
-      <svg className="svg-icon extra-class" viewBox='0 0 24 24'
-        style={{width: '24px', height: '24px'}}>
+      <svg className="svg-icon extra-class" style={{width: '24px', height: '24px'}}
+        viewBox='0 0 24 24'>
         <use xlinkHref="#icon-name" />
       </svg>);
   });

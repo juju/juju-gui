@@ -79,8 +79,8 @@ describe('PanelComponent', function() {
     var clickAction = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <Panel
-        instanceName={instanceName}
         clickAction={clickAction}
+        instanceName={instanceName}
         visible={true} />, true);
     var instance = renderer.getMountedInstance();
     instance._handleClick();
@@ -93,8 +93,8 @@ describe('PanelComponent', function() {
     var stopPropagation = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <Panel
-        instanceName={instanceName}
         clickAction={clickAction}
+        instanceName={instanceName}
         visible={true} />, true);
     var output = renderer.getRenderOutput();
     output.props.children.props.onClick({stopPropagation: stopPropagation});
@@ -118,8 +118,8 @@ describe('PanelComponent', function() {
     var focus = sinon.stub();
     var renderer = jsTestUtils.shallowRender(
       <Panel
-        instanceName="my-panel"
         focus={false}
+        instanceName="my-panel"
         visible={true} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {content: {focus: focus}};

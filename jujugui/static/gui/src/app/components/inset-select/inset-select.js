@@ -105,8 +105,8 @@ class InsetSelect extends React.Component {
           disabled={this.props.disabled}
           id={id}
           onChange={this._callOnChange.bind(this)}
-          required={this.props.required}
-          ref="field">
+          ref="field"
+          required={this.props.required}>
           {this._generateOptions()}
         </select>
       </div>
