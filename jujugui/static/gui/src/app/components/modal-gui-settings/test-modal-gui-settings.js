@@ -37,44 +37,44 @@ describe('ModalGUISettings', function() {
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span className="close" tabIndex="0" role="button"
-            onClick={instance.props.closeModal}>
+          <span className="close" onClick={instance.props.closeModal} role="button"
+            tabIndex="0">
             <SvgIcon name="close_16" size="16" />
           </span>
         </div>
         <div className="content">
           <p>
             <label htmlFor="disable-cookie">
-              <input type="checkbox" name="disable-cookie"
-                id="disable-cookie"
+              <input defaultChecked={false} id="disable-cookie"
+                name="disable-cookie"
                 onChange={handleChange}
-                defaultChecked={false} />&nbsp;
+                type="checkbox" />&nbsp;
               Disable the EU cookie warning.
             </label>
           </p>
           <p>
             <label htmlFor="force-containers">
-              <input type="checkbox" name="force-containers"
-                id="force-containers"
+              <input defaultChecked={false} id="force-containers"
+                name="force-containers"
                 onChange={handleChange}
-                defaultChecked={false} />&nbsp;
+                type="checkbox" />&nbsp;
               Enable container control for this provider.
             </label>
           </p>
           <p>
             <label htmlFor="disable-auto-place">
-              <input type="checkbox" name="disable-auto-place"
-                id="disable-auto-place"
+              <input defaultChecked={false} id="disable-auto-place"
+                name="disable-auto-place"
                 onChange={handleChange}
-                defaultChecked={false} />&nbsp;
+                type="checkbox" />&nbsp;
               Default to not automatically place units on commit.
             </label>
           </p>
           <p>
             <label htmlFor="jujushell-url">
-              <input type="text" name="jujushell-url"
-                id="jujushell-url"
+              <input id="jujushell-url" name="jujushell-url"
                 onChange={handleChange}
+                type="text"
                 value="" />&nbsp;
               DNS name for the Juju Shell.
             </label>
@@ -84,9 +84,9 @@ describe('ModalGUISettings', function() {
               NOTE: You will need to reload for changes to take effect.
             </small>
           </p>
-          <input type="button" className="button--positive"
+          <input className="button--positive" id="save-settings"
             name="save-settings" onClick={handleSave}
-            id="save-settings" value="Save" />
+            type="button" value="Save" />
         </div>
       </div>
     );

@@ -215,32 +215,34 @@ class HeaderSearch extends React.Component {
     return (
       <div className={this._generateClasses()} ref="headerSearchContainer">
         <form className="header-search__form">
-          <button type="submit"
+          <button className="header-search__submit"
             onClick={this._handleSubmit.bind(this)}
-            className="header-search__submit">
+            type="submit">
             <SvgIcon name="search_16"
               size="16" />
           </button>
-          <input type="search" name="query"
-            className="header-search__input"
-            placeholder="Search the store"
-            value={this.state.query}
+          <input className="header-search__input" name="query"
             onChange={this._handleQueryChange.bind(this)}
             onFocus={this._handleSearchFocus.bind(this)}
+            placeholder="Search the store"
+            ref="searchInput"
             style={this.state.inputStyles}
-            ref="searchInput" />
+            type="search"
+            value={this.state.query} />
         </form>
-        <span tabIndex="0" role="button"
+        <span
+          className="header-search__search--mobile"
           onClick={this._handleStoreClick.bind(this)}
-          className="header-search__search--mobile">
+          role="button"
+          tabIndex="0">
           <span className="header-search__store-icon">
             <SvgIcon name="search_16"
               size="16" />
           </span>
         </span>
-        <span tabIndex="0" role="button"
-          className={this._closeClasses()}
-          onClick={this._handleClose.bind(this)}>
+        <span className={this._closeClasses()} onClick={this._handleClose.bind(this)}
+          role="button"
+          tabIndex="0">
           <SvgIcon name="close_16"
             size="16" />
         </span>

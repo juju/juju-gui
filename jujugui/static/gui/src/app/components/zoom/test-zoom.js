@@ -24,16 +24,16 @@ describe('Zoom', function() {
           onClick={instance._zoomIn}
           role="button"
           tabIndex="0">
-          <SvgIcon name="add_16"
-            className="zoom-in__icon"
+          <SvgIcon className="zoom-in__icon"
+            name="add_16"
             size="12" />
         </li>
         <li className="zoom__out link"
           onClick={instance._zoomOut}
           role="button"
           tabIndex="0">
-          <SvgIcon name="minus_16"
-            className="zoom-out__icon"
+          <SvgIcon className="zoom-out__icon"
+            name="minus_16"
             size="12" />
         </li>
       </ul>);

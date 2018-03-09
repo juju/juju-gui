@@ -14,10 +14,10 @@ describe('EnvSwitcher', function() {
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
       environmentName={options.environmentName || 'MyEnv'}
+      humanizeTimestamp={options.humanizeTimestamp || sinon.stub()}
       listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
       modelCommitted={
         options.modelCommitted === undefined ? false : options.modelCommitted}
-      humanizeTimestamp={options.humanizeTimestamp || sinon.stub()}
       setModelName={options.setModelName || sinon.stub()}
       showProfile={options.showProfile || sinon.stub()}
       switchModel={options.switchModel || sinon.stub()} />
@@ -26,10 +26,10 @@ describe('EnvSwitcher', function() {
   it('renders the closed switcher component', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="env-switcher"
-        role="navigation"
-        aria-label="Model switcher"
+      <div aria-label="Model switcher"
+        className="env-switcher"
         onClick={null}
+        role="navigation"
         tabIndex="0">
         <div className="env-switcher__toggle editable">
           <div>
@@ -44,16 +44,16 @@ describe('EnvSwitcher', function() {
               It must not start or end with a hyphen.
             </div>
           </div>
-          <div className="env-switcher__chevron"
-            onClick={wrapper.find('.env-switcher__chevron').prop('onClick')}
-            onKeyPress={wrapper.find('.env-switcher__chevron').prop('onKeyPress')}
-            id="environmentSwitcherToggle"
-            role="button"
-            tabIndex="0"
+          <div aria-controls="environmentSwitcherMenu"
+            aria-expanded="false"
             aria-haspopup="true"
             aria-owns="environmentSwitcherMenu"
-            aria-controls="environmentSwitcherMenu"
-            aria-expanded="false">
+            className="env-switcher__chevron"
+            id="environmentSwitcherToggle"
+            onClick={wrapper.find('.env-switcher__chevron').prop('onClick')}
+            onKeyPress={wrapper.find('.env-switcher__chevron').prop('onKeyPress')}
+            role="button"
+            tabIndex="0">
             <SvgIcon
               name="chevron_down_16"
               size="16" />

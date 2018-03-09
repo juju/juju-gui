@@ -176,8 +176,8 @@ describe('MachineViewMachineUnit', function() {
     const output = jsTestUtils.shallowRender(
       <MachineViewMachineUnit.DecoratedComponent
         acl={acl}
-        connectDragSource={jsTestUtils.connectDragSource}
         canDrag={true}
+        connectDragSource={jsTestUtils.connectDragSource}
         isDragging={false}
         machineType="container"
         removeUnit={removeUnit}

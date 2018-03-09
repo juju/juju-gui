@@ -198,32 +198,32 @@ class GenericInput extends React.Component {
         {'generic-input__multiline-field--disabled': disabled});
       return (
         <div
+          aria-invalid={errors}
           className={classes}
           contentEditable={!disabled}
-          id={id}
           dangerouslySetInnerHTML={{__html: this.props.value}}
-          onChange={this._handleDIVOnchange.bind(this)}
-          onKeyUp={this._keyUpHandler.bind(this)}
-          onFocus={this._focusHandler.bind(this)}
+          id={id}
           onBlur={this._blurHandler.bind(this)}
-          aria-invalid={errors}
+          onChange={this._handleDIVOnchange.bind(this)}
+          onFocus={this._focusHandler.bind(this)}
+          onKeyUp={this._keyUpHandler.bind(this)}
           ref="field">
         </div>);
     }
     return (
-      <input className="generic-input__field"
+      <input aria-invalid={errors}
         autoComplete={this.props.autocomplete ? 'on' : 'off'}
+        className="generic-input__field"
         defaultValue={this.props.value}
         disabled={disabled}
         id={id}
-        placeholder={this.props.placeholder}
-        required={this.props.required}
-        onKeyUp={this._keyUpHandler.bind(this)}
-        onFocus={this._focusHandler.bind(this)}
         onBlur={this._blurHandler.bind(this)}
         onChange={this._callOnChange.bind(this)}
-        aria-invalid={errors}
+        onFocus={this._focusHandler.bind(this)}
+        onKeyUp={this._keyUpHandler.bind(this)}
+        placeholder={this.props.placeholder}
         ref="field"
+        required={this.props.required}
         type={this.props.type} />);
   }
 

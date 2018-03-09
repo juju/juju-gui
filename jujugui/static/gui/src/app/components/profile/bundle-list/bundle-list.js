@@ -191,11 +191,11 @@ class ProfileBundleList extends React.Component {
           expandedContent: (
             <ProfileExpandedContent
               acl={this.props.acl}
+              addToModel={this.props.addToModel}
               changeState={this.props.changeState}
               entity={bundle}
               generatePath={this.props.generatePath}
               getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-              addToModel={this.props.addToModel}
               getModelName={this.props.getModelName}
               topRow={(
                 <div>

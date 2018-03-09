@@ -22,24 +22,24 @@ describe('InspectorChangeVersionItem', function() {
     const output = jsTestUtils.shallowRender(
       <InspectorChangeVersionItem
         acl={acl}
-        key="cs:django-5"
+        buttonAction={buttonAction}
         downgrade={false}
         itemAction={itemAction}
-        buttonAction={buttonAction}
+        key="cs:django-5"
         url={url} />);
     assert.deepEqual(output,
       <li className="inspector-current-version__item"
-        role="button" tabIndex="0"
-        onClick={itemAction}>
-        <span title="django/xenial/5"
-          className="inspector-current-version__title">
+        onClick={itemAction} role="button"
+        tabIndex="0">
+        <span className="inspector-current-version__title"
+          title="django/xenial/5">
           version {5}
         </span>
         <GenericButton
+          action={buttonAction}
           disabled={false}
           key="django/xenial/5"
-          type="inline-neutral"
-          action={buttonAction}>
+          type="inline-neutral">
           Upgrade
         </GenericButton>
       </li>);
@@ -52,24 +52,24 @@ describe('InspectorChangeVersionItem', function() {
     const output = jsTestUtils.shallowRender(
       <InspectorChangeVersionItem
         acl={acl}
-        key="django/trusty/42"
+        buttonAction={buttonAction}
         downgrade={true}
         itemAction={itemAction}
-        buttonAction={buttonAction}
+        key="django/trusty/42"
         url={url} />);
     assert.deepEqual(output,
       <li className="inspector-current-version__item"
-        role="button" tabIndex="0"
-        onClick={itemAction}>
-        <span title="django/trusty/42"
-          className="inspector-current-version__title">
+        onClick={itemAction} role="button"
+        tabIndex="0">
+        <span className="inspector-current-version__title"
+          title="django/trusty/42">
           version {42}
         </span>
         <GenericButton
+          action={buttonAction}
           disabled={false}
           key="django/trusty/42"
-          type="inline-neutral"
-          action={buttonAction}>
+          type="inline-neutral">
           Downgrade
         </GenericButton>
       </li>);
@@ -83,17 +83,17 @@ describe('InspectorChangeVersionItem', function() {
     const output = jsTestUtils.shallowRender(
       <InspectorChangeVersionItem
         acl={acl}
-        key="django/47"
+        buttonAction={buttonAction}
         downgrade={false}
         itemAction={itemAction}
-        buttonAction={buttonAction}
+        key="django/47"
         url={url} />);
     const expected = (
       <GenericButton
+        action={buttonAction}
         disabled={true}
         key="django/47"
-        type="inline-neutral"
-        action={buttonAction}>
+        type="inline-neutral">
         Upgrade
       </GenericButton>);
     assert.deepEqual(output.props.children[1], expected);

@@ -80,7 +80,7 @@ class OverviewAction extends React.Component {
     return (
       <li className={this.baseClass}
         onClick={this.props.action}
-        title={this.props.title} tabIndex="0" role="button">
+        role="button" tabIndex="0" title={this.props.title}>
         {this._generateIcon()}
         <span className={titleClass}>
           {this.props.title}

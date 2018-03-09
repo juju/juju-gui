@@ -301,8 +301,8 @@ describe('Status', function() {
                     'status-view__traffic-light--ok'}
                   onClick={sinon.stub()}
                   role="button"
-                  title="Everything is OK"
-                  tabIndex="0">
+                  tabIndex="0"
+                  title="Everything is OK">
                 </span>
               </h2>
             </div>
@@ -417,8 +417,8 @@ describe('Status', function() {
                     'status-view__traffic-light--ok'}
                   onClick={sinon.stub()}
                   role="button"
-                  title="Everything is OK"
-                  tabIndex="0">
+                  tabIndex="0"
+                  title="Everything is OK">
                 </span>
               </h2>
             </div>
@@ -1165,8 +1165,8 @@ describe('Status', function() {
                 'status-view__traffic-light--error'}
               onClick={sinon.stub()}
               role="button"
-              title="Items are in error"
-              tabIndex="0">
+              tabIndex="0"
+              title="Items are in error">
             </span>
           </h2>
         </div>

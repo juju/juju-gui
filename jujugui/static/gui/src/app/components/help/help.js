@@ -122,8 +122,8 @@ ${this.props.youtubeAPIKey}`,
     if (this.state.tour) {
       return (
         <Tour
-          endTour={this._endTour.bind(this)}
           close={this._handleClose.bind(this)}
+          endTour={this._endTour.bind(this)}
           staticURL={this.props.staticURL} />
       );
     }
@@ -138,18 +138,18 @@ ${this.props.youtubeAPIKey}`,
         <header className="help__header clearfix">
           <h3 className="help__header-title">Help</h3>
           <div className="help__header-search header-search">
-            <form className="header-search__form"
-              target="_blank"
-              action="https://jujucharms.com/docs/search/">
-              <button type="submit"
-                className="header-search__submit">
+            <form action="https://jujucharms.com/docs/search/"
+              className="header-search__form"
+              target="_blank">
+              <button className="header-search__submit"
+                type="submit">
                 <SvgIcon name="search_16"
                   size="16" />
               </button>
-              <input type="search" name="text"
-                className="header-search__input"
+              <input className="header-search__input" name="text"
                 placeholder="Search the docs"
-                ref={input => {this.searchDocs = input;}} />
+                ref={input => {this.searchDocs = input;}}
+                type="search" />
             </form>
           </div>
         </header>
@@ -169,23 +169,25 @@ ${this.props.youtubeAPIKey}`,
             <p>Learn how to operate production-ready clusters.</p>
             <p>
               <a
+                className="link charm-row"
                 href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
-                target="_blank" className="link charm-row">
+                target="_blank">
                 <img
+                  alt="Kubernetes logo"
                   src={'https://api.jujucharms.com/charmstore/v5/~containers/' +
                   'kubernetes-master-55/icon.svg'}
-                  alt="Kubernetes logo"
                   width="24" />
                 Kubernetes tutorial</a>
             </p>
             <p>
               <a
+                className="link charm-row"
                 href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
-                target="_blank" className="link charm-row">
+                target="_blank">
                 <img
+                  alt="Hadoop Spark logo"
                   src={'https://api.jujucharms.com/charmstore/v5/xenial/' +
                   'hadoop-client-8/icon.svg'}
-                  alt="Hadoop Spark logo"
                   width="24" />
                 Hadoop Spark tutorial</a>
             </p>
@@ -195,11 +197,11 @@ ${this.props.youtubeAPIKey}`,
             <p>
               <img
                 className="help__tour-image"
-                width="201"
                 src={`${basePath}/help@1x.png`}
-                srcSet={`${basePath}/help@2x.png 2x`} />
-              <span role="button" className="link"
-                onClick={this._startTour.bind(this)}>
+                srcSet={`${basePath}/help@2x.png 2x`}
+                width="201" />
+              <span className="link" onClick={this._startTour.bind(this)}
+                role="button">
                 Learn how to use the canvas.
               </span>
             </p>
@@ -208,8 +210,8 @@ ${this.props.youtubeAPIKey}`,
         <footer className="help__footer clearfix">
           <div className="four-col">
             <p>
-              <span role="button" className="link"
-                onClick={this._handleShortcutsLink.bind(this)}>
+              <span className="link" onClick={this._handleShortcutsLink.bind(this)}
+                role="button">
                 Keyboard shortcuts
               </span>
             </p>
@@ -229,8 +231,8 @@ ${this.props.youtubeAPIKey}`,
             <p>IRC channels on Freenode</p>
             <p>
               <a
-                href="http://webchat.freenode.net/?channels=%23juju"
                 className="link external"
+                href="http://webchat.freenode.net/?channels=%23juju"
                 target="_blank">
                 #juju
               </a>
@@ -238,8 +240,8 @@ ${this.props.youtubeAPIKey}`,
             <p>Mailing lists</p>
             <p>
               <a
-                href="https://lists.ubuntu.com/mailman/listinfo/juju"
                 className="link external"
+                href="https://lists.ubuntu.com/mailman/listinfo/juju"
                 target="_blank">
                 The Juju project
               </a>

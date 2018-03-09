@@ -45,12 +45,12 @@ describe('EntityDetails', function() {
     const shallowRenderer = jsTestUtils.shallowRender(
       <EntityDetails
         acl={acl}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         clearLightbox={clearLightbox}
         deployService={deployService}
         displayLightbox={displayLightbox}
-        importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={getDiagramURL}
@@ -58,14 +58,14 @@ describe('EntityDetails', function() {
         getFile={getFile}
         getModelName={getModelName}
         hash="readme"
-        listPlansForCharm={sinon.stub()}
-        scrollPosition={100}
-        renderMarkdown={renderMarkdown}
         id={id}
-        pluralize={pluralize}
-        addNotification={addNotification}
+        importBundleYAML={importBundleYAML}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
+        scrollPosition={100}
         sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={showTerms}
@@ -86,14 +86,14 @@ describe('EntityDetails', function() {
         <div>
           <EntityHeader
             acl={acl}
+            addNotification={addNotification}
+            changeState={changeState}
+            deployService={deployService}
             entityModel={mockEntity}
-            importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             getModelName={getModelName}
             hasPlans={false}
-            changeState={changeState}
-            addNotification={addNotification}
-            deployService={deployService}
+            importBundleYAML={importBundleYAML}
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
@@ -109,8 +109,8 @@ describe('EntityDetails', function() {
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
-            hasPlans={false}
             hash="readme"
+            hasPlans={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
@@ -141,18 +141,18 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com/"
         changeState={changeState}
         deployService={deployService}
-        importBundleYAML={importBundleYAML}
         flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={sinon.stub()}
+        id={id}
+        importBundleYAML={importBundleYAML}
         listPlansForCharm={sinon.spy()}
         makeEntityModel={sinon.spy()}
-        renderMarkdown={renderMarkdown}
-        id={id}
         pluralize={pluralize}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         sendAnalytics={sinon.stub()}
@@ -203,27 +203,27 @@ describe('EntityDetails', function() {
     const shallowRenderer = jsTestUtils.shallowRender(
       <EntityDetails
         acl={acl}
+        addNotification={addNotification}
         apiUrl={apiUrl}
         changeState={changeState}
         clearLightbox={clearLightbox}
         deployService={deployService}
         displayLightbox={displayLightbox}
-        importBundleYAML={importBundleYAML}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
+        getDiagramURL={getDiagramURL}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={getModelName}
-        scrollPosition={100}
-        renderMarkdown={renderMarkdown}
-        getDiagramURL={getDiagramURL}
         hash="readme"
-        listPlansForCharm={sinon.stub()}
         id={id}
-        pluralize={pluralize}
-        addNotification={addNotification}
+        importBundleYAML={importBundleYAML}
+        listPlansForCharm={sinon.stub()}
         makeEntityModel={makeEntityModel}
+        pluralize={pluralize}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
+        scrollPosition={100}
         sendAnalytics={sinon.stub()}
         setPageTitle={sinon.stub()}
         showTerms={sinon.stub()}
@@ -244,14 +244,14 @@ describe('EntityDetails', function() {
         <div>
           <EntityHeader
             acl={acl}
+            addNotification={addNotification}
+            changeState={changeState}
+            deployService={deployService}
             entityModel={mockEntity}
-            importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             getModelName={getModelName}
             hasPlans={false}
-            changeState={changeState}
-            deployService={deployService}
-            addNotification={addNotification}
+            importBundleYAML={importBundleYAML}
             plans={null}
             pluralize={pluralize}
             scrollPosition={100}
@@ -266,8 +266,8 @@ describe('EntityDetails', function() {
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
-            hasPlans={false}
             hash="readme"
+            hasPlans={false}
             plans={null}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
@@ -298,18 +298,18 @@ describe('EntityDetails', function() {
         apiUrl="http://example.com/"
         changeState={changeState}
         deployService={deployService}
-        importBundleYAML={importBundleYAML}
         flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
         getEntity={getEntity}
         getFile={getFile}
         getModelName={sinon.stub()}
+        id={id}
+        importBundleYAML={importBundleYAML}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
-        renderMarkdown={renderMarkdown}
-        id={id}
         pluralize={pluralize}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()}
         scrollPosition={0}
         sendAnalytics={sinon.stub()}
@@ -331,7 +331,6 @@ describe('EntityDetails', function() {
         acl={acl}
         addNotification={sinon.stub()}
         apiUrl="http://example.com/"
-        id="test"
         changeState={sinon.spy()}
         deployService={sinon.spy()}
         flags={{}}
@@ -340,6 +339,7 @@ describe('EntityDetails', function() {
         getEntity={sinon.spy()}
         getFile={sinon.stub()}
         getModelName={sinon.stub()}
+        id="test"
         importBundleYAML={sinon.stub()}
         listPlansForCharm={sinon.stub()}
         makeEntityModel={sinon.spy()}
@@ -424,14 +424,14 @@ describe('EntityDetails', function() {
         <div>
           <EntityHeader
             acl={acl}
+            addNotification={addNotification}
+            changeState={changeState}
+            deployService={deployService}
             entityModel={mockEntity}
-            importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             getModelName={getModelName}
             hasPlans={true}
-            changeState={changeState}
-            addNotification={addNotification}
-            deployService={deployService}
+            importBundleYAML={importBundleYAML}
             plans={plans}
             pluralize={pluralize}
             scrollPosition={100}
@@ -447,8 +447,8 @@ describe('EntityDetails', function() {
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
-            hasPlans={true}
             hash="readme"
+            hasPlans={true}
             plans={plans}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}
@@ -528,14 +528,14 @@ describe('EntityDetails', function() {
         <div>
           <EntityHeader
             acl={acl}
+            addNotification={addNotification}
+            changeState={changeState}
+            deployService={deployService}
             entityModel={mockEntity}
-            importBundleYAML={importBundleYAML}
             getBundleYAML={getBundleYAML}
             getModelName={getModelName}
             hasPlans={true}
-            changeState={changeState}
-            addNotification={addNotification}
-            deployService={deployService}
+            importBundleYAML={importBundleYAML}
             plans={[]}
             pluralize={pluralize}
             scrollPosition={100}
@@ -551,8 +551,8 @@ describe('EntityDetails', function() {
             flags={{'test.ddeploy': true}}
             getDiagramURL={getDiagramURL}
             getFile={getFile}
-            hasPlans={true}
             hash="readme"
+            hasPlans={true}
             plans={[]}
             pluralize={pluralize}
             renderMarkdown={renderMarkdown}

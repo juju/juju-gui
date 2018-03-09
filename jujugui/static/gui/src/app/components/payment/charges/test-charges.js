@@ -324,8 +324,8 @@ describe('PaymentCharges', function() {
     const expected = (
       <ReceiptPopup
         addNotification={addNotification}
-        close={instance._togglePopup}
         chargeId="TEST-12344"
+        close={instance._togglePopup}
         getReceipt={getReceipt} />);
     expect(output.props.children.props.children[2]).toEqualJSX(expected);
   });

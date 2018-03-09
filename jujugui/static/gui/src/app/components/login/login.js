@@ -98,7 +98,7 @@ class Login extends React.Component {
     return (
       <div className={this._generateClassnames()}>
         <div className="login__logo">
-          <SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon height="30" name="juju-logo" width="75" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -107,25 +107,25 @@ class Login extends React.Component {
           {this._generateErrorMessage()}
           <form
             className="login__form"
-            ref="form"
-            onSubmit={this._handleLoginSubmit.bind(this)}>
+            onSubmit={this._handleLoginSubmit.bind(this)}
+            ref="form">
             <label
               className="login__label">
               Username
               <input
                 className="login__input"
-                type="text"
                 name="username"
-                ref="username" />
+                ref="username"
+                type="text" />
             </label>
             <label
               className="login__label">
               Password
               <input
                 className="login__input"
-                type="password"
                 name="password"
-                ref="password" />
+                ref="password"
+                type="password" />
             </label>
             <GenericButton
               submit={true}

@@ -244,22 +244,22 @@ class Configuration extends React.Component {
         const label = option.key + ':';
         configElements.push(
           <BooleanConfig
+            config={serviceConfig[key]}
             disabled={disabled}
             key={ref}
-            ref={ref}
-            option={option}
-            onChange={this._handleOnChange.bind(this)}
             label={label}
-            config={serviceConfig[key]} />);
+            onChange={this._handleOnChange.bind(this)}
+            option={option}
+            ref={ref} />);
       } else {
         configElements.push(
           <StringConfig
+            config={serviceConfig[key]}
             disabled={disabled}
             key={ref}
-            ref={ref}
-            option={option}
             onChange={this._handleOnChange.bind(this)}
-            config={serviceConfig[key]} />);
+            option={option}
+            ref={ref} />);
       }
     });
     return configElements;
@@ -278,15 +278,15 @@ class Configuration extends React.Component {
     // to change the name.
     if (id.match(/\$$/)) {
       return (<StringConfig
+        config={this.props.service.get('name')}
         disabled={this.props.acl.isReadOnly()}
-        ref="ServiceName"
         onChange={this._handleOnChange.bind(this)}
         option={{
           key: 'Application name',
           description: 'Specify a custom application name. The application' +
             ' name cannot be changed once it has been deployed.'
         }}
-        config={this.props.service.get('name')} />);
+        ref="ServiceName" />);
     }
     return;
   }

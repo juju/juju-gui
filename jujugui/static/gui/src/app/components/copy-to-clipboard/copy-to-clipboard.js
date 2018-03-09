@@ -32,8 +32,8 @@ class CopyToClipboard extends React.Component {
     return (
       <div className={className}>
         <input className={className + '__input'}
-          ref="input"
           readOnly="true"
+          ref="input"
           type="text"
           value={this.props.value} />
         <button className={className + '__btn'}

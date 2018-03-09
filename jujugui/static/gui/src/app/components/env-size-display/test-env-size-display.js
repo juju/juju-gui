@@ -51,10 +51,10 @@ describe('EnvSizeDisplay', function() {
   it('highlights active tab on initial render', function() {
     var component = renderIntoDocument(
       <EnvSizeDisplay
-        serviceCount={3}
-        machineCount={4}
         appState={appState}
+        machineCount={4}
         pluralize={sinon.stub()}
+        serviceCount={3}
         showStatus={true} />);
     assert.notEqual(
       queryComponentSelector(
@@ -66,10 +66,10 @@ describe('EnvSizeDisplay', function() {
   it('calls to change state when list item is clicked', function() {
     var component = renderIntoDocument(
       <EnvSizeDisplay
-        serviceCount={3}
-        machineCount={4}
         appState={appState}
+        machineCount={4}
         pluralize={sinon.stub()}
+        serviceCount={3}
         showStatus={true} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
@@ -96,10 +96,10 @@ describe('EnvSizeDisplay', function() {
   it('highlights the tab which was clicked on', function() {
     var component = renderIntoDocument(
       <EnvSizeDisplay
-        serviceCount={3}
-        machineCount={4}
         appState={appState}
+        machineCount={4}
         pluralize={sinon.stub()}
+        serviceCount={3}
         showStatus={true} />);
     var serviceLink = queryComponentSelector(component,
       'a[data-view=application]');
@@ -125,10 +125,10 @@ describe('EnvSizeDisplay', function() {
     testUtils.Simulate.click(serviceLink);
     component = renderIntoDocument(
       <EnvSizeDisplay
-        serviceCount={3}
-        machineCount={4}
         appState={appState}
+        machineCount={4}
         pluralize={sinon.stub()}
+        serviceCount={3}
         showStatus={true} />);
     assert.notEqual(
       queryComponentSelector(

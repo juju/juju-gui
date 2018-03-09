@@ -200,8 +200,8 @@ describe('BasicTable', function() {
     rows[2].extraData = 5;
     const renderer = jsTestUtils.shallowRender(
       <BasicTable
-        headers={headers}
         filterPredicate={row => row.extraData > 10}
+        headers={headers}
         rows={rows} />, true);
     const output = renderer.getRenderOutput();
     const rowItems = output.props.children[1];

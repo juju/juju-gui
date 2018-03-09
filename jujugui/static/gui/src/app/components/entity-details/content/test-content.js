@@ -64,8 +64,8 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getDiagramURL={sinon.stub()}
         getFile={getFile}
-        hasPlans={false}
         hash="readme"
+        hasPlans={false}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
@@ -134,8 +134,8 @@ describe('EntityContent', function() {
                 </h3>
                 <ul className="section__list">
                   <li className="section__list-item">
-                    <a href="https://bugs.launchpad.net/charms/+source/django"
-                      className="link"
+                    <a className="link"
+                      href="https://bugs.launchpad.net/charms/+source/django"
                       target="_blank">
                       Submit a bug
                     </a>
@@ -412,15 +412,15 @@ describe('EntityContent', function() {
         </h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a href="http://example.com/bugs"
-              className="link"
+            <a className="link"
+              href="http://example.com/bugs"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a href="http://example.com/"
-              className="link"
+            <a className="link"
+              href="http://example.com/"
               target="_blank">
               Project homepage
             </a>
@@ -455,8 +455,8 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getDiagramURL={sinon.stub()}
         getFile={getFile}
-        hasPlans={false}
         hash="readme"
+        hasPlans={false}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
@@ -502,8 +502,8 @@ describe('EntityContent', function() {
                 </h3>
                 <ul className="section__list">
                   <li className="section__list-item">
-                    <a href="https://bugs.launchpad.net/charms/+source/django"
-                      className="link"
+                    <a className="link"
+                      href="https://bugs.launchpad.net/charms/+source/django"
                       target="_blank">
                       Submit a bug
                     </a>
@@ -573,8 +573,8 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getDiagramURL={getDiagramURL}
         getFile={getFile}
-        hasPlans={false}
         hash="readme"
+        hasPlans={false}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser}
@@ -605,8 +605,8 @@ describe('EntityContent', function() {
                 hash="readme"
                 renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={scrollCharmbrowser} />
-              <div id="configuration"
-                className="entity-content__configuration">
+              <div className="entity-content__configuration"
+                id="configuration">
                 <h3 className="entity-content__header">
                   Bundle configuration
                 </h3>
@@ -659,10 +659,10 @@ describe('EntityContent', function() {
                 <ul className="section__list">
                   {undefined}
                   <li className="section__list-item">
-                    <a href={'https://code.launchpad.net/~charmers/charms/' +
+                    <a className="link"
+                      href={'https://code.launchpad.net/~charmers/charms/' +
                       'bundles/django-cluster/bundle'}
-                    className="link"
-                    target="_blank">
+                      target="_blank">
                       Project homepage
                     </a>
                   </li>
@@ -727,15 +727,15 @@ describe('EntityContent', function() {
         </h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a href="http://example.com/bugs"
-              className="link"
+            <a className="link"
+              href="http://example.com/bugs"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a href="http://example.com/"
-              className="link"
+            <a className="link"
+              href="http://example.com/"
               target="_blank">
               Project homepage
             </a>
@@ -815,8 +815,8 @@ describe('EntityContent', function() {
     const innerWrapper = output.props.children[0].props.children;
     const plansOutput = innerWrapper.props.children[0].props.children[3];
     const expected = (
-      <div id="plans"
-        className="row entity-content__plans">
+      <div className="row entity-content__plans"
+        id="plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
@@ -947,8 +947,8 @@ describe('EntityContent', function() {
         entityModel={mockEntity}
         getDiagramURL={sinon.stub()}
         getFile={getFile}
-        hasPlans={true}
         hash="readme"
+        hasPlans={true}
         plans={[]}
         pluralize={pluralize}
         renderMarkdown={renderMarkdown}

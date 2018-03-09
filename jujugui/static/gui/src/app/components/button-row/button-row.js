@@ -35,9 +35,9 @@ class ButtonRow extends React.Component {
     buttons.forEach(button => {
       components.push(
         <GenericButton
-          key={button.title}
           action={button.action}
           disabled={button.disabled}
+          key={button.title}
           submit={button.submit}
           type={button.type}>
           {button.title}

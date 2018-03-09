@@ -27,9 +27,9 @@ describe('NotificationListItem', function() {
     var expected = (
       <li className={classes}>
         <span>{message}</span>
-        <span tabIndex="0" role="button"
-          className="notification-list-item__hide"
-          onClick={instance.hide}>
+        <span className="notification-list-item__hide" onClick={instance.hide}
+          role="button"
+          tabIndex="0">
           <SvgIcon name="close_16"
             size="16" />
         </span>
@@ -60,9 +60,9 @@ describe('NotificationListItem', function() {
       <NotificationListItem
         message="message"
         removeNotification={removeNotification}
-        timestamp={timestamp}
-        // Used to shorten the test time by setting the setTimeouts to 0.
         timeout={timeout}
+        // Used to shorten the test time by setting the setTimeouts to 0.
+        timestamp={timestamp}
         type="info" />);
     var element = ReactDOM.findDOMNode(component);
     // Check that it's rendered with the proper classes.

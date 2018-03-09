@@ -791,8 +791,8 @@ describe('BudgetTableRow', function() {
         allocationEditable={false}
         charmsGetById={charmsGetById}
         listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
         parseTermId={parseTermId}
+        plansEditable={false}
         service={service}
         showTerms={showTerms}
         withPlans={true} />);

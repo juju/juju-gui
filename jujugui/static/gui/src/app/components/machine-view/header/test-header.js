@@ -122,12 +122,12 @@ describe('MachineViewHeader', function() {
         droppable={true}
         isOver={false}
         sendAnalytics={sendAnalytics}
+        title="Sandbox"
         toggle={{
           action: action,
           disabled: false,
           toggleOn: true
         }}
-        title="Sandbox"
         type="machine" />);
     const expected = (
       <div className="machine-view__header">

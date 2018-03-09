@@ -103,14 +103,14 @@ class ServiceOverview extends React.Component {
     actions.forEach(function(action) {
       items.push(
         <OverviewAction
-          key={action.title}
-          icon={action.icon}
           action={action.action}
+          icon={action.icon}
+          key={action.title}
+          linkAction={action.linkAction}
+          linkTitle={action.linkTitle}
           title={action.title}
           value={action.value}
-          valueType={action.valueType}
-          linkAction={action.linkAction}
-          linkTitle={action.linkTitle} />);
+          valueType={action.valueType} />);
     });
     return items;
   }
@@ -280,9 +280,9 @@ class ServiceOverview extends React.Component {
     return (
       <div className="service-overview">
         <InspectorConfirm
+          buttons={[]}
           message={message}
-          open={isDeleted}
-          buttons={[]} />
+          open={isDeleted} />
         <ul className="service-overview__actions">
           {this._generateActionList(this.state.actions)}
         </ul>

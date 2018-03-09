@@ -83,11 +83,11 @@ class NotificationList extends React.Component {
       elements.push(
         <NotificationListItem
           key={key}
-          timestamp={key}
+          message={notification.message}
           ref={'NotificationListItem' + key}
           removeNotification={this._removeNotification.bind(this)}
-          message={notification.message}
           timeout={this.props.timeout}
+          timestamp={key}
           type={notification.type} />);
     });
     return elements;
@@ -119,9 +119,9 @@ class NotificationList extends React.Component {
 
   render() {
     return (
-      <ul onMouseOver={this._clearTimeouts.bind(this)}
+      <ul className="notification-list"
         onMouseOut={this._restartTimeouts.bind(this)}
-        className="notification-list">
+        onMouseOver={this._clearTimeouts.bind(this)}>
         {this._generateNotifications()}
       </ul>);
   }

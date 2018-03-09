@@ -87,16 +87,16 @@ class BooleanConfig extends React.Component {
           <div className="boolean-config--title">{this.props.label}</div>
           <div className="boolean-config--toggle">
             <input
-              disabled={this.props.disabled}
-              type="checkbox"
-              id={this.props.option.key}
-              onClick={this._stopBubble.bind(this)}
-              onChange={this._handleChange.bind(this)}
+              className="boolean-config--input"
               defaultChecked={this.state.value}
-              className="boolean-config--input" />
+              disabled={this.props.disabled}
+              id={this.props.option.key}
+              onChange={this._handleChange.bind(this)}
+              onClick={this._stopBubble.bind(this)}
+              type="checkbox" />
             <label
-              htmlFor={this.props.option.key}
-              className={classes}>
+              className={classes}
+              htmlFor={this.props.option.key}>
               <div className="boolean-config--handle"></div>
             </label>
           </div>

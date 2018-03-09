@@ -90,10 +90,10 @@ describe('DeploymentSignup', function() {
                 </li>
               </ul>
               <p>
-                <a href="https://jujucharms.com/beta"
-                  target="_blank"
-                  className="button--inline-positive"
-                  onClick={instance._handleSignup}>
+                <a className="button--inline-positive"
+                  href="https://jujucharms.com/beta"
+                  onClick={instance._handleSignup}
+                  target="_blank">
                     Sign up for early access
                 </a>
               </p>

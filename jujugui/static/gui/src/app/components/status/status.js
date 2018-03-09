@@ -301,8 +301,8 @@ class Status extends React.Component {
                   `status-view__traffic-light--${highestStatus}`}
                 onClick={this._changeFilterStatus.bind(this, highestStatus)}
                 role="button"
-                title={title}
-                tabIndex="0">
+                tabIndex="0"
+                title={title}>
               </span>
             </h2>
           </div>

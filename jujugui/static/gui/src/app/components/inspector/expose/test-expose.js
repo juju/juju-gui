@@ -36,13 +36,13 @@ describe('InspectorExpose', function() {
       <div className="inspector-expose">
         <div className="inspector-expose__control">
           <BooleanConfig
+            config={false}
             disabled={false}
             key={toggle.key}
-            ref={toggle.key}
-            option={toggle}
-            onChange={toggleItem.props.onChange}
             label="Expose application"
-            config={false} />
+            onChange={toggleItem.props.onChange}
+            option={toggle}
+            ref={toggle.key} />
         </div>
         <p className="inspector-expose__warning">
               Exposing this application may make it publicly accessible from
@@ -77,13 +77,13 @@ describe('InspectorExpose', function() {
       <div className="inspector-expose">
         <div className="inspector-expose__control">
           <BooleanConfig
+            config={true}
             disabled={false}
             key={toggle.key}
-            ref={toggle.key}
-            option={toggle}
-            onChange={toggleItem.props.onChange}
             label="Expose application"
-            config={true} />
+            onChange={toggleItem.props.onChange}
+            option={toggle}
+            ref={toggle.key} />
         </div>
         <p className="inspector-expose__warning">
               Exposing this application may make it publicly accessible from
@@ -91,12 +91,12 @@ describe('InspectorExpose', function() {
         </p>
         <ul className="inspector-expose__units">
           <InspectorExposeUnit
-            key={unitList[0].id}
             action={output.props.children[2].props.children[0].props.action}
+            key={unitList[0].id}
             unit={unitList[0]} />
           <InspectorExposeUnit
-            key={unitList[1].id}
             action={output.props.children[2].props.children[1].props.action}
+            key={unitList[1].id}
             unit={unitList[1]} />
         </ul>
       </div>);
@@ -221,13 +221,13 @@ describe('InspectorExpose', function() {
     var toggleItem = output.props.children[0].props.children;
     var expected = (
       <BooleanConfig
+        config={false}
         disabled={true}
         key={toggle.key}
-        ref={toggle.key}
-        option={toggle}
-        onChange={toggleItem.props.onChange}
         label="Expose application"
-        config={false} />);
+        onChange={toggleItem.props.onChange}
+        option={toggle}
+        ref={toggle.key} />);
     assert.deepEqual(output.props.children[0].props.children, expected);
   });
 });

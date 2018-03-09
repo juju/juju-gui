@@ -124,13 +124,13 @@ class EnvSwitcher extends React.Component {
       return (
         <EnvList
           acl={this.props.acl}
-          user={this.props.user}
           changeState={this.props.changeState}
-          handleModelClick={this.handleModelClick.bind(this)}
-          humanizeTimestamp={this.props.humanizeTimestamp}
           environmentName={this.props.environmentName}
           envs={this.state.envList}
-          switchModel={this.props.switchModel} />);
+          handleModelClick={this.handleModelClick.bind(this)}
+          humanizeTimestamp={this.props.humanizeTimestamp}
+          switchModel={this.props.switchModel}
+          user={this.props.user} />);
     }
   }
 
@@ -223,23 +223,23 @@ class EnvSwitcher extends React.Component {
       {'env-switcher--error': !this.state.validName}
     );
     return (
-      <div className={classes}
-        role="navigation"
-        aria-label="Model switcher"
+      <div aria-label="Model switcher"
+        className={classes}
         onClick={this.props.modelCommitted ? toggleEnvList : null}
+        role="navigation"
         tabIndex="0">
         <div className={this._toggleClasses()}>
           {this._generateName()}
-          <div className="env-switcher__chevron"
-            onClick={toggleEnvList}
-            onKeyPress={this._handleKeyToggle.bind(this)}
-            id="environmentSwitcherToggle"
-            role="button"
-            tabIndex="0"
+          <div aria-controls="environmentSwitcherMenu"
+            aria-expanded="false"
             aria-haspopup="true"
             aria-owns="environmentSwitcherMenu"
-            aria-controls="environmentSwitcherMenu"
-            aria-expanded="false">
+            className="env-switcher__chevron"
+            id="environmentSwitcherToggle"
+            onClick={toggleEnvList}
+            onKeyPress={this._handleKeyToggle.bind(this)}
+            role="button"
+            tabIndex="0">
             <SvgIcon
               name="chevron_down_16"
               size="16" />

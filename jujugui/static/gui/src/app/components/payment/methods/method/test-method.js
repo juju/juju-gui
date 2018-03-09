@@ -115,9 +115,9 @@ describe('PaymentMethod', () => {
     const expected = (
       <div className="payment-method__form">
         <AddressForm
+          addNotification={addNotification}
           address={paymentMethod.address}
           disabled={false}
-          addNotification={addNotification}
           getCountries={getCountries}
           ref="cardAddress"
           showName={false}

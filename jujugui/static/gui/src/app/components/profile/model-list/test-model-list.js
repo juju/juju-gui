@@ -163,9 +163,9 @@ describe('Profile Model List', function() {
         addNotification={sinon.stub()}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
+        destroyModel={sinon.stub()}
         facadesExist={true}
         listModelsWithInfo={options.listModelsWithInfo || listModelsWithInfo}
-        destroyModel={sinon.stub()}
         switchModel={options.switchModel || sinon.stub()}
         userInfo={options.userInfo || {profile: 'tester'}} />, true);
   }
@@ -178,9 +178,9 @@ describe('Profile Model List', function() {
       <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
-            title="Start a new model"
             changeState={instance.props.changeState}
-            switchModel={instance.props.switchModel} />
+            switchModel={instance.props.switchModel}
+            title="Start a new model" />
           <h2 className="profile__title">
             My models
             <span className="profile__title-count">
@@ -657,9 +657,9 @@ describe('Profile Model List', function() {
       <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
-            title="Start a new model"
             changeState={instance.props.changeState}
-            switchModel={instance.props.switchModel} />
+            switchModel={instance.props.switchModel}
+            title="Start a new model" />
           <h2 className="profile__title">
             My models
             <span className="profile__title-count">
@@ -683,9 +683,9 @@ describe('Profile Model List', function() {
       <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
-            title="Start a new model"
             changeState={instance.props.changeState}
-            switchModel={instance.props.switchModel} />
+            switchModel={instance.props.switchModel}
+            title="Start a new model" />
           <h2 className="profile__title">
             My models
             <span className="profile__title-count">
@@ -746,9 +746,9 @@ describe('Profile Model List', function() {
       <div className="profile-model-list">
         <div className="profile-model-list__header twelve-col">
           <CreateModelButton
-            title="Start a new model"
             changeState={instance.props.changeState}
-            switchModel={instance.props.switchModel} />
+            switchModel={instance.props.switchModel}
+            title="Start a new model" />
           <h2 className="profile__title">
             My models
             <span className="profile__title-count">

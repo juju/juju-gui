@@ -87,8 +87,8 @@ class DeploymentBar extends React.Component {
       <div className="deployment-bar__deploy">
         <GenericButton
           action={this._deployAction.bind(this)}
-          type="inline-deployment"
-          disabled={changeCount === 0}>
+          disabled={changeCount === 0}
+          type="inline-deployment">
           {this._getDeployButtonLabel()}
         </GenericButton>
       </div>);

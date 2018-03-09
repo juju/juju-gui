@@ -30,11 +30,11 @@ describe('Profile Navigation', function() {
       <div className="profile-navigation">
         <ul>
           <li className="profile-navigation__list-item"
-            role="button" key='models' onClick={sinon.stub()}>
+            key='models' onClick={sinon.stub()} role="button">
             Models
           </li>
           <li className="profile-navigation__list-item"
-            role="button" key='charms' onClick={sinon.stub()}>
+            key='charms' onClick={sinon.stub()} role="button">
             Charms
           </li>
         </ul>
@@ -63,11 +63,11 @@ describe('Profile Navigation', function() {
       <div className="profile-navigation">
         <ul>
           <li className="profile-navigation__list-item"
-            role="button" key='models' onClick={sinon.stub()}>
+            key='models' onClick={sinon.stub()} role="button">
             Models
           </li>
           <li className="profile-navigation__list-item"
-            role="button" key='charms' onClick={sinon.stub()}>
+            key='charms' onClick={sinon.stub()} role="button">
             Charms
           </li>
         </ul>
@@ -76,19 +76,19 @@ describe('Profile Navigation', function() {
     expect(output).toEqualJSX(expected);
     renderer.render(
       <ProfileNavigation
+        activeSection="charms"
         changeState={changeState}
-        sectionsMap={sectionsMap}
-        activeSection="charms" />);
+        sectionsMap={sectionsMap} />);
     const output2 = renderer.getRenderOutput();
     const expected2 = (
       <div className="profile-navigation">
         <ul>
           <li className="profile-navigation__list-item"
-            role="button" key='models' onClick={sinon.stub()}>
+            key='models' onClick={sinon.stub()} role="button">
             Models
           </li>
           <li className="profile-navigation__list-item is-active"
-            role="button" key='charms' onClick={sinon.stub()}>
+            key='charms' onClick={sinon.stub()} role="button">
             Charms
           </li>
         </ul>

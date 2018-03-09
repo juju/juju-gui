@@ -82,8 +82,8 @@ class ButtonDropdown extends React.Component {
       } else if (item.action) {
         content = (
           <a className="dropdown-menu__list-item-link"
-            role="button"
-            onClick={this._handleItemClick.bind(this, item.action)}>
+            onClick={this._handleItemClick.bind(this, item.action)}
+            role="button">
             {item.label}
           </a>);
       } else {
@@ -123,8 +123,8 @@ class ButtonDropdown extends React.Component {
     const icon = this.props.icon;
     if (typeof icon === 'string') {
       return (
-        <SvgIcon name={icon}
-          className="button-dropdown__icon"
+        <SvgIcon className="button-dropdown__icon"
+          name={icon}
           size="16" />);
     }
     return icon;
@@ -169,14 +169,14 @@ class ButtonDropdown extends React.Component {
     );
     return (
       <div className={classes}>
-        <span className={this._getClassNames()}
-          onClick={this._toggleDropdown.bind(this)}
-          role="button"
-          tabIndex="0"
+        <span aria-controls="headerDropdownMenu"
+          aria-expanded="false"
           aria-haspopup="true"
           aria-owns="headerDropdownMenu"
-          aria-controls="headerDropdownMenu"
-          aria-expanded="false">
+          className={this._getClassNames()}
+          onClick={this._toggleDropdown.bind(this)}
+          role="button"
+          tabIndex="0">
           {this._generateIcon()}
           {this._generateTooltip()}
         </span>

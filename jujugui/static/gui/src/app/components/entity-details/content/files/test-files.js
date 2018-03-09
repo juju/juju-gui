@@ -31,15 +31,15 @@ describe('EntityFiles', function() {
     var instance = renderer.getMountedInstance();
     var archiveUrl = `${apiUrl}/django/archive`;
     var fileItems = [
-      <li key="foo.zip" className="p-list-tree__item">
-        <a href={archiveUrl + '/foo.zip'}
-          className="link"
-          title="foo.zip"
-          target="_blank">
+      <li className="p-list-tree__item" key="foo.zip">
+        <a className="link"
+          href={archiveUrl + '/foo.zip'}
+          target="_blank"
+          title="foo.zip">
           foo.zip
         </a>
       </li>,
-      <li key="/bar" className="p-list-tree__item p-list-tree__item--group"
+      <li className="p-list-tree__item p-list-tree__item--group" key="/bar"
         tabIndex="0" title="/bar">
         <button aria-controls="/bar" aria-expanded="false"
           className="p-list-tree__toggle"
@@ -49,11 +49,11 @@ describe('EntityFiles', function() {
         <ul aria-hidden="true" aria-labelledby="/bar-toggle"
           className="p-list-tree" id="/bar" role="tabpanel">
           {[
-            <li key="foo.txt" className="p-list-tree__item">
-              <a href={archiveUrl + '/bar/foo.txt'}
-                className="link"
-                title="foo.txt"
-                target="_blank">
+            <li className="p-list-tree__item" key="foo.txt">
+              <a className="link"
+                href={archiveUrl + '/bar/foo.txt'}
+                target="_blank"
+                title="foo.txt">
                 foo.txt
               </a>
             </li>
@@ -66,24 +66,24 @@ describe('EntityFiles', function() {
         <h3 className="section__title">
           files
         </h3>
-        <ul ref="files" aria-multiselectable="true"
-          className="p-list-tree"
+        <ul aria-multiselectable="true" className="p-list-tree"
+          ref="files"
           role="tablist">
           {fileItems}
         </ul>
         <ul className="section__list">
           <li className="section__list-item">
-            <a ref="codeLink"
-              className="button--inline-neutral entity-files__link"
-              target="_blank"
-              href="https://code.launchpad.net/django/code">
+            <a className="button--inline-neutral entity-files__link"
+              href="https://code.launchpad.net/django/code"
+              ref="codeLink"
+              target="_blank">
               View code
             </a>
           </li>
           <li className="section__list-item">
-            <a target="_blank"
-              className="button--inline-neutral entity-files__link"
-              href={archiveUrl}>
+            <a className="button--inline-neutral entity-files__link"
+              href={archiveUrl}
+              target="_blank">
               Download .zip
             </a>
           </li>

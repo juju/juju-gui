@@ -140,24 +140,24 @@ class UnitList extends React.Component {
     var unitList = [
       <CheckListItem
         aside={group.count + ''}
+        className='select-all'
         disabled={this.props.acl.isReadOnly()}
         key={key}
-        ref={key}
         label={group.label}
-        className='select-all'
+        ref={key}
         whenChanged={this._selectAllUnits.bind(this, key)} />
     ];
     group.units.forEach(unit => {
       var ref = 'CheckListItem-' + unit.id;
       unitList.push(
         <CheckListItem
-          disabled={this.props.acl.isReadOnly()}
-          key={unit.displayName}
-          ref={ref}
-          label={unit.displayName}
-          extraInfo={unit.workloadStatusMessage}
           action={this._unitItemAction.bind(this)}
+          disabled={this.props.acl.isReadOnly()}
+          extraInfo={unit.workloadStatusMessage}
           id={unit.id}
+          key={unit.displayName}
+          label={unit.displayName}
+          ref={ref}
           whenChanged={this._updateActiveCount.bind(this)} />);
     });
     return unitList;

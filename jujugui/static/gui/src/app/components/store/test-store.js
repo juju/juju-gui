@@ -15,10 +15,10 @@ describe('Store', function() {
     var apiVersion = 'v5';
     var renderer = jsTestUtils.shallowRender(
       <Store
+        apiVersion={apiVersion}
         changeState={changeState}
         charmstoreURL={charmstoreURL}
         gisf={false}
-        apiVersion={apiVersion}
         setPageTitle={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
     assert.equal(output.props.children[0].props.children.length, 4);
@@ -53,9 +53,9 @@ describe('Store', function() {
     const href = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
     const output = jsTestUtils.shallowRender(
       <Store
+        apiVersion={'v5'}
         changeState={sinon.stub()}
         charmstoreURL={'http://1.2.3.4/'}
-        apiVersion={'v5'}
         gisf={true}
         setPageTitle={sinon.stub()} />);
     const expected = (<div className="row row--write-your-own">
@@ -68,9 +68,9 @@ describe('Store', function() {
             scripts is straightforward. You can keep new charms
             private, or share them back with the community.</p>
             <p>
-              <a target="_blank"
-                className="link"
-                href={href}>
+              <a className="link"
+                href={href}
+                target="_blank">
               Learn more about writing charms&nbsp;&rsaquo;
               </a></p>
           </div>
@@ -145,10 +145,10 @@ describe('Store', function() {
   it('shows different hero links in gijoe', () => {
     const output = jsTestUtils.shallowRender(
       <Store
+        apiVersion={'v5'}
         changeState={sinon.stub()}
         charmstoreURL={'http://1.2.3.4/'}
         gisf={false}
-        apiVersion={'v5'}
         setPageTitle={sinon.stub()} />);
     assert.isDefined(
       output.props.children[0].props.children[0].props.children[1]

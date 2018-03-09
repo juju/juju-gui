@@ -64,13 +64,13 @@ class CredentialAddEdit extends React.Component {
   _generateChooseCloud() {
     return (
       <DeploymentCloud
-        key="deployment-cloud"
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         cloud={this.state.cloud}
         controllerIsReady={this.props.controllerIsReady}
-        listClouds={this.props.controllerAPI.listClouds}
         getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
+        key="deployment-cloud"
+        listClouds={this.props.controllerAPI.listClouds}
         setCloud={this._setCloud.bind(this)} />);
   }
 
@@ -83,7 +83,6 @@ class CredentialAddEdit extends React.Component {
     const credential = this.props.credential;
     return (
       <DeploymentCredentialAdd
-        key="deployment-credential-add"
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         cloud={
@@ -92,8 +91,9 @@ class CredentialAddEdit extends React.Component {
         credentialName={
           credential && (credential.name || credential.displayName) || null}
         credentials={this.props.credentials}
-        getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
+        getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
+        key="deployment-credential-add"
         onCancel={this.props.onCancel}
         onCredentialUpdated={this.props.onCredentialUpdated}
         sendAnalytics={this.props.sendAnalytics}

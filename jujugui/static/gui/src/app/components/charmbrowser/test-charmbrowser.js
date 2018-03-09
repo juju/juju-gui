@@ -40,13 +40,13 @@ describe('Charmbrowser', function() {
       <Charmbrowser
         acl={acl}
         addNotification={addNotification}
+        addToModel={addToModel}
         apiUrl="http://example.com/"
         apiVersion="v5"
         appState={appState}
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
         deployService={deployService}
-        addToModel={addToModel}
         flags={{}}
         getBundleYAML={getBundleYAML}
         getDiagramURL={sinon.stub()}
@@ -69,17 +69,17 @@ describe('Charmbrowser', function() {
     const searchResults = output.props.children.props.children.props;
     const expected = (
       <Panel
-        instanceName="white-box"
         clickAction={instance._close}
         focus={false}
+        instanceName="white-box"
         visible={true}>
         <div className="charmbrowser"
           ref="charmbrowser">
           <SearchResults
             acl={acl}
+            addToModel={addToModel}
             changeState={searchResults.changeState}
             charmstoreSearch={charmstoreSearch}
-            addToModel={addToModel}
             generatePath={searchResults.generatePath}
             getName={utils.getName}
             makeEntityModel={makeEntityModel}
@@ -108,14 +108,14 @@ describe('Charmbrowser', function() {
       <Charmbrowser
         acl={acl}
         addNotification={sinon.stub()}
+        addToModel={sinon.stub()}
         apiUrl="http://example.com/"
         apiVersion="v5"
         appState={appState}
         charmstoreSearch={charmstoreSearch}
         charmstoreURL="http://1.2.3.4/"
-        flags={{}}
         deployService={sinon.stub()}
-        addToModel={sinon.stub()}
+        flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}
         getEntity={sinon.stub()}
@@ -137,20 +137,20 @@ describe('Charmbrowser', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <Panel
-        instanceName="white-box"
         clickAction={instance._close}
         focus={false}
+        instanceName="white-box"
         visible={true}>
         <div className="charmbrowser"
           ref="charmbrowser">
           <Store
-            staticURL='surl'
             apiVersion="v5"
-            charmstoreURL="http://1.2.3.4/"
             changeState={
               output.props.children.props.children.props.changeState}
+            charmstoreURL="http://1.2.3.4/"
             gisf={true}
-            setPageTitle={setPageTitle} />
+            setPageTitle={setPageTitle}
+            staticURL='surl' />
         </div>
       </Panel>);
     expect(output).toEqualJSX(expected);
@@ -184,6 +184,7 @@ describe('Charmbrowser', function() {
       <Charmbrowser
         acl={acl}
         addNotification={addNotification}
+        addToModel={sinon.stub()}
         apiUrl={apiUrl}
         apiVersion="v5"
         appState={appState}
@@ -191,7 +192,6 @@ describe('Charmbrowser', function() {
         charmstoreURL="http://1.2.3.4/"
         clearLightbox={clearLightbox}
         deployService={deployService}
-        addToModel={sinon.stub()}
         displayLightbox={displayLightbox}
         flags={{'test.ddeploy': true}}
         getBundleYAML={getBundleYAML}
@@ -203,48 +203,48 @@ describe('Charmbrowser', function() {
         importBundleYAML={importBundleYAML}
         listPlansForCharm={listPlansForCharm}
         makeEntityModel={makeEntityModel}
-        utils={utils}
         renderMarkdown={renderMarkdown}
         sendAnalytics={sinon.stub()}
         series={{}}
         setPageTitle={setPageTitle}
         showTerms={showTerms}
         staticURL="http://example.com"
-        urllib={urllib} />, true);
+        urllib={urllib}
+        utils={utils} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <Panel
-        instanceName="white-box"
         clickAction={instance._close}
         focus={false}
+        instanceName="white-box"
         visible={true}>
         <div className="charmbrowser"
           ref="charmbrowser">
           <EntityDetails
             acl={acl}
+            addNotification={addNotification}
             apiUrl={apiUrl}
-            importBundleYAML={importBundleYAML}
-            getBundleYAML={getBundleYAML}
             changeState={
               output.props.children.props.children.props.changeState}
             clearLightbox={clearLightbox}
+            deployService={deployService}
             displayLightbox={displayLightbox}
             flags={{'test.ddeploy': true}}
+            getBundleYAML={getBundleYAML}
+            getDiagramURL={getDiagramURL}
             getEntity={getEntity}
+            getFile={getFile}
             getModelName={getModelName}
             hash="readme"
-            scrollPosition={0}
+            id={id}
+            importBundleYAML={importBundleYAML}
             listPlansForCharm={listPlansForCharm}
             makeEntityModel={makeEntityModel}
-            getDiagramURL={getDiagramURL}
-            getFile={getFile}
-            renderMarkdown={renderMarkdown}
-            deployService={deployService}
-            id={id}
-            addNotification={addNotification}
             pluralize={utils.pluralize}
+            renderMarkdown={renderMarkdown}
             scrollCharmbrowser={instance._scrollCharmbrowser}
+            scrollPosition={0}
             sendAnalytics={sinon.stub()}
             setPageTitle={setPageTitle}
             showTerms={showTerms}
@@ -264,13 +264,13 @@ describe('Charmbrowser', function() {
       <Charmbrowser
         acl={acl}
         addNotification={sinon.stub()}
+        addToModel={sinon.stub()}
         apiUrl="http://example.com"
         apiVersion="v5"
         appState={appState}
         charmstoreSearch={sinon.stub()}
         charmstoreURL="http://1.2.3.4/"
         deployService={sinon.stub()}
-        addToModel={sinon.stub()}
         flags={{}}
         getBundleYAML={sinon.stub()}
         getDiagramURL={sinon.stub()}

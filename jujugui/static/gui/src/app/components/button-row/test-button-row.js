@@ -22,9 +22,9 @@ describe('ButtonRow', function() {
         buttons={buttons} />);
     assert.deepEqual(output.props.children, [
       <GenericButton
-        key="My button"
         action={callbackStub}
         disabled={undefined}
+        key="My button"
         submit={undefined}
         type="submit">
         My button
@@ -47,17 +47,17 @@ describe('ButtonRow', function() {
         buttons={buttons} />);
     var children = [
       <GenericButton
-        key="My button"
         action={callbackStub}
         disabled={undefined}
+        key="My button"
         submit={undefined}
         type="submit">
         My button
       </GenericButton>,
       <GenericButton
-        key="Another button"
         action={callbackStub}
         disabled={undefined}
+        key="Another button"
         submit={undefined}
         type="submit">
         Another button

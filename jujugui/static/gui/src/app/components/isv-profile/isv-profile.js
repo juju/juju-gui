@@ -90,15 +90,15 @@ class ISVProfile extends React.Component {
                 <div className="twelve-col isv-profile__box">
                   <div className="twelve-col">
                     Show dates from:
-                    <select name="select"
-                      className="isv-profile__historic-data-input">
+                    <select className="isv-profile__historic-data-input"
+                      name="select">
                       <option value="value1">01/08/2016</option>
                       <option value="value2">01/08/2016</option>
                       <option value="value3">01/08/2016</option>
                     </select>
                     to:
-                    <select name="select"
-                      className="isv-profile__historic-data-input">
+                    <select className="isv-profile__historic-data-input"
+                      name="select">
                       <option value="value1">05/09/2016</option>
                       <option value="value2">01/08/2016</option>
                       <option value="value3">01/08/2016</option>

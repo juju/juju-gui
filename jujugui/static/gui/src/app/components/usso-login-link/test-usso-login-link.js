@@ -62,9 +62,9 @@ describe('USSOLoginLink', () => {
       <USSOLoginLink
         addNotification={sinon.stub()}
         displayType={'button'}
+        gisf={false}
         loginToController={sinon.stub()}
-        sendPost={sinon.stub()}
-        gisf={false} />, true);
+        sendPost={sinon.stub()} />, true);
     const output = component.getRenderOutput();
     var expected = (
       <div className="usso-login">
@@ -83,9 +83,9 @@ describe('USSOLoginLink', () => {
       <USSOLoginLink
         addNotification={sinon.stub()}
         displayType={'button'}
+        gisf={false}
         loginToController={sinon.stub()}
-        sendPost={sinon.stub()}
-        gisf={false}>
+        sendPost={sinon.stub()}>
           Scooby Doo
       </USSOLoginLink>, true);
     const output = component.getRenderOutput();
@@ -97,9 +97,9 @@ describe('USSOLoginLink', () => {
       <USSOLoginLink
         addNotification={sinon.stub()}
         displayType={'text'}
+        gisf={false}
         loginToController={sinon.stub()}
-        sendPost={sinon.stub()}
-        gisf={false}>
+        sendPost={sinon.stub()}>
           Scooby Doo
       </USSOLoginLink>, true);
     const output = component.getRenderOutput();

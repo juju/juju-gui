@@ -42,8 +42,8 @@ describe('DeploymentBar', function() {
         <div className="deployment-bar__deploy">
           <GenericButton
             action={instance._deployAction}
-            type="inline-deployment"
-            disabled={false}>
+            disabled={false}
+            type="inline-deployment">
             Deploy changes (2)
           </GenericButton>
         </div>
@@ -93,9 +93,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
-        hasEntities={false}
         deployButtonAction={deployButtonAction}
         generateChangeDescription={sinon.stub()}
+        hasEntities={false}
         modelCommitted={true}
         sendAnalytics={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -114,9 +114,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -126,9 +126,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
@@ -149,9 +149,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -161,9 +161,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
@@ -179,9 +179,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
@@ -200,9 +200,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />, true);
     var output = renderer.getRenderOutput();
@@ -212,9 +212,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
@@ -230,9 +230,9 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
         sendAnalytics={sinon.stub()} />);
     output = renderer.getRenderOutput();
@@ -247,12 +247,12 @@ describe('DeploymentBar', function() {
         acl={acl}
         changeState={sinon.stub()}
         currentChangeSet={currentChangeSet}
+        deployButtonAction={deployButtonAction}
         generateChangeDescription={generateChangeDescription}
         hasEntities={false}
-        deployButtonAction={deployButtonAction}
         modelCommitted={false}
-        services={[]}
-        sendAnalytics={sinon.stub()} />);
+        sendAnalytics={sinon.stub()}
+        services={[]} />);
     output = renderer.getRenderOutput();
     expect(output.props.children[0]).toEqualJSX(
       <DeploymentBarNotification

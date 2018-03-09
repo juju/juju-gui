@@ -118,17 +118,17 @@ class CheckListItem extends React.Component {
     return (
       <li className={this._generateClasses()}
         data-id={this.props.id}
-        onClick={this.props.action} tabIndex="0" role="button">
+        onClick={this.props.action} role="button" tabIndex="0">
         <label htmlFor={this._generateId(id)}>
           <div className="check-list-item__hit-area"
             onClick={this._hitAreaClick.bind(this)}>
             <input
+              checked={this.state.checked}
               disabled={this.props.disabled}
-              type="checkbox"
               id={id}
-              onClick={this._stopBubble.bind(this)}
               onChange={this._handleChange.bind(this)}
-              checked={this.state.checked} />
+              onClick={this._stopBubble.bind(this)}
+              type="checkbox" />
           </div>
           <span className="check-list-item__label">
             {this.props.label}

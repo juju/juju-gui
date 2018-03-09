@@ -40,9 +40,11 @@ describe('HeaderSearch', function() {
       <HeaderSearch
         appState={appState} />);
     assert.deepEqual(output.props.children[2],
-      <span tabIndex="0" role="button"
+      <span
         className="header-search__close hidden"
-        onClick={output.props.children[2].props.onClick}>
+        onClick={output.props.children[2].props.onClick}
+        role="button"
+        tabIndex="0">
         <SvgIcon name="close_16"
           size="16" />
       </span>);

@@ -45,10 +45,10 @@ class DeploymentModelName extends React.Component {
           disabled={this.props.acl.isReadOnly()}
           key="modelName"
           label="Model name"
-          required={true}
-          onChange={_updateModelName}
           onBlur={_updateModelName}
+          onChange={_updateModelName}
           ref="modelName"
+          required={true}
           validate={[{
             regex: /\S+/,
             error: 'This field is required.'

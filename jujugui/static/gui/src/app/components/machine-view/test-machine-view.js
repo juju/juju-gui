@@ -465,9 +465,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['trusty', 'xenial']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['trusty', 'xenial']} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -559,9 +559,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['trusty', 'xenial']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['trusty', 'xenial']} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -930,9 +930,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['wily']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['wily']} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1032,9 +1032,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['wily']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['wily']} />, true);
     const instance = renderer.getMountedInstance();
     const output = renderer.getRenderOutput();
     const propTypes = (
@@ -1142,9 +1142,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['wily']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['wily']} />, true);
     const instance = renderer.getMountedInstance();
     instance._toggleConstraints();
     const output = renderer.getRenderOutput();
@@ -1184,9 +1184,9 @@ describe('MachineView', function() {
           }}
           modelAPI={modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={parseConstraints}
+          ref="machine-new1"
           sendAnalytics={sendAnalytics}
           showConstraints={false}
-          ref="machine-new1"
           type="machine" />
       </ul>);
     expect(
@@ -1235,9 +1235,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['trusty', 'xenial']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['trusty', 'xenial']} />, true);
     const instance = renderer.getMountedInstance();
     instance._addMachine();
     const output = renderer.getRenderOutput();
@@ -1723,9 +1723,9 @@ describe('MachineView', function() {
         machine="new0"
         modelAPI={modelAPI}
         parseConstraints={parseConstraints}
-        series={['trusty', 'xenial']}
         parseMachineName={parseMachineName}
-        sendAnalytics={sendAnalytics} />, true);
+        sendAnalytics={sendAnalytics}
+        series={['trusty', 'xenial']} />, true);
     const instance = renderer.getMountedInstance();
     instance._addContainer();
     const output = renderer.getRenderOutput();

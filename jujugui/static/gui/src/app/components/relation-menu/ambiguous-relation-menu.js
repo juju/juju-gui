@@ -21,10 +21,10 @@ const AmbiguousRelationMenu = function(props) {
       var end = endpoint[1];
       components.push(
         <li
-          data-startservice={start.service}
-          data-startname={start.name}
-          data-endservice={end.service}
           data-endname={end.name}
+          data-endservice={end.service}
+          data-startname={start.name}
+          data-startservice={start.service}
           key={start.name + end.name + i}>
           {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
         </li>);

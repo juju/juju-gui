@@ -46,8 +46,8 @@ describe('MachineViewUnplacedUnit', function() {
     const output = renderer.getRenderOutput();
     const expected = (
       <li className="machine-view__unplaced-unit">
-        <img src="icon.svg" alt="django/7"
-          className="machine-view__unplaced-unit-icon" />
+        <img alt="django/7" className="machine-view__unplaced-unit-icon"
+          src="icon.svg" />
         django/7
         <ButtonDropdown
           classes={['machine-view__unplaced-unit-dropdown']}

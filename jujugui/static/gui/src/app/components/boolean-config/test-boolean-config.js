@@ -27,16 +27,16 @@ describe('BooleanConfig', function() {
           <div className="boolean-config--title">Test</div>
           <div className="boolean-config--toggle">
             <input
-              disabled={false}
-              type="checkbox"
-              id={option.key}
-              onClick={input.props.onClick}
-              onChange={input.props.onChange}
+              className="boolean-config--input"
               defaultChecked={true}
-              className="boolean-config--input" />
+              disabled={false}
+              id={option.key}
+              onChange={input.props.onChange}
+              onClick={input.props.onClick}
+              type="checkbox" />
             <label
-              htmlFor={option.key}
-              className="boolean-config--label">
+              className="boolean-config--label"
+              htmlFor={option.key}>
               <div className="boolean-config--handle"></div>
             </label>
           </div>
@@ -67,16 +67,16 @@ describe('BooleanConfig', function() {
           <div className="boolean-config--title">Test</div>
           <div className="boolean-config--toggle">
             <input
-              disabled={false}
-              type="checkbox"
-              id={option.key}
-              onClick={input.props.onClick}
-              onChange={input.props.onChange}
+              className="boolean-config--input"
               defaultChecked={false}
-              className="boolean-config--input" />
+              disabled={false}
+              id={option.key}
+              onChange={input.props.onChange}
+              onClick={input.props.onClick}
+              type="checkbox" />
             <label
-              htmlFor={option.key}
-              className="boolean-config--label">
+              className="boolean-config--label"
+              htmlFor={option.key}>
               <div className="boolean-config--handle"></div>
             </label>
           </div>
@@ -105,16 +105,16 @@ describe('BooleanConfig', function() {
           <div className="boolean-config--title">Test</div>
           <div className="boolean-config--toggle">
             <input
-              disabled={false}
-              type="checkbox"
-              id={option.key}
-              onClick={input.props.onClick}
-              onChange={input.props.onChange}
+              className="boolean-config--input"
               defaultChecked={true}
-              className="boolean-config--input" />
+              disabled={false}
+              id={option.key}
+              onChange={input.props.onChange}
+              onClick={input.props.onClick}
+              type="checkbox" />
             <label
-              htmlFor={option.key}
-              className="boolean-config--label boolean-config--label-changed">
+              className="boolean-config--label boolean-config--label-changed"
+              htmlFor={option.key}>
               <div className="boolean-config--handle"></div>
             </label>
           </div>
@@ -143,16 +143,16 @@ describe('BooleanConfig', function() {
           <div className="boolean-config--title">Test</div>
           <div className="boolean-config--toggle">
             <input
-              disabled={false}
-              type="checkbox"
-              id={option.key}
-              onClick={input.props.onClick}
-              onChange={input.props.onChange}
+              className="boolean-config--input"
               defaultChecked={false}
-              className="boolean-config--input" />
+              disabled={false}
+              id={option.key}
+              onChange={input.props.onChange}
+              onClick={input.props.onClick}
+              type="checkbox" />
             <label
-              htmlFor={option.key}
-              className="boolean-config--label boolean-config--label-changed">
+              className="boolean-config--label boolean-config--label-changed"
+              htmlFor={option.key}>
               <div className="boolean-config--handle"></div>
             </label>
           </div>
@@ -200,13 +200,13 @@ describe('BooleanConfig', function() {
     const input = output.props.children[0].props.children[1].props.children[0];
     const expected = (
       <input
-        disabled={true}
-        type="checkbox"
-        id={option.key}
-        onClick={input.props.onClick}
-        onChange={input.props.onChange}
+        className="boolean-config--input"
         defaultChecked={true}
-        className="boolean-config--input" />);
+        disabled={true}
+        id={option.key}
+        onChange={input.props.onChange}
+        onClick={input.props.onClick}
+        type="checkbox" />);
     expect(input).toEqualJSX(expected);
   });
 });

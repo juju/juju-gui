@@ -554,8 +554,8 @@ class DeploymentFlow extends React.Component {
           addNotification={this.props.addNotification}
           cloud={cloud}
           getGithubSSHKeys={this.props.getGithubSSHKeys}
-          setSSHKeys={this._setSSHKeys.bind(this)}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
+          setSSHKeys={this._setSSHKeys.bind(this)}
           username={this.props.username}
           WebHandler={this.props.WebHandler} />
       </DeploymentSection>);
@@ -676,8 +676,8 @@ class DeploymentFlow extends React.Component {
         callback={callback}
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}
-        showLoginLinks={this._shouldShowLoginLinks()}
-        loginToController={this.props.loginToController} />);
+        loginToController={this.props.loginToController}
+        showLoginLinks={this._shouldShowLoginLinks()} />);
   }
 
   /**
@@ -705,8 +705,8 @@ class DeploymentFlow extends React.Component {
           addNotification={this.props.addNotification}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
-          listClouds={this.props.listClouds}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
+          listClouds={this.props.listClouds}
           setCloud={this._setCloud.bind(this)} />
       </DeploymentSection>);
   }
@@ -732,14 +732,14 @@ class DeploymentFlow extends React.Component {
         <DeploymentCredential
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          credential={this.state.credential}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
-          getCloudProviderDetails={this.props.getCloudProviderDetails}
+          credential={this.state.credential}
           editable={!this.props.modelCommitted}
           generateCloudCredentialName={this.props.generateCloudCredentialName}
-          getCloudCredentials={this.props.getCloudCredentials}
           getCloudCredentialNames={this.props.getCloudCredentialNames}
+          getCloudCredentials={this.props.getCloudCredentials}
+          getCloudProviderDetails={this.props.getCloudProviderDetails}
           region={this.state.region}
           sendAnalytics={this.sendAnalytics.bind(this)}
           setCredential={this._setCredential.bind(this)}
@@ -800,17 +800,17 @@ class DeploymentFlow extends React.Component {
             addNotification={this.props.addNotification}
             changesFilterByParent={this.props.changesFilterByParent}
             charmsGetById={this.props.charmsGetById}
-            getCurrentChangeSet={this.props.getCurrentChangeSet}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
             generateChangeDescription={
               this.props.generateChangeDescription}
-            sortDescriptionsByApplication={
-              this.props.sortDescriptionsByApplication}
+            getCurrentChangeSet={this.props.getCurrentChangeSet}
+            getServiceByName={this.props.getServiceByName}
             listPlansForCharm={this.props.listPlansForCharm}
             parseTermId={this._parseTermId.bind(this)}
-            getServiceByName={this.props.getServiceByName}
             showTerms={this.props.showTerms}
+            sortDescriptionsByApplication={
+              this.props.sortDescriptionsByApplication}
             withPlans={this.props.withPlans} />
         </AccordionSection>
       </div>);
@@ -906,9 +906,9 @@ class DeploymentFlow extends React.Component {
     return (
       <div className={classes}>
         <input className="deployment-flow__deploy-checkbox"
-          onChange={this._handleTermsAgreement.bind(this)}
           disabled={disabled}
           id="terms"
+          onChange={this._handleTermsAgreement.bind(this)}
           type="checkbox" />
         <label className="deployment-flow__deploy-label"
           htmlFor="terms">

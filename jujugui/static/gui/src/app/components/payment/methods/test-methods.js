@@ -258,8 +258,8 @@ describe('PaymentMethods', () => {
               Credit or debit card address is the same as default address.
             </label>
             <AddressForm
-              disabled={false}
               addNotification={addNotification}
+              disabled={false}
               getCountries={getCountries}
               ref="cardAddress"
               showName={false}

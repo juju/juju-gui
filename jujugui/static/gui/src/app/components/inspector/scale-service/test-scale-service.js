@@ -60,10 +60,10 @@ describe('ScaleService', function() {
     const output = testUtils.renderIntoDocument(
       <ScaleService
         acl={acl}
-        serviceId="123"
         addGhostAndEcsUnits={addGhostStub}
+        changeState={changeStateStub}
         createMachinesPlaceUnits={createMachineStub}
-        changeState={changeStateStub} />);
+        serviceId="123" />);
 
     // Set the value in the input.
     const unitCount = output.refs.numUnitsInput;
@@ -129,10 +129,10 @@ describe('ScaleService', function() {
     var output = testUtils.renderIntoDocument(
       <ScaleService
         acl={acl}
-        serviceId="123"
         addGhostAndEcsUnits={addGhostStub}
+        changeState={changeStateStub}
         createMachinesPlaceUnits={createMachineStub}
-        changeState={changeStateStub} />);
+        serviceId="123" />);
 
     // Set the value in the input.
     var unitCount = output.refs.numUnitsInput;
@@ -177,15 +177,15 @@ describe('ScaleService', function() {
         onSubmit={instance._scaleUpService}>
         <div className="scale-service--units">
           <input
+            autoComplete="off"
             className="scale-service--units__input"
             disabled={true}
-            type="number"
             min="0"
-            step="1"
-            autoComplete="off"
             name="num-units"
             onChange={instance._updateState}
-            ref="numUnitsInput" />
+            ref="numUnitsInput"
+            step="1"
+            type="number" />
           <span className="scale-service--units__span">units</span>
         </div>
         <div className="scale-service--selector">
@@ -193,20 +193,20 @@ describe('ScaleService', function() {
             <input
               className="scale-service--selector__radio"
               disabled={true}
-              name="placement" type="radio"
+              id="auto-place-units" name="placement"
               onChange={instance._toggleConstraints}
-              id="auto-place-units"
-              ref="autoPlaceUnitsToggle" />
+              ref="autoPlaceUnitsToggle"
+              type="radio" />
             <label htmlFor="auto-place-units">1 unit per machine</label>
           </div>
           <div>
             <input
               className="scale-service--selector__radio"
-              disabled={true}
-              name="placement" type="radio"
-              onChange={instance._toggleConstraints}
               defaultChecked={true}
-              id="manually-place-units" />
+              disabled={true} id="manually-place-units"
+              name="placement"
+              onChange={instance._toggleConstraints}
+              type="radio" />
             <label htmlFor="manually-place-units">Manually place</label>
           </div>
         </div>

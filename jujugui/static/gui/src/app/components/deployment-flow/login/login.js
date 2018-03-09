@@ -63,9 +63,9 @@ class DeploymentLogin extends React.Component {
           <div className="deployment-login__login">
             <USSOLoginLink
               addNotification={this.props.addNotification}
-              gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="button"
+              gisf={this.props.gisf}
               loginToController={this.props.loginToController}>
               Login
             </USSOLoginLink>
@@ -74,9 +74,9 @@ class DeploymentLogin extends React.Component {
             Do not have an account?
             <USSOLoginLink
               addNotification={this.props.addNotification}
-              gisf={this.props.gisf}
               callback={this.props.callback}
               displayType="text"
+              gisf={this.props.gisf}
               loginToController={this.props.loginToController}>
               Sign up
             </USSOLoginLink>
@@ -97,18 +97,18 @@ class DeploymentLogin extends React.Component {
         </span>
         <USSOLoginLink
           addNotification={this.props.addNotification}
-          gisf={this.props.gisf}
           callback={this.props.callback}
           displayType="button"
+          gisf={this.props.gisf}
           loginToController={this.props.loginToController}>
           Sign up
         </USSOLoginLink>
         or&nbsp;
         <USSOLoginLink
           addNotification={this.props.addNotification}
-          gisf={this.props.gisf}
           callback={this.props.callback}
           displayType="text"
+          gisf={this.props.gisf}
           loginToController={this.props.loginToController}>
           log in
         </USSOLoginLink>

@@ -19,8 +19,8 @@ describe('CopyToClipboard', function() {
     var expected = (
       <div className={className}>
         <input className={className + '__input'}
-          ref="input"
           readOnly="true"
+          ref="input"
           type="text"
           value="" />
         <button className={className + '__btn'}

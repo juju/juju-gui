@@ -22,16 +22,16 @@ class InspectorChangeVersionItem extends React.Component {
     const props = this.props;
     return (
       <li className="inspector-current-version__item"
-        role="button" tabIndex="0"
-        onClick={props.itemAction}>
-        <span title={path} className="inspector-current-version__title">
+        onClick={props.itemAction} role="button"
+        tabIndex="0">
+        <span className="inspector-current-version__title" title={path}>
           version {props.url.revision}
         </span>
         <GenericButton
+          action={props.buttonAction}
           disabled={props.acl.isReadOnly()}
           key={path}
-          type='inline-neutral'
-          action={props.buttonAction}>
+          type='inline-neutral'>
           {this._generateButtonLabel()}
         </GenericButton>
       </li>

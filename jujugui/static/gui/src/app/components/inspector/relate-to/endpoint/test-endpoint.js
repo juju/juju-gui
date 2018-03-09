@@ -33,8 +33,8 @@ describe('InspectorRelateToEndpoint', () => {
         <ul className="inspector-relate-to-endpoint__list">
           {[<CheckListItem
             key={0}
-            ref="InspectorRelateToEndpoint-0"
             label="db → db"
+            ref="InspectorRelateToEndpoint-0"
             whenChanged={output.props.children[0].props.children[0]
               .props.whenChanged} />]}
         </ul>

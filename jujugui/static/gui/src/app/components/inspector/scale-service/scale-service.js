@@ -112,15 +112,15 @@ class ScaleService extends React.Component {
         onSubmit={this._scaleUpService.bind(this)}>
         <div className="scale-service--units">
           <input
+            autoComplete="off"
             className="scale-service--units__input"
             disabled={disabled}
-            type="number"
             min="0"
-            step="1"
-            autoComplete="off"
             name="num-units"
             onChange={this._updateState.bind(this)}
-            ref="numUnitsInput" />
+            ref="numUnitsInput"
+            step="1"
+            type="number" />
           <span className="scale-service--units__span">units</span>
         </div>
         <div className="scale-service--selector">
@@ -128,20 +128,20 @@ class ScaleService extends React.Component {
             <input
               className="scale-service--selector__radio"
               disabled={disabled}
-              name="placement" type="radio"
+              id="auto-place-units" name="placement"
               onChange={this._toggleConstraints.bind(this)}
-              id="auto-place-units"
-              ref="autoPlaceUnitsToggle" />
+              ref="autoPlaceUnitsToggle"
+              type="radio" />
             <label htmlFor="auto-place-units">1 unit per machine</label>
           </div>
           <div>
             <input
               className="scale-service--selector__radio"
-              disabled={disabled}
-              name="placement" type="radio"
-              onChange={this._toggleConstraints.bind(this)}
               defaultChecked={true}
-              id="manually-place-units" />
+              disabled={disabled} id="manually-place-units"
+              name="placement"
+              onChange={this._toggleConstraints.bind(this)}
+              type="radio" />
             <label htmlFor="manually-place-units">Manually place</label>
           </div>
         </div>

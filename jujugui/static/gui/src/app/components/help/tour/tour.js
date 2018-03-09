@@ -17,7 +17,7 @@ class Tour extends React.PureComponent {
         <span className="back-to-help"
           onClick={this.props.endTour.bind(this)}>
           <SvgIcon
-            name="chevron_down_16" size="16" className="back-to-help__icon" />
+            className="back-to-help__icon" name="chevron_down_16" size="16" />
           Back to GUI help
         </span>
         <Lightbox
@@ -37,12 +37,12 @@ class Tour extends React.PureComponent {
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
+              sizes="(max-width: 768px) 347w"
               src={`${basePath}/store@1x.png`}
               srcSet={`
 ${basePath}/store@2x.png 2x,
 ${basePath}/store-mobile@1x.png 347w,
-`}
-              sizes="(max-width: 768px) 347w" />
+`} />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
                 Browse the store to find charms for the applications you use and
@@ -52,12 +52,12 @@ ${basePath}/store-mobile@1x.png 347w,
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
+              sizes="(max-width: 768px) 335w"
               src={`${basePath}/relations@1x.png`}
               srcSet={`
 ${basePath}/relations@2x.png 2x,
 ${basePath}/relations-mobile@1x.png 335w,
-`}
-              sizes="(max-width: 768px) 335w" />
+`} />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
                 Juju relations allow individual applications to share information,
@@ -70,12 +70,12 @@ ${basePath}/relations-mobile@1x.png 335w,
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
+              sizes="(max-width: 768px) 307w"
               src={`${basePath}/inspector@1x.png`}
               srcSet={`
 ${basePath}/inspector@2x.png 2x,
 ${basePath}/inspector-mobile@1x.png 307w,
-`}
-              sizes="(max-width: 768px) 307w" />
+`} />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
                 The inspector shows a list of all the applications in your model.
@@ -85,12 +85,12 @@ ${basePath}/inspector-mobile@1x.png 307w,
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
+              sizes="(max-width: 768px) 431w"
               src={`${basePath}/machine-app-view@1x.png`}
               srcSet={`
 ${basePath}/machine-app-view@2x.png 2x,
 ${basePath}/machine-app-view-mobile@1x.png 431w,
-`}
-              sizes="(max-width: 768px) 431w" />
+`} />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
                 Use the inspector to switch between application view,
@@ -102,12 +102,12 @@ ${basePath}/machine-app-view-mobile@1x.png 431w,
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
+              sizes="(max-width: 768px) 341w"
               src={`${basePath}/deploy@1x.png`}
               srcSet={`
 ${basePath}/deploy@2x.png 2x,
 ${basePath}/deploy-mobile@1x.png 341w,
-`}
-              sizes="(max-width: 768px) 341w" />
+`} />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
                 Ready to deploy your workload? Click the blue Deploy button shown
@@ -117,12 +117,12 @@ ${basePath}/deploy-mobile@1x.png 341w,
           </div>
           <div className="tour__slide">
             <img className="tour__slide-image"
+              sizes="(max-width: 768px) 375w"
               src={`${basePath}/post-deploy@1x.png`}
               srcSet={`
 ${basePath}/post-deploy@2x.png 2x,
 ${basePath}/post-deploy-mobile@1x.png 375w,
-`}
-              sizes="(max-width: 768px) 375w" />
+`} />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
                 Creating instances, deploying applications, and performing

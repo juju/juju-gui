@@ -19,21 +19,21 @@ describe('SearchResultsTypeFilter', function() {
       <nav className="six-col list-block__type">
         <ul>
           <li className="selected"
-            onClick={output.props.children.props.children[0].props.onClick}
             key="All"
-            tabIndex="0" role="button">
+            onClick={output.props.children.props.children[0].props.onClick}
+            role="button" tabIndex="0">
             All
           </li>
           <li className=""
-            onClick={output.props.children.props.children[1].props.onClick}
             key="Charms"
-            tabIndex="0" role="button">
+            onClick={output.props.children.props.children[1].props.onClick}
+            role="button" tabIndex="0">
             Charms
           </li>
           <li className=""
-            onClick={output.props.children.props.children[2].props.onClick}
             key="Bundles"
-            tabIndex="0" role="button">
+            onClick={output.props.children.props.children[2].props.onClick}
+            role="button" tabIndex="0">
             Bundles
           </li>
         </ul>
@@ -50,21 +50,21 @@ describe('SearchResultsTypeFilter', function() {
       <nav className="six-col list-block__type">
         <ul>
           <li className=""
-            onClick={output.props.children.props.children[0].props.onClick}
             key="All"
-            tabIndex="0" role="button">
+            onClick={output.props.children.props.children[0].props.onClick}
+            role="button" tabIndex="0">
             All
           </li>
           <li className=""
-            onClick={output.props.children.props.children[1].props.onClick}
             key="Charms"
-            tabIndex="0" role="button">
+            onClick={output.props.children.props.children[1].props.onClick}
+            role="button" tabIndex="0">
             Charms
           </li>
           <li className="selected"
-            onClick={output.props.children.props.children[2].props.onClick}
             key="Bundles"
-            tabIndex="0" role="button">
+            onClick={output.props.children.props.children[2].props.onClick}
+            role="button" tabIndex="0">
             Bundles
           </li>
         </ul>

@@ -86,8 +86,8 @@ describe('ProfileCredentialList', () => {
         acl={acl}
         addNotification={options.addNotification || sinon.stub()}
         controllerAPI={options.controllerAPI || controllerAPI}
-        credential="azure_foo@external_cred1"
         controllerIsReady={options.controllerIsReady || sinon.stub()}
+        credential="azure_foo@external_cred1"
         initUtils={options.initUtils || initUtils}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
         username={options.username || 'foo@external'} />, true);
@@ -401,7 +401,6 @@ describe('ProfileCredentialList', () => {
           <div></div>
           <div className="twelve-col">
             <CredentialAddEdit
-              key="deployment-credential-add"
               acl={acl}
               addNotification={sinon.stub()}
               controllerAPI={{
@@ -415,6 +414,7 @@ describe('ProfileCredentialList', () => {
                 'aws_foo@external_cred1', 'aws_foo@external_testcred',
                 'azure_foo@external_cred1', 'google_foo@external_admin']}
               initUtils={initUtils}
+              key="deployment-credential-add"
               onCancel={sinon.stub()}
               onCredentialUpdated={sinon.stub()}
               sendAnalytics={sinon.stub()}
@@ -476,7 +476,6 @@ describe('ProfileCredentialList', () => {
             }],
             expandedContent: (
               <CredentialAddEdit
-                key="deployment-credential-add"
                 acl={acl}
                 addNotification={sinon.stub()}
                 controllerAPI={{
@@ -490,6 +489,7 @@ describe('ProfileCredentialList', () => {
                   'aws_foo@external_cred1', 'aws_foo@external_testcred',
                   'azure_foo@external_cred1', 'google_foo@external_admin']}
                 initUtils={initUtils}
+                key="deployment-credential-add"
                 onCancel={sinon.stub()}
                 onCredentialUpdated={sinon.stub()}
                 sendAnalytics={sinon.stub()}

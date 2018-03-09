@@ -107,9 +107,9 @@ class PaymentDetails extends React.Component {
       return (
         <PaymentDetailsAddress
           acl={this.props.acl}
-          addNotification={this.props.addNotification}
           addAddress={
             billing ? this.props.payment.addBillingAddress : this.props.payment.addAddress}
+          addNotification={this.props.addNotification}
           address={address}
           close={
             billing ? this._toggleBillingAddressEdit :

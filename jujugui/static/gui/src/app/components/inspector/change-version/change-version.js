@@ -162,10 +162,10 @@ class InspectorChangeVersion extends React.Component {
         components.push(
           <InspectorChangeVersionItem
             acl={this.props.acl}
-            key={version}
+            buttonAction={this._versionButtonAction.bind(this, version)}
             downgrade={downgrade}
             itemAction={this._viewCharmDetails.bind(this, versionURL)}
-            buttonAction={this._versionButtonAction.bind(this, version)}
+            key={version}
             url={versionURL} />);
       }, this);
     }
@@ -201,8 +201,8 @@ class InspectorChangeVersion extends React.Component {
         <div className="inspector-change-version__current">
           Current version:
           <div className="inspector-change-version__current-version"
-            role="button" tabIndex="0"
-            onClick={this._viewCharmDetails.bind(this, url)}>
+            onClick={this._viewCharmDetails.bind(this, url)} role="button"
+            tabIndex="0">
             {url.path()}
           </div>
         </div>

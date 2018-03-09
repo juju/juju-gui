@@ -341,17 +341,17 @@ class SearchResults extends React.Component {
                       <form>
                         <SearchResultsSelectFilter
                           changeState={this.props.changeState}
-                          label="Sort by"
+                          currentValue={nextProps.sort || this.props.sort}
                           filter='sort'
                           items={sortItems}
-                          currentValue={nextProps.sort || this.props.sort} />
+                          label="Sort by" />
                         <SearchResultsSelectFilter
                           changeState={this.props.changeState}
-                          label="Series"
+                          currentValue={
+                            nextProps.series || this.props.series}
                           filter='series'
                           items={seriesItems}
-                          currentValue={
-                            nextProps.series || this.props.series} />
+                          label="Series" />
                       </form>
                     </div>
                   </div>
@@ -465,8 +465,8 @@ class SearchResults extends React.Component {
         {promulgated.map((item, i) => (
           <SearchResultsItem
             acl={this.props.acl}
-            changeState={this.props.changeState}
             addToModel={this.props.addToModel}
+            changeState={this.props.changeState}
             generatePath={this.props.generatePath}
             item={item}
             key={item.storeId + i} />))}
@@ -502,8 +502,8 @@ class SearchResults extends React.Component {
       <div className="button-wrapper--ruled">
         <GenericButton
           action={this._toggleCommunityResults.bind(this)}
-          type="inline-neutral"
-          extraClasses="show-community-button">
+          extraClasses="show-community-button"
+          type="inline-neutral">
           {buttonTitle}
         </GenericButton>
       </div>) : null;
@@ -517,8 +517,8 @@ class SearchResults extends React.Component {
           {community.map((item, i) => (
             <SearchResultsItem
               acl={this.props.acl}
-              changeState={this.props.changeState}
               addToModel={this.props.addToModel}
+              changeState={this.props.changeState}
               generatePath={this.props.generatePath}
               item={item}
               key={item.storeId + i} />))}

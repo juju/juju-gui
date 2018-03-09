@@ -29,9 +29,9 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={changeState}
-        renderMarkdown={renderMarkdown}
-        getFile={getFile}
         entityModel={mockEntity}
+        getFile={getFile}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()} />, true);
     const instance = shallowRenderer.getMountedInstance();
     const getContainer = sinon.stub(instance, '_getContainer');
@@ -47,8 +47,8 @@ describe('EntityContentReadme', function() {
     expect(output).toEqualJSX(
       <div className="entity-content__readme">
         <div className="entity-content__readme-content"
-          ref="content"
-          dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}} />
+          dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}}
+          ref="content" />
       </div>);
   });
 
@@ -60,8 +60,8 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        getFile={getFile}
         entityModel={mockEntity}
+        getFile={getFile}
         renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()} />, true);
     const instance = shallowRenderer.getMountedInstance();
@@ -79,9 +79,9 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        renderMarkdown={sinon.spy()}
-        getFile={sinon.spy()}
         entityModel={mockEntity}
+        getFile={sinon.spy()}
+        renderMarkdown={sinon.spy()}
         scrollCharmbrowser={sinon.stub()} />
     );
     assert.equal(component.refs['content'].textContent, 'No readme.');
@@ -94,9 +94,9 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        renderMarkdown={renderMarkdown}
-        getFile={getFile}
         entityModel={mockEntity}
+        getFile={getFile}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()} />
     );
     assert.equal(getFile.callCount, 1);
@@ -114,10 +114,10 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        renderMarkdown={renderMarkdown}
+        entityModel={mockEntity}
         getFile={getFile}
         hash="readme"
-        entityModel={mockEntity}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser} />, true);
     const instance = renderer.getMountedInstance();
     const getContainer = sinon.stub(instance, '_getContainer');
@@ -135,9 +135,9 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        renderMarkdown={renderMarkdown}
-        getFile={getFile}
         entityModel={mockEntity}
+        getFile={getFile}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser} />, true);
     const instance = renderer.getMountedInstance();
     const getContainer = sinon.stub(instance, '_getContainer');
@@ -155,10 +155,10 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        renderMarkdown={renderMarkdown}
+        entityModel={mockEntity}
         getFile={getFile}
         hash="readme"
-        entityModel={mockEntity}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser} />, true);
     const instance = renderer.getMountedInstance();
     const getContainer = sinon.stub(instance, '_getContainer');
@@ -176,10 +176,10 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={sinon.stub()}
         changeState={sinon.stub()}
-        renderMarkdown={renderMarkdown}
+        entityModel={mockEntity}
         getFile={getFile}
         hash="readme"
-        entityModel={mockEntity}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={scrollCharmbrowser} />, true);
     const instance = renderer.getMountedInstance();
     instance.componentDidUpdate({hash: 'readme'});
@@ -194,9 +194,9 @@ describe('EntityContentReadme', function() {
       <EntityContentReadme
         addNotification={addNotification}
         changeState={sinon.stub()}
-        renderMarkdown={renderMarkdown}
-        getFile={getFile}
         entityModel={mockEntity}
+        getFile={getFile}
+        renderMarkdown={renderMarkdown}
         scrollCharmbrowser={sinon.stub()} />, true);
     const instance = renderer.getMountedInstance();
     instance.componentDidMount();

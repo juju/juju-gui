@@ -99,16 +99,16 @@ describe('DeploymentCredentialAdd', function() {
       <DeploymentCredentialAdd
         acl={acl}
         addNotification={options.addNotification || sinon.stub()}
-        updateCloudCredential={options.updateCloudCredential || sinon.stub()}
         cloud={options.cloud || null}
         credentialName={options.credentialName || undefined}
         credentials={options.credentials || []}
-        getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
+        getCloudProviderDetails={getCloudProviderDetails}
         onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
         onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
+        updateCloudCredential={options.updateCloudCredential || sinon.stub()}
         user="user-admin"
         validateForm={options.validateForm || sinon.stub()} />, true);
     return {
@@ -141,9 +141,8 @@ describe('DeploymentCredentialAdd', function() {
             <GenericInput
               disabled={false}
               label="Project ID (credential name)"
-              required={true}
               ref="credentialName"
-              value={undefined}
+              required={true}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -152,7 +151,8 @@ describe('DeploymentCredentialAdd', function() {
                 error: 'This field must only contain upper and lowercase ' +
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
-              }]} />
+              }]}
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -178,8 +178,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="client-id"
                   label="Client ID"
                   multiLine={undefined}
-                  required={true}
                   ref="client-id"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -191,8 +191,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="client-email"
                   label="Client e-mail address"
                   multiLine={undefined}
-                  required={true}
                   ref="client-email"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -204,8 +204,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="private-key"
                   label="Private key"
                   multiLine={true}
-                  required={true}
                   ref="private-key"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -217,8 +217,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="project-id"
                   label="Project ID"
                   multiLine={undefined}
-                  required={false}
                   ref="project-id"
+                  required={false}
                   type={undefined}
                   validate={undefined} />,
                 <GenericInput
@@ -227,8 +227,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="password"
                   label="Password"
                   multiLine={undefined}
-                  required={false}
                   ref="password"
+                  required={false}
                   type="password"
                   validate={undefined} />
               ]}
@@ -283,15 +283,15 @@ describe('DeploymentCredentialAdd', function() {
       <DeploymentCredentialAdd
         acl={acl}
         addNotification={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
         cloud={{name: 'aws', cloudType: 'ec2'}}
         credentials={[]}
-        getCloudProviderDetails={getCloudProviderDetails}
         generateCloudCredentialName={sinon.stub()}
+        getCloudProviderDetails={getCloudProviderDetails}
         onCancel={null}
         onCredentialUpdated={sinon.stub()}
         sendAnalytics={sendAnalytics}
         setCredential={sinon.stub()}
+        updateCloudCredential={sinon.stub()}
         user="user-admin"
         validateForm={sinon.stub()} />);
     const cloud = getCloudProviderDetails('ec2');
@@ -315,9 +315,8 @@ describe('DeploymentCredentialAdd', function() {
             <GenericInput
               disabled={false}
               label="Credential name"
-              required={true}
               ref="credentialName"
-              value={undefined}
+              required={true}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -326,7 +325,8 @@ describe('DeploymentCredentialAdd', function() {
                 error: 'This field must only contain upper and lowercase ' +
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
-              }]} />
+              }]}
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -342,8 +342,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="access-key"
                   label="The EC2 access key"
                   multiLine={undefined}
-                  required={true}
                   ref="access-key"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -355,8 +355,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="secret-key"
                   label="The EC2 secret key"
                   multiLine={undefined}
-                  required={true}
                   ref="secret-key"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -418,9 +418,8 @@ describe('DeploymentCredentialAdd', function() {
             <GenericInput
               disabled={false}
               label="Project ID (credential name)"
-              required={true}
               ref="credentialName"
-              value={undefined}
+              required={true}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -433,7 +432,8 @@ describe('DeploymentCredentialAdd', function() {
                 check: value => output.props.children[2].props.children[0]
                   .props.children.props.validate[2].check,
                 error: 'You already have a credential with this name.'
-              }]} />
+              }]}
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -458,8 +458,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="client-id"
                 label="Client ID"
                 multiLine={undefined}
-                required={true}
                 ref="client-id"
+                required={true}
                 type={undefined}
                 validate={[{
                   regex: /\S+/,
@@ -471,8 +471,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="client-email"
                 label="Client e-mail address"
                 multiLine={undefined}
-                required={true}
                 ref="client-email"
+                required={true}
                 type={undefined}
                 validate={[{
                   regex: /\S+/,
@@ -484,8 +484,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="private-key"
                 label="Private key"
                 multiLine={true}
-                required={true}
                 ref="private-key"
+                required={true}
                 type={undefined}
                 validate={[{
                   regex: /\S+/,
@@ -497,8 +497,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="project-id"
                 label="Project ID"
                 multiLine={undefined}
-                required={false}
                 ref="project-id"
+                required={false}
                 type={undefined}
                 validate={undefined} />,
               <GenericInput
@@ -507,8 +507,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="password"
                 label="Password"
                 multiLine={undefined}
-                required={false}
                 ref="password"
+                required={false}
                 type="password"
                 validate={undefined} />
               ]}
@@ -571,9 +571,8 @@ describe('DeploymentCredentialAdd', function() {
             <GenericInput
               disabled={false}
               label="Project ID (credential name)"
-              required={true}
               ref="credentialName"
-              value={undefined}
+              required={true}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -582,7 +581,8 @@ describe('DeploymentCredentialAdd', function() {
                 error: 'This field must only contain upper and lowercase ' +
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
-              }]} />
+              }]}
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -608,8 +608,8 @@ describe('DeploymentCredentialAdd', function() {
                     disabled={false}
                     key="file"
                     label="Upload Google Compute Engine .json auth-file"
-                    required={true}
-                    ref="file" />
+                    ref="file"
+                    required={true} />
                 </div>
               ]}
             </div>
@@ -671,9 +671,8 @@ describe('DeploymentCredentialAdd', function() {
             <GenericInput
               disabled={true}
               label="Project ID (credential name)"
-              required={true}
               ref="credentialName"
-              value={undefined}
+              required={true}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -682,7 +681,8 @@ describe('DeploymentCredentialAdd', function() {
                 error: 'This field must only contain upper and lowercase ' +
                   'letters, numbers, and hyphens. It must not start or ' +
                   'end with a hyphen.'
-              }]} />
+              }]}
+              value={undefined} />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -708,8 +708,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="client-id"
                   label="Client ID"
                   multiLine={undefined}
-                  required={true}
                   ref="client-id"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -721,8 +721,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="client-email"
                   label="Client e-mail address"
                   multiLine={undefined}
-                  required={true}
                   ref="client-email"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -734,8 +734,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="private-key"
                   label="Private key"
                   multiLine={true}
-                  required={true}
                   ref="private-key"
+                  required={true}
                   type={undefined}
                   validate={[{
                     regex: /\S+/,
@@ -747,8 +747,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="project-id"
                   label="Project ID"
                   multiLine={undefined}
-                  required={false}
                   ref="project-id"
+                  required={false}
                   type={undefined}
                   validate={undefined} />,
                 <GenericInput
@@ -757,8 +757,8 @@ describe('DeploymentCredentialAdd', function() {
                   key="password"
                   label="Password"
                   multiLine={undefined}
-                  required={false}
                   ref="password"
+                  required={false}
                   type="password"
                   validate={undefined} />
               ]}
@@ -1016,9 +1016,8 @@ describe('DeploymentCredentialAdd', function() {
             <GenericInput
               disabled={true}
               label="Project ID (credential name)"
-              required={true}
               ref="credentialName"
-              value="cred1"
+              required={true}
               validate={[{
                 regex: /\S+/,
                 error: 'This field is required.'
@@ -1031,7 +1030,8 @@ describe('DeploymentCredentialAdd', function() {
                 check: value => output.props.children[2].props.children[0]
                   .props.children.props.validate[2].check,
                 error: 'You already have a credential with this name.'
-              }]} />
+              }]}
+              value="cred1" />
           </div>
           <h3 className="deployment-panel__section-title twelve-col">
             Enter credentials
@@ -1056,8 +1056,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="client-id"
                 label="Client ID"
                 multiLine={undefined}
-                required={true}
                 ref="client-id"
+                required={true}
                 type={undefined}
                 validate={[{
                   regex: /\S+/,
@@ -1069,8 +1069,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="client-email"
                 label="Client e-mail address"
                 multiLine={undefined}
-                required={true}
                 ref="client-email"
+                required={true}
                 type={undefined}
                 validate={[{
                   regex: /\S+/,
@@ -1082,8 +1082,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="private-key"
                 label="Private key"
                 multiLine={true}
-                required={true}
                 ref="private-key"
+                required={true}
                 type={undefined}
                 validate={[{
                   regex: /\S+/,
@@ -1095,8 +1095,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="project-id"
                 label="Project ID"
                 multiLine={undefined}
-                required={false}
                 ref="project-id"
+                required={false}
                 type={undefined}
                 validate={undefined} />,
               <GenericInput
@@ -1105,8 +1105,8 @@ describe('DeploymentCredentialAdd', function() {
                 key="password"
                 label="Password"
                 multiLine={undefined}
-                required={false}
                 ref="password"
+                required={false}
                 type="password"
                 validate={undefined} />
               ]}

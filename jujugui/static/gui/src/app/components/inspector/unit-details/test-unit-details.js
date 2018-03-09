@@ -39,10 +39,10 @@ describe('UnitDetails', function() {
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
-        service={service}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className='unit-details__properties'>
         <div>
@@ -87,8 +87,8 @@ describe('UnitDetails', function() {
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
-        service={service}
         previousComponent='units'
+        service={service}
         unit={fakeUnit} />);
     const expectedOutput = (
       <div className='unit-details__properties'>
@@ -136,10 +136,10 @@ describe('UnitDetails', function() {
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
-        service={service}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className='unit-details__properties'>
         <div>
@@ -178,8 +178,8 @@ describe('UnitDetails', function() {
         acl={acl}
         changeState={sinon.stub()}
         destroyUnits={sinon.stub()}
-        service={service}
         previousComponent='units'
+        service={service}
         unit={fakeUnit} />);
     const expectedOutput = (
       <div className='unit-details__properties'>
@@ -227,12 +227,12 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        service={service}
+        destroyUnits={sinon.stub()}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className="unit-details__properties">
         <div>
@@ -312,12 +312,12 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        service={service}
+        destroyUnits={sinon.stub()}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className="unit-details__properties">
         <div>
@@ -376,12 +376,12 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        service={service}
+        destroyUnits={sinon.stub()}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className='unit-details__properties'>
         <div>
@@ -417,12 +417,12 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        service={service}
+        destroyUnits={sinon.stub()}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className="unit-details__properties">
         <div>
@@ -475,12 +475,12 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={sinon.stub()}
         changeState={sinon.stub()}
-        service={service}
+        destroyUnits={sinon.stub()}
         previousComponent='units'
-        unitStatus='error'
-        unit={fakeUnit} />);
+        service={service}
+        unit={fakeUnit}
+        unitStatus='error' />);
     const expectedOutput = (
       <div className="unit-details__properties">
         <div>
@@ -558,8 +558,8 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
+        destroyUnits={destroyUnits}
         service={service}
         unit={fakeUnit} />);
     output.props.children[1].props.buttons[0].action();
@@ -573,11 +573,11 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
-        unitStatus='pending'
+        destroyUnits={destroyUnits}
         service={service}
-        unit={fakeUnit} />);
+        unit={fakeUnit}
+        unitStatus='pending' />);
     output.props.children[1].props.buttons[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -596,8 +596,8 @@ describe('UnitDetails', function() {
     const output = jsTestUtils.shallowRender(
       <UnitDetails
         acl={acl}
-        destroyUnits={destroyUnits}
         changeState={changeState}
+        destroyUnits={destroyUnits}
         previousComponent='expose'
         service={service}
         unit={fakeUnit} />);

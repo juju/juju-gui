@@ -41,16 +41,16 @@ describe('Button Dropdown', function() {
     const instance = renderer.getMountedInstance();
     const expected = (
       <div className="button-dropdown extra-classes">
-        <span className="button-dropdown__button"
-          onClick={instance._toggleDropdown}
-          role="button"
-          tabIndex="0"
+        <span aria-controls="headerDropdownMenu"
+          aria-expanded="false"
           aria-haspopup="true"
           aria-owns="headerDropdownMenu"
-          aria-controls="headerDropdownMenu"
-          aria-expanded="false">
-          <SvgIcon name="icon_16"
-            className="button-dropdown__icon"
+          className="button-dropdown__button"
+          onClick={instance._toggleDropdown}
+          role="button"
+          tabIndex="0">
+          <SvgIcon className="button-dropdown__icon"
+            name="icon_16"
             size="16" />
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -70,16 +70,16 @@ describe('Button Dropdown', function() {
       const output = renderer.getRenderOutput();
       const expected = (
         <div className="button-dropdown extra-classes">
-          <span className="button-dropdown__button button-dropdown__show-menu"
-            onClick={instance._toggleDropdown}
-            role="button"
-            tabIndex="0"
+          <span aria-controls="headerDropdownMenu"
+            aria-expanded="false"
             aria-haspopup="true"
             aria-owns="headerDropdownMenu"
-            aria-controls="headerDropdownMenu"
-            aria-expanded="false">
-            <SvgIcon name="icon_16"
-              className="button-dropdown__icon"
+            className="button-dropdown__button button-dropdown__show-menu"
+            onClick={instance._toggleDropdown}
+            role="button"
+            tabIndex="0">
+            <SvgIcon className="button-dropdown__icon"
+              name="icon_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">
@@ -95,8 +95,8 @@ describe('Button Dropdown', function() {
                 role="menuitem"
                 tabIndex="0">
                 <a className="dropdown-menu__list-item-link"
-                  role="button"
-                  onClick={sinon.stub()}>
+                  onClick={sinon.stub()}
+                  role="button">
                   item1
                 </a>
               </li>,
@@ -117,8 +117,8 @@ describe('Button Dropdown', function() {
                 role="menuitem"
                 tabIndex="0">
                 <a className="dropdown-menu__list-item-link"
-                  role="button"
-                  onClick={sinon.stub()}>
+                  onClick={sinon.stub()}
+                  role="button">
                   item4
                 </a>
               </li>
@@ -138,14 +138,14 @@ describe('Button Dropdown', function() {
     const instance = renderer.getMountedInstance();
     const expected = (
       <div className="button-dropdown extra-classes">
-        <span className="button-dropdown__button"
-          onClick={instance._toggleDropdown}
-          role="button"
-          tabIndex="0"
+        <span aria-controls="headerDropdownMenu"
+          aria-expanded="false"
           aria-haspopup="true"
           aria-owns="headerDropdownMenu"
-          aria-controls="headerDropdownMenu"
-          aria-expanded="false">
+          className="button-dropdown__button"
+          onClick={instance._toggleDropdown}
+          role="button"
+          tabIndex="0">
           {icon}
           <span className="tooltip__tooltip--below">
             <span className="tooltip__inner tooltip__inner--up">
@@ -170,16 +170,16 @@ describe('Button Dropdown', function() {
       const output = renderer.getRenderOutput();
       const expected = (
         <div className="button-dropdown extra-classes">
-          <span className={classlist}
-            onClick={instance._toggleDropdown}
-            role="button"
-            tabIndex="0"
+          <span aria-controls="headerDropdownMenu"
+            aria-expanded="false"
             aria-haspopup="true"
             aria-owns="headerDropdownMenu"
-            aria-controls="headerDropdownMenu"
-            aria-expanded="false">
-            <SvgIcon name="icon_16"
-              className="button-dropdown__icon"
+            className={classlist}
+            onClick={instance._toggleDropdown}
+            role="button"
+            tabIndex="0">
+            <SvgIcon className="button-dropdown__icon"
+              name="icon_16"
               size="16" />
             <span className="tooltip__tooltip--below">
               <span className="tooltip__inner tooltip__inner--up">

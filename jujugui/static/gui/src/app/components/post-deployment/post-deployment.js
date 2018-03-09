@@ -214,13 +214,13 @@ class PostDeployment extends React.Component {
           extraClasses={classes.join(' ')}
           instanceName="post-deployment"
           visible={true}>
-          <span className="close" tabIndex="0" role="button"
-            onClick={this._closePostDeployment.bind(this)}>
+          <span className="close" onClick={this._closePostDeployment.bind(this)} role="button"
+            tabIndex="0">
             <SvgIcon name="close_16"
               size="16" />
           </span>
-          <div onClick={this._handleContentClick.bind(this)}
-            dangerouslySetInnerHTML={{__html: this.state.content}} />
+          <div dangerouslySetInnerHTML={{__html: this.state.content}}
+            onClick={this._handleContentClick.bind(this)} />
         </Panel>
       );
     }

@@ -33,11 +33,11 @@ describe('CreateModelButton', () => {
     const component = jsTestUtils.shallowRender(
       <CreateModelButton
         action={sinon.stub()}
-        type="positive"
-        title="test"
-        disabled={false}
         changeState={sinon.stub()}
-        switchModel={sinon.stub()} />, true);
+        disabled={false}
+        switchModel={sinon.stub()}
+        title="test"
+        type="positive" />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="create-new-model">
@@ -56,11 +56,11 @@ describe('CreateModelButton', () => {
   it('renders a disabled button when provided with disabled state', () => {
     const component = jsTestUtils.shallowRender(
       <CreateModelButton
-        type="positive"
-        title="test"
-        disabled={true}
         changeState={sinon.stub()}
-        switchModel={sinon.stub()} />, true);
+        disabled={true}
+        switchModel={sinon.stub()}
+        title="test"
+        type="positive" />, true);
     const output = component.getRenderOutput();
     const expected = (
       <div className="create-new-model">
@@ -80,11 +80,11 @@ describe('CreateModelButton', () => {
     const component = jsTestUtils.shallowRender(
       <CreateModelButton
         action={action}
-        type="positive"
-        title="test"
-        disabled={false}
         changeState={sinon.stub()}
-        switchModel={sinon.stub()} />, true);
+        disabled={false}
+        switchModel={sinon.stub()}
+        title="test"
+        type="positive" />, true);
     const instance = component.getMountedInstance();
     instance._createNewModel();
     assert.isTrue(action.called);
@@ -95,11 +95,11 @@ describe('CreateModelButton', () => {
     const component = jsTestUtils.shallowRender(
       <CreateModelButton
         action={action}
-        type="positive"
-        title="test"
-        disabled={true}
         changeState={sinon.stub()}
-        switchModel={sinon.stub()} />, true);
+        disabled={true}
+        switchModel={sinon.stub()}
+        title="test"
+        type="positive" />, true);
     const instance = component.getMountedInstance();
     instance._createNewModel();
     assert.isFalse(action.called);
@@ -110,10 +110,10 @@ describe('CreateModelButton', () => {
     const switchModel = sinon.stub();
     const component = jsTestUtils.shallowRender(
       <CreateModelButton
-        type="positive"
-        title="test"
         changeState={changeState}
-        switchModel={switchModel} />, true);
+        switchModel={switchModel}
+        title="test"
+        type="positive" />, true);
     const output = component.getRenderOutput();
     // Call the action passed to the GenericButton
     output.props.children.props.action();

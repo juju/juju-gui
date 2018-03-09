@@ -73,44 +73,44 @@ class ModalGUISettings extends React.Component {
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span className="close" tabIndex="0" role="button"
-            onClick={props.closeModal}>
+          <span className="close" onClick={props.closeModal} role="button"
+            tabIndex="0">
             <SvgIcon name="close_16" size="16" />
           </span>
         </div>
         <div className="content">
           <p>
             <label htmlFor="disable-cookie">
-              <input type="checkbox" name="disable-cookie"
-                id="disable-cookie"
+              <input defaultChecked={state['disable-cookie']} id="disable-cookie"
+                name="disable-cookie"
                 onChange={handleChange}
-                defaultChecked={state['disable-cookie']} />&nbsp;
+                type="checkbox" />&nbsp;
               Disable the EU cookie warning.
             </label>
           </p>
           <p>
             <label htmlFor="force-containers">
-              <input type="checkbox" name="force-containers"
-                id="force-containers"
+              <input defaultChecked={state['force-containers']} id="force-containers"
+                name="force-containers"
                 onChange={handleChange}
-                defaultChecked={state['force-containers']} />&nbsp;
+                type="checkbox" />&nbsp;
               Enable container control for this provider.
             </label>
           </p>
           <p>
             <label htmlFor="disable-auto-place">
-              <input type="checkbox" name="disable-auto-place"
-                id="disable-auto-place"
+              <input defaultChecked={state['disable-auto-place']} id="disable-auto-place"
+                name="disable-auto-place"
                 onChange={handleChange}
-                defaultChecked={state['disable-auto-place']} />&nbsp;
+                type="checkbox" />&nbsp;
               Default to not automatically place units on commit.
             </label>
           </p>
           <p>
             <label htmlFor="jujushell-url">
-              <input type="text" name="jujushell-url"
-                id="jujushell-url"
+              <input id="jujushell-url" name="jujushell-url"
                 onChange={handleChange}
+                type="text"
                 value={state['jujushell-url']} />&nbsp;
               DNS name for the Juju Shell.
             </label>
@@ -120,9 +120,9 @@ class ModalGUISettings extends React.Component {
               NOTE: You will need to reload for changes to take effect.
             </small>
           </p>
-          <input type="button" className="button--positive"
+          <input className="button--positive" id="save-settings"
             name="save-settings" onClick={this._handleSave.bind(this)}
-            id="save-settings" value="Save" />
+            type="button" value="Save" />
         </div>
       </div>
     );

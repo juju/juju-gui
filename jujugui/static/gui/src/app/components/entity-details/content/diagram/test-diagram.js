@@ -16,9 +16,9 @@ describe('EntityContentDiagram', function() {
         diagramUrl="example.com/diagram.svg" />);
     expect(output).toEqualJSX(
       <div className="entity-content__diagram">
-        <object type="image/svg+xml" data="example.com/diagram.svg"
+        <object className="entity-content__diagram-image" data="example.com/diagram.svg"
           title={undefined}
-          className="entity-content__diagram-image" />
+          type="image/svg+xml" />
       </div>);
   });
 
@@ -41,10 +41,12 @@ describe('EntityContentDiagram', function() {
     const instance = renderer.getMountedInstance();
     expect(output).toEqualJSX(
       <div className="entity-content__diagram">
-        <object type="image/svg+xml" data="example.com/diagram.svg"
-          title="example" className="entity-content__diagram-image" />
-        <button role="button" className="entity-content__diagram-expand"
-          onClick={instance._handleExpand.bind(instance)}>
+        <object className="entity-content__diagram-image" data="example.com/diagram.svg"
+          title="example" type="image/svg+xml" />
+        <button
+          className="entity-content__diagram-expand"
+          onClick={instance._handleExpand.bind(instance)}
+          role="button">
           <SvgIcon name="fullscreen-grey_16" size="12" />
         </button>
       </div>

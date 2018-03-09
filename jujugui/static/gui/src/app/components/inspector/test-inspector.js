@@ -110,10 +110,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={true}
-        type={undefined}
         title={title}
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     const overview = output.props.children[1].props.children;
@@ -203,10 +203,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={unitStatus}
         title='Units'
-        icon={icon} />
+        type={unitStatus} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -214,12 +214,12 @@ describe('Inspector', function() {
     assert.deepEqual(children,
       <UnitList
         acl={acl}
-        service={service}
-        unitStatus="error"
-        units={[]}
-        envResolved={envResolved}
+        changeState={children.props.changeState}
         destroyUnits={destroyUnits}
-        changeState={children.props.changeState} />);
+        envResolved={envResolved}
+        service={service}
+        units={[]}
+        unitStatus="error" />);
   });
 
   it('displays the configuration when the app state calls for it', function() {
@@ -290,10 +290,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Configure'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -301,17 +301,17 @@ describe('Inspector', function() {
     assert.deepEqual(children,
       <Configuration
         acl={acl}
-        service={service}
-        changeState={children.props.changeState}
-        getYAMLConfig={getYAMLConfig}
-        charm={charm}
-        setConfig={setConfig}
-        updateServiceUnitsDisplayname={updateServiceUnitsDisplayname}
         addNotification={addNotification}
-        unplaceServiceUnits={unplaceServiceUnits}
-        linkify={linkify}
+        changeState={children.props.changeState}
+        charm={charm}
         getServiceByName={getServiceByName}
-        serviceRelations={[]} />);
+        getYAMLConfig={getYAMLConfig}
+        linkify={linkify}
+        service={service}
+        serviceRelations={[]}
+        setConfig={setConfig}
+        unplaceServiceUnits={unplaceServiceUnits}
+        updateServiceUnitsDisplayname={updateServiceUnitsDisplayname} />);
   });
 
   it('displays the unit details when the app state calls for it', function() {
@@ -386,10 +386,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={headerType}
         title={title}
-        icon={icon} />
+        type={headerType} />
     );
     expect(header).toEqualJSX(expectedHeader);
 
@@ -397,12 +397,12 @@ describe('Inspector', function() {
     var expectedChildren = (
       <UnitDetails
         acl={acl}
-        destroyUnits={destroyUnits}
-        service={service}
         changeState={children.props.changeState}
+        destroyUnits={destroyUnits}
         previousComponent={undefined}
-        unitStatus={null}
-        unit={unit} />
+        service={service}
+        unit={unit}
+        unitStatus={null} />
     );
     assert.deepEqual(children, expectedChildren,
       'Unit details not rendered as expected');
@@ -621,8 +621,8 @@ describe('Inspector', function() {
         destroyService={sinon.stub()}
         destroyUnits={destroyUnits}
         displayPlans={true}
-        envResolved={sinon.stub()}
         entityPath={'u/foo/bar'}
+        envResolved={sinon.stub()}
         exposeService={sinon.stub()}
         getAvailableEndpoints={sinon.stub()}
         getAvailableVersions={sinon.stub()}
@@ -791,10 +791,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Scale'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -874,10 +874,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Expose'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -887,8 +887,8 @@ describe('Inspector', function() {
         addNotification={addNotification}
         changeState={children.props.changeState}
         exposeService={exposeService}
-        unexposeService={unexposeService}
         service={service}
+        unexposeService={unexposeService}
         units={units} />);
   });
 
@@ -955,10 +955,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Relations'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1032,17 +1032,17 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Relate to'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     assert.deepEqual(children,
       <InspectorRelateTo
-        changeState={children.props.changeState}
         application={service}
+        changeState={children.props.changeState}
         relatableApplications={['apps']} />);
   });
 
@@ -1113,10 +1113,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='spouse-name'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1130,9 +1130,9 @@ describe('Inspector', function() {
             }
           }
         }}
+        changeState={children.props.changeState}
         createRelation={createRelation}
-        endpoints={[]}
-        changeState={children.props.changeState} />);
+        endpoints={[]} />);
   });
 
   it('displays the Plans when the app state calls for it', function() {
@@ -1198,10 +1198,10 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Plan'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
@@ -1277,24 +1277,24 @@ describe('Inspector', function() {
         charmId="charmid"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Change version'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     var children = output.props.children[1].props.children;
     expect(children).toEqualJSX(
       <InspectorChangeVersion
         acl={acl}
+        addCharm={addCharm}
         addNotification={addNotification}
         changeState={children.props.changeState}
         charmId="cs:demo"
-        service={service}
-        addCharm={addCharm}
-        setCharm={setCharm}
+        getAvailableVersions={getAvailableVersions}
         getCharm={getCharm}
-        getAvailableVersions={getAvailableVersions} />);
+        service={service}
+        setCharm={setCharm} />);
   });
 
   it('displays Resources when the app state calls for it', function() {
@@ -1369,10 +1369,10 @@ describe('Inspector', function() {
         charmId="demo"
         entityPath="u/foo/bar"
         hasGetStarted={true}
+        icon={icon}
         showLinks={false}
-        type={undefined}
         title='Resources'
-        icon={icon} />
+        type={undefined} />
     );
     expect(header).toEqualJSX(expectedHeader);
     const children = output.props.children[1].props.children;

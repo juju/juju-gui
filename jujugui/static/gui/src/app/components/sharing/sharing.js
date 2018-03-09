@@ -158,7 +158,7 @@ class Sharing extends React.Component {
     return users.map(user => {
       if (user.err) {
         return (
-          <div key={user.name} className="sharing__user">
+          <div className="sharing__user" key={user.name}>
             <div className="sharing__user-details">
               <div className="sharing__user-name">
                 {user.displayName}
@@ -191,7 +191,7 @@ class Sharing extends React.Component {
         );
       }
       return (
-        <div key={user.name} className="sharing__user">
+        <div className="sharing__user" key={user.name}>
           <div className="sharing__user-details">
             <div className="sharing__user-name">
               {user.displayName}
@@ -249,16 +249,16 @@ class Sharing extends React.Component {
             <GenericInput
               inlineErrorIcon={true}
               label="Username"
+              onKeyUp={this._handleUsernameInputChange.bind(this)}
               placeholder="Username"
               ref="username"
-              onKeyUp={this._handleUsernameInputChange.bind(this)}
               required={true} />
           </div>
           <div className="sharing__invite--access">
             <InsetSelect
               label="Access"
-              ref="access"
-              options={accessOptions} />
+              options={accessOptions}
+              ref="access" />
           </div>
           <div className="sharing__invite--grant-button">
             {this.generateAddButton()}
@@ -277,11 +277,11 @@ class Sharing extends React.Component {
   generateAddButton() {
     if (this.state.sending) {
       return (<GenericButton
+        disabled={true}
+        ref="grantButton"
         submit={true}
         tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={true}>
+        type="positive">
         Add
       </GenericButton>);
     } else if (this.state.sent) {
@@ -294,22 +294,22 @@ class Sharing extends React.Component {
       })();
       setTimeout(sent, 1500);
       return (<GenericButton
+        disabled={!this.state.canAdd}
+        ref="grantButton"
         submit={true}
         tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={!this.state.canAdd}>
+        type="positive">
         <SvgIcon
           name="tick_16"
           size="16" />
       </GenericButton>);
     } else {
       return (<GenericButton
+        disabled={!this.state.canAdd}
+        ref="grantButton"
         submit={true}
         tooltip="Add user"
-        ref="grantButton"
-        type="positive"
-        disabled={!this.state.canAdd}>
+        type="positive">
         Add
       </GenericButton>);
     }
@@ -335,8 +335,8 @@ class Sharing extends React.Component {
         </div>
         <GenericButton
           action={this.props.closeHandler}
-          type="inline-neutral"
-          extraClasses="right">
+          extraClasses="right"
+          type="inline-neutral">
           Done
         </GenericButton>
       </Popup>

@@ -67,8 +67,8 @@ describe('PaymentDetailsAddress', () => {
         clickable={false}
         expanded={true}>
         <AddressForm
-          disabled={true}
           address={address}
+          disabled={true}
           getCountries={getCountries} />
         <div className="twelve-col payment-details-address__edit">
           <AddressForm

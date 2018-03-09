@@ -68,8 +68,8 @@ describe('Sharing', () => {
         </div>
         <GenericButton
           action={closeHandler}
-          type="inline-neutral"
-          extraClasses="right">
+          extraClasses="right"
+          type="inline-neutral">
           Done
         </GenericButton>
       </Popup>
@@ -111,7 +111,7 @@ describe('Sharing', () => {
     // array.
     const expected = (
       <div className="sharing__users">
-        {[<div key="drwho@external" className="sharing__user">
+        {[<div className="sharing__user" key="drwho@external">
           <div className="sharing__user-details">
             <div className="sharing__user-name">
               drwho
@@ -128,7 +128,7 @@ describe('Sharing', () => {
           </div>
           {undefined}
         </div>,
-        <div key="rose" className="sharing__user">
+        <div className="sharing__user" key="rose">
           <div className="sharing__user-details">
             <div className="sharing__user-name">
               Rose
@@ -145,7 +145,7 @@ describe('Sharing', () => {
           </div>
           {undefined}
         </div>,
-        <div key="dalek" className="sharing__user">
+        <div className="sharing__user" key="dalek">
           <div className="sharing__user-details">
             <div className="sharing__user-name">
               Dalek
@@ -210,24 +210,24 @@ describe('Sharing', () => {
             <GenericInput
               inlineErrorIcon={true}
               label="Username"
-              placeholder="Username"
               onKeyUp={instance._handleUsernameInputChange}
+              placeholder="Username"
               ref="username"
               required={true} />
           </div>
           <div className="sharing__invite--access">
             <InsetSelect
               label="Access"
-              ref="access"
-              options={expectedOptions} />
+              options={expectedOptions}
+              ref="access" />
           </div>
           <div className="sharing__invite--grant-button">
             <GenericButton
+              disabled={true}
+              ref="grantButton"
               submit={true}
               tooltip="Add user"
-              ref="grantButton"
-              type="positive"
-              disabled={true}>
+              type="positive">
               Add
             </GenericButton>
           </div>
@@ -343,11 +343,11 @@ describe('Sharing', () => {
     it('shows a disabled button with "add" text by default', () => {
       const expected = (
         <GenericButton
+          disabled={true}
+          ref="grantButton"
           submit={true}
           tooltip="Add user"
-          ref="grantButton"
-          type="positive"
-          disabled={true}>
+          type="positive">
           Add
         </GenericButton>
       );
@@ -360,11 +360,11 @@ describe('Sharing', () => {
       });
       const expected = (
         <GenericButton
+          disabled={false}
+          ref="grantButton"
           submit={true}
           tooltip="Add user"
-          ref="grantButton"
-          type="positive"
-          disabled={false}>
+          type="positive">
           Add
         </GenericButton>
       );
@@ -377,11 +377,11 @@ describe('Sharing', () => {
       });
       const expected = (
         <GenericButton
+          disabled={true}
+          ref="grantButton"
           submit={true}
           tooltip="Add user"
-          ref="grantButton"
-          type="positive"
-          disabled={true}>
+          type="positive">
           Add
         </GenericButton>
       );
@@ -394,11 +394,11 @@ describe('Sharing', () => {
       });
       const expected = (
         <GenericButton
+          disabled={true}
+          ref="grantButton"
           submit={true}
           tooltip="Add user"
-          ref="grantButton"
-          type="positive"
-          disabled={true}>
+          type="positive">
           <SvgIcon
             name="tick_16"
             size="16" />

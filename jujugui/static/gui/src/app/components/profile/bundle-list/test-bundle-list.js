@@ -179,8 +179,8 @@ describe('Profile Bundle List', function() {
               expandedContent: (
                 <ProfileExpandedContent
                   acl={instance.props.acl}
-                  changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
+                  changeState={sinon.stub()}
                   entity={bundles[0]}
                   generatePath={sinon.stub()}
                   getDiagramURL={sinon.stub()}
@@ -247,8 +247,8 @@ describe('Profile Bundle List', function() {
               expandedContent: (
                 <ProfileExpandedContent
                   acl={instance.props.acl}
-                  changeState={sinon.stub()}
                   addToModel={instance.props.addToModel}
+                  changeState={sinon.stub()}
                   entity={bundles[1]}
                   generatePath={sinon.stub()}
                   getDiagramURL={sinon.stub()}

@@ -229,9 +229,9 @@ class ProfileCharmList extends React.Component {
           expandedContent: (
             <ProfileExpandedContent
               acl={this.props.acl}
+              addToModel={this.props.addToModel}
               changeState={this.props.changeState}
               entity={charm}
-              addToModel={this.props.addToModel}
               generatePath={this.props.generatePath}
               getModelName={this.props.getModelName}
               topRow={(

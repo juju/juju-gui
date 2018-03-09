@@ -79,10 +79,10 @@ class EntityFiles extends React.Component {
       codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
       codeLink = (
         <li className="section__list-item">
-          <a ref="codeLink"
-            className="button--inline-neutral entity-files__link"
-            target="_blank"
-            href={codeUrl}>
+          <a className="button--inline-neutral entity-files__link"
+            href={codeUrl}
+            ref="codeLink"
+            target="_blank">
             View code
           </a>
         </li>
@@ -118,11 +118,11 @@ class EntityFiles extends React.Component {
       if (children === null) {
         const fileLink = `${url}/${path}`;
         return (
-          <li key={path} className="p-list-tree__item">
-            <a href={fileLink}
-              className="link"
-              title={fileName}
-              target="_blank">
+          <li className="p-list-tree__item" key={path}>
+            <a className="link"
+              href={fileLink}
+              target="_blank"
+              title={fileName}>
               {fileName}
             </a>
           </li>
@@ -137,23 +137,23 @@ class EntityFiles extends React.Component {
         });
         const isExpanded = this.state[`/${fileName}-isExpanded`] || false;
         return (
-          <li key={path}
-            className="p-list-tree__item p-list-tree__item--group"
+          <li className="p-list-tree__item p-list-tree__item--group"
+            key={path}
             tabIndex="0"
             title={`/${fileName}`}>
-            <button className="p-list-tree__toggle"
+            <button aria-controls={`/${fileName}`}
+              aria-expanded={`${isExpanded}`}
+              className="p-list-tree__toggle"
               id={`/${fileName}-toggle`}
-              role="tab"
               onClick={this._onDirectoryClick.bind(this)}
-              aria-controls={`/${fileName}`}
-              aria-expanded={`${isExpanded}`}>
+              role="tab">
               {`/${fileName}`}
             </button>
-            <ul className="p-list-tree"
+            <ul aria-hidden={`${!isExpanded}`}
+              aria-labelledby={`/${fileName}-toggle`}
+              className="p-list-tree"
               id={`/${fileName}`}
-              role="tabpanel"
-              aria-hidden={`${!isExpanded}`}
-              aria-labelledby={`/${fileName}-toggle`}>
+              role="tabpanel">
               {childItems}
             </ul>
           </li>
@@ -180,18 +180,18 @@ class EntityFiles extends React.Component {
         <h3 className="section__title">
           {this.props.pluralize('File', files.length)}
         </h3>
-        <ul ref="files"
+        <ul aria-multiselectable="true"
           className="p-list-tree"
-          aria-multiselectable="true"
+          ref="files"
           role="tablist">
           {this._generateFileItems(files, archiveUrl)}
         </ul>
         <ul className="section__list">
           {this._generateCodeLink(entityModel.get('code_source'))}
           <li className="section__list-item">
-            <a target="_blank"
-              className="button--inline-neutral entity-files__link"
-              href={archiveUrl}>
+            <a className="button--inline-neutral entity-files__link"
+              href={archiveUrl}
+              target="_blank">
               Download .zip
             </a>
           </li>

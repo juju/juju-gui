@@ -76,25 +76,25 @@ class DeploymentVPC extends React.Component {
           AWS accounts created since December 2013 have this –&nbsp;
           older accounts may not.&nbsp;
           <a className="link"
-            target="_blank" href={vpcLink}>Default VPC basics.</a>
+            href={vpcLink} target="_blank">Default VPC basics.</a>
         </p>
         <div className="six-col">
           <GenericInput
-            label="VPC ID"
             key="vpcId"
-            ref="vpcId"
+            label="VPC ID"
             multiLine={false}
             onBlur={this._onInputBlur.bind(this)}
             onKeyUp={this._onInputKeyUp.bind(this)}
+            ref="vpcId"
             required={false} />
           <label>
             <input
-              type="checkbox"
+              checked={this.state.force}
+              disabled={!this.state.forceEnabled}
               id="vpcIdForce"
               onChange={this._onCheckboxChange.bind(this)}
               onClick={this._onCheckboxClick.bind(this)}
-              checked={this.state.force}
-              disabled={!this.state.forceEnabled} />
+              type="checkbox" />
             &nbsp;
             Always use this ID
           </label>

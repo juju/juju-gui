@@ -61,8 +61,8 @@ class PaymentDetailsAddress extends React.Component {
         clickable={false}
         expanded={this.props.showEdit}>
         <AddressForm
-          disabled={true}
           address={this.props.address}
+          disabled={true}
           getCountries={this.props.getCountries} />
         <div className="twelve-col payment-details-address__edit">
           <AddressForm

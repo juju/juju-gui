@@ -103,12 +103,12 @@ class Inspector extends React.Component {
           component:
             <UnitList
               acl={nextProps.acl}
-              service={service}
-              unitStatus={unitStatus}
-              units={units}
-              envResolved={nextProps.envResolved}
+              changeState={changeState}
               destroyUnits={nextProps.destroyUnits}
-              changeState={changeState} />,
+              envResolved={nextProps.envResolved}
+              service={service}
+              units={units}
+              unitStatus={unitStatus} />,
           backState: {
             gui: {
               inspector: {
@@ -151,12 +151,12 @@ class Inspector extends React.Component {
           component:
             <UnitDetails
               acl={nextProps.acl}
-              destroyUnits={nextProps.destroyUnits}
-              service={service}
               changeState={changeState}
-              unitStatus={unitStatus}
+              destroyUnits={nextProps.destroyUnits}
               previousComponent={previousComponent}
-              unit={unit} />,
+              service={service}
+              unit={unit}
+              unitStatus={unitStatus} />,
           backState: {
             gui: {
               inspector: {
@@ -190,17 +190,17 @@ class Inspector extends React.Component {
           component:
             <Configuration
               acl={nextProps.acl}
-              service={service}
-              charm={nextProps.charm}
-              changeState={changeState}
-              getYAMLConfig={nextProps.getYAMLConfig}
-              updateServiceUnitsDisplayname={nextProps.updateServiceUnitsDisplayname}
-              getServiceByName={nextProps.getServiceByName}
               addNotification={nextProps.addNotification}
+              changeState={changeState}
+              charm={nextProps.charm}
+              getServiceByName={nextProps.getServiceByName}
+              getYAMLConfig={nextProps.getYAMLConfig}
               linkify={nextProps.linkify}
-              unplaceServiceUnits={nextProps.unplaceServiceUnits}
+              service={service}
               serviceRelations={nextProps.serviceRelations}
-              setConfig={nextProps.setConfig} />,
+              setConfig={nextProps.setConfig}
+              unplaceServiceUnits={nextProps.unplaceServiceUnits}
+              updateServiceUnitsDisplayname={nextProps.updateServiceUnitsDisplayname} />,
           backState: {
             gui: {
               inspector: {
@@ -214,11 +214,11 @@ class Inspector extends React.Component {
           component:
             <InspectorExpose
               acl={nextProps.acl}
+              addNotification={nextProps.addNotification}
               changeState={changeState}
               exposeService={nextProps.exposeService}
-              unexposeService={nextProps.unexposeService}
-              addNotification={nextProps.addNotification}
               service={service}
+              unexposeService={nextProps.unexposeService}
               units={service.get('units')} />,
           backState: {
             gui: {
@@ -233,10 +233,10 @@ class Inspector extends React.Component {
           component:
             <InspectorRelations
               acl={nextProps.acl}
-              service={service}
+              changeState={changeState}
               destroyRelations={nextProps.destroyRelations}
-              serviceRelations={nextProps.serviceRelations}
-              changeState={changeState} />,
+              service={service}
+              serviceRelations={nextProps.serviceRelations} />,
           backState: {
             gui: {
               inspector: {
@@ -273,10 +273,10 @@ class Inspector extends React.Component {
                     inspector: {
                       id: serviceId,
                       activeComponent: 'relations'}}}}
+                changeState={changeState}
                 createRelation={nextProps.createRelation}
                 endpoints={nextProps.getAvailableEndpoints(
-                  service, nextProps.getServiceById(spouse))}
-                changeState={changeState} />,
+                  service, nextProps.getServiceById(spouse))} />,
             backState: {
               gui: {
                 inspector: {
@@ -289,8 +289,8 @@ class Inspector extends React.Component {
           icon: service.get('icon'),
           component:
             <InspectorRelateTo
-              changeState={changeState}
               application={service}
+              changeState={changeState}
               relatableApplications={nextProps.relatableApplications} />,
           backState: {
             gui: {
@@ -309,14 +309,14 @@ class Inspector extends React.Component {
           component:
             <InspectorChangeVersion
               acl={nextProps.acl}
-              changeState={changeState}
-              addNotification={nextProps.addNotification}
-              charmId={service.get('charm')}
-              service={service}
               addCharm={nextProps.addCharm}
-              setCharm={nextProps.setCharm}
+              addNotification={nextProps.addNotification}
+              changeState={changeState}
+              charmId={service.get('charm')}
+              getAvailableVersions={nextProps.getAvailableVersions}
               getCharm={nextProps.getCharm}
-              getAvailableVersions={nextProps.getAvailableVersions} />,
+              service={service}
+              setCharm={nextProps.setCharm} />,
           backState: {
             gui: {
               inspector: {
@@ -365,12 +365,12 @@ class Inspector extends React.Component {
         <InspectorHeader
           activeComponent={this.state.activeComponent}
           backCallback={this._backCallback.bind(this)}
-          charmId={this.props.charm.get('id')}
           changeState={this.props.appState.changeState.bind(this.props.appState)}
+          charmId={this.props.charm.get('id')}
           entityPath={this.props.entityPath}
           hasGetStarted={this.props.charm.hasGetStarted()}
-          showLinks={this.state.showHeaderLinks}
           icon={this.state.activeChild.icon}
+          showLinks={this.state.showHeaderLinks}
           title={this.state.activeChild.title}
           type={this.state.activeChild.headerType} />
         <div className="inspector-content">

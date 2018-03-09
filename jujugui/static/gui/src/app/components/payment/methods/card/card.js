@@ -33,8 +33,8 @@ class PaymentMethodCard extends React.Component {
     const brand = this.props.card.brand.toLowerCase().replace(' ', '-');
     return (
       <SvgIcon
-        size="40"
-        name={`card-${brand}`} />);
+        name={`card-${brand}`}
+        size="40" />);
   }
 
   /**

@@ -34,11 +34,11 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={mockEntity}
-        getModelName={sinon.stub()}
         getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
         hasPlans={false}
         importBundleYAML={sinon.stub()}
         pluralize={sinon.stub()}
@@ -53,8 +53,8 @@ describe('EntityHeader', function() {
         <header className="entity-header">
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
-              <img src="data:image/gif;base64," alt="django"
-                width="96" className="entity-header__icon" />
+              <img alt="django" className="entity-header__icon"
+                src="data:image/gif;base64," width="96" />
               <h1
                 className="entity-header__title"
                 itemProp="name"
@@ -77,32 +77,32 @@ describe('EntityHeader', function() {
                     Latest version (#42)
                   </span>
                 </li>
-                {[<li key="trusty" className="entity-header__series">
+                {[<li className="entity-header__series" key="trusty">
                   trusty
                 </li>]}
                 {undefined}
-                {<li key="Stable, Candidate"
-                  className="entity-header__channels">
+                {<li className="entity-header__channels"
+                  key="Stable, Candidate">
                   Stable, Candidate
                 </li>}
               </ul>
               <ul className="entity-header__social-list">
                 <li>
-                  <a id="item-twitter"
-                    target="_blank"
-                    href={'https://twitter.com/intent/tweet?text=django%20' +
+                  <a href={'https://twitter.com/intent/tweet?text=django%20' +
                       'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
-                      '.com%2Fdjango%2Ftrusty%2F'}>
+                      '.com%2Fdjango%2Ftrusty%2F'}
+                  id="item-twitter"
+                  target="_blank">
                     <SvgIcon
                       name="icon-social-twitter"
                       size="36" />
                   </a>
                 </li>
                 <li>
-                  <a id="item-googleplus"
-                    target="_blank"
-                    href={'https://plus.google.com/share?url=https%3A%2F%2F' +
-                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}>
+                  <a href={'https://plus.google.com/share?url=https%3A%2F%2F' +
+                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}
+                  id="item-googleplus"
+                  target="_blank">
                     <SvgIcon
                       name="icon-social-google"
                       size="36" />
@@ -116,9 +116,9 @@ describe('EntityHeader', function() {
               <CopyToClipboard
                 value="juju deploy cs:django" />
               <GenericButton
-                ref="deployAction"
                 action={instance._handleDeployClick}
                 disabled={false}
+                ref="deployAction"
                 tooltip="Add this charm to a new model"
                 type="positive">
                 Add to model
@@ -136,8 +136,8 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
@@ -160,14 +160,14 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={mockEntity}
-        getModelName={sinon.stub()}
         getBundleYAML={sinon.stub()}
+        getModelName={sinon.stub()}
         hasPlans={true}
-        plans={plans}
         importBundleYAML={sinon.stub()}
+        plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
         urllib={urllib} />, true);
@@ -191,14 +191,14 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
         hasPlans={true}
-        plans={null}
         importBundleYAML={sinon.stub()}
+        plans={null}
         pluralize={sinon.stub()}
         scrollPosition={0}
         urllib={urllib} />, true);
@@ -219,14 +219,14 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
         hasPlans={true}
-        plans={[]}
         importBundleYAML={sinon.stub()}
+        plans={[]}
         pluralize={sinon.stub()}
         scrollPosition={0}
         urllib={urllib} />, true);
@@ -247,8 +247,8 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={entity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
@@ -279,8 +279,8 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={entity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
@@ -312,9 +312,9 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
+        entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
         hasPlans={false}
@@ -332,9 +332,9 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
+        entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub().returns('porkchop')}
         hasPlans={false}
@@ -353,9 +353,9 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        entityModel={mockEntity}
         changeState={sinon.spy()}
         deployService={sinon.spy()}
+        entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
         hasPlans={false}
@@ -377,13 +377,13 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        importBundleYAML={importBundleYAML}
+        changeState={changeState}
+        deployService={deployService}
+        entityModel={mockEntity}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
         hasPlans={false}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={mockEntity}
+        importBundleYAML={importBundleYAML}
         pluralize={sinon.stub()}
         scrollPosition={0}
         urllib={urllib} />);
@@ -404,13 +404,13 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        importBundleYAML={importBundleYAML}
+        changeState={changeState}
+        deployService={deployService}
+        entityModel={mockEntity}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
         hasPlans={true}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={mockEntity}
+        importBundleYAML={importBundleYAML}
         plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
@@ -436,13 +436,13 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        importBundleYAML={importBundleYAML}
+        changeState={changeState}
+        deployService={deployService}
+        entityModel={mockEntity}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
         hasPlans={true}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={mockEntity}
+        importBundleYAML={importBundleYAML}
         plans={plans}
         pluralize={sinon.stub()}
         scrollPosition={0}
@@ -466,13 +466,13 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        importBundleYAML={importBundleYAML}
+        changeState={changeState}
+        deployService={deployService}
+        entityModel={entity}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
         hasPlans={false}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={entity}
+        importBundleYAML={importBundleYAML}
         pluralize={sinon.stub()}
         scrollPosition={0}
         urllib={urllib} />);
@@ -498,14 +498,14 @@ describe('EntityHeader', function() {
     const output = testUtils.renderIntoDocument(
       <EntityHeader
         acl={acl}
-        importBundleYAML={importBundleYAML}
+        addNotification={addNotification}
+        changeState={changeState}
+        deployService={deployService}
+        entityModel={entity}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
         hasPlans={false}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={entity}
-        addNotification={addNotification}
+        importBundleYAML={importBundleYAML}
         pluralize={sinon.stub()}
         scrollPosition={0}
         urllib={urllib} />);
@@ -527,14 +527,14 @@ describe('EntityHeader', function() {
     const renderer = jsTestUtils.shallowRender(
       <EntityHeader
         acl={acl}
-        importBundleYAML={importBundleYAML}
+        addNotification={addNotification}
+        changeState={changeState}
+        deployService={deployService}
+        entityModel={entity}
         getBundleYAML={getBundleYAML}
         getModelName={sinon.stub()}
         hasPlans={false}
-        deployService={deployService}
-        changeState={changeState}
-        entityModel={entity}
-        addNotification={addNotification}
+        importBundleYAML={importBundleYAML}
         pluralize={sinon.stub()}
         scrollPosition={100}
         urllib={urllib} />, true);
@@ -568,9 +568,9 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        entityModel={mockEntity}
         changeState={changeState}
         deployService={sinon.spy()}
+        entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
         hasPlans={false}
@@ -602,9 +602,9 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        entityModel={mockEntity}
         changeState={changeState}
         deployService={sinon.spy()}
+        entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
         hasPlans={false}
@@ -628,8 +628,8 @@ describe('EntityHeader', function() {
       <EntityHeader
         acl={acl}
         addNotification={sinon.stub()}
-        deployService={sinon.spy()}
         changeState={sinon.spy()}
+        deployService={sinon.spy()}
         entityModel={mockEntity}
         getBundleYAML={sinon.stub()}
         getModelName={sinon.stub()}
@@ -642,9 +642,9 @@ describe('EntityHeader', function() {
     const output = renderer.getRenderOutput();
     const expectedOutput = (
       <GenericButton
-        ref="deployAction"
         action={instance._handleDeployClick}
         disabled={true}
+        ref="deployAction"
         tooltip="Add this charm to a new model"
         type="positive">
         Add to model

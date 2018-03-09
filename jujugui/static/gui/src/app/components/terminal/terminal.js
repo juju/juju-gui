@@ -239,18 +239,18 @@ class Terminal extends React.Component {
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
-            <span onClick={this.setSize.bind(this, 'min')} tabIndex="0" role="button">
+            <span onClick={this.setSize.bind(this, 'min')} role="button" tabIndex="0">
               <SvgIcon name="minimize-bar_16" size="16" />
             </span>
-            <span onClick={this.setSize.bind(this, 'max')} tabIndex="0" role="button">
+            <span onClick={this.setSize.bind(this, 'max')} role="button" tabIndex="0">
               <SvgIcon name="maximize-bar_16" size="16" />
             </span>
-            <span onClick={this.close.bind(this)} tabIndex="0" role="button">
+            <span onClick={this.close.bind(this)} role="button" tabIndex="0">
               <SvgIcon name="close_16" size="16" />
             </span>
           </div>
         </div>
-        <div ref="terminal" className={terminalClassNames} style={styles}></div>
+        <div className={terminalClassNames} ref="terminal" style={styles}></div>
       </div>
     );
   }

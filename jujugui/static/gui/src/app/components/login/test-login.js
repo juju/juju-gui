@@ -38,7 +38,7 @@ describe('LoginComponent', function() {
     var expected = (
       <div className="login">
         <div className="login__logo">
-          <SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon height="30" name="juju-logo" width="75" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -47,25 +47,25 @@ describe('LoginComponent', function() {
           {undefined}
           <form
             className="login__form"
-            ref="form"
-            onSubmit={instance._handleLoginSubmit}>
+            onSubmit={instance._handleLoginSubmit}
+            ref="form">
             <label
               className="login__label">
               Username
               <input
                 className="login__input"
-                type="text"
                 name="username"
-                ref="username" />
+                ref="username"
+                type="text" />
             </label>
             <label
               className="login__label">
               Password
               <input
                 className="login__input"
-                type="password"
                 name="password"
-                ref="password" />
+                ref="password"
+                type="password" />
             </label>
             <GenericButton
               submit={true}
@@ -112,7 +112,7 @@ describe('LoginComponent', function() {
     var expected = (
       <div className="login hidden">
         <div className="login__logo">
-          <SvgIcon width="75" height="30" name="juju-logo" />
+          <SvgIcon height="30" name="juju-logo" width="75" />
         </div>
         <div className="login__full-form">
           <div className="login__env-name">
@@ -121,25 +121,25 @@ describe('LoginComponent', function() {
           {undefined}
           <form
             className="login__form"
-            ref="form"
-            onSubmit={instance._handleLoginSubmit}>
+            onSubmit={instance._handleLoginSubmit}
+            ref="form">
             <label
               className="login__label">
               Username
               <input
                 className="login__input"
-                type="text"
                 name="username"
-                ref="username" />
+                ref="username"
+                type="text" />
             </label>
             <label
               className="login__label">
               Password
               <input
                 className="login__input"
-                type="password"
                 name="password"
-                ref="password" />
+                ref="password"
+                type="password" />
             </label>
             <GenericButton
               submit={true}
@@ -174,10 +174,10 @@ describe('LoginComponent', function() {
       <Login
         addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
-        gisf={false}
-        loginToController={sinon.stub()}
         errorMessage='bad wolf'
-        loginToAPIs={sinon.stub()} />);
+        gisf={false}
+        loginToAPIs={sinon.stub()}
+        loginToController={sinon.stub()} />);
     var expected = <div className="login__failure-message">bad wolf</div>;
     assert.deepEqual(output.props.children[1].props.children[1], expected);
   });
@@ -189,8 +189,8 @@ describe('LoginComponent', function() {
         addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
-        loginToController={sinon.stub()}
-        loginToAPIs={loginToAPIs} />);
+        loginToAPIs={loginToAPIs}
+        loginToController={sinon.stub()} />);
     component.refs.username.value = 'foo';
     component.refs.password.value = 'bar';
 
@@ -238,8 +238,8 @@ describe('LoginComponent', function() {
         addNotification={sinon.stub()}
         controllerIsConnected={sinon.stub()}
         gisf={false}
-        loginToController={sinon.stub()}
-        loginToAPIs={sinon.stub()} />, true);
+        loginToAPIs={sinon.stub()}
+        loginToController={sinon.stub()} />, true);
     var instance = renderer.getMountedInstance();
     instance.refs = {username: {focus: focus}};
     instance.componentDidMount();
