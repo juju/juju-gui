@@ -3,10 +3,10 @@
 
 const React = require('react');
 const ReactDOM = require('react-dom');
+const enzyme = require('enzyme');
 
 const EnvList = require('./list');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
 const testUtils = require('react-dom/test-utils');
 
 describe('EnvList', function() {
@@ -29,7 +29,7 @@ describe('EnvList', function() {
         lastConnection: {a: 1, getTime: function() {}}
       }
     ];
-    const renderer = jsTestUtils.shallowRender(
+    const renderer = enzyme.shallow(
       <EnvList
         acl={acl}
         changeState={sinon.stub()}
@@ -39,9 +39,7 @@ describe('EnvList', function() {
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
         user={{username: 'who@external', displayName: 'who'}} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
+    const expected = (
       <ul className="env-list"
         role="menubar"
         id="environmentSwitcherMenu"
@@ -54,15 +52,15 @@ describe('EnvList', function() {
           data-id={models[1].uuid}
           data-name={models[1].name}
           data-owner={models[1].owner}
-          onClick={instance._handleModelClick}
+          onClick={renderer.find('.env-list__environment').prop('onClick')}
           key={models[1].uuid}>
-          {'dalek/model-name-2'}
+          dalek/model-name-2
           <div className="env-list__last-connected">
-            {'Last accessed less than a minute ago'}
+            Last accessed less than a minute ago
           </div>
         </li>
       </ul>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    assert.compareJSX(renderer.find('.env-list'), expected);
   });
 
   it('orders the model list, and handles never connected ones', function() {
@@ -91,7 +89,7 @@ describe('EnvList', function() {
         owner: 'dalek@external'
       }
     ];
-    const renderer = jsTestUtils.shallowRender(
+    const renderer = enzyme.shallow(
       <EnvList
         acl={acl}
         changeState={sinon.stub()}
@@ -101,9 +99,7 @@ describe('EnvList', function() {
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
         user={{username: 'who@external', displayName: 'who'}} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
+    const expected = (
       <ul className="env-list"
         role="menubar"
         id="environmentSwitcherMenu"
@@ -116,7 +112,7 @@ describe('EnvList', function() {
           data-id={models[3].uuid}
           data-name={models[3].name}
           data-owner={models[3].owner}
-          onClick={instance._handleModelClick}
+          onClick={renderer.find('.env-list__environment').at(0).prop('onClick')}
           key={models[3].uuid}>
           {'dalek/model-name-4'}
           <div className="env-list__last-connected">
@@ -129,7 +125,7 @@ describe('EnvList', function() {
           data-id={models[2].uuid}
           data-name={models[2].name}
           data-owner={models[2].owner}
-          onClick={instance._handleModelClick}
+          onClick={renderer.find('.env-list__environment').at(1).prop('onClick')}
           key={models[2].uuid}>
           {'model-name-3'}
           <div className="env-list__last-connected">
@@ -142,7 +138,7 @@ describe('EnvList', function() {
           data-id={models[1].uuid}
           data-name={models[1].name}
           data-owner={models[1].owner}
-          onClick={instance._handleModelClick}
+          onClick={renderer.find('.env-list__environment').at(2).prop('onClick')}
           key={models[1].uuid}>
           {'dalek/model-name-2'}
           <div className="env-list__last-connected">
@@ -151,7 +147,7 @@ describe('EnvList', function() {
         </li>
         ]}
       </ul>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    assert.compareJSX(renderer.find('.env-list'), expected);
   });
 
   it('handles local model owners', function() {
@@ -169,7 +165,7 @@ describe('EnvList', function() {
         lastConnection: {a: 1, getTime: function() {}}
       }
     ];
-    const renderer = jsTestUtils.shallowRender(
+    const renderer = enzyme.shallow(
       <EnvList
         acl={acl}
         changeState={sinon.stub()}
@@ -179,8 +175,6 @@ describe('EnvList', function() {
         humanizeTimestamp={humanizeTimestamp}
         switchModel={sinon.stub()}
         user={{username: 'who@local', displayName: 'who'}} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
     const expected = (
       <ul className="env-list"
         role="menubar"
@@ -194,19 +188,19 @@ describe('EnvList', function() {
           data-id={models[1].uuid}
           data-name={models[1].name}
           data-owner={models[1].owner}
-          onClick={instance._handleModelClick}
+          onClick={renderer.find('.env-list__environment').prop('onClick')}
           key={models[1].uuid}>
-          {'dalek/model-name-2'}
+          dalek/model-name-2
           <div className="env-list__last-connected">
-            {'Last accessed less than a minute ago'}
+            Last accessed less than a minute ago
           </div>
         </li>
       </ul>);
-    expect(output.props.children[0]).toEqualJSX(expected);
+    assert.compareJSX(renderer.find('.env-list'), expected);
   });
 
   it('displays only the create new button if there are no models', function() {
-    const output = jsTestUtils.shallowRender(
+    const renderer = enzyme.shallow(
       <EnvList
         acl={acl}
         changeState={sinon.stub()}
@@ -215,7 +209,7 @@ describe('EnvList', function() {
         handleModelClick={sinon.stub()}
         switchModel={sinon.stub()}
         user={{username: 'who@local', displayName: 'who'}} />);
-    assert.strictEqual(output.props.children[0].props.children, false);
+    assert.strictEqual(renderer.find('EnvList').length, 0);
   });
 
   it('clicking a model calls the handleModelClick prop', function() {
@@ -225,7 +219,7 @@ describe('EnvList', function() {
     getAttribute.withArgs('data-id').returns('abc123');
     getAttribute.withArgs('data-name').returns('the name');
     getAttribute.withArgs('data-owner').returns('who@external');
-    const output = jsTestUtils.shallowRender(
+    const renderer = enzyme.shallow(
       <EnvList
         acl={acl}
         changeState={sinon.stub()}
@@ -234,7 +228,7 @@ describe('EnvList', function() {
         handleModelClick={handleModelClick}
         switchModel={sinon.stub()}
         user={{username: 'who@local', displayName: 'who'}} />);
-    output.props.children[0].props.children[0].props.onClick({
+    renderer.find('.env-list__environment').props().onClick({
       currentTarget: {
         getAttribute: getAttribute
       }
