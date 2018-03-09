@@ -60,6 +60,7 @@ class ProfileHeader extends React.Component {
   */
   _generateAvatar() {
     const user = this.state.user;
+    const isCurrent = this.props.userInfo.isCurrent;
     let content = <span className="profile-header__avatar-overlay"></span>;
     if (user && user.gravatar_id) {
       content = (
@@ -68,14 +69,26 @@ class ProfileHeader extends React.Component {
     }
     const classes = classNames(
       'profile-header__avatar', {
+        tooltip: isCurrent,
         'profile-header__avatar--default': !user || !user.gravatar_id,
         // If we haven't yet received a response about the user data, don't
         // return an avatar so that we can avoid a flash of the 'fallback' icon.
         'profile-header__avatar--hidden': !this.state.userRequested
       });
+    const tooltip = isCurrent ? (
+      <span className="tooltip__tooltip">
+        <span className="tooltip__inner tooltip__inner--down">
+          Edit your <strong>Gravatar</strong>
+        </span>
+      </span>) : null;
     return (
       <span className={classes}>
-        {content}
+        {isCurrent ? (
+          <a href="http://gravatar.com/"
+            target="_blank">
+            {content}
+          </a>) : content}
+        {tooltip}
       </span>);
   }
 
@@ -128,8 +141,8 @@ class ProfileHeader extends React.Component {
           </div>
           {this._generateAvatar()}
           <ul className="profile-header__meta">
-            <li>
-              <h1 className="profile-header__username">
+            <li className="profile-header__username">
+              <h1>
                 {this.props.userInfo.profile}
               </h1>
             </li>
