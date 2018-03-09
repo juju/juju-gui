@@ -332,7 +332,7 @@ utils._destroyServiceCallback = (service, db, callback, evt) => {
   } else {
     // Remove the relations from the database (they will be removed from
     // the state server by Juju, so we don't need to interact with env).
-    db.relations.remove(service.get('relations'));
+    db.relations.remove(db.relations.get_relations_for_service(service));
     db.notifications.add({
       title: 'Destroying service',
       message: 'Service: ' + evt.applicationName + ' is being destroyed.',

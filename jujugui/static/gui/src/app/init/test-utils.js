@@ -205,9 +205,7 @@ describe('init utils', () => {
         err: false,
         applicationName: APPNAME
       };
-      const service = {
-        get: () => []
-      };
+      const service = {};
 
       const db = {
         notifications: {
@@ -224,6 +222,7 @@ describe('init utils', () => {
           }
         },
         relations: {
+          get_relations_for_service: sinon.stub().returns([]),
           remove: sinon.stub()
         }
       };
