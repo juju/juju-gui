@@ -39,6 +39,8 @@ module.exports = function(config) {
 
       'jujugui/static/gui/src/app/state/*.js',
 
+      'jujugui/static/gui/src/test/enzyme-setup.js',
+      'jujugui/static/gui/src/test/chai-setup.js',
       // This file needs to go before any tests as it adds a beforEach and
       // afterEach for every test so that we can ensure there are no prop type
       // errors.
@@ -74,7 +76,9 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/init/topology/environment-utils.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
       'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/test/globalconfig.js': ['browserify']
+      'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],
+      'jujugui/static/gui/src/test/enzyme-setup.js': ['browserify'],
+      'jujugui/static/gui/src/test/chai-setup.js': ['browserify']
     },
 
     proxies: {
