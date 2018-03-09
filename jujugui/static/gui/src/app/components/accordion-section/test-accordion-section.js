@@ -2,91 +2,62 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const AccordionSection = require('./accordion-section');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('AccordionSection', () => {
-
-  function render(props) {
-    const renderer = jsTestUtils.shallowRender(
-      <AccordionSection
-        startOpen={props.startOpen}
-        title={props.title}>
-        {props.children}
-      </AccordionSection>
-      , true);
-
-    return {
-      renderer: renderer,
-      output: renderer.getRenderOutput(),
-      instance: renderer.getMountedInstance()
-    };
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <AccordionSection
+      startOpen={
+        options.startOpen === undefined ? false : options.startOpen}
+      title={options.title || 'My title!'}>
+      {options.children === undefined ? (<span>Hello</span>) : options.children}
+    </AccordionSection>
+  );
 
   it('can render', () => {
-    const comp = render({
-      startOpen: false,
-      title: 'My title!',
-      children: <span>Hello</span>
-    });
-    expect(comp.output).toEqualJSX(
+    const wrapper = renderComponent();
+    const expected = (
       <div className="accordion-section">
         <div className="accordion-section__title"
-          role="button"
-          onClick={comp.instance._toggle.bind(comp.instance)}>
+          onClick={wrapper.find('.accordion-section__title').prop('onClick')}
+          role="button">
           <span className="accordion-section__title-content">My title!</span>
-          <SvgIcon className="right" name="chevron_down_16"
+          <SvgIcon
+            className="right"
+            name="chevron_down_16"
             size="16" />
         </div>
         <div className="accordion-section__content" ref="content"
           style={{maxHeight: 0}}><span>Hello</span></div>
       </div>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('toggles open and closed when the heading is clicked', () => {
-    const comp = render({
-      startOpen: false,
-      title: 'My title!',
-      children: <span>Hello</span>
-    });
-    const instance = comp.renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     instance.refs = {
       content: {scrollHeight: 100}
     };
     instance._toggle();
-    let output = comp.renderer.getRenderOutput();
-    expect(output).toEqualJSX(
-      <div className="accordion-section">
-        <div className="accordion-section__title"
-          role="button"
-          onClick={instance._toggle.bind(instance)}>
-          <span className="accordion-section__title-content">My title!</span>
-          <SvgIcon className="right" name="chevron_up_16"
-            size="16" />
-        </div>
-        <div className="accordion-section__content" ref="content"
-          style={{maxHeight: '100px'}}><span>Hello</span></div>
+    const expected = (
+      <div className="accordion-section__content" ref="content"
+        style={{maxHeight: '100px'}}>
+        <span>Hello</span>
       </div>);
+    assert.compareJSX(wrapper.find('.accordion-section__content'), expected);
   });
 
   it('does not show chevron or content when there are no children', () => {
-    const comp = render({
-      startOpen: false,
-      title: 'My title!'
-    });
-    expect(comp.output).toEqualJSX(
-      <div className="accordion-section">
-        <div className="accordion-section__title"
-          role={null}
-          onClick={null}>
-          <span className="accordion-section__title-content">My title!</span>
-        </div>
-        <div className="accordion-section__content" ref="content"
-          style={{maxHeight: 0}}></div>
-      </div>
-    );
+    const wrapper = renderComponent({ children: null });
+    const expected = (
+      <div className="accordion-section__content" ref="content"
+        style={{maxHeight: '100px'}}>
+        {null}
+      </div>);
+    assert.compareJSX(wrapper.find('.accordion-section__content'), expected);
   });
 });
