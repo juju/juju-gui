@@ -96,15 +96,15 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         instanceName="inspector-panel"
         visible={db.services.size() > 0}>
         <AddedServicesList
-          services={db.services}
-          hoveredId={hoveredId}
-          updateUnitFlags={db.updateUnitFlags.bind(db)}
+          changeState={this._bound.changeState}
           findRelatedServices={db.findRelatedServices.bind(db)}
           findUnrelatedServices={db.findUnrelatedServices.bind(db)}
           getUnitStatusCounts={initUtils.getUnitStatusCounts}
+          hoveredId={hoveredId}
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
-          changeState={this._bound.changeState} />
+          services={db.services}
+          updateUnitFlags={db.updateUnitFlags.bind(db)} />
       </Panel>,
       document.getElementById('inspector-container'));
   }
@@ -141,18 +141,18 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
-        displayTerminalButton={displayTerminalButton}
         appState={this.state}
         changeState={this._bound.changeState}
+        displayTerminalButton={displayTerminalButton}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, this.db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
+        loadingModel={modelAPI.loading}
         renderDragOverNotification={
           this._renderDragOverNotification.bind(this)}
         sharingVisibility={this._sharingVisibility.bind(this)}
-        loadingModel={modelAPI.loading}
         userIsAuthenticated={modelAPI.userIsAuthenticated} />,
       document.getElementById('model-actions-container'));
   }
@@ -242,7 +242,7 @@ Browser: ${navigator.userAgent}`
     if (!address) {
       // This should never happen.
       let message = 'an unexpected error has occurred please file an issue ';
-      let link = <a href={githubIssueLink} target="_blank" key="link">here</a>;
+      let link = <a href={githubIssueLink} key="link" target="_blank">here</a>;
       const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
       if (!jujushell || jujushell.get('pending')) {
         message = 'deploy and expose the "jujushell" charm and try again.';
@@ -330,8 +330,9 @@ Browser: ${navigator.userAgent}`
         acl={shapeup.fromShape(this.acl, Profile.propTypes.acl)}
         activeSection={state.hash}
         addNotification={this._bound.addNotification}
-        baseURL={this.applicationConfig.baseUrl}
+        addToModel={this.addToModel.bind(this, charmstore)}
         bakery={this.bakery}
+        baseURL={this.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
         charmstore={charmstore}
         controllerAPI={
@@ -341,7 +342,6 @@ Browser: ${navigator.userAgent}`
             .replace('wss://', '').replace('ws://', '').split(':')[0]}
         controllerIsReady={this._controllerIsReady.bind(this)}
         controllerUser={this.user.controller.user}
-        addToModel={this.addToModel.bind(this, charmstore)}
         destroyModel={
           initUtils.destroyModel.bind(
             initUtils, this._bound.destroyModels, this.modelAPI, this._bound.switchModel)}
@@ -394,8 +394,8 @@ Browser: ${navigator.userAgent}`
         onClick={openHelp.bind(this)}
         role="button"
         tabIndex="0">
-        <SvgIcon name="help_16"
-          className="header__button-icon"
+        <SvgIcon className="header__button-icon"
+          name="help_16"
           size="16" />
         <span className="tooltip__tooltip--below">
           <span className="tooltip__inner tooltip__inner--up">
@@ -451,9 +451,9 @@ Browser: ${navigator.userAgent}`
       changeState={this._bound.changeState}
       displayShortcutsModal={this._displayShortcutsModal.bind(this)}
       gisf={this.applicationConfig.gisf}
-      user={this.user}
       sendGetRequest={handler.sendGetRequest.bind(handler)}
       staticURL={this.applicationConfig.staticURL || ''}
+      user={this.user}
       youtubeAPIKey={this.applicationConfig.youtubeAPIKey} />,
     document.getElementById('help')
     );
@@ -637,36 +637,36 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <Charmbrowser
         acl={this.acl}
-        apiUrl={charmstore.url}
-        charmstoreSearch={charmstore.search.bind(charmstore)}
-        clearLightbox={this._clearLightbox.bind(this)}
+        addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
-        displayLightbox={this._displayLightbox.bind(this)}
-        series={viewUtils.getSeriesList()}
-        importBundleYAML={this.bundleImporter.importBundleYAML.bind(
-          this.bundleImporter)}
-        flags={window.juju_config.flags}
-        getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
-        getEntity={getEntity}
-        getFile={charmstore.getFile.bind(charmstore)}
-        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-        getModelName={this._getModelName.bind(this)}
-        gisf={this.applicationConfig.gisf}
-        listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-        renderMarkdown={marked}
-        deployService={this.deployService.bind(this)}
+        apiUrl={charmstore.url}
+        apiVersion={window.jujulib.charmstoreAPIVersion}
         appState={this.state}
-        utils={initUtils}
-        sendAnalytics={this.sendAnalytics}
-        staticURL={this.applicationConfig.staticURL || ''}
+        charmstoreSearch={charmstore.search.bind(charmstore)}
         charmstoreURL={
           viewUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
-        apiVersion={window.jujulib.charmstoreAPIVersion}
-        addNotification={this._bound.addNotification}
+        clearLightbox={this._clearLightbox.bind(this)}
+        deployService={this.deployService.bind(this)}
+        displayLightbox={this._displayLightbox.bind(this)}
+        flags={window.juju_config.flags}
+        getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
+        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
+        getEntity={getEntity}
+        getFile={charmstore.getFile.bind(charmstore)}
+        getModelName={this._getModelName.bind(this)}
+        gisf={this.applicationConfig.gisf}
+        importBundleYAML={this.bundleImporter.importBundleYAML.bind(
+          this.bundleImporter)}
+        listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         makeEntityModel={jujulibConversionUtils.makeEntityModel}
+        renderMarkdown={marked}
+        sendAnalytics={this.sendAnalytics}
+        series={viewUtils.getSeriesList()}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
-        urllib={window.jujulib.URL} />,
+        staticURL={this.applicationConfig.staticURL || ''}
+        urllib={window.jujulib.URL}
+        utils={initUtils} />,
       document.getElementById('charmbrowser-container'));
     next();
   }
@@ -831,25 +831,25 @@ Browser: ${navigator.userAgent}`
           createMachinesPlaceUnits={initUtils.createMachinesPlaceUnits.bind(
             this, db, model, service)}
           createRelation={relationUtils.createRelation.bind(this, db, model)}
-          destroyService={initUtils.destroyService.bind(
-            this, db, model, service)}
           destroyRelations={relationUtils.destroyRelations.bind(
             this, db, model)}
+          destroyService={initUtils.destroyService.bind(
+            this, db, model, service)}
           destroyUnits={model.remove_units.bind(model)}
           displayPlans={initUtils.compareSemver(
             this.applicationConfig.jujuCoreVersion, '2') > -1}
           entityPath={window.jujulib.URL.fromAnyString(charm.get('id')).path()}
-          getCharm={model.get_charm.bind(model)}
-          getUnitStatusCounts={initUtils.getUnitStatusCounts}
-          getYAMLConfig={initUtils.getYAMLConfig.bind(this)}
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
           getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
             this, this.endpointsController, db, endpointUtils.getEndpoints)}
           getAvailableVersions={charmstore.getAvailableVersions.bind(
             charmstore)}
+          getCharm={model.get_charm.bind(model)}
           getServiceById={db.services.getById.bind(db.services)}
           getServiceByName={db.services.getServiceByName.bind(db.services)}
+          getUnitStatusCounts={initUtils.getUnitStatusCounts}
+          getYAMLConfig={initUtils.getYAMLConfig.bind(this)}
           linkify={initUtils.linkify}
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}
@@ -877,8 +877,8 @@ Browser: ${navigator.userAgent}`
           changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
-          services={db.services}
           series={viewUtils.getSeriesList()}
+          services={db.services}
           upgradeServiceUsingLocalCharm={
             localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
               this, model, db)}
@@ -963,26 +963,24 @@ Browser: ${navigator.userAgent}`
         addAgreement={this.terms.addAgreement.bind(this.terms)}
         addNotification={this._bound.addNotification}
         addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
-        importSSHKeys={modelAPI.importKeys.bind(modelAPI)}
         applications={services.toArray()}
-        charmstore={charmstore}
+        changes={currentChangeSet}
         changesFilterByParent={
           changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
         changeState={this._bound.changeState}
+        charmsGetById={db.charms.getById.bind(db.charms)}
+        charmstore={charmstore}
         cloud={cloud}
         controllerIsReady={this._controllerIsReady.bind(this)}
-        createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
         createCardElement={
           this.stripe && this.stripe.createCardElement.bind(this.stripe)}
+        createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
         createUser={
           this.payment && this.payment.createUser.bind(this.payment)}
         credential={modelAPI.get('credential')}
-        changes={currentChangeSet}
-        charmsGetById={db.charms.getById.bind(db.charms)}
+        ddData={ddData}
         deploy={initUtils.deploy.bind(
           viewUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
-        sendAnalytics={this.sendAnalytics}
-        setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         formatConstraints={viewUtils.formatConstraints.bind(viewUtils)}
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
@@ -997,27 +995,26 @@ Browser: ${navigator.userAgent}`
         generatePath={this.state.generatePath.bind(this.state)}
         getAgreementsByTerms={
           this.terms.getAgreementsByTerms.bind(this.terms)}
-        getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
-        sortDescriptionsByApplication={
-          changesUtils.sortDescriptionsByApplication.bind(null,
-            services.getById.bind(services))}
-        isLoggedIn={isLoggedIn}
-        getCloudCredentials={
-          controllerAPI.getCloudCredentials.bind(controllerAPI)}
         getCloudCredentialNames={
           controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
+        getCloudCredentials={
+          controllerAPI.getCloudCredentials.bind(controllerAPI)}
         getCloudProviderDetails={initUtils.getCloudProviderDetails.bind(initUtils)}
-        getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getCountries={
           this.payment && this.payment.getCountries.bind(this.payment)
             || null}
+        getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
         getEntity={charmstore.getEntity.bind(charmstore)}
+        getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
+        getServiceByName={services.getServiceByName.bind(services)}
         getUser={this.payment && this.payment.getUser.bind(this.payment)}
         getUserName={getUserName}
         gisf={this.gisf}
         groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
         gtmEnabled={this.applicationConfig.GTM_enabled}
+        importSSHKeys={modelAPI.importKeys.bind(modelAPI)}
+        isLoggedIn={isLoggedIn}
         listBudgets={this.plans.listBudgets.bind(this.plans)}
         listClouds={controllerAPI.listClouds.bind(controllerAPI)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
@@ -1025,13 +1022,16 @@ Browser: ${navigator.userAgent}`
         makeEntityModel={jujulibConversionUtils.makeEntityModel}
         modelCommitted={connected}
         modelName={modelName}
-        ddData={ddData}
         profileUsername={this._getUserInfo(state).profile}
         region={modelAPI.get('region')}
         renderMarkdown={marked}
-        getServiceByName={services.getServiceByName.bind(services)}
+        sendAnalytics={this.sendAnalytics}
+        setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showPay={this.applicationConfig.flags.pay || false}
         showTerms={this.terms.showTerms.bind(this.terms)}
+        sortDescriptionsByApplication={
+          changesUtils.sortDescriptionsByApplication.bind(null,
+            services.getById.bind(services))}
         stats={this.stats}
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
@@ -1216,18 +1216,18 @@ Browser: ${navigator.userAgent}`
         acl={this.acl}
         addNotification={this._bound.addNotification}
         appState={this.state}
-        user={this.user}
         changeState={this._bound.changeState}
         humanizeTimestamp={initUtils.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
+        loadingModel={modelAPI.loading}
+        modelCommitted={!!modelAPI.get('modelUUID')}
         modelName={this.db.environment.get('name')}
         modelOwner={modelAPI.get('modelOwner')}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showEnvSwitcher={showEnvSwitcher}
         showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
         switchModel={this._bound.switchModel}
-        loadingModel={modelAPI.loading}
-        modelCommitted={!!modelAPI.get('modelUUID')} />,
+        user={this.user} />,
       document.getElementById('header-breadcrumb'));
   }
   /**
