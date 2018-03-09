@@ -2,13 +2,25 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const AddedServicesListItem = require('./item');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('AddedServicesListItem', function() {
-  var mockService;
+  let mockService;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <AddedServicesListItem
+      focusService={options.focusService || sinon.stub()}
+      unfocusService={options.unfocusService || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      getUnitStatusCounts={options.getUnitStatusCounts || getUnitStatusCounts()}
+      hoverService={options.hoverService || sinon.stub()}
+      panToService={options.panToService || sinon.stub()}
+      service={options.service || mockService} />
+  );
 
   beforeEach(function() {
     mockService = jsTestUtils.makeModel();
@@ -26,25 +38,13 @@ describe('AddedServicesListItem', function() {
   it('renders the icon, count, visibility toggles and display name', () => {
     mockService.set('highlight', false);
     mockService.set('fade', false);
-
-    var renderer = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        hoverService={sinon.stub()}
-        panToService={sinon.stub()}
-        service={mockService} />, true);
-
-    var output = renderer.getRenderOutput();
-
-    var expected = (
+    const wrapper = renderComponent();
+    const expected = (
       <li className="inspector-view__list-item"
         data-serviceid="wordpress"
-        onClick={output.props.onClick}
-        onMouseEnter={output.props.onMouseEnter}
-        onMouseLeave={output.props.onMouseLeave}
+        onClick={wrapper.prop('onClick')}
+        onMouseEnter={wrapper.prop('onMouseEnter')}
+        onMouseLeave={wrapper.prop('onMouseLeave')}
         tabIndex="0"
         role="button">
         <img src="icon.gif" className="inspector-view__item-icon" />
@@ -57,7 +57,7 @@ describe('AddedServicesListItem', function() {
           {undefined}
         </span>
       </li>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('only shows the status icon for pending, uncommitted, error', function() {
@@ -85,7 +85,7 @@ describe('AddedServicesListItem', function() {
       return undefined;
     }
 
-    statuses.forEach(function(status) {
+    statuses.forEach((status, i) => {
       var service = {
         getAttrs: function() {
           return {
@@ -98,36 +98,15 @@ describe('AddedServicesListItem', function() {
         get: function() {
           return false;
         }};
-      var renderer = jsTestUtils.shallowRender(
-        <AddedServicesListItem
-          focusService={sinon.stub()}
-          unfocusService={sinon.stub()}
-          changeState={sinon.stub()}
-          getUnitStatusCounts={status.statusCounts}
-          hoverService={sinon.stub()}
-          panToService={sinon.stub()}
-          service={service} />, true);
-
-      var output = renderer.getRenderOutput();
-
-      assert.deepEqual(output,
-        <li className="inspector-view__list-item"
-          data-serviceid="demo"
-          onClick={output.props.onClick}
-          onMouseEnter={output.props.onMouseEnter}
-          onMouseLeave={output.props.onMouseLeave}
-          tabIndex="0"
-          role="button">
-          <img src="icon.gif" className="inspector-view__item-icon" />
-          <span className="inspector-view__item-count">1</span>
-          {' '}
-          <span className="inspector-view__item-name">
-            demo
-          </span>
-          <span className="inspector-view__status-block">
-            {statusIcon(status)}
-          </span>
-        </li>);
+      const wrapper = renderComponent({
+        getUnitStatusCounts: status.statusCounts,
+        service
+      });
+      const expected = (
+        <span className="inspector-view__status-block">
+          {statusIcon(status)}
+        </span>);
+      assert.compareJSX(wrapper.find('.inspector-view__status-block'), expected);
     });
   });
 
@@ -144,37 +123,12 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-
-    var renderer = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        hoverService={sinon.stub()}
-        panToService={sinon.stub()}
-        service={service} />, true);
-
-    var output = renderer.getRenderOutput();
-
-    assert.deepEqual(output,
-      <li className="inspector-view__list-item"
-        data-serviceid="demo"
-        onClick={output.props.onClick}
-        onMouseEnter={output.props.onMouseEnter}
-        onMouseLeave={output.props.onMouseLeave}
-        tabIndex="0"
-        role="button">
-        <img src="icon.gif" className="inspector-view__item-icon" />
-        <span className="inspector-view__item-count">5</span>
-        {' '}
-        <span className="inspector-view__item-name">
-            demo
-        </span>
-        <span className="inspector-view__status-block">
-          {undefined}
-        </span>
-      </li>);
+    const wrapper = renderComponent({ service });
+    const expected = (
+      <span className="inspector-view__status-block">
+        {undefined}
+      </span>);
+    assert.compareJSX(wrapper.find('.inspector-view__status-block'), expected);
   });
 
   it('prioiritizes error, over pending status icon', function() {
@@ -190,36 +144,11 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    var renderer = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts(1, 1)}
-        hoverService={sinon.stub()}
-        panToService={sinon.stub()}
-        service={service} />, true);
-
-    var output = renderer.getRenderOutput();
-
-    assert.deepEqual(output,
-      <li className="inspector-view__list-item"
-        data-serviceid="demo"
-        onClick={output.props.onClick}
-        onMouseEnter={output.props.onMouseEnter}
-        onMouseLeave={output.props.onMouseLeave}
-        tabIndex="0"
-        role="button">
-        <img src="icon.gif" className="inspector-view__item-icon" />
-        <span className="inspector-view__item-count">2</span>
-        {' '}
-        <span className="inspector-view__item-name">
-            demo
-        </span>
-        <span className="inspector-view__status-block">
-          <span className="inspector-view__status--error">1</span>
-        </span>
-      </li>);
+    const wrapper = renderComponent({
+      getUnitStatusCounts: getUnitStatusCounts(1, 1),
+      service
+    });
+    assert.equal(wrapper.find('.inspector-view__status--error').length, 1);
   });
 
   it('prioritizes pending over uncommitted status icon', function() {
@@ -235,36 +164,11 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    var renderer = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        changeState={sinon.stub()}
-        getUnitStatusCounts={getUnitStatusCounts(0, 1, 1)}
-        hoverService={sinon.stub()}
-        panToService={sinon.stub()}
-        service={service} />, true);
-
-    var output = renderer.getRenderOutput();
-
-    assert.deepEqual(output,
-      <li className="inspector-view__list-item"
-        data-serviceid="demo"
-        onClick={output.props.onClick}
-        onMouseEnter={output.props.onMouseEnter}
-        onMouseLeave={output.props.onMouseLeave}
-        tabIndex="0"
-        role="button">
-        <img src="icon.gif" className="inspector-view__item-icon" />
-        <span className="inspector-view__item-count">2</span>
-        {' '}
-        <span className="inspector-view__item-name">
-            demo
-        </span>
-        <span className="inspector-view__status-block">
-          <span className="inspector-view__status--pending">1</span>
-        </span>
-      </li>);
+    const wrapper = renderComponent({
+      getUnitStatusCounts: getUnitStatusCounts(0, 1, 1),
+      service
+    });
+    assert.equal(wrapper.find('.inspector-view__status--pending').length, 1);
   });
 
   it('calls the changeState callable on click', function() {
@@ -280,26 +184,21 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const changeStub = sinon.stub();
+    const changeState = sinon.stub();
     const panToService = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        focusService={sinon.stub()}
-        unfocusService={sinon.stub()}
-        changeState={changeStub}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        hoverService={sinon.stub()}
-        panToService={panToService}
-        service={service} />, true);
-    const output = renderer.getRenderOutput();
-    output.props.onClick({
+    const wrapper = renderComponent({
+      changeState,
+      panToService,
+      service
+    });
+    wrapper.props().onClick({
       currentTarget: {
         getAttribute: () => 'serviceId'
       }
     });
     assert.equal(panToService.callCount, 1);
-    assert.equal(changeStub.callCount, 1);
-    assert.deepEqual(changeStub.args[0][0], {
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: {
           id: 'serviceId'
@@ -319,18 +218,12 @@ describe('AddedServicesListItem', function() {
               return [];
             }}};
       }};
-    var changeStub = sinon.stub();
     var hoverService = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        changeState={changeStub}
-        focusService={sinon.stub()}
-        hoverService={hoverService}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        panToService={sinon.stub()}
-        service={service}
-        unfocusService={sinon.stub()} />);
-    output.props.onMouseEnter();
+    const wrapper = renderComponent({
+      hoverService,
+      service
+    });
+    wrapper.props().onMouseEnter();
     assert.equal(hoverService.callCount, 1);
     assert.equal(hoverService.args[0][0], 'apache2');
     assert.isTrue(hoverService.args[0][1]);
@@ -347,18 +240,12 @@ describe('AddedServicesListItem', function() {
               return [];
             }}};
       }};
-    var changeStub = sinon.stub();
     var hoverService = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <AddedServicesListItem
-        changeState={changeStub}
-        focusService={sinon.stub()}
-        hoverService={hoverService}
-        getUnitStatusCounts={getUnitStatusCounts()}
-        panToService={sinon.stub()}
-        service={service}
-        unfocusService={sinon.stub()} />);
-    output.props.onMouseLeave();
+    const wrapper = renderComponent({
+      hoverService,
+      service
+    });
+    wrapper.props().onMouseLeave();
     assert.equal(hoverService.callCount, 1);
     assert.equal(hoverService.args[0][0], 'apache2');
     assert.isFalse(hoverService.args[0][1]);
