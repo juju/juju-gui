@@ -151,7 +151,7 @@ class BudgetTableRow extends React.Component {
       return;
     }
     return (
-      <div>
+      <div className="budget-table-row__change-plan">
         <div className="budget-table__current twelve-col no-margin-bottom">
           {this._generateSharedFields()}
         </div>
@@ -237,17 +237,17 @@ class BudgetTableRow extends React.Component {
     var activePlan = service.get('activePlan');
     if (activePlan) {
       return (
-        <span>
+        <span className="budget-table-row__plan">
           {activePlan.url} ({activePlan.price})
         </span>);
     } else if (this.state.plans.length > 0) {
       return (
-        <span>
+        <span className="budget-table-row__plan">
           You need to select a plan
         </span>);
     } else {
       return (
-        <span>
+        <span className="budget-table-row__plan">
           -
         </span>);
     }
@@ -307,7 +307,8 @@ class BudgetTableRow extends React.Component {
     if (terms && terms.length > 0) {
       return (
         <div className={
-          'two-col prepend-five no-margin-bottom budget-table-row__link'}>
+          'two-col prepend-five no-margin-bottom budget-table-row__link ' +
+          'budget-table-row__terms-link'}>
           <GenericButton
             action={this._toggleTerms.bind(this)}
             type="base">
@@ -357,7 +358,7 @@ class BudgetTableRow extends React.Component {
     const plansEditable = this.props.plansEditable;
     const editableWidth = !plansEditable ? 'two-col' : 'one-col';
     return (
-      <div>
+      <div className="budget-table-row__plans">
         <div className="three-col no-margin-bottom">
           {this._generateSelectedPlan()}
         </div>
@@ -390,12 +391,12 @@ class BudgetTableRow extends React.Component {
           <div>
             {this._generateSharedFields()}
             {this._generatePlanCols()}
-            <div className="twelve-col no-margin-bottom">
+            <div className="twelve-col no-margin-bottom budget-table-row__extra">
               {this.props.extraInfo}
             </div>
             {this._generateTermsLink()}
           </div>
-          <div>
+          <div className="budget-table-row__change-plan-wrapper">
             {this._generateChangePlan()}
           </div>
         </ExpandingRow>
