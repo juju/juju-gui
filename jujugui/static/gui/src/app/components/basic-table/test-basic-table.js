@@ -2,14 +2,28 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const BasicTable = require('./basic-table');
 const ExpandingRow = require('../expanding-row/expanding-row');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('BasicTable', function() {
   let headers, rows;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <BasicTable
+      changeState={options.changeState || sinon.stub()}
+      filterPredicate={options.filterPredicate || null}
+      generatePath={options.generatePath || null}
+      headerClasses={options.headerClasses || null}
+      headerColumnClasses={options.headerColumnClasses || null}
+      headers={options.headers || headers}
+      rowClasses={options.rowClasses || null}
+      rowColumnClasses={options.rowColumnClasses || null}
+      rows={options.rows || rows}
+      sort={options.sort || null}
+      tableClasses={options.tableClasses || null} />
+  );
 
   beforeEach(() => {
     headers = [{
@@ -51,11 +65,7 @@ describe('BasicTable', function() {
   });
 
   it('can render the table', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <ul className="basic-table twelve-col">
         <li className="twelve-col  basic-table__header"
@@ -105,21 +115,19 @@ describe('BasicTable', function() {
           </div>
         </li>
       </ul>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can apply extra classes', function() {
     rows[1].classes = ['second-row-class'];
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        headerClasses={['header-class']}
-        headerColumnClasses={['header-column']}
-        headers={headers}
-        rowClasses={['row-class']}
-        rowColumnClasses={['row-column']}
-        rows={rows}
-        tableClasses={['table-class']} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      headerClasses: ['header-class'],
+      headerColumnClasses: ['header-column'],
+      rowClasses: ['row-class'],
+      rowColumnClasses: ['row-column'],
+      rows: rows,
+      tableClasses: ['table-class']
+    });
     const expected = (
       <ul className="basic-table twelve-col table-class">
         <li className="twelve-col header-class  basic-table__header"
@@ -169,7 +177,7 @@ describe('BasicTable', function() {
           </div>
         </li>
       </ul>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can sort the table', function() {
@@ -182,50 +190,41 @@ describe('BasicTable', function() {
       }
       return 0;
     };
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        headers={headers}
-        rows={rows}
-        sort={sort} />, true);
-    const output = renderer.getRenderOutput();
-    const rowItems = output.props.children[1];
-    assert.equal(rowItems[0].key, 'row-one-key');
-    assert.equal(rowItems[1].key, 'row-three-key');
-    assert.equal(rowItems[2].key, 'row-two-key');
+    const wrapper = renderComponent({ sort });
+    const rowItems = wrapper.find('.basic-table__row');
+    assert.equal(rowItems.at(0).key(), 'row-one-key');
+    assert.equal(rowItems.at(1).key(), 'row-three-key');
+    assert.equal(rowItems.at(2).key(), 'row-two-key');
   });
 
   it('can filter the table', function() {
     rows[0].extraData = 1;
     rows[1].extraData = 20;
     rows[2].extraData = 5;
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        filterPredicate={row => row.extraData > 10}
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
-    const rowItems = output.props.children[1];
+    const wrapper = renderComponent({
+      filterPredicate: row => row.extraData > 10,
+      rows
+    });
+    const rowItems = wrapper.find('.basic-table__row');
     assert.equal(rowItems.length, 1);
-    assert.equal(rowItems[0].key, 'row-two-key');
+    assert.equal(rowItems.at(0).key(), 'row-two-key');
   });
 
   it('displays row links', function() {
     rows[0].clickState = {another: 'state'};
     const generatePath = sinon.stub().returns('http://example.com');
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        changeState={sinon.stub()}
-        generatePath={generatePath}
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
-    const rowItems = output.props.children[1];
+    const wrapper = renderComponent({
+      changeState: sinon.stub(),
+      generatePath,
+      rows
+    });
+    const rowItems = wrapper.find('.basic-table__row');
     const expected = (
-      <li className="twelve-col basic-table__row"
+      <li className="twelve-col   basic-table__row"
         key="row-one-key">
         <a className="basic-table__row-link"
           href="http://example.com"
-          onClick={sinon.stub()}></a>
+          onClick={wrapper.find('.basic-table__row-link').prop('onClick')}></a>
         <div className="three-col r1c1class1 r1c1class2"
           key="column-1">
           <span>row 1 column 1</span>
@@ -235,7 +234,7 @@ describe('BasicTable', function() {
           row 1 column 2
         </div>
       </li>);
-    expect(rowItems[0]).toEqualJSX(expected);
+    assert.compareJSX(rowItems.at(0), expected);
   });
 
   it('can navigate when a row is clicked', function() {
@@ -243,15 +242,12 @@ describe('BasicTable', function() {
     const changeState = sinon.stub();
     const preventDefault = sinon.stub();
     const generatePath = sinon.stub().returns('http://example.com');
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        changeState={changeState}
-        generatePath={generatePath}
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
-    const rowItems = output.props.children[1];
-    rowItems[0].props.children[0].props.onClick(
+    const wrapper = renderComponent({
+      changeState,
+      generatePath,
+      rows
+    });
+    wrapper.find('.basic-table__row-link').simulate('click',
       {preventDefault: preventDefault});
     assert.equal(preventDefault.callCount, 1);
     assert.equal(changeState.callCount, 1);
@@ -272,14 +268,10 @@ describe('BasicTable', function() {
       expandedContent: (<div>Expanded content!</div>),
       key: 'row-one-key'
     }];
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ rows });
     const expected = (
       <ul className="basic-table twelve-col">
-        <li className="twelve-col basic-table__header"
+        <li className="twelve-col  basic-table__header"
           key='basic-table-header'>
           <div className="three-col class1 class2"
             key="column-1">
@@ -298,6 +290,7 @@ describe('BasicTable', function() {
             'first-row-class': true,
             'twelve-col': true
           }}
+          clickable={true}
           expanded={undefined}
           key="row-one-key">
           <div>
@@ -315,7 +308,7 @@ describe('BasicTable', function() {
           </div>
         </ExpandingRow>
       </ul>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can expand content using a prop', function() {
@@ -333,50 +326,8 @@ describe('BasicTable', function() {
       expandedContentExpanded: true,
       key: 'row-one-key'
     }];
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <ul className="basic-table twelve-col">
-        <li className="twelve-col basic-table__header"
-          key='basic-table-header'>
-          <div className="three-col class1 class2"
-            key="column-1">
-            Column 1
-          </div>
-          <div className="last-col four-col"
-            key="column-2">
-            <span>Column 2</span>
-          </div>
-        </li>
-        <ExpandingRow
-          classes={{
-            'basic-table__row': true,
-            'basic-table__row--clickable': true,
-            'basic-table__row--expandable': true,
-            'first-row-class': true,
-            'twelve-col': true
-          }}
-          expanded={true}
-          key="row-one-key">
-          <div>
-            <div className="three-col r1c1class1 r1c1class2"
-              key="column-1">
-              <span>row 1 column 1</span>
-            </div>
-            <div className="last-col three-col"
-              key="column-2">
-              row 1 column 2
-            </div>
-          </div>
-          <div>
-            <div>Expanded content!</div>
-          </div>
-        </ExpandingRow>
-      </ul>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ rows });
+    assert.equal(wrapper.find('ExpandingRow').prop('expanded'), true);
   });
 
   it('can make a row not clickable', function() {
@@ -394,50 +345,7 @@ describe('BasicTable', function() {
       key: 'row-one-key',
       rowClickable: false
     }];
-    const renderer = jsTestUtils.shallowRender(
-      <BasicTable
-        headers={headers}
-        rows={rows} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <ul className="basic-table twelve-col">
-        <li className="twelve-col basic-table__header"
-          key='basic-table-header'>
-          <div className="three-col class1 class2"
-            key="column-1">
-            Column 1
-          </div>
-          <div className="last-col four-col"
-            key="column-2">
-            <span>Column 2</span>
-          </div>
-        </li>
-        <ExpandingRow
-          classes={{
-            'basic-table__row': true,
-            'basic-table__row--clickable': false,
-            'basic-table__row--expandable': true,
-            'first-row-class': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={undefined}
-          key="row-one-key">
-          <div>
-            <div className="three-col r1c1class1 r1c1class2"
-              key="column-1">
-              <span>row 1 column 1</span>
-            </div>
-            <div className="last-col three-col"
-              key="column-2">
-              row 1 column 2
-            </div>
-          </div>
-          <div>
-            <div>Expanded content!</div>
-          </div>
-        </ExpandingRow>
-      </ul>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ rows });
+    assert.equal(wrapper.find('ExpandingRow').prop('clickable'), false);
   });
 });
