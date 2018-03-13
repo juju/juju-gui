@@ -2,12 +2,15 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const BudgetChart = require('./budget-chart');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('BudgetChart', function() {
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <BudgetChart
+      budgets={options.budgets || null} />
+  );
 
   it('can render', function() {
     var budgets = {
@@ -16,10 +19,7 @@ describe('BudgetChart', function() {
         limit: 80
       }
     };
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetChart
-        budgets={budgets} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ budgets });
     var expected = (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">
@@ -54,13 +54,11 @@ describe('BudgetChart', function() {
           Budget limit: <strong>${80}</strong>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render with no budget data', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetChart />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var expected = (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">
@@ -95,7 +93,7 @@ describe('BudgetChart', function() {
           Budget limit: <strong>${0}</strong>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
 });

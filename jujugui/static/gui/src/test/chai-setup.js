@@ -14,7 +14,7 @@ assert.compareJSX = function(actual, expected) {
   let message = '';
   diff.forEach(part => {
     if (part.added === true) {
-      message += `\x1b[32m- ${part.value}\x1b[0m\n'`;
+      message += `\x1b[32m+ ${part.value}\x1b[0m\n'`;
     } else if (part.removed === true) {
       message += `\x1b[31m- ${part.value}\x1b[0m\n'`;
     } else {

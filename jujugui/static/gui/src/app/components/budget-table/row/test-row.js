@@ -2,16 +2,29 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const BudgetTableRow = require('./row');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
-const TermsPopup = require('../../terms-popup/terms-popup');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('BudgetTableRow', function() {
   var acl, addNotification, listPlansForCharm, parseTermId, service;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <BudgetTableRow
+      acl={options.acl || acl}
+      addNotification={options.addNotification || addNotification}
+      allocationEditable={options.allocationEditable}
+      charmsGetById={options.charmsGetById}
+      extraInfo={options.extraInfo}
+      listPlansForCharm={options.listPlansForCharm || listPlansForCharm}
+      parseTermId={options.parseTermId}
+      plansEditable={options.plansEditable}
+      service={options.service || service}
+      showTerms={options.showTerms}
+      withPlans={options.withPlans === undefined ? true : options.withPlans} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -72,16 +85,7 @@ describe('BudgetTableRow', function() {
   });
 
   it('can render', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var expected = (
       <div>
         <ExpandingRow
@@ -99,9 +103,9 @@ describe('BudgetTableRow', function() {
                 Landscape
               </div>
             </div>
-            <div>
+            <div className="budget-table-row__plans">
               <div className="three-col no-margin-bottom">
-                <span>You need to select a plan</span>
+                <span className="budget-table-row__plan">You need to select a plan</span>
               </div>
               <div className="two-col no-margin-bottom">
                 $1
@@ -114,116 +118,32 @@ describe('BudgetTableRow', function() {
               </div>
               {undefined}
             </div>
-            <div className="twelve-col no-margin-bottom" />
+            <div className="twelve-col no-margin-bottom budget-table-row__extra" />
             {undefined}
           </div>
-          <div>
+          <div className="budget-table-row__change-plan-wrapper">
             {undefined}
           </div>
         </ExpandingRow>
         {undefined}
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render without plans', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        withPlans={false} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            {undefined}
-            {undefined}
-          </div>
-          <div>
-            {undefined}
-          </div>
-        </ExpandingRow>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ withPlans: false });
+    assert.equal(wrapper.find('.budget-table-row__plans').length, 0);
   });
 
   it('can display extra info', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        extraInfo={<span>extra</span>}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        showExtra={true}
-        withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      extraInfo: (<span>extra</span>)
+    });
     var expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>You need to select a plan</span>
-              </div>
-              <div className="two-col no-margin-bottom">
-                $1
-              </div>
-              <div className="two-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom last-col">
-                $1
-              </div>
-              {undefined}
-            </div>
-            <div className="twelve-col no-margin-bottom">
-              <span>extra</span>
-            </div>
-            {undefined}
-          </div>
-          <div>
-            {undefined}
-          </div>
-        </ExpandingRow>
-        {undefined}
+      <div className="twelve-col no-margin-bottom budget-table-row__extra">
+        <span>extra</span>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.budget-table-row__extra'), expected);
   });
 
   it('can show an active plan', function() {
@@ -249,138 +169,37 @@ describe('BudgetTableRow', function() {
         }
       }
     };
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>{'plan 1'} ({'$5'})</span>
-              </div>
-              <div className="two-col no-margin-bottom">
-                $1
-              </div>
-              <div className="two-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom last-col">
-                $1
-              </div>
-              {undefined}
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            {undefined}
-          </div>
-          <div>
-            {undefined}
-          </div>
-        </ExpandingRow>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ service });
+    const expected = (
+      <span className="budget-table-row__plan">{'plan 1'} ({'$5'})</span>);
+    assert.compareJSX(wrapper.find('.budget-table-row__plan'), expected);
   });
 
-  it('can display a service that does not need a plan', function() {
+  it('can display a service that does not need a plan (when no plans)', () => {
     listPlansForCharm = sinon.stub().callsArgWith(1, null, []);
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={true}
-        service={service}
-        withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>-</span>
-              </div>
-              <div className="one-col no-margin-bottom">
-                $1
-              </div>
-              <div className="one-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom">
-                $1
-              </div>
-              {undefined}
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            {undefined}
-          </div>
-          <div>
-            {undefined}
-          </div>
-        </ExpandingRow>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      listPlansForCharm,
+      plansEditable: true
+    });
+    assert.equal(wrapper.find('.budget-table-row__change-plan').length, 0);
+  });
+
+  it('can display a service that does not need a plan (when plans not editable)', () => {
+    const wrapper = renderComponent({
+      plansEditable: false
+    });
+    assert.equal(wrapper.find('.budget-table-row__change-plan').length, 0);
   });
 
   it('can display editable plans', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={true}
-        service={service}
-        withPlans={true} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      plansEditable: true
+    });
     var expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
+      <div className="budget-table-row__change-plan-wrapper">
+        <div className="budget-table-row__change-plan">
+          <div className={
+            'budget-table__current twelve-col no-margin-bottom'}>
             <div>
               <div className="five-col no-margin-bottom">
                 <img className="budget-table__charm-icon"
@@ -388,239 +207,85 @@ describe('BudgetTableRow', function() {
                 Landscape
               </div>
             </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>You need to select a plan</span>
-              </div>
-              <div className="one-col no-margin-bottom">
-                $1
-              </div>
-              <div className="one-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom">
-                $1
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <div className="budget-table__edit">
+          </div>
+          <ul className="budget-table__plans twelve-col no-margin-bottom">
+            {[
+              <li className="budget-table__plan twelve-col" key={0}>
+                <div className="six-col">
+                  <h4>plan 1</h4>
+                  <p>The basic support plan</p>
+                </div>
+                <div className="two-col">
+                  $5
+                </div>
+                <div className="two-col">
+                  Recommended allocation: $550.
+                </div>
+                <div className="two-col last-col">
                   <GenericButton
-                    action={instance._toggle}
+                    action={wrapper.find('GenericButton').at(1).prop('action')}
                     disabled={false}
                     type="neutral">
-                    Change plan
+                    Select plan
                   </GenericButton>
                 </div>
-              </div>
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            {undefined}
-          </div>
-          <div>
-            <div>
-              <div className={
-                'budget-table__current twelve-col no-margin-bottom'}>
-                <div>
-                  <div className="five-col no-margin-bottom">
-                    <img className="budget-table__charm-icon"
-                      src="landscape.svg" />
-                    Landscape
-                  </div>
+              </li>,
+              <li className="budget-table__plan twelve-col" key={1}>
+                <div className="six-col">
+                  <h4>plan 2</h4>
+                  <p>The expensive support plan</p>
                 </div>
-              </div>
-              <ul className="budget-table__plans twelve-col no-margin-bottom">
-                {[
-                  <li className="budget-table__plan twelve-col" key={0}>
-                    <div className="six-col">
-                      <h4>plan 1</h4>
-                      <p>The basic support plan</p>
-                    </div>
-                    <div className="two-col">
-                      $5
-                    </div>
-                    <div className="two-col">
-                      Recommended allocation: $550.
-                    </div>
-                    <div className="two-col last-col">
-                      <GenericButton
-                        action={instance._toggle}
-                        disabled={false}
-                        type="neutral">
-                        Select plan
-                      </GenericButton>
-                    </div>
-                  </li>,
-                  <li className="budget-table__plan twelve-col" key={1}>
-                    <div className="six-col">
-                      <h4>plan 2</h4>
-                      <p>The expensive support plan</p>
-                    </div>
-                    <div className="two-col">
-                      $1,000,000
-                    </div>
-                    <div className="two-col">
-                      Recommended allocation: $550.
-                    </div>
-                    <div className="two-col last-col">
-                      <GenericButton
-                        action={instance._toggle}
-                        disabled={false}
-                        type="neutral">
-                        Select plan
-                      </GenericButton>
-                    </div>
-                  </li>
-                ]}
-              </ul>
-              <p className="budget-table__plan-notice twelve-col">
-                By setting an allocation and selecting a plan you agree to the
-                plans terms and conditions
-              </p>
-            </div>
-          </div>
-        </ExpandingRow>
-        {undefined}
+                <div className="two-col">
+                  $1,000,000
+                </div>
+                <div className="two-col">
+                  Recommended allocation: $550.
+                </div>
+                <div className="two-col last-col">
+                  <GenericButton
+                    action={wrapper.find('GenericButton').at(2).prop('action')}
+                    disabled={false}
+                    type="neutral">
+                    Select plan
+                  </GenericButton>
+                </div>
+              </li>
+            ]}
+          </ul>
+          <p className="budget-table__plan-notice twelve-col">
+            By setting an allocation and selecting a plan you agree to the
+            plans terms and conditions
+          </p>
+        </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.budget-table-row__change-plan-wrapper'), expected);
+    assert.compareJSX(wrapper.find('.budget-table__edit'), (
+      <div className="budget-table__edit">
+        <GenericButton
+          action={wrapper.find('GenericButton').at(0).prop('action')}
+          disabled={false}
+          type="neutral">
+          Change plan
+        </GenericButton>
+      </div>));
   });
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={true}
-        service={service}
-        withPlans={true} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>You need to select a plan</span>
-              </div>
-              <div className="one-col no-margin-bottom">
-                $1
-              </div>
-              <div className="one-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom">
-                $1
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <div className="budget-table__edit">
-                  <GenericButton
-                    action={instance._toggle}
-                    disabled={true}
-                    type="neutral">
-                    Change plan
-                  </GenericButton>
-                </div>
-              </div>
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            {undefined}
-          </div>
-          <div>
-            <div>
-              <div className={
-                'budget-table__current twelve-col no-margin-bottom'}>
-                <div>
-                  <div className="five-col no-margin-bottom">
-                    <img className="budget-table__charm-icon"
-                      src="landscape.svg" />
-                    Landscape
-                  </div>
-                </div>
-              </div>
-              <ul className="budget-table__plans twelve-col no-margin-bottom">
-                {[
-                  <li className="budget-table__plan twelve-col" key={0}>
-                    <div className="six-col">
-                      <h4>plan 1</h4>
-                      <p>The basic support plan</p>
-                    </div>
-                    <div className="two-col">
-                      $5
-                    </div>
-                    <div className="two-col">
-                      Recommended allocation: $550.
-                    </div>
-                    <div className="two-col last-col">
-                      <GenericButton
-                        action={instance._toggle}
-                        disabled={true}
-                        type="neutral">
-                        Select plan
-                      </GenericButton>
-                    </div>
-                  </li>,
-                  <li className="budget-table__plan twelve-col" key={1}>
-                    <div className="six-col">
-                      <h4>plan 2</h4>
-                      <p>The expensive support plan</p>
-                    </div>
-                    <div className="two-col">
-                      $1,000,000
-                    </div>
-                    <div className="two-col">
-                      Recommended allocation: $550.
-                    </div>
-                    <div className="two-col last-col">
-                      <GenericButton
-                        action={instance._toggle}
-                        disabled={true}
-                        type="neutral">
-                        Select plan
-                      </GenericButton>
-                    </div>
-                  </li>
-                ]}
-              </ul>
-              <p className="budget-table__plan-notice twelve-col">
-                By setting an allocation and selecting a plan you agree to the
-                plans terms and conditions
-              </p>
-            </div>
-          </div>
-        </ExpandingRow>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      acl,
+      plansEditable: true
+    });
+    assert.equal(wrapper.find('GenericButton').at(0).prop('disabled'), true);
+    assert.equal(wrapper.find('GenericButton').at(1).prop('disabled'), true);
+    assert.equal(wrapper.find('GenericButton').at(2).prop('disabled'), true);
   });
 
   it('will abort the request when unmounting', function() {
     var abort = sinon.stub();
     listPlansForCharm = sinon.stub().returns({abort: abort});
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        withPlans={true} />, true);
-    renderer.unmount();
+    const wrapper = renderComponent({ listPlansForCharm });
+    wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 
@@ -629,61 +294,9 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(null)
     });
     const showTerms = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />, true);
-    renderer.getMountedInstance().componentWillMount();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>You need to select a plan</span>
-              </div>
-              <div className="two-col no-margin-bottom">
-                $1
-              </div>
-              <div className="two-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom last-col">
-                $1
-              </div>
-              {undefined}
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            {undefined}
-          </div>
-          <div>
-            {undefined}
-          </div>
-        </ExpandingRow>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ charmsGetById, showTerms });
+    assert.equal(showTerms.callCount, 0);
+    assert.equal(wrapper.find('TermsPopup').length, 0);
   });
 
   it('can display applications with terms', function() {
@@ -691,70 +304,18 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms'])
     });
     const showTerms = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />, true);
-    const instance = renderer.getMountedInstance();
-    instance.componentWillMount();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
     const expected = (
-      <div>
-        <ExpandingRow
-          classes={{
-            'budget-table-row': true,
-            'twelve-col': true
-          }}
-          clickable={false}
-          expanded={false}>
-          <div>
-            <div>
-              <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
-                  src="landscape.svg" />
-                Landscape
-              </div>
-            </div>
-            <div>
-              <div className="three-col no-margin-bottom">
-                <span>You need to select a plan</span>
-              </div>
-              <div className="two-col no-margin-bottom">
-                $1
-              </div>
-              <div className="two-col no-margin-bottom">
-                <span onClick={undefined}>$1</span>
-              </div>
-              <div className="one-col no-margin-bottom last-col">
-                $1
-              </div>
-              {undefined}
-            </div>
-            <div className="twelve-col no-margin-bottom" />
-            <div className={
-              'two-col prepend-five no-margin-bottom budget-table-row__link'}>
-              <GenericButton
-                action={instance._toggleTerms}
-                type="base">
-                Terms
-              </GenericButton>
-            </div>
-          </div>
-          <div>
-            {undefined}
-          </div>
-        </ExpandingRow>
-        {undefined}
+      <div className={
+        'two-col prepend-five no-margin-bottom budget-table-row__link ' +
+        'budget-table-row__terms-link'}>
+        <GenericButton
+          action={wrapper.find('.budget-table-row__terms-link GenericButton').prop('action')}
+          type="base">
+          Terms
+        </GenericButton>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.budget-table-row__terms-link'), expected);
   });
 
   it('can get terms by name', function() {
@@ -762,18 +323,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms'])
     });
     const showTerms = sinon.stub();
-    jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />);
+    renderComponent({ charmsGetById, parseTermId, showTerms });
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'landscape-terms');
     assert.isNull(showTerms.args[0][1]);
@@ -784,18 +334,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms/15'])
     });
     const showTerms = sinon.stub();
-    jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />);
+    renderComponent({ charmsGetById, parseTermId, showTerms });
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'landscape-terms');
     assert.equal(showTerms.args[0][1], 15);
@@ -806,18 +345,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['spinach/landscape-terms'])
     });
     const showTerms = sinon.stub();
-    jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />);
+    renderComponent({ charmsGetById, parseTermId, showTerms });
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'spinach/landscape-terms');
     assert.isNull(showTerms.args[0][1]);
@@ -828,18 +356,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['spinach/landscape-terms/15'])
     });
     const showTerms = sinon.stub();
-    jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />);
+    renderComponent({ charmsGetById, parseTermId, showTerms });
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'spinach/landscape-terms');
     assert.equal(showTerms.args[0][1], 15);
@@ -858,44 +375,20 @@ describe('BudgetTableRow', function() {
       name: 'apache2',
       content: 'Apache2 terms.'
     });
-    const renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />, true);
-    const instance = renderer.getMountedInstance();
-    let output = renderer.getRenderOutput();
-    output.props.children[0].props.children[0].props.children[3].props.children
-      .props.action();
-    output = renderer.getRenderOutput();
-    const expected = (
-      <TermsPopup
-        close={instance._toggleTerms}
-        terms={[
-          {content: 'Landscape terms.', name: 'landscape'},
-          {content: 'Apache2 terms.', name: 'apache2'}
-        ]} />);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
+    wrapper.find('.budget-table-row__terms-link GenericButton').props().action();
+    wrapper.update();
+    const popup = wrapper.find('TermsPopup');
+    assert.equal(popup.length, 1);
+    assert.deepEqual(popup.prop('terms'), [
+      {content: 'Landscape terms.', name: 'landscape'},
+      {content: 'Apache2 terms.', name: 'apache2'}
+    ]);
   });
 
   it('can handle errors when getting plans', function() {
     listPlansForCharm = sinon.stub().callsArgWith(1, 'uh oh!', null);
-    jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        service={service}
-        withPlans={true} />);
+    renderComponent({ listPlansForCharm });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Fetching plans failed',
@@ -909,22 +402,9 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms', 'apache2-terms'])
     });
     const showTerms = sinon.stub().callsArgWith(2, 'uh oh!', null);
-    const renderer = jsTestUtils.shallowRender(
-      <BudgetTableRow
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        charmsGetById={charmsGetById}
-        listPlansForCharm={listPlansForCharm}
-        parseTermId={parseTermId}
-        plansEditable={false}
-        service={service}
-        showTerms={showTerms}
-        withPlans={true} />, true);
-    let output = renderer.getRenderOutput();
-    output.props.children[0].props.children[0].props.children[3].props.children
-      .props.action();
-    output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
+    wrapper.find('.budget-table-row__terms-link GenericButton').props().action();
+    wrapper.update();
     assert.equal(addNotification.callCount, 2);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not retrieve "null" terms.',

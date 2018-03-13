@@ -2,14 +2,25 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const BudgetTable = require('./budget-table');
 const BudgetTableRow = require('./row/row');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('BudgetTable', function() {
   var acl;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <BudgetTable
+      acl={options.acl || acl}
+      addNotification={options.addNotification || sinon.stub()}
+      allocationEditable={options.allocationEditable}
+      listPlansForCharm={options.listPlansForCharm || sinon.stub()}
+      plansEditable={options.plansEditable}
+      services={options.services || [{}, {}]}
+      showTerms={options.showTerms || sinon.stub()}
+      withPlans={options.withPlans} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -19,17 +30,14 @@ describe('BudgetTable', function() {
     const addNotification = sinon.stub();
     const listPlansForCharm = sinon.stub();
     const showTerms = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTable
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        services={[{}, {}]}
-        showTerms={showTerms}
-        withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      addNotification,
+      allocationEditable: false,
+      listPlansForCharm,
+      plansEditable: false,
+      showTerms,
+      withPlans: true
+    });
     var expected = (
       <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
@@ -78,125 +86,20 @@ describe('BudgetTable', function() {
           showTerms={showTerms}
           withPlans={true} />]}
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render without plans', function() {
-    const addNotification = sinon.stub();
-    const listPlansForCharm = sinon.stub();
-    const showTerms = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTable
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={false}
-        services={[{}, {}]}
-        showTerms={showTerms}
-        withPlans={false} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="budget-table twelve-col">
-        <div className="budget-table__row-header twelve-col">
-          <div className="five-col">
-            Name
-          </div>
-          {undefined}
-        </div>
-        {[<BudgetTableRow
-          acl={acl}
-          addNotification={addNotification}
-          allocationEditable={false}
-          charmsGetById={undefined}
-          extraInfo={undefined}
-          key={0}
-          listPlansForCharm={listPlansForCharm}
-          parseTermId={undefined}
-          plansEditable={false}
-          service={{}}
-          showTerms={showTerms}
-          withPlans={false} />,
-        <BudgetTableRow
-          acl={acl}
-          addNotification={addNotification}
-          allocationEditable={false}
-          charmsGetById={undefined}
-          extraInfo={undefined}
-          key={1}
-          listPlansForCharm={listPlansForCharm}
-          parseTermId={undefined}
-          plansEditable={false}
-          service={{}}
-          showTerms={showTerms}
-          withPlans={false} />]}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      withPlans: false
+    });
+    assert.equal(wrapper.find('BudgetTableRow').at(0).prop('withPlans'), false);
   });
 
   it('can display editable plans', function() {
-    const addNotification = sinon.stub();
-    const listPlansForCharm = sinon.stub();
-    const showTerms = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <BudgetTable
-        acl={acl}
-        addNotification={addNotification}
-        allocationEditable={false}
-        listPlansForCharm={listPlansForCharm}
-        plansEditable={true}
-        services={[{}, {}]}
-        showTerms={showTerms}
-        withPlans={true} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="budget-table twelve-col">
-        <div className="budget-table__row-header twelve-col">
-          <div className="five-col">
-            Name
-          </div>
-          <div>
-            <div className="three-col">
-              Details
-            </div>
-            <div className="one-col">
-              Usage
-            </div>
-            <div className="one-col">
-              Allocation
-            </div>
-            <div className="one-col last-col">
-              Spend
-            </div>
-          </div>
-        </div>
-        {[<BudgetTableRow
-          acl={acl}
-          addNotification={addNotification}
-          allocationEditable={false}
-          charmsGetById={undefined}
-          extraInfo={undefined}
-          key={0}
-          listPlansForCharm={listPlansForCharm}
-          parseTermId={undefined}
-          plansEditable={true}
-          service={{}}
-          showTerms={showTerms}
-          withPlans={true} />,
-        <BudgetTableRow
-          acl={acl}
-          addNotification={addNotification}
-          allocationEditable={false}
-          charmsGetById={undefined}
-          extraInfo={undefined}
-          key={1}
-          listPlansForCharm={listPlansForCharm}
-          parseTermId={undefined}
-          plansEditable={true}
-          service={{}}
-          showTerms={showTerms}
-          withPlans={true} />]}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      plansEditable: true
+    });
+    assert.equal(wrapper.find('BudgetTableRow').at(0).prop('plansEditable'), true);
   });
 });
