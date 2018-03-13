@@ -26,8 +26,11 @@ class Charmbrowser extends React.Component {
   }
 
   componentDidMount() {
-    this.refs.charmbrowser.addEventListener(
-      'scroll', this._onScroll.bind(this));
+    // The ref cannot exist at this point in the tests.
+    if (this.refs.charmbrowser) {
+      this.refs.charmbrowser.addEventListener(
+        'scroll', this._onScroll.bind(this));
+    }
   }
 
   componentWillUnmount() {
