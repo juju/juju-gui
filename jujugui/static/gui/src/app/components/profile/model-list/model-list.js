@@ -198,7 +198,7 @@ class ProfileModelList extends React.Component {
         <DateDisplay
           date={model.lastConnection || '--'}
           relative={true} />);
-      const destroyContent = userIsAdmin ? (
+      const destroyContent = userIsAdmin && !model.isController ? (
         <a onClick={this._destroyModel.bind(this, model, bdRef)}>
           <SvgIcon
             name="delete_16"
