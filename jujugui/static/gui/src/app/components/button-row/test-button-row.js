@@ -2,13 +2,17 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const ButtonRow = require('./button-row');
 const GenericButton = require('../generic-button/generic-button');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('ButtonRow', function() {
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ButtonRow
+      buttons={options.buttons || []} />
+  );
 
   it('generates a button', function() {
     var callbackStub = sinon.stub();
@@ -17,18 +21,20 @@ describe('ButtonRow', function() {
       type: 'submit',
       action: callbackStub
     }];
-    var output = jsTestUtils.shallowRender(
-      <ButtonRow
-        buttons={buttons} />);
-    assert.deepEqual(output.props.children, [
-      <GenericButton
-        action={callbackStub}
-        disabled={undefined}
-        key="My button"
-        submit={undefined}
-        type="submit">
-        My button
-      </GenericButton>]);
+    const wrapper = renderComponent({ buttons });
+    const expected = (
+      <div className="button-row button-row--multiple button-row--count-1">
+        <GenericButton
+          action={callbackStub}
+          disabled={undefined}
+          key="My button"
+          submit={undefined}
+          type="submit">
+          My button
+        </GenericButton>
+      </div>
+    );
+    assert.compareJSX(wrapper, expected);
   });
 
   it('sets a class when generating multiple buttons', function() {
@@ -42,30 +48,26 @@ describe('ButtonRow', function() {
       type: 'submit',
       action: callbackStub
     }];
-    var output = jsTestUtils.shallowRender(
-      <ButtonRow
-        buttons={buttons} />);
-    var children = [
-      <GenericButton
-        action={callbackStub}
-        disabled={undefined}
-        key="My button"
-        submit={undefined}
-        type="submit">
-        My button
-      </GenericButton>,
-      <GenericButton
-        action={callbackStub}
-        disabled={undefined}
-        key="Another button"
-        submit={undefined}
-        type="submit">
-        Another button
-      </GenericButton>
-    ];
-    assert.deepEqual(output,
+    const wrapper = renderComponent({ buttons });
+    const expected = (
       <div className="button-row button-row--multiple button-row--count-2">
-        {children}
+        <GenericButton
+          action={callbackStub}
+          disabled={undefined}
+          key="My button"
+          submit={undefined}
+          type="submit">
+          My button
+        </GenericButton>
+        <GenericButton
+          action={callbackStub}
+          disabled={undefined}
+          key="Another button"
+          submit={undefined}
+          type="submit">
+          Another button
+        </GenericButton>
       </div>);
+    assert.compareJSX(wrapper, expected);
   });
 });
