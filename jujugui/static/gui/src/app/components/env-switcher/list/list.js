@@ -21,8 +21,7 @@ class EnvList extends React.Component {
 
   /**
     Generate the elements for the list of models.
-
-    @method generateModelList
+    @return {Object} The JSX elements for the list of models.
   */
   generateModelList() {
     const models = this.state.envs;
@@ -30,63 +29,52 @@ class EnvList extends React.Component {
       return false;
     }
     const currentUser = this.props.user ? this.props.user.username : null;
-    // Remove the 'controller' model from the dropdown list, then sort by
-    // last connected (latest at the top).
-    // People shouldn't be editing the 'controller' model.
-    // They can still access it from their profile page.
-    const modelsWithoutController = models.filter(model => {
-      return !model.isController &&
-        model.name !== this.props.environmentName;
-    }).sort((a, b) => {
-      if (!b.lastConnection) {
-        return 1;
-      }
-      if (!a.lastConnection) {
-        return -1;
-      }
-      return b.lastConnection.getTime() - a.lastConnection.getTime();
-    });
-    // If there is only one model left and it's the same name as the current
-    // environment - remove it.
-    if (modelsWithoutController.length === 1 &&
-        modelsWithoutController[0].name === this.props.environmentName) {
-      return false;
-    }
-    return modelsWithoutController.map(model => {
-      let name = model.name;
-      let owner = model.owner;
-      let lastConnected = 'Never accessed';
-      if (model.lastConnection) {
-        lastConnected = 'Last accessed ' + this.props.humanizeTimestamp(
-          model.lastConnection);
-      }
-      let ownerNoDomain;
-      if (owner.indexOf('@') === -1) {
-        // Juju does not return domains for local owners when listing models.
-        ownerNoDomain = owner;
-        owner += '@local';
-      } else {
-        ownerNoDomain = owner.split('@')[0];
-      }
-      if (owner !== currentUser) {
-        name = `${ownerNoDomain}/${model.name}`;
-      }
-      return (
-        <li className="env-list__environment"
-          data-id={model.uuid}
-          data-name={model.name}
-          data-owner={model.owner}
-          key={model.uuid}
-          onClick={this._handleModelClick.bind(this)}
-          role="menuitem"
-          tabIndex="0">
-          {name}
-          <div className="env-list__last-connected">
-            {lastConnected}
-          </div>
-        </li>
-      );
-    });
+    const sortedModels = models
+      .sort((a, b) => {
+        if (!b.lastConnection) {
+          return -1;
+        }
+        if (!a.lastConnection) {
+          return 1;
+        }
+        return b.lastConnection.getTime() - a.lastConnection.getTime();
+      })
+      .map(model => {
+        let name = model.name;
+        let owner = model.owner;
+        let lastConnected = 'Never accessed';
+        if (model.lastConnection) {
+          lastConnected = 'Last accessed ' + this.props.humanizeTimestamp(
+            model.lastConnection);
+        }
+        let ownerNoDomain;
+        if (owner.indexOf('@') === -1) {
+          // Juju does not return domains for local owners when listing models.
+          ownerNoDomain = owner;
+          owner += '@local';
+        } else {
+          ownerNoDomain = owner.split('@')[0];
+        }
+        if (owner !== currentUser) {
+          name = `${ownerNoDomain}/${model.name}`;
+        }
+        return (
+          <li className="env-list__environment"
+            data-id={model.uuid}
+            data-name={model.name}
+            data-owner={model.owner}
+            key={model.uuid}
+            onClick={this._handleModelClick.bind(this)}
+            role="menuitem"
+            tabIndex="0">
+            {name}
+            <div className="env-list__last-connected">
+              {lastConnected}
+            </div>
+          </li>
+        );
+      });
+    return sortedModels;
   }
 
   /**
