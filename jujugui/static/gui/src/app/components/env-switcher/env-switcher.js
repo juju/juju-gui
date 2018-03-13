@@ -184,12 +184,6 @@ class EnvSwitcher extends React.Component {
   }
 
   /**
-    Handle keyup in the model name input.
-  */
-  _handleInputKeyUp() {
-  }
-
-  /**
     Generate the model name.
   */
   _generateName() {
