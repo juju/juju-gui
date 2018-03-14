@@ -4,26 +4,35 @@
 const Clipboard = require('clipboard');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const enzyme = require('enzyme');
 
 const CopyToClipboard = require('./copy-to-clipboard');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
 const testUtils = require('react-dom/test-utils');
 
 describe('CopyToClipboard', function() {
+
+  const renderComponent = (options = {}) => {
+    return enzyme.shallow(
+      <CopyToClipboard
+        className={options.className}
+        value={options.value} />,
+      // Don't call componentDidMount as it requires nodes that don't exist in
+      // the shallow renderer.
+      { disableLifecycleMethods: true });
+  };
+
   it('renders with a default value', function() {
-    var output = jsTestUtils.shallowRender(
-      <CopyToClipboard />);
-    var className = output.props.className;
+    const wrapper = renderComponent();
     var expected = (
-      <div className={className}>
-        <input className={className + '__input'}
+      <div className="copy-to-clipboard">
+        <input className="copy-to-clipboard__input"
           readOnly="true"
           ref="input"
           type="text"
           value="" />
-        <button className={className + '__btn'}
+        <button className="copy-to-clipboard__btn"
           ref="btn">
           <SvgIcon
             name="copy-to-clipboard-16"
@@ -31,14 +40,20 @@ describe('CopyToClipboard', function() {
         </button>
       </div>
     );
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
+  });
+
+  it('can render with a provided className', function() {
+    const wrapper = renderComponent({ className: 'class-name' });
+    assert.equal(wrapper.prop('className'), 'class-name');
+    assert.equal(wrapper.find('input').prop('className'), 'class-name__input');
+    assert.equal(wrapper.find('button').prop('className'), 'class-name__btn');
   });
 
   it('renders a user-provided value properly', function() {
     var value = 'foobar';
-    var output = testUtils.renderIntoDocument(
-      <CopyToClipboard value={value} />);
-    assert.equal(output.refs.input.value, value,
+    const wrapper = renderComponent({ value });
+    assert.equal(wrapper.find('input').prop('value'), value,
       'Value is not set properly for input');
   });
 
