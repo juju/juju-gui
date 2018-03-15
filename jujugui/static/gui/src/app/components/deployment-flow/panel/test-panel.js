@@ -2,126 +2,82 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentPanel = require('./panel');
 const GenericButton = require('../../generic-button/generic-button');
-const Panel = require('../../panel/panel');
 const SvgIcon = require('../../svg-icon/svg-icon');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('DeploymentPanel', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentPanel
+      changeState={options.changeState || sinon.stub()}
+      isDirectDeploy={options.isDirectDeploy}
+      loggedIn={options.loggedIn}
+      sendAnalytics={options.sendAnalytics || sinon.stub()}
+      title={options.title || 'Lamington'}>
+      {options.children || (<span>content</span>)}
+    </DeploymentPanel>
+  );
+
   it('can render', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentPanel
-        changeState={sinon.stub()}
-        title="Lamington">
-        <span>content</span>
-      </DeploymentPanel>, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
-      <Panel
-        instanceName="deployment-flow-panel"
-        visible={true}>
-        <div className="deployment-panel">
-          <div className="deployment-panel__header">
-            <div className="deployment-panel__close">
-              <GenericButton
-                action={instance._handleClose}
-                type="neutral">
-                Back to canvas
-              </GenericButton>
-            </div>
-            <div className="deployment-panel__header-name">
-              Lamington
-            </div>
+      <div className="deployment-panel">
+        <div className="deployment-panel__header">
+          <div className="deployment-panel__close">
+            <GenericButton
+              action={wrapper.find('GenericButton').prop('action')}
+              type="neutral">
+              Back to canvas
+            </GenericButton>
           </div>
-          <div className="deployment-panel__content">
-            <span>content</span>
+          <div className="deployment-panel__header-name">
+            Lamington
           </div>
         </div>
-      </Panel>);
-    expect(output).toEqualJSX(expected);
+        <div className="deployment-panel__content">
+          <span>content</span>
+        </div>
+      </div>);
+    assert.compareJSX(wrapper.find('.deployment-panel'), expected);
   });
 
   it('can render for direct deploy', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentPanel
-        changeState={sinon.stub()}
-        isDirectDeploy={true}
-        loggedIn={false}
-        title="Lamington">
-        <span>content</span>
-      </DeploymentPanel>, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      isDirectDeploy: true,
+      loggedIn: false
+    });
     const expected = (
-      <Panel
-        instanceName="deployment-flow-panel"
-        visible={true}>
-        <div className="deployment-panel">
-          <div className={
-            'deployment-panel__header deployment-panel__header--dark'}>
-            <div className="deployment-panel__header-logo">
-              <SvgIcon
-                className="svg-icon"
-                height="35"
-                name="juju-logo-light"
-                width="90" />
-            </div>
-          </div>
-          <div className="deployment-panel__content">
-            <span>content</span>
-          </div>
+      <div className="deployment-panel__header deployment-panel__header--dark">
+        <div className="deployment-panel__header-logo">
+          <SvgIcon
+            className="svg-icon"
+            height="35"
+            name="juju-logo-light"
+            width="90" />
         </div>
-      </Panel>);
-    expect(output).toEqualJSX(expected);
+      </div>);
+    assert.compareJSX(wrapper.find('.deployment-panel__header'), expected);
   });
 
   it('can render for logged in direct deploy', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentPanel
-        changeState={sinon.stub()}
-        isDirectDeploy={true}
-        loggedIn={true}
-        title="Lamington">
-        <span>content</span>
-      </DeploymentPanel>, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <Panel
-        instanceName="deployment-flow-panel"
-        visible={true}>
-        <div className="deployment-panel">
-          <div className="deployment-panel__header">
-            <div className="deployment-panel__header-logo">
-              <SvgIcon
-                className="svg-icon"
-                height="35"
-                name="juju-logo"
-                width="90" />
-            </div>
-          </div>
-          <div className="deployment-panel__content">
-            <span>content</span>
-          </div>
-        </div>
-      </Panel>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      isDirectDeploy: true,
+      loggedIn: true
+    });
+    assert.equal(
+      wrapper.find('.deployment-panel__header').prop('className').includes(
+        'deployment-panel__header--dark'),
+      false);
+    assert.equal(wrapper.find('SvgIcon').prop('name'), 'juju-logo');
   });
 
   it('can close', function() {
     const changeState = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <DeploymentPanel
-        changeState={changeState}
-        sendAnalytics={sinon.stub()}
-        title="Lamington">
-        <span>content</span>
-      </DeploymentPanel>);
-    output.props.children.props.children[0].props.children[0].props.children
-      .props.action();
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('GenericButton').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {deploy: null},
