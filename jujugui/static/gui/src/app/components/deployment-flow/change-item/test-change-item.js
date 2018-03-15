@@ -2,17 +2,21 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentChangeItem = require('./change-item');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('DeploymentChangeItem', function() {
   let change;
 
-  beforeEach(() => {
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentChangeItem
+      change={options.change || change}
+      showTime={options.showTime} />
+  );
 
+  beforeEach(() => {
     change = {
       icon: 'my-icon.svg',
       command: 'juju deploy cs:django',
@@ -23,9 +27,7 @@ describe('DeploymentChangeItem', function() {
 
   it('can display a sprite icon', function() {
     change.icon = 'my-icon';
-    var output = jsTestUtils.shallowRender(
-      <DeploymentChangeItem
-        change={change} />);
+    const wrapper = renderComponent({ change });
     const expected = (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
@@ -41,47 +43,19 @@ describe('DeploymentChangeItem', function() {
           {change.time}
         </span>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can display an svg icon', function() {
-    var output = jsTestUtils.shallowRender(
-      <DeploymentChangeItem
-        change={change} />);
+    const wrapper = renderComponent();
     const expected = (
-      <div className="deployment-change-item">
-        <span className="deployment-change-item__change">
-          <img alt="" className="deployment-change-item__icon"
-            src="my-icon.svg" />
-          Django was added
-          <span className="deployment-change-item__change-command">
-            juju deploy cs:django
-          </span>
-        </span>
-        <span className="deployment-change-item__time">
-          {change.time}
-        </span>
-      </div>);
-    expect(output).toEqualJSX(expected);
+      <img alt="" className="deployment-change-item__icon"
+        src="my-icon.svg" />);
+    assert.compareJSX(wrapper.find('.deployment-change-item__icon'), expected);
   });
 
   it('can display without the time', function() {
-    var output = jsTestUtils.shallowRender(
-      <DeploymentChangeItem
-        change={change}
-        showTime={false} />);
-    const expected = (
-      <div className="deployment-change-item">
-        <span className="deployment-change-item__change">
-          <img alt="" className="deployment-change-item__icon"
-            src="my-icon.svg" />
-          Django was added
-          <span className="deployment-change-item__change-command">
-            juju deploy cs:django
-          </span>
-        </span>
-        {undefined}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ showTime: false });
+    assert.equal(wrapper.find('.deployment-change-item__time').length, 0);
   });
 });
