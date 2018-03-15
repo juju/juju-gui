@@ -2,15 +2,20 @@
 'use strict';
 
 const React = require('react');
-const ReactDOM = require('react-dom');
+const enzyme = require('enzyme');
 
 const DeploymentBarNotification = require('./notification');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
-
 describe('DeploymentBarNotification', function() {
   var clearTimeout, setTimeout;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentBarNotification
+      change={options.change || {
+        id: 'service-added-1',
+        description: 'Django added'
+      }} />
+  );
 
   beforeEach(function() {
     clearTimeout = window.clearTimeout;
@@ -28,71 +33,42 @@ describe('DeploymentBarNotification', function() {
     var change = {
       description: 'Django added'
     };
-    var output = jsTestUtils.shallowRender(
-      <DeploymentBarNotification
-        change={change} />);
-    assert.deepEqual(output,
-      <div className="deployment-bar__notification"
-        onClick={output.props.onClick}
-        ref="deploymentBarNotificationContainer">
+    const wrapper = renderComponent({ change });
+    const expected = (
+      <div className="deployment-bar__notification deployment-bar__notification--visible"
+        onClick={wrapper.prop('onClick')}>
           Django added
       </div>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can hide the notification when it is clicked', function() {
-    var change = {
-      id: 'service-added-1',
-      description: 'Django added'
-    };
-    var output = jsTestUtils.shallowRender(
-      <DeploymentBarNotification
-        change={change} />);
-    output.props.onClick();
-    assert.deepEqual(output,
-      <div className="deployment-bar__notification"
-        onClick={output.props.onClick}
-        ref="deploymentBarNotificationContainer">
-          Django added
-      </div>);
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.prop('className').includes('deployment-bar__notification--visible'), true);
+    wrapper.simulate('click');
+    wrapper.update();
+    assert.equal(
+      wrapper.prop('className').includes('deployment-bar__notification--visible'), false);
     assert.equal(window.clearTimeout.callCount, 1);
-  });
-
-  it('can show a notification for the provided change', function() {
-    var change = {
-      id: 'service-added-1',
-      description: 'Django added'
-    };
-    // Have to render to the document here as the shallow renderer does not
-    // support componentDidMount or componentWillReceiveProps.
-    var output = testUtils.renderIntoDocument(
-      <DeploymentBarNotification
-        change={change} />);
-    assert.isTrue(
-      output.refs.deploymentBarNotificationContainer
-        .classList.contains('deployment-bar__notification--visible'));
-    assert.equal(window.clearTimeout.callCount, 1);
-    assert.equal(window.setTimeout.callCount, 1);
   });
 
   it('does not show a notification more than once', function() {
-    var change = {
+    const change = {
       id: 'service-added-1',
       description: 'Django added'
     };
-    // Have to render to the document here as the shallow renderer does not
-    // support componentDidMount or componentWillReceiveProps.
-    var node = document.createElement('div');
-    var component = ReactDOM.render(
-      <DeploymentBarNotification
-        change={change} />, node);
-
-    testUtils.Simulate.click(ReactDOM.findDOMNode(component));
-    var container = component.refs.deploymentBarNotificationContainer;
-    assert.equal(container.classList.length, 1);
-    ReactDOM.render(
-      <DeploymentBarNotification
-        change={change} />, node);
+    const wrapper = renderComponent({ change });
+    assert.equal(
+      wrapper.prop('className').includes('deployment-bar__notification--visible'), true);
+    wrapper.simulate('click');
+    wrapper.update();
     assert.equal(window.setTimeout.callCount, 1);
-    assert.equal(container.classList.length, 1);
+    assert.equal(
+      wrapper.prop('className').includes('deployment-bar__notification--visible'), false);
+    wrapper.setProps({ change });
+    assert.equal(window.setTimeout.callCount, 1);
+    assert.equal(
+      wrapper.prop('className').includes('deployment-bar__notification--visible'), false);
   });
 });
