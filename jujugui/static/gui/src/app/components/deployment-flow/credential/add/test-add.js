@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentCredentialAdd = require('./add');
 const SvgIcon = require('../../../svg-icon/svg-icon');
@@ -9,7 +10,6 @@ const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
 const ButtonRow = require('../../../button-row/button-row');
 const FileField = require('../../../file-field/file-field');
-const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('DeploymentCredentialAdd', function() {
   let acl, sendAnalytics, getCloudProviderDetails;
@@ -94,34 +94,27 @@ describe('DeploymentCredentialAdd', function() {
     });
   });
 
-  function renderComponent(options = {}) {
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={options.addNotification || sinon.stub()}
-        cloud={options.cloud || null}
-        credentialName={options.credentialName || undefined}
-        credentials={options.credentials || []}
-        generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
-        getCloudProviderDetails={getCloudProviderDetails}
-        onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
-        onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        updateCloudCredential={options.updateCloudCredential || sinon.stub()}
-        user="user-admin"
-        validateForm={options.validateForm || sinon.stub()} />, true);
-    return {
-      renderer,
-      instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput()
-    };
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentCredentialAdd
+      acl={acl}
+      addNotification={options.addNotification || sinon.stub()}
+      cloud={options.cloud || null}
+      credentialName={options.credentialName || undefined}
+      credentials={options.credentials || []}
+      generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
+      getCloudProviderDetails={getCloudProviderDetails}
+      onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
+      onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
+      sendAnalytics={sendAnalytics}
+      setCredential={sinon.stub()}
+      updateCloudCredential={options.updateCloudCredential || sinon.stub()}
+      user="user-admin"
+      validateForm={options.validateForm || sinon.stub()} />
+  );
 
-  it('can render without a cloud', function() {
+  it('can render without a provided cloud', function() {
     const cloud = getCloudProviderDetails('gce');
-    const comp = renderComponent();
-    const instance = comp.instance;
+    const wrapper = renderComponent();
     const expected = (
       <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
@@ -136,7 +129,7 @@ describe('DeploymentCredentialAdd', function() {
           </a>
         </div>
         <form className="twelve-col no-margin-bottom"
-          onSubmit={sinon.stub()}>
+          onSubmit={wrapper.find('form').prop('onSubmit')}>
           <div className="six-col last-col">
             <GenericInput
               disabled={false}
@@ -163,7 +156,7 @@ describe('DeploymentCredentialAdd', function() {
               <InsetSelect
                 disabled={false}
                 label="Authentication type"
-                onChange={instance._handleAuthChange}
+                onChange={wrapper.find('InsetSelect').prop('onChange')}
                 options={[{
                   label: 'oauth2',
                   value: 'oauth2'
@@ -261,15 +254,14 @@ describe('DeploymentCredentialAdd', function() {
           </div>
         </form>
       </div>);
-    expect(comp.output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render without a cancel button', function() {
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       onCancel: null
     });
-    const buttons = comp.output.props.children[2].props.children[3].props
-      .children.props.buttons;
+    const buttons = wrapper.find('ButtonRow').prop('buttons');
     assert.deepEqual(buttons, [{
       submit: true,
       title: 'Add cloud credential',
@@ -278,533 +270,187 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can update to a new cloud', function() {
-    const comp = renderComponent();
-    comp.renderer.render(
-      <DeploymentCredentialAdd
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={{name: 'aws', cloudType: 'ec2'}}
-        credentials={[]}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudProviderDetails={getCloudProviderDetails}
-        onCancel={null}
-        onCredentialUpdated={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        user="user-admin"
-        validateForm={sinon.stub()} />);
-    const cloud = getCloudProviderDetails('ec2');
-    const output = comp.renderer.getRenderOutput();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    assert.equal(instance.state.authType, 'oauth2');
+    wrapper.setProps({
+      cloud: {name: 'aws', cloudType: 'ec2'}
+    });
+    assert.equal(instance.state.authType, 'access-key');
     const expected = (
-      <div className="deployment-credential-add twelve-col no-margin-bottom">
-        <h4>Create new Amazon Web Services credential</h4>
-        <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link" href={cloud.signupUrl}
-            target="_blank">
-            Sign up for {'Amazon Web Services'}
-            &nbsp;
-            <SvgIcon
-              name="external-link-16"
-              size="12" />
-          </a>
-        </div>
-        <form className="twelve-col no-margin-bottom"
-          onSubmit={sinon.stub()}>
-          <div className="six-col last-col">
-            <GenericInput
-              disabled={false}
-              label="Credential name"
-              ref="credentialName"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }]}
-              value={undefined} />
-          </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Enter credentials
-          </h3>
-          <div className="deployment-credential-add__credentials">
-            <div className="six-col">
-              a message
-              {undefined}
-              {[
-                <GenericInput
-                  autocomplete={true}
-                  disabled={false}
-                  key="access-key"
-                  label="The EC2 access key"
-                  multiLine={undefined}
-                  ref="access-key"
-                  required={true}
-                  type={undefined}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />,
-                <GenericInput
-                  autocomplete={false}
-                  disabled={false}
-                  key="secret-key"
-                  label="The EC2 secret key"
-                  multiLine={undefined}
-                  ref="secret-key"
-                  required={true}
-                  type={undefined}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />
-              ]}
-            </div>
-            <div className={
-              'deployment-credential-add__notice prepend-one five-col last-col'}>
-              <p className="deployment-credential-add__notice-content">
-                <SvgIcon
-                  name="general-action-blue"
-                  size="16" />
-                Credentials are stored securely on our servers and we will
-                notify you by email whenever they are changed or deleted.
-                You can see where they are used and manage or remove them via
-                the account page.
-              </p>
-            </div>
-          </div>
-          <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
-            <ButtonRow
-              buttons={[{
-                submit: true,
-                title: 'Add cloud credential',
-                type: 'inline-positive'
-              }]} />
-          </div>
-        </form>
-      </div>);
-    expect(output).toEqualJSX(expected);
+      <h4>Create new Amazon Web Services credential</h4>);
+    assert.compareJSX(wrapper.find('h4'), expected);
   });
 
   it('can render credential fields for a cloud', function() {
-    const cloud = getCloudProviderDetails('gce');
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
       credentials: ['cred1']
     });
-    const instance = comp.instance;
-    const output = comp.output;
     const expected = (
-      <div className="deployment-credential-add twelve-col no-margin-bottom">
-        <h4>Create new Google Compute Engine credential</h4>
-        <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link" href={cloud.signupUrl}
-            target="_blank">
-            Sign up for {'Google Compute Engine'}
-            &nbsp;
-            <SvgIcon
-              name="external-link-16"
-              size="12" />
-          </a>
+      <div className="deployment-credential-add__credentials">
+        <div className="six-col">
+          a message
+          <InsetSelect
+            disabled={false}
+            label="Authentication type"
+            onChange={wrapper.find('InsetSelect').prop('onChange')}
+            options={[{
+              label: 'oauth2',
+              value: 'oauth2'
+            }, {
+              label: 'jsonfile',
+              value: 'jsonfile'
+            }]} />
+          {[<GenericInput
+            autocomplete={undefined}
+            disabled={false}
+            key="client-id"
+            label="Client ID"
+            multiLine={undefined}
+            ref="client-id"
+            required={true}
+            type={undefined}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]} />,
+          <GenericInput
+            autocomplete={undefined}
+            disabled={false}
+            key="client-email"
+            label="Client e-mail address"
+            multiLine={undefined}
+            ref="client-email"
+            required={true}
+            type={undefined}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]} />,
+          <GenericInput
+            autocomplete={undefined}
+            disabled={false}
+            key="private-key"
+            label="Private key"
+            multiLine={true}
+            ref="private-key"
+            required={true}
+            type={undefined}
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]} />,
+          <GenericInput
+            autocomplete={undefined}
+            disabled={false}
+            key="project-id"
+            label="Project ID"
+            multiLine={undefined}
+            ref="project-id"
+            required={false}
+            type={undefined}
+            validate={undefined} />,
+          <GenericInput
+            autocomplete={undefined}
+            disabled={false}
+            key="password"
+            label="Password"
+            multiLine={undefined}
+            ref="password"
+            required={false}
+            type="password"
+            validate={undefined} />
+          ]}
         </div>
-        <form className="twelve-col no-margin-bottom"
-          onSubmit={sinon.stub()}>
-          <div className="six-col last-col">
-            <GenericInput
-              disabled={false}
-              label="Project ID (credential name)"
-              ref="credentialName"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }, {
-                check: value => output.props.children[2].props.children[0]
-                  .props.children.props.validate[2].check,
-                error: 'You already have a credential with this name.'
-              }]}
-              value={undefined} />
-          </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Enter credentials
-          </h3>
-          <div className="deployment-credential-add__credentials">
-            <div className="six-col">
-              a message
-              <InsetSelect
-                disabled={false}
-                label="Authentication type"
-                onChange={instance._handleAuthChange}
-                options={[{
-                  label: 'oauth2',
-                  value: 'oauth2'
-                }, {
-                  label: 'jsonfile',
-                  value: 'jsonfile'
-                }]} />
-              {[<GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-id"
-                label="Client ID"
-                multiLine={undefined}
-                ref="client-id"
-                required={true}
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-email"
-                label="Client e-mail address"
-                multiLine={undefined}
-                ref="client-email"
-                required={true}
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="private-key"
-                label="Private key"
-                multiLine={true}
-                ref="private-key"
-                required={true}
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="project-id"
-                label="Project ID"
-                multiLine={undefined}
-                ref="project-id"
-                required={false}
-                type={undefined}
-                validate={undefined} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="password"
-                label="Password"
-                multiLine={undefined}
-                ref="password"
-                required={false}
-                type="password"
-                validate={undefined} />
-              ]}
-            </div>
-            <div className={
-              'deployment-credential-add__notice prepend-one five-col last-col'}>
-              <p className="deployment-credential-add__notice-content">
-                <SvgIcon
-                  name="general-action-blue"
-                  size="16" />
-                Credentials are stored securely on our servers and we will
-                notify you by email whenever they are changed or deleted.
-                You can see where they are used and manage or remove them via
-                the account page.
-              </p>
-            </div>
-          </div>
-          <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
-            <ButtonRow
-              buttons={[{
-                action: sinon.stub(),
-                title: 'Cancel',
-                type: 'inline-neutral'
-              }, {
-                submit: true,
-                title: 'Add cloud credential',
-                type: 'inline-positive'
-              }]} />
-          </div>
-        </form>
+        <div className={
+          'deployment-credential-add__notice prepend-one five-col last-col'}>
+          <p className="deployment-credential-add__notice-content">
+            <SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Credentials are stored securely on our servers and we will
+            notify you by email whenever they are changed or deleted.
+            You can see where they are used and manage or remove them via
+            the account page.
+          </p>
+        </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.deployment-credential-add__credentials'), expected);
   });
 
   it('can render a cloud with a json field', function() {
-    const cloud = getCloudProviderDetails('gce');
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'}
     });
-    const instance = comp.instance;
+    const instance = wrapper.instance();
     instance.setState({authType: 'jsonfile'});
-    const output = comp.renderer.getRenderOutput();
+    wrapper.update();
     const expected = (
-      <div className="deployment-credential-add twelve-col no-margin-bottom">
-        <h4>Create new Google Compute Engine credential</h4>
-        <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link" href={cloud.signupUrl}
-            target="_blank">
-            Sign up for {'Google Compute Engine'}
-            &nbsp;
-            <SvgIcon
-              name="external-link-16"
-              size="12" />
-          </a>
-        </div>
-        <form className="twelve-col no-margin-bottom"
-          onSubmit={sinon.stub()}>
-          <div className="six-col last-col">
-            <GenericInput
-              disabled={false}
-              label="Project ID (credential name)"
-              ref="credentialName"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }]}
-              value={undefined} />
-          </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Enter credentials
-          </h3>
-          <div className="deployment-credential-add__credentials">
-            <div className="six-col">
-              a message
-              <InsetSelect
+      <div className="deployment-credential-add__credentials">
+        <div className="six-col">
+          a message
+          <InsetSelect
+            disabled={false}
+            label="Authentication type"
+            onChange={wrapper.find('InsetSelect').prop('onChange')}
+            options={[{
+              label: 'oauth2',
+              value: 'oauth2'
+            }, {
+              label: 'jsonfile',
+              value: 'jsonfile'
+            }]} />
+          {[
+            <div className="deployment-credential-add__upload" key="file">
+              <FileField
+                accept=".json"
                 disabled={false}
-                label="Authentication type"
-                onChange={instance._handleAuthChange}
-                options={[{
-                  label: 'oauth2',
-                  value: 'oauth2'
-                }, {
-                  label: 'jsonfile',
-                  value: 'jsonfile'
-                }]} />
-              {[
-                <div className="deployment-credential-add__upload" key="file">
-                  <FileField
-                    accept=".json"
-                    disabled={false}
-                    key="file"
-                    label="Upload Google Compute Engine .json auth-file"
-                    ref="file"
-                    required={true} />
-                </div>
-              ]}
+                key="file"
+                label="Upload Google Compute Engine .json auth-file"
+                ref="file"
+                required={true} />
             </div>
-            <div className={
-              'deployment-credential-add__notice prepend-one five-col last-col'}>
-              <p className="deployment-credential-add__notice-content">
-                <SvgIcon
-                  name="general-action-blue"
-                  size="16" />
-                Credentials are stored securely on our servers and we will
-                notify you by email whenever they are changed or deleted.
-                You can see where they are used and manage or remove them via
-                the account page.
-              </p>
-            </div>
-          </div>
-          <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
-            <ButtonRow
-              buttons={[{
-                action: sinon.stub(),
-                title: 'Cancel',
-                type: 'inline-neutral'
-              }, {
-                submit: true,
-                title: 'Add cloud credential',
-                type: 'inline-positive'
-              }]} />
-          </div>
-        </form>
+          ]}
+        </div>
+        <div className={
+          'deployment-credential-add__notice prepend-one five-col last-col'}>
+          <p className="deployment-credential-add__notice-content">
+            <SvgIcon
+              name="general-action-blue"
+              size="16" />
+            Credentials are stored securely on our servers and we will
+            notify you by email whenever they are changed or deleted.
+            You can see where they are used and manage or remove them via
+            the account page.
+          </p>
+        </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.deployment-credential-add__credentials'), expected);
   });
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    const cloud = getCloudProviderDetails('gce');
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'}
     });
-    const instance = comp.instance;
-    const output = comp.output;
-    const expected = (
-      <div className="deployment-credential-add twelve-col no-margin-bottom">
-        <h4>Create new Google Compute Engine credential</h4>
-        <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link" href={cloud.signupUrl}
-            target="_blank">
-            Sign up for {'Google Compute Engine'}
-            &nbsp;
-            <SvgIcon
-              name="external-link-16"
-              size="12" />
-          </a>
-        </div>
-        <form className="twelve-col no-margin-bottom"
-          onSubmit={sinon.stub()}>
-          <div className="six-col last-col">
-            <GenericInput
-              disabled={true}
-              label="Project ID (credential name)"
-              ref="credentialName"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }]}
-              value={undefined} />
-          </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Enter credentials
-          </h3>
-          <div className="deployment-credential-add__credentials">
-            <div className="six-col">
-              a message
-              <InsetSelect
-                disabled={true}
-                label="Authentication type"
-                onChange={instance._handleAuthChange}
-                options={[{
-                  label: 'oauth2',
-                  value: 'oauth2'
-                }, {
-                  label: 'jsonfile',
-                  value: 'jsonfile'
-                }]} />
-              {[
-                <GenericInput
-                  autocomplete={undefined}
-                  disabled={true}
-                  key="client-id"
-                  label="Client ID"
-                  multiLine={undefined}
-                  ref="client-id"
-                  required={true}
-                  type={undefined}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />,
-                <GenericInput
-                  autocomplete={undefined}
-                  disabled={true}
-                  key="client-email"
-                  label="Client e-mail address"
-                  multiLine={undefined}
-                  ref="client-email"
-                  required={true}
-                  type={undefined}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />,
-                <GenericInput
-                  autocomplete={undefined}
-                  disabled={true}
-                  key="private-key"
-                  label="Private key"
-                  multiLine={true}
-                  ref="private-key"
-                  required={true}
-                  type={undefined}
-                  validate={[{
-                    regex: /\S+/,
-                    error: 'This field is required.'
-                  }]} />,
-                <GenericInput
-                  autocomplete={undefined}
-                  disabled={true}
-                  key="project-id"
-                  label="Project ID"
-                  multiLine={undefined}
-                  ref="project-id"
-                  required={false}
-                  type={undefined}
-                  validate={undefined} />,
-                <GenericInput
-                  autocomplete={undefined}
-                  disabled={true}
-                  key="password"
-                  label="Password"
-                  multiLine={undefined}
-                  ref="password"
-                  required={false}
-                  type="password"
-                  validate={undefined} />
-              ]}
-            </div>
-            <div className={
-              'deployment-credential-add__notice prepend-one five-col last-col'}>
-              <p className="deployment-credential-add__notice-content">
-                <SvgIcon
-                  name="general-action-blue"
-                  size="16" />
-                Credentials are stored securely on our servers and we will
-                notify you by email whenever they are changed or deleted.
-                You can see where they are used and manage or remove them via
-                the account page.
-              </p>
-            </div>
-          </div>
-          <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
-            <ButtonRow
-              buttons={[{
-                action: sinon.stub(),
-                title: 'Cancel',
-                type: 'inline-neutral'
-              }, {
-                submit: true,
-                title: 'Add cloud credential',
-                type: 'inline-positive'
-              }]} />
-          </div>
-        </form>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('InsetSelect').prop('disabled'), true);
+    wrapper.find('GenericInput').forEach(input => {
+      assert.equal(input.prop('disabled'), true);
+    });
   });
 
   it('can add the credentials', function() {
     const updateCloudCredential = sinon.stub().callsArg(3);
     const onCredentialUpdated = sinon.stub();
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
       onCredentialUpdated,
       updateCloudCredential,
       generateCloudCredentialName: sinon.stub().returns('new@test'),
       validateForm: sinon.stub().returns(true)
     });
-    const instance = comp.instance;
+    const instance = wrapper.instance();
     instance.refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -848,17 +494,17 @@ describe('DeploymentCredentialAdd', function() {
     assert.equal(onCredentialUpdated.args[0][0], 'new@test');
   });
 
-  it('can add the credentials buy submitting the form', () => {
+  it('can add the credentials by submitting the form', () => {
     const updateCloudCredential = sinon.stub().callsArg(3);
     const onCredentialUpdated = sinon.stub();
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
       onCredentialUpdated,
       updateCloudCredential,
       generateCloudCredentialName: sinon.stub().returns('new@test'),
       validateForm: sinon.stub().returns(true)
     });
-    const instance = comp.instance;
+    const instance = wrapper.instance();
     instance.refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -883,7 +529,7 @@ describe('DeploymentCredentialAdd', function() {
         getValue: sinon.stub().returns('password')
       }
     };
-    comp.output.props.children[2].props.onSubmit({preventDefault: sinon.stub()});
+    wrapper.find('form').simulate('submit', {preventDefault: sinon.stub()});
     assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
       ['Button click', 'Add credentials']);
@@ -904,12 +550,12 @@ describe('DeploymentCredentialAdd', function() {
 
   it('properly unescapes necessary fields', function() {
     const updateCloudCredential = sinon.stub();
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       updateCloudCredential,
       cloud: {name: 'google', cloudType: 'gce'},
       validateForm: sinon.stub().returns(true)
     });
-    const instance = comp.instance;
+    const instance = wrapper.instance();
     instance.setState({authType: 'oauth2'});
     instance.refs = {
       'credentialName': {
@@ -944,12 +590,13 @@ describe('DeploymentCredentialAdd', function() {
 
   it('does not submit the form if there are validation errors', function() {
     const updateCloudCredential = sinon.stub();
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       updateCloudCredential,
       cloud: {name: 'google', cloudType: 'gce'},
       validateForm: sinon.stub().returns(false)
     });
-    comp.instance._handleAddCredentials({preventDefault: sinon.stub()});
+    const instance = wrapper.instance();
+    instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(updateCloudCredential.callCount, 0);
   });
 
@@ -957,14 +604,14 @@ describe('DeploymentCredentialAdd', function() {
     const error = 'Bad wolf';
     const updateCloudCredential = sinon.stub().callsArgWith(3, error);
     const addNotification = sinon.stub();
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       addNotification,
       updateCloudCredential,
       cloud: {name: 'google', cloudType: 'gce'},
       generateCloudCredentialName: sinon.stub().returns('new@test'),
       validateForm: sinon.stub().returns(true)
     });
-    const instance = comp.instance;
+    const instance = wrapper.instance();
     instance.refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -999,153 +646,24 @@ describe('DeploymentCredentialAdd', function() {
   });
 
   it('can render for updating a credential', function() {
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
       credentialName: 'cred1',
       credentials: ['cred1']
     });
-    const instance = comp.instance;
-    const output = comp.output;
-    const expected = (
-      <div className="deployment-credential-add twelve-col no-margin-bottom">
-        <h4>Update Google Compute Engine credential</h4>
-        {null}
-        <form className="twelve-col no-margin-bottom"
-          onSubmit={sinon.stub()}>
-          <div className="six-col last-col">
-            <GenericInput
-              disabled={true}
-              label="Project ID (credential name)"
-              ref="credentialName"
-              required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }, {
-                regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-                error: 'This field must only contain upper and lowercase ' +
-                  'letters, numbers, and hyphens. It must not start or ' +
-                  'end with a hyphen.'
-              }, {
-                check: value => output.props.children[2].props.children[0]
-                  .props.children.props.validate[2].check,
-                error: 'You already have a credential with this name.'
-              }]}
-              value="cred1" />
-          </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Enter credentials
-          </h3>
-          <div className="deployment-credential-add__credentials">
-            <div className="six-col">
-              a message
-              <InsetSelect
-                disabled={false}
-                label="Authentication type"
-                onChange={instance._handleAuthChange}
-                options={[{
-                  label: 'oauth2',
-                  value: 'oauth2'
-                }, {
-                  label: 'jsonfile',
-                  value: 'jsonfile'
-                }]} />
-              {[<GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-id"
-                label="Client ID"
-                multiLine={undefined}
-                ref="client-id"
-                required={true}
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="client-email"
-                label="Client e-mail address"
-                multiLine={undefined}
-                ref="client-email"
-                required={true}
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="private-key"
-                label="Private key"
-                multiLine={true}
-                ref="private-key"
-                required={true}
-                type={undefined}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="project-id"
-                label="Project ID"
-                multiLine={undefined}
-                ref="project-id"
-                required={false}
-                type={undefined}
-                validate={undefined} />,
-              <GenericInput
-                autocomplete={undefined}
-                disabled={false}
-                key="password"
-                label="Password"
-                multiLine={undefined}
-                ref="password"
-                required={false}
-                type="password"
-                validate={undefined} />
-              ]}
-            </div>
-            <div className={
-              'deployment-credential-add__notice prepend-one five-col last-col'}>
-              <p className="deployment-credential-add__notice-content">
-                <SvgIcon
-                  name="general-action-blue"
-                  size="16" />
-                Credentials are stored securely on our servers and we will
-                notify you by email whenever they are changed or deleted.
-                You can see where they are used and manage or remove them via
-                the account page.
-              </p>
-            </div>
-          </div>
-          <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
-            <ButtonRow
-              buttons={[{
-                action: sinon.stub(),
-                title: 'Cancel',
-                type: 'inline-neutral'
-              }, {
-                submit: true,
-                title: 'Update cloud credential',
-                type: 'inline-positive'
-              }]} />
-          </div>
-        </form>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(
+      wrapper.find('h4').children().text(),
+      'Update Google Compute Engine credential');
+    assert.equal(wrapper.find('GenericInput').at(0).prop('disabled'), true);
+    assert.equal(wrapper.find('GenericInput').at(0).prop('value'), 'cred1');
+    const buttons = wrapper.find('ButtonRow').prop('buttons');
+    assert.equal(buttons[1].title, 'Update cloud credential');
   });
 
   it('does not show a signup url if the cloud does not have one', () => {
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       cloud: {name: 'maas', cloudType: 'maas'}
     });
-    assert.strictEqual(comp.output.props.children[1], null);
+    assert.strictEqual(wrapper.find('.deployment-credential-add__signup').length, 0);
   });
 });

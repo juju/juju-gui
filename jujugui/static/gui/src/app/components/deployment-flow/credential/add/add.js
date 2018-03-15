@@ -166,6 +166,9 @@ class DeploymentCredentialAdd extends React.Component {
     if (!info || !info.forms) {
       return;
     }
+    if (!info.forms[this.state.authType]) {
+      return;
+    }
     const fields = info.forms[this.state.authType].map(field => {
       // If the required parameter is not provided then default it to true.
       const required = field.required === undefined ? true : field.required;
