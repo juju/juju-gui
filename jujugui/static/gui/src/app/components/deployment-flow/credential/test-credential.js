@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentCredential = require('./credential');
 const Spinner = require('../../spinner/spinner');
@@ -9,10 +10,31 @@ const InsetSelect = require('../../inset-select/inset-select');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const DeploymentCredentialAdd = require('./add/add');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('DeploymentCredential', function() {
   var acl, sendAnalytics, cloud, credentials, regions, credentialNames, user;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentCredential
+      acl={options.acl || acl}
+      addNotification={options.addNotification || sinon.stub()}
+      cloud={options.cloud === undefined ? cloud : options.cloud}
+      controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
+      credential={options.credential}
+      editable={options.editable === undefined ? true : options.editable}
+      generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
+      getCloudCredentialNames={
+        options.getCloudCredentialNames || sinon.stub().callsArgWith(1, null, credentialNames)}
+      getCloudCredentials={
+        options.getCloudCredentials || sinon.stub().callsArgWith(1, null, credentials)}
+      getCloudProviderDetails={options.getCloudProviderDetails || sinon.stub()}
+      region={options.region}
+      sendAnalytics={options.sendAnalytics || sendAnalytics}
+      setCredential={options.setCredential || sinon.stub()}
+      setRegion={options.setRegion || sinon.stub()}
+      updateCloudCredential={options.updateCloudCredential || sinon.stub()}
+      user={options.user === undefined ? user : options.user}
+      validateForm={options.validateForm || sinon.stub()} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -29,61 +51,20 @@ describe('DeploymentCredential', function() {
   });
 
   it('can display a loader when loading regions and credentials', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={sinon.stub()}
-        getCloudCredentials={sinon.stub()}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ getCloudCredentialNames: sinon.stub() });
     var expected = (
       <div className="clearfix">
         <div className="deployment-credential__loading">
           <Spinner />
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render with a cloud', function() {
-    var updateCloudCredential = sinon.stub();
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var validateForm = sinon.stub();
-    const getCloudProviderDetails = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
-        getCloudProviderDetails={getCloudProviderDetails}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={updateCloudCredential}
-        user={user}
-        validateForm={validateForm} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    const props = instance.props;
+    const wrapper = renderComponent({
+      getCloudCredentials: sinon.stub().callsArgWith(1, null, [])
+    });
     var expected = (
       <div className="clearfix">
         <ExpandingRow
@@ -93,255 +74,87 @@ describe('DeploymentCredential', function() {
           {undefined}
           <DeploymentCredentialAdd
             acl={acl}
-            addNotification={props.addNotification}
+            addNotification={sinon.stub()}
             cloud={cloud}
             credentials={[]}
-            generateCloudCredentialName={generateCloudCredentialName}
-            getCloudProviderDetails={getCloudProviderDetails}
+            generateCloudCredentialName={sinon.stub()}
+            getCloudProviderDetails={sinon.stub()}
             onCancel={null}
-            onCredentialUpdated={sinon.stub()}
+            onCredentialUpdated={
+              wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
             sendAnalytics={sendAnalytics}
-            updateCloudCredential={updateCloudCredential}
+            updateCloudCredential={sinon.stub()}
             user={user}
-            validateForm={validateForm} />
+            validateForm={sinon.stub()} />
         </ExpandingRow>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render when not editable', function() {
-    var updateCloudCredential = sinon.stub();
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var validateForm = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        credential="lxd_admin@local_default"
-        editable={false}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        region="north-north-west"
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={updateCloudCredential}
-        user={user}
-        validateForm={validateForm} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={false}>
-          <form className="deployment-credential__form">
-            <div className="prepend-two four-col">
-              <InsetSelect
-                disabled={false}
-                label="Credential"
-                onChange={instance._handleCredentialChange}
-                options={[{
-                  label: 'default',
-                  value: 'lxd_admin@local_default'
-                }, {
-                  label: 'Add credential...',
-                  value: 'add-credential'
-                }]}
-                ref="credential"
-                value="lxd_admin@local_default" />
-            </div>
-            <div className="four-col">
-              <InsetSelect
-                disabled={true}
-                label="Region"
-                onChange={setRegion}
-                options={[
-                  {label: 'Default', value: ''},
-                  {label: 'north-north-west', value: 'north-north-west'}
-                ]}
-                value="north-north-west" />
-            </div>
-          </form>
-          {undefined}
-        </ExpandingRow>
-      </div>);
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('can render without a cloud', function() {
-    var updateCloudCredential = sinon.stub();
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var validateForm = sinon.stub();
-    const getCloudProviderDetails = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={{name: 'test'}}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, [])}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, {})}
-        getCloudProviderDetails={getCloudProviderDetails}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={updateCloudCredential}
-        user={user}
-        validateForm={validateForm} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    const props = instance.props;
-    var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={true}>
-          {undefined}
-          <DeploymentCredentialAdd
-            acl={acl}
-            addNotification={props.addNotification}
-            cloud={{name: 'test'}}
-            credentials={[]}
-            generateCloudCredentialName={generateCloudCredentialName}
-            getCloudProviderDetails={getCloudProviderDetails}
-            onCancel={null}
-            onCredentialUpdated={sinon.stub()}
-            sendAnalytics={sendAnalytics}
-            updateCloudCredential={updateCloudCredential}
-            user={user}
-            validateForm={validateForm} />
-        </ExpandingRow>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      credential: 'lxd_admin@local_default',
+      editable: false,
+      region: 'north-north-west'
+    });
+    const select = wrapper.find('InsetSelect').at(1);
+    assert.equal(select.prop('disabled'), true);
+    assert.deepEqual(select.prop('options'), [
+      {label: 'Default', value: ''},
+      {label: 'north-north-west', value: 'north-north-west'}
+    ]);
+    assert.equal(wrapper.find('DeploymentCredentialAdd').length, 0);
+    assert.equal(wrapper.find('ExpandingRow').prop('expanded'), false);
   });
 
   it('can show existing credentials', function() {
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={false}>
-          <form className="deployment-credential__form">
-            <div className="prepend-two four-col">
-              <InsetSelect
-                disabled={false}
-                label="Credential"
-                onChange={instance._handleCredentialChange}
-                options={[{
-                  label: 'default',
-                  value: 'lxd_admin@local_default'
-                }, {
-                  label: 'Add credential...',
-                  value: 'add-credential'
-                }]}
-                ref="credential"
-                value={undefined} />
-            </div>
-            <div className="four-col">
-              <InsetSelect
-                disabled={false}
-                label="Region"
-                onChange={setRegion}
-                options={[
-                  {label: 'Default', value: ''},
-                  {label: 'test-region', value: 'test-region'}
-                ]}
-                value={undefined} />
-            </div>
-          </form>
-          {undefined}
-        </ExpandingRow>
-      </div>);
-    expect(output).toEqualJSX(expected);
+      <form className="deployment-credential__form">
+        <div className="prepend-two four-col">
+          <InsetSelect
+            disabled={false}
+            label="Credential"
+            onChange={wrapper.find('InsetSelect').at(0).prop('onChange')}
+            options={[{
+              label: 'default',
+              value: 'lxd_admin@local_default'
+            }, {
+              label: 'Add credential...',
+              value: 'add-credential'
+            }]}
+            ref="credential"
+            value={undefined} />
+        </div>
+        <div className="four-col deployment-credential__form-region">
+          <InsetSelect
+            disabled={false}
+            label="Region"
+            onChange={sinon.stub()}
+            options={[
+              {label: 'Default', value: ''},
+              {label: 'test-region', value: 'test-region'}
+            ]}
+            value={undefined} />
+        </div>
+      </form>);
+    assert.compareJSX(wrapper.find('.deployment-credential__form'), expected);
   });
 
   it('selects an initial credential', function() {
     var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
+    renderComponent({ setCredential });
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], 'lxd_admin@local_default');
   });
 
   it('can select a credential after loading the list of creds', function() {
     var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
     credentials['new@test'] = {
       name: 'new@test'
     };
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ setCredential });
+    const instance = wrapper.instance();
     instance.refs = {credential: {setValue: sinon.stub()}};
     instance._getCredentials('new@test');
     assert.equal(setCredential.callCount, 2);
@@ -352,187 +165,41 @@ describe('DeploymentCredential', function() {
 
   it('can disable controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={false}>
-          <form className="deployment-credential__form">
-            <div className="prepend-two four-col">
-              <InsetSelect
-                disabled={true}
-                label="Credential"
-                onChange={instance._handleCredentialChange}
-                options={[{
-                  label: 'default',
-                  value: 'lxd_admin@local_default'
-                }, {
-                  label: 'Add credential...',
-                  value: 'add-credential'
-                }]}
-                ref="credential"
-                value={undefined} />
-            </div>
-            <div className="four-col">
-              <InsetSelect
-                disabled={true}
-                label="Region"
-                onChange={setRegion}
-                options={[
-                  {label: 'Default', value: ''},
-                  {label: 'test-region', value: 'test-region'}
-                ]}
-                value={undefined} />
-            </div>
-          </form>
-          {undefined}
-        </ExpandingRow>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    wrapper.find('InsetSelect').forEach(select => {
+      assert.equal(select.prop('disabled'), true);
+    });
   });
 
   it('can handle a cloud without regions', function() {
     delete cloud.regions;
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className="four-col">
+    const wrapper = renderComponent();
+    const expected = (
+      <div className="four-col deployment-credential__form-region">
         <InsetSelect
           disabled={false}
           label="Region"
-          onChange={setRegion}
+          onChange={sinon.stub()}
           options={[
             {label: 'Default', value: ''}
           ]}
           value={undefined} />
       </div>);
-    assert.deepEqual(
-      output.props.children.props.children[0].props.children[1], expected);
+    assert.compareJSX(wrapper.find('.deployment-credential__form-region'), expected);
   });
 
   it('can navigate to the add credentials form', function() {
-    var updateCloudCredential = sinon.stub();
-    var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var validateForm = sinon.stub();
-    const getCloudProviderDetails = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={getCloudProviderDetails}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={updateCloudCredential}
-        user={user}
-        validateForm={validateForm} />, true);
-    var instance = renderer.getMountedInstance();
-    instance._handleCredentialChange('add-credential');
-    var output = renderer.getRenderOutput();
-    const props = instance.props;
-    var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={true}>
-          {undefined}
-          <DeploymentCredentialAdd
-            acl={acl}
-            addNotification={props.addNotification}
-            cloud={cloud}
-            credentials={['default']}
-            generateCloudCredentialName={generateCloudCredentialName}
-            getCloudProviderDetails={getCloudProviderDetails}
-            onCancel={sinon.stub()}
-            onCredentialUpdated={sinon.stub()}
-            sendAnalytics={sendAnalytics}
-            updateCloudCredential={updateCloudCredential}
-            user={user}
-            validateForm={validateForm} />
-        </ExpandingRow>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('DeploymentCredentialAdd').length, 0);
+    wrapper.find('InsetSelect').at(0).simulate('change', 'add-credential');
+    wrapper.update();
+    assert.equal(wrapper.find('DeploymentCredentialAdd').length, 1);
   });
 
   it('clears the credential when displaying the form', function() {
-    var updateCloudCredential = sinon.stub();
     var setCredential = sinon.stub();
-    var setRegion = sinon.stub();
-    var validateForm = sinon.stub();
-    const getCloudProviderDetails = sinon.stub();
-    const generateCloudCredentialName = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={generateCloudCredentialName}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={getCloudProviderDetails}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={setRegion}
-        updateCloudCredential={updateCloudCredential}
-        user={user}
-        validateForm={validateForm} />, true);
-    var instance = renderer.getMountedInstance();
-    instance._handleCredentialChange('add-credential');
+    const wrapper = renderComponent({ setCredential });
+    wrapper.find('InsetSelect').at(0).simulate('change', 'add-credential');
     assert.equal(setCredential.callCount, 2);
     assert.equal(setCredential.args[1][0], null);
   });
@@ -540,26 +207,11 @@ describe('DeploymentCredential', function() {
   it('restores the credential when canceling the form', function() {
     const setCredential = sinon.stub();
     const credential = 'test-credential';
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={sinon.stub()}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        credential={credential}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, credentials)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={setCredential}
-        setRegion={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({
+      setCredential,
+      credential
+    });
+    const instance = wrapper.instance();
     // Show add credential form...
     instance._toggleAdd();
     assert.equal(instance.state.savedCredential, credential);
@@ -580,23 +232,11 @@ describe('DeploymentCredential', function() {
 
   it('can handle errors when getting credential names', () => {
     const addNotification = sinon.stub();
-    jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={addNotification}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, null, [])}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />);
+    renderComponent({
+      addNotification,
+      getCloudCredentialNames: sinon.stub().callsArgWith(1, 'Uh oh!', null),
+      getCloudCredentials: sinon.stub().callsArgWith(1, null, [])
+    });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'unable to get names for credentials',
@@ -607,24 +247,10 @@ describe('DeploymentCredential', function() {
 
   it('can handle errors when getting credentials', () => {
     const addNotification = sinon.stub();
-    jsTestUtils.shallowRender(
-      <DeploymentCredential
-        acl={acl}
-        addNotification={addNotification}
-        cloud={cloud}
-        controllerIsReady={sinon.stub().returns(true)}
-        editable={true}
-        generateCloudCredentialName={sinon.stub()}
-        getCloudCredentialNames={
-          sinon.stub().callsArgWith(1, null, credentialNames)}
-        getCloudCredentials={sinon.stub().callsArgWith(1, 'Uh oh!', null)}
-        getCloudProviderDetails={sinon.stub()}
-        sendAnalytics={sendAnalytics}
-        setCredential={sinon.stub()}
-        setRegion={sinon.stub()}
-        updateCloudCredential={sinon.stub()}
-        user={user}
-        validateForm={sinon.stub()} />);
+    renderComponent({
+      addNotification,
+      getCloudCredentials: sinon.stub().callsArgWith(1, 'Uh oh!', null)
+    });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to get credentials',
