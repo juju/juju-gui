@@ -3,14 +3,13 @@
 
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const CredentialAddEdit = require('./credential-add-edit');
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
 const GenericButton = require('../generic-button/generic-button');
 const Spinner = require('../spinner/spinner');
-
-const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('CredentialAddEdit', () => {
   let acl, controllerAPI, controllerIsReady, initUtils;
@@ -44,65 +43,59 @@ describe('CredentialAddEdit', () => {
     };
   });
 
-  function renderComponent(options={}) {
-    const renderer = jsTestUtils.shallowRender(
-      <CredentialAddEdit
-        acl={acl}
-        addNotification={options.addNotification || sinon.stub()}
-        controllerAPI={controllerAPI}
-        controllerIsReady={controllerIsReady}
-        credential={options.credential}
-        credentials={['test1', 'test2']}
-        initUtils={initUtils}
-        onCancel={sinon.stub()}
-        onCredentialUpdated={sinon.stub()}
-        sendAnalytics={options.sendAnalytics || sinon.stub()}
-        username="spinach@external" />, true);
-    return {
-      renderer,
-      output: renderer.getRenderOutput(),
-      instance: renderer.getMountedInstance()
-    };
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <CredentialAddEdit
+      acl={acl}
+      addNotification={options.addNotification || sinon.stub()}
+      controllerAPI={controllerAPI}
+      controllerIsReady={controllerIsReady}
+      credential={options.credential}
+      credentials={['test1', 'test2']}
+      initUtils={initUtils}
+      onCancel={options.onCancel || sinon.stub()}
+      onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
+      sendAnalytics={options.sendAnalytics || sinon.stub()}
+      username="spinach@external" />
+  );
 
   it('can show cloud options when adding credentials', () => {
-    const comp = renderComponent();
+    const wrapper = renderComponent();
     const expected = (
       <div className="credential-add-edit">
         <DeploymentCloud
           acl={acl}
           addNotification={sinon.stub()}
           cloud={null}
-          controllerIsReady={sinon.stub()}
+          controllerIsReady={controllerIsReady}
           getCloudProviderDetails={sinon.stub()}
           key="deployment-cloud"
           listClouds={sinon.stub()}
-          setCloud={sinon.stub()} />
+          setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
       </div>);
-    expect(comp.output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can show the loading spinner', () => {
     controllerAPI.listClouds = sinon.stub();
-    const comp = renderComponent();
+    const wrapper = renderComponent();
     const expected = (
       <div className="credential-add-edit">
         <Spinner />
       </div>);
-    expect(comp.output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can show the form when adding credentials', () => {
-    const comp = renderComponent();
-    const instance = comp.instance;
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     instance._setCloud({title: 'aws'});
-    const output = comp.renderer.getRenderOutput();
+    wrapper.update();
     const expected = (
       <div className="credential-add-edit">
         <div>
           <div className="credential-add-edit__choose-cloud">
             <GenericButton
-              action={sinon.stub()}
+              action={wrapper.find('GenericButton').prop('action')}
               type="inline-neutral">
               Change cloud
             </GenericButton>
@@ -111,11 +104,11 @@ describe('CredentialAddEdit', () => {
             acl={acl}
             addNotification={sinon.stub()}
             cloud={{title: 'aws'}}
-            controllerIsReady={sinon.stub()}
+            controllerIsReady={controllerIsReady}
             getCloudProviderDetails={sinon.stub()}
             key="deployment-cloud"
             listClouds={sinon.stub()}
-            setCloud={sinon.stub()} />
+            setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
           <DeploymentCredentialAdd
             acl={acl}
             addNotification={sinon.stub()}
@@ -133,11 +126,11 @@ describe('CredentialAddEdit', () => {
             validateForm={sinon.stub()} />
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can show the form for updating credentials', () => {
-    const comp = renderComponent({
+    const wrapper = renderComponent({
       credential: {
         name: 'cred-name',
         cloud: 'aws'
@@ -161,7 +154,7 @@ describe('CredentialAddEdit', () => {
           user="spinach@external"
           validateForm={sinon.stub()} />
       </div>);
-    expect(comp.output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('does not show the change cloud button when only one cloud', () => {
@@ -170,41 +163,10 @@ describe('CredentialAddEdit', () => {
         cloudType: 'aws'
       }
     });
-    const comp = renderComponent();
-    const instance = comp.instance;
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     instance._setCloud({title: 'aws'});
-    const output = comp.renderer.getRenderOutput();
-    const expected = (
-      <div className="credential-add-edit">
-        <div>
-          {null}
-          <DeploymentCloud
-            acl={acl}
-            addNotification={sinon.stub()}
-            cloud={{title: 'aws'}}
-            controllerIsReady={sinon.stub()}
-            getCloudProviderDetails={sinon.stub()}
-            key="deployment-cloud"
-            listClouds={sinon.stub()}
-            setCloud={sinon.stub()} />
-          <DeploymentCredentialAdd
-            acl={acl}
-            addNotification={sinon.stub()}
-            cloud={{title: 'aws'}}
-            credentialName={null}
-            credentials={['test1', 'test2']}
-            generateCloudCredentialName={sinon.stub()}
-            getCloudProviderDetails={sinon.stub()}
-            key="deployment-credential-add"
-            onCancel={sinon.stub()}
-            onCredentialUpdated={sinon.stub()}
-            sendAnalytics={sinon.stub()}
-            updateCloudCredential={sinon.stub()}
-            user="spinach@external"
-            validateForm={sinon.stub()} />
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('.credential-add-edit__choose-cloud').length, 0);
   });
 
   it('can handle errors when getting clouds', () => {

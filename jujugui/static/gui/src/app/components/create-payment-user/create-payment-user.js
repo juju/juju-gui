@@ -168,7 +168,7 @@ class CreatePaymentUser extends React.Component {
       return null;
     }
     return (
-      <div>
+      <div className="create-payment-user__card-address-form">
         <h2 className="create-payment-user__title">
           Card address
         </h2>
@@ -191,7 +191,7 @@ class CreatePaymentUser extends React.Component {
       return null;
     }
     return (
-      <div>
+      <div className="create-payment-user__billing-address-form">
         <h2 className="create-payment-user__title">
           Billing address
         </h2>

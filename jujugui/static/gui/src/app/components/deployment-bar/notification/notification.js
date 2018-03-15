@@ -3,12 +3,15 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-const ReactDOM = require('react-dom');
+const classNames = require('classnames');
 
 class DeploymentBarNotification extends React.Component {
   constructor() {
     super();
     this.timeout = null;
+    this.state = {
+      visible: false
+    };
   }
   /**
     Fade out the notification.
@@ -16,16 +19,7 @@ class DeploymentBarNotification extends React.Component {
     @method _hideNotification
   */
   _hideNotification() {
-    var node;
-    try {
-      // This will throw a warning that it can't be found sometimes, that's
-      // fine to ignore.
-      node = this.refs.deploymentBarNotificationContainer;
-      // Fade out the notification.
-      node.classList.remove('deployment-bar__notification--visible');
-    } catch (e) {
-      // The notification has already been removed.
-    }
+    this.setState({ visible: false });
   }
 
   componentDidMount() {
@@ -48,14 +42,9 @@ class DeploymentBarNotification extends React.Component {
       var oldId = prevProps && prevProps.change ? prevProps.change.id : null;
       // Only show the notification if we've received a new id.
       if (newId !== oldId) {
-        var node = ReactDOM.findDOMNode(this);
-        // Fade in the notification.
-        if (node) {
-          node.classList.add('deployment-bar__notification--visible');
-          window.clearTimeout(this.timeout);
-          this.timeout = window.setTimeout(
-            this._hideNotification.bind(this), 4000);
-        }
+        this.setState({ visible: true });
+        this.timeout = window.setTimeout(
+          this._hideNotification.bind(this), 4000);
       }
     }
   }
@@ -75,10 +64,12 @@ class DeploymentBarNotification extends React.Component {
     if (this.props.change) {
       description = this.props.change.description;
     }
+    const classes = classNames('deployment-bar__notification', {
+      'deployment-bar__notification--visible': this.state.visible
+    });
     return (
-      <div className="deployment-bar__notification"
-        onClick={this._handleClick.bind(this)}
-        ref="deploymentBarNotificationContainer">
+      <div className={classes}
+        onClick={this._handleClick.bind(this)}>
         {description}
       </div>
     );

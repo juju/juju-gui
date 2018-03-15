@@ -2,121 +2,75 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const CreateModelButton = require('./create-model-button');
 const GenericButton = require('../generic-button/generic-button');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('CreateModelButton', () => {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <CreateModelButton
+      action={options.action || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      disabled={options.disabled === undefined ? false : options.disabled}
+      switchModel={options.switchModel || sinon.stub()}
+      title={options.title}
+      type={options.type} />
+  );
+
   it('renders a button with default values', () => {
-    const component = jsTestUtils.shallowRender(
-      <CreateModelButton
-        changeState={sinon.stub()}
-        switchModel={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="create-new-model">
         <GenericButton
-          action={output.props.children.props.action}
+          action={wrapper.find('GenericButton').prop('action')}
           disabled={false}
           type="inline-neutral">
           Create new
         </GenericButton>
       </div>
     );
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('renders a button with provided values', () => {
-    const component = jsTestUtils.shallowRender(
-      <CreateModelButton
-        action={sinon.stub()}
-        changeState={sinon.stub()}
-        disabled={false}
-        switchModel={sinon.stub()}
-        title="test"
-        type="positive" />, true);
-    const output = component.getRenderOutput();
-    const expected = (
-      <div className="create-new-model">
-        <GenericButton
-          action={output.props.children.props.action}
-          disabled={false}
-          type="positive">
-          test
-        </GenericButton>
-      </div>
-    );
-    jsTestUtils.specificDeepEqual(output, expected);
-    assert.deepEqual(output, expected);
+    const wrapper = renderComponent({
+      title: 'test',
+      type: 'positive'
+    });
+    const button = wrapper.find('GenericButton');
+    assert.equal(button.prop('type'), 'positive');
+    assert.equal(button.children().text(), 'test');
   });
 
   it('renders a disabled button when provided with disabled state', () => {
-    const component = jsTestUtils.shallowRender(
-      <CreateModelButton
-        changeState={sinon.stub()}
-        disabled={true}
-        switchModel={sinon.stub()}
-        title="test"
-        type="positive" />, true);
-    const output = component.getRenderOutput();
-    const expected = (
-      <div className="create-new-model">
-        <GenericButton
-          action={output.props.children.props.action}
-          disabled={true}
-          type="positive">
-          test
-        </GenericButton>
-      </div>
-    );
-    assert.deepEqual(output, expected);
+    const wrapper = renderComponent({ disabled: true });
+    assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
   });
 
   it('calls the passed action', () => {
     const action = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <CreateModelButton
-        action={action}
-        changeState={sinon.stub()}
-        disabled={false}
-        switchModel={sinon.stub()}
-        title="test"
-        type="positive" />, true);
-    const instance = component.getMountedInstance();
-    instance._createNewModel();
+    const wrapper = renderComponent({ action });
+    wrapper.find('GenericButton').props().action();
     assert.isTrue(action.called);
   });
 
   it('the passed action isn\'t called if button is disabled', () => {
     const action = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <CreateModelButton
-        action={action}
-        changeState={sinon.stub()}
-        disabled={true}
-        switchModel={sinon.stub()}
-        title="test"
-        type="positive" />, true);
-    const instance = component.getMountedInstance();
-    instance._createNewModel();
+    const wrapper = renderComponent({ action, disabled: true });
+    wrapper.find('GenericButton').props().action();
     assert.isFalse(action.called);
   });
 
   it('closes the profile before switching to a new model', () => {
     const changeState = sinon.stub();
     const switchModel = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <CreateModelButton
-        changeState={changeState}
-        switchModel={switchModel}
-        title="test"
-        type="positive" />, true);
-    const output = component.getRenderOutput();
-    // Call the action passed to the GenericButton
-    output.props.children.props.action();
+    const wrapper = renderComponent({
+      changeState,
+      switchModel
+    });
+    wrapper.find('GenericButton').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0], [
       {profile: null, hash: null, postDeploymentPanel: null}
