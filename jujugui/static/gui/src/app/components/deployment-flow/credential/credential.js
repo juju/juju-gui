@@ -15,6 +15,7 @@ class DeploymentCredential extends React.Component {
     this.state = {
       credentials: [],
       credentialsLoading: false,
+      savedCredential: null,
       showAdd: this.props.editable
     };
   }
@@ -248,7 +249,7 @@ class DeploymentCredential extends React.Component {
             ref="credential"
             value={this.props.credential} />
         </div>
-        <div className="four-col">
+        <div className="four-col deployment-credential__form-region">
           <InsetSelect
             disabled={disabled || !this.props.editable}
             label="Region"
@@ -320,7 +321,6 @@ class DeploymentCredential extends React.Component {
         expanded={this.state.showAdd}>
         {this._generateSelect()}
         {this._generateAdd()}
-
       </ExpandingRow>);
   }
 
