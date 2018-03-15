@@ -2,23 +2,36 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentSection = require('./section');
 const ButtonRow = require('../../button-row/button-row');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('DeploymentSection', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentSection
+      buttons={options.buttons}
+      completed={options.completed}
+      disabled={options.disabled}
+      extra={options.extra}
+      instance={options.instance}
+      showCheck={options.showCheck}
+      title={options.title || 'Model changes'}>
+      {options.children || (<span>content</span>)}
+    </DeploymentSection>
+  );
+
   it('can render', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentSection
-        disabled={false}
-        title="Model changes">
-        <span>content</span>
-      </DeploymentSection>, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
+    // var renderer = jsTestUtils.shallowRender(
+    //   <DeploymentSection
+    //     disabled={false}
+    //     title="Model changes">
+    //     <span>content</span>
+    //   </DeploymentSection>, true);
+    // var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-section twelve-col deployment-section--active">
         <div className="inner-wrapper">
@@ -32,7 +45,7 @@ describe('DeploymentSection', function() {
           </div>
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render with extra props', function() {
@@ -41,18 +54,14 @@ describe('DeploymentSection', function() {
       title: 'Add credential',
       type: 'neutral'
     }];
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentSection
-        buttons={buttons}
-        completed={true}
-        disabled={true}
-        extra={<span>extra</span>}
-        instance="section-instance"
-        showCheck={true}
-        title="Model changes">
-        <span>content</span>
-      </DeploymentSection>, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      buttons: buttons,
+      completed: true,
+      disabled: true,
+      extra: (<span>extra</span>),
+      instance: 'section-instance',
+      showCheck: true
+    });
     var expected = (
       <div className={
         'deployment-section twelve-col deployment-section--completed ' +
@@ -77,6 +86,6 @@ describe('DeploymentSection', function() {
           </div>
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 });
