@@ -2,28 +2,22 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentVPC = require('./vpc');
 const GenericInput = require('../../generic-input/generic-input');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('DeploymentVPC', function() {
   let setVPCId;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentVPC
+      setVPCId={options.setVPCId || setVPCId} />
+  );
 
   beforeEach(() => {
     setVPCId = sinon.stub();
   });
-
-  // Render the component and return the instance and the output.
-  const render = () => {
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentVPC setVPCId={setVPCId} />, true);
-    return {
-      instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput()
-    };
-  };
 
   // Check that the setVPCId function has been called for the expected number
   // of times and, the last time, with the expected id value and force flag.
@@ -36,10 +30,10 @@ describe('DeploymentVPC', function() {
   };
 
   it('renders to show the VPC widgets', function() {
-    const comp = render('aws');
+    const wrapper = renderComponent();
     const vpcLink =
     'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
-    const expectedOutput = (
+    const expected = (
       <div className="twelve-col no-margin-bottom">
         <p>Juju uses your default VPC – or you can specify one here.</p>
         <p>
@@ -53,8 +47,8 @@ describe('DeploymentVPC', function() {
             key="vpcId"
             label="VPC ID"
             multiLine={false}
-            onBlur={comp.instance._onInputBlur}
-            onKeyUp={comp.instance._onInputKeyUp}
+            onBlur={wrapper.find('GenericInput').prop('onBlur')}
+            onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
             ref="vpcId"
             required={false} />
           <label>
@@ -62,8 +56,8 @@ describe('DeploymentVPC', function() {
               checked={false}
               disabled={true}
               id="vpcIdForce"
-              onChange={comp.instance._onCheckboxChange}
-              onClick={comp.instance._onCheckboxClick}
+              onChange={wrapper.find('input').prop('onChange')}
+              onClick={wrapper.find('input').prop('onClick')}
               type="checkbox" />
             &nbsp;
             Always use this ID
@@ -71,49 +65,46 @@ describe('DeploymentVPC', function() {
         </div>
       </div>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('stores the VPC data', function() {
-    const comp = render();
-    const children = comp.output.props.children;
-    const input = children[2].props.children[0];
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     // Simulate returning a value from the id value field.
-    comp.instance.refs = {vpcId: {getValue: () => 'my-id'}};
-    input.props.onBlur();
+    instance.refs = {vpcId: {getValue: () => 'my-id'}};
+    wrapper.find('GenericInput').props().onBlur();
     // The VPC data has been stored.
     checkSetVPCIdCalled(1, 'my-id', false);
   });
 
   it('forces the VPC data', function() {
-    const comp = render();
-    const children = comp.output.props.children;
-    const input = children[2].props.children[0];
-    const checkbox = children[2].props.children[1].props.children[0];
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    const checkbox = wrapper.find('input');
 
     // Simulate forcing a value from the id value field.
-    comp.instance.refs = {vpcId: {getValue: () => 'forced-id'}};
-    checkbox.props.onChange.call(comp.instance, {target: {checked: true}});
-    input.props.onBlur();
+    instance.refs = {vpcId: {getValue: () => 'forced-id'}};
+    checkbox.props().onChange.call(instance, {target: {checked: true}});
+    wrapper.find('GenericInput').props().onBlur();
     // The VPC data has been stored.
     checkSetVPCIdCalled(2, 'forced-id', true);
   });
 
   it('enables or disable the force check box', function() {
-    const comp = render();
-    const children = comp.output.props.children;
-    const instance = comp.instance;
-    const input = children[2].props.children[0];
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    const input = wrapper.find('GenericInput');
     // Check that the force check box is initially disabled.
     assert.strictEqual(instance.state.forceEnabled, false, 'initial');
     // Simulate returning a value from the id value field.
     instance.refs = {vpcId: {getValue: () => 'my-id'}};
-    input.props.onKeyUp();
+    input.props().onKeyUp();
     // The check box is now enabled.
     assert.strictEqual(instance.state.forceEnabled, true, 'enabled');
     // Simulate returning no value from the id value field.
     instance.refs = {vpcId: {getValue: () => ''}};
-    input.props.onKeyUp();
+    input.props().onKeyUp();
     // The check box is now disabled again.
     assert.strictEqual(instance.state.forceEnabled, false, 'disabled again');
   });
