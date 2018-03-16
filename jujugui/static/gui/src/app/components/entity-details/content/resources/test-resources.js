@@ -2,26 +2,27 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const EntityResources = require('./resources');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
-
 describe('EntityResources', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <EntityResources
+      apiUrl={options.apiUrl || '/api'}
+      entityId={options.entityId || 'cs:foo-0'}
+      pluralize={options.pluralize || sinon.stub()}
+      resources={options.resources || []} />
+  );
+
   it('can display an empty list', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <EntityResources
-        apiUrl='/api'
-        entityId='cs:foo-0'
-        pluralize={sinon.stub()}
-        resource={[]} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div>
         {undefined}
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can display a list of resources', function() {
@@ -43,13 +44,10 @@ describe('EntityResources', function() {
       Type: 'file',
       Path: 'file3.tar'
     }];
-    const renderer = jsTestUtils.shallowRender(
-      <EntityResources
-        apiUrl='/api'
-        entityId='cs:foo-0'
-        pluralize={sinon.stub().returns('resources')}
-        resources={resources} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      pluralize: sinon.stub().returns('resources'),
+      resources: resources
+    });
     const expected = (
       <div>
         <div className="entity-resources section" id="files">
@@ -78,6 +76,6 @@ describe('EntityResources', function() {
           </ul>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 });
