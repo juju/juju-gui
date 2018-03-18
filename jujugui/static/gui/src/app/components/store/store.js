@@ -225,13 +225,6 @@ class Store extends React.Component {
       target="_blank">
           Find out more
     </a>);
-    let bigdataButton = (<a className="button--inline-neutral"
-      href="https://jujucharms.com/big-data"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-          Find out more
-    </a>);
-
     if (!this.props.gisf) {
       kubernetesButton = (<span className="button--inline-neutral"
         data-query="kubernetes"
@@ -243,20 +236,12 @@ class Store extends React.Component {
         onClick={this._handleSearchClick.bind(this)}>
           View
       </span>);
-      bigdataButton = (<span className="button--inline-neutral"
-        data-query="hadoop"
-        onClick={this._handleSearchClick.bind(this)}>
-          View
-      </span>);
     }
 
     const kubernetes = (
-      <div className={
-        `box box--kubernetes align-center ${
-          this.props.gisf ? 'four-col' : 'four-col'
-        }`}
-      data-query="kubernetes"
-      onClick={this._handleSearchClick.bind(this)}>
+      <div className="box box--feature box--kubernetes align-center four-col"
+        data-query="kubernetes"
+        onClick={this._handleSearchClick.bind(this)}>
         <img alt="Kubernetes"
           className="box__image" src={this._generateLocalImagePath('k8-image.png')} />
         <div className="align-bottom">
@@ -266,7 +251,7 @@ class Store extends React.Component {
       </div>
     );
     const openstack = this.props.gisf ? null : (
-      <div className="box box--openstack align-center four-col"
+      <div className="box box--feature box--openstack align-center four-col"
         data-query="openstack"
         onClick={this._handleSearchClick.bind(this)}>
         <img alt="Openstack"
@@ -277,31 +262,12 @@ class Store extends React.Component {
         </div>
       </div>
     );
-    const bigdata = (
-      <div className={
-        `box box--kubernetes align-center ${
-          this.props.gisf ? 'four-col' : 'four-col'
-        }`}
-      data-query="hadoop"
-      onClick={this._handleSearchClick.bind(this)}>
-        <div className="box--hadoop-container">
-          <img alt="Hadoop"
-            className="box__image" src={this._generateLocalImagePath('hadoop-elephant.png')} />
-          <div className="align-bottom">
-            <h2>Big Data</h2>
-            {bigdataButton}
-          </div>
-        </div>
-      </div>
-    );
-
     return (
       <div className="row equal-height">
         {kubernetes}
         {openstack}
-        {bigdata}
         <ExpertStoreCard
-          classes={['four-col', 'last-col', 'box--expert']}
+          classes={['four-col', 'last-col', 'box--expert', 'box--feature']}
           expert="spicule"
           staticURL={this.props.staticURL} />
       </div>);
