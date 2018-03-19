@@ -78,7 +78,7 @@ class EntityFiles extends React.Component {
     if (codeUrl) {
       codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
       codeLink = (
-        <li className="section__list-item">
+        <li className="section__list-item entity-files__code-link">
           <a className="button--inline-neutral entity-files__link"
             href={codeUrl}
             ref="codeLink"
