@@ -170,7 +170,8 @@ class EntityHeader extends React.Component {
       );
     } else {
       deployAction = (
-        <div ref="deployAction">
+        <div className="entity-header__deploy-action"
+          ref="deployAction">
           This type of charm can only be deployed from the command line.
         </div>
       );
