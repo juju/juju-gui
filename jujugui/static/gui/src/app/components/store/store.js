@@ -225,6 +225,12 @@ class Store extends React.Component {
       target="_blank">
           Find out more
     </a>);
+    let bigdataButton = (<a className="button--inline-neutral"
+      href="https://jujucharms.com/big-data"
+      onClick={this._stopPropagation.bind(this)}
+      target="_blank">
+      Find out more
+    </a>);
     if (!this.props.gisf) {
       kubernetesButton = (<span className="button--inline-neutral"
         data-query="kubernetes"
@@ -235,6 +241,11 @@ class Store extends React.Component {
         data-query="openstack"
         onClick={this._handleSearchClick.bind(this)}>
           View
+      </span>);
+      bigdataButton = (<span className="button--inline-neutral"
+        data-query="hadoop"
+        onClick={this._handleSearchClick.bind(this)}>
+        View
       </span>);
     }
 
@@ -262,10 +273,25 @@ class Store extends React.Component {
         </div>
       </div>
     );
+    const bigdata = this.props.gisf ? (
+      <div className="box box--feature box--hadoop align-center four-col"
+        data-query="hadoop"
+        onClick={this._handleSearchClick.bind(this)}>
+        <div className="box--hadoop-container">
+          <img alt="Hadoop"
+            className="box__image" src={this._generateLocalImagePath('hadoop-elephant.png')} />
+          <div className="align-bottom">
+            <h2>Big Data</h2>
+            {bigdataButton}
+          </div>
+        </div>
+      </div>
+    ) : null;
     return (
       <div className="row equal-height">
         {kubernetes}
         {openstack}
+        {bigdata}
         <ExpertStoreCard
           classes={['four-col', 'last-col', 'box--expert', 'box--feature']}
           expert="spicule"

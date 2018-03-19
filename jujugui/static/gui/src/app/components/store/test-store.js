@@ -17,15 +17,22 @@ describe('Store', function() {
       setPageTitle={options.setPageTitle || sinon.stub()} />
   );
 
-  it('can render the right number of featured items', function() {
+  it('can render the right items for gij', function() {
     const wrapper = renderComponent({ gisf: false });
     assert.equal(wrapper.find('.box--feature').length, 2);
+    assert.equal(wrapper.find('.box--kubernetes').length, 1);
+    assert.equal(wrapper.find('.box--openstack').length, 1);
+    assert.equal(wrapper.find('.box--hadoop').length, 0);
     assert.equal(wrapper.find('ExpertStoreCard').length, 1);
   });
 
-  it('can skip openstack feature in gisf', () => {
-    const wrapper = renderComponent();
+  it('can render the right items for gisf', function() {
+    const wrapper = renderComponent({ gisf: true });
+    assert.equal(wrapper.find('.box--feature').length, 2);
+    assert.equal(wrapper.find('.box--kubernetes').length, 1);
     assert.equal(wrapper.find('.box--openstack').length, 0);
+    assert.equal(wrapper.find('.box--hadoop').length, 1);
+    assert.equal(wrapper.find('ExpertStoreCard').length, 1);
   });
 
   it('can render write-your-own correctly', function() {
