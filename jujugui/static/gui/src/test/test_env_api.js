@@ -248,18 +248,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     describe('prepareConstraints', function() {
 
       it('converts a constraints string to an object', function() {
+        // XXX Due to https://bugs.launchpad.net/juju/+bug/1755580
+        // the prepareConstraints method converts cpu-cores to cores. See
+        // the method for more information.
         var constraints = env.prepareConstraints('tags=foo,bar cpu-cores=4');
         assert.deepEqual(constraints, {
-          'cpu-cores': 4,
+          'cores': 4,
           'tags': ['foo', 'bar']
         });
       });
 
       it('converts integer constraints', function() {
+        // XXX Due to https://bugs.launchpad.net/juju/+bug/1755580
+        // the prepareConstraints method converts cpu-cores to cores. See
+        // the method for more information.
         var constraints = env.prepareConstraints(
           {'root-disk': '800', 'cpu-cores': '4', mem: '2000'});
         assert.deepEqual(
-          constraints, {'root-disk': 800, 'cpu-cores': 4, mem: 2000});
+          constraints, {'root-disk': 800, 'cores': 4, mem: 2000});
       });
 
       it('removes integer constraints with invalid values', function() {
@@ -274,6 +280,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
 
       it('removes empty/undefined/null values', function() {
+        // XXX Due to https://bugs.launchpad.net/juju/+bug/1755580
+        // the prepareConstraints method converts cpu-cores to cores. See
+        // the method for more information.
         var constraints = env.prepareConstraints({
           arch: undefined,
           tags: '',
@@ -281,7 +290,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           'cpu-cores': 4,
           'cpu-power': null
         });
-        assert.deepEqual(constraints, {'cpu-cores': 4});
+        assert.deepEqual(constraints, {'cores': 4});
       });
 
       it('removes unexpected constraints', function() {
@@ -1813,7 +1822,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       }, null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(msg.params.applications[0].constraints, {
-        'cpu-cores': 1,
+        'cores': 1,
         'cpu-power': 0,
         mem: 512,
         arch: 'i386',
@@ -1931,7 +1940,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('adds a machine with the given series and constraints', function() {
-      var constraints = {'cpu-cores': 4, 'mem': 4000};
+      var constraints = {'cores': 4, 'mem': 4000};
       env.addMachines([{series: 'trusty', constraints: constraints}], null,
         {immediate: true});
       var expectedMsg = {
@@ -2924,7 +2933,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           request: 'Update',
           params: {
             application: 'django',
-            constraints: {'cpu-cores': 4, 'mem': 2000}
+            constraints: {'cores': 4, 'mem': 2000}
           },
           'request-id': 1
         });
@@ -2963,7 +2972,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         forceUnits: true,
         forceSeries: true,
         settings: {'opt1': 'val1', 'opt2': true},
-        constraints: {'cpu-cores': 8},
+        constraints: {'cores': 8},
         minUnits: 3
       };
       env.updateApplication('django', args, function(data) {
