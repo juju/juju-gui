@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const EntityDetails = require('./entity-details');
 const EntityContent = require('./content/content');
@@ -11,6 +12,46 @@ const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EntityDetails', function() {
   var acl, mockEntity, urllib;
+
+  const renderComponent = (options = {}) => {
+    const wrapper = enzyme.shallow(
+      <EntityDetails
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        apiUrl={options.apiUrl || 'http://example.com'}
+        changeState={options.changeState || sinon.stub()}
+        clearLightbox={options.clearLightbox || sinon.stub()}
+        deployService={options.deployService || sinon.stub()}
+        displayLightbox={options.displayLightbox || sinon.stub()}
+        flags={options.flags || {}}
+        getBundleYAML={options.getBundleYAML || sinon.stub()}
+        getDiagramURL={options.getDiagramURL || sinon.stub()}
+        getEntity={
+          options.getEntity || sinon.stub().callsArgWith(1, null, [mockEntity])}
+        getFile={options.getFile || sinon.stub()}
+        getModelName={options.getModelName || sinon.stub()}
+        hash={options.hash || 'readme'}
+        id={options.id || mockEntity.get('id')}
+        importBundleYAML={options.importBundleYAML || sinon.stub()}
+        listPlansForCharm={options.listPlansForCharm || sinon.stub()}
+        makeEntityModel={options.makeEntityModel || sinon.stub().returns(mockEntity)}
+        pluralize={options.pluralize || sinon.stub()}
+        renderMarkdown={options.renderMarkdown || sinon.stub()}
+        scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
+        scrollPosition={options.scrollPosition || 100}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        setPageTitle={options.setPageTitle || sinon.stub()}
+        showTerms={options.showTerms || sinon.stub()}
+        staticURL={options.staticURL || 'http://example.com'}
+        urllib={options.urllib || urllib} />,
+      { disableLifecycleMethods: true }
+    );
+    const instance = wrapper.instance();
+    instance.refs = {content: {focus: sinon.stub()}};
+    instance.componentDidMount();
+    wrapper.update();
+    return wrapper;
+  };
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -24,147 +65,67 @@ describe('EntityDetails', function() {
 
   it('fetches an entity properly', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
-    const apiUrl = 'http://example.com';
     const id = mockEntity.get('id');
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const deployService = sinon.spy();
-    const changeState = sinon.spy();
-    const clearLightbox = sinon.stub();
-    const displayLightbox = sinon.stub();
-    const importBundleYAML = sinon.spy();
-    const getBundleYAML = sinon.spy();
-    const getModelName = sinon.spy();
-    const pluralize = sinon.spy();
-    const getDiagramURL = sinon.stub();
-    const getFile = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const addNotification = sinon.spy();
-    const showTerms = sinon.stub();
-    const scrollCharmbrowser = sinon.stub();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl={apiUrl}
-        changeState={changeState}
-        clearLightbox={clearLightbox}
-        deployService={deployService}
-        displayLightbox={displayLightbox}
-        flags={{'test.ddeploy': true}}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={getDiagramURL}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={getModelName}
-        hash="readme"
-        id={id}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={makeEntityModel}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollCharmbrowser={scrollCharmbrowser}
-        scrollPosition={100}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={showTerms}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
+    const wrapper = renderComponent({
+      flags: {'test.ddeploy': true},
+      getEntity
+    });
     assert.isTrue(getEntity.calledOnce,
       'getEntity function not called');
     assert.equal(getEntity.args[0][0], id,
       'getEntity not called with the entity ID');
-    const expectedOutput = (
+    const expected = (
       <div className="entity-details charm"
         ref="content"
         tabIndex="0">
         <div>
           <EntityHeader
             acl={acl}
-            addNotification={addNotification}
-            changeState={changeState}
-            deployService={deployService}
+            addNotification={sinon.stub()}
+            changeState={sinon.stub()}
+            deployService={sinon.stub()}
             entityModel={mockEntity}
-            getBundleYAML={getBundleYAML}
-            getModelName={getModelName}
+            getBundleYAML={sinon.stub()}
+            getModelName={sinon.stub()}
             hasPlans={false}
-            importBundleYAML={importBundleYAML}
+            importBundleYAML={sinon.stub()}
             plans={null}
-            pluralize={pluralize}
+            pluralize={sinon.stub()}
             scrollPosition={100}
             urllib={urllib} />
           {undefined}
           <EntityContent
-            addNotification={addNotification}
-            apiUrl={apiUrl}
-            changeState={changeState}
-            clearLightbox={clearLightbox}
-            displayLightbox={displayLightbox}
+            addNotification={sinon.stub()}
+            apiUrl="http://example.com"
+            changeState={sinon.stub()}
+            clearLightbox={sinon.stub()}
+            displayLightbox={sinon.stub()}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
-            getDiagramURL={getDiagramURL}
-            getFile={getFile}
+            getDiagramURL={sinon.stub()}
+            getFile={sinon.stub()}
             hash="readme"
             hasPlans={false}
             plans={null}
-            pluralize={pluralize}
-            renderMarkdown={renderMarkdown}
-            scrollCharmbrowser={scrollCharmbrowser}
+            pluralize={sinon.stub()}
+            renderMarkdown={sinon.stub()}
+            scrollCharmbrowser={sinon.stub()}
             sendAnalytics={sinon.stub()}
-            showTerms={showTerms}
+            showTerms={sinon.stub()}
             staticURL="http://example.com" />
         </div>
       </div>
     );
-    expect(output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can display a message if there is a loading error', function() {
-    const id = mockEntity.get('id');
     const getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
-    const deployService = sinon.spy();
-    const changeState = sinon.spy();
-    const importBundleYAML = sinon.spy();
-    const getBundleYAML = sinon.spy();
-    const pluralize = sinon.spy();
-    const getFile = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={sinon.stub()}
-        apiUrl="http://example.com/"
-        changeState={changeState}
-        deployService={deployService}
-        flags={{}}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={sinon.stub()}
-        id={id}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={sinon.spy()}
-        makeEntityModel={sinon.spy()}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollCharmbrowser={sinon.stub()}
-        scrollPosition={0}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
-    const expectedOutput = (
+    const wrapper = renderComponent({
+      getEntity
+    });
+    const expected = (
       <div className="entity-details"
         ref="content"
         tabIndex="0">
@@ -172,397 +133,61 @@ describe('EntityDetails', function() {
           There was a problem while loading the entity details.
           You could try searching for another charm or bundle or go{' '}
           <span className="link"
-            onClick={instance._handleBack}>
+            onClick={wrapper.find('.link').prop('onClick')}>
             back
           </span>.
         </p>
       </div>);
-    expect(output).toEqualJSX(expectedOutput);
-  });
-
-  it('can display a bundle diagram', function() {
-    const apiUrl = 'http://example.com';
-    const mockEntity = jsTestUtils.makeEntity(true);
-    const id = mockEntity.get('id');
-    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const deployService = sinon.spy();
-    const displayLightbox = sinon.stub();
-    const changeState = sinon.spy();
-    const clearLightbox = sinon.stub();
-    const importBundleYAML = sinon.spy();
-    const getBundleYAML = sinon.spy();
-    const getModelName = sinon.spy();
-    const pluralize = sinon.spy();
-    const getFile = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const getDiagramURL = sinon.spy();
-    const addNotification = sinon.spy();
-    const showTerms = sinon.stub();
-    const scrollCharmbrowser = sinon.stub();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl={apiUrl}
-        changeState={changeState}
-        clearLightbox={clearLightbox}
-        deployService={deployService}
-        displayLightbox={displayLightbox}
-        flags={{'test.ddeploy': true}}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={getDiagramURL}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={getModelName}
-        hash="readme"
-        id={id}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={makeEntityModel}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollCharmbrowser={scrollCharmbrowser}
-        scrollPosition={100}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
-    assert.isTrue(getEntity.calledOnce,
-      'getEntity function not called');
-    assert.equal(getEntity.args[0][0], id,
-      'getEntity not called with the entity ID');
-    const expectedOutput = (
-      <div className={'entity-details bundle'}
-        ref="content"
-        tabIndex="0">
-        <div>
-          <EntityHeader
-            acl={acl}
-            addNotification={addNotification}
-            changeState={changeState}
-            deployService={deployService}
-            entityModel={mockEntity}
-            getBundleYAML={getBundleYAML}
-            getModelName={getModelName}
-            hasPlans={false}
-            importBundleYAML={importBundleYAML}
-            plans={null}
-            pluralize={pluralize}
-            scrollPosition={100}
-            urllib={urllib} />
-          <EntityContent
-            addNotification={addNotification}
-            apiUrl={apiUrl}
-            changeState={changeState}
-            clearLightbox={clearLightbox}
-            displayLightbox={displayLightbox}
-            entityModel={mockEntity}
-            flags={{'test.ddeploy': true}}
-            getDiagramURL={getDiagramURL}
-            getFile={getFile}
-            hash="readme"
-            hasPlans={false}
-            plans={null}
-            pluralize={pluralize}
-            renderMarkdown={renderMarkdown}
-            scrollCharmbrowser={scrollCharmbrowser}
-            sendAnalytics={sinon.stub()}
-            showTerms={showTerms}
-            staticURL="http://example.com" />
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.entity-details'), expected);
   });
 
   it('will abort the request when unmounting', function() {
     const abort = sinon.stub();
-    const id = mockEntity.get('id');
     const getEntity = sinon.stub().returns({abort: abort});
-    const deployService = sinon.spy();
-    const changeState = sinon.spy();
-    const importBundleYAML = sinon.spy();
-    const getBundleYAML = sinon.spy();
-    const pluralize = sinon.spy();
-    const getFile = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={sinon.stub()}
-        apiUrl="http://example.com/"
-        changeState={changeState}
-        deployService={deployService}
-        flags={{}}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={sinon.stub()}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={sinon.stub()}
-        id={id}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={sinon.spy()}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollCharmbrowser={sinon.stub()}
-        scrollPosition={0}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    instance.componentWillUnmount();
+    const wrapper = renderComponent({
+      getEntity
+    });
+    wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 
   it('sets the focus when rendered', function() {
-    const focus = sinon.stub();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={sinon.stub()}
-        apiUrl="http://example.com/"
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        flags={{}}
-        getBundleYAML={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={sinon.spy()}
-        getFile={sinon.stub()}
-        getModelName={sinon.stub()}
-        id="test"
-        importBundleYAML={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={sinon.spy()}
-        pluralize={sinon.spy()}
-        renderMarkdown={sinon.stub()}
-        scrollCharmbrowser={sinon.stub()}
-        scrollPosition={0}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: focus}};
-    instance.componentDidMount();
-    assert.equal(focus.callCount, 1);
+    const wrapper = renderComponent({
+      getEntity: sinon.stub()
+    });
+    const instance = wrapper.instance();
+    assert.equal(instance.refs.content.focus.callCount, 1);
   });
 
   it('can get plans', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
     const plans = ['plan1', 'plan2'];
-    const addNotification = sinon.spy();
-    const apiUrl = 'http://example.com';
-    const changeState = sinon.spy();
-    const clearLightbox = sinon.stub();
-    const deployService = sinon.spy();
-    const displayLightbox = sinon.stub();
-    const getBundleYAML = sinon.spy();
-    const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    const getFile = sinon.spy();
-    const getModelName = sinon.spy();
-    const id = mockEntity.get('id');
-    const importBundleYAML = sinon.spy();
     const listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const pluralize = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const showTerms = sinon.stub();
-    const scrollCharmbrowser = sinon.stub();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl={apiUrl}
-        changeState={changeState}
-        clearLightbox={clearLightbox}
-        deployService={deployService}
-        displayLightbox={displayLightbox}
-        flags={{'test.ddeploy': true}}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={getDiagramURL}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={getModelName}
-        hash="readme"
-        id={id}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={listPlansForCharm}
-        makeEntityModel={makeEntityModel}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollCharmbrowser={scrollCharmbrowser}
-        scrollPosition={100}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
-    assert.isTrue(getEntity.calledOnce,
-      'getEntity function not called');
-    assert.equal(getEntity.args[0][0], id,
-      'getEntity not called with the entity ID');
-    const expectedOutput = (
-      <div className={'entity-details charm'}
-        ref="content"
-        tabIndex="0">
-        <div>
-          <EntityHeader
-            acl={acl}
-            addNotification={addNotification}
-            changeState={changeState}
-            deployService={deployService}
-            entityModel={mockEntity}
-            getBundleYAML={getBundleYAML}
-            getModelName={getModelName}
-            hasPlans={true}
-            importBundleYAML={importBundleYAML}
-            plans={plans}
-            pluralize={pluralize}
-            scrollPosition={100}
-            urllib={urllib} />
-          {undefined}
-          <EntityContent
-            addNotification={addNotification}
-            apiUrl={apiUrl}
-            changeState={changeState}
-            clearLightbox={clearLightbox}
-            displayLightbox={displayLightbox}
-            entityModel={mockEntity}
-            flags={{'test.ddeploy': true}}
-            getDiagramURL={getDiagramURL}
-            getFile={getFile}
-            hash="readme"
-            hasPlans={true}
-            plans={plans}
-            pluralize={pluralize}
-            renderMarkdown={renderMarkdown}
-            scrollCharmbrowser={scrollCharmbrowser}
-            sendAnalytics={sinon.stub()}
-            showTerms={showTerms}
-            staticURL="http://example.com" />
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent({
+      getEntity,
+      listPlansForCharm
+    });
+    assert.equal(wrapper.find('EntityHeader').prop('hasPlans'), true);
+    assert.deepEqual(wrapper.find('EntityHeader').prop('plans'), plans);
+    assert.equal(wrapper.find('EntityContent').prop('hasPlans'), true);
+    assert.deepEqual(wrapper.find('EntityContent').prop('plans'), plans);
     assert.equal(listPlansForCharm.callCount, 1);
     assert.equal(listPlansForCharm.args[0][0], 'cs:django');
   });
 
   it('can set plans to empty on error', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
-    const addNotification = sinon.spy();
-    const apiUrl = 'http://example.com';
-    const changeState = sinon.spy();
-    const clearLightbox = sinon.stub();
-    const deployService = sinon.spy();
-    const displayLightbox = sinon.stub();
-    const getBundleYAML = sinon.spy();
-    const getDiagramURL = sinon.spy();
     const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    const getFile = sinon.spy();
-    const getModelName = sinon.spy();
-    const id = mockEntity.get('id');
-    const importBundleYAML = sinon.spy();
     const listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const pluralize = sinon.spy();
-    const renderMarkdown = sinon.spy();
-    const showTerms = sinon.stub();
-    const scrollCharmbrowser = sinon.stub();
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl={apiUrl}
-        changeState={changeState}
-        clearLightbox={clearLightbox}
-        deployService={deployService}
-        displayLightbox={displayLightbox}
-        flags={{'test.ddeploy': true}}
-        getBundleYAML={getBundleYAML}
-        getDiagramURL={getDiagramURL}
-        getEntity={getEntity}
-        getFile={getFile}
-        getModelName={getModelName}
-        hash="readme"
-        id={id}
-        importBundleYAML={importBundleYAML}
-        listPlansForCharm={listPlansForCharm}
-        makeEntityModel={makeEntityModel}
-        pluralize={pluralize}
-        renderMarkdown={renderMarkdown}
-        scrollCharmbrowser={scrollCharmbrowser}
-        scrollPosition={100}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
-    assert.isTrue(getEntity.calledOnce,
-      'getEntity function not called');
-    assert.equal(getEntity.args[0][0], id,
-      'getEntity not called with the entity ID');
-    const expectedOutput = (
-      <div className={'entity-details charm'}
-        ref="content"
-        tabIndex="0">
-        <div>
-          <EntityHeader
-            acl={acl}
-            addNotification={addNotification}
-            changeState={changeState}
-            deployService={deployService}
-            entityModel={mockEntity}
-            getBundleYAML={getBundleYAML}
-            getModelName={getModelName}
-            hasPlans={true}
-            importBundleYAML={importBundleYAML}
-            plans={[]}
-            pluralize={pluralize}
-            scrollPosition={100}
-            urllib={urllib} />
-          {undefined}
-          <EntityContent
-            addNotification={addNotification}
-            apiUrl={apiUrl}
-            changeState={changeState}
-            clearLightbox={clearLightbox}
-            displayLightbox={displayLightbox}
-            entityModel={mockEntity}
-            flags={{'test.ddeploy': true}}
-            getDiagramURL={getDiagramURL}
-            getFile={getFile}
-            hash="readme"
-            hasPlans={true}
-            plans={[]}
-            pluralize={pluralize}
-            renderMarkdown={renderMarkdown}
-            scrollCharmbrowser={scrollCharmbrowser}
-            sendAnalytics={sinon.stub()}
-            showTerms={showTerms}
-            staticURL="http://example.com" />
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent({
+      getEntity,
+      listPlansForCharm
+    });
+    assert.equal(wrapper.find('EntityHeader').prop('hasPlans'), true);
+    assert.deepEqual(wrapper.find('EntityHeader').prop('plans'), []);
+    assert.equal(wrapper.find('EntityContent').prop('hasPlans'), true);
+    assert.deepEqual(wrapper.find('EntityContent').prop('plans'), []);
     assert.equal(listPlansForCharm.callCount, 1);
   });
 
@@ -570,36 +195,10 @@ describe('EntityDetails', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
     const addNotification = sinon.stub();
     const getEntity = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl="http://example.com"
-        changeState={sinon.stub()}
-        deployService={sinon.stub()}
-        getBundleYAML={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={getEntity}
-        getFile={sinon.stub()}
-        getModelName={sinon.stub()}
-        hash="readme"
-        id={mockEntity.get('id')}
-        importBundleYAML={sinon.stub()}
-        listPlansForCharm={sinon.stub()}
-        makeEntityModel={makeEntityModel}
-        pluralize={sinon.stub()}
-        renderMarkdown={sinon.stub()}
-        scrollCharmbrowser={sinon.stub()}
-        scrollPosition={100}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
+    renderComponent({
+      addNotification,
+      getEntity
+    });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'cannot fetch the entity',
@@ -611,40 +210,11 @@ describe('EntityDetails', function() {
   it('handles errors when getting plans', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
     const addNotification = sinon.stub();
-    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
-    const id = mockEntity.get('id');
     const listPlansForCharm = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    const makeEntityModel = sinon.stub().returns(mockEntity);
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <EntityDetails
-        acl={acl}
-        addNotification={addNotification}
-        apiUrl="http://example.com"
-        changeState={sinon.stub()}
-        deployService={sinon.stub()}
-        getBundleYAML={sinon.stub()}
-        getDiagramURL={sinon.stub()}
-        getEntity={getEntity}
-        getFile={sinon.stub()}
-        getModelName={sinon.stub()}
-        hash="readme"
-        id={id}
-        importBundleYAML={sinon.stub()}
-        listPlansForCharm={listPlansForCharm}
-        makeEntityModel={makeEntityModel}
-        pluralize={sinon.stub()}
-        renderMarkdown={sinon.stub()}
-        scrollCharmbrowser={sinon.stub()}
-        scrollPosition={100}
-        sendAnalytics={sinon.stub()}
-        setPageTitle={sinon.stub()}
-        showTerms={sinon.stub()}
-        staticURL="http://example.com"
-        urllib={urllib} />, true);
-    const instance = shallowRenderer.getMountedInstance();
-    instance.refs = {content: {focus: sinon.stub()}};
-    instance.componentDidMount();
-    shallowRenderer.getRenderOutput();
+    renderComponent({
+      addNotification,
+      listPlansForCharm
+    });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Fetching plans failed',

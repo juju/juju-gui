@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const EntityHeader = require('./header');
@@ -9,10 +10,28 @@ const GenericButton = require('../../generic-button/generic-button');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
 
 describe('EntityHeader', function() {
   let acl, mockEntity, urllib;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <EntityHeader
+      acl={options.acl || acl}
+      addNotification={options.addNotification || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      deployService={options.deployService || sinon.stub()}
+      entityModel={options.entityModel || mockEntity}
+      getBundleYAML={options.getBundleYAML || sinon.stub()}
+      getModelName={options.getModelName || sinon.stub()}
+      hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
+      importBundleYAML={options.importBundleYAML || sinon.stub()}
+      plans={options.plans}
+      pluralize={options.pluralize || sinon.stub()}
+      scrollPosition={
+        options.scrollPosition === undefined ? 0 : options.scrollPosition}
+      urllib={options.urllib || urllib} />,
+    { disableLifecycleMethods: true }
+  );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -30,23 +49,8 @@ describe('EntityHeader', function() {
   });
 
   it('renders the latest entity properly', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
+    const wrapper = renderComponent();
+    const expected = (
       <div className="row-hero"
         ref="headerWrapper"
         style={{}}>
@@ -67,14 +71,15 @@ describe('EntityHeader', function() {
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By&nbsp;
-                  <span className="link" onClick={instance._onOwnerClick}>
+                  <span className="link"
+                    onClick={wrapper.find('.entity-header__by .link').prop('onClick')}>
                     test-owner
                   </span>
                 </li>
                 <li className="entity-header__series">
                   <span className="link"
-                    onClick={instance._onLastRevisionClick}>
-                    Latest version (#42)
+                    onClick={wrapper.find('.entity-header__series .link').prop('onClick')}>
+                    Latest version (#{42})
                   </span>
                 </li>
                 {[<li className="entity-header__series" key="trusty">
@@ -116,7 +121,7 @@ describe('EntityHeader', function() {
               <CopyToClipboard
                 value="juju deploy cs:django" />
               <GenericButton
-                action={instance._handleDeployClick}
+                action={wrapper.find('GenericButton').prop('action')}
                 disabled={false}
                 ref="deployAction"
                 tooltip="Add this charm to a new model"
@@ -127,52 +132,26 @@ describe('EntityHeader', function() {
           </div>
         </header>
       </div>);
-    expect(output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('renders an old entity properly', function() {
     mockEntity.set('revision_id', 122);
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const output = renderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children.props.children.props.children[0].
-        props.children[1].props.children[2].props.children[1],
-      122
-    );
+    const wrapper = renderComponent();
+    const expected = (
+      <span className="entity-header__version">
+        {'#'}{122}
+      </span>);
+    assert.compareJSX(wrapper.find('.entity-header__version'), expected);
   });
 
   it('can display plans', function() {
     const plans = [{url: 'test'}];
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={true}
-        importBundleYAML={sinon.stub()}
-        plans={plans}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
+    const wrapper = renderComponent({
+      hasPlans: true,
+      plans
+    });
+    const expected = (
       <select className="entity-header__select"
         ref="plan">
         <option key="default">Choose a plan</option>
@@ -181,60 +160,29 @@ describe('EntityHeader', function() {
           test
         </option>]}
       </select>);
-    expect(
-      output.props.children.props.children.props.children[1].props.children[0]
-    ).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.entity-header__select'), expected);
   });
 
   it('displays correctly when loading plans', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={true}
-        importBundleYAML={sinon.stub()}
-        plans={null}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
+    const wrapper = renderComponent({
+      hasPlans: true,
+      plans: null
+    });
+    const expected = (
       <select className="entity-header__select"
         ref="plan">
         <option key="default">Loading plans...</option>
         {null}
       </select>);
-    expect(
-      output.props.children.props.children.props.children[1].props.children[0]
-    ).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.entity-header__select'), expected);
   });
 
   it('displays correctly when there are no plans', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={true}
-        importBundleYAML={sinon.stub()}
-        plans={[]}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const output = renderer.getRenderOutput();
-    assert.deepEqual(
-      output.props.children.props.children.props.children[1].props.children[0],
-      (undefined)
-    );
+    const wrapper = renderComponent({
+      hasPlans: true,
+      plans: []
+    });
+    assert.equal(wrapper.find('.entity-header__select').length, 0);
   });
 
   it('displays the counts for a bundle', function() {
@@ -243,53 +191,26 @@ describe('EntityHeader', function() {
     pluralize.withArgs('machine').returns('machines');
     pluralize.withArgs('unit').returns('units');
     const entity = jsTestUtils.makeEntity(true);
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={entity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={pluralize}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
-      <ul className="bullets inline entity-header__properties">
-        <li className="entity-header__counts">
-          {3} {'applications'},
-          &nbsp;
-          {2} {'machines'},
-          &nbsp;
-          {5} {'units'}
-        </li>
-      </ul>);
-    expect(
-      output.props.children.props.children.props.children[0].
-        props.children[3]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent({
+      entityModel: entity,
+      pluralize
+    });
+    const expected = (
+      <li className="entity-header__counts">
+        {3} {'applications'},
+        &nbsp;
+        {2} {'machines'},
+        &nbsp;
+        {5} {'units'}
+      </li>);
+    assert.compareJSX(wrapper.find('.entity-header__counts'), expected);
   });
 
   it('can mark charms as subordinates', function() {
     const entity = jsTestUtils.makeEntity(false, {is_subordinate: true});
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={entity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({
+      entityModel: entity
+    });
     const expected = (
       <li className="entity-header__subordinate">
         Subordinate
@@ -302,125 +223,57 @@ describe('EntityHeader', function() {
             size="16" />
         </a>
       </li>);
-    expect(
-      output.props.children.props.children.props.children[0].
-        props.children[2].props.children[1]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.entity-header__subordinate'), expected);
   });
 
   it('displays an add to model button', function() {
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const deployAction = output.refs.deployAction;
-    assert.equal(deployAction.props.type, 'positive');
-    assert.equal(deployAction.props.children, 'Add to model');
+    const wrapper = renderComponent();
+    const deployAction = wrapper.find('GenericButton');
+    assert.equal(deployAction.prop('type'), 'positive');
+    assert.equal(deployAction.children().text(), 'Add to model');
   });
 
   it('displays the model name in the add to model button if provided', () => {
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub().returns('porkchop')}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const deployAction = output.refs.deployAction;
-    assert.equal(deployAction.props.type, 'positive');
-    assert.equal(deployAction.props.children, 'Add to porkchop');
+    const wrapper = renderComponent({
+      getModelName: sinon.stub().returns('porkchop')
+    });
+    const deployAction = wrapper.find('GenericButton');
+    assert.equal(deployAction.prop('type'), 'positive');
+    assert.equal(deployAction.children().text(), 'Add to porkchop');
   });
 
   it('displays an unsupported message for multi-series charms', function() {
     mockEntity.set('series', undefined);
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const textContent = output.refs.deployAction.innerText;
-    assert.equal(textContent, 'This type of charm can only be deployed from ' +
-      'the command line.');
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.find('.entity-header__deploy-action').children().text(),
+      'This type of charm can only be deployed from the command line.');
   });
 
   it('adds a charm when the add button is clicked', function() {
     const deployService = sinon.stub();
-    const changeState = sinon.stub();
-    const importBundleYAML = sinon.stub();
-    const getBundleYAML = sinon.stub();
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        deployService={deployService}
-        entityModel={mockEntity}
-        getBundleYAML={getBundleYAML}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={importBundleYAML}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const deployAction = output.refs.deployAction;
+    const wrapper = renderComponent({
+      deployService
+    });
     // Simulate a click.
-    deployAction.props.action();
+    wrapper.find('GenericButton').props().action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
   });
 
   it('can include a plan when deploying a charm', function() {
     const deployService = sinon.stub();
-    const changeState = sinon.stub();
-    const importBundleYAML = sinon.stub();
-    const getBundleYAML = sinon.stub();
     const plans = [{url: 'test-plan'}];
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        deployService={deployService}
-        entityModel={mockEntity}
-        getBundleYAML={getBundleYAML}
-        getModelName={sinon.stub()}
-        hasPlans={true}
-        importBundleYAML={importBundleYAML}
-        plans={plans}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const refs = output.refs;
-    const deployAction = refs.deployAction;
+    const wrapper = renderComponent({
+      deployService,
+      hasPlans: true,
+      plans: plans
+    });
+    const instance = wrapper.instance();
     // Change the select value to a plan.
-    refs.plan.value = 'test-plan';
+    instance.refs = { plan: { value: 'test-plan' } };
     // Simulate a click.
-    deployAction.props.action();
+    wrapper.find('GenericButton').props().action();
     assert.equal(deployService.callCount, 1);
     assert.deepEqual(deployService.args[0][2], plans);
     assert.deepEqual(deployService.args[0][3], plans[0]);
@@ -428,29 +281,14 @@ describe('EntityHeader', function() {
 
   it('can set the plans when deploying a charm without selecing one', () => {
     const deployService = sinon.stub();
-    const changeState = sinon.stub();
-    const importBundleYAML = sinon.stub();
-    const getBundleYAML = sinon.stub();
     const plans = [{url: 'test-plan'}];
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        deployService={deployService}
-        entityModel={mockEntity}
-        getBundleYAML={getBundleYAML}
-        getModelName={sinon.stub()}
-        hasPlans={true}
-        importBundleYAML={importBundleYAML}
-        plans={plans}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const refs = output.refs;
-    const deployAction = refs.deployAction;
+    const wrapper = renderComponent({
+      deployService,
+      hasPlans: true,
+      plans: plans
+    });
     // Simulate a click.
-    deployAction.props.action();
+    wrapper.find('GenericButton').props().action();
     assert.equal(deployService.callCount, 1);
     assert.deepEqual(deployService.args[0][2], plans);
     assert.isUndefined(deployService.args[0][3]);
@@ -458,104 +296,65 @@ describe('EntityHeader', function() {
 
   it('adds a bundle when the add button is clicked', function() {
     const deployService = sinon.stub();
-    const changeState = sinon.stub();
     const getBundleYAML = sinon.stub().callsArgWith(1, null, 'mock yaml');
     const importBundleYAML = sinon.stub();
     const entity = jsTestUtils.makeEntity(true);
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        deployService={deployService}
-        entityModel={entity}
-        getBundleYAML={getBundleYAML}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={importBundleYAML}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const deployAction = output.refs.deployAction;
-    sinon.spy(output, '_getBundleYAMLCallback');
+    const wrapper = renderComponent({
+      deployService,
+      entityModel: entity,
+      getBundleYAML,
+      importBundleYAML
+    });
     // Simulate a click.
-    deployAction.props.action();
+    wrapper.find('GenericButton').props().action();
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
-    assert.equal(output._getBundleYAMLCallback.args[0][0], 'u/who/django/42');
     assert.equal(importBundleYAML.callCount, 1);
     assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
     assert.equal(importBundleYAML.args[0][1], 'u/who/django/42');
   });
 
   it('displays a notification if there is a bundle deploy error', function() {
-    const deployService = sinon.stub();
-    const changeState = sinon.stub();
     const getBundleYAML = sinon.stub().callsArgWith(1, 'error');
-    const importBundleYAML = sinon.stub();
     const addNotification = sinon.stub();
     const entity = jsTestUtils.makeEntity(true);
-    const output = testUtils.renderIntoDocument(
-      <EntityHeader
-        acl={acl}
-        addNotification={addNotification}
-        changeState={changeState}
-        deployService={deployService}
-        entityModel={entity}
-        getBundleYAML={getBundleYAML}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={importBundleYAML}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />);
-    const deployAction = output.refs.deployAction;
+    const wrapper = renderComponent({
+      addNotification,
+      entityModel: entity,
+      getBundleYAML
+    });
     // Simulate a click.
-    deployAction.props.action();
+    wrapper.find('GenericButton').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
   });
 
   it('can display as sticky', function() {
-    const deployService = sinon.stub();
-    const changeState = sinon.stub();
-    const getBundleYAML = sinon.stub().callsArgWith(1, 'error');
-    const importBundleYAML = sinon.stub();
-    const addNotification = sinon.stub();
-    const entity = jsTestUtils.makeEntity(true);
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={addNotification}
-        changeState={changeState}
-        deployService={deployService}
-        entityModel={entity}
-        getBundleYAML={getBundleYAML}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={importBundleYAML}
-        pluralize={sinon.stub()}
-        scrollPosition={100}
-        urllib={urllib} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({
+      scrollPosition: 100
+    });
+    const instance = wrapper.instance();
     instance.refs = {
       headerWrapper: {
         clientHeight: 99
       }
     };
     instance.componentDidMount();
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
-      <div className="row-hero"
-        ref="headerWrapper"
-        style={{height: '99px'}}>
-        <header className="entity-header entity-header--sticky">
-          {output.props.children.props.children}
-        </header>
-      </div>
-    );
-    expect(output).toEqualJSX(expectedOutput);
+    wrapper.update();
+    // const expected = (
+    //   <div className="row-hero"
+    //     ref="headerWrapper"
+    //     style={{height: '99px'}}>
+    //     <header className="entity-header entity-header--sticky">
+    //       {output.props.children.props.children}
+    //     </header>
+    //   </div>
+    // );
+    assert.deepEqual(wrapper.find('.row-hero').prop('style'), {height: '99px'});
+    assert.equal(
+      wrapper.find('header').prop('className').includes('entity-header--sticky'),
+      true);
   });
 
   it('goes to the profile page when the owner is clicked', function() {
@@ -564,21 +363,10 @@ describe('EntityHeader', function() {
       preventDefault: sinon.stub().withArgs(),
       stopPropagation: sinon.stub().withArgs()
     };
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({
+      changeState
+    });
+    const instance = wrapper.instance();
     instance._onOwnerClick(evt);
     assert.strictEqual(evt.preventDefault.callCount, 1, 'preventDefault');
     assert.strictEqual(evt.stopPropagation.callCount, 1, 'stopPropagation');
@@ -598,21 +386,10 @@ describe('EntityHeader', function() {
       preventDefault: sinon.stub().withArgs(),
       stopPropagation: sinon.stub().withArgs()
     };
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({
+      changeState
+    });
+    const instance = wrapper.instance();
     instance._onLastRevisionClick(evt);
     assert.strictEqual(evt.preventDefault.callCount, 1, 'preventDefault');
     assert.strictEqual(evt.stopPropagation.callCount, 1, 'stopPropagation');
@@ -624,33 +401,7 @@ describe('EntityHeader', function() {
 
   it('can disable the deploy button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    const renderer = jsTestUtils.shallowRender(
-      <EntityHeader
-        acl={acl}
-        addNotification={sinon.stub()}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        entityModel={mockEntity}
-        getBundleYAML={sinon.stub()}
-        getModelName={sinon.stub()}
-        hasPlans={false}
-        importBundleYAML={sinon.stub()}
-        pluralize={sinon.stub()}
-        scrollPosition={0}
-        urllib={urllib} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const expectedOutput = (
-      <GenericButton
-        action={instance._handleDeployClick}
-        disabled={true}
-        ref="deployAction"
-        tooltip="Add this charm to a new model"
-        type="positive">
-        Add to model
-      </GenericButton>);
-    expect(
-      output.props.children.props.children.props.children[1].props.children[2]
-    ).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
   });
 });

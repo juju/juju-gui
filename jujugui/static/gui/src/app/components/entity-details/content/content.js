@@ -433,7 +433,7 @@ class EntityContent extends React.Component {
         `+source/${entity.name}`;
     }
     return (
-      <div className="section">
+      <div className="section section__contribute">
         <h3 className="section__title">
           Contribute
         </h3>
@@ -598,6 +598,7 @@ class EntityContent extends React.Component {
           </a>.
         </p>
         <CopyToClipboard
+          className="copy-to-clipboard"
           value={script} />
         <h4>Preview</h4>
         {cardElement}
