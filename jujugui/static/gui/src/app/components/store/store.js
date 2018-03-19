@@ -756,7 +756,7 @@ class Store extends React.Component {
           </li>
           <li className="three-col featured-entity">
             <span className="featured-entity__link link"
-              data-entity="u/containers/elk-stack"
+              data-entity="u/elasticsearch-charmers/elk-stack"
               onClick={this._handleEntityClick.bind(this)}>
               <ul className="featured-entity__image-list one-col">
                 <li className="featured-entity__image-list-item">
