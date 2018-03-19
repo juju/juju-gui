@@ -111,18 +111,6 @@ describe('ExpandingRow', () => {
 
   it('can stop observing the DOM when unmounted', () => {
     const wrapper = renderComponent();
-    // var renderer = jsTestUtils.shallowRender(
-    //   <ExpandingRow
-    //     clickable={false}>
-    //     <span>closed</span>
-    //     <span>open</span>
-    //   </ExpandingRow>, true);
-    // var instance = renderer.getMountedInstance();
-    // // Mock the ref. The MutationObserver needs a real DOM node.
-    // instance.refs = {inner: document.createElement('div')};
-    // // The shallow renderer does not call componentDidMount, so call it
-    // // manually.
-    // instance.componentDidMount();
     const instance = wrapper.instance();
     assert.isNotNull(instance.observer);
     instance.observer.disconnect = sinon.stub();
