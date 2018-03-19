@@ -1039,24 +1039,26 @@ class DeploymentFlow extends React.Component {
 
   render() {
     return (
-      <DeploymentPanel
-        changeState={this.props.changeState}
-        isDirectDeploy={this.state.isDirectDeploy}
-        loggedIn={this.props.isLoggedIn()}
-        sendAnalytics={this.sendAnalytics.bind(this)}
-        title={this.props.modelName}>
-        {this._generateDirectDeploy()}
-        {this._generateModelNameSection()}
-        {this._generateCloudSection()}
-        {this._generateCredentialSection()}
-        {this._generateSSHKeySection()}
-        {this._generateMachinesSection()}
-        {this._generateServicesSection()}
-        {this._generateBudgetSection()}
-        {this._generatePaymentSection()}
-        {this._generateDeploySection()}
-        {this._generateLogin()}
-      </DeploymentPanel>
+      <div className="deployment-flow">
+        <DeploymentPanel
+          changeState={this.props.changeState}
+          isDirectDeploy={this.state.isDirectDeploy}
+          loggedIn={this.props.isLoggedIn()}
+          sendAnalytics={this.sendAnalytics.bind(this)}
+          title={this.props.modelName}>
+          {this._generateDirectDeploy()}
+          {this._generateModelNameSection()}
+          {this._generateCloudSection()}
+          {this._generateCredentialSection()}
+          {this._generateSSHKeySection()}
+          {this._generateMachinesSection()}
+          {this._generateServicesSection()}
+          {this._generateBudgetSection()}
+          {this._generatePaymentSection()}
+          {this._generateDeploySection()}
+          {this._generateLogin()}
+        </DeploymentPanel>
+      </div>
     );
   }
 };

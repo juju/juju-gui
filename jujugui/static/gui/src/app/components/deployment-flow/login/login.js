@@ -33,7 +33,7 @@ class DeploymentLogin extends React.Component {
         instance="deployment-login"
         showCheck={true}
         title="You're almost ready to deploy!">
-        <div className="twelve-col">
+        <div className="deployment-login__content twelve-col">
           <p className="deployment-login__intro">
             You will need to sign in with an Ubuntu One account to deploy
             your model with Juju-as-a-Service.
@@ -129,7 +129,7 @@ class DeploymentLogin extends React.Component {
     const gceScale = 1.7;
     const azureScale = 1;
     return (
-      <div>
+      <div className="deployment-login__login">
         {this._getLoginLinks()}
         <DeploymentSection
           instance="deployment-login-features">

@@ -2,13 +2,21 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentMachines = require('./machines');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('DeploymentMachines', function() {
   var acl, machines;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentMachines
+      acl={options.acl || acl}
+      cloud={options.cloud === undefined ? {name: 'My cloud'} : options.cloud}
+      formatConstraints={options.formatConstraints || sinon.stub()}
+      generateMachineDetails={options.generateMachineDetails || sinon.stub()}
+      machines={options.machines || machines} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -102,14 +110,7 @@ describe('DeploymentMachines', function() {
       '(constraints not set)');
     generateMachineDetails.onCall(4).returns(
       'cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentMachines
-        acl={acl}
-        cloud={{name: 'My cloud'}}
-        formatConstraints={sinon.stub()}
-        generateMachineDetails={generateMachineDetails}
-        machines={machines} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ generateMachineDetails });
     var expected = (
       <div>
         <p className="deployment-machines__message">
@@ -180,39 +181,26 @@ describe('DeploymentMachines', function() {
           ]}
         </ul>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render for a local cloud', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentMachines
-        acl={acl}
-        cloud={{name: 'localhost'}}
-        formatConstraints={sinon.stub()}
-        generateMachineDetails={sinon.stub()}
-        machines={machines} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ cloud: {name: 'localhost'} });
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'localhost'}.&nbsp;
         {''}
       </p>);
-    expect(output.props.children[0]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.deployment-machines__message'), expected);
   });
 
   it('can render with unknown cloud', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <DeploymentMachines
-        acl={acl}
-        formatConstraints={sinon.stub()}
-        generateMachineDetails={sinon.stub()}
-        machines={machines} />, true);
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ cloud: null });
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'the cloud'}.&nbsp;
         {'You may incur charges from your cloud provider.'}
       </p>);
-    expect(output.props.children[0]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.deployment-machines__message'), expected);
   });
 });

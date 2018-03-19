@@ -298,7 +298,7 @@ class DeploymentSSHKey extends React.Component {
     }
 
     return (
-      <div>
+      <div className="deployment-ssh-key__added-keys">
         {sshKeysList}
         {lpUsernameList}
       </div>
@@ -318,35 +318,42 @@ class DeploymentSSHKey extends React.Component {
 
     if (this.state.addSource === 'github') {
       return (
-        <div className="three-col last-col no-margin-bottom">
+        <div className="deployment-ssh-key__username three-col last-col no-margin-bottom">
           <GenericInput
+            autocomplete={true}
             key="githubUsername"
             label="GitHub username"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
-            ref="githubUsername" />
+            ref="githubUsername"
+            required={false} />
         </div>
       );
     } else if (this.state.addSource === 'manual') {
       return (
-        <div className="seven-col no-margin-bottom">
+        <div className="deployment-ssh-key__username seven-col no-margin-bottom">
           <GenericInput
+            autocomplete={true}
             key="sshKey"
             label="Enter your SSH key (typically found at ~/.ssh/id_rsa.pub)"
             multiLine={true}
             onKeyUp={this._onKeyUp.bind(this)}
-            ref="sshKey" />
+            ref="sshKey"
+            required={false} />
         </div>
       );
     } else if (this.state.addSource === 'launchpad') {
       return (
-        <div className="three-col last-col no-margin-bottom">
+        <div className="deployment-ssh-key__username three-col last-col no-margin-bottom">
           <GenericInput
+            autocomplete={true}
             key="launchpadUsername"
             label="Launchpad username"
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
             ref="launchpadUsername"
+            required={false}
+            type="text"
             value={this.props.username} />
         </div>
       );
@@ -362,7 +369,7 @@ class DeploymentSSHKey extends React.Component {
     const title = this.state.addSource === 'manual' ? 'Add key' : 'Add keys';
     const disabled = this.state.buttonDisabled;
     return (
-      <div className="right">
+      <div className="deployment-ssh-key__add-key right">
         <GenericButton
           action={this._handleAddMoreKeys.bind(this)}
           disabled={disabled}
@@ -403,9 +410,11 @@ class DeploymentSSHKey extends React.Component {
     if (this.state.error) {
       const content = (<span><b>Error:</b> {this.state.error}</span>);
       return (
-        <Notification
-          content={content}
-          type="negative" />);
+        <span className="deployment-ssh-key__notification">
+          <Notification
+            content={content}
+            type="negative" />
+        </span>);
     }
     return false;
   }
@@ -422,14 +431,14 @@ class DeploymentSSHKey extends React.Component {
     const isAzure = cloud.cloudType === AZURE_CLOUD_TYPE;
 
     let message = (
-      <p>
+      <p className="deployment-ssh-key__description">
         Keys will allow you SSH access to the machines provisioned by Juju
         for this model.
       </p>
     );
     if (isAzure) {
       message = (
-        <p>
+        <p className="deployment-ssh-key__description">
           Keys will allow you SSH access to the machines provisioned on Azure.
         </p>
       );

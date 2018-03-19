@@ -91,7 +91,7 @@ class DeploymentDirectDeploy extends React.Component {
     const entityModel = this.props.entityModel;
     if (!entityModel) {
       content = (
-        <div>
+        <div className="deployment-direct-deploy__content">
           This {this.state.isBundle ? 'bundle' : 'charm'} could not be found.
           Visit the&nbsp;
           <span className="link"
@@ -106,7 +106,7 @@ class DeploymentDirectDeploy extends React.Component {
       const entity = entityModel.toEntity();
       const machineNumber = this.state.isBundle ? entity.machineCount : 1;
       content = (
-        <div>
+        <div className="deployment-direct-deploy__content">
           <div className="deployment-direct-deploy__description six-col">
             <h4>You are about to deploy:</h4>
             <h2 className="deployment-direct-deploy__title">

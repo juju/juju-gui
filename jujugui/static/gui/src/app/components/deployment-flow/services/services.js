@@ -44,7 +44,7 @@ class DeploymentServices extends React.Component {
       return null;
     }
     return (
-      <div className="prepend-seven">
+      <div className="deployment-services__spend prepend-seven">
         Maximum monthly spend:&nbsp;
         <span className="deployment-services__max">
           $100

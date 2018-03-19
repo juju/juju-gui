@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const DeploymentSSHKey = require('./sshkey');
 const InsetSelect = require('../../inset-select/inset-select');
@@ -10,13 +11,22 @@ const GenericButton = require('../../generic-button/generic-button');
 const GenericInput = require('../../generic-input/generic-input');
 const Notification = require('../../notification/notification');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('DeploymentSSHKey', function() {
   let addNotification;
   let setSSHKeys;
   let setLaunchpadUsernames;
   let getGithubSSHKeys;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <DeploymentSSHKey
+      addNotification={options.addNotification || addNotification}
+      cloud={options.cloud === undefined ? {cloudType: 'aws'} : options.cloud}
+      getGithubSSHKeys={options.getGithubSSHKeys || getGithubSSHKeys}
+      setLaunchpadUsernames={options.setLaunchpadUsernames || setLaunchpadUsernames}
+      setSSHKeys={options.setSSHKeys || setSSHKeys}
+      username={options.username}
+      WebHandler={options.WebHandler || sinon.stub()} />
+  );
 
   beforeEach(() => {
     addNotification = sinon.stub();
@@ -25,38 +35,18 @@ describe('DeploymentSSHKey', function() {
     getGithubSSHKeys = sinon.stub();
   });
 
-  // Render the component and return the instance and the output.
-  const render = (cloudType, _getGithubSSHKeys, username) => {
-    let cloud = null;
-    if (cloudType) {
-      cloud = {cloudType: cloudType};
-    }
-    const renderer = jsTestUtils.shallowRender(
-      <DeploymentSSHKey
-        addNotification={addNotification}
-        cloud={cloud}
-        getGithubSSHKeys={_getGithubSSHKeys || getGithubSSHKeys}
-        setLaunchpadUsernames={setLaunchpadUsernames}
-        setSSHKeys={setSSHKeys}
-        username={username}
-        WebHandler={sinon.stub()} />, true);
-    return {
-      instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput(),
-      renderer: renderer
-    };
-  };
-
   it('does not render without a cloud', function() {
-    const comp = render(null);
-    assert.strictEqual(comp.output, null);
+    const wrapper = renderComponent({
+      cloud: null
+    });
+    assert.strictEqual(wrapper.html(), null);
   });
 
   it('renders with a cloud', function() {
-    const comp = render('aws');
-    const expectedOutput = (
+    const wrapper = renderComponent();
+    const expected = (
       <div className="deployment-ssh-key">
-        <p>
+        <p className="deployment-ssh-key__description">
           Keys will allow you SSH access to the machines
           provisioned by Juju for this model.
         </p>
@@ -67,7 +57,7 @@ describe('DeploymentSSHKey', function() {
             <InsetSelect
               disabled={false}
               label="Source"
-              onChange={comp.instance._handleSourceChange.bind(comp.instance)}
+              onChange={wrapper.find('InsetSelect').prop('onChange')}
               options={[
                 {
                   label: 'GitHub',
@@ -84,144 +74,75 @@ describe('DeploymentSSHKey', function() {
               ]}
               ref="sshSource" />
           </div>
-          <div className="three-col last-col no-margin-bottom">
+          <div className="deployment-ssh-key__username three-col last-col no-margin-bottom">
             <GenericInput
-              autocomplete
+              autocomplete={true}
               key="githubUsername"
               label="GitHub username"
-              onKeyUp={comp.instance._onKeyUp.
-                bind(comp.instance)}
+              multiLine={false}
+              onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
               ref="githubUsername"
+              required={false}
               type="text" />
           </div>
-          <div className="right">
+          <div className="deployment-ssh-key__add-key right">
             <GenericButton
-              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+              action={wrapper.find('GenericButton').prop('action')}
               disabled
               type="positive">Add keys</GenericButton>
           </div>
         </div>
       </div>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('prefills Launchpad username if available', () => {
-    const comp = render('aws', null, 'rose');
-    comp.instance.refs = {
+    const wrapper = renderComponent({
+      username: 'rose'
+    });
+    const instance = wrapper.instance();
+    instance.refs = {
       launchpadUsername: {getValue: () => 'rose'},
       sshSource: {getValue: () => 'launchpad'}
     };
-    comp.instance.componentDidUpdate();
-    comp.instance._handleSourceChange();
-    const expectedOutput = (
-      <div className="deployment-ssh-key">
-        <p>
-          Keys will allow you SSH access to the machines
-          provisioned by Juju for this model.
-        </p>
-        {false}
-        {false}
-        <div className="twelve-col no-margin-bottom">
-          <div className="three-col no-margin-bottom">
-            <InsetSelect
-              disabled={false}
-              label="Source"
-              onChange={comp.instance._handleSourceChange.bind(comp.instance)}
-              options={[
-                {
-                  label: 'GitHub',
-                  value: 'github'
-                },
-                {
-                  label: 'Manual',
-                  value: 'manual'
-                },
-                {
-                  label: 'Launchpad',
-                  value: 'launchpad'
-                }
-              ]}
-              ref="sshSource" />
-          </div>
-          <div className="three-col last-col no-margin-bottom">
-            <GenericInput
-              autocomplete
-              key="launchpadUsername"
-              label="Launchpad username"
-              onKeyUp={comp.instance._onKeyUp.
-                bind(comp.instance)}
-              ref="launchpadUsername"
-              type="text"
-              value="rose" />
-          </div>
-          <div className="right">
-            <GenericButton
-              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
-              type="positive">Add keys</GenericButton>
-          </div>
-        </div>
+    instance.componentDidUpdate();
+    instance._handleSourceChange();
+    wrapper.update();
+    const expected = (
+      <div className="deployment-ssh-key__username three-col last-col no-margin-bottom">
+        <GenericInput
+          autocomplete
+          key="launchpadUsername"
+          label="Launchpad username"
+          multiLine={false}
+          onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
+          ref="launchpadUsername"
+          required={false}
+          type="text"
+          value="rose" />
       </div>
     );
-    expect(comp.renderer.getRenderOutput()).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.deployment-ssh-key__username'), expected);
   });
 
   it('renders with azure', function() {
-    const comp = render('azure');
-    const expectedOutput = (
-      <div className="deployment-ssh-key">
-        <p>
-          Keys will allow you SSH access to the machines provisioned on Azure.
-        </p>
-        {false}
-        {false}
-        <div className="twelve-col no-margin-bottom">
-          <div className="three-col no-margin-bottom">
-            <InsetSelect
-              label="Source"
-              onChange={comp.instance._handleSourceChange.bind(comp.instance)}
-              options={[
-                {
-                  label: 'GitHub',
-                  value: 'github'
-                },
-                {
-                  label: 'Manual',
-                  value: 'manual'
-                },
-                {
-                  label: 'Launchpad',
-                  value: 'launchpad'
-                }
-              ]}
-              ref="sshSource" />
-          </div>
-          <div className="three-col last-col no-margin-bottom">
-            <GenericInput
-              autocomplete
-              label="GitHub username"
-              onKeyUp={comp.instance._onKeyUp.
-                bind(comp.instance)}
-              ref="githubUsername"
-              type="text" />
-          </div>
-          <div className="right">
-            <GenericButton
-              action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
-              disabled
-              type="positive">Add keys</GenericButton>
-          </div>
-        </div>
-      </div>
+    const wrapper = renderComponent({
+      cloud: {cloudType: 'azure'}
+    });
+    const expected = (
+      <p className="deployment-ssh-key__description">
+        Keys will allow you SSH access to the machines provisioned on Azure.
+      </p>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.deployment-ssh-key__description'), expected);
   });
 
   describe('github', () => {
     it('handles errors when getting keys', () => {
-      const comp = render('aws');
-      comp.instance._addGithubKeysCallback('Uh oh!', null);
-      comp.renderer.getRenderOutput();
+      const wrapper = renderComponent();
+      const instance = wrapper.instance();
+      instance._addGithubKeysCallback('Uh oh!', null);
       assert.equal(addNotification.callCount, 1);
       assert.deepEqual(addNotification.args[0][0], {
         title: 'could not get SSH keys',
@@ -231,49 +152,60 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('shows an error if no keys found', () => {
-      const comp = render('aws');
-      comp.instance._addGithubKeysCallback(null, []);
-      const output = comp.renderer.getRenderOutput();
-      expect(output.props.children[2]).toEqualJSX(
-        <Notification
-          content={<span>
-            <b>Error:</b>
-            <span>
-              No keys found.
-              <a className="link" href="https://github.com/settings/keys"
-                target="_blank">Create an SSH Key</a>.
-            </span>
-          </span>}
-          type="negative" />);
+      const wrapper = renderComponent();
+      const instance = wrapper.instance();
+      instance._addGithubKeysCallback(null, []);
+      wrapper.update();
+      const expected = (
+        <span className="deployment-ssh-key__notification">
+          <Notification
+            content={(
+              <span>
+                <b>Error:</b>
+                <span>
+                  No keys found.
+                  <a className="link" href="https://github.com/settings/keys"
+                    target="_blank">Create an SSH Key</a>.
+                </span>
+              </span>
+            )}
+            type="negative" />
+        </span>);
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__notification'), expected);
     });
 
     it('shows an error if user not found', () => {
-      const comp = render('aws');
-      comp.instance._addGithubKeysCallback('Not Found', {
+      const wrapper = renderComponent();
+      const instance = wrapper.instance();
+      instance._addGithubKeysCallback('Not Found', {
         message: 'Not Found'
       });
-      const output = comp.renderer.getRenderOutput();
-      expect(output.props.children[2]).toEqualJSX(
-        <Notification
-          content={(<span><b>Error:</b> Not Found</span>)}
-          type="negative" />);
+      wrapper.update();
+      const expected = (
+        <span className="deployment-ssh-key__notification">
+          <Notification
+            content={(<span><b>Error:</b> Not Found</span>)}
+            type="negative" />
+        </span>);
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__notification'), expected);
     });
 
     it('creates a table if keys present', () => {
-      const comp = render('aws');
-      comp.instance.refs = {
+      const wrapper = renderComponent();
+      const instance = wrapper.instance();
+      instance.refs = {
         githubUsername: {
           getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }
       };
-      comp.instance._addGithubKeysCallback(null, [
+      instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
-      const output = comp.renderer.getRenderOutput();
-      expect(output.props.children[1]).toEqualJSX(
-        <div>
+      wrapper.update();
+      const expected = (
+        <div className="deployment-ssh-key__added-keys">
           <ul className="deployment-machines__list clearfix">
             <li className="deployment-flow__row-header twelve-col">
               <div className="two-col">Type</div>
@@ -286,7 +218,7 @@ describe('DeploymentSSHKey', function() {
               </div>
               <div className="one-col last-col">
                 <span className="added-keys__key-remove right"
-                  onClick={comp.instance._removeKey.bind(comp.instance)}
+                  onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
                   title="Remove key">
                   <SvgIcon name="close_16" size="16" />
@@ -296,53 +228,54 @@ describe('DeploymentSSHKey', function() {
           </ul>
         </div>
       );
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__added-keys'), expected);
     });
 
     it('removes key from table', () => {
-      const comp = render('aws');
-      comp.instance.refs = {
+      const wrapper = renderComponent();
+      const instance = wrapper.instance();
+      instance.refs = {
         githubUsername: {
           getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }
       };
-      comp.instance._addGithubKeysCallback(null, [
+      instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
-      let output = comp.renderer.getRenderOutput();
-      let removeButton = output.props.children[1].props.children[0]
-        .props.children[1][0].props.children[2].props.children;
-      expect(removeButton).toEqualJSX(
+      wrapper.update();
+      assert.equal(wrapper.find('.deployment-ssh-key__added-keys').length, 1);
+      const expected = (
         <span className="added-keys__key-remove right"
-          onClick={comp.instance._removeKey.bind(comp.instance)}
+          onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
           role="button"
           title="Remove key">
           <SvgIcon name="close_16" size="16" />
         </span>
       );
-
-      comp.instance._removeKey.bind(comp.instance)(1);
-      output = comp.renderer.getRenderOutput();
-
-      assert.deepEqual(output.props.children[1], false);
+      assert.compareJSX(wrapper.find('.added-keys__key-remove'), expected);
+      instance._removeKey(1);
+      wrapper.update();
+      assert.equal(wrapper.find('.deployment-ssh-key__added-keys').length, 0);
     });
 
     it('stores the SSH keys', function() {
-      const comp = render('gce');
-      comp.instance.refs = {
+      const wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      const instance = wrapper.instance();
+      instance.refs = {
         githubUsername: {
           getValue: sinon.stub(),
           focus: sinon.stub(),
           setValue: sinon.stub()
         }
       };
-      comp.instance._addGithubKeysCallback(null, [
+      instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
         {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
       ]);
-      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
-      expect(comp.instance.props.setSSHKeys.args[0][0]).
+      expect(instance.props.setSSHKeys.callCount).toEqual(1);
+      expect(instance.props.setSSHKeys.args[0][0]).
         toEqual([
           {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
           {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
@@ -350,9 +283,10 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('disables the add key button after keys stored', function() {
-      const comp = render('gce');
+      const wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      const instance = wrapper.instance();
       let githubUsername = 'spinach';
-      comp.instance.refs = {
+      instance.refs = {
         githubUsername: {
           getValue: () => githubUsername,
           focus: sinon.stub(),
@@ -361,33 +295,34 @@ describe('DeploymentSSHKey', function() {
           }
         }
       };
-      comp.instance.componentDidUpdate();
-      let output = comp.renderer.getRenderOutput();
-      let button = output.props.children[3].props.children[2].props.children;
-      assert.equal(button.props.disabled, false);
-      comp.instance._addGithubKeysCallback(null, [
+      instance.componentDidUpdate();
+      wrapper.update();
+      assert.equal(wrapper.find('GenericButton').prop('disabled'), false);
+      instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
-      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
-      output = comp.renderer.getRenderOutput();
-      button = output.props.children[3].props.children[2].props.children;
-      assert.equal(button.props.disabled, true);
+      expect(instance.props.setSSHKeys.callCount).toEqual(1);
+      wrapper.update();
+      assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
     });
   });
 
   it('changes source and disables the button', function() {
-    const comp = render('aws');
-    comp.instance.refs = {sshSource: {getValue: () => 'manual'}};
-    comp.instance._handleSourceChange();
-    expect(comp.instance.state.addSource).toEqual('manual');
-    expect(comp.instance.state.buttonDisabled).toEqual(true);
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    instance.refs = {sshSource: {getValue: () => 'manual'}};
+    instance._handleSourceChange();
+    expect(instance.state.addSource).toEqual('manual');
+    expect(instance.state.buttonDisabled).toEqual(true);
   });
 
   describe('launchpad', () => {
-    let comp;
+    let instance, wrapper;
+
     beforeEach(() => {
-      comp = render('gce');
-      comp.instance.refs = {
+      wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      instance = wrapper.instance();
+      instance.refs = {
         sshSource: {getValue: () => 'launchpad'},
         launchpadUsername: {
           setValue: () => sinon.stub(),
@@ -395,22 +330,22 @@ describe('DeploymentSSHKey', function() {
           getValue: () => 'rose'
         }
       };
-      comp.instance.setState({buttonDisabled: false});
+      instance.setState({buttonDisabled: false});
     });
 
     it('stores the Launchpad username', () => {
-      comp.instance._handleAddMoreKeys.call(comp.instance);
-      expect(comp.instance.props.setLaunchpadUsernames.callCount).toEqual(1);
+      instance._handleAddMoreKeys(wrapper.instance);
+      expect(instance.props.setLaunchpadUsernames.callCount).toEqual(1);
       assert.deepEqual(
-        comp.instance.props.setLaunchpadUsernames.args[0][0],
+        instance.props.setLaunchpadUsernames.args[0][0],
         ['rose']);
     });
 
     it('shows a table if usernames are present', () => {
-      comp.instance._handleAddMoreKeys.call(comp.instance);
-      const output = comp.renderer.getRenderOutput();
-      expect(output.props.children[1]).toEqualJSX(
-        <div>
+      instance._handleAddMoreKeys(wrapper.instance);
+      wrapper.update();
+      const expected = (
+        <div className="deployment-ssh-key__added-keys">
           <ul className="deployment-machines__list clearfix">
             <li className="deployment-flow__row-header twelve-col last-col">
               Launchpad Users
@@ -421,7 +356,7 @@ describe('DeploymentSSHKey', function() {
               </div>
               <div className="one-col last-col">
                 <span className="added-keys__key-remove right"
-                  onClick={comp.instance._removeLPUsername.bind(comp.instance)}
+                  onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
                   title="Remove username">
                   <SvgIcon name="close_16" size="16" />
@@ -431,13 +366,14 @@ describe('DeploymentSSHKey', function() {
           </ul>
         </div>
       );
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__added-keys'), expected);
     });
 
     it('removes key from table', () => {
-      comp.instance._handleAddMoreKeys.call(comp.instance);
-      let output = comp.renderer.getRenderOutput();
-      expect(output.props.children[1]).toEqualJSX(
-        <div>
+      instance._handleAddMoreKeys(wrapper.instance);
+      wrapper.update();
+      const expected = (
+        <div className="deployment-ssh-key__added-keys">
           <ul className="deployment-machines__list clearfix">
             <li className="deployment-flow__row-header twelve-col last-col">
               Launchpad Users
@@ -448,7 +384,7 @@ describe('DeploymentSSHKey', function() {
               </div>
               <div className="one-col last-col">
                 <span className="added-keys__key-remove right"
-                  onClick={comp.instance._removeLPUsername.bind(comp.instance)}
+                  onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
                   title="Remove username">
                   <SvgIcon name="close_16" size="16" />
@@ -458,24 +394,23 @@ describe('DeploymentSSHKey', function() {
           </ul>
         </div>
       );
-
-      comp.instance._removeLPUsername.bind(comp.instance)('rose');
-      output = comp.renderer.getRenderOutput();
-
-      assert.deepEqual(output.props.children[1], false);
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__added-keys'), expected);
+      wrapper.find('.added-keys__key-remove').props().onClick('rose');
+      wrapper.update();
+      assert.equal(wrapper.find('.deployment-ssh-key__added-keys').length, 0);
     });
 
     it('shows a table for usernames and keys', () => {
-      comp.instance.setState({SSHkeys: [{
+      instance.setState({SSHkeys: [{
         body: 'thekey',
         text: 'ssh-rsa thekey',
         type: 'ssh-rsa',
         id: 0
       }]});
-      comp.instance._handleAddMoreKeys.call(comp.instance);
-      const output = comp.renderer.getRenderOutput();
-      expect(output.props.children[1]).toEqualJSX(
-        <div>
+      instance._handleAddMoreKeys(wrapper.instance);
+      wrapper.update();
+      const expected = (
+        <div className="deployment-ssh-key__added-keys">
           <ul className="deployment-machines__list clearfix">
             <li className="deployment-flow__row-header twelve-col">
               <div className="two-col">Type</div>
@@ -488,7 +423,7 @@ describe('DeploymentSSHKey', function() {
               </div>
               <div className="one-col last-col">
                 <span className="added-keys__key-remove right"
-                  onClick={comp.instance._removeKey.bind(comp.instance)}
+                  onClick={wrapper.find('.added-keys__key-remove').at(0).prop('onClick')}
                   role="button"
                   title="Remove key">
                   <SvgIcon name="close_16" size="16" />
@@ -506,7 +441,7 @@ describe('DeploymentSSHKey', function() {
               </div>
               <div className="one-col last-col">
                 <span className="added-keys__key-remove right"
-                  onClick={comp.instance._removeLPUsername.bind(comp.instance)}
+                  onClick={wrapper.find('.added-keys__key-remove').at(1).prop('onClick')}
                   role="button"
                   title="Remove username">
                   <SvgIcon name="close_16" size="16" />
@@ -516,14 +451,17 @@ describe('DeploymentSSHKey', function() {
           </ul>
         </div>
       );
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__added-keys'), expected);
     });
   });
 
   describe('manual', () => {
-    let comp;
+    let instance, wrapper;
+
     beforeEach(() => {
-      comp = render('gce');
-      comp.instance.refs = {
+      wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      instance = wrapper.instance();
+      instance.refs = {
         sshSource: {getValue: () => 'manual'},
         sshKey: {
           setValue: () => sinon.stub(),
@@ -531,14 +469,14 @@ describe('DeploymentSSHKey', function() {
           getValue: () => 'ssh-rsa thekey'
         }
       };
-      comp.instance.setState({buttonDisabled: false});
+      instance.setState({buttonDisabled: false});
     });
 
     it('stores the SSH key', function() {
-      comp.instance._handleAddMoreKeys.call(comp.instance);
-      expect(comp.instance.props.setSSHKeys.callCount).toEqual(1);
+      instance._handleAddMoreKeys(instance);
+      expect(instance.props.setSSHKeys.callCount).toEqual(1);
       assert.deepEqual(
-        comp.instance.props.setSSHKeys.args[0][0],
+        instance.props.setSSHKeys.args[0][0],
         [{
           body: 'thekey',
           text: 'ssh-rsa thekey',
@@ -548,10 +486,10 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('shows a table if keys present', () => {
-      comp.instance._handleAddMoreKeys.call(comp.instance);
-      const output = comp.renderer.getRenderOutput();
-      expect(output.props.children[1]).toEqualJSX(
-        <div>
+      instance._handleAddMoreKeys(instance);
+      wrapper.update();
+      const expected = (
+        <div className="deployment-ssh-key__added-keys">
           <ul className="deployment-machines__list clearfix">
             <li className="deployment-flow__row-header twelve-col">
               <div className="two-col">Type</div>
@@ -564,7 +502,7 @@ describe('DeploymentSSHKey', function() {
               </div>
               <div className="one-col last-col">
                 <span className="added-keys__key-remove right"
-                  onClick={comp.instance._removeKey.bind(comp.instance)}
+                  onClick={instance._removeKey.bind(instance)}
                   role="button"
                   title="Remove key">
                   <SvgIcon name="close_16" size="16" />
@@ -574,39 +512,39 @@ describe('DeploymentSSHKey', function() {
           </ul>
         </div>
       );
+      assert.compareJSX(wrapper.find('.deployment-ssh-key__added-keys'), expected);
     });
   });
 
   it('can disable and enable the add', () => {
-    const comp = render('aws');
-    let output = comp.output.props.children[3].props.children[2];
-    expect(output).toEqualJSX(
-      <div className="right">
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    let expected = (
+      <div className="deployment-ssh-key__add-key right">
         <GenericButton
-          action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+          action={wrapper.find('GenericButton').prop('action')}
           disabled={true}
           type="positive">
           Add keys
         </GenericButton>
       </div>
     );
-
-    comp.instance.setState({
+    assert.compareJSX(wrapper.find('.deployment-ssh-key__add-key'), expected);
+    instance.setState({
       buttonDisabled: false
     });
-
-    output = comp.renderer.getRenderOutput()
-      .props.children[3].props.children[2];
-    expect(output).toEqualJSX(
-      <div className="right">
+    wrapper.update();
+    expected = (
+      <div className="deployment-ssh-key__add-key right">
         <GenericButton
-          action={comp.instance._handleAddMoreKeys.bind(comp.instance)}
+          action={wrapper.find('GenericButton').prop('action')}
           disabled={false}
           type="positive">
           Add keys
         </GenericButton>
       </div>
     );
+    assert.compareJSX(wrapper.find('.deployment-ssh-key__add-key'), expected);
   });
 
 });
