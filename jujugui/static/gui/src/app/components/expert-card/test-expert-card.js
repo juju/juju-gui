@@ -2,25 +2,23 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const ExpertCard = require('../expert-card/expert-card');
 const EXPERTS = require('../expert-card/experts');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('ExpertCard', function() {
-  function renderComponent(options={}) {
-    return jsTestUtils.shallowRender(
-      <ExpertCard
-        expert={options.expert || EXPERTS['spicule']}
-        staticURL="/media">
-        <span>Content</span>
-      </ExpertCard>, true);
-  }
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ExpertCard
+      expert={options.expert || EXPERTS['spicule']}
+      staticURL="/media">
+      <span>Content</span>
+    </ExpertCard>
+  );
 
   it('can render', () => {
-    const renderer = renderComponent();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="expert-card">
         <div className="expert-card__top-title">
@@ -35,6 +33,6 @@ describe('ExpertCard', function() {
         </div>
         <span>Content</span>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 });

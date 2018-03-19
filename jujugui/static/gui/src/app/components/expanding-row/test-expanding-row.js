@@ -4,26 +4,40 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
+const enzyme = require('enzyme');
 
 const ExpandingRow = require('./expanding-row');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('ExpandingRow', () => {
 
-  it('can render', () => {
-    var renderer = jsTestUtils.shallowRender(
+  const renderComponent = (options = {}) => {
+    const wrapper = enzyme.shallow(
       <ExpandingRow
-        classes={{extraClass: true}}>
+        classes={options.classes}
+        clickable={options.clickable}
+        expanded={options.expanded}
+        style={options.style}>
         <span>closed</span>
         <span>open</span>
-      </ExpandingRow>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+      </ExpandingRow>,
+      { disableLifecycleMethods: true }
+    );
+    const instance = wrapper.instance();
+    // Mock the ref. The MutationObserver needs a real DOM node.
+    instance.refs = { inner: document.createElement('div') };
+    instance.componentDidMount();
+    wrapper.update();
+    return wrapper;
+  };
+
+  it('can render', () => {
+    const wrapper = renderComponent({
+      classes: {extraClass: true}
+    });
     var expected = (
       <li className={
         'expanding-row twelve-col extraClass expanding-row--clickable'}
-      onClick={instance._toggle}
+      onClick={wrapper.prop('onClick')}
       style={undefined}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
@@ -36,64 +50,29 @@ describe('ExpandingRow', () => {
           </div>
         </div>
       </li>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can toggle to the expanded view', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <ExpandingRow>
-        <span>closed</span>
-        <span>open</span>
-      </ExpandingRow>, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     // Mock the ref.
     instance.refs = {inner: {offsetHeight: 10}};
-    output.props.onClick();
-    output = renderer.getRenderOutput();
-    const expected = (
-      <li className={
-        'expanding-row twelve-col expanding-row--expanded ' +
-          'expanding-row--clickable'}
-      onClick={instance._toggle}
-      style={undefined}>
-        <div className="expanding-row__initial twelve-col no-margin-bottom">
-          <span>closed</span>
-        </div>
-        <div className="expanding-row__expanded twelve-col"
-          style={{height: '10px', opacity: 1}}>
-          <div className="twelve-col no-margin-bottom"
-            ref="inner">
-            <span>open</span>
-          </div>
-        </div>
-      </li>);
-    expect(output).toEqualJSX(expected);
+    wrapper.simulate('click');
+    wrapper.update();
+    assert.equal(
+      wrapper.prop('className').includes('expanding-row--expanded'), true);
+    assert.deepEqual(
+      wrapper.find('.expanding-row__expanded').prop('style'),
+      {height: '10px', opacity: 1});
   });
 
   it('can initially be expanded', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <ExpandingRow
-        expanded={true}>
-        <span>closed</span>
-        <span>open</span>
-      </ExpandingRow>, true);
-    var instance = renderer.getMountedInstance();
-    // Mock the ref. The MutationObserver needs a real DOM node.
-    instance.refs = {inner: document.createElement('div')};
-    // The shallow renderer does not call componentDidMount, so call it
-    // manually.
-    instance.componentDidMount();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <li className={
-        'expanding-row twelve-col expanding-row--expanded ' +
-        'expanding-row--clickable'}
-      onClick={instance._toggle}
-      style={undefined}>
-        {output.props.children}
-      </li>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      expanded: true
+    });
+    assert.equal(
+      wrapper.prop('className').includes('expanding-row--expanded'), true);
   });
 
   it('can update to be expanded', () => {
@@ -122,61 +101,26 @@ describe('ExpandingRow', () => {
   });
 
   it('can be not clickable', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <ExpandingRow
-        clickable={false}>
-        <span>closed</span>
-        <span>open</span>
-      </ExpandingRow>, true);
-    var instance = renderer.getMountedInstance();
-    // Mock the ref. The MutationObserver needs a real DOM node.
-    instance.refs = {inner: document.createElement('div')};
-    // The shallow renderer does not call componentDidMount, so call it
-    // manually.
-    instance.componentDidMount();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <li className="expanding-row twelve-col"
-        onClick={undefined}
-        style={undefined}>
-        {output.props.children}
-      </li>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      clickable: false
+    });
+    assert.equal(
+      wrapper.prop('className').includes('expanding-row--clickable'), false);
+    assert.strictEqual(wrapper.prop('onClick'), undefined);
   });
 
   it('can stop observing the DOM when unmounted', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <ExpandingRow
-        clickable={false}>
-        <span>closed</span>
-        <span>open</span>
-      </ExpandingRow>, true);
-    var instance = renderer.getMountedInstance();
-    // Mock the ref. The MutationObserver needs a real DOM node.
-    instance.refs = {inner: document.createElement('div')};
-    // The shallow renderer does not call componentDidMount, so call it
-    // manually.
-    instance.componentDidMount();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     assert.isNotNull(instance.observer);
     instance.observer.disconnect = sinon.stub();
-    renderer.unmount();
+    wrapper.unmount();
     assert.equal(instance.observer.disconnect.callCount, 1);
   });
 
   it('can pass through styles', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <ExpandingRow
-        style={{zIndex: 5}}>
-        <span>closed</span>
-        <span>open</span>
-      </ExpandingRow>, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <li className="expanding-row twelve-col expanding-row--clickable"
-        onClick={sinon.stub()}
-        style={{zIndex: 5}}>
-        {output.props.children}
-      </li>);
-    expect(output).toEqualJSX(expected);
+    const style = { zIndex: 5 };
+    const wrapper = renderComponent({ style });
+    assert.deepEqual(wrapper.prop('style'), style);
   });
 });

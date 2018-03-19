@@ -2,29 +2,29 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const FileField = require('./file-field');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('FileField', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <FileField
+      accept={options.accept || '.json'}
+      disabled={options.disabled === undefined ? false : options.disabled}
+      label={options.label || 'Dingo'}
+      required={options.required === undefined ? true : options.required} />
+  );
+
   it('can render', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <FileField
-        accept=".json"
-        disabled={false}
-        label="Dingo"
-        required={true} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var expected = (
       <div className="file-field">
         <input accept=".json"
           className="file-field__field"
           disabled={false}
           id="Dingo"
-          onChange={instance.validate}
+          onChange={wrapper.find('input').prop('onChange')}
           ref="field"
           required={true}
           type="file" />
@@ -34,17 +34,12 @@ describe('FileField', function() {
         </label>
         {null}
       </div>);
-    expect(expected).toEqualJSX(output);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can return the field value', done => {
-    const renderer = jsTestUtils.shallowRender(
-      <FileField
-        accept=".json"
-        disabled={false}
-        label="Dingo"
-        required={true} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     // Patch the file reader factory used to create the JSON file reader.
     const reader = instance._newFileReader();
     const original = instance._newFileReader;
@@ -69,113 +64,55 @@ describe('FileField', function() {
   });
 
   it('can validate the form', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <FileField
-        accept=".json"
-        disabled={false}
-        label="Dingo"
-        required={true} />, true);
-    var instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    var instance = wrapper.instance();
     instance.refs = {field: {files: []}};
     instance.validate();
-    var output = renderer.getRenderOutput();
+    wrapper.update();
     var expected = (
-      <div className="file-field error">
-        <input accept=".json"
-          className="file-field__field"
-          disabled={false}
-          id="Dingo"
-          onChange={instance.validate}
-          ref="field"
-          required={true}
-          type="file" />
-        <label className="file-field__label"
-          htmlFor="Dingo">
-          Dingo
-        </label>
-        <ul className="file-field__errors">
-          {[<li className="file-field__error"
-            key="required">
-            This field is required.
-          </li>]}
-        </ul>
-      </div>);
-    expect(expected).toEqualJSX(output);
+      <ul className="file-field__errors">
+        {[<li className="file-field__error"
+          key="required">
+          This field is required.
+        </li>]}
+      </ul>);
+    assert.equal(wrapper.prop('className').includes('error'), true);
+    assert.compareJSX(wrapper.find('.file-field__errors'), expected);
   });
 
   it('can validate the form when the file changes', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <FileField
-        accept=".json"
-        disabled={false}
-        label="Dingo"
-        required={true} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     instance.refs = {field: {files: []}};
-    let output = renderer.getRenderOutput();
-    output.props.children[0].props.onChange();
-    output = renderer.getRenderOutput();
-    const expected = (
-      <div className="file-field error">
-        <input accept=".json"
-          className="file-field__field"
-          disabled={false}
-          id="Dingo"
-          onChange={instance.validate}
-          ref="field"
-          required={true}
-          type="file" />
-        <label className="file-field__label"
-          htmlFor="Dingo">
-          Dingo
-        </label>
-        <ul className="file-field__errors">
-          {[<li className="file-field__error"
-            key="required">
-            This field is required.
-          </li>]}
-        </ul>
-      </div>);
-    expect(expected).toEqualJSX(output);
+    wrapper.find('input').props().onChange();
+    wrapper.update();
+    var expected = (
+      <ul className="file-field__errors">
+        {[<li className="file-field__error"
+          key="required">
+          This field is required.
+        </li>]}
+      </ul>);
+    assert.equal(wrapper.prop('className').includes('error'), true);
+    assert.compareJSX(wrapper.find('.file-field__errors'), expected);
   });
 
   it('generate a label when file is stored', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <FileField
-        accept=".json"
-        disabled={false}
-        label="Dingo"
-        required={true} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     instance.setState({contents: 'foo'});
-    let output = renderer.getRenderOutput();
+    wrapper.update();
     const expected = (
-      <div className="file-field">
-        <input accept=".json"
-          className="file-field__field"
-          disabled={false}
-          id="Dingo"
-          onChange={instance.validate}
-          ref="field"
-          required={true}
-          type="file" />
-        <label className="file-field__label"
-          htmlFor="Dingo">
-          File stored.
-        </label>
-        {null}
-      </div>);
-    expect(expected).toEqualJSX(output);
+      <label className="file-field__label"
+        htmlFor="Dingo">
+        File stored.
+      </label>);
+    assert.compareJSX(wrapper.find('.file-field__label'), expected);
   });
 
   it('can set the focus on the field', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <FileField
-        accept=".json"
-        disabled={false}
-        label="Dingo"
-        required={true} />, true);
-    var instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    var instance = wrapper.instance();
     instance.refs = {field: {focus: sinon.stub()}};
     instance.focus();
     assert.equal(instance.refs.field.focus.callCount, 1);
