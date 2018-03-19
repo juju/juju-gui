@@ -488,6 +488,16 @@ YUI.add('juju-env-api', function(Y) {
           value = (constraint || '').trim();
         }
         if (value || value === 0) {
+          // The following conditional is a workaround for a bug in Juju core
+          // not correctly supporting the 'cpu-cores' key.
+          // https://bugs.launchpad.net/juju/+bug/1755580
+          // When that issue is resolved, then these lines can be removed.
+          // Changing this caused a number of tests to fail because of the name
+          // change, these tests were simply updated to the new key. When this
+          // is removed then those changes will have to be reverted.
+          if (key === 'cpu-cores') {
+            key = 'cores';
+          }
           result[key] = value;
         }
       }, this);
