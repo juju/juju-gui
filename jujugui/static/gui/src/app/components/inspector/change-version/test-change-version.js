@@ -2,124 +2,66 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorChangeVersion = require('./change-version');
-const Spinner = require('../../spinner/spinner');
 const InspectorChangeVersionItem = require('./item/item');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('InspectorChangeVersion', function() {
   var acl;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorChangeVersion
+      acl={options.acl || acl}
+      addCharm={options.addCharm || sinon.stub()}
+      addNotification={options.addNotification || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      charmId={options.charmId || 'cs:django-5'}
+      getAvailableVersions={
+        options.getAvailableVersions || sinon.stub().callsArgWith(1, null, [
+          'cs:django-4', 'cs:django-5', 'cs:django-6'
+        ])}
+      getCharm={options.getCharm || sinon.stub()}
+      getMacaroon={options.getMacaroon || sinon.stub()}
+      service={options.service || {
+        get: sinon.stub().returns('django'),
+        set: sinon.stub()
+      }}
+      setCharm={options.setCharm || sinon.stub()} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
   });
 
   it('can display a loading spinner', function() {
-    var changeState = sinon.stub();
-    var service = {};
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub();
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output,
-      <div className="inspector-change-version">
-        <div className="inspector-change-version__current">
-          Current version:
-          <div className="inspector-change-version__current-version"
-            onClick={output.props.children[0].props.children[1].props.onClick} role="button"
-            tabIndex="0">
-            django
-          </div>
-        </div>
-        <div className="inspector-spinner">
-          <Spinner />
-        </div>
-      </div>);
+    const wrapper = renderComponent({ getAvailableVersions: sinon.stub() });
+    assert.equal(wrapper.find('Spinner').length, 1);
   });
 
   it('can display an empty versions list', function() {
-    var changeState = sinon.stub();
-    var service = {};
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub();
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    getAvailableVersions.callsArgWith(1, null, ['cs:django']);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output,
-      <div className="inspector-change-version">
-        <div className="inspector-change-version__current">
-          Current version:
-          <div className="inspector-change-version__current-version"
-            onClick={output.props.children[0].props.children[1].props.onClick} role="button"
-            tabIndex="0">
-            django
-          </div>
-        </div>
-        <ul className="inspector-change-version__versions">
-          <li className="inspector-change-version__none">
-            No other versions found.
-          </li>
-        </ul>
-      </div>);
+    const getAvailableVersions = sinon.stub().callsArgWith(1, null, ['cs:django']);
+    const wrapper = renderComponent({ getAvailableVersions });
+    const expected = (
+      <ul className="inspector-change-version__versions">
+        <li className="inspector-change-version__none">
+          No other versions found.
+        </li>
+      </ul>);
+    assert.compareJSX(wrapper.find('.inspector-change-version__versions'), expected);
   });
 
   it('can display list of versions', function() {
-    var changeState = sinon.stub();
-    var service = {};
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    var list = output.props.children[1];
-    assert.deepEqual(output,
+    const wrapper = renderComponent();
+    const items = wrapper.find('InspectorChangeVersionItem');
+    const expected = (
       <div className="inspector-change-version">
         <div className="inspector-change-version__current">
           Current version:
           <div className="inspector-change-version__current-version"
-            onClick={output.props.children[0].props.children[1].props.onClick} role="button"
+            onClick={
+              wrapper.find('.inspector-change-version__current-version').prop('onClick')}
+            role="button"
             tabIndex="0">
             django/5
           </div>
@@ -127,83 +69,39 @@ describe('InspectorChangeVersion', function() {
         <ul className="inspector-change-version__versions">
           <InspectorChangeVersionItem
             acl={acl}
-            buttonAction={list.props.children[0].props.buttonAction}
+            buttonAction={items.at(0).prop('buttonAction')}
             downgrade={true}
-            itemAction={list.props.children[0].props.itemAction}
+            itemAction={items.at(0).prop('itemAction')}
             key="cs:django-4"
             url={window.jujulib.URL.fromString('django/4')} />
           <InspectorChangeVersionItem
             acl={acl}
-            buttonAction={list.props.children[1].props.buttonAction}
+            buttonAction={items.at(1).prop('buttonAction')}
             downgrade={false}
-            itemAction={list.props.children[1].props.itemAction}
+            itemAction={items.at(1).prop('itemAction')}
             key="cs:django-6"
             url={window.jujulib.URL.fromString('django/6')} />
         </ul>
       </div>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can display a message if there is a get versions failure', function() {
-    var changeState = sinon.stub();
-    var service = {};
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub().callsArg(1, 'bad wolf', []);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    assert.deepEqual(output,
-      <div className="inspector-change-version">
-        <div className="inspector-change-version__current">
-          Current version:
-          <div className="inspector-change-version__current-version"
-            onClick={output.props.children[0].props.children[1].props.onClick} role="button"
-            tabIndex="0">
-            django
-          </div>
-        </div>
-        <ul className="inspector-change-version__versions">
-          <li className="inspector-change-version__none">
-            No other versions found.
-          </li>
-        </ul>
-      </div>);
+    const wrapper = renderComponent({ getAvailableVersions });
+    const expected = (
+      <ul className="inspector-change-version__versions">
+        <li className="inspector-change-version__none">
+          No other versions found.
+        </li>
+      </ul>);
+    assert.compareJSX(wrapper.find('.inspector-change-version__versions'), expected);
   });
 
   it('can navigate to the current charm version details', function() {
     var changeState = sinon.stub();
-    var service = {};
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    output.props.children[0].props.children[1].props.onClick();
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.inspector-change-version__current-version').props().onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       store: 'django/5'
@@ -212,27 +110,8 @@ describe('InspectorChangeVersion', function() {
 
   it('can navigate to another charm version details', function() {
     var changeState = sinon.stub();
-    var service = {};
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.itemAction();
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('InspectorChangeVersionItem').at(0).props().itemAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       store: 'django/4'
@@ -240,9 +119,7 @@ describe('InspectorChangeVersion', function() {
   });
 
   it('can change charm version', function() {
-    var changeState = sinon.stub();
     var serviceSet = sinon.stub();
-    var getMacaroon = sinon.stub().returns('macaroon');
     var addCharm = sinon.stub();
     var service = {
       get: sinon.stub().returns('django'),
@@ -250,24 +127,13 @@ describe('InspectorChangeVersion', function() {
     };
     var setCharm = sinon.stub().callsArgWith(4, 'cs:django-4');
     var getCharm = sinon.stub().callsArgWith(1, 'cs:django-4');
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={addCharm}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={getMacaroon}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.buttonAction();
+    const wrapper = renderComponent({
+      addCharm,
+      getCharm,
+      service,
+      setCharm
+    });
+    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     // The charm needs to be added to the model first.
     assert.equal(addCharm.callCount, 1);
     assert.equal(addCharm.args[0][0], 'cs:django-4');
@@ -279,151 +145,62 @@ describe('InspectorChangeVersion', function() {
 
   it('adds a notification if it can not add a charm', function() {
     const addNotification = sinon.stub();
-    const changeState = sinon.stub();
-    const serviceSet = sinon.stub();
-    const getMacaroon = sinon.stub().returns('macaroon');
-    const setCharm = sinon.stub();
-    const service = {
-      get: sinon.stub().returns('django'),
-      set: serviceSet
-    };
     const addCharm = sinon.stub().callsArgWith(1, {err: 'error'});
-    const getCharm = sinon.stub();
-    const getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    const shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={addCharm}
-        addNotification={addNotification}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={getMacaroon}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    const output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.buttonAction();
+    const wrapper = renderComponent({
+      addNotification,
+      addCharm
+    });
+    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
 
   it('adds a notification if it can not set a charm', function() {
     var addNotification = sinon.stub();
-    var changeState = sinon.stub();
-    var serviceSet = sinon.stub();
-    var getMacaroon = sinon.stub().returns('macaroon');
-    var addCharm = sinon.stub();
-    var service = {
-      get: sinon.stub().returns('django'),
-      set: serviceSet
-    };
+    var addCharm = sinon.stub().callsArgWith(1, {});
     var setCharm = sinon.stub().callsArgWith(4, {err: 'error'});
     var getCharm = sinon.stub().callsArgWith(1);
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={addCharm}
-        addNotification={addNotification}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={getMacaroon}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.buttonAction();
-    // Call the addCharm callback.
-    addCharm.args[0][1]({});
+    const wrapper = renderComponent({
+      addNotification,
+      addCharm,
+      getCharm,
+      setCharm
+    });
+    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
 
   it('adds a notification if it can not get a charm', function() {
     var addNotification = sinon.stub();
-    var changeState = sinon.stub();
-    var serviceSet = sinon.stub();
-    var getMacaroon = sinon.stub().returns('macaroon');
-    var addCharm = sinon.stub();
-    var service = {
-      get: sinon.stub().returns('django'),
-      set: serviceSet
-    };
+    var addCharm = sinon.stub().callsArgWith(1, {});
     var setCharm = sinon.stub().callsArgWith(4, {});
     var getCharm = sinon.stub().callsArgWith(1, {err: 'error'});
-    var getAvailableVersions = sinon.stub().callsArgWith(1, null, [
-      'cs:django-4', 'cs:django-5', 'cs:django-6'
-    ]);
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={addCharm}
-        addNotification={addNotification}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={getMacaroon}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    var output = shallowRenderer.getRenderOutput();
-    output.props.children[1].props.children[0].props.buttonAction();
-    // Call the addCharm callback.
-    addCharm.args[0][1]({});
+    const wrapper = renderComponent({
+      addNotification,
+      addCharm,
+      getCharm,
+      setCharm
+    });
+    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
 
   it('will abort the request when unmounting', function() {
     var abort = sinon.stub();
-    var changeState = sinon.stub();
-    var serviceSet = sinon.stub();
-    var service = {
-      get: sinon.stub().returns('django'),
-      set: serviceSet
-    };
-    var setCharm = sinon.stub();
-    var getCharm = sinon.stub();
     var getAvailableVersions = sinon.stub().returns({abort: abort});
-    var shallowRenderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={sinon.stub()}
-        changeState={changeState}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={getCharm}
-        getMacaroon={sinon.stub()}
-        service={service}
-        setCharm={setCharm} />, true);
-    shallowRenderer.getMountedInstance().componentDidMount();
-    shallowRenderer.unmount();
+    const wrapper = renderComponent({
+      getAvailableVersions
+    });
+    wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 
-  it('can display list of versions', function() {
+  it('can handle errors when getting versions', function() {
     const addNotification = sinon.stub();
     const getAvailableVersions = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    const renderer = jsTestUtils.shallowRender(
-      <InspectorChangeVersion
-        acl={acl}
-        addCharm={sinon.stub()}
-        addNotification={addNotification}
-        changeState={sinon.stub()}
-        charmId="cs:django-5"
-        getAvailableVersions={getAvailableVersions}
-        getCharm={sinon.stub()}
-        getMacaroon={sinon.stub()}
-        service={{}}
-        setCharm={sinon.stub()} />, true);
-    renderer.getMountedInstance().componentDidMount();
+    renderComponent({
+      addNotification,
+      getAvailableVersions
+    });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'unable to retrieve charm versions',
