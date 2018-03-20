@@ -2,23 +2,27 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InsetSelect = require('./inset-select');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('InsetSelect', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InsetSelect
+      disabled={options.disabled}
+      label={options.label === undefined ? 'Spork!' : options.label}
+      onChange={options.onChange}
+      options={options.options || [{
+        label: 'Splade!',
+        value: 'splade'
+      }]}
+      required={options.required}
+      value={options.value} />
+  );
+
   it('can render', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <InsetSelect
-        label="Spork!"
-        options={[{
-          label: 'Splade!',
-          value: 'splade'
-        }]} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var expected = (
       <div className='inset-select inset-select--spork'>
         <label className="inset-select__label"
@@ -29,7 +33,7 @@ describe('InsetSelect', function() {
           defaultValue={undefined}
           disabled={undefined}
           id="Spork!"
-          onChange={instance._callOnChange}
+          onChange={wrapper.find('.inset-select__field').prop('onChange')}
           ref="field"
           required={undefined}>
           {[<option
@@ -39,31 +43,19 @@ describe('InsetSelect', function() {
           </option>]}
         </select>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can return the field value', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <InsetSelect
-        label="Spork!"
-        options={[{
-          label: 'Splade!',
-          value: 'splade'
-        }]} />, true);
-    var instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    var instance = wrapper.instance();
     instance.refs = {field: {value: 'default'}};
     assert.equal(instance.getValue(), 'default');
   });
 
   it('can set the field value', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <InsetSelect
-        label="Spork!"
-        options={[{
-          label: 'Splade!',
-          value: 'splade'
-        }]} />, true);
-    var instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    var instance = wrapper.instance();
     instance.refs = {field: {value: 'default'}};
     instance.setValue('new');
     assert.equal(instance.getValue(), 'new');
@@ -71,48 +63,16 @@ describe('InsetSelect', function() {
 
   it('can pass the field value to a supplied onChange method', () => {
     var onChange = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <InsetSelect
-        label="Spork!"
-        onChange={onChange}
-        options={[{
-          label: 'Splade!',
-          value: 'splade'
-        }]} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ onChange });
+    var instance = wrapper.instance();
     instance.refs = {field: {value: 'new'}};
-    output.props.children[1].props.onChange();
+    wrapper.find('.inset-select__field').props().onChange();
     assert.equal(onChange.callCount, 1);
     assert.equal(onChange.args[0][0], 'new');
   });
 
   it('allows the label to be optional', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <InsetSelect
-        options={[{
-          label: 'Splade!',
-          value: 'splade'
-        }]} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var expected = (
-      <div className='inset-select'>
-        {undefined}
-        <select className="inset-select__field"
-          defaultValue={undefined}
-          disabled={undefined}
-          id={undefined}
-          onChange={instance._callOnChange}
-          ref="field"
-          required={undefined}>
-          {[<option
-            key="splade0"
-            value="splade">
-            Splade!
-          </option>]}
-        </select>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ label: null });
+    assert.equal(wrapper.find('.inset-select__label').length, 0);
   });
 });
