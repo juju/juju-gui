@@ -134,7 +134,7 @@ ${this.props.youtubeAPIKey}`,
     return (<Lightbox
       close={this._handleClose.bind(this)}
       extraClasses={['help']}>
-      <div>
+      <div className="help__body">
         <header className="help__header clearfix">
           <h3 className="help__header-title">Help</h3>
           <div className="help__header-search header-search">
