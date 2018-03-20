@@ -2,39 +2,35 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const HashLink = require('./hash-link');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('HashLink', () => {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <HashLink
+      changeState={options.changeState || sinon.stub()}
+      hash={options.hash || 'readme'} />
+  );
+
   it('can render', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <HashLink
-        changeState={sinon.stub()}
-        hash="readme" />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="hash-link"
-        onClick={instance._handleClick}>
+        onClick={wrapper.prop('onClick')}>
         <SvgIcon
           name="anchor_16"
           size="16" />
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
-  it('can change the has state', () => {
+  it('can change the hash state', () => {
     const changeState = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <HashLink
-        changeState={changeState}
-        hash="readme" />, true);
-    const output = renderer.getRenderOutput();
-    output.props.onClick();
+    const wrapper = renderComponent({ changeState });
+    wrapper.props().onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       hash: 'readme'
