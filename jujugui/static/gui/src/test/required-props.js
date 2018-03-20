@@ -12,7 +12,7 @@ afterEach(function() {
   console.error.calls.all().forEach(call => {
     const error = call.args[0];
     if (error && error.startsWith('Warning: Failed prop type:')) {
-      fail(error);
+      fail(`\x1b[31m${error}\x1b[0m'`);
     }
   });
 });
