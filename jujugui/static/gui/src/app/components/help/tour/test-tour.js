@@ -2,24 +2,25 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Tour = require('./tour');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('Tour', () => {
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Tour
+      close={options.close || sinon.stub()}
+      endTour={options.endTour || sinon.stub()}
+      staticURL={options.staticURL || '/static/'} />
+  );
+
   it('renders', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Tour close={sinon.stub()} endTour={sinon.stub()} staticURL="" />,
-      true
-    );
-
-    const output = renderer.getRenderOutput();
-
-    expect(output.props.children[0]).toEqualJSX(
+    const wrapper = renderComponent();
+    const expected = (
       <span className="back-to-help"
-        onClick={sinon.stub()}>
+        onClick={wrapper.find('.back-to-help').prop('onClick')}>
         <SvgIcon
           className="back-to-help__icon"
           name="chevron_down_16"
@@ -27,15 +28,9 @@ describe('Tour', () => {
         Back to GUI help
       </span>
     );
-
-    assert.deepEqual(output.props.children[1].props.extraClasses, ['tour']);
-
+    assert.compareJSX(wrapper.find('.back-to-help'), expected);
+    assert.deepEqual(wrapper.find('Lightbox').prop('extraClasses'), ['tour']);
     // Slides
-    const slides = output.props.children[1].props.children;
-    assert.isDefined(slides);
-    assert.equal(slides.length, 7);
-    slides.forEach(slide => {
-      assert.deepEqual(slide.props.className, 'tour__slide');
-    });
+    assert.equal(wrapper.find('.tour__slide').length, 7);
   });
 });
