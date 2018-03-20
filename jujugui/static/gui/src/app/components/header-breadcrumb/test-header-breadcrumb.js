@@ -2,17 +2,33 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const EnvSwitcher = require('../env-switcher/env-switcher');
 const HeaderBreadcrumb = require('./header-breadcrumb');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('HeaderBreadcrumb', () => {
-  let appState, addNotification, changeState, humanizeTimestamp,
-      listModelsWithInfo, showProfile, switchModel;
+  let appState;
   const acl = {};
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <HeaderBreadcrumb
+      acl={options.acl || acl}
+      addNotification={options.addNotification || sinon.stub()}
+      appState={options.appState || appState}
+      changeState={options.changeState || sinon.stub()}
+      humanizeTimestamp={options.humanizeTimestamp || sinon.stub()}
+      listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
+      loadingModel={options.loadingModel}
+      modelCommitted={options.modelCommitted}
+      modelName={options.modelName}
+      modelOwner={options.modelOwner}
+      setModelName={options.setModelName || sinon.stub()}
+      showEnvSwitcher={options.showEnvSwitcher}
+      showProfile={options.showProfile || sinon.stub()}
+      switchModel={options.switchModel || sinon.stub()}
+      user={options.user} />
+  );
 
   beforeEach(function() {
     appState = {
@@ -21,64 +37,24 @@ describe('HeaderBreadcrumb', () => {
         return `/u/${stateObj.profile}`;
       }
     };
-    addNotification = sinon.stub();
-    listModelsWithInfo = sinon.stub();
-    showProfile = sinon.stub();
-    switchModel = sinon.stub();
-    changeState = sinon.stub();
-    humanizeTimestamp = sinon.stub();
   });
 
-  // Render the component and return the instance and the output.
-  const render = attrs => {
-    const renderer = jsTestUtils.shallowRender(
-      <HeaderBreadcrumb
-        acl={acl}
-        addNotification={addNotification}
-        appState={appState}
-        changeState={changeState}
-        humanizeTimestamp={humanizeTimestamp}
-        listModelsWithInfo={listModelsWithInfo}
-        loadingModel={attrs.loadingModel}
-        modelCommitted={attrs.modelCommitted}
-        modelName={attrs.modelName}
-        modelOwner={attrs.modelOwner}
-        setModelName={attrs.setModelName || sinon.stub()}
-        showEnvSwitcher={attrs.showEnvSwitcher}
-        showProfile={showProfile}
-        switchModel={switchModel}
-        user={attrs.user} />, true);
-    const output = renderer.getRenderOutput();
-    const userSection = output.props.children[1].props.children[0];
-    let clickUser = null;
-    if (userSection) {
-      clickUser = userSection.props.children.props.onClick;
-    }
-    return {
-      instance: renderer.getMountedInstance(),
-      output: output,
-      clickUser: clickUser
-    };
-  };
-
   it('renders properly with the current user', () => {
-    const setModelName = sinon.stub();
-    const comp = render({
+    const wrapper = renderComponent({
       user: {username: 'who@external', displayName: 'who'},
       modelCommitted: true,
       modelName: 'mymodel',
       modelOwner: '',
-      setModelName: setModelName,
       showEnvSwitcher: true
     });
-    const expectedOutput = (
+    const expected = (
       <div className="header-breadcrumb">
         <div className="header-breadcrumb__loading">Loading model</div>
         <ul className="header-breadcrumb__list" data-username="who">
           <li className="header-breadcrumb__list-item">
             <a className="header-breadcrumb--link"
               href="/u/who"
-              onClick={comp.clickUser}
+              onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
               title="who">
               who
             </a>
@@ -86,164 +62,129 @@ describe('HeaderBreadcrumb', () => {
           <li className="header-breadcrumb__list-item">
             <EnvSwitcher
               acl={acl}
-              addNotification={addNotification}
-              changeState={changeState}
+              addNotification={sinon.stub()}
+              changeState={sinon.stub()}
               environmentName={'mymodel'}
-              humanizeTimestamp={humanizeTimestamp}
-              listModelsWithInfo={listModelsWithInfo}
+              humanizeTimestamp={sinon.stub()}
+              listModelsWithInfo={sinon.stub()}
               modelCommitted={true}
-              setModelName={setModelName}
-              switchModel={switchModel}
+              setModelName={sinon.stub()}
+              switchModel={sinon.stub()}
               user={{username: 'who@external', displayName: 'who'}} />
           </li>
         </ul>
       </div>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('renders properly with the model owner', () => {
-    const setModelName = sinon.stub();
-    const comp = render({
+    const wrapper = renderComponent({
       user: {username: 'dalek@external', displayName: 'dalek'},
       modelCommitted: true,
       modelName: 'mymodel',
       modelOwner: 'rose',
-      setModelName: setModelName,
       showEnvSwitcher: true
     });
-    const expectedOutput = (
-      <div className="header-breadcrumb">
-        <div className="header-breadcrumb__loading">Loading model</div>
-        <ul className="header-breadcrumb__list" data-username="dalek">
-          <li className="header-breadcrumb__list-item">
-            <a className="header-breadcrumb--link"
-              href="/u/rose"
-              onClick={comp.clickUser}
-              title="rose">
-              rose
-            </a>
-          </li>
-          <li className="header-breadcrumb__list-item">
-            <EnvSwitcher
-              acl={acl}
-              addNotification={addNotification}
-              changeState={changeState}
-              environmentName={'mymodel'}
-              humanizeTimestamp={humanizeTimestamp}
-              listModelsWithInfo={listModelsWithInfo}
-              modelCommitted={true}
-              setModelName={setModelName}
-              switchModel={switchModel}
-              user={{username: 'dalek@external', displayName: 'dalek'}} />
-          </li>
-        </ul>
-      </div>
+    const expected = (
+      <a className="header-breadcrumb--link"
+        href="/u/rose"
+        onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
+        title="rose">
+        rose
+      </a>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.header-breadcrumb--link'), expected);
   });
 
   it('renders properly with a profile', () => {
     const user = {username: 'dalek@external', displayName: 'dalek'};
     appState.current.profile = 'cyberman';
-    const comp = render({
+    const wrapper = renderComponent({
       user: user,
       modelCommitted: true,
       modelName: 'mymodel',
       modelOwner: 'rose',
       showEnvSwitcher: true
     });
-    const expectedOutput = (
-      <div className="header-breadcrumb">
-        <div className="header-breadcrumb__loading">Loading model</div>
-        <ul className="header-breadcrumb__list" data-username="dalek">
-          <li className="header-breadcrumb__list-item">
-            <a className="header-breadcrumb--link"
-              href="/u/cyberman"
-              onClick={comp.clickUser}
-              title="cyberman">
-              cyberman
-            </a>
-          </li>
-          <li className="header-breadcrumb__list-item">
-            <EnvSwitcher
-              acl={acl}
-              addNotification={addNotification}
-              changeState={changeState}
-              environmentName={'mymodel'}
-              humanizeTimestamp={humanizeTimestamp}
-              listModelsWithInfo={listModelsWithInfo}
-              modelCommitted={true}
-              setModelName={sinon.stub()}
-              switchModel={switchModel}
-              user={user} />
-          </li>
-        </ul>
-      </div>
+    const expected = (
+      <a className="header-breadcrumb--link"
+        href="/u/cyberman"
+        onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
+        title="cyberman">
+        cyberman
+      </a>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.header-breadcrumb--link'), expected);
   });
 
   it('removes user name from breadcrumbs if none is provided', () => {
-    const comp = render({
+    const wrapper = renderComponent({
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: true
     });
-    assert.strictEqual(comp.output.props.children[1].props.children[0],
-      null);
+    assert.equal(wrapper.find('.header-breadcrumb--link').length, 0);
   });
 
   it('does not render the model switcher if told not to', () => {
-    const comp = render({
+    const wrapper = renderComponent({
       user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
       showEnvSwitcher: false
     });
-    assert.strictEqual(comp.output.props.children[1].props.children[1],
-      null);
+    assert.equal(wrapper.find('EnvSwitcher').length, 0);
   });
 
   it('does not make the username linkable if we hide model switcher', () => {
-    const comp = render({
+    const showProfile = sinon.stub();
+    const wrapper = renderComponent({
       user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
-      showEnvSwitcher: false
+      showEnvSwitcher: false,
+      showProfile
     });
-    const userSection = comp.output.props.children[1].props.children[0];
     assert.equal(
-      userSection.props.children.props.className,
-      'header-breadcrumb--link profile-disabled');
+      wrapper.find('.header-breadcrumb--link').prop('className').includes(
+        'profile-disabled'),
+      true);
     // Manually call the onClick handler and make sure it doesn't navigate
     // to show the profile.
-    comp.clickUser({preventDefault: sinon.stub()});
+    wrapper.find('.header-breadcrumb--link').props().onClick(
+      {preventDefault: sinon.stub()});
     assert.equal(showProfile.callCount, 0, 'showProfile called');
   });
 
   it('calls the profile view when the current user link is clicked', () => {
-    const comp = render({
+    const showProfile = sinon.stub();
+    const wrapper = renderComponent({
       user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: '',
-      showEnvSwitcher: true
+      showEnvSwitcher: true,
+      showProfile
     });
-    checkProfileCalled(comp.clickUser, 'who');
+    checkProfileCalled(
+      wrapper.find('.header-breadcrumb--link').prop('onClick'), showProfile, 'who');
   });
 
   it('calls the profile view when the model owner link is clicked', () => {
-    const comp = render({
+    const showProfile = sinon.stub();
+    const wrapper = renderComponent({
       user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: 'dalek',
-      showEnvSwitcher: true
+      showEnvSwitcher: true,
+      showProfile
     });
-    checkProfileCalled(comp.clickUser, 'dalek');
+    checkProfileCalled(
+      wrapper.find('.header-breadcrumb--link').prop('onClick'), showProfile, 'dalek');
   });
 
   // Check that the link to go to the profile view has been called.
-  const checkProfileCalled = (clickUser, username) => {
+  const checkProfileCalled = (clickUser, showProfile, username) => {
     const preventDefault = sinon.stub();
     clickUser({preventDefault: preventDefault});
     assert.equal(preventDefault.callCount, 1, 'preventDefault not called');
@@ -256,7 +197,7 @@ describe('HeaderBreadcrumb', () => {
   };
 
   it('applies the correct class when loading a model', () => {
-    const comp = render({
+    const wrapper = renderComponent({
       user: {username: 'who@external', displayName: 'who'},
       modelName: 'mymodel',
       modelOwner: 'dalek',
@@ -264,7 +205,8 @@ describe('HeaderBreadcrumb', () => {
       loadingModel: true
     });
     const className = 'header-breadcrumb--loading-model';
-    const classPresent = comp.output.props.className.indexOf(className) >= 0;
-    assert.isTrue(classPresent);
+    assert.equal(
+      wrapper.find('.header-breadcrumb').prop('className').includes(className),
+      true);
   });
 });
