@@ -145,7 +145,7 @@ class CreatePaymentUser extends React.Component {
     @param evt {Object} The change event from the checkbox.
   */
   _handleBillingSameChange(evt) {
-    this.setState({billingAddressSame: this.refs.billingAddressSame.checked});
+    this.setState({billingAddressSame: evt.currentTarget.checked});
   }
 
   /**
@@ -155,7 +155,7 @@ class CreatePaymentUser extends React.Component {
     @param evt {Object} The change event from the checkbox.
   */
   _handleCardSameChange(evt) {
-    this.setState({cardAddressSame: this.refs.cardAddressSame.checked});
+    this.setState({cardAddressSame: evt.currentTarget.checked});
   }
 
   /**

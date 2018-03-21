@@ -133,12 +133,14 @@ describe('Payment', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="payment__no-user">
-        You are not set up to make payments.
-        <GenericButton
-          action={wrapper.find('GenericButton').prop('action')}
-          type="inline-neutral">
-          Set up payments
-        </GenericButton>
+        <p>You are not set up to make payments.</p>
+        <p>
+          <GenericButton
+            action={wrapper.find('GenericButton').prop('action')}
+            type="inline-positive">
+            Set up payments
+          </GenericButton>
+        </p>
       </div>);
     assert.compareJSX(wrapper.find('.payment__no-user'), expected);
   });

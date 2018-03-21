@@ -114,8 +114,8 @@ describe('AddressForm', function() {
               error: 'This field is required.'
             }]}
             value={undefined} />
-          <div className="twelve-col">
-            <div className="six-col">
+          <div className="twelve-col u-no-margin--bottom">
+            <div className="six-col u-no-margin--bottom">
               <GenericInput
                 disabled={false}
                 label="Town/city"
@@ -127,7 +127,7 @@ describe('AddressForm', function() {
                 }]}
                 value={undefined} />
             </div>
-            <div className="six-col last-col">
+            <div className="six-col last-col u-no-margin--bottom">
               <GenericInput
                 disabled={false}
                 label="Postcode"
@@ -139,19 +139,19 @@ describe('AddressForm', function() {
                 }]}
                 value={undefined} />
             </div>
-            <div className="twelve-col">
-              <GenericInput
-                disabled={false}
-                label="Phone number"
-                ref="phoneNumber"
-                required={true}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]}
-                value="" />
-            </div>
           </div>
+          <div className="twelve-col u-no-margin--bottom">
+            <GenericInput
+              disabled={false}
+              label="Phone number"
+              ref="phoneNumber"
+              required={true}
+              validate={[{
+                regex: /\S+/,
+                error: 'This field is required.'
+              }]}
+              value="" />
+            </div>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);

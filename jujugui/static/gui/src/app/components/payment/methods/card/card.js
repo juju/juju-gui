@@ -81,11 +81,11 @@ class PaymentMethodCard extends React.Component {
       return null;
     }
     return (
-      <div className="payment-card-actions no-margin-bottom">
+      <div className="payment-card-actions">
         <GenericButton
           action={this.props.updatePaymentMethod}
           type="inline-neutral">
-          Update payment
+          Update payment details
         </GenericButton>
         <GenericButton
           action={this._removePaymentMethod.bind(this)}

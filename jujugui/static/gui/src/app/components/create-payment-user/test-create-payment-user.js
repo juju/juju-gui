@@ -71,6 +71,16 @@ describe('CreatePaymentUser', function() {
           <div className="create-payment-user__form-content">
             <ul className="create-payment-user__form-type">
               <li className="create-payment-user__form-type-option">
+                <label htmlFor="business">
+                  <input checked={false}
+                    id="business"
+                    name="formType"
+                    onChange={options.at(1).prop('onChange')}
+                    type="radio" />
+                    Business use
+                </label>
+              </li>
+              <li className="create-payment-user__form-type-option">
                 <label htmlFor="personal">
                   <input checked={true}
                     id="personal"
@@ -80,20 +90,10 @@ describe('CreatePaymentUser', function() {
                   Personal use
                 </label>
               </li>
-              <li className="create-payment-user__form-type-option">
-                <label htmlFor="business">
-                  <input checked={false}
-                    id="business"
-                    name="formType"
-                    onChange={options.at(1).prop('onChange')}
-                    type="radio" />
-                  Business use
-                </label>
-              </li>
             </ul>
             {null}
             <h2 className="create-payment-user__title">
-              Name and address
+              Your contact details
             </h2>
             {null}
             <GenericInput
@@ -139,17 +139,18 @@ describe('CreatePaymentUser', function() {
             </label>
             {null}
             {null}
-          </div>
-          <div className="create-payment-user__add">
-            <GenericButton
-              action={wrapper.find('GenericButton').prop('action')}
-              disabled={false}
-              type="inline-neutral">
-              Add payment details
-            </GenericButton>
+            <div className="create-payment-user__add">
+              <GenericButton
+                action={wrapper.find('GenericButton').prop('action')}
+                disabled={false}
+                type="inline-positive">
+                Add payment details
+              </GenericButton>
+            </div>
           </div>
         </form>
       </div>);
+    wrapper.find('#personal').simulate('change');
     assert.compareJSX(wrapper, expected);
   });
 
@@ -301,6 +302,7 @@ describe('CreatePaymentUser', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
+    wrapper.find('#personal').simulate('change');
     wrapper.find('GenericButton').props().action();
     assert.equal(createUser.callCount, 1);
     assert.deepEqual(createUser.args[0][0], {
@@ -382,6 +384,7 @@ describe('CreatePaymentUser', function() {
       })
     };
     instance.refs = refs;
+    wrapper.find('#personal').simulate('change');
     wrapper.find('#billingAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.update();
@@ -428,6 +431,7 @@ describe('CreatePaymentUser', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
+    wrapper.find('#personal').simulate('change');
     wrapper.find('GenericButton').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -444,6 +448,7 @@ describe('CreatePaymentUser', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
+    wrapper.find('#personal').simulate('change');
     wrapper.find('GenericButton').props().action();
     assert.equal(onUserCreated.callCount, 1);
   });
