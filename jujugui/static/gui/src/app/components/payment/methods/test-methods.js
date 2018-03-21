@@ -3,23 +3,44 @@
 
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const GenericButton = require('../../generic-button/generic-button');
-const ExpandingRow = require('../../expanding-row/expanding-row');
 const CardForm = require('../../card-form/card-form');
-const AddressForm = require('../../address-form/address-form');
 const PaymentMethod = require('./method/method');
 const PaymentMethods = require('./methods');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('PaymentMethods', () => {
   let acl, payment, stripe, user;
 
+  const renderComponent = (options = {}) => {
+    const wrapper = enzyme.shallow(
+      <PaymentMethods
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        payment={options.payment || payment}
+        paymentUser={options.paymentUser || user}
+        stripe={options.stripe || stripe}
+        updateUser={options.updateUser || sinon.stub()}
+        username={options.username || 'spinach'}
+        validateForm={options.validateForm || sinon.stub().returns(true)} />
+    );
+    const instance = wrapper.instance();
+    instance.refs = {
+      cardForm: {
+        getValue: sinon.stub().returns({
+          card: {card: 'data'},
+          name: 'Mr G Spinach'
+        })
+      }
+    };
+    return wrapper;
+  };
+
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     payment = {
-      createPaymentMethod: sinon.stub(),
+      createPaymentMethod: sinon.stub().callsArg(3, null, null),
       getCountries: sinon.stub(),
       removePaymentMethod: sinon.stub(),
       reshape: shapeup.reshapeFunc,
@@ -27,7 +48,7 @@ describe('PaymentMethods', () => {
     };
     stripe = {
       createCardElement: sinon.stub(),
-      createToken: sinon.stub(),
+      createToken: sinon.stub().callsArgWith(2, null, {id: 'token123'}),
       reshape: shapeup.reshapeFunc
     };
     user = {
@@ -50,20 +71,7 @@ describe('PaymentMethods', () => {
       name: 'Company',
       id: 'method1'
     }];
-    const addNotification = sinon.stub();
-    const updateUser = sinon.stub();
-    const validateForm = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={addNotification}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={updateUser}
-        username="spinach"
-        validateForm={validateForm} />, true);
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="payment__section">
         <h2 className="payment__title twelve-col">
@@ -72,7 +80,7 @@ describe('PaymentMethods', () => {
         <ul className="user-profile__list twelve-col">
           {[<PaymentMethod
             acl={acl}
-            addNotification={addNotification}
+            addNotification={sinon.stub()}
             key="method1"
             payment={{
               getCountries: payment.getCountries,
@@ -81,265 +89,109 @@ describe('PaymentMethods', () => {
               updatePaymentMethod: payment.updatePaymentMethod
             }}
             paymentMethod={user.paymentMethods[0]}
-            updateUser={updateUser}
+            updateUser={sinon.stub()}
             username="spinach"
-            validateForm={validateForm} />]}
+            validateForm={sinon.stub()} />]}
         </ul>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render when there are no payment methods', () => {
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={sinon.stub()}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub()} />, true);
-    const instance = component.getMountedInstance();
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
-      <div className="payment__section">
-        <h2 className="payment__title twelve-col">
-          Payment details
-        </h2>
-        <div className="payment-methods__no-methods">
-          You do not have a payment method.
-          <GenericButton
-            action={instance._toggleAdd}
-            type="inline-neutral">
-            Add payment method
-          </GenericButton>
-        </div>
+      <div className="payment-methods__no-methods">
+        You do not have a payment method.
+        <GenericButton
+          action={wrapper.find('GenericButton').prop('action')}
+          type="inline-neutral">
+          Add payment method
+        </GenericButton>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.payment-methods__no-methods'), expected);
   });
 
   it('can cancel the requests when unmounting (methods)', () => {
     const abort = sinon.stub();
     stripe.createToken = sinon.stub().returns({abort: abort});
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={sinon.stub()}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    instance.refs = {
-      cardForm: {
-        getValue: sinon.stub().returns({
-          card: 'data'
-        })
-      }
-    };
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1]
-      .props.children[1].props.action();
-    component.unmount();
+    const wrapper = renderComponent();
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 
   it('can show the add payment form', () => {
-    const createCardElement = sinon.stub();
-    const validateForm = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={sinon.stub()}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={validateForm} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
+    const wrapper = renderComponent();
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
     const expected = (
-      <ExpandingRow
-        classes={{'twelve-col': true}}
-        clickable={false}
-        expanded={true}>
-        <div></div>
-        <div className="payment-methods__form">
-          <div className="payment-methods__form-fields">
-            <CardForm
-              acl={acl}
-              createCardElement={createCardElement}
-              ref="cardForm"
-              validateForm={validateForm} />
-            <label htmlFor="cardAddressSame">
-              <input checked={true}
-                className="payment-methods__form-checkbox"
-                id="cardAddressSame"
-                name="cardAddressSame"
-                onChange={instance._handleCardSameChange}
-                ref="cardAddressSame"
-                type="checkbox" />
-              Credit or debit card address is the same as default address.
-            </label>
-            {null}
-          </div>
-          <div className="twelve-col payment-methods__form-buttons">
-            <GenericButton
-              action={instance._toggleAdd}
-              type="inline-neutral">
-              Cancel
-            </GenericButton>
-            <GenericButton
-              action={instance._createToken}
-              type="inline-positive">
-              Add
-            </GenericButton>
-          </div>
+      <div className="payment-methods__form">
+        <div className="payment-methods__form-fields">
+          <CardForm
+            acl={acl}
+            createCardElement={sinon.stub()}
+            ref="cardForm"
+            validateForm={sinon.stub()} />
+          <label htmlFor="cardAddressSame">
+            <input checked={true}
+              className="payment-methods__form-checkbox"
+              id="cardAddressSame"
+              name="cardAddressSame"
+              onChange={wrapper.find('input').prop('onChange')}
+              ref="cardAddressSame"
+              type="checkbox" />
+            Credit or debit card address is the same as default address.
+          </label>
+          {null}
         </div>
-      </ExpandingRow>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+        <div className="twelve-col payment-methods__form-buttons">
+          <GenericButton
+            action={wrapper.find('GenericButton').at(0).prop('action')}
+            type="inline-neutral">
+            Cancel
+          </GenericButton>
+          <GenericButton
+            action={wrapper.find('GenericButton').at(1).prop('action')}
+            type="inline-positive">
+            Add
+          </GenericButton>
+        </div>
+      </div>);
+    assert.compareJSX(wrapper.find('.payment-methods__form'), expected);
   });
 
   it('can show the address form', () => {
-    const createCardElement = sinon.stub();
-    const addNotification = sinon.stub();
-    const validateForm = sinon.stub();
-    const getCountries = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={addNotification}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={validateForm} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[0]
-      .props.children[1].props.children[0].props.onChange({
-        currentTarget: {
-          checked: false
-        }
-      });
-    output = component.getRenderOutput();
-    const expected = (
-      <ExpandingRow
-        classes={{'twelve-col': true}}
-        clickable={false}
-        expanded={true}>
-        <div></div>
-        <div className="payment-methods__form">
-          <div className="payment-methods__form-fields">
-            <CardForm
-              acl={acl}
-              createCardElement={createCardElement}
-              ref="cardForm"
-              validateForm={validateForm} />
-            <label htmlFor="cardAddressSame">
-              <input checked={false}
-                className="payment-methods__form-checkbox"
-                id="cardAddressSame"
-                name="cardAddressSame"
-                onChange={instance._handleCardSameChange}
-                ref="cardAddressSame"
-                type="checkbox" />
-              Credit or debit card address is the same as default address.
-            </label>
-            <AddressForm
-              addNotification={addNotification}
-              disabled={false}
-              getCountries={getCountries}
-              ref="cardAddress"
-              showName={false}
-              showPhone={false}
-              validateForm={validateForm} />
-          </div>
-          <div className="twelve-col payment-methods__form-buttons">
-            <GenericButton
-              action={instance._toggleAdd}
-              type="inline-neutral">
-              Cancel
-            </GenericButton>
-            <GenericButton
-              action={instance._createToken}
-              type="inline-positive">
-              Add
-            </GenericButton>
-          </div>
-        </div>
-      </ExpandingRow>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('input').props().onChange({
+      currentTarget: {
+        checked: false
+      }
+    });
+    wrapper.update();
+    assert.equal(wrapper.find('AddressForm').length, 1);
   });
 
   it('validates the form when adding a new payment method', () => {
-    stripe.createToken = sinon.stub().callsArgWith(2, null, {id: 'token123'});
-    payment.createPaymentMethod = sinon.stub().callsArg(2, null, null);
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={sinon.stub()}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(false)} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    instance.refs = {
-      cardForm: {
-        getValue: sinon.stub().returns({
-          card: 'data'
-        })
-      }
-    };
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1]
-      .props.children[1].props.action();
+    const wrapper = renderComponent({
+      validateForm: sinon.stub().returns(false)
+    });
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(stripe.createToken.callCount, 0);
   });
 
   it('can create a new payment method with an existing address', () => {
-    stripe.createToken = sinon.stub().callsArgWith(2, null, {id: 'token123'});
-    payment.createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const updateUser = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={sinon.stub()}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={updateUser}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    instance.refs = {
-      cardForm: {
-        getValue: sinon.stub().returns({
-          card: {card: 'data'},
-          name: 'Mr G Spinach'
-        })
-      }
-    };
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1]
-      .props.children[1].props.action();
+    const wrapper = renderComponent({ updateUser });
+    const instance = wrapper.instance();
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {
       card: 'data'
@@ -359,52 +211,29 @@ describe('PaymentMethods', () => {
   });
 
   it('can create a new payment method with a new address', () => {
-    stripe.createToken = sinon.stub().callsArgWith(2, null, {id: 'token123'});
-    payment.createPaymentMethod = sinon.stub().callsArg(3, null, null);
     const updateUser = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={sinon.stub()}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={updateUser}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    instance.refs = {
-      cardAddress: {
-        getValue: sinon.stub().returns({
-          name: 'Bruce Dundee',
-          line1: '9 Kangaroo St',
-          line2: '',
-          city: 'Snake',
-          county: 'Spider',
-          postcode: '9000',
-          country: 'AU',
-          phones: ['00001111']
-        })
-      },
-      cardForm: {
-        getValue: sinon.stub().returns({
-          card: {card: 'data'},
-          name: 'Mr G Spinach'
-        })
-      }
+    const wrapper = renderComponent({ updateUser });
+    const instance = wrapper.instance();
+    instance.refs.cardAddress = {
+      getValue: sinon.stub().returns({
+        name: 'Bruce Dundee',
+        line1: '9 Kangaroo St',
+        line2: '',
+        city: 'Snake',
+        county: 'Spider',
+        postcode: '9000',
+        country: 'AU',
+        phones: ['00001111']
+      })
     };
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[0]
-      .props.children[1].props.children[0].props.onChange({
-        currentTarget: {
-          checked: false
-        }
-      });
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1]
-      .props.children[1].props.action();
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('input').props().onChange({
+      currentTarget: {
+        checked: false
+      }
+    });
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {
       card: 'data'
@@ -425,31 +254,11 @@ describe('PaymentMethods', () => {
 
   it('can handle errors when creating a token', () => {
     stripe.createToken = sinon.stub().callsArgWith(2, 'Uh oh!');
-    payment.createPaymentMethod = sinon.stub().callsArg(2, null, null);
     const addNotification = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={addNotification}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    instance.refs = {
-      cardForm: {
-        getValue: sinon.stub().returns({
-          card: 'data'
-        })
-      }
-    };
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1]
-      .props.children[1].props.action();
+    const wrapper = renderComponent({ addNotification });
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create Stripe token',
@@ -459,32 +268,12 @@ describe('PaymentMethods', () => {
   });
 
   it('can handle errors when creating a payment method', () => {
-    stripe.createToken = sinon.stub().callsArgWith(2, null, {id: 'token123'});
     payment.createPaymentMethod = sinon.stub().callsArgWith(3, 'Uh oh!', null);
     const addNotification = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethods
-        acl={acl}
-        addNotification={addNotification}
-        payment={payment}
-        paymentUser={user}
-        stripe={stripe}
-        updateUser={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
-    let output = component.getRenderOutput();
-    instance.refs = {
-      cardForm: {
-        getValue: sinon.stub().returns({
-          card: 'data'
-        })
-      }
-    };
-    output.props.children[1].props.children[1].props.action();
-    output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1]
-      .props.children[1].props.action();
+    const wrapper = renderComponent({ addNotification });
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create the payment method',
