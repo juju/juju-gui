@@ -2,15 +2,24 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const PaymentMethodCard = require('./card');
 const GenericButton = require('../../../generic-button/generic-button');
 const SvgIcon = require('../../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
-
 describe('PaymentMethodCard', () => {
   let card;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <PaymentMethodCard
+      addNotification={options.addNotification}
+      card={options.card || card}
+      onPaymentMethodRemoved={options.onPaymentMethodRemoved}
+      removePaymentMethod={options.removePaymentMethod}
+      updatePaymentMethod={options.updatePaymentMethod}
+      username='spinach' />
+  );
 
   beforeEach(() => {
     card = {
@@ -34,16 +43,12 @@ describe('PaymentMethodCard', () => {
   });
 
   it('can render', () => {
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethodCard
-        card={card} />, true);
-    const instance = component.getMountedInstance();
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="payment-card twelve-col">
         <div className="eight-col">
           <div className="payment-card-wrapper"
-            onClick={instance._handleCardClick}>
+            onClick={wrapper.find('.payment-card-wrapper').prop('onClick')}>
             <div className="payment-card-container">
               <div className="payment-card-front">
                 <div className="payment-card-overlay"></div>
@@ -79,59 +84,49 @@ describe('PaymentMethodCard', () => {
         </div>
         {null}
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render the actions', () => {
-    const updatePaymentMethod = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethodCard
-        card={card}
-        removePaymentMethod={sinon.stub()}
-        updatePaymentMethod={updatePaymentMethod} />, true);
-    const instance = component.getMountedInstance();
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent({
+      updatePaymentMethod: sinon.stub(),
+      removePaymentMethod: sinon.stub()
+    });
     const expected = (
       <div className="four-col last-col payment-card-actions">
         <GenericButton
-          action={instance._removePaymentMethod}
+          action={wrapper.find('GenericButton').at(0).prop('action')}
           type="inline-neutral">
           Remove payment details
         </GenericButton>
         <GenericButton
-          action={updatePaymentMethod}
+          action={sinon.stub()}
           type="inline-neutral">
           Update payment details
         </GenericButton>
       </div>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.payment-card-actions'), expected);
   });
 
   it('can render when flipped', () => {
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethodCard
-        card={card} />, true);
-    let output = component.getRenderOutput();
-    output.props.children[0].props.children[0].props.onClick(
+    const wrapper = renderComponent();
+    wrapper.find('.payment-card-wrapper').props().onClick(
       {stopPropagation: sinon.stub()});
-    output = component.getRenderOutput();
+    wrapper.update();
     assert.equal(
-      output.props.children[0].props.children[0].props.className,
-      'payment-card-wrapper payment-card-wrapper--flipped');
+      wrapper.find('.payment-card-wrapper').prop('className').includes(
+        'payment-card-wrapper--flipped'),
+      true);
   });
 
   it('can remove the payment method', () => {
     const onPaymentMethodRemoved = sinon.stub();
     const removePaymentMethod = sinon.stub().callsArgWith(2, null);
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethodCard
-        addNotification={sinon.stub()}
-        card={card}
-        onPaymentMethodRemoved={onPaymentMethodRemoved}
-        removePaymentMethod={removePaymentMethod}
-        username='spinach' />, true);
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[0].props.action();
+    const wrapper = renderComponent({
+      onPaymentMethodRemoved,
+      removePaymentMethod
+    });
+    wrapper.find('GenericButton').at(0).props().action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
     assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
@@ -141,15 +136,11 @@ describe('PaymentMethodCard', () => {
   it('can handle errors when removing the payment method', () => {
     const addNotification = sinon.stub();
     const removePaymentMethod = sinon.stub().callsArgWith(2, 'Uh oh!');
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethodCard
-        addNotification={addNotification}
-        card={card}
-        onPaymentMethodRemoved={sinon.stub()}
-        removePaymentMethod={removePaymentMethod}
-        username='spinach' />, true);
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[0].props.action();
+    const wrapper = renderComponent({
+      addNotification,
+      removePaymentMethod
+    });
+    wrapper.find('GenericButton').at(0).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to remove the payment method',
@@ -161,16 +152,11 @@ describe('PaymentMethodCard', () => {
   it('can cancel the requests when unmounting', () => {
     const abort = sinon.stub();
     const removePaymentMethod = sinon.stub().returns({abort: abort});
-    const component = jsTestUtils.shallowRender(
-      <PaymentMethodCard
-        addNotification={sinon.stub()}
-        card={card}
-        onPaymentMethodRemoved={sinon.stub()}
-        removePaymentMethod={removePaymentMethod}
-        username='spinach' />, true);
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[0].props.action();
-    component.unmount();
+    const wrapper = renderComponent({
+      removePaymentMethod
+    });
+    wrapper.find('GenericButton').at(0).props().action();
+    wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 });
