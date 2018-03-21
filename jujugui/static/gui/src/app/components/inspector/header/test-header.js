@@ -2,105 +2,101 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorHeader = require('./header');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('InspectorHeader', () => {
 
-  function renderComponent(options = {}) {
-    return jsTestUtils.shallowRender(
-      <InspectorHeader
-        backCallback={options.backCallback || sinon.stub()}
-        changeState={options.changeState}
-        charmId={options.charmId}
-        entityPath={options.entityPath}
-        hasGetStarted={options.hasGetStarted}
-        icon={options.icon}
-        showLinks={options.showLinks}
-        title="Juju GUI"
-        type={options.type} />);
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorHeader
+      backCallback={options.backCallback || sinon.stub()}
+      changeState={options.changeState}
+      charmId={options.charmId}
+      entityPath={options.entityPath}
+      hasGetStarted={options.hasGetStarted}
+      icon={options.icon}
+      showLinks={options.showLinks}
+      title="Juju GUI"
+      type={options.type} />
+  );
 
   it('displays the provided title', () => {
-    const output = renderComponent();
-    assert.equal(output.props.children[1].props.children, 'Juju GUI');
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.inspector-header__title').text(), 'Juju GUI');
   });
 
   it('adds a class based on the provided type', () => {
-    const output = renderComponent({type: 'error'});
-    assert.equal(output.props.className,
-      'inspector-header inspector-header--type-error');
+    const wrapper = renderComponent({type: 'error'});
+    assert.equal(
+      wrapper.prop('className').includes(
+        'inspector-header inspector-header--type-error'),
+      true);
   });
 
   it('does not add a type class if it is not provided', () => {
-    const output = renderComponent();
-    assert.equal(output.props.className, 'inspector-header');
+    const wrapper = renderComponent();
+    assert.equal(wrapper.prop('className'), 'inspector-header');
   });
 
   it('displays the provided icon', () => {
-    const output = renderComponent({icon: 'icon.svg'});
-    assert.equal(output.props.children[2].props.children.props.src, 'icon.svg');
+    const wrapper = renderComponent({icon: 'icon.svg'});
+    assert.equal(
+      wrapper.find('.inspector-header__service-icon').prop('src'), 'icon.svg');
   });
 
   it('calls supplied callable when clicked', () => {
     const callbackStub = sinon.stub();
-    const output = renderComponent({backCallback: callbackStub});
-    output.props.onClick();
+    const wrapper = renderComponent({backCallback: callbackStub});
+    wrapper.props().onClick();
     assert.equal(callbackStub.callCount, 1);
   });
 
   it('by default the header links are disabled', () => {
-    const output = renderComponent();
-    assert.equal(output.props.children[3], undefined);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.inspector-header__inline-list').length, 0);
   });
 
   it('renders the Get Started and Charm Details links when requested', () => {
-    const output = renderComponent({
+    const wrapper = renderComponent({
       hasGetStarted: true,
       showLinks: true
     });
-    expect(output.props.children[3]).toEqualJSX(
+    const links = wrapper.find('.inspector-header__list-item a');
+    const expected = (
       <ul className="inspector-header__inline-list">
         <li className="inspector-header__list-item">
-          <a onClick={sinon.stub()}>
+          <a onClick={links.at(0).prop('onClick')}>
             Charm details
           </a>
         </li>
         <li className='inspector-header__list-item'>
-          <a onClick={sinon.stub()}>
+          <a onClick={links.at(1).prop('onClick')}>
             Get started
           </a>
         </li>
       </ul>);
+    assert.compareJSX(wrapper.find('.inspector-header__inline-list'), expected);
   });
 
   it('does not show the Get Started link if not available', () => {
-    const output = renderComponent({
+    const wrapper = renderComponent({
       hasGetStarted: false,
       showLinks: true
     });
-    expect(output.props.children[3]).toEqualJSX(
-      <ul className="inspector-header__inline-list">
-        <li className="inspector-header__list-item">
-          <a onClick={sinon.stub()}>
-            Charm details
-          </a>
-        </li>
-      </ul>);
+    assert.equal(wrapper.find('.inspector-header__list-item').length, 1);
   });
 
   it('clicking the Get Started link changes state to show the get started', () => {
     const changeState = sinon.stub();
     const charmId = 'cs:~hatch/ghost';
-    const output = renderComponent({
+    const wrapper = renderComponent({
       changeState,
       charmId,
       hasGetStarted: true,
       showLinks: true
     });
-    output.props.children[3].props.children[1].props.children.props.onClick({
+    wrapper.find('.inspector-header__list-item a').at(1).props().onClick({
       preventDefault: sinon.stub(),
       stopPropagation: sinon.stub()
     });
@@ -115,13 +111,13 @@ describe('InspectorHeader', () => {
   it('clicking the Charm Details link changes state to show the details', () => {
     const changeState = sinon.stub();
     const entityPath = 'u/hatch/ghost';
-    const output = renderComponent({
+    const wrapper = renderComponent({
       changeState,
       entityPath,
       hasGetStarted: true,
       showLinks: true
     });
-    output.props.children[3].props.children[0].props.children.props.onClick({
+    wrapper.find('.inspector-header__list-item a').at(0).props().onClick({
       preventDefault: sinon.stub(),
       stopPropagation: sinon.stub()
     });

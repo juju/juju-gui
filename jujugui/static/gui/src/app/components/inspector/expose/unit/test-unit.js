@@ -2,12 +2,17 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorExposeUnit = require('./unit');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
-
 describe('InspectorExposeUnit', function() {
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorExposeUnit
+      action={options.action || sinon.stub()}
+      unit={options.unit} />
+  );
 
   it('can render the unit', function() {
     var unit = {
@@ -22,15 +27,11 @@ describe('InspectorExposeUnit', function() {
       }],
       public_address: '20.20.20.199'
     };
-    var action = sinon.stub();
-    var renderer = jsTestUtils.shallowRender(
-      <InspectorExposeUnit
-        action={action}
-        unit={unit} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ unit });
     var expected = (
-      <li className="inspector-expose__unit" data-id="django/1" onClick={action}
+      <li className="inspector-expose__unit"
+        data-id="django/1"
+        onClick={sinon.stub()}
         role="button"
         tabIndex="0">
         <div className="inspector-expose__unit-detail">
@@ -44,7 +45,7 @@ describe('InspectorExposeUnit', function() {
           <li className="inspector-expose__item"
             key="https://20.20.20.199:443">
             <a href="https://20.20.20.199:443"
-              onClick={instance._stopBubble}
+              onClick={wrapper.find('a').at(0).prop('onClick')}
               target="_blank">
               {'20.20.20.199:443'}
             </a>
@@ -52,14 +53,14 @@ describe('InspectorExposeUnit', function() {
           <li className="inspector-expose__item"
             key="http://20.20.20.199:8080">
             <a href="http://20.20.20.199:8080"
-              onClick={instance._stopBubble}
+              onClick={wrapper.find('a').at(1).prop('onClick')}
               target="_blank">
               {'20.20.20.199:8080'}
             </a>
           </li>
         </ul>
       </li>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render the unit without a public address', function() {
@@ -67,24 +68,9 @@ describe('InspectorExposeUnit', function() {
       id: 'django/1',
       displayName: 'django/1'
     };
-    var action = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <InspectorExposeUnit
-        action={action}
-        unit={unit} />);
-    var expected = (
-      <li className="inspector-expose__unit"
-        data-id="django/1"
-        onClick={action}
-        role="button"
-        tabIndex="0">
-        <div className="inspector-expose__unit-detail">
-              django/1
-        </div>
-        <div className="inspector-expose__unit-detail">
-              No public address
-        </div>
-      </li>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ unit });
+    assert.equal(
+      wrapper.find('.inspector-expose__unit-detail').at(1).text(),
+      'No public address');
   });
 });

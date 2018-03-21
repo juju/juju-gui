@@ -2,13 +2,18 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorResourcesList = require('./list');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
-
 describe('InspectorResourcesList', function() {
   let acl;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorResourcesList
+      acl={options.acl || acl}
+      resources={options.resources} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -26,11 +31,7 @@ describe('InspectorResourcesList', function() {
       Path: 'file2',
       Revision: 2
     }];
-    const renderer = jsTestUtils.shallowRender(
-      <InspectorResourcesList
-        acl={acl}
-        resources={resources} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ resources });
     const expected = (
       <div className="inspector-resources-list">
         <ul className="inspector-resources-list__list">
@@ -46,6 +47,6 @@ describe('InspectorResourcesList', function() {
           </li>
         </ul>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 });
