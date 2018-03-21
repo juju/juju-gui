@@ -18,12 +18,16 @@ class IconList extends React.Component {
     @returns {Object} The store state.
   */
   _generateStoreState(id) {
-    const url = window.jujulib.URL.fromAnyString(id);
-    return {
-      profile: null,
-      search: null,
-      store: url.path()
-    };
+    let path;
+    try {
+      const url = window.jujulib.URL.fromAnyString(id);
+      path = url.path();
+    } catch(err) {
+      // This is probably due to new series introduced and not yet supported.
+      console.error(err);
+      path = null;
+    }
+    return {profile: null, search: null, store: path};
   }
 
   /**

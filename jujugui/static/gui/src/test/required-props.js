@@ -10,8 +10,15 @@ beforeEach(function() {
 
 afterEach(function() {
   console.error.calls.all().forEach(call => {
-    const error = call.args[0];
-    if (error && error.startsWith('Warning: Failed prop type:')) {
+    let error = call.args[0];
+    if (!error) {
+      return;
+    }
+    if (error.toString) {
+      // This must be a raised Error().
+      error = error.toString();
+    }
+    if (error.startsWith('Warning: Failed prop type:')) {
       fail(`\x1b[31m${error}\x1b[0m'`);
     }
   });
