@@ -98,14 +98,25 @@
     margin-top: -10px;
   }
 
-  &-actions,
-  &-info {
-    padding-top: 20px;
+  &-actions {
+    padding-top: 1rem;
   }
 
   &-actions {
     .button--inline-neutral {
       margin-bottom: 10px;
+    }
+  }
+}
+
+.payment-card-actions {
+
+  button {
+    width: calc(50% - .5rem);
+    padding: 1rem .75rem;
+
+    &:first-child {
+      margin-right: 1rem;
     }
   }
 }

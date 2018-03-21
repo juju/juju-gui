@@ -172,3 +172,12 @@ a {
     color: $cool-grey;
   }
 }
+
+// Utilities
+.u-no-padding--bottom {
+  padding-bottom: 0;
+}
+
+.u-no-margin--bottom {
+  margin-bottom: 0;
+}
