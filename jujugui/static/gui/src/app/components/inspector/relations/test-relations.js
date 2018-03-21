@@ -2,26 +2,29 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorRelations = require('./relations');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const ButtonRow = require('../../button-row/button-row');
 const OverviewAction = require('../overview-action/overview-action');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
-
 describe('InspectorRelations', function() {
-  var acl, service;
+  var acl, service, serviceRelations;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorRelations
+      acl={options.acl || acl}
+      changeState={options.changeState || sinon.stub()}
+      destroyRelations={options.destroyRelations || sinon.stub()}
+      service={options.service || service}
+      serviceRelations={options.serviceRelations || serviceRelations} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     service = {get: sinon.stub().withArgs('id').returns('ghost')};
-  });
-
-  it('can render the relations list', function() {
-    var changeState = sinon.stub();
-    var relations = [{
+    serviceRelations = [{
       id: 'mysql',
       near: {
         name: 'mysql',
@@ -55,26 +58,22 @@ describe('InspectorRelations', function() {
       interface: 'some-interface',
       scope: 'global'
     }];
-    var renderer = jsTestUtils.shallowRender(
-      <InspectorRelations
-        acl={acl}
-        changeState={changeState}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={relations} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+  });
+
+  it('can render the relations list', function() {
+    const wrapper = renderComponent();
     var buttons = [];
     buttons.push({
       title: 'Remove',
       type: 'neutral',
-      action: instance._handleRemoveRelation,
+      action: wrapper.find('ButtonRow').prop('buttons')[0].action,
       disabled: true
     });
+    const items = wrapper.find('CheckListItem');
     var expected = (<div className="inspector-relations">
       <div className="inspector-relations__actions">
         <OverviewAction
-          action={output.props.children[0].props.children.props.action}
+          action={wrapper.find('OverviewAction').prop('action')}
           icon="plus_box_16"
           title="Build a relation" />
       </div>
@@ -85,54 +84,32 @@ describe('InspectorRelations', function() {
           key='select-all1'
           label='Select all relations'
           ref='select-all'
-          whenChanged={
-            output.props.children[1].props.children[0].props.whenChanged
-          } />
+          whenChanged={items.at(0).prop('whenChanged')} />
         <CheckListItem
-          action={output.props.children[1].props.children[1].props.action}
+          action={items.at(1).prop('action')}
           disabled={false}
-          key={relations[0].id}
+          key={serviceRelations[0].id}
           label={'django:django'}
           ref='CheckListItem-mysql'
-          whenChanged={instance._updateActiveCount} />
+          whenChanged={items.at(1).prop('whenChanged')} />
         <CheckListItem
-          action={output.props.children[1].props.children[2].props.action}
+          action={items.at(2).prop('action')}
           disabled={false}
-          key={relations[1].id}
+          key={serviceRelations[1].id}
           label={'django:django'}
           ref='CheckListItem-postgresql'
-          whenChanged={instance._updateActiveCount} />
+          whenChanged={items.at(2).prop('whenChanged')} />
       </ul>
       <ButtonRow
         buttons={buttons} />
     </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can show relation details on click', function() {
     var changeState = sinon.stub();
-    var relations = [{
-      id: 'mysql',
-      near: {
-        name: 'mysql',
-        role: 'primary'
-      },
-      far: {
-        name: 'django',
-        serviceName: 'django'
-      },
-      interface: 'postgresql',
-      scope: 'global'
-    }];
-    var renderer = jsTestUtils.shallowRender(
-      <InspectorRelations
-        acl={acl}
-        changeState={changeState}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={relations} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.children[1].props.children[1].props.action();
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('CheckListItem').at(1).props().action();
     assert.deepEqual(changeState.args[0][0].gui.inspector, {
       activeComponent: 'relation',
       relation: '0'
@@ -141,297 +118,103 @@ describe('InspectorRelations', function() {
 
   it('can disable the controls when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    var changeState = sinon.stub();
-    var relations = [
-      {id: 'mysql',
-        near: {
-          name: 'mysql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
-      },
-      {id: 'postgresql',
-        near: {
-          name: 'pgsql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'}
-    ];
-    var renderer = jsTestUtils.shallowRender(
-      <InspectorRelations
-        acl={acl}
-        changeState={changeState}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={relations} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var buttons = [];
-    buttons.push({
-      title: 'Remove',
-      type: 'neutral',
-      action: instance._handleRemoveRelation,
-      disabled: true
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('ButtonRow').prop('buttons')[0].disabled, true);
+    wrapper.find('CheckListItem').forEach(item => {
+      assert.equal(item.prop('disabled'), true);
     });
-    var expected = (<div className="inspector-relations">
-      <div className="inspector-relations__actions">
-        <OverviewAction
-          action={output.props.children[0].props.children.props.action}
-          icon="plus_box_16"
-          title="Build a relation" />
-      </div>
-      <ul className="inspector-relations__list">
-        <CheckListItem
-          className='select-all'
-          disabled={true}
-          key='select-all1'
-          label='Select all relations'
-          ref='select-all'
-          whenChanged={
-            output.props.children[1].props.children[0].props.whenChanged
-          } />
-        <CheckListItem
-          action={output.props.children[1].props.children[1].props.action}
-          disabled={true}
-          key={relations[0].id}
-          label={'django:django'}
-          ref='CheckListItem-mysql'
-          whenChanged={instance._updateActiveCount} />
-        <CheckListItem
-          action={output.props.children[1].props.children[2].props.action}
-          disabled={true}
-          key={relations[1].id}
-          label={'django:django'}
-          ref='CheckListItem-postgresql'
-          whenChanged={instance._updateActiveCount} />
-      </ul>
-      <ButtonRow
-        buttons={buttons} />
-    </div>);
-    expect(output).toEqualJSX(expected);
   });
 
   it('renders if there are no relations', () => {
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelations
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={[]} />);
-    var expected = (<li className="inspector-relations__message">
-            No active relations for this application.
-    </li>);
-    assert.deepEqual(output.props.children[1].props.children,
-      expected);
+    const wrapper = renderComponent({ serviceRelations: [] });
+    assert.equal(
+      wrapper.find('.inspector-relations__message').text(),
+      'No active relations for this application.');
   });
 
   it('propagates select-all to all relations', () => {
-    var relations = [
-      {id: 'mysql',
-        near: {
-          name: 'mysql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    instance.refs = {
+      'CheckListItem-mysql': {
+        setState: sinon.stub()
       },
-      {id: 'postgresql',
-        near: {
-          name: 'pgsql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'}
-    ];
-    // shallowRenderer doesn't support state so need to render it.
-    var component = testUtils.renderIntoDocument(
-      <InspectorRelations
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={relations} />);
-    var refs = component.refs;
-    // We want to make sure that they are not checked first.
-    assert.deepEqual(refs['CheckListItem-mysql'].state,
-      {checked: false});
-    assert.deepEqual(refs['CheckListItem-postgresql'].state,
-      {checked: false});
+      'CheckListItem-postgresql': {
+        setState: sinon.stub()
+      }
+    };
     // Activate the select all toggle.
-    refs['select-all'].props.whenChanged(true);
+    wrapper.find('CheckListItem').at(0).props().whenChanged(true);
     // Now check that they are all checked.
-    assert.deepEqual(refs['CheckListItem-mysql'].state,
+    assert.equal(instance.refs['CheckListItem-mysql'].setState.callCount, 1);
+    assert.deepEqual(instance.refs['CheckListItem-mysql'].setState.args[0][0],
       {checked: true});
-    assert.deepEqual(refs['CheckListItem-postgresql'].state,
+    assert.equal(instance.refs['CheckListItem-postgresql'].setState.callCount, 1);
+    assert.deepEqual(instance.refs['CheckListItem-postgresql'].setState.args[0][0],
       {checked: true});
   });
 
   it('displays a disabled remove button when none selected', function() {
-    var relations = [
-      {id: 'mysql',
-        near: {
-          name: 'mysql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
-      }
-    ];
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelations
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={relations} />);
-    var buttonItems = output.props.children[2].props.buttons;
-    var buttons = [{
-      title: 'Remove',
-      type: 'neutral',
-      action: buttonItems[0].action,
-      disabled: true
-    }];
-    assert.deepEqual(output.props.children[2],
-      <ButtonRow
-        buttons={buttons} />);
-    assert.equal(buttonItems.length, 1);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('ButtonRow').prop('buttons')[0].disabled, true);
   });
 
   it('can remove the selected relations', function() {
     var destroyRelations = sinon.stub();
-    var changeState = sinon.stub();
-    var relations = [
-      {id: 'mysql',
-        near: {
-          name: 'mysql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
+    const wrapper = renderComponent({ destroyRelations });
+    const instance = wrapper.instance();
+    instance.refs = {
+      'CheckListItem-mysql': {
+        setState: sinon.stub(),
+        state: {
+          checked: true
+        }
       },
-      {id: 'postgresql',
-        near: {
-          name: 'pgsql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
-      },
-      {id: 'apache2',
-        near: {
-          name: 'apache',
-          role: 'primary'
-        },
-        far: {
-          name: 'wordpress',
-          serviceName: 'website'
-        },
-        interface: 'none',
-        scope: 'global'}
-    ];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <InspectorRelations
-        acl={acl}
-        changeState={changeState}
-        destroyRelations={destroyRelations}
-        service={service}
-        serviceRelations={relations} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[3].checked = true;
-    testUtils.Simulate.change(checkboxes[3]);
-    var button = testUtils.findRenderedDOMComponentWithClass(
-      output, 'button--neutral');
-    testUtils.Simulate.click(button);
+      'CheckListItem-peer-relation': {
+        setState: sinon.stub(),
+        state: {
+          checked: true
+        }
+      }
+    };
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(destroyRelations.callCount, 1);
     assert.deepEqual(destroyRelations.args[0][0],
-      [relations[0].id, relations[2].id]);
+      [serviceRelations[0].id, serviceRelations[2].id]);
   });
 
   it('deselects all relations after removal', function() {
     var destroyRelations = sinon.stub();
-    var changeState = sinon.stub();
-    var relations = [
-      {id: 'mysql',
-        near: {
-          name: 'mysql',
-          role: 'primary'
-        },
-        far: {
-          name: 'django',
-          serviceName: 'django'
-        },
-        interface: 'postgresql',
-        scope: 'global'
+    const wrapper = renderComponent({ destroyRelations });
+    const instance = wrapper.instance();
+    instance.refs = {
+      'CheckListItem-mysql': {
+        setState: sinon.stub(),
+        state: {
+          checked: true
+        }
+      },
+      'CheckListItem-peer-relation': {
+        setState: sinon.stub(),
+        state: {
+          checked: true
+        }
       }
-    ];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <InspectorRelations
-        acl={acl}
-        changeState={changeState}
-        destroyRelations={destroyRelations}
-        service={service}
-        serviceRelations={relations} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    var button = testUtils.findRenderedDOMComponentWithClass(
-      output, 'button--neutral');
-    testUtils.Simulate.click(button);
-    assert.isFalse(
-      output.refs['CheckListItem-' + relations[0].id].state.checked
-    );
+    };
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    assert.equal(instance.refs['CheckListItem-mysql'].setState.callCount, 1);
+    assert.deepEqual(instance.refs['CheckListItem-mysql'].setState.args[0][0],
+      {checked: false});
+    assert.equal(instance.refs['CheckListItem-peer-relation'].setState.callCount, 1);
+    assert.deepEqual(instance.refs['CheckListItem-peer-relation'].setState.args[0][0],
+      {checked: false});
   });
 
   it('navigates to show build relation on build-relation click', function() {
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelations
-        acl={acl}
-        changeState={changeState}
-        destroyRelations={sinon.stub()}
-        service={service}
-        serviceRelations={[]} />);
-    // Call the action for the create realtion button.
-    output.props.children[0].props.children.props.action();
+    const wrapper = renderComponent({ changeState });
+    // Call the action for the create relation button.
+    wrapper.find('OverviewAction').props().action();
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: {
