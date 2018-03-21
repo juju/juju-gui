@@ -2,16 +2,31 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const PaymentDetailsAddress = require('./address');
 const AddressForm = require('../../../address-form/address-form');
 const ExpandingRow = require('../../../expanding-row/expanding-row');
 const GenericButton = require('../../../generic-button/generic-button');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
-
 describe('PaymentDetailsAddress', () => {
   let acl, address, newAddress;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <PaymentDetailsAddress
+      acl={options.acl || acl}
+      addAddress={options.addAddress || sinon.stub()}
+      addNotification={options.addNotification || sinon.stub()}
+      address={options.address || address}
+      close={options.close || sinon.stub()}
+      getCountries={options.getCountries || sinon.stub()}
+      removeAddress={options.removeAddress || sinon.stub()}
+      showEdit={options.showEdit === undefined ? true : options.showEdit}
+      updateAddress={options.updateAddress || sinon.stub()}
+      updated={options.updated || sinon.stub()}
+      username={options.username || 'spinach'}
+      validateForm={options.validateForm || sinon.stub().returns(true)} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -39,104 +54,63 @@ describe('PaymentDetailsAddress', () => {
   });
 
   it('can render', () => {
-    const addNotification = sinon.stub();
-    const getCountries = sinon.stub();
-    const validateForm = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetailsAddress
-        acl={acl}
-        addAddress={sinon.stub()}
-        addNotification={addNotification}
-        address={address}
-        close={sinon.stub()}
-        getCountries={getCountries}
-        removeAddress={sinon.stub()}
-        showEdit={true}
-        updateAddress={sinon.stub()}
-        updated={sinon.stub()}
-        username="spinach"
-        validateForm={validateForm} />, true);
-    const instance = component.getMountedInstance();
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
-      <ExpandingRow
-        classes={{
-          'payment-details-address': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={true}>
-        <AddressForm
-          address={address}
-          disabled={true}
-          getCountries={getCountries} />
-        <div className="twelve-col payment-details-address__edit">
+      <div className="payment-details-address_wrapper">
+        <ExpandingRow
+          classes={{
+            'payment-details-address': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={true}>
           <AddressForm
-            addNotification={addNotification}
             address={address}
-            disabled={false}
-            getCountries={getCountries}
-            ref="addressForm"
-            validateForm={validateForm} />
-          <div className={
-            'twelve-col payment-details-address__buttons'}>
-            <GenericButton
-              action={close}
+            disabled={true}
+            getCountries={sinon.stub()} />
+          <div className="twelve-col payment-details-address__edit">
+            <AddressForm
+              addNotification={sinon.stub()}
+              address={address}
               disabled={false}
-              type="inline-neutral">
-              Cancel
-            </GenericButton>
-            <GenericButton
-              action={instance._updateAddress}
-              disabled={false}
-              type="inline-positive">
-              Update
-            </GenericButton>
+              getCountries={sinon.stub()}
+              ref="addressForm"
+              validateForm={sinon.stub()} />
+            <div className={
+              'twelve-col payment-details-address__buttons'}>
+              <GenericButton
+                action={sinon.stub()}
+                disabled={false}
+                type="inline-neutral">
+                Cancel
+              </GenericButton>
+              <GenericButton
+                action={wrapper.find('GenericButton').at(1).prop('action')}
+                disabled={false}
+                type="inline-positive">
+                Update
+              </GenericButton>
+            </div>
           </div>
-        </div>
-      </ExpandingRow>);
-    expect(output).toEqualJSX(expected);
+        </ExpandingRow>
+      </div>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can cancel the form', () => {
     const close = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetailsAddress
-        acl={acl}
-        addAddress={sinon.stub()}
-        addNotification={sinon.stub()}
-        address={address}
-        close={close}
-        getCountries={sinon.stub()}
-        removeAddress={sinon.stub()}
-        showEdit={true}
-        updateAddress={sinon.stub()}
-        updated={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub()} />, true);
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[0].props.action();
+    const wrapper = renderComponent({ close });
+    wrapper.find('GenericButton').at(0).props().action();
     assert.equal(close.callCount, 1);
   });
 
   it('can validate the form', () => {
     const removeAddress = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetailsAddress
-        acl={acl}
-        addAddress={sinon.stub()}
-        addNotification={sinon.stub()}
-        address={{}}
-        close={sinon.stub()}
-        getCountries={sinon.stub()}
-        removeAddress={sinon.stub()}
-        showEdit={true}
-        updateAddress={sinon.stub()}
-        updated={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(false)} />, true);
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1].props.action();
+    const wrapper = renderComponent({
+      removeAddress,
+      validateForm: sinon.stub().returns(false)
+    });
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(removeAddress.callCount, 0);
   });
 
@@ -144,28 +118,18 @@ describe('PaymentDetailsAddress', () => {
     const updateAddress = sinon.stub().callsArgWith(3, null);
     const close = sinon.stub();
     const updated = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetailsAddress
-        acl={acl}
-        addAddress={sinon.stub()}
-        addNotification={sinon.stub()}
-        address={address}
-        close={close}
-        getCountries={sinon.stub()}
-        removeAddress={sinon.stub()}
-        showEdit={true}
-        updateAddress={updateAddress}
-        updated={updated}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
+    const wrapper = renderComponent({
+      close,
+      updateAddress,
+      updated
+    });
+    const instance = wrapper.instance();
     instance.refs = {
       addressForm: {
         getValue: sinon.stub().returns(newAddress)
       }
     };
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1].props.action();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(updateAddress.callCount, 1);
     assert.equal(updateAddress.args[0][0], 'spinach');
     assert.equal(updateAddress.args[0][1], 'address1');
@@ -177,28 +141,17 @@ describe('PaymentDetailsAddress', () => {
   it('can handle errors when updating the address', () => {
     const updateAddress = sinon.stub().callsArgWith(3, 'Uh oh!');
     const addNotification = sinon.stub();
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetailsAddress
-        acl={acl}
-        addAddress={sinon.stub()}
-        addNotification={addNotification}
-        address={address}
-        close={sinon.stub()}
-        getCountries={sinon.stub()}
-        removeAddress={sinon.stub()}
-        showEdit={true}
-        updateAddress={updateAddress}
-        updated={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
+    const wrapper = renderComponent({
+      updateAddress,
+      addNotification
+    });
+    const instance = wrapper.instance();
     instance.refs = {
       addressForm: {
         getValue: sinon.stub().returns(newAddress)
       }
     };
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1].props.action();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not update address',
@@ -210,29 +163,17 @@ describe('PaymentDetailsAddress', () => {
   it('get abort the requests when unmountin', () => {
     const abort = sinon.stub();
     const updateAddress = sinon.stub().returns({abort: abort});
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetailsAddress
-        acl={acl}
-        addAddress={sinon.stub()}
-        addNotification={sinon.stub()}
-        address={address}
-        close={sinon.stub()}
-        getCountries={sinon.stub()}
-        removeAddress={sinon.stub()}
-        showEdit={true}
-        updateAddress={updateAddress}
-        updated={sinon.stub()}
-        username="spinach"
-        validateForm={sinon.stub().returns(true)} />, true);
-    const instance = component.getMountedInstance();
+    const wrapper = renderComponent({
+      updateAddress
+    });
+    const instance = wrapper.instance();
     instance.refs = {
       addressForm: {
         getValue: sinon.stub().returns(newAddress)
       }
     };
-    const output = component.getRenderOutput();
-    output.props.children[1].props.children[1].props.children[1].props.action();
-    component.unmount();
+    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 });

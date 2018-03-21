@@ -3,16 +3,26 @@
 
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const PaymentDetails = require('./details');
 const GenericButton = require('../../generic-button/generic-button');
 const GenericInput = require('../../generic-input/generic-input');
 const PaymentDetailsAddress = require('./address/address');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('PaymentDetails', () => {
   let acl, payment;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <PaymentDetails
+      acl={options.acl || acl}
+      addNotification={options.addNotification || sinon.stub()}
+      payment={options.payment || payment}
+      paymentUser={options.paymentUser || sinon.stub()}
+      updateUser={options.updateUser || sinon.stub()}
+      username={options.username || 'spinach'}
+      validateForm={options.validateForm || sinon.stub()} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -29,15 +39,6 @@ describe('PaymentDetails', () => {
   });
 
   it('can display the details', () => {
-    const addNotification = sinon.stub();
-    const getCountries = sinon.stub();
-    const addAddress = sinon.stub();
-    const addBillingAddress = sinon.stub();
-    const removeAddress = sinon.stub();
-    const removeBillingAddress = sinon.stub();
-    const validateForm = sinon.stub();
-    const updateAddress = sinon.stub();
-    const updateUser = sinon.stub();
     const paymentUser ={
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
@@ -65,17 +66,7 @@ describe('PaymentDetails', () => {
         phones: ['00001111']
       }]
     };
-    const component = jsTestUtils.shallowRender(
-      <PaymentDetails
-        acl={acl}
-        addNotification={addNotification}
-        payment={payment}
-        paymentUser={paymentUser}
-        updateUser={updateUser}
-        username="spinach"
-        validateForm={validateForm} />, true);
-    const instance = component.getMountedInstance();
-    const output = component.getRenderOutput();
+    const wrapper = renderComponent({ paymentUser });
     const expected = (
       <div className="payment__section">
         <h2 className="payment__title twelve-col">
@@ -103,7 +94,7 @@ describe('PaymentDetails', () => {
           <h4>
             Addresses
             <GenericButton
-              action={instance._toggleAddressEdit}
+              action={wrapper.find('GenericButton').at(0).prop('action')}
               disabled={false}
               extraClasses="payment-details-title-button"
               type="inline-neutral">
@@ -113,8 +104,8 @@ describe('PaymentDetails', () => {
           <ul className="payment-details-addresses">
             {[<PaymentDetailsAddress
               acl={acl}
-              addAddress={addAddress}
-              addNotification={addNotification}
+              addAddress={sinon.stub()}
+              addNotification={sinon.stub()}
               address={{
                 name: 'Geoffrey Spinach',
                 line1: '10 Maple St',
@@ -125,20 +116,20 @@ describe('PaymentDetails', () => {
                 countryCode: 'CA',
                 phones: ['12341234']
               }}
-              close={instance._toggleAddressEdit}
-              getCountries={getCountries}
+              close={wrapper.find('PaymentDetailsAddress').at(0).prop('close')}
+              getCountries={sinon.stub()}
               key="Geoffrey Spinach"
-              removeAddress={removeAddress}
+              removeAddress={sinon.stub()}
               showEdit={false}
-              updateAddress={updateAddress}
-              updated={updateUser}
+              updateAddress={sinon.stub()}
+              updated={sinon.stub()}
               username="spinach"
-              validateForm={validateForm} />]}
+              validateForm={sinon.stub()} />]}
           </ul>
           <h4>
             Billing addresses
             <GenericButton
-              action={instance._toggleBillingAddressEdit}
+              action={wrapper.find('GenericButton').at(1).prop('action')}
               disabled={false}
               extraClasses="payment-details-title-button"
               type="inline-neutral">
@@ -148,8 +139,8 @@ describe('PaymentDetails', () => {
           <ul className="payment-details-addresses">
             {[<PaymentDetailsAddress
               acl={acl}
-              addAddress={addBillingAddress}
-              addNotification={addNotification}
+              addAddress={sinon.stub()}
+              addNotification={sinon.stub()}
               address={{
                 name: 'Bruce Dundee',
                 line1: '9 Kangaroo St',
@@ -160,18 +151,18 @@ describe('PaymentDetails', () => {
                 countryCode: 'AU',
                 phones: ['00001111']
               }}
-              close={instance._toggleBillingAddressEdit}
-              getCountries={getCountries}
+              close={wrapper.find('PaymentDetailsAddress').at(1).prop('close')}
+              getCountries={sinon.stub()}
               key="Geoffrey Spinach"
-              removeAddress={removeBillingAddress}
+              removeAddress={sinon.stub()}
               showEdit={false}
-              updateAddress={updateAddress}
-              updated={updateUser}
+              updateAddress={sinon.stub()}
+              updated={sinon.stub()}
               username="spinach"
-              validateForm={validateForm} />]}
+              validateForm={sinon.stub()} />]}
           </ul>
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 });

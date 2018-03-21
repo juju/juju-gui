@@ -53,42 +53,44 @@ class PaymentDetailsAddress extends React.Component {
   render() {
     const disabled = this.props.acl.isReadOnly();
     return (
-      <ExpandingRow
-        classes={{
-          'payment-details-address': true,
-          'twelve-col': true
-        }}
-        clickable={false}
-        expanded={this.props.showEdit}>
-        <AddressForm
-          address={this.props.address}
-          disabled={true}
-          getCountries={this.props.getCountries} />
-        <div className="twelve-col payment-details-address__edit">
+      <div className="payment-details-address_wrapper">
+        <ExpandingRow
+          classes={{
+            'payment-details-address': true,
+            'twelve-col': true
+          }}
+          clickable={false}
+          expanded={this.props.showEdit}>
           <AddressForm
-            addNotification={this.props.addNotification}
             address={this.props.address}
-            disabled={disabled}
-            getCountries={this.props.getCountries}
-            ref="addressForm"
-            validateForm={this.props.validateForm} />
-          <div className={
-            'twelve-col payment-details-address__buttons'}>
-            <GenericButton
-              action={this.props.close}
+            disabled={true}
+            getCountries={this.props.getCountries} />
+          <div className="twelve-col payment-details-address__edit">
+            <AddressForm
+              addNotification={this.props.addNotification}
+              address={this.props.address}
               disabled={disabled}
-              type="inline-neutral">
-              Cancel
-            </GenericButton>
-            <GenericButton
-              action={this._updateAddress.bind(this)}
-              disabled={disabled}
-              type="inline-positive">
-              Update
-            </GenericButton>
+              getCountries={this.props.getCountries}
+              ref="addressForm"
+              validateForm={this.props.validateForm} />
+            <div className={
+              'twelve-col payment-details-address__buttons'}>
+              <GenericButton
+                action={this.props.close}
+                disabled={disabled}
+                type="inline-neutral">
+                Cancel
+              </GenericButton>
+              <GenericButton
+                action={this._updateAddress.bind(this)}
+                disabled={disabled}
+                type="inline-positive">
+                Update
+              </GenericButton>
+            </div>
           </div>
-        </div>
-      </ExpandingRow>
+        </ExpandingRow>
+      </div>
     );
   }
 };
