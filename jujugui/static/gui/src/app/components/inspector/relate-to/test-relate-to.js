@@ -2,29 +2,30 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorRelateTo = require('./relate-to');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('InspectorRelateTo', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorRelateTo
+      application={options.application || {}}
+      changeState={options.changeState || sinon.stub()}
+      relatableApplications={options.relatableApplications || [{
+        getAttrs: () => ({ id: 'id', name: 'name', icon: 'icon'})
+      }]} />
+  );
+
   it('can render properly', () => {
-    var applications = [{
-      getAttrs: () => ({ id: 'id', name: 'name', icon: 'icon'})
-    }];
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelateTo
-        application={{}}
-        changeState={sinon.stub()}
-        relatableApplications={applications} />);
+    const wrapper = renderComponent();
     var expected = (
       <div className="inspector-relate-to">
         <ul className="inspector-view__list">
           {[<li className="inspector-view__list-item"
             data-id="id"
             key="id0"
-            onClick={output.props.children.props.children[0].props.onClick}
+            onClick={wrapper.find('.inspector-view__list-item').prop('onClick')}
             role="button"
             tabIndex="0">
             <img className="inspector-view__item-icon" src="icon" />
@@ -33,41 +34,26 @@ describe('InspectorRelateTo', function() {
         </ul>
       </div>
     );
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render when there are no relatable endpoints', () => {
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelateTo
-        application={{}}
-        changeState={sinon.stub()}
-        relatableApplications={[]} />);
-    var expected = (
-      <div className="inspector-relate-to">
-        <ul className="inspector-view__list">
-          <div className="unit-list__message">
-            No relatable endpoints available.
-          </div>
-        </ul>
-      </div>
-    );
-    assert.deepEqual(output, expected);
+    const wrapper = renderComponent({ relatableApplications: [] });
+    assert.equal(
+      wrapper.find('.unit-list__message').text(),
+      'No relatable endpoints available.');
   });
 
   it('can navigate to relate-to-endpoint', () => {
-    var applications = [{
-      getAttrs: () => ({ id: 'id', name: 'name', icon: 'icon'})
-    }];
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelateTo
-        application={{
-          get: () => 'my-id'
-        }}
-        changeState={changeState}
-        relatableApplications={applications} />);
+    const wrapper = renderComponent({
+      application: {
+        get: () => 'my-id'
+      },
+      changeState
+    });
     // Trigger a relation click.
-    output.props.children.props.children[0].props.onClick({
+    wrapper.find('.inspector-view__list-item').simulate('click', {
       currentTarget: {
         getAttribute: sinon.stub().withArgs('data-id').returns('zee-spouse')
       }
