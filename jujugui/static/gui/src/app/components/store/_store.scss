@@ -142,17 +142,15 @@
       background: linear-gradient(to bottom, $hadoop-brand-start 0%, $hadoop-brand-end 100%);
       border: 0;
       color: $white;
+      min-height: 300px;
 
       &-container {
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-size: 200px;
-
         .box__image {
-          margin: calc(-195px/5*3) 0 0 calc(-195px/2);
-          max-width: 195px
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          max-width: 180px;
+          transform: translate(-50%, -80%);
         }
       }
     }

@@ -2,62 +2,42 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Store = require('./store');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('Store', function() {
 
-  it('can render the right number of featured items', function() {
-    var changeState = sinon.stub();
-    var charmstoreURL = 'http://1.2.3.4/';
-    var apiVersion = 'v5';
-    var renderer = jsTestUtils.shallowRender(
-      <Store
-        apiVersion={apiVersion}
-        changeState={changeState}
-        charmstoreURL={charmstoreURL}
-        gisf={false}
-        setPageTitle={sinon.stub()} />, true);
-    var output = renderer.getRenderOutput();
-    assert.equal(output.props.children[0].props.children.length, 4);
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Store
+      apiVersion={options.apiVersion || 'v5'}
+      changeState={options.changeState || sinon.stub()}
+      charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
+      gisf={options.gisf === undefined ? true : options.gisf}
+      setPageTitle={options.setPageTitle || sinon.stub()} />
+  );
+
+  it('can render the right items for gij', function() {
+    const wrapper = renderComponent({ gisf: false });
+    assert.equal(wrapper.find('.box--feature').length, 2);
+    assert.equal(wrapper.find('.box--kubernetes').length, 1);
+    assert.equal(wrapper.find('.box--openstack').length, 1);
+    assert.equal(wrapper.find('.box--hadoop').length, 0);
+    assert.equal(wrapper.find('ExpertStoreCard').length, 1);
   });
 
-  it('can skip openstack feature in gisf', () => {
-    const output = jsTestUtils.shallowRender(
-      <Store
-        apiVersion="v5"
-        changeState={sinon.stub()}
-        charmstoreURL="http://1.2.3.4/"
-        gisf={true}
-        setPageTitle={sinon.stub()} />);
-    assert.equal(output.props.children[0].props.children[1], null);
+  it('can render the right items for gisf', function() {
+    const wrapper = renderComponent({ gisf: true });
+    assert.equal(wrapper.find('.box--feature').length, 2);
+    assert.equal(wrapper.find('.box--kubernetes').length, 1);
+    assert.equal(wrapper.find('.box--openstack').length, 0);
+    assert.equal(wrapper.find('.box--hadoop').length, 1);
+    assert.equal(wrapper.find('ExpertStoreCard').length, 1);
   });
-
-  it('can render big data feature in the correct place', function() {
-    const output = jsTestUtils.shallowRender(
-      <Store
-        apiVersion="v5"
-        changeState={sinon.stub()}
-        charmstoreURL="http://1.2.3.4/"
-        gisf={true}
-        setPageTitle={sinon.stub()} />);
-    assert.equal(
-      output.props.children[3].props.children.props.children[0]
-        .props.children.props.children[0].props.children,
-      'Container management');
-  }),
 
   it('can render write-your-own correctly', function() {
     const href = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
-    const output = jsTestUtils.shallowRender(
-      <Store
-        apiVersion={'v5'}
-        changeState={sinon.stub()}
-        charmstoreURL={'http://1.2.3.4/'}
-        gisf={true}
-        setPageTitle={sinon.stub()} />);
+    const wrapper = renderComponent();
     const expected = (<div className="row row--write-your-own">
       <div className="wrapper">
         <div className="inner-wrapper">
@@ -81,23 +61,15 @@ describe('Store', function() {
         </div>
       </div>
     </div>);
-    expect(output.props.children[7]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.row--write-your-own'), expected);
   }),
 
   it('can handle clicking on an entity', function() {
     var changeState = sinon.stub();
     var stopPropagation = sinon.stub();
     var target = {dataset: {entity: 'kibana'}};
-    var output = jsTestUtils.shallowRender(
-      <Store
-        apiVersion="v5"
-        changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
-        gisf={true}
-        setPageTitle={sinon.stub()} />);
-    var entityList = output.props.children[2].props.children.props.children[2];
-    var entityItem = entityList.props.children[0].props.children;
-    entityItem.props.onClick({
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.featured-entity__link[data-entity="kibana"]').simulate('click', {
       stopPropagation: stopPropagation,
       target: target
     });
@@ -117,17 +89,8 @@ describe('Store', function() {
         filtervalue: 'databases'
       }
     };
-    var output = jsTestUtils.shallowRender(
-      <Store
-        apiVersion="v5"
-        changeState={changeState}
-        charmstoreURL="http://1.2.3.4/"
-        gisf={true}
-        setPageTitle={sinon.stub()} />);
-    var row = output.props.children[1].props.children;
-    var tagList = row.props.children[2].props.children;
-    var searchItem = tagList.props.children[0].props.children[0];
-    searchItem.props.onClick({
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.link[data-filtervalue="databases"]').at(0).simulate('click', {
       stopPropagation: stopPropagation,
       currentTarget: target
     });
@@ -140,18 +103,5 @@ describe('Store', function() {
         text: ''
       }
     });
-  });
-
-  it('shows different hero links in gijoe', () => {
-    const output = jsTestUtils.shallowRender(
-      <Store
-        apiVersion={'v5'}
-        changeState={sinon.stub()}
-        charmstoreURL={'http://1.2.3.4/'}
-        gisf={false}
-        setPageTitle={sinon.stub()} />);
-    assert.isDefined(
-      output.props.children[0].props.children[0].props.children[1]
-        .props.children[1].props.onClick);
   });
 });
