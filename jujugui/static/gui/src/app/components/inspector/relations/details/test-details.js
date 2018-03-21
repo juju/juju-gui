@@ -2,15 +2,19 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorRelationDetails = require('./details');
 
-const jsTestUtils = require('../../../../utils/component-test-utils');
-
 describe('InspectorRelationDetails', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorRelationDetails
+      relation={options.relation} />
+  );
+
   it('shows the relation properties', function() {
-    var fakeRelation = {
+    var relation = {
       near: {
         name: 'pgsql',
         role: 'primary'
@@ -22,23 +26,21 @@ describe('InspectorRelationDetails', function() {
       interface: 'postgresql',
       scope: 'global'
     };
-    var output = jsTestUtils.shallowRender(
-      <InspectorRelationDetails
-        relation={fakeRelation} />);
+    const wrapper = renderComponent({ relation });
     var expected = (<div className='inspector-relation-details__properties'>
       <p className='inspector-relation-details__property'>
-        Interface: {fakeRelation.interface}
+        Interface: {relation.interface}
       </p>
       <p className='inspector-relation-details__property'>
-        Name: {fakeRelation.near.name}
+        Name: {relation.near.name}
       </p>
       <p className='inspector-relation-details__property'>
-        Role: {fakeRelation.near.role}
+        Role: {relation.near.role}
       </p>
       <p className='inspector-relation-details__property'>
-        Scope: {fakeRelation.scope}
+        Scope: {relation.scope}
       </p>
     </div>);
-    assert.deepEqual(output.props.children, expected);
+    assert.compareJSX(wrapper.find('.inspector-relation-details__properties'), expected);
   });
 });
