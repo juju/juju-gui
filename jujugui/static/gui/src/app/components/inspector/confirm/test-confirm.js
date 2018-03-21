@@ -2,14 +2,20 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorConfirm = require('./confirm');
 const ButtonRow = require('../../button-row/button-row');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('InspectorConfirm', function() {
   let buttons;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorConfirm
+      buttons={options.buttons || buttons}
+      message={options.message === undefined ? 'My message' : options.message}
+      open={options.open} />
+  );
 
   beforeEach(function() {
     buttons = [
@@ -27,11 +33,8 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is closed', function() {
-    const output = jsTestUtils.shallowRender(
-      <InspectorConfirm
-        buttons={buttons}
-        message="My message" />);
-    assert.deepEqual(output,
+    const wrapper = renderComponent();
+    const expected = (
       <div className="inspector-confirm">
         <p className="inspector-confirm__message">
           My message
@@ -39,50 +42,28 @@ describe('InspectorConfirm', function() {
         <ButtonRow
           buttons={buttons} />
       </div>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('generates the correct classes if it is open', function() {
-    const output = jsTestUtils.shallowRender(
-      <InspectorConfirm
-        buttons={buttons}
-        message="My message"
-        open={true} />);
-    assert.deepEqual(output,
-      <div className="inspector-confirm inspector-confirm--open">
-        <p className="inspector-confirm__message">
-          My message
-        </p>
-        <ButtonRow
-          buttons={buttons} />
-      </div>);
-  });
-
-  it('displays the provided message', function() {
-    const output = jsTestUtils.shallowRender(
-      <InspectorConfirm
-        buttons={buttons}
-        message="My message" />);
-    assert.deepEqual(output.props.children[0],
-      <p className="inspector-confirm__message">
-        My message
-      </p>);
+    const wrapper = renderComponent({ open: true });
+    assert.equal(
+      wrapper.prop('className').includes('inspector-confirm--open'),
+      true);
   });
 
   it('hides the message if one is not provided', function() {
-    const output = jsTestUtils.shallowRender(
-      <InspectorConfirm
-        buttons={buttons} />);
-    assert.deepEqual(output.props.children[0],
+    const wrapper = renderComponent({ message: null });
+    const expected = (
       <p className="inspector-confirm__message hidden">
         {undefined}
       </p>);
+    assert.compareJSX(wrapper.find('.inspector-confirm__message'), expected);
   });
 
   it('leaves out the button row if there are no buttons', function() {
     buttons = [];
-    const output = jsTestUtils.shallowRender(
-      <InspectorConfirm
-        buttons={buttons} />);
-    assert.deepEqual(output.props.children[1], undefined);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('ButtonRow').length, 0);
   });
 });
