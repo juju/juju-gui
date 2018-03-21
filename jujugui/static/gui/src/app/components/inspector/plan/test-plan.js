@@ -2,13 +2,20 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const InspectorPlan = require('./plan');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('InspectorPlan', () => {
   var acl;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <InspectorPlan
+      acl={options.acl || acl}
+      changeState={options.changeState || sinon.stub()}
+      currentPlan={options.currentPlan}
+      service={options.service || {}} />
+  );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -20,12 +27,7 @@ describe('InspectorPlan', () => {
       price: 'price/goes/here',
       url: 'canonical-landscape/24-7'
     };
-    var output = jsTestUtils.shallowRender(
-      <InspectorPlan
-        acl={acl}
-        changeState={sinon.stub()}
-        currentPlan={currentPlan}
-        service={{}} />);
+    const wrapper = renderComponent({ currentPlan });
     var expected = (
       <div className="inspector-plan">
         <div className="inspector-plan__details">
@@ -36,23 +38,18 @@ describe('InspectorPlan', () => {
           </div>
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render correctly without a selected plan', () => {
-    var output = jsTestUtils.shallowRender(
-      <InspectorPlan
-        acl={acl}
-        changeState={sinon.stub()}
-        currentPlan={null}
-        service={{}} />);
+    const wrapper = renderComponent();
     var expected = (
       <div className="inspector-plan">
         <div className="inspector-plan__no-plan">
           You have no active plan
         </div>
       </div>);
-    assert.deepEqual(output, expected);
+    assert.compareJSX(wrapper, expected);
   });
 
 });
