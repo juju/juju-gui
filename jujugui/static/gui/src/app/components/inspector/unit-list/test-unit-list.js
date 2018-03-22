@@ -2,47 +2,90 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const UnitList = require('./unit-list');
-const ButtonRow = require('../../button-row/button-row');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const OverviewAction = require('../overview-action/overview-action');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
-
 describe('UnitList', () => {
-  var acl, service;
+  var acl, refs, service, units;
+
+  const renderComponent = (options = {}) => {
+    const wrapper = enzyme.shallow(
+      <UnitList
+        acl={options.acl || acl}
+        changeState={options.changeState || sinon.stub()}
+        destroyUnits={options.destroyUnits || sinon.stub()}
+        envResolved={options.envResolved || sinon.stub()}
+        service={options.service || service}
+        units={options.units || units}
+        unitStatus={options.unitStatus}
+        whenChanged={options.whenChanged || sinon.stub()} />
+    );
+    const instance = wrapper.instance();
+    instance.refs = refs;
+    return wrapper;
+  };
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     service = {
-      get: function(val) {
-        if (val === 'subordinate') {
-          return false;
+      get: sinon.stub()
+    };
+    service.get.withArgs('subordinate').returns(false);
+    service.get.withArgs('id').returns('mysql');
+    units = [{
+      displayName: 'mysql/0',
+      id: 'mysql/0'
+    }, {
+      displayName: 'mysql/1',
+      id: 'mysql/1'
+    }, {
+      displayName: 'mysql/2',
+      id: 'mysql/2'
+    }];
+    refs = {
+      'select-all': {
+        setState: sinon.stub(),
+        state: {
+          checked: false
         }
-        return 'mysql';
+      },
+      'select-all-0': {
+        setState: sinon.stub(),
+        state: {
+          checked: false
+        }
+      },
+      'CheckListItem-mysql/0': {
+        setState: sinon.stub(),
+        state: {
+          checked: true
+        }
+      },
+      'CheckListItem-mysql/1': {
+        setState: sinon.stub(),
+        state: {
+          checked: false
+        }
+      },
+      'CheckListItem-mysql/2': {
+        setState: sinon.stub(),
+        state: {
+          checked: true
+        }
       }
     };
   });
 
   it('renders if there are no units', () => {
-    var renderer = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={[]}
-        whenChanged={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ units: [] });
     var expected = (
       <div className="unit-list">
         <div className="unit-list__actions">
           <OverviewAction
-            action={instance._navigate}
+            action={wrapper.find('OverviewAction').prop('action')}
             icon="plus_box_16"
             title="Scale application" />
         </div>
@@ -51,33 +94,13 @@ describe('UnitList', () => {
         </div>
         {undefined}
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('renders a list of unit components', () => {
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }];
-    var renderer = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var children = output.props.children[1].props.children;
-    var refs = [
-      'CheckListItem-' + units[0].id,
-      'CheckListItem-' + units[1].id
-    ];
+    units.pop();
+    const wrapper = renderComponent({ units });
+    const items = wrapper.find('CheckListItem');
     const expected = (
       <ul className="unit-list__units">
         {[<CheckListItem
@@ -87,56 +110,35 @@ describe('UnitList', () => {
           key="select-all"
           label="Select all units"
           ref="select-all"
-          whenChanged={children[0].props.whenChanged} />,
+          whenChanged={items.at(0).prop('whenChanged')} />,
         <CheckListItem
-          action={children[1].props.action}
+          action={items.at(1).prop('action')}
           disabled={false}
           extraInfo={undefined}
           id="mysql/0"
           key={units[0].displayName}
           label={units[0].displayName}
-          ref={refs[0]}
-          whenChanged={instance._updateActiveCount} />,
+          whenChanged={items.at(1).prop('whenChanged')} />,
         <CheckListItem
-          action={children[2].props.action}
+          action={items.at(2).prop('action')}
           disabled={false}
           extraInfo={undefined}
           id="mysql/1"
           key={units[1].displayName}
           label={units[1].displayName}
-          ref={refs[1]}
-          whenChanged={instance._updateActiveCount} />]}
+          whenChanged={items.at(2).prop('whenChanged')} />]}
       </ul>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.unit-list__units'), expected);
   });
 
   it('renders a grouped list of error unit components', () => {
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0',
-      agent_state_info: 'hook failed: install'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1',
-      agent_state_info: 'hook failed: config-changed'
-    }];
-    var renderer = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={{}}
-        units={units}
-        unitStatus='error'
-        whenChanged={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var children = output.props.children[1].props.children;
-    var refs = [
-      'CheckListItem-' + units[0].id,
-      'CheckListItem-' + units[1].id
-    ];
+    units.pop();
+    units[0].agent_state_info = 'hook failed: install';
+    units[1].agent_state_info = 'hook failed: config-changed';
+    const wrapper = renderComponent({
+      unitStatus: 'error'
+    });
+    const items = wrapper.find('CheckListItem');
     const expected = (
       <ul className="unit-list__units">
         {[<CheckListItem
@@ -145,188 +147,74 @@ describe('UnitList', () => {
           disabled={false}
           key="select-all-0"
           label="hook failed: install"
-          ref="select-all-0"
-          whenChanged={children[0].props.whenChanged} />,
+          whenChanged={items.at(0).prop('whenChanged')} />,
         <CheckListItem
-          action={children[1].props.action}
+          action={items.at(1).prop('action')}
           disabled={false}
           extraInfo={undefined}
           id="mysql/0"
           key={units[0].displayName}
           label={units[0].displayName}
-          ref={refs[0]}
-          whenChanged={instance._updateActiveCount} />,
+          whenChanged={items.at(1).prop('whenChanged')} />,
         <CheckListItem
           aside="1"
           className="select-all"
           disabled={false}
           key="select-all-1"
           label="hook failed: config-changed"
-          ref="select-all-1"
-          whenChanged={children[2].props.whenChanged} />,
+          whenChanged={items.at(2).prop('whenChanged')} />,
         <CheckListItem
-          action={children[3].props.action}
+          action={items.at(3).prop('action')}
           disabled={false}
           extraInfo={undefined}
           id="mysql/1"
           key={units[1].displayName}
           label={units[1].displayName}
-          ref={refs[1]}
-          whenChanged={instance._updateActiveCount} />]}
+          whenChanged={items.at(3).prop('whenChanged')} />]}
       </ul>);
-    expect(output.props.children[1]).toEqualJSX(expected);
-  });
-
-  it('displays the provided count', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <CheckListItem
-        aside="5"
-        label="label"
-        whenChanged={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
-    assert.equal(output.props.children.props.children[3].props.children, '5');
+    assert.compareJSX(wrapper.find('.unit-list__units'), expected);
   });
 
   it('does not show the scaling link when read only', () => {
     acl.isReadOnly.returns(true);
-    const units = [{
-      displayName: 'mysql/0'
-    }];
-    const output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    const scaling = output.props.children[0];
-    assert.equal(scaling, null);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.unit-list__actions').length, 0);
   });
 
   it('renders the Scale Application action component', () => {
-    var units = [{
-      displayName: 'mysql/0'
-    }];
-
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    var child = output.props.children[0].props.children;
-    const expected = (
-      <OverviewAction
-        action={child.props.action}
-        icon="plus_box_16"
-        title="Scale application" />);
-    expect(child).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.unit-list__actions').length, 1);
   });
 
   it('does not render the actions when viewing a status list', () => {
-    var units = [{
-      displayName: 'mysql/0'
-    }];
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        unitStatus="pending"
-        whenChanged={sinon.stub()} />);
-    const expected = (
-      <div className="unit-list">
-        {undefined}
-        {output.props.children[1]}
-        {output.props.children[2]}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ unitStatus: 'pending' });
+    assert.equal(wrapper.find('.unit-list__actions').length, 0);
   });
 
   it('does not render the actions when viewing a subordinate', () => {
-    var units = [{
-      displayName: 'mysql/0'
-    }];
-    service = {
-      get: function(val) {
-        if (val === 'subordinate') {
-          return true;
-        }
-        return 'mysql';
-      }
-    };
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    const expected = (
-      <div className="unit-list">
-        {undefined}
-        {output.props.children[1]}
-        {output.props.children[2]}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    service.get.withArgs('subordinate').returns(true);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.unit-list__actions').length, 0);
   });
 
   it('propagates select-all to all children', () => {
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }];
-    // shallowRenderer doesn't support state so need to render it.
-    var component = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    var refs = component.refs;
-    // We want to make sure that they are not checked first.
-    assert.deepEqual(refs['CheckListItem-mysql/0'].state, {checked: false});
-    assert.deepEqual(refs['CheckListItem-mysql/1'].state, {checked: false});
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     // Activate the select all toggle.
-    refs['select-all'].props.whenChanged(true);
+    wrapper.find('CheckListItem').at(0).props().whenChanged(true);
     // Now check that they are all checked.
-    assert.deepEqual(refs['CheckListItem-mysql/0'].state, {checked: true});
-    assert.deepEqual(refs['CheckListItem-mysql/1'].state, {checked: true});
+    assert.equal(instance.refs['CheckListItem-mysql/0'].setState.callCount, 1);
+    assert.deepEqual(
+      instance.refs['CheckListItem-mysql/0'].setState.args[0][0], {checked: true});
+    assert.equal(instance.refs['CheckListItem-mysql/1'].setState.callCount, 1);
+    assert.deepEqual(
+      instance.refs['CheckListItem-mysql/1'].setState.args[0][0], {checked: true});
   });
 
   it('navigates to the unit when a list item is clicked', function() {
-    var units = [{
-      displayName: 'mysql/5',
-      id: 'mysql/5'
-    }];
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        unitStatus={null}
-        whenChanged={sinon.stub()} />);
-    output.props.children[1].props.children[1].props.action({
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('CheckListItem').at(1).props().action({
       currentTarget: {
         getAttribute: function() {
           return 'mysql/5';
@@ -345,83 +233,21 @@ describe('UnitList', () => {
     });
   });
 
-  it('navigates to the remote service unit when a list item is clicked', () => {
-    // A subordinate shows the remote service unit.
-    var units = [{
-      displayName: 'wordpress/5',
-      id: 'wordpress/5'
-    }];
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        unitStatus={null}
-        whenChanged={sinon.stub()} />);
-    output.props.children[1].props.children[1].props.action({
-      currentTarget: {
-        getAttribute: function() {
-          return 'wordpress/5';
-        }
-      }
-    });
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      gui: {
-        inspector: {
-          id: 'wordpress',
-          unit: '5',
-          activeComponent: 'unit'
-        }
-      }
-    });
-  });
-
   it('only displays a remove button for a non-error list', function() {
-    var units = [{
-      displayName: 'mysql/0'
-    }];
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    var buttonItems = output.props.children[2].props.buttons;
+    const wrapper = renderComponent();
+    const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Remove',
       type: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }];
-    const expected = (
-      <ButtonRow
-        buttons={buttons} />);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    assert.deepEqual(buttonItems, buttons);
   });
 
   it('displays Resolve and Retry buttons for an error list', function() {
-    var units = [{
-      displayName: 'mysql/0'
-    }];
-    var output = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={{}}
-        units={units}
-        unitStatus='error'
-        whenChanged={sinon.stub()} />);
-    var buttonItems = output.props.children[2].props.buttons;
+    const wrapper = renderComponent({ unitStatus: 'error' });
+    const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Resolve',
       type: 'neutral',
@@ -438,49 +264,20 @@ describe('UnitList', () => {
       action: buttonItems[2].action,
       disabled: true
     }];
-    const expected = (
-      <ButtonRow
-        buttons={buttons} />);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    assert.deepEqual(buttonItems, buttons);
   });
 
   it('can remove the selected units', function() {
     var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
     var envResolved = sinon.stub();
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0',
-      agent_status: 'running'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1',
-      agent_status: 'running'
-    }, {
-      displayName: 'mysql/2',
-      id: 'mysql/2',
-      agent_status: 'running'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        envResolved={envResolved}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[3].checked = true;
-    testUtils.Simulate.change(checkboxes[3]);
-    var button = testUtils.findRenderedDOMComponentWithClass(
-      output, 'button--neutral');
-    testUtils.Simulate.click(button);
+    units[0].agent_status = 'running';
+    units[1].agent_status = 'running';
+    units[2].agent_status = 'running';
+    const wrapper = renderComponent({
+      destroyUnits,
+      envResolved
+    });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
     // Make sure we mark the unit as resolved so that we can remove it.
@@ -489,38 +286,12 @@ describe('UnitList', () => {
 
   it('does not make an RPC call for pending units', function() {
     const destroyUnits = sinon.stub();
-    const changeState = sinon.stub();
     const envResolved = sinon.stub();
-    const units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }, {
-      displayName: 'mysql/2',
-      id: 'mysql/2'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        envResolved={envResolved}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[3].checked = true;
-    testUtils.Simulate.change(checkboxes[3]);
-    const button = testUtils.findRenderedDOMComponentWithClass(
-      output, 'button--neutral');
-    testUtils.Simulate.click(button);
+    const wrapper = renderComponent({
+      destroyUnits,
+      envResolved
+    });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     // Remove is still called to remove from ECS.
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
@@ -529,292 +300,78 @@ describe('UnitList', () => {
   });
 
   it('deselects all units after removal', function() {
-    var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    var button = testUtils.findRenderedDOMComponentWithClass(
-      output, 'button--neutral');
-    testUtils.Simulate.click(button);
-    assert.isFalse(output.refs['CheckListItem-' + units[0].id].state.checked);
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    assert.equal(instance.refs['CheckListItem-mysql/0'].setState.callCount, 1);
+    assert.deepEqual(
+      instance.refs['CheckListItem-mysql/0'].setState.args[0][0], {checked: false});
   });
 
   it('deselects select all after removal', function() {
-    var destroyUnits = sinon.stub();
-    var changeState = sinon.stub();
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[0].checked = true;
-    testUtils.Simulate.change(checkboxes[0]);
-    assert.isTrue(output.refs['select-all'].state.checked);
-    var button = testUtils.findRenderedDOMComponentWithClass(
-      output, 'button--neutral');
-    testUtils.Simulate.click(button);
-    assert.isFalse(output.refs['CheckListItem-' + units[0].id].state.checked);
-    assert.isFalse(output.refs['select-all'].state.checked);
+    refs['select-all'].state.checked = true;
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    assert.equal(instance.refs['select-all'].setState.callCount, 1);
+    assert.deepEqual(
+      instance.refs['select-all'].setState.args[0][0], {checked: false});
   });
 
   it('can resolve the selected units', function() {
-    var changeState = sinon.stub();
     var envResolved = sinon.stub();
-    var units = [{
-      displayName: 'mysql/0',
-      agent_status: 'running',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      agent_status: 'running',
-      id: 'mysql/1'
-    }, {
-      displayName: 'mysql/2',
-      agent_status: 'running',
-      id: 'mysql/2'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={sinon.stub()}
-        envResolved={envResolved}
-        service={service}
-        units={units}
-        unitStatus='error'
-        whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[2].checked = true;
-    testUtils.Simulate.change(checkboxes[2]);
-    var button = testUtils.scryRenderedDOMComponentsWithClass(
-      output, 'button--neutral')[0];
-    testUtils.Simulate.click(button);
+    units[0].agent_status = 'running';
+    units[1].agent_status = 'running';
+    units[2].agent_status = 'running';
+    const wrapper = renderComponent({ envResolved });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
     assert.deepEqual(envResolved.args[0][2], false);
-    assert.deepEqual(envResolved.args[1][0], units[1].id);
+    assert.deepEqual(envResolved.args[1][0], units[2].id);
     assert.deepEqual(envResolved.args[1][2], false);
   });
 
   it('will not resolve pending units', function() {
-    const changeState = sinon.stub();
     const envResolved = sinon.stub();
-    const units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }, {
-      displayName: 'mysql/2',
-      id: 'mysql/2'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    const output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={sinon.stub()}
-        envResolved={envResolved}
-        service={service}
-        units={units}
-        unitStatus='error'
-        whenChanged={sinon.stub()} />);
-    const checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[2].checked = true;
-    testUtils.Simulate.change(checkboxes[2]);
-    const button = testUtils.scryRenderedDOMComponentsWithClass(
-      output, 'button--neutral')[0];
-    testUtils.Simulate.click(button);
+    const wrapper = renderComponent({ envResolved });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(envResolved.callCount, 0);
   });
 
   it('can retry the selected units', function() {
-    var changeState = sinon.stub();
     var envResolved = sinon.stub();
-    var units = [{
-      displayName: 'mysql/0',
-      agent_status: 'running',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      agent_status: 'running',
-      id: 'mysql/1'
-    }, {
-      displayName: 'mysql/2',
-      agent_status: 'running',
-      id: 'mysql/2'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={sinon.stub()}
-        envResolved={envResolved}
-        service={service}
-        units={units}
-        unitStatus='error'
-        whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[2].checked = true;
-    testUtils.Simulate.change(checkboxes[2]);
-    var button = testUtils.scryRenderedDOMComponentsWithClass(
-      output, 'button--neutral')[1];
-    testUtils.Simulate.click(button);
+    units[0].agent_status = 'running';
+    units[1].agent_status = 'running';
+    units[2].agent_status = 'running';
+    const wrapper = renderComponent({
+      envResolved,
+      unitStatus: 'error'
+    });
+    wrapper.find('ButtonRow').prop('buttons')[1].action();
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
     assert.deepEqual(envResolved.args[0][2], true);
-    assert.deepEqual(envResolved.args[1][0], units[1].id);
+    assert.deepEqual(envResolved.args[1][0], units[2].id);
     assert.deepEqual(envResolved.args[1][2], true);
   });
 
   it('won\'t retry pending units', function() {
-    var changeState = sinon.stub();
     var envResolved = sinon.stub();
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }, {
-      displayName: 'mysql/2',
-      agent_status: 'running',
-      id: 'mysql/2'
-    }];
-    // Have to use renderIntoDocument here as shallowRenderer does not support
-    // refs.
-    var output = testUtils.renderIntoDocument(
-      <UnitList
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={sinon.stub()}
-        envResolved={envResolved}
-        service={service}
-        units={units}
-        unitStatus='error'
-        whenChanged={sinon.stub()} />);
-    var checkboxes = testUtils.scryRenderedDOMComponentsWithTag(
-      output, 'input');
-    checkboxes[1].checked = true;
-    testUtils.Simulate.change(checkboxes[1]);
-    checkboxes[2].checked = true;
-    testUtils.Simulate.change(checkboxes[2]);
-    var button = testUtils.scryRenderedDOMComponentsWithClass(
-      output, 'button--neutral')[1];
-    testUtils.Simulate.click(button);
+    const wrapper = renderComponent({
+      envResolved,
+      unitStatus: 'error'
+    });
+    wrapper.find('ButtonRow').prop('buttons')[1].action();
     assert.equal(envResolved.callCount, 0);
   });
 
   it('can disable controls when read only', () => {
     acl.isReadOnly = sinon.stub().returns(true);
-    var units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }];
-    var renderer = jsTestUtils.shallowRender(
-      <UnitList
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        envResolved={sinon.stub()}
-        service={service}
-        units={units}
-        whenChanged={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
-    var children = output.props.children[1].props.children;
-    var refs = [
-      'CheckListItem-' + units[0].id,
-      'CheckListItem-' + units[1].id
-    ];
-    const list = (
-      <ul className="unit-list__units">
-        {[<CheckListItem
-          aside="2"
-          className="select-all"
-          disabled={true}
-          key="select-all"
-          label="Select all units"
-          ref="select-all"
-          whenChanged={children[0].props.whenChanged} />,
-        <CheckListItem
-          action={children[1].props.action}
-          disabled={true}
-          extraInfo={undefined}
-          id="mysql/0"
-          key={units[0].displayName}
-          label={units[0].displayName}
-          ref={refs[0]}
-          whenChanged={instance._updateActiveCount} />,
-        <CheckListItem
-          action={children[2].props.action}
-          disabled={true}
-          extraInfo={undefined}
-          id="mysql/1"
-          key={units[1].displayName}
-          label={units[1].displayName}
-          ref={refs[1]}
-          whenChanged={instance._updateActiveCount} />]}
-      </ul>);
-    expect(output.props.children[1]).toEqualJSX(list);
-    var buttonItems = output.props.children[2].props.buttons;
-    var buttons = [{
-      disabled: true,
-      title: 'Remove',
-      type: 'neutral',
-      action: buttonItems[0].action,
-      disabled: true
-    }];
-    const expected = (
-      <ButtonRow
-        buttons={buttons} />);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('ButtonRow').prop('buttons')[0].disabled, true);
+    wrapper.find('CheckListItem').forEach(item => {
+      assert.equal(item.prop('disabled'), true);
+    });
   });
 });
