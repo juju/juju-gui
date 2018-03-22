@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
@@ -14,33 +15,33 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('MachineViewColumn', function() {
   let acl, sendAnalytics;
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    // The component is wrapped to handle drag and drop, but we just want to
+    // test the internal component so we access it via DecoratedComponent.
+    <MachineViewColumn.DecoratedComponent
+      acl={options.acl || acl}
+      activeMenuItem={options.activeMenuItem || 'name'}
+      canDrop={options.canDrop === undefined ? false : options.canDrop}
+      connectDropTarget={jsTestUtils.connectDropTarget}
+      droppable={options.droppable === undefined ? true : options.droppable}
+      dropUnit={options.dropUnit || sinon.stub()}
+      isOver={options.isOver === undefined ? false : options.isOver}
+      menuItems={options.menuItems || []}
+      sendAnalytics={options.sendAnalytics || sinon.stub()}
+      title={options.title || 'Sandbox'}
+      toggle={options.toggle || {}}
+      type={options.type || 'machine'}>
+      {options.children || (<div>contents</div>)}
+    </MachineViewColumn.DecoratedComponent>
+  );
+
   beforeEach(() => {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
     sendAnalytics = sinon.stub();
   });
 
   it('can render', function() {
-    const menuItems = [];
-    const toggle = {};
-    const dropUnit = sinon.stub();
-    // The component is wrapped to handle drag and drop, but we just want to
-    // test the internal component so we access it via DecoratedComponent.
-    const output = jsTestUtils.shallowRender(
-      <MachineViewColumn.DecoratedComponent
-        acl={acl}
-        activeMenuItem="name"
-        canDrop={false}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        droppable={true}
-        dropUnit={dropUnit}
-        isOver={false}
-        menuItems={menuItems}
-        sendAnalytics={sendAnalytics}
-        title="Sandbox"
-        toggle={toggle}
-        type="machine">
-        <div>contents</div>
-      </MachineViewColumn.DecoratedComponent>);
+    const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__column">
         <MachineViewHeader
@@ -49,11 +50,11 @@ describe('MachineViewColumn', function() {
           )}
           activeMenuItem="name"
           droppable={true}
-          dropUnit={dropUnit}
-          menuItems={menuItems}
+          dropUnit={sinon.stub()}
+          menuItems={[]}
           sendAnalytics={sendAnalytics}
           title="Sandbox"
-          toggle={toggle}
+          toggle={{}}
           type="machine" />
         <div className="machine-view__column-content">
           <div>contents</div>
@@ -63,42 +64,20 @@ describe('MachineViewColumn', function() {
           </div>
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render in droppable mode', function() {
-    const output = jsTestUtils.shallowRender(
-      <MachineViewColumn.DecoratedComponent
-        acl={acl}
-        canDrop={false}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        droppable={true}
-        isOver={true}
-        sendAnalytics={sendAnalytics}
-        title="Sandbox"
-        type="machine" />);
-    const expected = (
-      <div className="machine-view__column machine-view__column--drop">
-        {output.props.children}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ canDrop: true });
+    assert.equal(
+      wrapper.prop('className').includes('machine-view__column--droppable'),
+      true);
   });
 
   it('can render in drop mode', function() {
-    const output = jsTestUtils.shallowRender(
-      <MachineViewColumn.DecoratedComponent
-        acl={acl}
-        canDrop={true}
-        connectDropTarget={jsTestUtils.connectDropTarget}
-        droppable={true}
-        isOver={false}
-        sendAnalytics={sendAnalytics}
-        title="Sandbox"
-        type="machine" />);
-    const expected = (
-      <div className="machine-view__column machine-view__column--droppable">
-        {output.props.children}
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ isOver: true });
+    assert.equal(
+      wrapper.prop('className').includes('machine-view__column--drop'),
+      true);
   });
 });
