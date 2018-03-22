@@ -14,7 +14,7 @@ class Link extends React.Component {
     @param state {String} The new state to update to.
     @param evt {Object} The click event.
   */
-  _handleRowClick(state, evt) {
+  _handleClick(state, evt) {
     evt.preventDefault();
     this.props.changeState(state);
   }
@@ -28,7 +28,7 @@ class Link extends React.Component {
     return (
       <a className={classes}
         href={this.props.generatePath(clickState)}
-        onClick={this._handleRowClick.bind(this, clickState)}>
+        onClick={this._handleClick.bind(this, clickState)}>
         {this.props.children}
       </a>
     );
