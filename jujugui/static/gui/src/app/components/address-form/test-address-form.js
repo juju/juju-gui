@@ -151,7 +151,7 @@ describe('AddressForm', function() {
                 error: 'This field is required.'
               }]}
               value="" />
-            </div>
+          </div>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);
