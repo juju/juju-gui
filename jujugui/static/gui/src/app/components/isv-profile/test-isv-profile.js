@@ -2,19 +2,19 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const ISVProfile = require('./isv-profile');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('ISVProfile', () => {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ISVProfile
+      d3={options.d3 || {}} />
+  );
+
   it('renders the navigation', () => {
-    var component = jsTestUtils.shallowRender(
-      <ISVProfile
-        d3={{}} />, true);
-    var output = component.getRenderOutput();
-    var content = output.props.children.props.children.props.children[0];
+    const wrapper = renderComponent();
     var expected = (<nav className="three-col isv-profile__navigation">
       <ul className="isv-profile__navigation-list">
         <li className="isv-profile__navigation-item--title">
@@ -31,16 +31,11 @@ describe('ISVProfile', () => {
         </li>
       </ul>
     </nav>);
-    assert.deepEqual(content, expected);
+    assert.compareJSX(wrapper.find('.isv-profile__navigation'), expected);
   });
 
   it('renders the live data section', () => {
-    var component = jsTestUtils.shallowRender(
-      <ISVProfile
-        d3={{}} />, true);
-    var output = component.getRenderOutput();
-    var wrapper = output.props.children.props.children;
-    var content = wrapper.props.children[1].props.children[0];
+    const wrapper = renderComponent();
     var expected = (<div className="isv-profile__live-data clearfix">
       <h3 className="isv-profile__section-title">
         03 September 2016 - 14:35
@@ -64,6 +59,6 @@ describe('ISVProfile', () => {
         <p className="isv-profile__box-stat">$1,500.00</p>
       </div>
     </div>);
-    assert.deepEqual(content, expected);
+    assert.compareJSX(wrapper.find('.isv-profile__live-data'), expected);
   });
 });

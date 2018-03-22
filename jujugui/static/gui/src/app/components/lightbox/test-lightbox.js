@@ -2,30 +2,32 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Lightbox = require('./lightbox');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('Lightbox', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Lightbox
+      caption={options.caption === undefined ? 'Test caption' : options.caption}
+      close={options.close || sinon.stub()}
+      extraClasses={options.extraClasses}>
+      {options.children || 'Hi'}
+    </Lightbox>
+  );
+
   it('renders', () => {
-    const close = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Lightbox
-        caption="Test caption"
-        close={close}>
-        Hi
-      </Lightbox>, true);
-    const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
     const expected = (
-      <div className="lightbox" onClick={close}>
+      <div className="lightbox"
+        onClick={wrapper.prop('onClick')}>
         <button className="lightbox__close">
           <SvgIcon name="close_16_white" width="16" />
         </button>
-        <div className="lightbox__wrapper" onClick={instance._stopPropagation}>
+        <div className="lightbox__wrapper"
+          onClick={wrapper.find('.lightbox__wrapper').prop('onClick')}>
           <div className="lightbox__content">
             Hi
           </div>
@@ -35,285 +37,167 @@ describe('Lightbox', function() {
         </div>
       </div>
     );
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('renders with extra classes', () => {
-    const close = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Lightbox
-        caption="Test caption"
-        close={close}
-        extraClasses={['testing']}>
-        Hi
-      </Lightbox>, true);
-    const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
-    const expected = (
-      <div className="lightbox testing" onClick={close}>
-        <button className="lightbox__close">
-          <SvgIcon name="close_16_white" width="16" />
-        </button>
-        <div className="lightbox__wrapper" onClick={instance._stopPropagation}>
-          <div className="lightbox__content">
-            Hi
-          </div>
-          <div className="lightbox__caption">
-            Test caption
-          </div>
-        </div>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      extraClasses: ['testing']
+    });
+    assert.equal(wrapper.prop('className').includes('testing'), true);
   });
 
   it('renders without a caption', () => {
-    const close = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Lightbox
-        close={close}>
-        Hi
-      </Lightbox>, true);
-    const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
-    const expected = (
-      <div className="lightbox" onClick={close}>
-        <button className="lightbox__close">
-          <SvgIcon name="close_16_white" width="16" />
-        </button>
-        <div className="lightbox__wrapper" onClick={instance._stopPropagation}>
-          <div className="lightbox__content">
-            Hi
-          </div>
-        </div>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      caption: null
+    });
+    assert.equal(wrapper.find('.lightbox__caption').length, 0);
   });
 
   describe('slides', () => {
-    let renderer, output, instance, slide1, slide2, slide3;
-    const close = sinon.stub();
+    let slideList;
 
-    beforeAll(() => {
-      renderer = jsTestUtils.shallowRender(
-        <Lightbox close={close}>
-          <p>Slide 1</p>
-          <p>Slide 2</p>
-          <p>Slide 3</p>
-        </Lightbox>, true);
-      output = renderer.getRenderOutput();
-      instance = renderer.getMountedInstance();
-
-      slide1 = (<div
-        className="lightbox"
-        onClick={instance._handleClose}>
-        <button className="lightbox__close">
-          <SvgIcon
-            name="close_16_white"
-            width="16" />
-        </button>
-        <div className="lightbox__wrapper"
-          onClick={instance._stopPropagation}>
-          <div className="lightbox__content">
-            <div className="lightbox__navigation">
-              <button className="lightbox__navigation-previous"
-                disabled
-                onClick={instance._goToSlide.bind(instance, -1)}>
-                <SvgIcon name="chevron_down_16" width="16" />
-              </button>
-              <button className="lightbox__navigation-next"
-                onClick={instance._goToSlide.bind(instance, 1)}>
-                <SvgIcon name="chevron_down_16" width="16" />
-              </button>
-              <ul className="lightbox__navigation-bullets">
-                <li className="lightbox__navigation-bullet is-active"
-                  onClick={instance.setState.bind(instance, {activeSlide: 0})}>
-                  &bull;
-                </li>
-                <li className="lightbox__navigation-bullet"
-                  onClick={instance.setState.bind(instance, {activeSlide: 1})}>
-                  &bull;
-                </li>
-                <li className="lightbox__navigation-bullet"
-                  onClick={instance.setState.bind(instance, {activeSlide: 2})}>
-                  &bull;
-                </li>
-              </ul>
-            </div>
-            <div className="lightbox__slide is-active">
-              <p>Slide 1</p>
-            </div>
-            <div className="lightbox__slide">
-              <p>Slide 2</p>
-            </div>
-            <div className="lightbox__slide">
-              <p>Slide 3</p>
-            </div>
-          </div>
-        </div>
-      </div>);
-
-      slide2 = (<div
-        className="lightbox"
-        onClick={instance._handleClose}>
-        <button className="lightbox__close">
-          <SvgIcon
-            name="close_16_white"
-            width="16" />
-        </button>
-        <div className="lightbox__wrapper"
-          onClick={instance._stopPropagation}>
-          <div className="lightbox__content">
-            <div className="lightbox__navigation">
-              <button className="lightbox__navigation-previous"
-                onClick={instance._goToSlide.bind(instance, -1)}>
-                <SvgIcon name="chevron_down_16" width="16" />
-              </button>
-              <button className="lightbox__navigation-next"
-                onClick={instance._goToSlide.bind(instance, 1)}>
-                <SvgIcon name="chevron_down_16" width="16" />
-              </button>
-              <ul className="lightbox__navigation-bullets">
-                <li className="lightbox__navigation-bullet"
-                  onClick={instance.setState.bind(instance, {activeSlide: 0})}>
-                  &bull;
-                </li>
-                <li className="lightbox__navigation-bullet is-active"
-                  onClick={instance.setState.bind(instance, {activeSlide: 1})}>
-                  &bull;
-                </li>
-                <li className="lightbox__navigation-bullet"
-                  onClick={instance.setState.bind(instance, {activeSlide: 2})}>
-                  &bull;
-                </li>
-              </ul>
-            </div>
-            <div className="lightbox__slide">
-              <p>Slide 1</p>
-            </div>
-            <div className="lightbox__slide is-active">
-              <p>Slide 2</p>
-            </div>
-            <div className="lightbox__slide">
-              <p>Slide 3</p>
-            </div>
-          </div>
-        </div>
-      </div>);
-
-      slide3 = (<div
-        className="lightbox"
-        onClick={instance._handleClose}>
-        <button className="lightbox__close">
-          <SvgIcon
-            name="close_16_white"
-            width="16" />
-        </button>
-        <div className="lightbox__wrapper"
-          onClick={instance._stopPropagation}>
-          <div className="lightbox__content">
-            <div className="lightbox__navigation">
-              <button className="lightbox__navigation-previous"
-                onClick={instance._goToSlide.bind(instance, -1)}>
-                <SvgIcon name="chevron_down_16" width="16" />
-              </button>
-              <button className="lightbox__navigation-next"
-                disabled
-                onClick={instance._goToSlide.bind(instance, 1)}>
-                <SvgIcon name="chevron_down_16" width="16" />
-              </button>
-              <ul className="lightbox__navigation-bullets">
-                <li className="lightbox__navigation-bullet"
-                  onClick={instance.setState.bind(instance, {activeSlide: 0})}>
-                  &bull;
-                </li>
-                <li className="lightbox__navigation-bullet"
-                  onClick={instance.setState.bind(instance, {activeSlide: 1})}>
-                  &bull;
-                </li>
-                <li className="lightbox__navigation-bullet is-active"
-                  onClick={instance.setState.bind(instance, {activeSlide: 2})}>
-                  &bull;
-                </li>
-              </ul>
-            </div>
-            <div className="lightbox__slide">
-              <p>Slide 1</p>
-            </div>
-            <div className="lightbox__slide">
-              <p>Slide 2</p>
-            </div>
-            <div className="lightbox__slide is-active">
-              <p>Slide 3</p>
-            </div>
-          </div>
-        </div>
-      </div>);
+    beforeEach(() => {
+      slideList = [
+        (<p key="1">Slide 1</p>),
+        (<p key="2">Slide 2</p>),
+        (<p key="3">Slide 3</p>)
+      ];
     });
 
     it('renders with multiple slides', () => {
-      expect(output).toEqualJSX(
-        slide1
-      );
+      const wrapper = renderComponent({
+        children: slideList
+      });
+      const expected = (
+        <div className="lightbox__content">
+          <div className="lightbox__navigation">
+            <button className="lightbox__navigation-previous"
+              disabled={true}
+              onClick={wrapper.find('.lightbox__navigation-previous').prop('onClick')}>
+              <SvgIcon name="chevron_down_16" width="16" />
+            </button>
+            <button className="lightbox__navigation-next"
+              disabled={false}
+              onClick={wrapper.find('.lightbox__navigation-next').prop('onClick')}>
+              <SvgIcon name="chevron_down_16" width="16" />
+            </button>
+            <ul className="lightbox__navigation-bullets">
+              <li className="lightbox__navigation-bullet is-active"
+                onClick={wrapper.find('.lightbox__navigation-bullet').at(0).prop('onClick')}>
+                &bull;
+              </li>
+              <li className="lightbox__navigation-bullet"
+                onClick={wrapper.find('.lightbox__navigation-bullet').at(1).prop('onClick')}>
+                &bull;
+              </li>
+              <li className="lightbox__navigation-bullet"
+                onClick={wrapper.find('.lightbox__navigation-bullet').at(2).prop('onClick')}>
+                &bull;
+              </li>
+            </ul>
+          </div>
+          <div className="lightbox__slide is-active">
+            <p>Slide 1</p>
+          </div>
+          <div className="lightbox__slide">
+            <p>Slide 2</p>
+          </div>
+          <div className="lightbox__slide">
+            <p>Slide 3</p>
+          </div>
+        </div>);
+      assert.compareJSX(wrapper.find('.lightbox__content'), expected);
     });
 
     it('moves to the next slide when _nextSlide is called', () => {
+      const wrapper = renderComponent({
+        children: slideList
+      });
+      const instance = wrapper.instance();
       instance._goToSlide(1);
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide2
-      );
+      wrapper.update();
+      assert.equal(
+        wrapper.find('.lightbox__navigation-previous').prop('disabled'), false);
+      const bullets = wrapper.find('.lightbox__navigation-bullet');
+      assert.equal(
+        bullets.at(0).prop('className').includes('is-active'), false);
+      assert.equal(
+        bullets.at(1).prop('className').includes('is-active'), true);
+      const slides = wrapper.find('.lightbox__slide');
+      assert.equal(
+        slides.at(0).prop('className').includes('is-active'), false);
+      assert.equal(
+        slides.at(1).prop('className').includes('is-active'), true);
     });
 
     it('disables the next slide button when the last slide is active', () => {
-      instance._goToSlide(1);
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide3
-      );
+      const wrapper = renderComponent({
+        children: slideList
+      });
+      const instance = wrapper.instance();
+      instance._goToSlide(2);
+      wrapper.update();
+      assert.equal(
+        wrapper.find('.lightbox__navigation-previous').prop('disabled'), false);
+      assert.equal(
+        wrapper.find('.lightbox__navigation-next').prop('disabled'), true);
     });
 
     it('does not move past the final slide', () => {
-      instance._goToSlide(1);
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide3
-      );
+      const wrapper = renderComponent({
+        children: slideList
+      });
+      const instance = wrapper.instance();
+      instance._goToSlide(5);
+      wrapper.update();
+      assert.equal(
+        wrapper.find('.lightbox__navigation-next').prop('disabled'), true);
+      const bullets = wrapper.find('.lightbox__navigation-bullet');
+      assert.equal(
+        bullets.at(2).prop('className').includes('is-active'), true);
+      const slides = wrapper.find('.lightbox__slide');
+      assert.equal(
+        slides.at(2).prop('className').includes('is-active'), true);
     });
 
     it('moves to the prev slide when _previousSlide is called', () => {
+      const wrapper = renderComponent({
+        children: slideList
+      });
+      const instance = wrapper.instance();
+      instance._goToSlide(2);
       instance._goToSlide(-1);
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide2
-      );
-    });
-
-    it('disables the prev slide button when the first slide is active', () => {
-      instance._goToSlide(-1);
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide1
-      );
+      wrapper.update();
+      assert.equal(
+        wrapper.find('.lightbox__navigation-previous').prop('disabled'), false);
+      const bullets = wrapper.find('.lightbox__navigation-bullet');
+      assert.equal(
+        bullets.at(0).prop('className').includes('is-active'), false);
+      assert.equal(
+        bullets.at(1).prop('className').includes('is-active'), true);
+      const slides = wrapper.find('.lightbox__slide');
+      assert.equal(
+        slides.at(0).prop('className').includes('is-active'), false);
+      assert.equal(
+        slides.at(1).prop('className').includes('is-active'), true);
     });
 
     it('does not move past the first slide', () => {
-      instance._goToSlide(-1);
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide1
-      );
-    });
-
-    it('moves to the nth slide when _goToSlide is called', () => {
-      instance.setState({
-        activeSlide: 1
+      const wrapper = renderComponent({
+        children: slideList
       });
-      output = renderer.getRenderOutput();
-      expect(output).toEqualJSX(
-        slide2
-      );
+      const instance = wrapper.instance();
+      instance._goToSlide(-1);
+      wrapper.update();
+      assert.equal(
+        wrapper.find('.lightbox__navigation-previous').prop('disabled'), true);
+      const bullets = wrapper.find('.lightbox__navigation-bullet');
+      assert.equal(
+        bullets.at(0).prop('className').includes('is-active'), true);
+      const slides = wrapper.find('.lightbox__slide');
+      assert.equal(
+        slides.at(0).prop('className').includes('is-active'), true);
     });
   });
 });
