@@ -2,18 +2,28 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const UnitDetails = require('./unit-details');
-const ButtonRow = require('../../button-row/button-row');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('UnitDetails', function() {
-  var acl, fakeUnit, service;
+  var acl, unit, service;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <UnitDetails
+      acl={options.acl || acl}
+      changeState={options.changeState || sinon.stub()}
+      destroyUnits={options.destroyUnits || sinon.stub()}
+      previousComponent={options.previousComponent || 'units'}
+      service={options.service || service}
+      unit={options.unit || unit}
+      unitStatus={
+        options.unitStatus === undefined ? 'error' : options.unitStatus} />
+  );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    fakeUnit = {
+    unit = {
       id: 'unit1',
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
@@ -34,26 +44,18 @@ describe('UnitDetails', function() {
   });
 
   it('shows the unit properties', function() {
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
+    const wrapper = renderComponent();
+    const expected = (
       <div className='unit-details__properties'>
         <div>
           <p className='unit-details__property'>
-            Status: started - doing stuff
+            Status: {'started - doing stuff'}
           </p>
           <p className="unit-details__property">
-            Agent Status: idle
+            Agent Status: {'idle'}
           </p>
           <p className="unit-details__property">
-            Workload Status: maintenance
+            Workload Status: {'maintenance'}
           </p>
         </div>
         <p className='unit-details__property'>
@@ -77,141 +79,34 @@ describe('UnitDetails', function() {
           </li>
         </ul>
       </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.unit-details__properties'), expected);
   });
 
   it('does not render workload status message when not provided', function() {
-    fakeUnit.workloadStatusMessage = '';
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit} />);
-    const expectedOutput = (
-      <div className='unit-details__properties'>
-        <div>
-          <p className='unit-details__property'>
-            Status: started
-          </p>
-          <p className="unit-details__property">
-            Agent Status: idle
-          </p>
-          <p className="unit-details__property">
-            Workload Status: maintenance
-          </p>
-        </div>
-        <p className='unit-details__property'>
-          Public addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="93.20.93.20">
-            <span>
-              {'93.20.93.20'}
-            </span>
-          </li>
-        </ul>
-        <p className='unit-details__property'>
-          IP addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="192.168.0.1">
-            <span>
-              {'192.168.0.1'}
-            </span>
-          </li>
-        </ul>
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    unit.workloadStatusMessage = '';
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.find('.unit-details__property').at(0).text(), 'Status: started');
   });
 
   it('does not render agent/workload statuses when not provided', function() {
-    fakeUnit.agentStatus = '';
-    fakeUnit.workloadStatus = '';
-    fakeUnit.workloadStatusMessage = '';
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
-      <div className='unit-details__properties'>
-        <div>
-          <p className='unit-details__property'>
-            Status: started
-          </p>
-        </div>
-        <p className='unit-details__property'>
-          Public addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="93.20.93.20">
-            <span>
-              {'93.20.93.20'}
-            </span>
-          </li>
-        </ul>
-        <p className='unit-details__property'>
-          IP addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="192.168.0.1">
-            <span>
-              {'192.168.0.1'}
-            </span>
-          </li>
-        </ul>
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    unit.agentStatus = '';
+    unit.workloadStatus = '';
+    unit.workloadStatusMessage = '';
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.find('.unit-details__property').length, 3);
   });
 
   it('does not render statuses if uncommitted', function() {
-    fakeUnit.agent_state = '';
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit} />);
-    const expectedOutput = (
-      <div className='unit-details__properties'>
-        <p className='unit-details__property'>
-          Status: uncommitted
-        </p>
-        <p className='unit-details__property'>
-          Public addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="93.20.93.20">
-            <span>
-              {'93.20.93.20'}
-            </span>
-          </li>
-        </ul>
-        <p className='unit-details__property'>
-          IP addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item" key="192.168.0.1">
-            <span>
-              {'192.168.0.1'}
-            </span>
-          </li>
-        </ul>
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    unit.agent_state = '';
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.find('.unit-details__property').length, 3);
   });
 
   it('shows list of addresses correctly', function() {
-    fakeUnit = {
+    unit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
       portRanges: [{
@@ -224,70 +119,52 @@ describe('UnitDetails', function() {
       agent_state: 'started',
       id: 'unit1'
     };
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
-      <div className="unit-details__properties">
-        <div>
-          <p className='unit-details__property'>
-            Status: started
-          </p>
-        </div>
-        <p className="unit-details__property">
-          Public addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item"
-            key="93.20.93.20:9000-10000/udp">
-            <span>
-              {'93.20.93.20:9000-10000/udp'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="93.20.93.20:443">
-            <span>
-              {'93.20.93.20:443'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="93.20.93.20:8080">
-            <span>
-              {'93.20.93.20:8080'}
-            </span>
-          </li>
-        </ul>
-        <p className="unit-details__property">
-          IP addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item"
-            key="192.168.0.1:9000-10000/udp">
-            <span>
-              {'192.168.0.1:9000-10000/udp'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="192.168.0.1:443">
-            <a href="https://192.168.0.1:443" target="_blank">
-              {'192.168.0.1:443'}
-            </a>
-          </li>
-          <li className="unit-details__list-item" key="192.168.0.1:8080">
-            <a href="http://192.168.0.1:8080" target="_blank">
-              {'192.168.0.1:8080'}
-            </a>
-          </li>
-        </ul>
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent();
+    const publicAddresses = (
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item"
+          key="93.20.93.20:9000-10000/udp">
+          <span>
+            {'93.20.93.20:9000-10000/udp'}
+          </span>
+        </li>
+        <li className="unit-details__list-item" key="93.20.93.20:443">
+          <span>
+            {'93.20.93.20:443'}
+          </span>
+        </li>
+        <li className="unit-details__list-item" key="93.20.93.20:8080">
+          <span>
+            {'93.20.93.20:8080'}
+          </span>
+        </li>
+      </ul>);
+    const ipAddresses = (
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item"
+          key="192.168.0.1:9000-10000/udp">
+          <span>
+            {'192.168.0.1:9000-10000/udp'}
+          </span>
+        </li>
+        <li className="unit-details__list-item" key="192.168.0.1:443">
+          <a href="https://192.168.0.1:443" target="_blank">
+            {'192.168.0.1:443'}
+          </a>
+        </li>
+        <li className="unit-details__list-item" key="192.168.0.1:8080">
+          <a href="http://192.168.0.1:8080" target="_blank">
+            {'192.168.0.1:8080'}
+          </a>
+        </li>
+      </ul>);
+    const lists = wrapper.find('.unit-details__list');
+    assert.compareJSX(lists.at(0), publicAddresses);
+    assert.compareJSX(lists.at(1), ipAddresses);
   });
 
   it('shows list of addresses as links if exposed', function() {
-    fakeUnit = {
+    unit = {
       private_address: '192.168.0.1',
       public_address: '93.20.93.20',
       portRanges: [{
@@ -309,100 +186,58 @@ describe('UnitDetails', function() {
         }
       }
     };
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
-      <div className="unit-details__properties">
-        <div>
-          <p className='unit-details__property'>
-            Status: pending
-          </p>
-        </div>
-        <p className="unit-details__property">
-          Public addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item"
-            key="93.20.93.20:9000-10000/udp">
-            <span>
-              {'93.20.93.20:9000-10000/udp'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="93.20.93.20:443">
-            <a href="https://93.20.93.20:443" target="_blank">
-              {'93.20.93.20:443'}
-            </a>
-          </li>
-          <li className="unit-details__list-item" key="93.20.93.20:8080">
-            <a href="http://93.20.93.20:8080" target="_blank">
-              {'93.20.93.20:8080'}
-            </a>
-          </li>
-        </ul>
-        <p className="unit-details__property">
-          IP addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item"
-            key="192.168.0.1:9000-10000/udp">
-            <span>
-              {'192.168.0.1:9000-10000/udp'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="192.168.0.1:443">
-            <a href="https://192.168.0.1:443" target="_blank">
-              {'192.168.0.1:443'}
-            </a>
-          </li>
-          <li className="unit-details__list-item" key="192.168.0.1:8080">
-            <a href="http://192.168.0.1:8080" target="_blank">
-              {'192.168.0.1:8080'}
-            </a>
-          </li>
-        </ul>
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent();
+    const publicAddresses = (
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item"
+          key="93.20.93.20:9000-10000/udp">
+          <span>
+            {'93.20.93.20:9000-10000/udp'}
+          </span>
+        </li>
+        <li className="unit-details__list-item" key="93.20.93.20:443">
+          <a href="https://93.20.93.20:443" target="_blank">
+            {'93.20.93.20:443'}
+          </a>
+        </li>
+        <li className="unit-details__list-item" key="93.20.93.20:8080">
+          <a href="http://93.20.93.20:8080" target="_blank">
+            {'93.20.93.20:8080'}
+          </a>
+        </li>
+      </ul>);
+    const ipAddresses = (
+      <ul className="unit-details__list">
+        <li className="unit-details__list-item"
+          key="192.168.0.1:9000-10000/udp">
+          <span>
+            {'192.168.0.1:9000-10000/udp'}
+          </span>
+        </li>
+        <li className="unit-details__list-item" key="192.168.0.1:443">
+          <a href="https://192.168.0.1:443" target="_blank">
+            {'192.168.0.1:443'}
+          </a>
+        </li>
+        <li className="unit-details__list-item" key="192.168.0.1:8080">
+          <a href="http://192.168.0.1:8080" target="_blank">
+            {'192.168.0.1:8080'}
+          </a>
+        </li>
+      </ul>);
+    const lists = wrapper.find('.unit-details__list');
+    assert.compareJSX(lists.at(0), publicAddresses);
+    assert.compareJSX(lists.at(1), ipAddresses);
   });
 
   it('shows no addresses if no addresses are unavailable', function() {
-    fakeUnit = {agent_state: 'started', id: 'unit1'};
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
-      <div className='unit-details__properties'>
-        <div>
-          <p className='unit-details__property'>
-            Status: started
-          </p>
-        </div>
-        <p className='unit-details__property'>
-          Public addresses: {'none'}
-        </p>
-        {undefined}
-        <p className='unit-details__property'>
-          IP addresses: {'none'}
-        </p>
-        {undefined}
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    unit = {agent_state: 'started', id: 'unit1'};
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.unit-details__list').length, 0);
   });
 
   it('shows only public address if available', function() {
-    fakeUnit = {
+    unit = {
       public_address: '93.20.93.20',
       portRanges: [{
         from: 9000, to: 10000, protocol: 'udp', single: false
@@ -414,53 +249,12 @@ describe('UnitDetails', function() {
       agent_state: 'started',
       id: 'unit1'
     };
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
-      <div className="unit-details__properties">
-        <div>
-          <p className='unit-details__property'>
-            Status: started
-          </p>
-        </div>
-        <p className="unit-details__property">
-          Public addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item"
-            key="93.20.93.20:9000-10000/udp">
-            <span>
-              {'93.20.93.20:9000-10000/udp'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="93.20.93.20:443">
-            <span>
-              {'93.20.93.20:443'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="93.20.93.20:8080">
-            <span>
-              {'93.20.93.20:8080'}
-            </span>
-          </li>
-        </ul>
-        <p className='unit-details__property'>
-          IP addresses: {'none'}
-        </p>
-        {undefined}
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.unit-details__list').length, 1);
   });
 
   it('shows only private address if available', function() {
-    fakeUnit = {
+    unit = {
       private_address: '192.168.0.1',
       portRanges: [{
         from: 9000, to: 10000, protocol: 'udp', single: false
@@ -472,143 +266,57 @@ describe('UnitDetails', function() {
       agent_state: 'started',
       id: 'unit1'
     };
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        previousComponent='units'
-        service={service}
-        unit={fakeUnit}
-        unitStatus='error' />);
-    const expectedOutput = (
-      <div className="unit-details__properties">
-        <div>
-          <p className='unit-details__property'>
-            Status: started
-          </p>
-        </div>
-        <p className='unit-details__property'>
-          Public addresses: {'none'}
-        </p>
-        {undefined}
-        <p className="unit-details__property">
-          IP addresses: {null}
-        </p>
-        <ul className="unit-details__list">
-          <li className="unit-details__list-item"
-            key="192.168.0.1:9000-10000/udp">
-            <span>
-              {'192.168.0.1:9000-10000/udp'}
-            </span>
-          </li>
-          <li className="unit-details__list-item" key="192.168.0.1:443">
-            <a href="https://192.168.0.1:443" target="_blank">
-              {'192.168.0.1:443'}
-            </a>
-          </li>
-          <li className="unit-details__list-item" key="192.168.0.1:8080">
-            <a href="http://192.168.0.1:8080" target="_blank">
-              {'192.168.0.1:8080'}
-            </a>
-          </li>
-        </ul>
-      </div>);
-    expect(output.props.children[0]).toEqualJSX(expectedOutput);
-  });
-
-  it('renders the remove button', function() {
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        service={service}
-        unit={fakeUnit} />);
-    const buttons = [{
-      disabled: false,
-      title: 'Remove',
-      action: output.props.children[1].props.buttons[0].action
-    }];
-    const expectedOutput = <ButtonRow buttons={buttons} />;
-    expect(output.props.children[1]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.unit-details__list').length, 1);
   });
 
   it('can disable remove button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={sinon.stub()}
-        destroyUnits={sinon.stub()}
-        service={service}
-        unit={fakeUnit} />);
-    const buttons = [{
-      disabled: true,
-      title: 'Remove',
-      action: output.props.children[1].props.buttons[0].action
-    }];
-    const expectedOutput = <ButtonRow buttons={buttons} />;
-    expect(output.props.children[1]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('ButtonRow').prop('buttons')[0].disabled, true);
   });
 
   it('destroys the unit when the destroy button is clicked', function() {
     const destroyUnits = sinon.stub();
-    const changeState = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        service={service}
-        unit={fakeUnit} />);
-    output.props.children[1].props.buttons[0].action();
+    const wrapper = renderComponent({ destroyUnits });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(destroyUnits.callCount, 1);
-    assert.deepEqual(destroyUnits.args[0][0], [fakeUnit.id]);
+    assert.deepEqual(destroyUnits.args[0][0], [unit.id]);
   });
 
   it('navigates to the unit list when the unit is destroyed', function() {
-    const destroyUnits = sinon.stub();
     const changeState = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        service={service}
-        unit={fakeUnit}
-        unitStatus='pending' />);
-    output.props.children[1].props.buttons[0].action();
+    const wrapper = renderComponent({
+      changeState,
+      previousComponent: null
+    });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: {
           id: 'service1',
           activeComponent: 'units',
-          unitStatus: 'pending',
+          unitStatus: 'error',
           unit: null
         }}});
   });
 
   it('can navigate to the expose view when the unit is destroyed', function() {
-    const destroyUnits = sinon.stub();
     const changeState = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <UnitDetails
-        acl={acl}
-        changeState={changeState}
-        destroyUnits={destroyUnits}
-        previousComponent='expose'
-        service={service}
-        unit={fakeUnit} />);
-    output.props.children[1].props.buttons[0].action();
+    const wrapper = renderComponent({
+      changeState,
+      previousComponent: 'expose',
+      unitStatus: null
+    });
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: {
           id: 'service1',
           activeComponent: 'expose',
-          unitStatus: undefined,
+          unitStatus: null,
           unit: null
         }}});
   });

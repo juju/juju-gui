@@ -5,11 +5,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ServiceOverview = require('./service-overview');
-const ButtonRow = require('../../button-row/button-row');
-const InspectorConfirm = require('../confirm/confirm');
-const OverviewAction = require('../overview-action/overview-action');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('ServiceOverview', function() {
   let acl, charm, service;
