@@ -62,7 +62,7 @@ class LocalInspector extends React.Component {
             </option>);
         });
         component = (
-          <div>
+          <div className="local-inspector__content-new">
             <p>Choose a series to deploy this charm</p>
             <select className="local-inspector__series" defaultValue="trusty"
               disabled={this.props.acl.isReadOnly()}
@@ -74,7 +74,7 @@ class LocalInspector extends React.Component {
         break;
       case 'update':
         component = (
-          <div>
+          <div className="local-inspector__content-update">
             <p className="local-inspector__label">Choose applications to upgrade:</p>
             <ul className="local-inspector__list">
               {this._generateServiceList()}
