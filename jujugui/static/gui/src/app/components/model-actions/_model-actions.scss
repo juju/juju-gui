@@ -16,6 +16,7 @@
   @include visible($delay: 0.5s);
 
   &__export,
+  &__shell,
   &__import,
   &__share {
     padding: 11px;
