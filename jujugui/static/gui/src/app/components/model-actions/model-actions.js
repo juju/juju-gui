@@ -97,7 +97,7 @@ class ModelActions extends React.Component {
     let terminalAction = null;
     if (props.displayTerminalButton) {
       terminalAction = (
-        <span className="model-actions__import model-actions__button"
+        <span className="model-actions__shell model-actions__button"
           onClick={this._handleTerminalClick.bind(this)}
           role="button"
           tabIndex="0">

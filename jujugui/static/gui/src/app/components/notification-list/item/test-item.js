@@ -2,81 +2,71 @@
 'use strict';
 
 const React = require('react');
-const ReactDOM = require('react-dom');
+const enzyme = require('enzyme');
 
 const NotificationListItem = require('./item');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-const testUtils = require('react-dom/test-utils');
-
 describe('NotificationListItem', function() {
+  let clock;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <NotificationListItem
+      message={options.message || 'notification message'}
+      removeNotification={options.removeNotification || sinon.stub()}
+      timestamp={options.timestamp || '123'}
+      type={options.type || 'info'} />
+  );
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  afterEach(() => {
+    clock.restore();
+  });
 
   it('renders a notification list item', () => {
-    var message = 'notification message';
+    const wrapper = renderComponent();
     var classes = 'notification-list-item notification-list-item--info ' +
       'notification-list-item--visible';
-    var renderer = jsTestUtils.shallowRender(
-      <NotificationListItem
-        message={message}
-        removeNotification={sinon.stub()}
-        timestamp="123"
-        type="info" />, true);
-    var output = renderer.getRenderOutput();
-    var instance = renderer.getMountedInstance();
     var expected = (
       <li className={classes}>
-        <span>{message}</span>
-        <span className="notification-list-item__hide" onClick={instance.hide}
+        <span>notification message</span>
+        <span className="notification-list-item__hide"
+          onClick={wrapper.find('.notification-list-item__hide').prop('onClick')}
           role="button"
           tabIndex="0">
           <SvgIcon name="close_16"
             size="16" />
         </span>
       </li>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
-  it('adds the proper type class to the container', () => {
-    var classes = 'notification-list-item notification-list-item--error ' +
-      'notification-list-item--visible';
-    var output = jsTestUtils.shallowRender(
-      <NotificationListItem
-        message="message"
-        removeNotification={sinon.stub()}
-        timestamp="123"
-        type="error" />);
-    assert.equal(output.props.className, classes);
-  });
-
-  it('updates class and calls to remove itself after hiding', done => {
-    var timestamp = '123456';
-    var timeout = 1;
-    var removeNotification = function(ts) {
-      assert.equal(ts, timestamp);
-      done();
-    };
-    var component = testUtils.renderIntoDocument(
-      <NotificationListItem
-        message="message"
-        removeNotification={removeNotification}
-        timeout={timeout}
-        // Used to shorten the test time by setting the setTimeouts to 0.
-        timestamp={timestamp}
-        type="info" />);
-    var element = ReactDOM.findDOMNode(component);
+  it('updates class and calls to remove itself after hiding', () => {
+    const wrapper = renderComponent();
     // Check that it's rendered with the proper classes.
     assert.isTrue(
-      element.classList.contains('notification-list-item--visible'));
+      wrapper.prop('className').includes('notification-list-item--visible'));
     assert.isFalse(
-      element.classList.contains('notification-list-item--hidden'));
-    testUtils.Simulate.click(
-      element.querySelector('.notification-list-item__hide'));
+      wrapper.prop('className').includes('notification-list-item--hidden'));
+    wrapper.find('.notification-list-item__hide').simulate('click');
+    wrapper.update();
     // After a click it should have the classes updated.
     assert.isFalse(
-      element.classList.contains('notification-list-item--visible'));
+      wrapper.prop('className').includes('notification-list-item--visible'));
     assert.isTrue(
-      element.classList.contains('notification-list-item--hidden'));
+      wrapper.prop('className').includes('notification-list-item--hidden'));
+  });
+
+  it('calls the remove notification prop after the timeout', () => {
+    const removeNotification = sinon.stub();
+    const wrapper = renderComponent({ removeNotification });
+    wrapper.find('.notification-list-item__hide').simulate('click');
+    assert.equal(removeNotification.callCount, 0);
+    clock.tick(1000);
+    assert.equal(removeNotification.callCount, 1);
   });
 
 });

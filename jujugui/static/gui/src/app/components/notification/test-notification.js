@@ -2,19 +2,24 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Notification = require('./notification');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('Notification', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Notification
+      content={options.content || (<span>Hello</span>)}
+      dismiss={options.dismiss}
+      extraClasses={options.extraClasses}
+      isBlocking={options.isBlocking}
+      type={options.type} />
+  );
+
   it('renders default', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span>Hello</span>} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="p-notification">
         <p className="p-notification__response">
@@ -22,104 +27,37 @@ describe('Notification', function() {
         </p>
       </div>
     );
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
-  it('renders positive', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        type="positive" />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="p-notification--positive">
-        <p className="p-notification__response">
-          <span />
-        </p>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('renders caution', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        type="caution" />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="p-notification--caution">
-        <p className="p-notification__response">
-          <span />
-        </p>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
-  });
-
-  it('renders negative', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        type="negative" />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="p-notification--negative">
-        <p className="p-notification__response">
-          <span />
-        </p>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+  it('renders type', () => {
+    const wrapper = renderComponent({ type: 'positive' });
+    assert.equal(wrapper.prop('className'), 'p-notification--positive');
   });
 
   it('renders with additional classes', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        extraClasses="test" />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="p-notification test">
-        <p className="p-notification__response">
-          <span />
-        </p>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ extraClasses: 'test' });
+    assert.equal(wrapper.prop('className').includes('test'), true);
   });
 
   it('renders with dismiss function', () => {
     const dismiss = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        dismiss={dismiss} />, true);
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent({ dismiss });
     const expected = (
-      <div className="p-notification">
-        <p className="p-notification__response">
-          <span />
-          <button className="p-notification__action" onClick={dismiss}>
-            <SvgIcon
-              name="close_16"
-              size="16" />
-          </button>
-        </p>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+      <button className="p-notification__action"
+        onClick={wrapper.find('.p-notification__action').prop('onClick')}>
+        <SvgIcon
+          name="close_16"
+          size="16" />
+      </button>
+    );assert.compareJSX(wrapper.find('.p-notification__action'), expected);
   });
 
   it('can be dismissed', () => {
     const dismiss = sinon.stub();
     const stopPropagation = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        dismiss={dismiss} />, true);
-    const output = renderer.getRenderOutput();
-    output.props.children.props.children[1].props.onClick({
+    const wrapper = renderComponent({ dismiss });
+    wrapper.find('.p-notification__action').props().onClick({
       stopPropagation: stopPropagation
     });
     assert.equal(dismiss.callCount, 1);
@@ -127,47 +65,19 @@ describe('Notification', function() {
   });
 
   it('renders with a blocking div', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        isBlocking={true} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="p-notification__blocker">
-        <div className="p-notification">
-          <p className="p-notification__response">
-            <span />
-          </p>
-        </div>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ isBlocking: true });
+    assert.equal(wrapper.find('.p-notification__blocker').length, 1);
+    assert.equal(wrapper.find('.p-notification').length, 1);
   });
 
   it('renders with a blocking div and is clickable', () => {
     const dismiss = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Notification
-        content={<span></span>}
-        dismiss={dismiss}
-        isBlocking={true} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="p-notification__blocker"
-        onClick={dismiss}>
-        <div className="p-notification">
-          <p className="p-notification__response">
-            <span />
-            <button className="p-notification__action" onClick={dismiss}>
-              <SvgIcon
-                name="close_16"
-                size="16" />
-            </button>
-          </p>
-        </div>
-      </div>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({
+      dismiss,
+      isBlocking: true
+    });
+    assert.equal(wrapper.find('.p-notification__blocker').length, 1);
+    assert.equal(wrapper.find('.p-notification__action').length, 1);
   });
 
 });

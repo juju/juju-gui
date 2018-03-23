@@ -2,11 +2,10 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const ModalShortcuts = require('./modal-shortcuts');
 const SvgIcon = require('../svg-icon/svg-icon');
-
-const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('ModalSortcuts', function() {
 
@@ -15,18 +14,19 @@ describe('ModalSortcuts', function() {
     test2: {label: 'test2', help: 'a second test item'}
   };
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ModalShortcuts.WrappedComponent
+      closeModal={options.closeModal || sinon.stub()}
+      guiVersion={options.guiVersion || '1.2.3'}
+      keybindings={options.keybindings || keybindings} />
+  );
+
   it('renders', function() {
-    const hide = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <ModalShortcuts.WrappedComponent
-        closeModal={hide}
-        guiVersion="1.2.3"
-        keybindings={keybindings} />, true);
-    let output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     let expected = (<div className="modal">
       <div className="twelve-col no-margin-bottom">
         <h2 className="bordered">Keyboard Shortcuts</h2>
-        <span className="close" onClick={hide} role="button"
+        <span className="close" onClick={sinon.stub()} role="button"
           tabIndex="0">
           <SvgIcon name="close_16"
             size="16" />
@@ -54,10 +54,10 @@ describe('ModalSortcuts', function() {
       </div>
       <div className="twelve-col">
         <div className="content">
-          Juju GUI version 1.2.3
+          Juju GUI version {'1.2.3'}
         </div>
       </div>
     </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 });
