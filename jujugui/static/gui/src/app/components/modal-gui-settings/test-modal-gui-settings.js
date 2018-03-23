@@ -2,42 +2,40 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const ModalGUISettings = require('./modal-gui-settings');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('ModalGUISettings', function() {
-  const storage = {
-    setItem: sinon.stub(),
-    removeItem: sinon.stub(),
-    getItem: sinon.stub().returns(false)
-  };
+  let storage;
 
   // Shallow render the component with the given parameters, and return an
   // object with the instance and the resulting output.
-  function render(params={}) {
-    const renderer = jsTestUtils.shallowRender(
-      <ModalGUISettings
-        closeModal={params.close || sinon.stub()}
-        flags={params.flags || {terminal: false}}
-        localStorage={params.storage || storage} />, true);
-    return {
-      instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput()
-    };
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ModalGUISettings
+      closeModal={options.closeModal || sinon.stub()}
+      flags={options.flags || {terminal: false}}
+      localStorage={options.localStorage || storage} />
+  );
 
-  // Return a node wit the component expected output.
-  function expectedOutput(instance) {
-    const handleChange = instance._handleChange.bind(instance);
-    const handleSave = instance._handleSave.bind(instance);
-    return (
+  beforeEach(() => {
+    storage = {
+      setItem: sinon.stub(),
+      removeItem: sinon.stub(),
+      getItem: sinon.stub().returns(false)
+    };
+  });
+
+  it('renders', function() {
+    const wrapper = renderComponent();
+    const expected = (
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span className="close" onClick={instance.props.closeModal} role="button"
+          <span className="close"
+            onClick={sinon.stub()}
+            role="button"
             tabIndex="0">
             <SvgIcon name="close_16" size="16" />
           </span>
@@ -47,7 +45,7 @@ describe('ModalGUISettings', function() {
             <label htmlFor="disable-cookie">
               <input defaultChecked={false} id="disable-cookie"
                 name="disable-cookie"
-                onChange={handleChange}
+                onChange={wrapper.find('#disable-cookie').prop('onChange')}
                 type="checkbox" />&nbsp;
               Disable the EU cookie warning.
             </label>
@@ -56,7 +54,7 @@ describe('ModalGUISettings', function() {
             <label htmlFor="force-containers">
               <input defaultChecked={false} id="force-containers"
                 name="force-containers"
-                onChange={handleChange}
+                onChange={wrapper.find('#force-containers').prop('onChange')}
                 type="checkbox" />&nbsp;
               Enable container control for this provider.
             </label>
@@ -65,7 +63,7 @@ describe('ModalGUISettings', function() {
             <label htmlFor="disable-auto-place">
               <input defaultChecked={false} id="disable-auto-place"
                 name="disable-auto-place"
-                onChange={handleChange}
+                onChange={wrapper.find('#disable-auto-place').prop('onChange')}
                 type="checkbox" />&nbsp;
               Default to not automatically place units on commit.
             </label>
@@ -73,7 +71,7 @@ describe('ModalGUISettings', function() {
           <p>
             <label htmlFor="jujushell-url">
               <input id="jujushell-url" name="jujushell-url"
-                onChange={handleChange}
+                onChange={wrapper.find('#jujushell-url').prop('onChange')}
                 type="text"
                 value="" />&nbsp;
               DNS name for the Juju Shell.
@@ -85,25 +83,22 @@ describe('ModalGUISettings', function() {
             </small>
           </p>
           <input className="button--positive" id="save-settings"
-            name="save-settings" onClick={handleSave}
+            name="save-settings"
+            onClick={wrapper.find('#save-settings').prop('onClick')}
             type="button" value="Save" />
         </div>
-      </div>
-    );
-  }
-
-  it('renders', function() {
-    const comp = render();
-    expect(comp.output).toEqualJSX(expectedOutput(comp.instance));
+      </div>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('saves state', function() {
-    const comp = render();
-    comp.instance.setState({
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    instance.setState({
       'disable-cookie': true,
       'disable-auto-place': null
     });
-    comp.instance._handleSave();
+    instance._handleSave();
     assert.equal(storage.setItem.callCount, 1);
     assert.deepEqual(storage.setItem.args[0], ['disable-cookie', true]);
     assert.equal(storage.removeItem.callCount, 3);
