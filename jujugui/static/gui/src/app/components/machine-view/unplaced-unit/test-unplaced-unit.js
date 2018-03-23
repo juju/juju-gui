@@ -2,6 +2,7 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
@@ -11,39 +12,44 @@ const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewUnplacedUnit', function() {
-  let acl, sendAnalytics;
+  let acl, dbAPI, modelAPI, unitAPI;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    // The component is wrapped to handle drag and drop, but we just want to
+    // test the internal component so we access it via DecoratedComponent.
+    <MachineViewUnplacedUnit.DecoratedComponent
+      acl={options.acl || acl}
+      connectDragSource={jsTestUtils.connectDragSource}
+      dbAPI={options.dbAPI || dbAPI}
+      isDragging={options.isDragging === undefined ? false : options.isDragging}
+      modelAPI={options.modelAPI || modelAPI}
+      sendAnalytics={options.sendAnalytics || sinon.stub()}
+      unitAPI={options.unitAPI || unitAPI} />
+  );
 
   beforeEach(() => {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
-    sendAnalytics = sinon.stub();
+    dbAPI = {
+      machines: {}
+    };
+    modelAPI = {
+      createMachine: sinon.stub(),
+      placeUnit: sinon.stub()
+    };
+    unitAPI = {
+      icon: 'icon.svg',
+      removeUnit: sinon.stub(),
+      selectMachine: sinon.stub(),
+      unit: {
+        displayName: 'django/7',
+        id: 'django/7'
+      }
+    };
   });
 
   it('can render', function() {
-    const removeUnit = sinon.stub();
-    const unit = {displayName: 'django/7'};
-    const renderer = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <MachineViewUnplacedUnit.DecoratedComponent
-        acl={acl}
-        connectDragSource={jsTestUtils.connectDragSource}
-        dbAPI={{
-          machines: {}
-        }}
-        isDragging={false}
-        modelAPI={{
-          createMachine: sinon.stub(),
-          placeUnit: sinon.stub()
-        }}
-        sendAnalytics={sendAnalytics}
-        unitAPI={{
-          icon: 'icon.svg',
-          removeUnit: removeUnit,
-          selectMachine: sinon.stub(),
-          unit: unit
-        }} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
+    const items = wrapper.find('ButtonDropdown').prop('listItems');
     const expected = (
       <li className="machine-view__unplaced-unit">
         <img alt="django/7" className="machine-view__unplaced-unit-icon"
@@ -53,114 +59,37 @@ describe('MachineViewUnplacedUnit', function() {
           classes={['machine-view__unplaced-unit-dropdown']}
           listItems={[{
             label: 'Deploy to...',
-            action: instance._togglePlaceUnit
+            action: items[0].action
           }, {
             label: 'Destroy',
-            action: output.props.children[2].props.listItems[1].action
+            action: items[1].action
           }]} />
         {undefined}
         <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can display in dragged mode', function() {
-    const removeUnit = sinon.stub();
-    const unit = {displayName: 'django/7'};
-    const output = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <MachineViewUnplacedUnit.DecoratedComponent
-        acl={acl}
-        connectDragSource={jsTestUtils.connectDragSource}
-        dbAPI={{
-          machines: {}
-        }}
-        isDragging={true}
-        modelAPI={{
-          createMachine: sinon.stub(),
-          placeUnit: sinon.stub()
-        }}
-        sendAnalytics={sendAnalytics}
-        unitAPI={{
-          icon: 'icon.svg',
-          removeUnit: removeUnit,
-          selectMachine: sinon.stub(),
-          unit: unit
-        }} />);
-    const expected = (
-      <li className={'machine-view__unplaced-unit ' +
-        'machine-view__unplaced-unit--dragged'}>
-        {output.props.children}
-      </li>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({ isDragging: true });
+    assert.equal(
+      wrapper.prop('className').includes('machine-view__unplaced-unit--dragged'),
+      true);
   });
 
   it('can remove a unit', function() {
-    const removeUnit = sinon.stub();
-    const unit = {displayName: 'django/7', id: 'django/7'};
-    const output = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <MachineViewUnplacedUnit.DecoratedComponent
-        acl={acl}
-        connectDragSource={jsTestUtils.connectDragSource}
-        dbAPI={{
-          machines: {}
-        }}
-        isDragging={false}
-        modelAPI={{
-          createMachine: sinon.stub(),
-          placeUnit: sinon.stub()
-        }}
-        sendAnalytics={sendAnalytics}
-        unitAPI={{
-          icon: 'icon.svg',
-          removeUnit: removeUnit,
-          selectMachine: sinon.stub(),
-          unit: unit
-        }} />);
-    output.props.children[2].props.listItems[1].action();
+    const wrapper = renderComponent();
+    wrapper.find('ButtonDropdown').prop('listItems')[1].action();
+    const removeUnit = unitAPI.removeUnit;
     assert.equal(removeUnit.callCount, 1);
     assert.equal(removeUnit.args[0][0], 'django/7');
   });
 
   it('disables the menu items when read only', function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => true}));
-    const removeUnit = sinon.stub();
-    const unit = {displayName: 'django/7'};
-    const renderer = jsTestUtils.shallowRender(
-      // The component is wrapped to handle drag and drop, but we just want to
-      // test the internal component so we access it via DecoratedComponent.
-      <MachineViewUnplacedUnit.DecoratedComponent
-        acl={acl}
-        connectDragSource={jsTestUtils.connectDragSource}
-        dbAPI={{
-          machines: {}
-        }}
-        isDragging={false}
-        modelAPI={{
-          createMachine: sinon.stub(),
-          placeUnit: sinon.stub()
-        }}
-        sendAnalytics={sendAnalytics}
-        unitAPI={{
-          icon: 'icon.svg',
-          removeUnit: removeUnit,
-          selectMachine: sinon.stub(),
-          unit: unit
-        }} />, true);
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <ButtonDropdown
-        classes={['machine-view__unplaced-unit-dropdown']}
-        listItems={[{
-          label: 'Deploy to...',
-          action: null
-        }, {
-          label: 'Destroy',
-          action: null
-        }]} />);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    wrapper.find('ButtonDropdown').prop('listItems').forEach(item => {
+      assert.strictEqual(item.action, null);
+    });
   });
 });
