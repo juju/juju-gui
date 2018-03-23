@@ -2,18 +2,29 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const NotificationList = require('./notification-list');
 const NotificationListItem = require('./item/item');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('NotificationList', function() {
+  let clock, notification;
 
-  let clock;
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <NotificationList
+      notification={
+        options.notification === undefined ? notification : options.notification}
+      timeout={options.timeout} />
+  );
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
+    notification = {
+      key: '12345',
+      timestamp: '12345',
+      message: 'notification message',
+      level: 'info'
+    };
   });
 
   afterEach(() => {
@@ -21,84 +32,43 @@ describe('NotificationList', function() {
   });
 
   it('renders a list based on the notification passed in', () => {
-    const notification = {
-      timestamp: '12345',
-      message: 'notification message',
-      level: 'info'
-    };
-    const renderer = jsTestUtils.shallowRender(
-      <NotificationList
-        notification={notification} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const children = output.props.children;
+    const wrapper = renderComponent();
     const items = [
       <NotificationListItem
         key={notification.timestamp}
         message={notification.message}
         ref={'NotificationListItem' + notification.timestamp}
-        removeNotification={children[0].props.removeNotification}
+        removeNotification={wrapper.find('NotificationListItem').prop('removeNotification')}
         timeout={undefined}
         timestamp={notification.timestamp}
         type={notification.level} />];
     const expected = (
       <ul className="notification-list"
-        onMouseOut={instance._restartTimeouts}
-        onMouseOver={instance._clearTimeouts}>
+        onMouseOut={wrapper.prop('onMouseOut')}
+        onMouseOver={wrapper.prop('onMouseOver')}>
         {items}
       </ul>
     );
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render with no notifications', () => {
-    const output = jsTestUtils.shallowRender(
-      <NotificationList
-        notification={null} />);
-    assert.strictEqual(output.props.children[0], undefined);
+    const wrapper = renderComponent({ notification: null });
+    assert.equal(wrapper.find('NotificationListItem').length, 0);
   });
 
   it('can render notifications after rendering none', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <NotificationList
-        notification={null} />, true);
-    const output = renderer.getRenderOutput();
-    assert.strictEqual(output.props.children[0], undefined);
-    const notification = {
-      timestamp: '12345',
-      message: 'notification message',
-      level: 'info'
-    };
-    renderer.render(
-      <NotificationList
-        notification={notification} />);
-    const instance = renderer.getMountedInstance();
-    // Updates to state don't re-render when using the shallow renderer
-    // so just checking that the state gets updated.
-    assert.deepEqual(instance.state, {
-      notifications: {
-        12345: {
-          message: 'notification message',
-          type: 'info',
-          timestamp: '12345'
-        }
-      }
-    });
+    const wrapper = renderComponent({ notification: null });
+    assert.equal(wrapper.find('NotificationListItem').length, 0);
+    wrapper.setProps({ notification });
+    wrapper.update();
+    assert.equal(wrapper.find('NotificationListItem').length, 1);
   });
 
   it('times out non error messages', () => {
-    const notification = {
-      key: '12345',
-      timestamp: '12345',
-      message: 'notification message',
-      level: 'info'
-    };
     const timeout = 500;
-    const renderer = jsTestUtils.shallowRender(
-      <NotificationList
-        notification={notification}
-        timeout={timeout} />, this);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ timeout });
+    const instance = wrapper.instance();
     const key = 'NotificationListItem' + notification.timestamp;
     const refs = {};
     const hideStub = sinon.stub();
@@ -110,18 +80,10 @@ describe('NotificationList', function() {
   });
 
   it('does not time out error messages', () => {
-    const notification = {
-      key: '12345',
-      timestamp: '12345',
-      message: 'notification message',
-      level: 'error'
-    };
+    notification.level = 'error';
     const timeout = 500;
-    const renderer = jsTestUtils.shallowRender(
-      <NotificationList
-        notification={notification}
-        timeout={timeout} />, this);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ timeout });
+    const instance = wrapper.instance();
     const key = 'NotificationListItem' + notification.timestamp;
     const refs = {};
     const hideStub = sinon.stub();
@@ -133,18 +95,9 @@ describe('NotificationList', function() {
   });
 
   it('can clear and restart timeouts', () => {
-    const longTimeout = 10000;
-    const notification = {
-      timestamp: '12345',
-      message: 'notification message',
-      level: 'info'
-    };
-    const renderer = jsTestUtils.shallowRender(
-      <NotificationList
-        notification={notification}
-        timeout={longTimeout} />, this);
-    const instance = renderer.getMountedInstance();
-    renderer.getRenderOutput();
+    const timeout = 10000;
+    const wrapper = renderComponent({ timeout });
+    const instance = wrapper.instance();
     assert.equal(instance.timeouts.length, 1,
       'notification timeouts were not populated');
     instance._clearTimeouts();
@@ -154,6 +107,6 @@ describe('NotificationList', function() {
     assert.equal(instance.timeouts.length, 1,
       'notification timeouts were not restarted');
     // Let everything clear out.
-    clock.tick(longTimeout + 10);
+    clock.tick(timeout + 10);
   });
 });
