@@ -4,14 +4,11 @@
 
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmList = require('./charm-list');
-const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
-const Spinner = require('../../spinner/spinner');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Charm List', function() {
 
@@ -43,7 +40,7 @@ describe('Profile Charm List', function() {
   }]`;
   const charms = JSON.parse(rawCharmData);
 
-  function renderComponent(options={}) {
+  const renderComponent = (options = {}) => {
     const charmstoreList = (user, cb) => {
       assert.equal(user, 'hatch@external');
       cb(null, charms);
@@ -52,7 +49,7 @@ describe('Profile Charm List', function() {
     if (options.isActiveUsersProfile !== undefined) {
       isActiveUsersProfile = options.isActiveUsersProfile;
     }
-    return jsTestUtils.shallowRender(
+    return enzyme.shallow(
       <ProfileCharmList
         acl={options.acl || acl}
         addNotification={sinon.stub()}
@@ -71,7 +68,7 @@ describe('Profile Charm List', function() {
         storeUser={options.storeUser || sinon.stub()}
         user={
           options.user !== undefined ? options.user : 'hatch@external'} />, true);
-  }
+  };
   let acl;
 
   beforeEach(() => {
@@ -79,14 +76,12 @@ describe('Profile Charm List', function() {
   });
 
   it('can render', () => {
-    const renderer = renderComponent();
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="profile-charm-list">
         <div>
           <h2 className="profile__title">
-            My charms
+            {'My'} charms
             <span className="profile__title-count">
               ({3})
             </span>
@@ -134,12 +129,12 @@ describe('Profile Charm List', function() {
               }],
               expandedContent: (
                 <ProfileExpandedContent
-                  acl={instance.props.acl}
-                  addToModel={instance.props.addToModel}
+                  acl={acl}
+                  addToModel={sinon.stub()}
                   changeState={sinon.stub()}
                   entity={charms[0]}
                   generatePath={sinon.stub()}
-                  getModelName={instance.props.getModelName}
+                  getModelName={sinon.stub()}
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
@@ -202,12 +197,12 @@ describe('Profile Charm List', function() {
               }],
               expandedContent: (
                 <ProfileExpandedContent
-                  acl={instance.props.acl}
-                  addToModel={instance.props.addToModel}
+                  acl={acl}
+                  addToModel={sinon.stub()}
                   changeState={sinon.stub()}
                   entity={charms[1]}
                   generatePath={sinon.stub()}
-                  getModelName={instance.props.getModelName}
+                  getModelName={sinon.stub()}
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
@@ -256,12 +251,12 @@ describe('Profile Charm List', function() {
               }],
               expandedContent: (
                 <ProfileExpandedContent
-                  acl={instance.props.acl}
-                  addToModel={instance.props.addToModel}
+                  acl={acl}
+                  addToModel={sinon.stub()}
                   changeState={sinon.stub()}
                   entity={charms[2]}
                   generatePath={sinon.stub()}
-                  getModelName={instance.props.getModelName}
+                  getModelName={sinon.stub()}
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
@@ -283,74 +278,46 @@ describe('Profile Charm List', function() {
               extraData: 'privghost',
               key: 'cs:~hatch/privghost-1'
             }]}
-            sort={sinon.stub()} />
+            sort={wrapper.find('BasicTable').prop('sort')} />
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render when there are no charms', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       charmstoreList: sinon.stub().callsArgWith(1, null, null)
     });
-    const output = renderer.getRenderOutput();
     const expected = (
-      <div className="profile-charm-list">
-        <div>
-          <h2 className="profile__title">
-            My charms
-            <span className="profile__title-count">
-              ({0})
-            </span>
-          </h2>
-          <p>
-            Learn about&nbsp;
-            <a href="https://jujucharms.com/docs/stable/developer-getting-started"
-              target="_blank">
-              writing your own charm
-            </a>.
-          </p>
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+      <p className="profile-charm-list__onboarding">
+        Learn about&nbsp;
+        <a href="https://jujucharms.com/docs/stable/developer-getting-started"
+          target="_blank">
+          writing your own charm
+        </a>.
+      </p>);
+    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+    assert.compareJSX(wrapper.find('.profile-charm-list__onboarding'), expected);
   });
 
   it('can display a login message', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       charmstoreList: sinon.stub().callsArgWith(1, null, null),
       user: null
     });
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-charm-list">
-        <ProfileCharmstoreLogin
-          addNotification={sinon.stub()}
-          bakery={{}}
-          changeState={sinon.stub()}
-          charmstore={{getMacaroon: sinon.stub()}}
-          storeUser={sinon.stub()}
-          type="charms" />
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('ProfileCharmstoreLogin').length, 1);
   });
 
   it('updates the header if it is not your profile', () => {
-    const renderer = renderComponent({isActiveUsersProfile: false});
-    const output = renderer.getRenderOutput();
-    assert.equal(output.props.children.props.children[0].props.children[0], 'Their');
+    const wrapper = renderComponent({isActiveUsersProfile: false});
+    assert.equal(
+      wrapper.find('.profile__title').html().includes('Their charms'), true);
   });
 
   it('shows the spinner when loading', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       charmstoreList: sinon.stub()
     });
-    const instance = renderer.getMountedInstance();
-    instance.componentWillMount();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-charm-list">
-        <Spinner />
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('Spinner').length, 1);
   });
 });
