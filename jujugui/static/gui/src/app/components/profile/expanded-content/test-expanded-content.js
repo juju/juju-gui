@@ -3,13 +3,12 @@
 'use strict';
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const GenericButton = require('../../generic-button/generic-button');
 const Link = require('../../link/link');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile expanded content', function() {
 
@@ -69,25 +68,22 @@ describe('Profile expanded content', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
   });
 
-  function renderComponent(options={}) {
-    const entity = JSON.parse(options.entity);
-    return jsTestUtils.shallowRender(
-      <ProfileExpandedContent
-        acl={options.acl || acl}
-        addToModel={options.addToModel || sinon.stub()}
-        changeState={options.changeState || sinon.stub()}
-        entity={entity}
-        generatePath={options.generatePath || sinon.stub()}
-        getDiagramURL={options.getDiagramURL || sinon.stub().returns('diagram.svg')}
-        getModelName={options.getModelName || sinon.stub().returns('snazzy-model')}
-        topRow={options.topRow || (<div>Top row</div>)} />, true);
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ProfileExpandedContent
+      acl={options.acl || acl}
+      addToModel={options.addToModel || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      entity={JSON.parse(options.entity)}
+      generatePath={options.generatePath || sinon.stub()}
+      getDiagramURL={options.getDiagramURL || sinon.stub().returns('diagram.svg')}
+      getModelName={options.getModelName || sinon.stub().returns('snazzy-model')}
+      topRow={options.topRow || (<div>Top row</div>)} />
+  );
 
   it('can render for a bundle', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       entity: rawBundleData
     });
-    const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-expanded-content">
         <div>Top row</div>
@@ -99,14 +95,14 @@ describe('Profile expanded content', function() {
         <div className="six-col last-col">
           <div>
             <a href="example.com/bugs"
-              onClick={sinon.stub()}
+              onClick={wrapper.find('a').at(0).prop('onClick')}
               target="_blank">
               Bugs
             </a>
           </div>
           <div>
             <a href="example.com/"
-              onClick={sinon.stub()}
+              onClick={wrapper.find('a').at(1).prop('onClick')}
               target="_blank">
               Homepage
             </a>
@@ -138,7 +134,7 @@ describe('Profile expanded content', function() {
         </div>
         <div className="three-col prepend-nine last-col">
           <GenericButton
-            action={sinon.stub()}
+            action={wrapper.find('GenericButton').prop('action')}
             disabled={false}
             tooltip="Add this bundle to your current model"
             type="positive">
@@ -146,14 +142,13 @@ describe('Profile expanded content', function() {
           </GenericButton>
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render for a charm', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       entity: rawCharmData
     });
-    const output = renderer.getRenderOutput();
     const expected = (
       <div className="profile-expanded-content">
         <div>Top row</div>
@@ -165,14 +160,14 @@ describe('Profile expanded content', function() {
         <div className="six-col last-col">
           <div>
             <a href="example.com/bugs"
-              onClick={sinon.stub()}
+              onClick={wrapper.find('a').at(0).prop('onClick')}
               target="_blank">
               Bugs
             </a>
           </div>
           <div>
             <a href="example.com/"
-              onClick={sinon.stub()}
+              onClick={wrapper.find('a').at(1).prop('onClick')}
               target="_blank">
               Homepage
             </a>
@@ -215,7 +210,7 @@ describe('Profile expanded content', function() {
         </div>
         <div className="three-col prepend-nine last-col">
           <GenericButton
-            action={sinon.stub()}
+            action={wrapper.find('GenericButton').prop('action')}
             disabled={false}
             tooltip="Add this bundle to your current model"
             type="positive">
@@ -223,83 +218,14 @@ describe('Profile expanded content', function() {
           </GenericButton>
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render for a charm without entity description', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       entity: rawCharmDataWithoutEntityDesc
     });
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-expanded-content">
-        <div>Top row</div>
-        <div className="six-col">
-          <EntityContentDiagram
-            diagramUrl="diagram.svg" />
-        </div>
-        <div className="six-col last-col">
-          <div>
-            <a href="example.com/bugs"
-              onClick={sinon.stub()}
-              target="_blank">
-              Bugs
-            </a>
-          </div>
-          <div>
-            <a href="example.com/"
-              onClick={sinon.stub()}
-              target="_blank">
-              Homepage
-            </a>
-          </div>
-          <p className="profile-expanded-content__permissions-title">
-            Writeable:
-          </p>
-          <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission"
-              key="hatch">
-              <Link changeState={sinon.stub()}
-                clickState={{
-                  hash: null,
-                  profile: 'hatch'
-                }}
-                generatePath={sinon.stub()}>
-                hatch
-              </Link>
-            </li>
-          </ul>
-          <p className="profile-expanded-content__permissions-title">
-            Readable:
-          </p>
-          <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission">
-              everyone
-            </li>
-            <li className="profile-expanded-content__permission"
-              key="hatch">
-              <Link changeState={sinon.stub()}
-                clickState={{
-                  hash: null,
-                  profile: 'hatch'
-                }}
-                generatePath={sinon.stub()}>
-                hatch
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="three-col prepend-nine last-col">
-          <GenericButton
-            action={sinon.stub()}
-            disabled={false}
-            tooltip="Add this bundle to your current model"
-            type="positive">
-            Add to snazzy-model
-          </GenericButton>
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('.profile-expanded-content__entity-desc').length, 0);
   });
 
   it('can render for a charm without bug/home links', () => {
@@ -312,77 +238,21 @@ describe('Profile expanded content', function() {
       },
       "name": "failtester"
     }`;
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       entity: rawCharmData
     });
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-expanded-content">
-        <div>Top row</div>
-        <div className="six-col">
-          <EntityContentDiagram
-            diagramUrl="diagram.svg" />
-        </div>
-        <div className="six-col last-col">
-          <p className="profile-expanded-content__permissions-title">
-            Writeable:
-          </p>
-          <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission"
-              key="hatch">
-              <Link changeState={sinon.stub()}
-                clickState={{
-                  hash: null,
-                  profile: 'hatch'
-                }}
-                generatePath={sinon.stub()}>
-                hatch
-              </Link>
-            </li>
-          </ul>
-          <p className="profile-expanded-content__permissions-title">
-            Readable:
-          </p>
-          <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission">
-              everyone
-            </li>
-            <li className="profile-expanded-content__permission"
-              key="hatch">
-              <Link changeState={sinon.stub()}
-                clickState={{
-                  hash: null,
-                  profile: 'hatch'
-                }}
-                generatePath={sinon.stub()}>
-                hatch
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="three-col prepend-nine last-col">
-          <GenericButton
-            action={sinon.stub()}
-            disabled={false}
-            tooltip="Add this bundle to your current model"
-            type="positive">
-            Add to snazzy-model
-          </GenericButton>
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('a').length, 0);
   });
 
   it('can deploy an entity', () => {
     const changeState = sinon.stub();
     const addToModel = sinon.stub();
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       changeState: changeState,
       addToModel: addToModel,
       entity: rawBundleData
     });
-    const output = renderer.getRenderOutput();
-    output.props.children[3].props.children.props.action();
+    wrapper.find('GenericButton').props().action();
     assert.equal(addToModel.callCount, 1);
     assert.equal(addToModel.args[0][0], 'cs:~lazypower/bundle/logstash-core-1');
     assert.equal(changeState.callCount, 1);
