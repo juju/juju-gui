@@ -3,15 +3,12 @@
 'use strict';
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const BasicTable = require('../../basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
-const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const ProfileBundleList = require('./bundle-list');
-const Spinner = require('../../spinner/spinner');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Profile Bundle List', function() {
   const rawBundleData = `[{
@@ -68,7 +65,7 @@ describe('Profile Bundle List', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
   });
 
-  function renderComponent(options={}) {
+  const renderComponent = (options = {}) => {
     const charmstoreList = (user, cb) => {
       assert.equal(user, 'lazypower@external');
       cb(null, bundles);
@@ -77,7 +74,7 @@ describe('Profile Bundle List', function() {
     if (options.isActiveUsersProfile !== undefined) {
       isActiveUsersProfile = options.isActiveUsersProfile;
     }
-    return jsTestUtils.shallowRender(
+    return enzyme.shallow(
       <ProfileBundleList
         acl={options.acl || acl}
         addNotification={sinon.stub()}
@@ -96,18 +93,16 @@ describe('Profile Bundle List', function() {
         isActiveUsersProfile={isActiveUsersProfile}
         storeUser={options.storeUser || sinon.stub()}
         user={
-          options.user !== undefined ? options.user : 'lazypower@external'} />, true);
-  }
+          options.user !== undefined ? options.user : 'lazypower@external'} />);
+  };
 
   it('can render', () => {
-    const renderer = renderComponent();
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     const expected = (
       <div className="profile-bundle-list">
         <div>
           <h2 className="profile__title">
-            My bundles
+            {'My'} bundles
             <span className="profile__title-count">
               ({2})
             </span>
@@ -178,13 +173,13 @@ describe('Profile Bundle List', function() {
               }],
               expandedContent: (
                 <ProfileExpandedContent
-                  acl={instance.props.acl}
-                  addToModel={instance.props.addToModel}
+                  acl={acl}
+                  addToModel={sinon.stub()}
                   changeState={sinon.stub()}
                   entity={bundles[0]}
                   generatePath={sinon.stub()}
                   getDiagramURL={sinon.stub()}
-                  getModelName={instance.props.getModelName}
+                  getModelName={sinon.stub()}
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
@@ -246,13 +241,13 @@ describe('Profile Bundle List', function() {
               }],
               expandedContent: (
                 <ProfileExpandedContent
-                  acl={instance.props.acl}
-                  addToModel={instance.props.addToModel}
+                  acl={acl}
+                  addToModel={sinon.stub()}
                   changeState={sinon.stub()}
                   entity={bundles[1]}
                   generatePath={sinon.stub()}
                   getDiagramURL={sinon.stub()}
-                  getModelName={instance.props.getModelName}
+                  getModelName={sinon.stub()}
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
@@ -277,74 +272,46 @@ describe('Profile Bundle List', function() {
               extraData: 'swarm-core',
               key: 'cs:~lazypower/bundle/swarm-core-1'
             }]}
-            sort={sinon.stub()} />
+            sort={wrapper.find('BasicTable').prop('sort')} />
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render without any bundles', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       charmstoreList: sinon.stub().callsArgWith(1, null, null)
     });
-    const output = renderer.getRenderOutput();
     const expected = (
-      <div className="profile-bundle-list">
-        <div>
-          <h2 className="profile__title">
-            My bundles
-            <span className="profile__title-count">
-              ({0})
-            </span>
-          </h2>
-          <p>
-            Learn about&nbsp;
-            <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
-              target="_blank">
-              writing your own bundle
-            </a>.
-          </p>
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+      <p className="profile-bundle-list__onboarding">
+        Learn about&nbsp;
+        <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
+          target="_blank">
+          writing your own bundle
+        </a>.
+      </p>);
+    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+    assert.compareJSX(wrapper.find('.profile-bundle-list__onboarding'), expected);
   });
 
   it('can display a login message', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       charmstoreList: sinon.stub().callsArgWith(1, null, null),
       user: null
     });
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-bundle-list">
-        <ProfileCharmstoreLogin
-          addNotification={sinon.stub()}
-          bakery={{}}
-          changeState={sinon.stub()}
-          charmstore={{getMacaroon: sinon.stub()}}
-          storeUser={sinon.stub()}
-          type="bundles" />
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('ProfileCharmstoreLogin').length, 1);
   });
 
   it('updates the header if it is not your profile', () => {
-    const renderer = renderComponent({isActiveUsersProfile: false});
-    const output = renderer.getRenderOutput();
-    assert.equal(output.props.children.props.children[0].props.children[0], 'Their');
+    const wrapper = renderComponent({isActiveUsersProfile: false});
+    assert.equal(
+      wrapper.find('.profile__title').html().includes('Their bundles'), true);
   });
 
   it('can display a spinner when loading', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       charmstoreList: sinon.stub()
     });
-    const instance = renderer.getMountedInstance();
-    instance.componentWillMount();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-bundle-list">
-        <Spinner />
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.equal(wrapper.find('Spinner').length, 1);
   });
 });
