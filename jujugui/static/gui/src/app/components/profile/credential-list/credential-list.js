@@ -266,12 +266,14 @@ class ProfileCredentialList extends React.Component {
       return null;
     }
     return (
-      <ProfileCredentialListDelete
-        addNotification={this.props.addNotification}
-        credential={credential}
-        onCancel={this._setDeleteCredential.bind(this)}
-        onCredentialDeleted={this._onCredentialDeleted.bind(this)}
-        revokeCloudCredential={this.props.controllerAPI.revokeCloudCredential} />);
+      <div className="profile-credential-list__delete">
+        <ProfileCredentialListDelete
+          addNotification={this.props.addNotification}
+          credential={credential}
+          onCancel={this._setDeleteCredential.bind(this)}
+          onCredentialDeleted={this._onCredentialDeleted.bind(this)}
+          revokeCloudCredential={this.props.controllerAPI.revokeCloudCredential} />
+      </div>);
   }
 
   /**
@@ -336,25 +338,27 @@ class ProfileCredentialList extends React.Component {
     });
 
     return (
-      <BasicTable
-        headerClasses={['profile__entity-table-header-row']}
-        headerColumnClasses={['profile__entity-table-header-column']}
-        headers={[{
-          content: 'Name',
-          columnSize: 6
-        }, {
-          content: 'Provider',
-          columnSize: 2
-        }, {
-          content: 'Used by',
-          columnSize: 3
-        }, {
-          content: 'Action',
-          columnSize: 1
-        }]}
-        rowClasses={['profile__entity-table-row']}
-        rowColumnClasses={['profile__entity-table-column']}
-        rows={rows} />
+      <div className="profile-credential-list__list">
+        <BasicTable
+          headerClasses={['profile__entity-table-header-row']}
+          headerColumnClasses={['profile__entity-table-header-column']}
+          headers={[{
+            content: 'Name',
+            columnSize: 6
+          }, {
+            content: 'Provider',
+            columnSize: 2
+          }, {
+            content: 'Used by',
+            columnSize: 3
+          }, {
+            content: 'Action',
+            columnSize: 1
+          }]}
+          rowClasses={['profile__entity-table-row']}
+          rowColumnClasses={['profile__entity-table-column']}
+          rows={rows} />
+      </div>
     );
   }
 
