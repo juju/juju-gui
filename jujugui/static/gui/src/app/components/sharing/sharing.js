@@ -321,25 +321,27 @@ class Sharing extends React.Component {
 
   render() {
     return (
-      <Popup
-        className="sharing__popup"
-        close={this.props.closeHandler}
-        title="Share">
-        {this._generateInvite()}
-        <div className="sharing__users-header">
-          <div className="sharing__users-header-user">User</div>
-          <div className="sharing__users-header-access">Access</div>
-        </div>
-        <div className="sharing__users">
-          {this._generateUsersWithAccess()}
-        </div>
-        <GenericButton
-          action={this.props.closeHandler}
-          extraClasses="right"
-          type="inline-neutral">
-          Done
-        </GenericButton>
-      </Popup>
+      <div>
+        <Popup
+          className="sharing__popup"
+          close={this.props.closeHandler}
+          title="Share">
+          {this._generateInvite()}
+          <div className="sharing__users-header">
+            <div className="sharing__users-header-user">User</div>
+            <div className="sharing__users-header-access">Access</div>
+          </div>
+          <div className="sharing__users">
+            {this._generateUsersWithAccess()}
+          </div>
+          <GenericButton
+            action={this.props.closeHandler}
+            extraClasses="right"
+            type="inline-neutral">
+            Done
+          </GenericButton>
+        </Popup>
+      </div>
     );
   }
 };
