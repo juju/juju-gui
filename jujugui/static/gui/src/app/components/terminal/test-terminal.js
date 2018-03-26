@@ -16,19 +16,29 @@ describe('Terminal', () => {
     websocket.prototype.close = sinon.stub();
   }
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Terminal
-      addNotification={options.addNotification || sinon.stub()}
-      address={options.address || '1.2.3.4:123'}
-      changeState={options.changeState || sinon.stub()}
-      commands={options.commands}
-      creds={options.creds || {
-        user: 'user',
-        password: 'password',
-        macaroons: {}
-      }}
-      WebSocket={options.websocket || websocket} />
-  );
+  const renderComponent = (options = {}) => {
+    const wrapper = enzyme.shallow(
+      <Terminal
+        addNotification={options.addNotification || sinon.stub()}
+        address={options.address || '1.2.3.4:123'}
+        changeState={options.changeState || sinon.stub()}
+        commands={options.commands}
+        creds={options.creds || {
+          user: 'user',
+          password: 'password',
+          macaroons: {}
+        }}
+        WebSocket={options.websocket || websocket} />,
+      { disableLifeCycleMethods: true }
+    );
+    const instance = wrapper.instance();
+    instance.refs = {
+      terminal: {
+        querySelector: sinon.stub().returns({ focus: sinon.stub() })
+      }
+    };
+    return wrapper;
+  };
 
   beforeEach(() => {
     setupWebsocket();
