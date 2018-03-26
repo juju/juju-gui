@@ -2,16 +2,24 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const GenericButton = require('../../generic-button/generic-button');
 const IconList = require('../../icon-list/icon-list');
 const SearchResultsItem = require('./item');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('SearchResultsItem', function() {
   let acl, item, generatePath;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <SearchResultsItem
+      acl={options.acl || acl}
+      addToModel={options.addToModel || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      generatePath={options.generatePath || generatePath}
+      item={options.item || item} />
+  );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -36,23 +44,15 @@ describe('SearchResultsItem', function() {
   });
 
   it('can render an item', function() {
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    const tags = output.props.children[1].props.children[1].props.children;
-    const series = output.props.children[2].props.children.props.children;
-    const owner = output.props.children[4].props.children.props.children[1];
-    const deploy = output.props.children[5].props.children;
+    const wrapper = renderComponent();
+    const tagLinks = wrapper.find('.tag-list a');
+    const seriesLinks = wrapper.find('.list-series__item a');
     var expected = (
       <li className="list-block__list--item charm">
         <a className="list-block__list--item-main-link"
           href="/u/spinach/apache2"
-          onClick={output.props.children[0].props.onClick}></a>
+          onClick={
+            wrapper.find('.list-block__list--item-main-link').prop('onClick')}></a>
         <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
@@ -62,14 +62,14 @@ describe('SearchResultsItem', function() {
             <li className="tag-list--item">
               <a className="list-block__list--item-link"
                 href="/u/spinach/apache2"
-                onClick={tags[0].props.children.props.onClick}>
+                onClick={tagLinks.at(0).prop('onClick')}>
                 tag1
               </a>
             </li>
             <li className="tag-list--item">
               <a className="list-block__list--item-link"
                 href="/u/spinach/apache2"
-                onClick={tags[1].props.children.props.onClick}>
+                onClick={tagLinks.at(1).prop('onClick')}>
                 tag2
               </a>
             </li>
@@ -82,13 +82,13 @@ describe('SearchResultsItem', function() {
                 key="vivid">
                 <a className="list-block__list--item-link"
                   href="/u/spinach/apache2"
-                  onClick={series[0].props.children.props.onClick}>vivid</a>
+                  onClick={seriesLinks.at(0).prop('onClick')}>vivid</a>
               </li>,
               <li className="list-series__item"
                 key="wily">
                 <a className="list-block__list--item-link"
                   href="/u/spinach/apache2"
-                  onClick={series[1].props.children.props.onClick}>wily</a>
+                  onClick={seriesLinks.at(1).prop('onClick')}>wily</a>
               </li>
             ]}
           </ul>
@@ -104,7 +104,7 @@ describe('SearchResultsItem', function() {
             {'By '}
             <a className="list-block__list--item-link"
               href="/u/spinach/apache2"
-              onClick={owner.props.onClick}
+              onClick={wrapper.find('.owner__column a').prop('onClick')}
               title="See other charms and bundles by test-owner">
               {item.owner}
             </a>
@@ -112,7 +112,7 @@ describe('SearchResultsItem', function() {
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
           <GenericButton
-            action={deploy.props.action}
+            action={wrapper.find('GenericButton').prop('action')}
             disabled={false}
             extraClasses="list-block__list--item-deploy-link"
             type="inline-neutral">
@@ -123,76 +123,18 @@ describe('SearchResultsItem', function() {
         </div>
       </li>
     );
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render an item with defaults for missing props', function() {
-    var changeState = sinon.stub();
     item.series = [];
     item.tags = null;
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    const owner = output.props.children[4].props.children.props.children[1];
-    const deploy = output.props.children[5].props.children;
-    var expected = (
-      <li className="list-block__list--item charm">
-        <a className="list-block__list--item-main-link"
-          href="/u/spinach/apache2"
-          onClick={output.props.children[0].props.onClick}></a>
-        <div className="four-col charm-name__column">
-          <h3 className="list-block__list--item-title">
-            mysql
-            <span className="special-flag"></span>
-          </h3>
-          <ul className="tag-list">
-            <span>{' '}</span>
-          </ul>
-        </div>
-        <div className="series__column four-col">
-          <ul className="list-series">
-            <li>&nbsp;</li>
-          </ul>
-        </div>
-        <div className="charm-logos__column list-block__column one-col">
-          <IconList
-            applications={[item]}
-            changeState={sinon.stub()}
-            generatePath={sinon.stub()} />
-        </div>
-        <div className="two-col owner__column list-block__column">
-          <p className="cell">
-            {'By '}
-            <a className="list-block__list--item-link"
-              href="/u/spinach/apache2"
-              onClick={owner.props.onClick}
-              title="See other charms and bundles by test-owner">
-              {item.owner}
-            </a>
-          </p>
-        </div>
-        <div className="one-col last-col list-block__list--item-deploy">
-          <GenericButton
-            action={deploy.props.action}
-            disabled={false}
-            extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
-            <SvgIcon
-              name="add-icon"
-              size="16" />
-          </GenericButton>
-        </div>
-      </li>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.tag-list--item').length, 0);
+    assert.equal(wrapper.find('.list-series__item').length, 0);
   });
 
   it('can render icons for a bundle', function() {
-    var changeState = sinon.stub();
     item.type = 'bundle';
     item.series = [];
     item.tags = null;
@@ -205,78 +147,18 @@ describe('SearchResultsItem', function() {
       id: 'cs:apache2',
       iconPath: 'apache2.svg'
     }];
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    const owner = output.props.children[4].props.children.props.children[1];
-    const deploy = output.props.children[5].props.children;
-    var expected = (
-      <li className="list-block__list--item bundle">
-        <a className="list-block__list--item-main-link"
-          href="/u/spinach/apache2"
-          onClick={output.props.children[0].props.onClick}></a>
-        <div className="four-col charm-name__column">
-          <h3 className="list-block__list--item-title">
-            mysql
-            <span className="special-flag"></span>
-          </h3>
-          <ul className="tag-list">
-            <span>{' '}</span>
-          </ul>
-        </div>
-        <div className="series__column two-col">
-          <ul className="list-series">
-            <li>&nbsp;</li>
-          </ul>
-        </div>
-        <div className="charm-logos__column list-block__column three-col">
-          <IconList
-            applications={item.applications}
-            changeState={sinon.stub()}
-            generatePath={sinon.stub()} />
-        </div>
-        <div className="two-col owner__column list-block__column">
-          <p className="cell">
-            {'By '}
-            <a className="list-block__list--item-link"
-              href="/u/spinach/apache2"
-              onClick={owner.props.onClick}
-              title="See other charms and bundles by test-owner">
-              {item.owner}
-            </a>
-          </p>
-        </div>
-        <div className="one-col last-col list-block__list--item-deploy">
-          <GenericButton
-            action={deploy.props.action}
-            disabled={false}
-            extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
-            <SvgIcon
-              name="add-icon"
-              size="16" />
-          </GenericButton>
-        </div>
-      </li>
-    );
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent();
+    assert.deepEqual(
+      wrapper.find('IconList').prop('applications'), item.applications);
   });
 
   it('can handle clicking on an item', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    output.props.children[0].props.onClick({preventDefault: preventDefault});
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.list-block__list--item-main-link').simulate('click', {
+      preventDefault: preventDefault
+    });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -289,15 +171,10 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on a series', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    const series = output.props.children[2].props.children.props.children;
-    series[0].props.children.props.onClick({preventDefault: preventDefault});
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.list-series__item a').at(0).simulate('click', {
+      preventDefault: preventDefault
+    });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -305,7 +182,9 @@ describe('SearchResultsItem', function() {
       search: null,
       store: 'u/test-owner/mysql/vivid'
     });
-    series[1].props.children.props.onClick({preventDefault: preventDefault});
+    wrapper.find('.list-series__item a').at(1).simulate('click', {
+      preventDefault: preventDefault
+    });
     assert.equal(changeState.callCount, 2);
     assert.equal(preventDefault.callCount, 2);
     assert.deepEqual(changeState.args[1][0], {
@@ -318,15 +197,10 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on a tag', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    output.props.children[1].props.children[1].props.children[0].props.children
-      .props.onClick({preventDefault: preventDefault});
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.tag-list a').at(0).simulate('click', {
+      preventDefault: preventDefault
+    });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -345,15 +219,10 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on an owner', function() {
     const changeState = sinon.stub();
     const preventDefault = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    output.props.children[4].props.children.props.children[1]
-      .props.onClick({preventDefault: preventDefault});
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('.owner__column a').at(0).simulate('click', {
+      preventDefault: preventDefault
+    });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -363,49 +232,30 @@ describe('SearchResultsItem', function() {
   });
 
   it('gives the correct class names for charm list item', function() {
-    const output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={sinon.stub()}
-        generatePath={generatePath}
-        item={item} />);
-
-    const seriesClass = output.props.children[2].props.className;
-    const iconsClass = output.props.children[3].props.className;
-    assert.equal(seriesClass, 'series__column four-col');
-    assert.equal(iconsClass,
-      'charm-logos__column list-block__column one-col');
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.find('.series__column').prop('className').includes('four-col'), true);
+    assert.equal(
+      wrapper.find('.charm-logos__column').prop('className').includes('one-col'), true);
   });
 
   it('gives the correct class names for bundle list item', function() {
     item.type = 'bundle';
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={sinon.stub()}
-        changeState={sinon.stub()}
-        generatePath={generatePath}
-        item={item} />);
-
-    const seriesClass = output.props.children[2].props.className;
-    const iconsClass = output.props.children[3].props.className;
-    assert.equal(seriesClass, 'series__column two-col');
-    assert.equal(iconsClass,
-      'charm-logos__column list-block__column three-col');
+    const wrapper = renderComponent();
+    assert.equal(
+      wrapper.find('.series__column').prop('className').includes('two-col'), true);
+    assert.equal(
+      wrapper.find('.charm-logos__column').prop('className').includes('three-col'), true);
   });
 
   it('can deploy an entity', function() {
     const changeState = sinon.stub();
     const addToModel = sinon.stub();
-    const output = jsTestUtils.shallowRender(
-      <SearchResultsItem
-        acl={acl}
-        addToModel={addToModel}
-        changeState={changeState}
-        generatePath={generatePath}
-        item={item} />);
-    output.props.children[5].props.children.props.action();
+    const wrapper = renderComponent({
+      addToModel,
+      changeState
+    });
+    wrapper.find('GenericButton').props().action();
     assert.equal(changeState.callCount, 1);
     assert.equal(addToModel.callCount, 1);
     assert.deepEqual(addToModel.args[0][0], 'mysql');
