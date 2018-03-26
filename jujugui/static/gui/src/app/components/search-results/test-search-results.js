@@ -2,210 +2,40 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const GenericButton = require('../generic-button/generic-button');
 const SearchResults = require('./search-results');
 const SearchResultsItem = require('./item/item');
 const SearchResultsSelectFilter = require('./select-filter/select-filter');
 const SearchResultsTypeFilter = require('./type-filter/type-filter');
-const Spinner = require('../spinner/spinner');
-
-const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('SearchResults', function() {
-  let series, acl, addToModel, generatePath;
+  let acl, addToModel, charmstoreSearch, generatePath, getName,
+      makeEntityModel, results;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <SearchResults
+      acl={options.acl || acl}
+      addToModel={options.addToModel || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
+      charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
+      generatePath={options.generatePath || generatePath}
+      getName={options.getName || getName}
+      makeEntityModel={options.makeEntityModel || makeEntityModel}
+      query={options.query || 'spinach'}
+      series={options.series}
+      seriesList={options.seriesList || {}}
+      setPageTitle={options.setPageTitle || sinon.stub()}
+      sort={options.sort}
+      type={options.type} />
+  );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     addToModel = sinon.stub();
     generatePath = sinon.stub();
-    series = {
-      vivid: {name: 'Vivid Vervet 15.04'},
-      wily: {name: 'Wily Werewolf 15.10'}
-    };
-  });
-
-  describe('functional tests', function() {
-    it('can initially show the spinner', function() {
-      var query = 'spinach';
-      var output = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={sinon.stub()}
-          charmstoreSearch={sinon.stub()}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={sinon.stub()}
-          query={query}
-          seriesList={{}}
-          setPageTitle={sinon.stub()} />);
-      assert.deepEqual(output,
-        <div className="search-results">
-          <div className="twelve-col initial-load-container last-col">
-            <Spinner />
-          </div>
-        </div>);
-    });
-
-    it('can display a message if there are no results', function() {
-      var charmstoreSearch = sinon.stub().callsArgWith(1, null, []);
-      var shallowRenderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={sinon.stub()}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={sinon.stub()}
-          query="nothing here"
-          seriesList={{}}
-          setPageTitle={sinon.stub()} />, true);
-      shallowRenderer.getMountedInstance().componentDidMount();
-      var output = shallowRenderer.getRenderOutput();
-      assert.deepEqual(output,
-        <div className="search-results">
-          <div className="twelve-col no-results-container last-col">
-            <h1 className="row-title">
-              Your search for <strong>nothing here</strong>
-              {' '}
-              returned 0 results
-            </h1>
-            <p>
-              Try a more specific or different query, try other keywords or
-              learn how to
-              {' '}
-              <a href="http://jujucharms.com/docs/authors-charm-writing">
-                create your own solution
-              </a>.
-            </p>
-          </div>
-        </div>);
-    });
-
-    it('can display a message if there is a loading error', function() {
-      var charmstoreSearch = sinon.stub().callsArgWith(1, 'bad wolf', []);
-      var shallowRenderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={sinon.stub()}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={sinon.stub()}
-          query="nothing here"
-          seriesList={{}}
-          setPageTitle={sinon.stub()} />, true);
-      var instance = shallowRenderer.getMountedInstance();
-      instance.componentDidMount();
-      var output = shallowRenderer.getRenderOutput();
-      const expected = (
-        <div className="search-results">
-          <div className="twelve-col no-results-container last-col">
-            <h1 className="row-title">
-              Something went wrong
-            </h1>
-            <p>
-              For some reason the search failed. You could try searching at
-              {' '}
-              <a href="http://jujucharms.com/store">
-                http://jujucharms.com
-              </a>
-              {' '}or go{' '}
-              <span className="link"
-                onClick={instance._handleBack}>
-                back
-              </span>.
-            </p>
-          </div>
-        </div>);
-      expect(output).toEqualJSX(expected);
-    });
-
-    it('loads search results', function() {
-      var query = 'spinach';
-      var result = {
-        name: 'spinach',
-        displayName: 'spinach',
-        url: 'http://example.com/spinach',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: true,
-        id: 'spinach',
-        type: 'charm'
-      };
-      var mockModel = {};
-      mockModel.toEntity = sinon.stub().returns(result);
-      var mockData = [mockModel];
-      var makeEntityModel = sinon.stub().returns(mockModel);
-      var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
-
-      var shallowRenderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={sinon.stub()}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={makeEntityModel}
-          query={query}
-          seriesList={series}
-          setPageTitle={sinon.stub()} />, true);
-      var instance = shallowRenderer.getMountedInstance();
-      instance.componentDidMount();
-      shallowRenderer.getRenderOutput();
-
-      assert.isTrue(charmstoreSearch.calledOnce,
-        'search function not called');
-      assert.isTrue(mockModel.toEntity.callCount == mockData.length,
-        'all models not converted to plain old objects');
-      var data = instance.state.data;
-      assert.equal(data.text, query,
-        'search text not set to the query');
-      assert.equal(data.solutionsCount, mockData.length,
-        'total results returned is incorrect');
-    });
-
-    const changeState = sinon.spy();
-    const getName = val => {
-      return val;
-    };
-    const sortItems = [{
-      label: 'Default',
-      value: ''
-    }, {
-      label: 'Most popular',
-      value: '-downloads'
-    }, {
-      label: 'Least popular',
-      value: 'downloads'
-    }, {
-      label: 'Name (a-z)',
-      value: 'name'
-    }, {
-      label: 'Name (z-a)',
-      value: '-name'
-    }, {
-      label: 'Author (a-z)',
-      value: 'owner'
-    }, {
-      label: 'Author (z-a)',
-      value: '-owner'
-    }];
-    const seriesItems = [{
-      label: 'All',
-      value: ''
-    }, {
-      label: 'Vivid Vervet 15.04',
-      value: 'vivid'
-    }, {
-      label: 'Wily Werewolf 15.10',
-      value: 'wily'
-    }];
-    const results = [{
+    results = [{
       name: 'mysql-one',
       displayName: 'mysql-one',
       url: 'http://example.com/mysql-one',
@@ -255,187 +85,244 @@ describe('SearchResults', function() {
     }, {
       toEntity: sinon.stub().returns(results[3])
     }];
-    const charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
-    const makeEntityModel = sinon.stub().returnsArg(0);
+    charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
+    makeEntityModel = sinon.stub().returnsArg(0);
+    getName = val => {
+      return val;
+    };
+  });
 
-    function renderedResults(
-      changeState,
-      sortItems,
-      seriesItems,
-      results,
-      showCommunity) {
-      return (<div className="search-results">
-        <div className="row no-padding-top">
-          <div className="inner-wrapper list-block">
-            <div className="twelve-col list-block__title no-margin-bottom">
-              Your search for &lsquo;{'mysql'}&rsquo; returned {4}{' '}
-              results.
-            </div>
-            <div className="list-block__filters">
-              <SearchResultsTypeFilter
-                changeState={changeState}
-                currentType="charm" />
-              <div className="six-col last-col">
-                <div className="list-block__filters--selects">
-                  <form>
-                    <SearchResultsSelectFilter
-                      changeState={changeState}
-                      currentValue="-name"
-                      filter='sort'
-                      items={sortItems}
-                      label="Sort by" />
-                    <SearchResultsSelectFilter
-                      changeState={changeState}
-                      currentValue="wily"
-                      filter='series'
-                      items={seriesItems}
-                      label="Series" />
-                  </form>
+  describe('functional tests', function() {
+    it('can initially show the spinner', function() {
+      const wrapper = renderComponent({ charmstoreSearch: sinon.stub() });
+      assert.equal(wrapper.find('Spinner').length, 1);
+    });
+
+    it('can display a message if there are no results', function() {
+      charmstoreSearch.callsArgWith(1, null, []);
+      const wrapper = renderComponent();
+      const expected = (
+        <div className="twelve-col no-results-container last-col">
+          <h1 className="row-title">
+            Your search for <strong>spinach</strong>
+            {' '}
+            returned 0 results
+          </h1>
+          <p>
+            Try a more specific or different query, try other keywords or
+            learn how to
+            {' '}
+            <a href="http://jujucharms.com/docs/authors-charm-writing">
+              create your own solution
+            </a>.
+          </p>
+        </div>);
+      assert.compareJSX(wrapper.find('.no-results-container'), expected);
+    });
+
+    it('can display a message if there is a loading error', function() {
+      charmstoreSearch.callsArgWith(1, 'bad wolf', []);
+      const wrapper = renderComponent();
+      const expected = (
+        <div className="twelve-col no-results-container last-col">
+          <h1 className="row-title">
+            Something went wrong
+          </h1>
+          <p>
+            For some reason the search failed. You could try searching at
+            {' '}
+            <a href="http://jujucharms.com/store">
+              http://jujucharms.com
+            </a>
+            {' '}or go{' '}
+            <span className="link"
+              onClick={wrapper.find('.link').prop('onClick')}>
+              back
+            </span>.
+          </p>
+        </div>);
+      assert.compareJSX(wrapper.find('.no-results-container'), expected);
+    });
+
+    it('loads search results', function() {
+      var result = {
+        name: 'spinach',
+        displayName: 'spinach',
+        url: 'http://example.com/spinach',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'spinach',
+        type: 'charm'
+      };
+      var mockModel = {};
+      mockModel.toEntity = sinon.stub().returns(result);
+      var mockData = [mockModel];
+      var makeEntityModel = sinon.stub().returns(mockModel);
+      var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
+      const wrapper = renderComponent({
+        charmstoreSearch,
+        makeEntityModel
+      });
+      const instance = wrapper.instance();
+      assert.isTrue(charmstoreSearch.calledOnce,
+        'search function not called');
+      assert.isTrue(mockModel.toEntity.callCount == mockData.length,
+        'all models not converted to plain old objects');
+      var data = instance.state.data;
+      assert.equal(data.text, 'spinach',
+        'search text not set to the query');
+      assert.equal(data.solutionsCount, mockData.length,
+        'total results returned is incorrect');
+    });
+
+    it('can render the promulgated search results', function() {
+      const sortItems = [{
+        label: 'Default',
+        value: ''
+      }, {
+        label: 'Most popular',
+        value: '-downloads'
+      }, {
+        label: 'Least popular',
+        value: 'downloads'
+      }, {
+        label: 'Name (a-z)',
+        value: 'name'
+      }, {
+        label: 'Name (z-a)',
+        value: '-name'
+      }, {
+        label: 'Author (a-z)',
+        value: 'owner'
+      }, {
+        label: 'Author (z-a)',
+        value: '-owner'
+      }];
+      const seriesItems = [{
+        label: 'All',
+        value: ''
+      }, {
+        label: 'Vivid Vervet 15.04',
+        value: 'vivid'
+      }, {
+        label: 'Wily Werewolf 15.10',
+        value: 'wily'
+      }];
+      const wrapper = renderComponent({
+        series: 'wily',
+        sort: '-name',
+        type: 'charm'
+      });
+      const expected = (
+        <div className="search-results">
+          <div className="row no-padding-top">
+            <div className="inner-wrapper list-block">
+              <div className="twelve-col list-block__title no-margin-bottom">
+                Your search for &lsquo;{'spinach'}&rsquo; returned {4}{' '}
+                results.
+              </div>
+              <div className="list-block__filters">
+                <SearchResultsTypeFilter
+                  changeState={sinon.stub()}
+                  currentType="charm" />
+                <div className="six-col last-col">
+                  <div className="list-block__filters--selects">
+                    <form>
+                      <SearchResultsSelectFilter
+                        changeState={sinon.stub()}
+                        currentValue="-name"
+                        filter='sort'
+                        items={sortItems}
+                        label="Sort by" />
+                      <SearchResultsSelectFilter
+                        changeState={sinon.stub()}
+                        currentValue="wily"
+                        filter='series'
+                        items={seriesItems}
+                        label="Series" />
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="entity-search-results">
-              <div>
-                <div className="clearfix promulgated-results">
-                  <h4>
-                    {'Recommended'}{' '}
-                    <span className="count">({2})</span>
-                  </h4>
-                  <ul className="list-block__list">
-                    <SearchResultsItem
-                      acl={acl}
-                      addToModel={addToModel}
-                      changeState={changeState}
-                      generatePath={generatePath}
-                      item={results[0]}
-                      key="~test-owner/mysql-one" />
-                    <SearchResultsItem
-                      acl={acl}
-                      addToModel={addToModel}
-                      changeState={changeState}
-                      generatePath={generatePath}
-                      item={results[1]}
-                      key="~test-owner/mysql-two" />
-                  </ul>
-                </div>
-                <div className="clearfix community-results">
-                  <div className="button-wrapper--ruled">
-                    <GenericButton
-                      action={sinon.stub()}
-                      extraClasses="show-community-button"
-                      type="inline-neutral">
-                      {(showCommunity ? 'Hide' : `Show ${2}`) +
-                        ' community results'}
-                    </GenericButton>
-                  </div>
-                  <div
-                    className={'clearfix' + (showCommunity ? '' : ' hidden')}>
-                    <h4>Community{' '}<span className="count">({2})</span></h4>
+              <div className="entity-search-results">
+                <div>
+                  <div className="clearfix promulgated-results">
+                    <h4>
+                      Recommended <span className="count">({2})</span>
+                    </h4>
                     <ul className="list-block__list">
                       <SearchResultsItem
                         acl={acl}
                         addToModel={addToModel}
-                        changeState={changeState}
+                        changeState={sinon.stub()}
                         generatePath={generatePath}
-                        item={results[2]}
-                        key="~test-owner/mysql-three" />
+                        item={results[0]}
+                        key="~test-owner/mysql-one" />
                       <SearchResultsItem
                         acl={acl}
                         addToModel={addToModel}
-                        changeState={changeState}
+                        changeState={sinon.stub()}
                         generatePath={generatePath}
-                        item={results[3]}
-                        key="~test-owner/mysql-four" />
+                        item={results[1]}
+                        key="~test-owner/mysql-two" />
                     </ul>
+                  </div>
+                  <div className="clearfix community-results">
+                    <div className="button-wrapper--ruled">
+                      <GenericButton
+                        action={wrapper.find('GenericButton').prop('action')}
+                        extraClasses="show-community-button"
+                        type="inline-neutral">
+                        Show 2 community results
+                      </GenericButton>
+                    </div>
+                    <div
+                      className="clearfix community-results__content hidden">
+                      <h4>Community <span className="count">({2})</span></h4>
+                      <ul className="list-block__list">
+                        <SearchResultsItem
+                          acl={acl}
+                          addToModel={addToModel}
+                          changeState={sinon.stub()}
+                          generatePath={generatePath}
+                          item={results[2]}
+                          key="~test-owner/mysql-three" />
+                        <SearchResultsItem
+                          acl={acl}
+                          addToModel={addToModel}
+                          changeState={sinon.stub()}
+                          generatePath={generatePath}
+                          item={results[3]}
+                          key="~test-owner/mysql-four" />
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>);
-    }
-
-    it('can render the promulgated search results', function() {
-      const shallowRenderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={addToModel}
-          changeState={changeState}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={getName}
-          makeEntityModel={makeEntityModel}
-          query="mysql"
-          series="wily"
-          seriesList={series}
-          setPageTitle={sinon.stub()}
-          sort="-name"
-          type="charm" />, true);
-      const instance = shallowRenderer.getMountedInstance();
-      instance.componentDidMount();
-      const output = shallowRenderer.getRenderOutput();
-      const expected = renderedResults(changeState, sortItems,
-        seriesItems, results, false);
-      expect(output).toEqualJSX(expected);
+        </div>);
+      assert.compareJSX(wrapper, expected);
     });
 
     it('will show community results', function() {
-      const shallowRenderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={addToModel}
-          changeState={changeState}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={getName}
-          makeEntityModel={makeEntityModel}
-          query="mysql"
-          series="wily"
-          seriesList={series}
-          setPageTitle={sinon.stub()}
-          sort="-name"
-          type="charm" />, true);
-      const instance = shallowRenderer.getMountedInstance();
-      instance.componentDidMount();
+      const wrapper = renderComponent();
+      const instance = wrapper.instance();
       instance._toggleCommunityResults();
-      const output = shallowRenderer.getRenderOutput();
-      const expected = renderedResults(changeState, sortItems,
-        seriesItems, results, true);
-      expect(output).toEqualJSX(expected);
+      wrapper.update();
+      assert.equal(
+        wrapper.find('.community-results__content').prop('className').includes(
+          'hidden'),
+        false);
     });
 
     it('aborts existing requests before making new ones', function() {
       const abort = sinon.stub();
-      const charmstoreSearch = sinon.stub().returns({abort: abort});
-      const renderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={sinon.stub()}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={makeEntityModel}
-          query="apache2"
-          seriesList={series}
-          setPageTitle={sinon.stub()} />, true);
-      const instance = renderer.getMountedInstance();
-      instance.componentDidMount();
+      charmstoreSearch.returns({abort: abort});
+      const wrapper = renderComponent();
       assert.equal(abort.callCount, 0);
-      renderer.render(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={sinon.stub()}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={makeEntityModel}
-          query="apache2"
-          seriesList={series}
-          setPageTitle={sinon.stub()} />);
-      renderer.getRenderOutput();
+      wrapper.setProps({ query: 'apache2' });
       assert.equal(abort.callCount, 1);
     });
   });
@@ -712,35 +599,9 @@ describe('SearchResults', function() {
 
     it('will abort the request when unmounting', function() {
       var abort = sinon.stub();
-      var changeState = sinon.stub();
-      var query = 'spinach';
-      var result = {
-        name: 'spinach',
-        displayName: 'spinach',
-        url: 'http://example.com/spinach',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: true,
-        series: 'wily',
-        type: 'charm'
-      };
-      var mockModel = {};
-      mockModel.toEntity = sinon.stub().returns(result);
-      var charmstoreSearch = sinon.stub().returns({abort: abort});
-      var shallowRenderer = jsTestUtils.shallowRender(
-        <SearchResults
-          acl={acl}
-          addToModel={sinon.stub()}
-          changeState={changeState}
-          charmstoreSearch={charmstoreSearch}
-          generatePath={generatePath}
-          getName={sinon.stub()}
-          makeEntityModel={sinon.stub()}
-          query={query}
-          seriesList={{}}
-          setPageTitle={sinon.stub()} />, true);
-      shallowRenderer.getMountedInstance().componentDidMount();
-      shallowRenderer.unmount();
+      charmstoreSearch.returns({abort: abort});
+      const wrapper = renderComponent();
+      wrapper.unmount();
       assert.equal(abort.callCount, 1);
     });
 
