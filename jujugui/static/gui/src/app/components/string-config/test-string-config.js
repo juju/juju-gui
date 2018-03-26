@@ -2,14 +2,20 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const StringConfig = require('./string-config');
 const StringConfigInput = require('./input/input');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('StringConfig', function() {
   let option;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <StringConfig
+      config={options.config === undefined ? 'the value' : options.config}
+      disabled={options.disabled}
+      option={options.option || option} />
+  );
 
   beforeEach(() => {
     option = {
@@ -20,133 +26,84 @@ describe('StringConfig', function() {
   });
 
   it('renders a string config', function() {
-    var config = 'the value';
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config={config}
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var typeString = ` (${option.type})`;
     var expected = (
       <div className="string-config">
         <span className="string-config__label">{option.key}{typeString}</span>
         <div className="string-config--value">
           <StringConfigInput
-            config={config}
+            config="the value"
             disabled={false}
             ref="editableInput"
-            setValue={instance._setValue} />
+            setValue={wrapper.find('StringConfigInput').prop('setValue')} />
         </div>
         <span className="string-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
         </span>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can handle a string config without a config value', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config={undefined}
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="string-config--value">
-        <StringConfigInput
-          config={undefined}
-          disabled={false}
-          ref="editableInput"
-          setValue={instance._setValue} />
-      </div>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    const wrapper = renderComponent({ config: null });
+    assert.equal(wrapper.find('StringConfigInput').prop('config'), null);
   });
 
   it('does not show a type if none is provided', function() {
-    var option = {
-      key: 'testconfig',
-      description: 'test config for strings'
-    };
-    var output = jsTestUtils.shallowRender(
-      <StringConfig
-        config="initial"
-        option={option} />);
-    assert.deepEqual(
-      output.props.children[0].props.children, ['testconfig', '']);
+    option.type = null;
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.string-config__label').text(), 'testconfig');
   });
 
   it('can be disabled', function() {
-    var config = 'the value';
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config={config}
-        disabled={true}
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
-    const output = renderer.getRenderOutput();
-    var expected = (
-      <div className="string-config--value string-config--disabled">
-        <StringConfigInput
-          config={config}
-          disabled={true}
-          ref="editableInput"
-          setValue={instance._setValue} />
-      </div>);
-    expect(output.props.children[1]).toEqualJSX(expected);
+    const wrapper = renderComponent({ disabled: true });
+    assert.equal(wrapper.find('StringConfigInput').prop('disabled'), true);
   });
 
   it('can display a changed value', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config="the value"
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
     instance._setValue('different value');
-    const output = renderer.getRenderOutput();
+    wrapper.update();
     assert.equal(
-      output.props.children[1].props.className,
-      'string-config--value string-config--changed');
+      wrapper.find('.string-config--value').prop('className').includes(
+        'string-config--changed'),
+      true);
   });
 
   it('correctly compares existing numbers', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config={123}
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ config: 123 });
+    const instance = wrapper.instance();
     instance._setValue('123');
-    const output = renderer.getRenderOutput();
+    wrapper.update();
     assert.equal(
-      output.props.children[1].props.className,
-      'string-config--value');
+      wrapper.find('.string-config--value').prop('className').includes(
+        'string-config--changed'),
+      false);
   });
 
   it('can handle empty strings with newlines', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config=""
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ config: '' });
+    const instance = wrapper.instance();
     instance._setValue('\n');
-    const output = renderer.getRenderOutput();
+    wrapper.update();
     assert.equal(
-      output.props.children[1].props.className,
-      'string-config--value');
+      wrapper.find('.string-config--value').prop('className').includes(
+        'string-config--changed'),
+      false);
     assert.equal(instance.getValue(), '');
   });
 
   it('can remove trailing newlines', function() {
-    const renderer = jsTestUtils.shallowRender(
-      <StringConfig
-        config="0"
-        option={option} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ config: '0' });
+    const instance = wrapper.instance();
     instance._setValue('0\n');
-    const output = renderer.getRenderOutput();
+    wrapper.update();
     assert.equal(
-      output.props.children[1].props.className,
-      'string-config--value');
+      wrapper.find('.string-config--value').prop('className').includes(
+        'string-config--changed'),
+      false);
     assert.equal(instance.getValue(), '0');
   });
 });
