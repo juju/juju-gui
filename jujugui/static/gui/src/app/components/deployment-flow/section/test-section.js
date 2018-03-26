@@ -25,13 +25,6 @@ describe('DeploymentSection', function() {
 
   it('can render', function() {
     const wrapper = renderComponent();
-    // var renderer = jsTestUtils.shallowRender(
-    //   <DeploymentSection
-    //     disabled={false}
-    //     title="Model changes">
-    //     <span>content</span>
-    //   </DeploymentSection>, true);
-    // var output = renderer.getRenderOutput();
     var expected = (
       <div className="deployment-section twelve-col deployment-section--active">
         <div className="inner-wrapper">
