@@ -2,26 +2,38 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Zoom = require('./zoom');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('Zoom', function() {
+  let topo;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Zoom
+      topo={options.topo || topo}
+      zoomInCanvas={options.zoomInCanvas || sinon.stub()}
+      zoomOutCanvas={options.zoomOutCanvas || sinon.stub()} />
+  );
+
+  beforeEach(() => {
+    topo = {
+      modules: {
+        PanZoomModule: {
+          _fire_zoom: sinon.stub()
+        }
+      },
+      getScale: sinon.stub().returns(1)
+    };
+  });
 
   it('can render the zoom component', function() {
-    var renderer = jsTestUtils.shallowRender(
-      <Zoom
-        topo={{}}
-        zoomInCanvas={sinon.stub()}
-        zoomOutCanvas={sinon.stub()} />, true);
-    var instance = renderer.getMountedInstance();
-    var output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
     var expected = (
       <ul className="zoom">
         <li className="zoom__in link"
-          onClick={instance._zoomIn}
+          onClick={wrapper.find('.zoom__in').prop('onClick')}
           role="button"
           tabIndex="0">
           <SvgIcon className="zoom-in__icon"
@@ -29,7 +41,7 @@ describe('Zoom', function() {
             size="12" />
         </li>
         <li className="zoom__out link"
-          onClick={instance._zoomOut}
+          onClick={wrapper.find('.zoom__out').prop('onClick')}
           role="button"
           tabIndex="0">
           <SvgIcon className="zoom-out__icon"
@@ -37,40 +49,18 @@ describe('Zoom', function() {
             size="12" />
         </li>
       </ul>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can zoom in', function() {
-    var topo = {
-      modules: {
-        PanZoomModule: {
-          _fire_zoom: sinon.stub()
-        }
-      },
-      getScale: sinon.stub().returns(1)
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <Zoom
-        topo={topo} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.children[0].props.onClick();
+    const wrapper = renderComponent();
+    wrapper.find('.zoom__in').simulate('click');
     assert.equal(topo.modules.PanZoomModule._fire_zoom.callCount, 1);
   });
 
   it('can zoom out', function() {
-    var topo = {
-      modules: {
-        PanZoomModule: {
-          _fire_zoom: sinon.stub()
-        }
-      },
-      getScale: sinon.stub().returns(1)
-    };
-    var renderer = jsTestUtils.shallowRender(
-      <Zoom
-        topo={topo} />, true);
-    var output = renderer.getRenderOutput();
-    output.props.children[1].props.onClick();
+    const wrapper = renderComponent();
+    wrapper.find('.zoom__out').simulate('click');
     assert.equal(topo.modules.PanZoomModule._fire_zoom.callCount, 1);
   });
 });
