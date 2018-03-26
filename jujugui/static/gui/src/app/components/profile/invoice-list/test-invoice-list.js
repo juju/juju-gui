@@ -3,11 +3,10 @@
 'use strict';
 const React = require('react');
 const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileInvoiceList = require('./invoice-list');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('Invoice Bundle List', function() {
   const rawInvoiceData = `[{
@@ -30,18 +29,17 @@ describe('Invoice Bundle List', function() {
     invoices = JSON.parse(rawInvoiceData);
   });
 
-  function renderComponent(options={}) {
-    return jsTestUtils.shallowRender(
-      <ProfileInvoiceList
-        acl={options.acl || acl}
-        baseURL="/gui/"
-        data={options.invoices || invoices}
-        user="lazypower@external" />, true);
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ProfileInvoiceList
+      acl={options.acl || acl}
+      baseURL="/gui/"
+      data={options.invoices || invoices}
+      user="lazypower@external" />
+  );
 
   it('can render', () => {
-    const renderer = renderComponent();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
+    wrapper.update();
     const expected = (
       <div className="profile-invoice-list">
         <div>
@@ -103,41 +101,13 @@ describe('Invoice Bundle List', function() {
             }]} />
         </div>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render without any invoices', () => {
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       invoices: []
     });
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-invoice-list">
-        <div>
-          <h2 className="profile__title">
-            Payment history
-          </h2>
-          <BasicTable
-            headerClasses={['profile__entity-table-header-row']}
-            headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Status',
-              columnSize: 3
-            }, {
-              content: 'Invoice Number',
-              columnSize: 3
-            }, {
-              content: 'Charged to',
-              columnSize: 3
-            }, {
-              content: 'Date',
-              columnSize: 3
-            }]}
-            rowClasses={['profile__entity-table-row']}
-            rowColumnClasses={['profile__entity-table-column']}
-            rows={[]} />
-        </div>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    assert.deepEqual(wrapper.find('BasicTable').prop('rows'), []);
   });
 });

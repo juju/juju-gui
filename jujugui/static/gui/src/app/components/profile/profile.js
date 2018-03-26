@@ -159,26 +159,28 @@ class Profile extends React.Component {
     }
 
     return (
-      <Panel
-        instanceName="profile"
-        visible={true}>
-        <ProfileHeader
-          changeState={props.changeState}
-          controllerIP={props.controllerIP}
-          getUser={props.getUser}
-          gisf={props.gisf}
-          userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
-        <div className="twelve-col">
-          <div className="profile__content inner-wrapper">
-            <ProfileNavigation
-              // Use supplied activeSection or the key from the first map entry.
-              activeSection={this._getProfileURL().activeSection || mapEntry[0]}
-              changeState={props.changeState}
-              sectionsMap={sectionsMap} />
-            {section.getComponent()}
+      <div>
+        <Panel
+          instanceName="profile"
+          visible={true}>
+          <ProfileHeader
+            changeState={props.changeState}
+            controllerIP={props.controllerIP}
+            getUser={props.getUser}
+            gisf={props.gisf}
+            userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
+          <div className="twelve-col">
+            <div className="profile__content inner-wrapper">
+              <ProfileNavigation
+                // Use supplied activeSection or the key from the first map entry.
+                activeSection={this._getProfileURL().activeSection || mapEntry[0]}
+                changeState={props.changeState}
+                sectionsMap={sectionsMap} />
+              {section.getComponent()}
+            </div>
           </div>
-        </div>
-      </Panel>
+        </Panel>
+      </div>
     );
   }
 

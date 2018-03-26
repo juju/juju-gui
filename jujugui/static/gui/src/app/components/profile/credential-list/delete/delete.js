@@ -40,13 +40,15 @@ class ProfileCredentialListDelete extends React.Component {
       type: 'destructive'
     }];
     return (
-      <Popup
-        buttons={buttons}
-        title="Remove credentials">
-        <p>
-          Are you sure you want to remove these credentials?
-        </p>
-      </Popup>
+      <div>
+        <Popup
+          buttons={buttons}
+          title="Remove credentials">
+          <p>
+            Are you sure you want to remove these credentials?
+          </p>
+        </Popup>
+      </div>
     );
   }
 }

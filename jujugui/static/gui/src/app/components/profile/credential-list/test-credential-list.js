@@ -4,6 +4,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
+const enzyme = require('enzyme');
 
 const BasicTable = require('../../basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
@@ -12,8 +13,6 @@ const GenericButton = require('../../generic-button/generic-button');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const ProfileCredentialList = require('./credential-list');
 const ProfileCredentialListDelete = require('./delete/delete');
-
-const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('ProfileCredentialList', () => {
   let acl, cloudData, controllerAPI, credentialData, initUtils, modelData;
@@ -80,18 +79,17 @@ describe('ProfileCredentialList', () => {
     return component;
   }
 
-  function shallowRenderComponent(options = {}) {
-    return jsTestUtils.shallowRender(
-      <ProfileCredentialList
-        acl={acl}
-        addNotification={options.addNotification || sinon.stub()}
-        controllerAPI={options.controllerAPI || controllerAPI}
-        controllerIsReady={options.controllerIsReady || sinon.stub()}
-        credential="azure_foo@external_cred1"
-        initUtils={options.initUtils || initUtils}
-        sendAnalytics={options.sendAnalytics || sinon.stub()}
-        username={options.username || 'foo@external'} />, true);
-  }
+  const shallowRenderComponent = (options = {}) => enzyme.shallow(
+    <ProfileCredentialList
+      acl={acl}
+      addNotification={options.addNotification || sinon.stub()}
+      controllerAPI={options.controllerAPI || controllerAPI}
+      controllerIsReady={options.controllerIsReady || sinon.stub()}
+      credential="azure_foo@external_cred1"
+      initUtils={options.initUtils || initUtils}
+      sendAnalytics={options.sendAnalytics || sinon.stub()}
+      username={options.username || 'foo@external'} />
+  );
 
   /**
     Some tasks are done async in the component. This method checks to see when
@@ -218,24 +216,24 @@ describe('ProfileCredentialList', () => {
   });
 
   it('can render', () => {
-    const renderer = shallowRenderComponent();
-    const instance = renderer.getMountedInstance();
+    const wrapper = shallowRenderComponent();
+    const instance = wrapper.instance();
     return instance._getClouds().then(() => {
-      const output = renderer.getRenderOutput();
+      wrapper.update();
       const expected = (
         <div className="profile-credential-list">
           <div className="four-col">
             <h2 className="profile__title">
               My credentials
               <span className="profile__title-count">
-                (4)
+                ({4})
               </span>
             </h2>
           </div>
           <div className="push-four four-col">
             <div className="profile-credential-list__add">
               <GenericButton
-                action={sinon.stub()}
+                action={wrapper.find('GenericButton').prop('action')}
                 type="inline-neutral">
                 Add credentials
               </GenericButton>
@@ -248,6 +246,186 @@ describe('ProfileCredentialList', () => {
             <div></div>
             <div className="twelve-col"></div>
           </ExpandingRow>
+          <div className="profile-credential-list__list">
+            <BasicTable
+              headerClasses={['profile__entity-table-header-row']}
+              headerColumnClasses={['profile__entity-table-header-column']}
+              headers={[{
+                content: 'Name',
+                columnSize: 6
+              }, {
+                content: 'Provider',
+                columnSize: 2
+              }, {
+                content: 'Used by',
+                columnSize: 3
+              }, {
+                content: 'Action',
+                columnSize: 1
+              }]}
+              rowClasses={['profile__entity-table-row']}
+              rowColumnClasses={['profile__entity-table-column']}
+              rows={[{
+                classes: null,
+                columns: [{
+                  content: 'cred1',
+                  columnSize: 6
+                }, {
+                  content: 'aws',
+                  columnSize: 2
+                }, {
+                  content: 'testmodel1',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <ButtonDropdown
+                      icon="contextual-menu-horizontal"
+                      listItems={[{
+                        label: 'Edit',
+                        action: sinon.stub()
+                      }, {
+                        label: 'Delete',
+                        action: sinon.stub()
+                      }]} />),
+                  columnSize: 1
+                }],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'aws_foo@external_cred1',
+                rowClickable: false
+              }, {
+                classes: null,
+                columns: [{
+                  content: 'testcred',
+                  columnSize: 6
+                }, {
+                  content: 'aws',
+                  columnSize: 2
+                }, {
+                  content: '-',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <ButtonDropdown
+                      icon="contextual-menu-horizontal"
+                      listItems={[{
+                        label: 'Edit',
+                        action: sinon.stub()
+                      }, {
+                        label: 'Delete',
+                        action: sinon.stub()
+                      }]} />),
+                  columnSize: 1
+                }],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'aws_foo@external_testcred',
+                rowClickable: false
+              }, {
+                classes: ['profile-credential-list--highlighted'],
+                columns: [{
+                  content: 'cred1',
+                  columnSize: 6
+                }, {
+                  content: 'azure',
+                  columnSize: 2
+                }, {
+                  content: 'testmodel2',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <ButtonDropdown
+                      icon="contextual-menu-horizontal"
+                      listItems={[{
+                        label: 'Edit',
+                        action: sinon.stub()
+                      }, {
+                        label: 'Delete',
+                        action: sinon.stub()
+                      }]} />),
+                  columnSize: 1
+                }],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'azure_foo@external_cred1',
+                rowClickable: false
+              }, {
+                classes: null,
+                columns: [{
+                  content: 'admin',
+                  columnSize: 6
+                }, {
+                  content: 'google',
+                  columnSize: 2
+                }, {
+                  content: '-',
+                  columnSize: 3
+                }, {
+                  content: (
+                    <ButtonDropdown
+                      icon="contextual-menu-horizontal"
+                      listItems={[{
+                        label: 'Edit',
+                        action: sinon.stub()
+                      }, {
+                        label: 'Delete',
+                        action: sinon.stub()
+                      }]} />),
+                  columnSize: 1
+                }],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'google_foo@external_admin',
+                rowClickable: false
+              }
+              ]} />
+          </div>
+        </div>
+      );
+      assert.compareJSX(wrapper, expected);
+    });
+  });
+
+  it('can show the add form', () => {
+    const wrapper = shallowRenderComponent();
+    const instance = wrapper.instance();
+    return instance._getClouds().then(() => {
+      wrapper.find('GenericButton').props().action();
+      wrapper.update();
+      const expected = (
+        <div className="twelve-col">
+          <CredentialAddEdit
+            acl={acl}
+            addNotification={sinon.stub()}
+            controllerAPI={{
+              listClouds: sinon.stub(),
+              reshape: sinon.stub(),
+              updateCloudCredential: sinon.stub()
+            }}
+            controllerIsReady={sinon.stub()}
+            credential={undefined}
+            credentials={[
+              'aws_foo@external_cred1', 'aws_foo@external_testcred',
+              'azure_foo@external_cred1', 'google_foo@external_admin']}
+            initUtils={initUtils}
+            key="deployment-credential-add"
+            onCancel={wrapper.find('CredentialAddEdit').prop('onCancel')}
+            onCredentialUpdated={wrapper.find('CredentialAddEdit').prop('onCredentialUpdated')}
+            sendAnalytics={sinon.stub()}
+            username="foo@external" />
+        </div>);
+      assert.compareJSX(wrapper.find('.twelve-col'), expected);
+    });
+  });
+
+  it('can show the edit form', () => {
+    const wrapper = shallowRenderComponent();
+    const instance = wrapper.instance();
+    return instance._getClouds().then(() => {
+      instance._setEditCredential('aws_foo@external_cred1');
+      wrapper.update();
+      const expected = (
+        <div className="profile-credential-list__list">
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
@@ -290,8 +468,27 @@ describe('ProfileCredentialList', () => {
                     }]} />),
                 columnSize: 1
               }],
-              expandedContent: null,
-              expandedContentExpanded: false,
+              expandedContent: (
+                <CredentialAddEdit
+                  acl={acl}
+                  addNotification={sinon.stub()}
+                  controllerAPI={{
+                    listClouds: sinon.stub(),
+                    reshape: sinon.stub(),
+                    updateCloudCredential: sinon.stub()
+                  }}
+                  controllerIsReady={sinon.stub()}
+                  credential={{cloud: 'aws', displayName: 'cred1', models: ['testmodel1']}}
+                  credentials={[
+                    'aws_foo@external_cred1', 'aws_foo@external_testcred',
+                    'azure_foo@external_cred1', 'google_foo@external_admin']}
+                  initUtils={initUtils}
+                  key="deployment-credential-add"
+                  onCancel={sinon.stub()}
+                  onCredentialUpdated={sinon.stub()}
+                  sendAnalytics={sinon.stub()}
+                  username="foo@external" />),
+              expandedContentExpanded: true,
               key: 'aws_foo@external_cred1',
               rowClickable: false
             }, {
@@ -380,228 +577,29 @@ describe('ProfileCredentialList', () => {
               rowClickable: false
             }
             ]} />
-        </div>
-      );
-      expect(output).toEqualJSX(expected);
-    });
-  });
-
-  it('can show the add form', () => {
-    const renderer = shallowRenderComponent();
-    const instance = renderer.getMountedInstance();
-    return instance._getClouds().then(() => {
-      let output = renderer.getRenderOutput();
-      output.props.children[1].props.children.props.children.props.action();
-      output = renderer.getRenderOutput();
-      const expected = (
-        <ExpandingRow
-          classes={{'twelve-col': true}}
-          clickable={false}
-          expanded={true}>
-          <div></div>
-          <div className="twelve-col">
-            <CredentialAddEdit
-              acl={acl}
-              addNotification={sinon.stub()}
-              controllerAPI={{
-                listClouds: sinon.stub(),
-                reshape: sinon.stub(),
-                updateCloudCredential: sinon.stub()
-              }}
-              controllerIsReady={sinon.stub()}
-              credential={undefined}
-              credentials={[
-                'aws_foo@external_cred1', 'aws_foo@external_testcred',
-                'azure_foo@external_cred1', 'google_foo@external_admin']}
-              initUtils={initUtils}
-              key="deployment-credential-add"
-              onCancel={sinon.stub()}
-              onCredentialUpdated={sinon.stub()}
-              sendAnalytics={sinon.stub()}
-              username="foo@external" />
-          </div>
-        </ExpandingRow>);
-      expect(output.props.children[2]).toEqualJSX(expected);
-    });
-  });
-
-  it('can show the edit form', () => {
-    const renderer = shallowRenderComponent();
-    const instance = renderer.getMountedInstance();
-    return instance._getClouds().then(() => {
-      instance._setEditCredential('aws_foo@external_cred1');
-      const output = renderer.getRenderOutput();
-      const expected = (
-        <BasicTable
-          headerClasses={['profile__entity-table-header-row']}
-          headerColumnClasses={['profile__entity-table-header-column']}
-          headers={[{
-            content: 'Name',
-            columnSize: 6
-          }, {
-            content: 'Provider',
-            columnSize: 2
-          }, {
-            content: 'Used by',
-            columnSize: 3
-          }, {
-            content: 'Action',
-            columnSize: 1
-          }]}
-          rowClasses={['profile__entity-table-row']}
-          rowColumnClasses={['profile__entity-table-column']}
-          rows={[{
-            classes: null,
-            columns: [{
-              content: 'cred1',
-              columnSize: 6
-            }, {
-              content: 'aws',
-              columnSize: 2
-            }, {
-              content: 'testmodel1',
-              columnSize: 3
-            }, {
-              content: (
-                <ButtonDropdown
-                  icon="contextual-menu-horizontal"
-                  listItems={[{
-                    label: 'Edit',
-                    action: sinon.stub()
-                  }, {
-                    label: 'Delete',
-                    action: sinon.stub()
-                  }]} />),
-              columnSize: 1
-            }],
-            expandedContent: (
-              <CredentialAddEdit
-                acl={acl}
-                addNotification={sinon.stub()}
-                controllerAPI={{
-                  listClouds: sinon.stub(),
-                  reshape: sinon.stub(),
-                  updateCloudCredential: sinon.stub()
-                }}
-                controllerIsReady={sinon.stub()}
-                credential={{cloud: 'aws', displayName: 'cred1', models: ['testmodel1']}}
-                credentials={[
-                  'aws_foo@external_cred1', 'aws_foo@external_testcred',
-                  'azure_foo@external_cred1', 'google_foo@external_admin']}
-                initUtils={initUtils}
-                key="deployment-credential-add"
-                onCancel={sinon.stub()}
-                onCredentialUpdated={sinon.stub()}
-                sendAnalytics={sinon.stub()}
-                username="foo@external" />),
-            expandedContentExpanded: true,
-            key: 'aws_foo@external_cred1',
-            rowClickable: false
-          }, {
-            classes: null,
-            columns: [{
-              content: 'testcred',
-              columnSize: 6
-            }, {
-              content: 'aws',
-              columnSize: 2
-            }, {
-              content: '-',
-              columnSize: 3
-            }, {
-              content: (
-                <ButtonDropdown
-                  icon="contextual-menu-horizontal"
-                  listItems={[{
-                    label: 'Edit',
-                    action: sinon.stub()
-                  }, {
-                    label: 'Delete',
-                    action: sinon.stub()
-                  }]} />),
-              columnSize: 1
-            }],
-            expandedContent: null,
-            expandedContentExpanded: false,
-            key: 'aws_foo@external_testcred',
-            rowClickable: false
-          }, {
-            classes: ['profile-credential-list--highlighted'],
-            columns: [{
-              content: 'cred1',
-              columnSize: 6
-            }, {
-              content: 'azure',
-              columnSize: 2
-            }, {
-              content: 'testmodel2',
-              columnSize: 3
-            }, {
-              content: (
-                <ButtonDropdown
-                  icon="contextual-menu-horizontal"
-                  listItems={[{
-                    label: 'Edit',
-                    action: sinon.stub()
-                  }, {
-                    label: 'Delete',
-                    action: sinon.stub()
-                  }]} />),
-              columnSize: 1
-            }],
-            expandedContent: null,
-            expandedContentExpanded: false,
-            key: 'azure_foo@external_cred1',
-            rowClickable: false
-          }, {
-            classes: null,
-            columns: [{
-              content: 'admin',
-              columnSize: 6
-            }, {
-              content: 'google',
-              columnSize: 2
-            }, {
-              content: '-',
-              columnSize: 3
-            }, {
-              content: (
-                <ButtonDropdown
-                  icon="contextual-menu-horizontal"
-                  listItems={[{
-                    label: 'Edit',
-                    action: sinon.stub()
-                  }, {
-                    label: 'Delete',
-                    action: sinon.stub()
-                  }]} />),
-              columnSize: 1
-            }],
-            expandedContent: null,
-            expandedContentExpanded: false,
-            key: 'google_foo@external_admin',
-            rowClickable: false
-          }
-          ]} />);
-      expect(output.props.children[3]).toEqualJSX(expected);
+        </div>);
+      assert.compareJSX(wrapper.find('.profile-credential-list__list'), expected);
     });
   });
 
   it('can show the UI to delete a credential', () => {
-    const renderer = shallowRenderComponent();
-    const instance = renderer.getMountedInstance();
+    const wrapper = shallowRenderComponent();
+    const instance = wrapper.instance();
     instance._setDeleteCredential('google_foo@external_admin');
     return instance._getClouds().then(() => {
-      const output = renderer.getRenderOutput();
+      wrapper.update();
       const expected = (
-        <ProfileCredentialListDelete
-          addNotification={sinon.stub()}
-          credential="google_foo@external_admin"
-          onCancel={sinon.stub()}
-          onCredentialDeleted={sinon.stub()}
-          revokeCloudCredential={sinon.stub()} />
+        <div className="profile-credential-list__delete">
+          <ProfileCredentialListDelete
+            addNotification={sinon.stub()}
+            credential="google_foo@external_admin"
+            onCancel={wrapper.find('ProfileCredentialListDelete').prop('onCancel')}
+            onCredentialDeleted={
+              wrapper.find('ProfileCredentialListDelete').prop('onCredentialDeleted')}
+            revokeCloudCredential={sinon.stub()} />
+        </div>
       );
-      expect(output.props.children[4]).toEqualJSX(expected);
+      assert.compareJSX(wrapper.find('.profile-credential-list__delete'), expected);
     });
   });
 

@@ -2,34 +2,32 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const GenericButton = require('../../generic-button/generic-button');
 const ProfileCharmstoreLogin = require('./charmstore-login');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('ProfileCharmstoreLogin ', function() {
-  function renderComponent(options={}) {
-    return jsTestUtils.shallowRender(
-      <ProfileCharmstoreLogin
-        addNotification={options.addNotification || sinon.stub()}
-        bakery={options.bakery || {}}
-        changeState={options.changeState || sinon.stub()}
-        charmstore={{
-          getMacaroon: options.getMacaroon || sinon.stub()
-        }}
-        storeUser={options.storeUser || sinon.stub()}
-        type={options.type || 'charms'} />, true);
-  }
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <ProfileCharmstoreLogin
+      addNotification={options.addNotification || sinon.stub()}
+      bakery={options.bakery || {}}
+      changeState={options.changeState || sinon.stub()}
+      charmstore={{
+        getMacaroon: options.getMacaroon || sinon.stub()
+      }}
+      storeUser={options.storeUser || sinon.stub()}
+      type={options.type || 'charms'} />
+  );
 
   it('can render for a charm', () => {
-    const renderer = renderComponent();
-    const output = renderer.getRenderOutput();
+    const wrapper = renderComponent();
+    const links = wrapper.find('.link');
     const expected = (
       <div className="profile-charmstore-login">
         <div className="profile-charmstore-login__button">
           <GenericButton
-            action={sinon.stub()}
+            action={wrapper.find('GenericButton').prop('action')}
             type="neutral">
             Login to the charm store
           </GenericButton>
@@ -40,14 +38,14 @@ describe('ProfileCharmstoreLogin ', function() {
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span className="link"
-            onClick={sinon.stub()}
+            onClick={links.at(0).prop('onClick')}
             role="button"
             tabIndex="0">
             login
           </span>&nbsp;
           to the&nbsp;
           <span className="link"
-            onClick={sinon.stub()}
+            onClick={links.at(1).prop('onClick')}
             role="button"
             tabIndex="0">
             charm store
@@ -55,43 +53,12 @@ describe('ProfileCharmstoreLogin ', function() {
           using an Ubuntu One identity (USSO) to view your charms and bundles.
         </p>
       </div>);
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render for a bundle', () => {
-    const renderer = renderComponent({type: 'bundles'});
-    const output = renderer.getRenderOutput();
-    const expected = (
-      <div className="profile-charmstore-login">
-        <div className="profile-charmstore-login__button">
-          <GenericButton
-            action={sinon.stub()}
-            type="neutral">
-            Login to the charm store
-          </GenericButton>
-        </div>
-        <h2 className="profile__title">
-          No {'bundles'}
-        </h2>
-        <p className="profile-charmstore-login__notice">
-          You must&nbsp;
-          <span className="link"
-            onClick={sinon.stub()}
-            role="button"
-            tabIndex="0">
-            login
-          </span>&nbsp;
-          to the&nbsp;
-          <span className="link"
-            onClick={sinon.stub()}
-            role="button"
-            tabIndex="0">
-            charm store
-          </span>&nbsp;
-          using an Ubuntu One identity (USSO) to view your charms and bundles.
-        </p>
-      </div>);
-    expect(output).toEqualJSX(expected);
+    const wrapper = renderComponent({type: 'bundles'});
+    assert.equal(wrapper.find('.profile__title').html().includes('No bundles'), true);
   });
 
   it('can log in', () => {
@@ -102,13 +69,12 @@ describe('ProfileCharmstoreLogin ', function() {
     };
     const getMacaroon = sinon.stub().callsArgWith(0, null, 'new macaroon');
     const storeUser = sinon.stub();
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       bakery,
       getMacaroon,
       storeUser
     });
-    const output = renderer.getRenderOutput();
-    output.props.children[0].props.children.props.action();
+    wrapper.find('.link').at(0).props().onClick();
     assert.equal(getMacaroon.callCount, 1);
     assert.equal(storeUser.callCount, 1);
   });
@@ -121,13 +87,12 @@ describe('ProfileCharmstoreLogin ', function() {
     };
     const getMacaroon = sinon.stub();
     const storeUser = sinon.stub();
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       bakery,
       getMacaroon,
       storeUser
     });
-    const output = renderer.getRenderOutput();
-    output.props.children[0].props.children.props.action();
+    wrapper.find('.link').at(0).props().onClick();
     assert.equal(getMacaroon.callCount, 0);
     assert.equal(storeUser.callCount, 1);
     assert.equal(bakery.storage.get.callCount, 1);
@@ -142,14 +107,13 @@ describe('ProfileCharmstoreLogin ', function() {
     };
     const getMacaroon = sinon.stub().callsArgWith(0, 'Uh oh!', null);
     const storeUser = sinon.stub();
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       addNotification,
       bakery,
       getMacaroon,
       storeUser
     });
-    const output = renderer.getRenderOutput();
-    output.props.children[0].props.children.props.action();
+    wrapper.find('.link').at(0).props().onClick();
     assert.equal(getMacaroon.callCount, 1);
     assert.equal(storeUser.callCount, 0);
     assert.equal(addNotification.callCount, 1);
@@ -162,11 +126,10 @@ describe('ProfileCharmstoreLogin ', function() {
 
   it('can show the store', () => {
     const changeState = sinon.stub();
-    const renderer = renderComponent({
+    const wrapper = renderComponent({
       changeState
     });
-    const output = renderer.getRenderOutput();
-    output.props.children[2].props.children[3].props.onClick();
+    wrapper.find('.link').at(1).props().onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       profile: null,

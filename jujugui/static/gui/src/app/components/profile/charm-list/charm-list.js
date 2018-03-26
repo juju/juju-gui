@@ -178,7 +178,7 @@ class ProfileCharmList extends React.Component {
         content = (
           <div>
             {this._generateTitle()}
-            <p>
+            <p className="profile-charm-list__onboarding">
               Learn about&nbsp;
               <a href="https://jujucharms.com/docs/stable/developer-getting-started"
                 target="_blank">
