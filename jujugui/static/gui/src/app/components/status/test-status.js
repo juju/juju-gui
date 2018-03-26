@@ -2,24 +2,32 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
 const Status = require('./status');
 const BasicTable = require('../basic-table/basic-table');
-const Panel = require('../panel/panel');
-
-const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('Status', function() {
   let changeState;
-  let defaultModel;
+  let model;
   let emptyDB;
   let generatePath;
+  const propTypes = Status.propTypes;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Status
+      changeState={options.changeState || changeState}
+      db={shapeup.fromShape(options.db, propTypes.db)}
+      generatePath={options.generatePath || generatePath}
+      model={shapeup.fromShape(options.model || model, propTypes.model)}
+      urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />
+  );
 
   beforeEach(() => {
     changeState = sinon.stub();
-    defaultModel = {
+    model = {
       cloud: 'aws',
       environmentName: 'my-model',
       modelUUID: 'myuuid',
@@ -45,34 +53,6 @@ describe('Status', function() {
     };
     generatePath = sinon.stub();
   });
-
-  // Render the component with the given db and optional model.
-  // Return an object with the instance and the output.
-  const render = (db, model=defaultModel) => {
-    const propTypes = Status.propTypes;
-    const renderer = jsTestUtils.shallowRender(
-      <Status
-        changeState={changeState}
-        db={shapeup.fromShape(db, propTypes.db)}
-        generatePath={generatePath}
-        model={shapeup.fromShape(model, propTypes.model)}
-        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />, true
-    );
-    return {
-      instance: renderer.getMountedInstance(),
-      output: renderer.getRenderOutput(),
-      renderer: renderer
-    };
-  };
-
-  // Wrap the given element into the shared component boilerplate.
-  const wrap = element => {
-    return (
-      <Panel instanceName="status-view" visible={true}>
-        {element}
-      </Panel>
-    );
-  };
 
   // Create and return a database.
   const makeDB = () => {
@@ -278,134 +258,36 @@ describe('Status', function() {
 
   it('renders with no data', () => {
     const model = {};
-    const comp = render(emptyDB, model);
-    const expectedOutput = wrap(
+    const wrapper = renderComponent({
+      db: emptyDB,
+      model
+    });
+    // const comp = render(emptyDB, model);
+    const expected = (
       <div className="status-view__content">
         Cannot show the status: the GUI is not connected to a model.
       </div>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.status-view__content'), expected);
   });
 
   it('renders with no entities', () => {
-    const comp = render(emptyDB);
-    const expectedOutput = wrap(
-      <div className="status-view__content">
-        <div key="model">
-          <div className="twelve-col no-margin-bottom">
-            <div className="eight-col">
-              <h2>
-                my-model
-                <span
-                  className={'status-view__traffic-light ' +
-                    'status-view__traffic-light--ok'}
-                  onClick={sinon.stub()}
-                  role="button"
-                  tabIndex="0"
-                  title="Everything is OK">
-                </span>
-              </h2>
-            </div>
-            <div className="status-view__filter-label two-col">
-              Filter status:
-            </div>
-            <div className="status-view__filter two-col last-col">
-              <select className="status-view__filter-select"
-                onChange={sinon.stub()}
-                value="none">
-                <option className="status-view__filter-option"
-                  key="none"
-                  value="none">
-                  none
-                </option>
-                <option className="status-view__filter-option"
-                  key="error"
-                  value="error">
-                  error
-                </option>
-                <option className="status-view__filter-option"
-                  key="pending"
-                  value="pending">
-                  pending
-                </option>
-                <option className="status-view__filter-option"
-                  key="ok"
-                  value="ok">
-                  ok
-                </option>
-              </select>
-            </div>
-          </div>
-          <BasicTable
-            headers={[{
-              content: 'Cloud/Region',
-              columnSize: 2
-            }, {
-              content: 'Version',
-              columnSize: 2
-            }, {
-              content: 'SLA',
-              columnSize: 1
-            }, {
-              content: 'Applications',
-              columnSize: 2
-            }, {
-              content: 'Remote applications',
-              columnSize: 2
-            }, {
-              content: 'Units',
-              columnSize: 1
-            }, {
-              content: 'Machines',
-              columnSize: 1
-            }, {
-              content: 'Relations',
-              columnSize: 1
-            }]}
-            rows={[{
-              columns: [{
-                columnSize: 2,
-                content: 'aws/neutral zone'
-              }, {
-                columnSize: 2,
-                content: '2.42.47'
-              }, {
-                columnSize: 1,
-                content: 'advanced'
-              }, {
-                columnSize: 2,
-                content: 0
-              }, {
-                columnSize: 2,
-                content: 0
-              }, {
-                columnSize: 1,
-                content: 0
-              }, {
-                columnSize: 1,
-                content: 0
-              }, {
-                columnSize: 1,
-                content: 0
-              }],
-              key: 'model'
-            }]} />
-        </div>
-      </div>
-    );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent({ db: emptyDB });
+    assert.equal(wrapper.find('BasicTable').length, 1);
   });
 
   it('can display status by priority', () => {
-    const comp = render(makeDB());
-    const unitSection = comp.output.props.children.props.children[3];
+    const wrapper = renderComponent({ db: makeDB() });
     assert.deepEqual(
-      unitSection.props.rows[1].classes, ['status-view__table-row--error']);
+      wrapper.find('BasicTable').at(3).prop('rows')[1].classes,
+      ['status-view__table-row--error']);
   });
 
   it('renders with entities', () => {
-    const comp = render(makeDB());
-    const expectedOutput = wrap(
+    const wrapper = renderComponent({ db: makeDB() });
+    const tables = wrapper.find('BasicTable');
+    const instance = wrapper.instance();
+    const expected = (
       <div className="status-view__content">
         <div key="model">
           <div className="twelve-col no-margin-bottom">
@@ -415,7 +297,7 @@ describe('Status', function() {
                 <span
                   className={'status-view__traffic-light ' +
                     'status-view__traffic-light--ok'}
-                  onClick={sinon.stub()}
+                  onClick={wrapper.find('.status-view__traffic-light').prop('onClick')}
                   role="button"
                   tabIndex="0"
                   title="Everything is OK">
@@ -427,7 +309,7 @@ describe('Status', function() {
             </div>
             <div className="status-view__filter two-col last-col">
               <select className="status-view__filter-select"
-                onChange={sinon.stub()}
+                onChange={wrapper.find('select').prop('onChange')}
                 value="none">
                 <option className="status-view__filter-option"
                   key="none"
@@ -508,7 +390,7 @@ describe('Status', function() {
             }]} />
         </div>
         <BasicTable
-          filterPredicate={sinon.stub()}
+          filterPredicate={tables.at(1).prop('filterPredicate')}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -560,11 +442,11 @@ describe('Status', function() {
             extraData: 'ok',
             key: 'local:admin/my.mongo'
           }]}
-          sort={sinon.stub()}
+          sort={instance._byKey}
           tableClasses={['status-view__table']} />
         <BasicTable
           changeState={changeState}
-          filterPredicate={sinon.stub()}
+          filterPredicate={tables.at(2).prop('filterPredicate')}
           generatePath={generatePath}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
@@ -686,11 +568,11 @@ describe('Status', function() {
             extraData: 'error',
             key: 'ha'
           }]}
-          sort={sinon.stub()}
+          sort={instance._byKey}
           tableClasses={['status-view__table']} />
         <BasicTable
           changeState={changeState}
-          filterPredicate={sinon.stub()}
+          filterPredicate={tables.at(3).prop('filterPredicate')}
           generatePath={generatePath}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
@@ -881,11 +763,11 @@ describe('Status', function() {
             extraData: 'pending',
             key: 'django/id42'
           }]}
-          sort={sinon.stub()}
+          sort={instance._byKey}
           tableClasses={['status-view__table']} />
         <BasicTable
           changeState={changeState}
-          filterPredicate={sinon.stub()}
+          filterPredicate={tables.at(4).prop('filterPredicate')}
           generatePath={generatePath}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
@@ -976,10 +858,10 @@ describe('Status', function() {
             extraData: 'ok',
             key: 'm2'
           }]}
-          sort={sinon.stub()}
+          sort={instance._byKey}
           tableClasses={['status-view__table']} />
         <BasicTable
-          filterPredicate={sinon.stub()}
+          filterPredicate={tables.at(5).prop('filterPredicate')}
           headerClasses={['status-view__table-header']}
           headerColumnClasses={['status-view__table-header-column']}
           headers={[{
@@ -1050,33 +932,24 @@ describe('Status', function() {
             }],
             key: 'rel2'
           }]}
-          sort={sinon.stub()}
+          sort={instance._byKey}
           tableClasses={['status-view__table']} />
       </div>
     );
-    expect(comp.output).toEqualJSX(expectedOutput);
+    assert.compareJSX(wrapper.find('.status-view__content'), expected);
   });
 
   it('can link to the DNS address for a unit', () => {
-    const comp = render(makeDB());
-    const wrapper = comp.output.props.children;
-    const units = wrapper.props.children[3];
-    const unit = units.props.rows[0];
-    const address = unit.columns[4].content;
-    const expected = (
-      <a className="status-view__link"
-        href="http://1.2.3.4:80"
-        target="_blank">
-        1.2.3.4
-      </a>);
-    expect(address).toEqualJSX(expected);
+    const wrapper = renderComponent({ db: makeDB() });
+    const section = wrapper.find('BasicTable').at(3);
+    const column = section.prop('rows')[0].columns[4];
+    assert.equal(column.content.props.href, 'http://1.2.3.4:80');
   });
 
   it('can navigate to charms from the app list', () => {
-    const comp = render(makeDB());
-    const content = comp.output.props.children;
-    const section = content.props.children[2];
-    const column = section.props.rows[0].columns[4];
+    const wrapper = renderComponent({ db: makeDB() });
+    const section = wrapper.find('BasicTable').at(2);
+    const column = section.prop('rows')[0].columns[4];
     column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
@@ -1084,10 +957,9 @@ describe('Status', function() {
   });
 
   it('can navigate to machines from the unit list', () => {
-    const comp = render(makeDB());
-    const content = comp.output.props.children;
-    const section = content.props.children[3];
-    const column = section.props.rows[0].columns[3];
+    const wrapper = renderComponent({ db: makeDB() });
+    const section = wrapper.find('BasicTable').at(3);
+    const column = section.prop('rows')[0].columns[3];
     column.content.props.onClick({
       stopPropagation: sinon.stub(),
       preventDefault: sinon.stub()
@@ -1098,10 +970,9 @@ describe('Status', function() {
   });
 
   it('can navigate to provided apps from the relation list', () => {
-    const comp = render(makeDB());
-    const content = comp.output.props.children;
-    const section = content.props.children[5];
-    const column = section.props.rows[0].columns[1];
+    const wrapper = renderComponent({ db: makeDB() });
+    const section = wrapper.find('BasicTable').at(5);
+    const column = section.prop('rows')[0].columns[1];
     column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -1117,10 +988,9 @@ describe('Status', function() {
   });
 
   it('can navigate to consumed apps from the relation list', () => {
-    const comp = render(makeDB());
-    const content = comp.output.props.children;
-    const section = content.props.children[5];
-    const column = section.props.rows[0].columns[2];
+    const wrapper = renderComponent({ db: makeDB() });
+    const section = wrapper.find('BasicTable').at(5);
+    const column = section.prop('rows')[0].columns[2];
     column.content.props.onClick({preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -1136,75 +1006,28 @@ describe('Status', function() {
   });
 
   it('can filter by status', () => {
-    const comp = render(makeDB());
-    const modelSection = comp.output.props.children.props.children[0];
-    const titleRow = modelSection.props.children[0];
-    const selectBox = titleRow.props.children[2].props.children;
-    selectBox.props.onChange({currentTarget: {value: 'error'}});
-    assert.equal(comp.instance.state.statusFilter, 'error');
+    const wrapper = renderComponent({ db: makeDB() });
+    wrapper.find('select').simulate('change', {currentTarget: {value: 'error'}});
+    const instance = wrapper.instance();
+    assert.equal(instance.state.statusFilter, 'error');
   });
 
   it('can filter by nothing', () => {
-    const comp = render(makeDB());
-    const modelSection = comp.output.props.children.props.children[0];
-    const titleRow = modelSection.props.children[0];
-    const selectBox = titleRow.props.children[2].props.children;
-    selectBox.props.onChange({currentTarget: {value: 'none'}});
-    assert.equal(comp.instance.state.filter, null);
+    const wrapper = renderComponent({ db: makeDB() });
+    wrapper.find('select').simulate('change', {currentTarget: {value: 'none'}});
+    const instance = wrapper.instance();
+    assert.equal(instance.state.filter, null);
   });
 
   it('can show a highest status notification', () => {
-    const comp = render(makeDB());
-    const expectedOutput = (
-      <div className="twelve-col no-margin-bottom">
-        <div className="eight-col">
-          <h2>
-            my-model
-            <span
-              className={'status-view__traffic-light ' +
-                'status-view__traffic-light--error'}
-              onClick={sinon.stub()}
-              role="button"
-              tabIndex="0"
-              title="Items are in error">
-            </span>
-          </h2>
-        </div>
-        <div className="status-view__filter-label two-col">
-          Filter status:
-        </div>
-        <div className="status-view__filter two-col last-col">
-          <select className="status-view__filter-select"
-            onChange={sinon.stub()}
-            value="none">
-            <option className="status-view__filter-option"
-              key="none"
-              value="none">
-              none
-            </option>
-            <option className="status-view__filter-option"
-              key="error"
-              value="error">
-              error
-            </option>
-            <option className="status-view__filter-option"
-              key="pending"
-              value="pending">
-              pending
-            </option>
-            <option className="status-view__filter-option"
-              key="ok"
-              value="ok">
-              ok
-            </option>
-          </select>
-        </div>
-      </div>);
-    comp.instance._setHighestStatus('error');
-    comp.instance.componentDidUpdate();
-    const output = comp.renderer.getRenderOutput();
-    const wrapper = output.props.children;
-    const header = wrapper.props.children[0];
-    expect(header.props.children[0]).toEqualJSX(expectedOutput);
+    const wrapper = renderComponent({ db: makeDB() });
+    const instance = wrapper.instance();
+    instance._setHighestStatus('error');
+    instance.componentDidUpdate();
+    wrapper.update();
+    assert.equal(
+      wrapper.find('.status-view__traffic-light').prop('className').includes(
+        'status-view__traffic-light--error'),
+      true);
   });
 });

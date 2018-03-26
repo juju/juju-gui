@@ -2,20 +2,29 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Sharing = require('./sharing');
 const GenericButton = require('../generic-button/generic-button');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
-const Spinner = require('../spinner/spinner');
 const Popup = require('../popup/popup');
 const SvgIcon = require('../svg-icon/svg-icon');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('Sharing', () => {
-  const humanizeTimestamp = sinon.stub().returns('9 minutes ago');
-  let users;
+  let users, getModelUserInfo, humanizeTimestamp;
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Sharing
+      addNotification={options.addNotification || sinon.stub()}
+      canShareModel={
+        options.canShareModel === undefined ? false : options.canShareModel}
+      closeHandler={options.closeHandler || sinon.stub()}
+      getModelUserInfo={options.getModelUserInfo || getModelUserInfo}
+      grantModelAccess={options.grantModelAccess || sinon.stub()}
+      humanizeTimestamp={options.humanizeTimestamp || humanizeTimestamp}
+      revokeModelAccess={options.revokeModelAccess || sinon.stub()} />
+  );
 
   beforeEach(() => {
     users = [
@@ -39,76 +48,46 @@ describe('Sharing', () => {
         err: 'exterminate!'
       }
     ];
+    getModelUserInfo = sinon.stub().callsArgWith(0, null, users);
+    humanizeTimestamp = sinon.stub().returns('9 minutes ago');
   });
 
   it('can render with no users', () => {
-    const getModelUserInfo = sinon.stub().callsArgWith(0, null, []);
-    const closeHandler = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        canShareModel={false}
-        closeHandler={closeHandler}
-        getModelUserInfo={getModelUserInfo}
-        grantModelAccess={sinon.stub()}
-        humanizeTimestamp={humanizeTimestamp}
-        revokeModelAccess={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
+    getModelUserInfo.callsArgWith(0, null, []);
+    const wrapper = renderComponent();
     const expected = (
-      <Popup
-        className="sharing__popup"
-        close={closeHandler}
-        title="Share">
-        {undefined}
-        <div className="sharing__users-header">
-          <div className="sharing__users-header-user">User</div>
-          <div className="sharing__users-header-access">Access</div>
-        </div>
-        <div className="sharing__users">
+      <div>
+        <Popup
+          className="sharing__popup"
+          close={wrapper.find('Popup').prop('close')}
+          title="Share">
           {undefined}
-        </div>
-        <GenericButton
-          action={closeHandler}
-          extraClasses="right"
-          type="inline-neutral">
-          Done
-        </GenericButton>
-      </Popup>
+          <div className="sharing__users-header">
+            <div className="sharing__users-header-user">User</div>
+            <div className="sharing__users-header-access">Access</div>
+          </div>
+          <div className="sharing__users">
+            {undefined}
+          </div>
+          <GenericButton
+            action={wrapper.find('GenericButton').prop('action')}
+            extraClasses="right"
+            type="inline-neutral">
+            Done
+          </GenericButton>
+        </Popup>
+      </div>
     );
-    expect(output).toEqualJSX(expected);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can render with a spinner', () => {
-    const getModelUserInfo = sinon.stub().callsArgWith(0, null, []);
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        canShareModel={false}
-        getModelUserInfo={getModelUserInfo}
-        grantModelAccess={sinon.stub()}
-        revokeModelAccess={sinon.stub()} />, true);
-    const instance = renderer.getMountedInstance();
-    instance.setState({loadingUsers: true});
-    const output = renderer.getRenderOutput();
-    const spinner = output.props.children[2].props.children;
-    const expected = (
-      <div className="sharing__loading">
-        <Spinner />
-      </div>
-    );
-    expect(spinner).toEqualJSX(expected);
+    const wrapper = renderComponent({ getModelUserInfo: sinon.stub() });
+    assert.equal(wrapper.find('Spinner').length, 1);
   });
 
   it('can render with users', () => {
-    const getModelUserInfo = sinon.stub().callsArgWith(0, null, users);
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        canShareModel={false}
-        getModelUserInfo={getModelUserInfo}
-        grantModelAccess={sinon.stub()}
-        humanizeTimestamp={humanizeTimestamp}
-        revokeModelAccess={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
-    // Get all the children except the header, which is the first item in the
-    // array.
+    const wrapper = renderComponent();
     const expected = (
       <div className="sharing__users">
         {[<div className="sharing__user" key="drwho@external">
@@ -156,21 +135,17 @@ describe('Sharing', () => {
           </div>
         </div>]}
       </div>);
-    expect(output.props.children[2]).toEqualJSX(expected);
+    assert.compareJSX(wrapper.find('.sharing__users'), expected);
   });
 
   it('can handle an API call error', () => {
-    const getModelUserInfo = sinon.stub().callsArgWith(0, 'boom', []);
+    getModelUserInfo.callsArgWith(0, 'boom', []);
     const addNotification = sinon.stub();
     const closeHandler = sinon.stub();
-    jsTestUtils.shallowRender(
-      <Sharing
-        addNotification={addNotification}
-        canShareModel={false}
-        closeHandler={closeHandler}
-        getModelUserInfo={getModelUserInfo}
-        grantModelAccess={sinon.stub()}
-        revokeModelAccess={sinon.stub()} />);
+    renderComponent({
+      addNotification,
+      closeHandler
+    });
     assert.equal(addNotification.called, true);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to load users.',
@@ -181,17 +156,7 @@ describe('Sharing', () => {
   });
 
   it('can render the invitation form', () => {
-    const grantModelAccess = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        addNotification={sinon.stub()}
-        canShareModel={true}
-        closeHandler={sinon.stub()}
-        getModelUserInfo={sinon.stub()}
-        grantModelAccess={grantModelAccess}
-        revokeModelAccess={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ canShareModel: true });
     const expectedOptions = [{
       label: 'Read',
       value: 'read'
@@ -202,15 +167,15 @@ describe('Sharing', () => {
       label: 'Admin',
       value: 'admin'
     }];
-    const expectedMarkup = (
+    const expected = (
       <div className="sharing__invite">
         <div className="sharing__invite--header">Add a user</div>
-        <form onSubmit={instance._grantModelAccess}>
+        <form onSubmit={wrapper.find('form').prop('onSubmit')}>
           <div className="sharing__invite--username">
             <GenericInput
               inlineErrorIcon={true}
               label="Username"
-              onKeyUp={instance._handleUsernameInputChange}
+              onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
               placeholder="Username"
               ref="username"
               required={true} />
@@ -235,29 +200,22 @@ describe('Sharing', () => {
         </form>
       </div>
     );
-    const actualMarkup = output.props.children[0];
-    expect(actualMarkup).toEqualJSX(expectedMarkup);
+    assert.compareJSX(wrapper.find('.sharing__invite'), expected);
   });
 
   it('can grant user access', () => {
     const grantModelAccess = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        addNotification={sinon.stub()}
-        canShareModel={true}
-        closeHandler={sinon.stub()}
-        getModelUserInfo={sinon.stub()}
-        grantModelAccess={grantModelAccess}
-        revokeModelAccess={sinon.stub()} />, true);
-    const output = renderer.getRenderOutput();
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({
+      canShareModel: true,
+      grantModelAccess
+    });
+    const instance = wrapper.instance();
     // Verify that the action of granting access makes the expected API call.
     instance.refs = {
       username: {getValue: sinon.stub().returns('chekov')},
       access: {getValue: sinon.stub().returns('read')}
     };
-    const inviteForm = output.props.children[0].props.children[1];
-    inviteForm.props.onSubmit();
+    wrapper.find('form').simulate('submit');
     assert.equal(grantModelAccess.called, true,
       'grantModelAccess was not called');
     assert.deepEqual(grantModelAccess.args[0][0], 'chekov');
@@ -266,26 +224,16 @@ describe('Sharing', () => {
   });
 
   it('can render and revoke user access', () => {
-    const getModelUserInfo = sinon.stub().callsArgWith(0, null, users);
     const revokeModelAccess = sinon.stub();
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        addNotification={sinon.stub()}
-        canShareModel={true}
-        closeHandler={sinon.stub()}
-        getModelUserInfo={getModelUserInfo}
-        grantModelAccess={sinon.stub()}
-        humanizeTimestamp={humanizeTimestamp}
-        revokeModelAccess={revokeModelAccess} />, true);
-    const output = renderer.getRenderOutput();
-    const user = output.props.children[2].props.children[0];
+    const wrapper = renderComponent({
+      canShareModel: true,
+      revokeModelAccess
+    });
     // Validate that the markup is correct.
-    const revokeMarkup = user.props.children[2];
-    const revokeAction = revokeMarkup.props.children.props.action;
-    const expectedMarkup = (
+    const expected = (
       <div className="sharing__user-revoke">
         <GenericButton
-          action={revokeAction}
+          action={wrapper.find('.sharing__user-revoke GenericButton').at(0).prop('action')}
           tooltip="Remove user">
           <SvgIcon
             name="close_16"
@@ -293,9 +241,9 @@ describe('Sharing', () => {
         </GenericButton>
       </div>
     );
-    expect(revokeMarkup).toEqualJSX(expectedMarkup);
+    assert.compareJSX(wrapper.find('.sharing__user-revoke').at(0), expected);
     // Verify that the button triggers the API call as expected.
-    revokeAction();
+    wrapper.find('.sharing__user-revoke GenericButton').at(0).props().action();
     assert.equal(revokeModelAccess.called, true,
       'revokeModelAccess was not called');
     assert.equal(revokeModelAccess.args[0][0], 'drwho@external');
@@ -303,108 +251,53 @@ describe('Sharing', () => {
   });
 
   it('handles revoke/grant errors', () => {
-    const renderer = jsTestUtils.shallowRender(
-      <Sharing
-        addNotification={sinon.stub()}
-        canShareModel={true}
-        closeHandler={sinon.stub()}
-        getModelUserInfo={sinon.stub()}
-        grantModelAccess={sinon.stub()}
-        revokeModelAccess={sinon.stub()} />, true);
-    const instance = renderer.getMountedInstance();
+    const wrapper = renderComponent({ canShareModel: true });
+    const instance = wrapper.instance();
     instance._modifyModelAccessCallback('boom');
-    const output = renderer.getRenderOutput();
-    const actualMessage = output.props.children[0].props.children[1].props.
-      children[3];
-    const expectedMessage = (
+    wrapper.update();
+    const expected = (
       <div className="sharing__invite--error"><b>Error:</b>{' '}boom</div>
     );
-    expect(actualMessage).toEqualJSX(expectedMessage);
+    assert.compareJSX(wrapper.find('.sharing__invite--error'), expected);
   });
 
   describe('add button states', () => {
-    function makeSharingEle(state) {
-      const renderer = jsTestUtils.shallowRender(
-        <Sharing
-          addNotification={sinon.stub()}
-          canShareModel={true}
-          closeHandler={sinon.stub()}
-          getModelUserInfo={sinon.stub()}
-          grantModelAccess={sinon.stub()}
-          revokeModelAccess={sinon.stub()} />, true);
-      const instance = renderer.getMountedInstance();
-      if (state) {
-        instance.setState(state);
-      }
-      const output = renderer.getRenderOutput();
-      return output.props.children[0].
-        props.children[1].props.children[2].props.children;
-    }
+
     it('shows a disabled button with "add" text by default', () => {
-      const expected = (
-        <GenericButton
-          disabled={true}
-          ref="grantButton"
-          submit={true}
-          tooltip="Add user"
-          type="positive">
-          Add
-        </GenericButton>
-      );
-      expect(makeSharingEle()).toEqualJSX(expected);
+      const wrapper = renderComponent({ canShareModel: true });
+      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      assert.equal(button.children().text(), 'Add');
+      assert.equal(button.prop('disabled'), true);
     });
 
     it('shows an active button with "add" text when enabled', () => {
-      const output = makeSharingEle({
-        canAdd: true
-      });
-      const expected = (
-        <GenericButton
-          disabled={false}
-          ref="grantButton"
-          submit={true}
-          tooltip="Add user"
-          type="positive">
-          Add
-        </GenericButton>
-      );
-      expect(output).toEqualJSX(expected);
+      const wrapper = renderComponent({ canShareModel: true });
+      const instance = wrapper.instance();
+      instance.setState({ canAdd: true });
+      wrapper.update();
+      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      assert.equal(button.children().text(), 'Add');
+      assert.equal(button.prop('disabled'), false);
     });
 
     it('shows a disabled button with "add" text when sending', () => {
-      const output = makeSharingEle({
-        sending: true
-      });
-      const expected = (
-        <GenericButton
-          disabled={true}
-          ref="grantButton"
-          submit={true}
-          tooltip="Add user"
-          type="positive">
-          Add
-        </GenericButton>
-      );
-      expect(output).toEqualJSX(expected);
+      const wrapper = renderComponent({ canShareModel: true });
+      const instance = wrapper.instance();
+      instance.setState({ sending: true });
+      wrapper.update();
+      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      assert.equal(button.children().text(), 'Add');
+      assert.equal(button.prop('disabled'), true);
     });
 
     it('shows a disabled button with tick icon when sent', () => {
-      const output = makeSharingEle({
-        sent: true
-      });
-      const expected = (
-        <GenericButton
-          disabled={true}
-          ref="grantButton"
-          submit={true}
-          tooltip="Add user"
-          type="positive">
-          <SvgIcon
-            name="tick_16"
-            size="16" />
-        </GenericButton>
-      );
-      expect(output).toEqualJSX(expected);
+      const wrapper = renderComponent({ canShareModel: true });
+      const instance = wrapper.instance();
+      instance.setState({ sent: true });
+      wrapper.update();
+      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      assert.equal(button.find('SvgIcon').length, 1);
+      assert.equal(button.prop('disabled'), true);
     });
   });
 });

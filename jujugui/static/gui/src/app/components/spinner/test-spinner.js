@@ -2,20 +2,24 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const Spinner = require('./spinner');
 
-const jsTestUtils = require('../../utils/component-test-utils');
-
 describe('Spinner', function() {
+
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <Spinner />
+  );
+
   it('renders the spinner', function() {
-    var output = jsTestUtils.shallowRender(
-      <Spinner />);
-    expect(output).toEqualJSX(
+    const wrapper = renderComponent();
+    const expected = (
       <div className="spinner-container">
         <div className="spinner-loading">
           Loading...
         </div>
       </div>);
+    assert.compareJSX(wrapper, expected);
   });
 });

@@ -4,7 +4,6 @@
 const classnames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
-const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 const XTerm = require('xterm');
 
@@ -45,9 +44,7 @@ class Terminal extends React.Component {
     const term = new XTerm();
     term.writeln('connecting (this operation could take a minute)... ');
     this.term = term;
-    term.open(
-      ReactDOM.findDOMNode(this).querySelector('.juju-shell__terminal'),
-      true);
+    term.open(this.refs.terminal, true);
     const ws = new props.WebSocket(props.address);
     this.ws = ws;
     const creds = props.creds;

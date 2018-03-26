@@ -29,11 +29,13 @@ class TermsPopup extends React.Component {
         </div>);
     }
     return (
-      <Popup
-        close={this.props.close}
-        type="wide">
-        {content}
-      </Popup>);
+      <div>
+        <Popup
+          close={this.props.close}
+          type="wide">
+          {content}
+        </Popup>
+      </div>);
   }
 };
 
