@@ -2,82 +2,56 @@
 'use strict';
 
 const React = require('react');
+const enzyme = require('enzyme');
 
 const SearchResultsTypeFilter = require('./type-filter');
 
-const jsTestUtils = require('../../../utils/component-test-utils');
-
 describe('SearchResultsTypeFilter', function() {
 
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <SearchResultsTypeFilter
+      changeState={options.changeState || sinon.stub()}
+      currentType={options.currentType || null} />
+  );
+
   it('can render a type filter', function() {
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsTypeFilter
-        changeState={changeState}
-        currentType={null} />);
-    assert.deepEqual(output,
+    const wrapper = renderComponent();
+    const expected = (
       <nav className="six-col list-block__type">
         <ul>
           <li className="selected"
             key="All"
-            onClick={output.props.children.props.children[0].props.onClick}
+            onClick={wrapper.find('li').at(0).prop('onClick')}
             role="button" tabIndex="0">
             All
           </li>
           <li className=""
             key="Charms"
-            onClick={output.props.children.props.children[1].props.onClick}
+            onClick={wrapper.find('li').at(1).prop('onClick')}
             role="button" tabIndex="0">
             Charms
           </li>
           <li className=""
             key="Bundles"
-            onClick={output.props.children.props.children[2].props.onClick}
+            onClick={wrapper.find('li').at(2).prop('onClick')}
             role="button" tabIndex="0">
             Bundles
           </li>
         </ul>
       </nav>);
+    assert.compareJSX(wrapper, expected);
   });
 
   it('can show a filter as active', function() {
-    var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsTypeFilter
-        changeState={changeState}
-        currentType='bundle' />);
-    assert.deepEqual(output,
-      <nav className="six-col list-block__type">
-        <ul>
-          <li className=""
-            key="All"
-            onClick={output.props.children.props.children[0].props.onClick}
-            role="button" tabIndex="0">
-            All
-          </li>
-          <li className=""
-            key="Charms"
-            onClick={output.props.children.props.children[1].props.onClick}
-            role="button" tabIndex="0">
-            Charms
-          </li>
-          <li className="selected"
-            key="Bundles"
-            onClick={output.props.children.props.children[2].props.onClick}
-            role="button" tabIndex="0">
-            Bundles
-          </li>
-        </ul>
-      </nav>);
+    const wrapper = renderComponent({ currentType: 'bundle' });
+    assert.equal(
+      wrapper.find('li').at(2).prop('className').includes('selected'), true);
   });
 
   it('can change the state when a filter is clicked', function() {
     var changeState = sinon.stub();
-    var output = jsTestUtils.shallowRender(
-      <SearchResultsTypeFilter
-        changeState={changeState}
-        currentType='bundle' />);
-    output.props.children.props.children[1].props.onClick();
+    const wrapper = renderComponent({ changeState });
+    wrapper.find('li').at(1).simulate('click');
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       search: {

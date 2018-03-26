@@ -493,6 +493,7 @@ class SearchResults extends React.Component {
   _generateCommunityResults(community, hasPromulgated) {
     const holderClasses = classNames(
       'clearfix',
+      'community-results__content',
       {
         'hidden': !this.state.showCommunity && hasPromulgated
       });
