@@ -20,39 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 const JsDiff = require('diff');
 
-const ShallowRenderer = require('react-test-renderer/shallow');
-
 const jsTestUtils = {
-
-  /**
-    shallowRender provides a convenience wrapper around the React
-    testUtils createRenderer method.
-
-    The createRenderer isn't well documented but you can view it's source
-    code:
-      https://github.com/facebook/react/blob/
-      dc2570e1ceebd2b4be7ebe0990f8524f6b53ea7c/src/test/ReactTestUtils.js#L347
-
-    @param {Object} component The components to render.
-    @param {Boolean} returnRenderer Whether or not it should return the
-      component instance or just the rendered output.
-    @return {Object} See returnRenderer parameter.
-  */
-  shallowRender: function(component, returnRenderer) {
-    const shallowRenderer = new ShallowRenderer();
-    shallowRenderer.render(component);
-    // XXX: Add the getMountedInstance until it lands, at which point this can
-    // removed. See:
-    // https://github.com/facebook/react/pull/4918/files
-    if (!shallowRenderer.getMountedInstance) {
-      shallowRenderer.getMountedInstance = function() {
-        return this._instance ? this._instance._instance : null;
-      };
-    }
-    return (returnRenderer) ?
-      shallowRenderer : shallowRenderer.getRenderOutput();
-  },
-
   /**
     Provide a mock method for the ReactDnD connectDragSource method.
 
