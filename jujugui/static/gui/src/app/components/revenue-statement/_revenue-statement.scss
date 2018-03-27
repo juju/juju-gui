@@ -1,10 +1,10 @@
-$invoice-bp: 600px;
+$revenue-statement-bp: 600px;
 
 .revenue-statement {
   @extend %floating-panel;
   min-height: 500vh;
   width: 100vw;
-  z-index: index($z-indexed-elements, invoice);
+  z-index: index($z-indexed-elements, revenue-statement);
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
@@ -16,7 +16,7 @@ $invoice-bp: 600px;
     overflow-y: auto;
     height: calc(100vh - 4rem);
 
-    @media (min-width: $invoice-bp) {
+    @media (min-width: $revenue-statement-bp) {
       margin: 2rem auto;
       max-width: 1200px;
       padding: 2rem;
@@ -30,8 +30,8 @@ $invoice-bp: 600px;
   &__header {
     position: relative;
 
-    @media (min-width: $invoice-bp) {
-      .invoice__meta {
+    @media (min-width: $revenue-statement-bp) {
+      .revenue-statement__meta {
         position: relative;
         top: 3rem;
         min-height: 3rem;
@@ -49,13 +49,13 @@ $invoice-bp: 600px;
     font-size: 2.8rem;
     margin-top: 1rem;
 
-    @media (min-width: $invoice-bp) {
+    @media (min-width: $revenue-statement-bp) {
       position: absolute;
       top: 2.25rem;
       left: 0;
       width: 100%;
 
-      .invoice__meta {
+      .revenue-statement__meta {
         position: relative;
         top: 3rem;
       }
@@ -70,7 +70,7 @@ $invoice-bp: 600px;
     border-top: 1px solid $light-mid-grey;
     margin-top: 1.5rem;
 
-    @media (min-width: $invoice-bp) {
+    @media (min-width: $revenue-statement-bp) {
       position: relative;
       margin-top: 3.5rem;
       padding-top: 2rem;
@@ -87,7 +87,7 @@ $invoice-bp: 600px;
       margin-bottom: 0.25rem;
     }
 
-    @media (min-width: $invoice-bp) {
+    @media (min-width: $revenue-statement-bp) {
       position: absolute;
       top: 1rem;
       left: 0;
@@ -106,7 +106,7 @@ $invoice-bp: 600px;
         text-align: right;
       }
 
-      @media (min-width: $invoice-bp) {
+      @media (min-width: $revenue-statement-bp) {
         &:first-child {
           flex: 7.5;
         }
@@ -126,30 +126,30 @@ $invoice-bp: 600px;
       display: block;
     }
 
-    & + .invoice__meta .u-emphasis-value {
-      @media (min-width: $invoice-bp) {
+    & + .revenue-statement__meta .u-emphasis-value {
+      @media (min-width: $revenue-statement-bp) {
         margin-top: -0.75rem;
       }
     }
 
-    @media (max-width: $invoice-bp) {
-      .invoice__label {
+    @media (max-width: $revenue-statement-bp) {
+      .revenue-statement__label {
         margin-bottom: 0.5rem;
       }
     }
 
-    @media (min-width: $invoice-bp) {
+    @media (min-width: $revenue-statement-bp) {
       margin-top: 0;
       padding-top: 0;
       position: absolute;
       top: 0;
       left: 0;
 
-      .invoice__label {
+      .revenue-statement__label {
         margin-bottom: 0.5rem;
       }
 
-      & + .invoice__meta {
+      & + .revenue-statement__meta {
         padding-bottom: 2rem;
       }
     }
@@ -160,7 +160,7 @@ $invoice-bp: 600px;
     margin-bottom: 1rem;
     padding: 1rem;
 
-    .invoice__meta {
+    .revenue-statement__meta {
       min-height: 0;
     }
 
@@ -176,7 +176,7 @@ $invoice-bp: 600px;
   &__rel-wrap {
     position: relative;
 
-    @media (min-width: $invoice-bp) {
+    @media (min-width: $revenue-statement-bp) {
       padding-top: 0.5rem;
     }
   }
@@ -205,28 +205,28 @@ $invoice-bp: 600px;
   }
 }
 
-.invoice-details-lrg-screen {
+.revenue-statement-details-lrg-screen {
   display: none;
 }
 
-.invoice-details__title {
+.revenue-statement-details__title {
   font-size: 20px;
 
-  @media (min-width: $invoice-bp) {
+  @media (min-width: $revenue-statement-bp) {
     font-size: 23px;
   }
 }
 
 @media (min-width: 768px) {
-  .invoice-details-sm-screen {
+  .revenue-statement-details-sm-screen {
     display: none;
   }
 
-  .invoice-details-lrg-screen {
+  .revenue-statement-details-lrg-screen {
     display: block;
   }
 
-  .invoice__footer {
+  .revenue-statement__footer {
     display: flex;
     width: 100%;
 

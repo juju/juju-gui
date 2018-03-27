@@ -15,6 +15,7 @@ const ProfileCredentialList = require('./credential-list/credential-list');
 const ProfileInvoiceList = require('./invoice-list/invoice-list');
 const Invoice = require('../invoice/invoice');
 const Panel = require('../panel/panel');
+const RevenueStatement = require('../revenue-statement/revenue-statement');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
@@ -46,13 +47,24 @@ class Profile extends React.Component {
 
   render() {
     const props = this.props;
+    const profileUrl = this._getProfileURL();
     const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
     const sectionsMap = new Map();
+<<<<<<< HEAD
     const sectionInfo = this._getSectionInfo();
     if (sectionInfo.active === 'invoices' && sectionInfo.sub !== null) {
       return (
         <Panel instanceName="invoice" visible={true}>
           <Invoice />
+=======
+
+    console.log(profileUrl.full);
+
+    if (profileUrl.full === 'revenue-statement') {
+      return (
+        <Panel instanceName="revenue-statement" visible={true}>
+          <RevenueStatement />
+>>>>>>> Correct routing for Revenue statement
         </Panel>
       );
     }
@@ -150,6 +162,15 @@ class Profile extends React.Component {
       });
       sectionsMap.set('invoices', {
         label: 'Invoices',
+        getComponent: () => {
+          return (
+            <ProfileInvoiceList
+              baseURL={props.baseURL}
+              user={props.userInfo.external} />);
+        }
+      });
+      sectionsMap.set('revenue-statement', {
+        label: 'Revenue Statements',
         getComponent: () => {
           return (
             <ProfileInvoiceList
