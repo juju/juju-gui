@@ -91,7 +91,18 @@
     }
   }
 
+  .store-top-cards {
+    justify-content: space-between;
+  }
+
   .box {
+    margin-right: 10px;
+    flex-grow: 1;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
     &--kubernetes,
     &--openstack,
     &--hadoop {
@@ -107,6 +118,10 @@
           background-color: $light-grey;
         }
       }
+    }
+
+    &--expert {
+      max-width: 530px;
     }
 
     &--kubernetes {
@@ -127,13 +142,19 @@
     }
 
     &--openstack {
+      position: relative;
+      overflow: hidden;
       $openstack-brand: #df2e29;
       border-color: $openstack-brand;
       background: $openstack-brand;
       color: $white;
 
       .box__image {
+        position: absolute;
+        top: 50%;
+        left: 50%;
         max-width: none;
+        margin: -127px 0 0 -70px;
       }
     }
 
