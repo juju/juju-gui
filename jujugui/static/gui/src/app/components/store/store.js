@@ -250,8 +250,9 @@ class Store extends React.Component {
     }
 
     const kubernetes = (
-      <div className="box box--feature box--kubernetes align-center four-col"
+      <div className="box box--kubernetes align-center"
         data-query="kubernetes"
+        key="kubernetes"
         onClick={this._handleSearchClick.bind(this)}>
         <img alt="Kubernetes"
           className="box__image" src={this._generateLocalImagePath('k8-image.png')} />
@@ -259,11 +260,12 @@ class Store extends React.Component {
           <h2>Kubernetes</h2>
           {kubernetesButton}
         </div>
-      </div>
-    );
-    const openstack = this.props.gisf ? null : (
-      <div className="box box--feature box--openstack align-center four-col"
+      </div>);
+
+    const openstack = (
+      <div className="box box--openstack align-center"
         data-query="openstack"
+        key="openstack"
         onClick={this._handleSearchClick.bind(this)}>
         <img alt="Openstack"
           className="box__image" src={this._generateLocalImagePath('openstack-promo.png')} />
@@ -271,11 +273,12 @@ class Store extends React.Component {
           <h2>OpenStack</h2>
           {openstackButton}
         </div>
-      </div>
-    );
-    const bigdata = this.props.gisf ? (
-      <div className="box box--feature box--hadoop align-center four-col"
+      </div>);
+
+    const bigdata = (
+      <div className="box box--hadoop align-center"
         data-query="hadoop"
+        key="hadoop"
         onClick={this._handleSearchClick.bind(this)}>
         <div className="box--hadoop-container">
           <img alt="Hadoop"
@@ -285,17 +288,39 @@ class Store extends React.Component {
             {bigdataButton}
           </div>
         </div>
-      </div>
-    ) : null;
+      </div>);
+
+    const expert = (
+      <ExpertStoreCard
+        classes={['box', 'box--expert']}
+        expert="spicule"
+        key="expert"
+        staticURL={this.props.staticURL} />);
+
+    function _activeCards() {
+      const showExperts = this.props.showExperts;
+      const gisf = this.props.gisf;
+      const cards = [kubernetes];
+
+      if (gisf) {
+        cards.push(bigdata);
+        if (showExperts) {
+          cards.push(expert);
+        }
+      } else {
+        cards.push(openstack);
+        if (showExperts) {
+          cards.push(expert);
+        } else {
+          cards.push(bigdata);
+        }
+      }
+      return cards;
+    }
+
     return (
-      <div className="row equal-height">
-        {kubernetes}
-        {openstack}
-        {bigdata}
-        <ExpertStoreCard
-          classes={['four-col', 'last-col', 'box--expert', 'box--feature']}
-          expert="spicule"
-          staticURL={this.props.staticURL} />
+      <div className="row equal-height store-top-cards">
+        {_activeCards.call(this)}
       </div>);
   }
 
@@ -958,6 +983,7 @@ Store.propTypes = {
   charmstoreURL: PropTypes.string.isRequired,
   gisf: PropTypes.bool.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  showExperts: PropTypes.bool,
   staticURL: PropTypes.string
 };
 
