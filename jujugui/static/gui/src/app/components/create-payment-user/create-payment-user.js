@@ -248,10 +248,11 @@ class CreatePaymentUser extends React.Component {
     Update the state with the form type.
 
     @method _setFormType
-    @param {Boolean} Whether the form is for a business.
+    @param {event} Contains id of elemt where event was fired
   */
-  _setFormType(business) {
-    this.setState({business: business});
+  _setFormType(e) {
+    const business = e.target.id === 'business';
+    this.setState({business});
   }
 
   render() {
@@ -270,7 +271,7 @@ class CreatePaymentUser extends React.Component {
                   <input checked={this.state.business}
                     id="business"
                     name="formType"
-                    onChange={this._setFormType.bind(this, true)}
+                    onChange={this._setFormType.bind(this)}
                     type="radio" />
                     Business use
                 </label>
@@ -280,7 +281,7 @@ class CreatePaymentUser extends React.Component {
                   <input checked={!this.state.business}
                     id="personal"
                     name="formType"
-                    onChange={this._setFormType.bind(this, false)}
+                    onChange={this._setFormType.bind(this)}
                     type="radio" />
                   Personal use
                 </label>
