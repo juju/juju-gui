@@ -52,6 +52,9 @@ class DeploymentCloud extends React.Component {
         if (cloudList.length === 1) {
           this.props.setCloud(cloudList[0]);
         }
+        if (this.props.setCloudCount) {
+          this.props.setCloudCount(cloudList.length);
+        }
       });
     };
     listClouds();
@@ -149,7 +152,8 @@ DeploymentCloud.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   getCloudProviderDetails: PropTypes.func.isRequired,
   listClouds: PropTypes.func.isRequired,
-  setCloud: PropTypes.func.isRequired
+  setCloud: PropTypes.func.isRequired,
+  setCloudCount: PropTypes.func
 };
 
 module.exports = DeploymentCloud;
