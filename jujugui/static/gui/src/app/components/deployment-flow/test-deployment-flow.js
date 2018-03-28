@@ -144,6 +144,9 @@ describe('DeploymentFlow', function() {
       modelCommitted: false,
       withPlans: true
     });
+    const instance = wrapper.instance();
+    instance.setState({ cloudCount: 2 });
+    wrapper.update();
     const expected = (
       <div className="deployment-flow">
         <DeploymentPanel
@@ -177,7 +180,8 @@ describe('DeploymentFlow', function() {
               controllerIsReady={sinon.stub()}
               getCloudProviderDetails={sinon.stub()}
               listClouds={sinon.stub()}
-              setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
+              setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
+              setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')} />
           </DeploymentSection>
           <DeploymentSection
             completed={false}
@@ -318,6 +322,37 @@ describe('DeploymentFlow', function() {
     assert.equal(wrapper.find('DeploymentCloud').length, 0);
   });
 
+  it('displays the change cloud button if there are multiple clouds', () => {
+    const wrapper = createDeploymentFlow();
+    const instance = wrapper.instance();
+    instance.setState({
+      cloud: { name: 'cloud' },
+      cloudCount: 2
+    });
+    wrapper.update();
+    const buttons = wrapper.find(
+      'DeploymentSection[instance="deployment-cloud"]').prop('buttons');
+    assert.deepEqual(buttons, [{
+      action: buttons[0].action,
+      disabled: false,
+      title: 'Change cloud',
+      type: 'neutral'
+    }]);
+  });
+
+  it('does not display the change cloud button if there is only one cloud', () => {
+    const wrapper = createDeploymentFlow();
+    const instance = wrapper.instance();
+    instance.setState({
+      cloud: { name: 'cloud' },
+      cloudCount: 1
+    });
+    wrapper.update();
+    assert.strictEqual(
+      wrapper.find('DeploymentSection[instance="deployment-cloud"]').prop('buttons'),
+      undefined);
+  });
+
   it('does not show the model name when comitting', function() {
     const wrapper = createDeploymentFlow({
       modelCommitted: true
@@ -339,6 +374,7 @@ describe('DeploymentFlow', function() {
     });
     const instance = wrapper.instance();
     instance._setCloud({name: 'cloud-2'});
+    instance._setCloudCount(6);
     instance._setCredential('cloud-2-cred');
     wrapper.update();
     assert.isNotNull(instance.state.cloud);

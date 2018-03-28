@@ -35,6 +35,7 @@ class DeploymentFlow extends React.Component {
     const modelCommitted = this.props.modelCommitted;
     this.state = {
       cloud: modelCommitted ? this.props.cloud : null,
+      cloudCount: 0,
       credential: this.props.credential,
       deploying: false,
       ddEntity: null,
@@ -202,6 +203,14 @@ class DeploymentFlow extends React.Component {
   */
   _setCloud(cloud) {
     this.setState({cloud: cloud, vpcId: INITIAL_VPC_ID});
+  }
+
+  /**
+    Store the number of clouds in state.
+    @param count {Int} The number of clouds.
+  */
+  _setCloudCount(count) {
+    this.setState({ cloudCount: count });
   }
 
   /**
@@ -515,7 +524,7 @@ class DeploymentFlow extends React.Component {
     @returns {Array} The list of actions.
   */
   _generateCloudAction() {
-    if (!this.state.cloud || this.props.modelCommitted) {
+    if (this.state.cloudCount <= 1 || !this.state.cloud || this.props.modelCommitted) {
       return;
     }
     return [{
@@ -707,7 +716,8 @@ class DeploymentFlow extends React.Component {
           controllerIsReady={this.props.controllerIsReady}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
           listClouds={this.props.listClouds}
-          setCloud={this._setCloud.bind(this)} />
+          setCloud={this._setCloud.bind(this)}
+          setCloudCount={this._setCloudCount.bind(this)} />
       </DeploymentSection>);
   }
 
