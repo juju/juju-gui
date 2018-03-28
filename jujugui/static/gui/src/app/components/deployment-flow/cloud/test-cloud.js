@@ -151,12 +151,12 @@ describe('DeploymentCloud', function() {
       setCloud,
       setCloudCount
     });
-    assert.equal(setCloud.callCount, 1);
+    assert.strictEqual(setCloud.callCount, 1);
     assert.deepEqual(setCloud.args[0][0], {
       name: 'google'
     });
-    assert.equal(setCloudCount.callCount, 1);
-    assert.equal(setCloudCount.args[0][0], 1);
+    assert.strictEqual(setCloudCount.callCount, 1);
+    assert.strictEqual(setCloudCount.args[0][0], 1);
   });
 
   it('can select a cloud', function() {
@@ -165,7 +165,7 @@ describe('DeploymentCloud', function() {
       setCloud
     });
     wrapper.find('.deployment-cloud__cloud').at(0).simulate('click');
-    assert.equal(setCloud.callCount, 1);
+    assert.strictEqual(setCloud.callCount, 1);
     assert.deepEqual(setCloud.args[0][0], {
       name: 'google',
       cloudType: 'gce'
