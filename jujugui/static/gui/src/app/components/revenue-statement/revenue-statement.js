@@ -35,20 +35,24 @@ class RevenueStatement extends React.Component {
         return {
           columns: [
             {
-              content: 'Ubuntu Advantage Essential',
-              columnSize: 3
+              content: 'equities-prod-lon-1',
+              columnSize: 4
             },
             {
-              content: '$0.09 per machine-hour',
-              columnSize: 3
+              content: '$0.028',
+              columnSize: 2
             },
             {
-              content: '28,499 hours',
-              columnSize: 3
+              content: 'Hours',
+              columnSize: 2
             },
             {
-              content: '$32,888',
-              columnSize: 3
+              content: '20%',
+              columnSize: 2
+            },
+            {
+              content: '$50.96',
+              columnSize: 2
             }
           ]
         };
@@ -65,10 +69,10 @@ class RevenueStatement extends React.Component {
 
             <div className="revenue-statement__meta">
               <div className="revenue-statement__meta__col">
-                <span className="revenue-statement__label">Invoice number:</span>
+                <span className="revenue-statement__label">Payment date:</span>
               </div>
               <div className="revenue-statement__meta__col">
-                <span className="revenue-statement__number u-emphasis-value">1003528</span>
+                <span className="revenue-statement__number">1 April 2018</span>
               </div>
             </div>
           </header>
@@ -83,36 +87,18 @@ class RevenueStatement extends React.Component {
               <span>UK</span>
             </div>
 
-            <div className="revenue-statement__meta">
+            <div className="revenue-statement__meta address-container">
               <div className="revenue-statement__meta__col">
-                <span className="revenue-statement__label u-btn-mar">Invoice date:</span>
+                <span className="revenue-statement__label u-btn-mar">Statement number</span>
 
-                <span className="revenue-statement__label">Our reference:</span>
-                <span className="revenue-statement__label u-btn-mar">Your reference:</span>
-
-                <span className="revenue-statement__label">Currency:</span>
-                <span className="revenue-statement__label u-btn-mar">Net total:</span>
-
-                <span className="revenue-statement__label">VAT number:</span>
-                <span className="revenue-statement__label">VAT @ 20%:</span>
-                <span className="revenue-statement__label">GDP</span>
+                <span className="revenue-statement__label">Our reference</span>
+                <span className="revenue-statement__label">Currency</span>
               </div>
               <div className="revenue-statement__meta__col">
-                <span className="revenue-statement__value u-btn-mar">01 Feb 2018</span>
+                <span className="revenue-statement__value u-btn-mar">21</span>
 
                 <span className="revenue-statement__value">CGL_CN00601</span>
-                <span className="revenue-statement__value u-btn-mar">280000000</span>
-
                 <span className="revenue-statement__value">USD</span>
-                <span className="revenue-statement__value u-btn-mar">
-                  <strong>$2,564.94</strong>
-                </span>
-
-                <span className="revenue-statement__value">GB 123456789</span>
-                <span className="revenue-statement__value">
-                  <strong>$512.75</strong>
-                </span>
-                <span className="revenue-statement__value">£394.90</span>
               </div>
             </div>
             <hr />
@@ -125,8 +111,8 @@ class RevenueStatement extends React.Component {
                 <div className="u-btn-mar">
                   <span className="revenue-statement__label">Questions?</span>
                   <span className="revenue-statement__value">
-                    <a href="mailto:accountsrecievable@canonical.com">
-                      accountsrecievable@canonical.com
+                    <a href="mailto:juju-partners@canonical.com">
+                      juju-partners@canonical.com
                     </a>
                   </span>
                 </div>
@@ -145,7 +131,7 @@ class RevenueStatement extends React.Component {
               </div>
             </div>
             <hr />
-            <h3 className="u-btn-mar revenue-statement-details__title">Details</h3>
+            <h3 className="u-btn-mar revenue-statement-details__title">Details - March 2018</h3>
             <div className="revenue-statement-details-sm-screen">
               <div className="revenue-statement__billing-package">
                 <p>
@@ -204,20 +190,24 @@ class RevenueStatement extends React.Component {
                 headerColumnClasses={['profile__entity-table-header-column']}
                 headers={[
                   {
-                    content: 'Item',
-                    columnSize: 3
+                    content: 'Model / Item',
+                    columnSize: 4
                   },
                   {
-                    content: 'Unit price',
-                    columnSize: 3
+                    content: 'Price',
+                    columnSize: 2
                   },
                   {
-                    content: 'Quantity',
-                    columnSize: 3
+                    content: 'Metered',
+                    columnSize: 2
+                  },
+                  {
+                    content: 'Share',
+                    columnSize: 2
                   },
                   {
                     content: 'Amount',
-                    columnSize: 3
+                    columnSize: 2
                   }
                 ]}
                 rowClasses={['profile__entity-table-row']}
