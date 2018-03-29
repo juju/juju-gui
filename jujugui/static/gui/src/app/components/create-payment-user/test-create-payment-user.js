@@ -150,13 +150,13 @@ describe('CreatePaymentUser', function() {
           </div>
         </form>
       </div>);
-    wrapper.find('#personal').simulate('change');
+    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
     assert.compareJSX(wrapper, expected);
   });
 
   it('can display a business form', function() {
     const wrapper = renderComponent({});
-    wrapper.find('#business').simulate('change');
+    wrapper.find('#business').simulate('change', { target: { id: 'business'} });
     const inputs = wrapper.find('GenericInput');
     assert.equal(inputs.at(0).prop('label'), 'VAT number (optional)');
     assert.equal(inputs.at(1).prop('label'), 'Business name');
@@ -302,7 +302,7 @@ describe('CreatePaymentUser', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change');
+    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
     wrapper.find('GenericButton').props().action();
     assert.equal(createUser.callCount, 1);
     assert.deepEqual(createUser.args[0][0], {
@@ -354,7 +354,7 @@ describe('CreatePaymentUser', function() {
     };
     instance.refs = Object.assign(refs, extraRefs);
     instance.refs = refs;
-    wrapper.find('#business').simulate('change');
+    wrapper.find('#business').simulate('change', { target: { id: 'business'} });
     wrapper.update();
     wrapper.find('GenericButton').props().action();
     assert.equal(createUser.callCount, 1);
@@ -384,7 +384,7 @@ describe('CreatePaymentUser', function() {
       })
     };
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change');
+    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
     wrapper.find('#billingAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.update();
@@ -431,7 +431,7 @@ describe('CreatePaymentUser', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change');
+    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
     wrapper.find('GenericButton').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -448,7 +448,7 @@ describe('CreatePaymentUser', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change');
+    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
     wrapper.find('GenericButton').props().action();
     assert.equal(onUserCreated.callCount, 1);
   });
