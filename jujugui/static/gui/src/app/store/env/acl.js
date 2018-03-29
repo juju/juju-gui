@@ -74,9 +74,6 @@ aclModule.generateAcl = function(controllerAPI, modelAPI) {
       if (modelOwner.indexOf('@') < 0) {
         modelOwner = `${modelOwner}@local`;
       }
-      if (modelOwner !== currentUser) {
-        return false;
-      }
       for (let user of model.users) {
         if (user.name === currentUser) {
           return user.access === 'admin';
