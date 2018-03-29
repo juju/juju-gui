@@ -148,10 +148,10 @@ class Payment extends React.Component {
   _generatePaymentForm() {
     return (
       <div className="payment__section">
-        <h2 className="payment__title twelve-col">
-          Payment details
-        </h2>
         <div className="twelve-col">
+          <h2 className="payment__title twelve-col">
+            Enter your payment details
+          </h2>
           <CreatePaymentUser
             acl={this.props.acl}
             addNotification={this.props.addNotification}
@@ -178,12 +178,14 @@ class Payment extends React.Component {
           Payment details
         </h2>
         <div className="payment__no-user">
-          You are not set up to make payments.
-          <GenericButton
-            action={this._toggleAdd.bind(this)}
-            type="inline-neutral">
-            Set up payments
-          </GenericButton>
+          <p>You are not set up to make payments.</p>
+          <p>
+            <GenericButton
+              action={this._toggleAdd.bind(this)}
+              type="inline-positive">
+              Set up payments
+            </GenericButton>
+          </p>
         </div>
       </div>);
   }

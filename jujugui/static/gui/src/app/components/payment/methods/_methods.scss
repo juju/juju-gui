@@ -10,14 +10,11 @@
   }
 
   &__form {
-    padding: 20px;
-
-    &-fields {
-      width: 50%;
-    }
+    padding: 1rem;
 
     &-buttons {
-      padding: 20px;
+      padding: 1rem;
+      margin-bottom: 0;
       text-align: right;
 
       .button--inline-positive {

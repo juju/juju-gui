@@ -45,8 +45,8 @@ describe('PaymentMethodCard', () => {
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="payment-card twelve-col">
-        <div className="eight-col">
+      <div className="payment-card">
+        <div className="five-col">
           <div className="payment-card-wrapper"
             onClick={wrapper.find('.payment-card-wrapper').prop('onClick')}>
             <div className="payment-card-container">
@@ -74,6 +74,8 @@ describe('PaymentMethodCard', () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="seven-col last-col">
           <div className="payment-card-info">
             <h4>Card address</h4>
             <p>1 Maple</p>
@@ -93,16 +95,16 @@ describe('PaymentMethodCard', () => {
       removePaymentMethod: sinon.stub()
     });
     const expected = (
-      <div className="four-col last-col payment-card-actions">
-        <GenericButton
-          action={wrapper.find('GenericButton').at(0).prop('action')}
-          type="inline-neutral">
-          Remove payment details
-        </GenericButton>
+      <div className="payment-card-actions">
         <GenericButton
           action={sinon.stub()}
           type="inline-neutral">
           Update payment details
+        </GenericButton>
+        <GenericButton
+          action={wrapper.find('GenericButton').at(1).prop('action')}
+          type="inline-neutral">
+          Remove payment details
         </GenericButton>
       </div>);
     assert.compareJSX(wrapper.find('.payment-card-actions'), expected);
@@ -126,7 +128,7 @@ describe('PaymentMethodCard', () => {
       onPaymentMethodRemoved,
       removePaymentMethod
     });
-    wrapper.find('GenericButton').at(0).props().action();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
     assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
@@ -140,7 +142,7 @@ describe('PaymentMethodCard', () => {
       addNotification,
       removePaymentMethod
     });
-    wrapper.find('GenericButton').at(0).props().action();
+    wrapper.find('GenericButton').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to remove the payment method',
@@ -155,7 +157,7 @@ describe('PaymentMethodCard', () => {
     const wrapper = renderComponent({
       removePaymentMethod
     });
-    wrapper.find('GenericButton').at(0).props().action();
+    wrapper.find('GenericButton').at(1).props().action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

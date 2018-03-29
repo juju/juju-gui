@@ -101,12 +101,14 @@ describe('PaymentMethods', () => {
     const wrapper = renderComponent();
     const expected = (
       <div className="payment-methods__no-methods">
-        You do not have a payment method.
-        <GenericButton
-          action={wrapper.find('GenericButton').prop('action')}
-          type="inline-neutral">
-          Add payment method
-        </GenericButton>
+        <p>You do not have a payment method.</p>
+        <p>
+          <GenericButton
+            action={wrapper.find('GenericButton').prop('action')}
+            type="inline-positive">
+            Add payment method
+          </GenericButton>
+        </p>
       </div>);
     assert.compareJSX(wrapper.find('.payment-methods__no-methods'), expected);
   });

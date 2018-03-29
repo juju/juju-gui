@@ -15,7 +15,7 @@ class CreatePaymentUser extends React.Component {
     this.xhrs = [];
     this.state = {
       billingAddressSame: true,
-      business: false,
+      business: true,
       cardAddressSame: true,
       loading: false
     };
@@ -248,10 +248,11 @@ class CreatePaymentUser extends React.Component {
     Update the state with the form type.
 
     @method _setFormType
-    @param {Boolean} Whether the form is for a business.
+    @param {event} Contains id of elemt where event was fired
   */
-  _setFormType(business) {
-    this.setState({business: business});
+  _setFormType(e) {
+    const business = e.target.id === 'business';
+    this.setState({business});
   }
 
   render() {
@@ -266,29 +267,29 @@ class CreatePaymentUser extends React.Component {
           <div className="create-payment-user__form-content">
             <ul className="create-payment-user__form-type">
               <li className="create-payment-user__form-type-option">
-                <label htmlFor="personal">
-                  <input checked={!this.state.business}
-                    id="personal"
-                    name="formType"
-                    onChange={this._setFormType.bind(this, false)}
-                    type="radio" />
-                  Personal use
-                </label>
-              </li>
-              <li className="create-payment-user__form-type-option">
                 <label htmlFor="business">
                   <input checked={this.state.business}
                     id="business"
                     name="formType"
-                    onChange={this._setFormType.bind(this, true)}
+                    onChange={this._setFormType.bind(this)}
                     type="radio" />
-                  Business use
+                    Business use
+                </label>
+              </li>
+              <li className="create-payment-user__form-type-option">
+                <label htmlFor="personal">
+                  <input checked={!this.state.business}
+                    id="personal"
+                    name="formType"
+                    onChange={this._setFormType.bind(this)}
+                    type="radio" />
+                  Personal use
                 </label>
               </li>
             </ul>
             {this._generateVATField()}
             <h2 className="create-payment-user__title">
-              Name and address
+              Your contact details
             </h2>
             {this._generateBusinessNameField()}
             <GenericInput
@@ -331,14 +332,14 @@ class CreatePaymentUser extends React.Component {
             </label>
             {this._generateCardAddressFields()}
             {this._generateBillingAddressFields()}
-          </div>
-          <div className="create-payment-user__add">
-            <GenericButton
-              action={this._handleAddUser.bind(this)}
-              disabled={disabled}
-              type="inline-neutral">
-              Add payment details
-            </GenericButton>
+            <div className="create-payment-user__add">
+              <GenericButton
+                action={this._handleAddUser.bind(this)}
+                disabled={disabled}
+                type="inline-positive">
+                Add payment details
+              </GenericButton>
+            </div>
           </div>
         </form>
       </div>

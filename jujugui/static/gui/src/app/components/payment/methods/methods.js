@@ -37,12 +37,14 @@ class PaymentMethods extends React.Component {
     if (!user.paymentMethods.length) {
       return (
         <div className="payment-methods__no-methods">
-          You do not have a payment method.
-          <GenericButton
-            action={this._toggleAdd.bind(this)}
-            type="inline-neutral">
-            Add payment method
-          </GenericButton>
+          <p>You do not have a payment method.</p>
+          <p>            
+            <GenericButton
+              action={this._toggleAdd.bind(this)}
+              type="inline-positive">
+              Add payment method
+            </GenericButton>
+          </p>
         </div>);
     }
     const payment = this.props.payment;

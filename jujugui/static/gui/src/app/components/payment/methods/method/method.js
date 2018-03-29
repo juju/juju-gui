@@ -136,8 +136,7 @@ class PaymentMethod extends React.Component {
     return (
       <ExpandingRow
         classes={{
-          'user-profile__list-row': true,
-          'twelve-col': true
+          'user-profile__list-row': true
         }}
         clickable={false}
         expanded={true}>

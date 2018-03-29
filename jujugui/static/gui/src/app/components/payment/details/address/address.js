@@ -65,7 +65,7 @@ class PaymentDetailsAddress extends React.Component {
             address={this.props.address}
             disabled={true}
             getCountries={this.props.getCountries} />
-          <div className="twelve-col payment-details-address__edit">
+          <div className="twelve-col payment-details-address__edit u-no-margin--bottom">
             <AddressForm
               addNotification={this.props.addNotification}
               address={this.props.address}
@@ -74,7 +74,7 @@ class PaymentDetailsAddress extends React.Component {
               ref="addressForm"
               validateForm={this.props.validateForm} />
             <div className={
-              'twelve-col payment-details-address__buttons'}>
+              'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
               <GenericButton
                 action={this.props.close}
                 disabled={disabled}

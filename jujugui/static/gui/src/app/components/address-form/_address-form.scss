@@ -1,0 +1,15 @@
+.u-no-margin--bottom {
+  margin-bottom: 0 !important;
+}
+
+.create-payment-user__form-content > label {
+  margin-bottom: 1rem;
+
+  &:last-of-type {
+    margin-bottom: 2rem;
+  }
+}
+
+.create-payment-user__add {
+  margin-top: 1rem;
+}

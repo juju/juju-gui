@@ -1,7 +1,5 @@
 .create-payment-user {
   &__form {
-    @extend %floating-panel;
-    padding: 20px;
 
     // Clearfix.
     :after {
@@ -12,10 +10,12 @@
 
     &-content {
       width: 65%;
+      max-width: 414px;
     }
 
     &-type {
       @extend %list-style;
+      margin-bottom: 1rem;
 
       &-option {
         display: inline-block;

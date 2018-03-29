@@ -147,7 +147,7 @@ class AddressForm extends React.Component {
     }
     const address = this.props.address;
     return (
-      <div className="twelve-col">
+      <div className="twelve-col u-no-margin--bottom">
         <GenericInput
           disabled={this.props.disabled}
           label="Phone number"
@@ -211,8 +211,8 @@ class AddressForm extends React.Component {
             required={true}
             validate={[required]}
             value={address.county} />
-          <div className="twelve-col">
-            <div className="six-col">
+          <div className="twelve-col u-no-margin--bottom">
+            <div className="six-col u-no-margin--bottom">
               <GenericInput
                 disabled={disabled}
                 label="Town/city"
@@ -221,7 +221,7 @@ class AddressForm extends React.Component {
                 validate={[required]}
                 value={address.city} />
             </div>
-            <div className="six-col last-col">
+            <div className="six-col last-col u-no-margin--bottom">
               <GenericInput
                 disabled={disabled}
                 label="Postcode"
@@ -230,8 +230,8 @@ class AddressForm extends React.Component {
                 validate={[required]}
                 value={address.postcode} />
             </div>
-            {this._generatePhoneField()}
           </div>
+          {this._generatePhoneField()}
         </div>);
     }
     return (
