@@ -21,7 +21,9 @@ describe('ExpertCard', function() {
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <ExpertBlock classes={undefined} title="Juju expert partners">
+      <ExpertBlock
+        classes={undefined}
+        title="Juju expert partners">
         <div className="expert-card__logo">
           <img alt="spicule.png" className="expert-card__logo-image"
             src={

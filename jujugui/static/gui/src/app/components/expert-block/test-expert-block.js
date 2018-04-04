@@ -30,13 +30,6 @@ describe('ExpertBlock', function() {
 
   it('can have custom classes supplied', () => {
     const wrapper = renderComponent({classes: ['foo']});
-    const expected = (
-      <div className="expert-block foo">
-        <div className="expert-block__top-title">
-          Expert Title
-        </div>
-        <span>Content</span>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    assert.equal(wrapper.prop('className').includes('foo'), true);
   });
 });

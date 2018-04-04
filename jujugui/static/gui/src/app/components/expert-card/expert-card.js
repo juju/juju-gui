@@ -12,7 +12,9 @@ class ExpertCard extends React.Component {
     const logo = `${this.props.staticURL}/static/gui/build/app/assets/images/` +
       `non-sprites/experts/${expert.logo}`;
     return (
-      <ExpertBlock classes={this.props.classes} title="Juju expert partners">
+      <ExpertBlock
+        classes={this.props.classes}
+        title="Juju expert partners">
         <div className="expert-card__logo">
           <img alt={expert.logo}
             className="expert-card__logo-image"
