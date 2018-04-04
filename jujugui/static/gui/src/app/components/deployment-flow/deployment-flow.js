@@ -187,6 +187,11 @@ class DeploymentFlow extends React.Component {
         disabled = false;
         visible = loggedIn;
         break;
+      case 'pricing':
+        completed = false;
+        disabled = false;
+        visible = loggedIn;
+        break;
     }
     return {
       completed: completed,
@@ -613,6 +618,25 @@ class DeploymentFlow extends React.Component {
           ddEntity={this.state.ddEntity}
           modelName={this.props.modelName}
           setModelName={this.props.setModelName} />
+      </DeploymentSection>);
+  }
+
+  /**
+    Generate the pricing section.
+    @returns {Object} The markup.
+  */
+  _generatePricingSection() {
+    const status = this._getSectionStatus('pricing');
+    if (!status.visible) {
+      return;
+    }
+    return (
+      <DeploymentSection
+        completed={status.completed}
+        instance="deployment-pricing"
+        showCheck={true}
+        title="Pricing">
+        <DeploymentPricing />
       </DeploymentSection>);
   }
 
@@ -1058,6 +1082,7 @@ class DeploymentFlow extends React.Component {
           title={this.props.modelName}>
           {this._generateDirectDeploy()}
           {this._generateModelNameSection()}
+          {this._generatePricingSection()}
           {this._generateCloudSection()}
           {this._generateCredentialSection()}
           {this._generateSSHKeySection()}
