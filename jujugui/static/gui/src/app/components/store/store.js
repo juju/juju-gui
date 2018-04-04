@@ -3,6 +3,8 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const classNames = require('classnames');
+
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
 class Store extends React.Component {
@@ -207,12 +209,22 @@ class Store extends React.Component {
   }
 
   /**
-    The content for the featured charms and bundles section of the page
-
-    @method _featuredSection
-    @return {Object} The contents of the section
+    Generate a feature card.
+    @param name {String} The name of the feature.
+    @param featureCount {Int} The total number of features.
+    @param lastCol {Boolean} Whether this is the last column.
+    @return {Object} The feature JSX.
   */
-  _featuredSection() {
+  _generateFeature(name, featureCount, lastCol) {
+    let sharedClasses = ['box', 'box--feature', 'align-center'];
+    if (featureCount === 3) {
+      sharedClasses.push('four-col');
+    } else if (featureCount === 2) {
+      sharedClasses.push('six-col');
+    }
+    if (lastCol) {
+      sharedClasses.push('last-col');
+    }
     let kubernetesButton = (<a className="button--inline-neutral"
       href="https://jujucharms.com/kubernetes"
       onClick={this._stopPropagation.bind(this)}
@@ -248,54 +260,93 @@ class Store extends React.Component {
         View
       </span>);
     }
+    switch (name) {
+      case 'kubernetes':
+        return (
+          <div className={classNames('box--kubernetes', sharedClasses)}
+            data-query="kubernetes"
+            key="kubernetes"
+            onClick={this._handleSearchClick.bind(this)}>
+            <img alt="Kubernetes"
+              className="box__image"
+              src={this._generateLocalImagePath('k8-image.png')} />
+            <div className="align-bottom">
+              <h2>Kubernetes</h2>
+              {kubernetesButton}
+            </div>
+          </div>);
+      case 'openstack':
+        return (
+          <div className={classNames('box--openstack', sharedClasses)}
+            data-query="openstack"
+            key="openstack"
+            onClick={this._handleSearchClick.bind(this)}>
+            <img alt="Openstack"
+              className="box__image"
+              src={this._generateLocalImagePath('openstack-promo.png')} />
+            <div className="align-bottom">
+              <h2>OpenStack</h2>
+              {openstackButton}
+            </div>
+          </div>);
+      case 'bigdata':
+        return (
+          <div className={classNames('box--hadoop', sharedClasses)}
+            data-query="hadoop"
+            key="hadoop"
+            onClick={this._handleSearchClick.bind(this)}>
+            <div className="box--hadoop-container">
+              <img alt="Hadoop"
+                className="box__image"
+                src={this._generateLocalImagePath('hadoop-elephant.png')} />
+              <div className="align-bottom">
+                <h2>Big Data</h2>
+                {bigdataButton}
+              </div>
+            </div>
+          </div>);
+      case 'expert':
+        return (
+          <ExpertStoreCard
+            classes={sharedClasses.concat(['box--expert'])}
+            expert="spicule"
+            key="expert"
+            staticURL={this.props.staticURL} />);
+    }
+  }
 
-    const kubernetes = (
-      <div className="box box--feature box--kubernetes align-center four-col"
-        data-query="kubernetes"
-        onClick={this._handleSearchClick.bind(this)}>
-        <img alt="Kubernetes"
-          className="box__image" src={this._generateLocalImagePath('k8-image.png')} />
-        <div className="align-bottom">
-          <h2>Kubernetes</h2>
-          {kubernetesButton}
-        </div>
-      </div>
-    );
-    const openstack = this.props.gisf ? null : (
-      <div className="box box--feature box--openstack align-center four-col"
-        data-query="openstack"
-        onClick={this._handleSearchClick.bind(this)}>
-        <img alt="Openstack"
-          className="box__image" src={this._generateLocalImagePath('openstack-promo.png')} />
-        <div className="align-bottom">
-          <h2>OpenStack</h2>
-          {openstackButton}
-        </div>
-      </div>
-    );
-    const bigdata = this.props.gisf ? (
-      <div className="box box--feature box--hadoop align-center four-col"
-        data-query="hadoop"
-        onClick={this._handleSearchClick.bind(this)}>
-        <div className="box--hadoop-container">
-          <img alt="Hadoop"
-            className="box__image" src={this._generateLocalImagePath('hadoop-elephant.png')} />
-          <div className="align-bottom">
-            <h2>Big Data</h2>
-            {bigdataButton}
-          </div>
-        </div>
-      </div>
-    ) : null;
+  /**
+    The content for the featured charms and bundles section of the page
+    @return {Object} The contents of the section
+  */
+  _featuredSection() {
+    function _activeCards() {
+      const showExperts = this.props.showExperts;
+      const gisf = this.props.gisf;
+      const cards = ['kubernetes'];
+
+      if (gisf) {
+        cards.push('bigdata');
+        if (showExperts) {
+          cards.push('expert');
+        }
+      } else {
+        cards.push('openstack');
+        if (showExperts) {
+          cards.push('expert');
+        } else {
+          cards.push('bigdata');
+        }
+      }
+      return cards;
+    }
+    const activeCards = _activeCards.call(this);
+    const cardCount = activeCards.length;
+    const featureItems = activeCards.map((item, i) =>
+      this._generateFeature(item, cardCount, i === (cardCount - 1)));
     return (
       <div className="row equal-height">
-        {kubernetes}
-        {openstack}
-        {bigdata}
-        <ExpertStoreCard
-          classes={['four-col', 'last-col', 'box--expert', 'box--feature']}
-          expert="spicule"
-          staticURL={this.props.staticURL} />
+        {featureItems}
       </div>);
   }
 
@@ -958,6 +1009,7 @@ Store.propTypes = {
   charmstoreURL: PropTypes.string.isRequired,
   gisf: PropTypes.bool.isRequired,
   setPageTitle: PropTypes.func.isRequired,
+  showExperts: PropTypes.bool,
   staticURL: PropTypes.string
 };
 

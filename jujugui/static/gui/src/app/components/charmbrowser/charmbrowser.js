@@ -133,6 +133,7 @@ class Charmbrowser extends React.Component {
             charmstoreURL={this.props.charmstoreURL}
             gisf={this.props.gisf}
             setPageTitle={this.props.setPageTitle}
+            showExperts={this.props.flags.expert}
             staticURL={this.props.staticURL} />
         );
         break;

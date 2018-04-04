@@ -25,7 +25,7 @@ describe('Charmbrowser', function() {
       clearLightbox={options.clearLightbox}
       deployService={options.deployService || sinon.stub()}
       displayLightbox={options.displayLightbox}
-      flags={options.flags}
+      flags={options.flags || {}}
       getBundleYAML={options.getBundleYAML || sinon.stub()}
       getDiagramURL={options.getDiagramURL || sinon.stub()}
       getEntity={options.getEntity || sinon.stub()}
@@ -130,6 +130,7 @@ describe('Charmbrowser', function() {
           charmstoreURL="http://1.2.3.4/"
           gisf={true}
           setPageTitle={setPageTitle}
+          showExperts={undefined}
           staticURL='surl' />
       </div>);
     assert.compareJSX(wrapper.find('.charmbrowser'), expected);
