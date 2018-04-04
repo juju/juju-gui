@@ -5,6 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ExpertCard = require('../expert-card/expert-card');
+const ExpertBlock = require('../expert-block/expert-block');
 const EXPERTS = require('../expert-card/experts');
 
 describe('ExpertCard', function() {
@@ -20,19 +21,15 @@ describe('ExpertCard', function() {
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="expert-card">
-        <div className="expert-card__top-title">
-          Juju expert partners
-        </div>
+      <ExpertBlock classes={undefined} title="Juju expert partners">
         <div className="expert-card__logo">
-          <img alt="spicule.png"
-            className="expert-card__logo-image"
+          <img alt="spicule.png" className="expert-card__logo-image"
             src={
               '/media/static/gui/build/app/assets/images/' +
               'non-sprites/experts/spicule.png'} />
         </div>
         <span>Content</span>
-      </div>);
+      </ExpertBlock>);
     assert.compareJSX(wrapper, expected);
   });
 });
