@@ -3,26 +3,23 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-const classNames = require('classnames');
+
+const ExpertBlock = require('../expert-block/expert-block');
 
 class ExpertCard extends React.Component {
   render() {
     const { expert } = this.props;
     const logo = `${this.props.staticURL}/static/gui/build/app/assets/images/` +
       `non-sprites/experts/${expert.logo}`;
-    const classes = classNames('expert-card', this.props.classes);
     return (
-      <div className={classes}>
-        <div className="expert-card__top-title">
-          Juju expert partners
-        </div>
+      <ExpertBlock classes={this.props.classes} title="Juju expert partners">
         <div className="expert-card__logo">
           <img alt={expert.logo}
             className="expert-card__logo-image"
             src={logo} />
         </div>
         {this.props.children}
-      </div>
+      </ExpertBlock>
     );
   }
 };
