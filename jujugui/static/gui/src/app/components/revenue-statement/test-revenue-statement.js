@@ -3,18 +3,15 @@
 'use strict';
 const React = require('react');
 const shapeup = require('shapeup');
-
-const BasicTable = require('../basic-table/basic-table');
-const Invoice = require('./invoice');
-
+const RevenueStatement = require('./revenue-statement');
 const jsTestUtils = require('../../utils/component-test-utils');
 
-describe('Invoice', function() {
+describe('Revenue Statement', function() {
   function renderComponent(options = {}) {
-    return jsTestUtils.shallowRender(<Invoice />, true);
+    return jsTestUtils.shallowRender(<RevenueStatement />, true);
   }
 
   fit('can render', () => {
-    const renderer = renderComponent();
+    renderComponent();
   });
 });
