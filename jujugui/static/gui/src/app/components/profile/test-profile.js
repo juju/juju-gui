@@ -138,10 +138,10 @@ describe('Profile', function() {
   it('correctly parses the URL', () => {
     const wrapper = renderComponent({activeSection: 'credentials/aws_test'});
     const instance = wrapper.instance();
-    assert.deepEqual(instance._getProfileURL(), {
+    assert.deepEqual(instance._getSectionInfo(), {
       full: 'credentials/aws_test',
-      activeSection: 'credentials',
-      subSection: 'aws_test'
+      active: 'credentials',
+      sub: 'aws_test'
     });
   });
 
@@ -150,10 +150,10 @@ describe('Profile', function() {
       activeSection: 'credentials'
     });
     const instance = wrapper.instance();
-    assert.deepEqual(instance._getProfileURL(), {
+    assert.deepEqual(instance._getSectionInfo(), {
       full: 'credentials',
-      activeSection: 'credentials',
-      subSection: null
+      active: 'credentials',
+      sub: null
     });
   });
 
