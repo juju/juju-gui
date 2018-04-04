@@ -344,9 +344,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             'juju-env-base',
             'juju-env-api',
             'juju-models',
-            // juju-views group
-            'juju-landscape',
-            // end juju-views group
             'base',
             'bundle-import-notifications',
             'model',
