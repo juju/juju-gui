@@ -14,7 +14,7 @@ class RevenueStatement extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: [
+      data: [ // Dummy data
         {
           id: 1
         },
