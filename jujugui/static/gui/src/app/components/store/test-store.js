@@ -24,6 +24,9 @@ describe('Store', function() {
     assert.equal(wrapper.find('.box--openstack').length, 1, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 1, 'hadoop');
     assert.equal(wrapper.find('ExpertStoreCard').length, 0, 'experts');
+    wrapper.find('.box--feature').forEach(feature => {
+      assert.equal(feature.prop('className').includes('four-col'), true);
+    });
   });
 
   it('can render the right items for gisf', function() {
@@ -32,6 +35,9 @@ describe('Store', function() {
     assert.equal(wrapper.find('.box--openstack').length, 0, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 1, 'hadoop');
     assert.equal(wrapper.find('ExpertStoreCard').length, 0, 'experts');
+    wrapper.find('.box--feature').forEach(feature => {
+      assert.equal(feature.prop('className').includes('six-col'), true);
+    });
   });
 
   it('can render the right items for gij with experts', function() {
@@ -39,7 +45,12 @@ describe('Store', function() {
     assert.equal(wrapper.find('.box--kubernetes').length, 1, 'k8s');
     assert.equal(wrapper.find('.box--openstack').length, 1, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 0, 'hadoop');
-    assert.equal(wrapper.find('ExpertStoreCard').length, 1, 'experts');
+    const expertStoreCard = wrapper.find('ExpertStoreCard');
+    assert.equal(expertStoreCard.length, 1, 'experts');
+    wrapper.find('.box--feature').forEach(feature => {
+      assert.equal(feature.prop('className').includes('four-col'), true);
+    });
+    assert.equal(expertStoreCard.prop('classes').includes('four-col'), true);
   });
 
   it('can render the right items for gisf with experts', function() {
@@ -47,7 +58,12 @@ describe('Store', function() {
     assert.equal(wrapper.find('.box--kubernetes').length, 1, 'k8s');
     assert.equal(wrapper.find('.box--openstack').length, 0, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 1, 'hadoop');
-    assert.equal(wrapper.find('ExpertStoreCard').length, 1, 'experts');
+    const expertStoreCard = wrapper.find('ExpertStoreCard');
+    assert.equal(expertStoreCard.length, 1, 'experts');
+    wrapper.find('.box--feature').forEach(feature => {
+      assert.equal(feature.prop('className').includes('four-col'), true);
+    });
+    assert.equal(expertStoreCard.prop('classes').includes('four-col'), true);
   });
 
   it('can render write-your-own correctly', function() {
