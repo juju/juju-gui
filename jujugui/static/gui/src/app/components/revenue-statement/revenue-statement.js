@@ -29,10 +29,11 @@ class RevenueStatement extends React.Component {
   render() {
     let content;
     if (this.state.loading) {
-      content = <Spinner />;
+      return <Spinner />;
     } else {
-      const rows = this.state.data.map(revenueStatement => {
+      const rows = this.state.data.map((revenueStatement, index) => {
         return {
+          key: `${index}`,
           columns: [
             {
               content: 'equities-prod-lon-1',
@@ -106,7 +107,9 @@ class RevenueStatement extends React.Component {
               <div className="revenue-statement__summary">
                 <div className="u-btn-mar">
                   <span className="revenue-statement__label">Services during the period</span>
-                  <span className="revenue-statement__value">1st December 2017 - 31st January 2018</span>
+                  <span className="revenue-statement__value">
+                    1st December 2017 - 31st January 2018
+                  </span>
                 </div>
                 <div className="u-btn-mar">
                   <span className="revenue-statement__label">Questions?</span>
@@ -131,26 +134,36 @@ class RevenueStatement extends React.Component {
               </div>
             </div>
             <hr />
-            <h3 className="u-btn-mar revenue-statement-details__title">Details - March 2018</h3>
+            <h3 className="u-btn-mar revenue-statement-details__title">
+              Details - March 2018
+            </h3>
             <div className="revenue-statement-details-sm-screen">
               <div className="revenue-statement__billing-package">
                 <p>
                   <strong>Ubuntu Advantage Essential</strong>
                 </p>
                 <p>$0.09 per machine hour</p>
-                <p className="revenue-statement__billing-package__model-name">Model: fx-staging-ldn</p>
+                <p className="revenue-statement__billing-package__model-name">
+                  Model: fx-staging-ldn
+                </p>
                 <div className="revenue-statement__meta">
                   <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">28.999 hours</span>
+                    <span className="revenue-statement__label u-text-align--left">
+                      28.999 hours
+                    </span>
                   </div>
                   <div className="revenue-statement__meta__col">
                     <span className="revenue-statement__value">$2,567.94</span>
                   </div>
                 </div>
-                <p className="revenue-statement__billing-package__model-name">Model: version neo</p>
+                <p className="revenue-statement__billing-package__model-name">
+                  Model: version neo
+                </p>
                 <div className="revenue-statement__meta">
                   <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">28.999 hours</span>
+                    <span className="revenue-statement__label u-text-align--left">
+                      28.999 hours
+                    </span>
                   </div>
                   <div className="revenue-statement__meta__col">
                     <span className="revenue-statement__value">$2,567.94</span>
@@ -165,7 +178,9 @@ class RevenueStatement extends React.Component {
                 <p>Model: fx-staging-ldn</p>
                 <div className="revenue-statement__meta">
                   <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">28.999 hours</span>
+                    <span className="revenue-statement__label u-text-align--left">
+                      28.999 hours
+                    </span>
                   </div>
                   <div className="revenue-statement__meta__col">
                     <span className="revenue-statement__value">$2,567.94</span>
@@ -175,7 +190,9 @@ class RevenueStatement extends React.Component {
                 <p>Model: version neo</p>
                 <div className="revenue-statement__meta">
                   <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">28.999 hours</span>
+                    <span className="revenue-statement__label u-text-align--left">
+                      28.999 hours
+                    </span>
                   </div>
                   <div className="revenue-statement__meta__col">
                     <span className="revenue-statement__value">$2,567.94</span>

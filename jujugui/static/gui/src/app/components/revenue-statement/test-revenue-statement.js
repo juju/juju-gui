@@ -1,17 +1,20 @@
-/* Copyright (C) 2018 Canonical Ltd. */
-
+/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
+
 const React = require('react');
-const shapeup = require('shapeup');
+const enzyme = require('enzyme');
+
 const RevenueStatement = require('./revenue-statement');
-const jsTestUtils = require('../../utils/component-test-utils');
 
-describe('Revenue Statement', function() {
-  function renderComponent(options = {}) {
-    return jsTestUtils.shallowRender(<RevenueStatement />, true);
-  }
+describe('Revenue statement', function() {
 
-  fit('can render', () => {
-    renderComponent();
+  const renderComponent = (options = {}) => enzyme.shallow(
+    <RevenueStatement />
+  );
+
+  it('can render', () => {
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.revenue-statement__inner')
+      .length, 1, 'Revenue statement inner wrapper');
   });
 });
