@@ -58,8 +58,6 @@ class Profile extends React.Component {
           <Invoice />
 =======
 
-    console.log(profileUrl.full);
-
     if (profileUrl.full === 'revenue-statement') {
       return (
         <Panel instanceName="revenue-statement" visible={true}>
