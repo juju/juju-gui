@@ -13,6 +13,7 @@ const ProfileCharmList = require('./charm-list/charm-list');
 const ProfileBundleList = require('./bundle-list/bundle-list');
 const ProfileCredentialList = require('./credential-list/credential-list');
 const ProfileInvoiceList = require('./invoice-list/invoice-list');
+const Invoice = require('../invoice/invoice');
 const Panel = require('../panel/panel');
 
 /** Profile React component used to display user details. */
@@ -29,17 +30,17 @@ class Profile extends React.Component {
   }
 
   /**
-    Get the base URL for the active section e.g. "credentials/aws_prod" would
+    Get the base path for the active section e.g. "credentials/aws_prod" would
     return "credentials".
-    @returns {String} The active base section of the URL.
+    @returns {String} The active base section of the path.
   */
-  _getProfileURL() {
-    const URL = this.props.activeSection || '';
-    const parts = URL.split('/');
+  _getSectionInfo() {
+    const path = this.props.activeSection || '';
+    const parts = path.split('/');
     return {
-      full: URL,
-      activeSection: parts[0],
-      subSection: parts.length > 1 ? parts.slice(1, parts.length).join('/') : null
+      full: path,
+      active: parts[0],
+      sub: parts.length > 1 ? parts.slice(1, parts.length).join('/') : null
     };
   }
 
@@ -47,6 +48,15 @@ class Profile extends React.Component {
     const props = this.props;
     const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
     const sectionsMap = new Map();
+    const sectionInfo = this._getSectionInfo();
+    if (sectionInfo.active === 'invoices' && sectionInfo.sub !== null) {
+      return (
+        <Panel instanceName="invoice" visible={true}>
+          <Invoice />
+        </Panel>
+      );
+    }
+
     if (isActiveUsersProfile) {
       sectionsMap.set('models', {
         label: 'Models',
@@ -117,7 +127,7 @@ class Profile extends React.Component {
               controllerAPI={
                 shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
-              credential={this._getProfileURL().subSection}
+              credential={this._getSectionInfo().sub}
               initUtils={props.initUtils}
               sendAnalytics={this._sendAnalytics.bind(this)}
               username={props.controllerUser} />);
@@ -148,7 +158,7 @@ class Profile extends React.Component {
         }
       });
     }
-    let section = sectionsMap.get(this._getProfileURL().activeSection);
+    let section = sectionsMap.get(this._getSectionInfo().active);
     let mapEntry;
     if (section === undefined) {
       // Grab the first element in the sectionsMap if the provided
@@ -173,7 +183,7 @@ class Profile extends React.Component {
             <div className="profile__content inner-wrapper">
               <ProfileNavigation
                 // Use supplied activeSection or the key from the first map entry.
-                activeSection={this._getProfileURL().activeSection || mapEntry[0]}
+                activeSection={this._getSectionInfo().active || mapEntry[0]}
                 changeState={props.changeState}
                 sectionsMap={sectionsMap} />
               {section.getComponent()}

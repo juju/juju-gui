@@ -1,0 +1,245 @@
+$invoice-bp: 600px;
+
+.invoice {
+  @extend %floating-panel;
+  min-height: 500vh;
+  width: 100vw;
+  z-index: index($z-indexed-elements, invoice);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  &__inner {
+    padding: 1.5rem;
+    overflow-y: auto;
+    height: calc(100vh - 4rem);
+
+    @media (min-width: $invoice-bp) {
+      margin: 2rem auto;
+      max-width: 1200px;
+      padding: 2rem;
+    }
+  }
+
+  &__label {
+    color: $dark-warm-grey;
+  }
+
+  &__header {
+    position: relative;
+
+    @media (min-width: $invoice-bp) {
+
+      .invoice__meta {
+        position: relative;
+        top: 3rem;
+        min-height: 3rem;
+      }
+
+      .u-emphasis-value {
+        position: relative;
+        top: -1rem;
+      }
+    }
+  }
+
+  &__heading {
+    border-top: 1px solid $light-mid-grey;
+    font-size: 2.8rem;
+    margin-top: 1rem;
+
+    @media (min-width: $invoice-bp) {
+      position: absolute;
+      top: 2.25rem;
+      left: 0;
+      width: 100%;
+
+      .invoice__meta {
+        position: relative;
+        top: 3rem;
+      }
+    }
+  }
+
+  &__logo {
+    width: 80px;
+  }
+
+  &__info {
+    border-top: 1px solid $light-mid-grey;
+    margin-top: 1.5rem;
+
+    @media (min-width: $invoice-bp) {
+      position: relative;
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+    }
+
+  }
+
+  &__address {
+    width: 100%;
+    margin: 1rem 0;
+
+    & > * {
+      display: block;
+      width: 100%;
+      margin-bottom: .25rem;
+    }
+
+    @media (min-width: $invoice-bp) {
+      position: absolute;
+      top: 1rem;
+      left: 0;
+    }
+  }
+
+  &__meta {
+    display: flex;
+
+    &__col {
+      flex: 1;
+
+      span {
+        display: block;
+        margin-bottom: .5rem;
+        text-align: right;
+      }
+
+      @media (min-width: $invoice-bp) {
+
+        &:first-child {
+          flex: 7.5;
+        }
+
+        &:last-child {
+          flex: 2.5;
+        }
+      }
+    }
+  }
+
+  &__summary {
+    margin-top: 1rem;
+    padding: 1rem 0;
+
+    * {
+      display: block;
+    }
+
+    & + .invoice__meta .u-emphasis-value {
+
+      @media (min-width: $invoice-bp) {
+        margin-top: -.75rem;
+      }
+    }
+
+    @media (max-width: $invoice-bp) {
+
+      .invoice__label {
+        margin-bottom: .5rem;
+      }
+    }
+
+
+    @media (min-width: $invoice-bp) {
+      margin-top: 0;
+      padding-top: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      .invoice__label {
+        margin-bottom: .5rem;
+      }
+
+      & + .invoice__meta {
+        padding-bottom: 2rem;
+      }
+    }
+  }
+
+  &__billing-package {
+    border: 1px solid $light-mid-grey;
+    margin-bottom: 1rem;
+    padding: 1rem;
+
+    .invoice__meta {
+      min-height: 0;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    &__model-name {
+      margin-bottom: .25rem;
+    }
+  }
+
+  &__rel-wrap {
+    position: relative;
+
+    @media (min-width: $invoice-bp) {
+      padding-top: .5rem;
+    }
+  }
+
+  .u-btn-mar {
+    margin-bottom: 1rem;
+  }
+
+  .u-block-children * {
+    display: block;
+    margin-bottom: .25rem;
+  }
+
+  .u-emphasis-value {
+    font-size: 2rem;
+  }
+
+  .u-text-align--left {
+    text-align: left;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid $light-mid-grey;
+    margin: 2rem 0 1rem;
+  }
+}
+
+
+.invoice-details-lrg-screen {
+  display: none;
+}
+
+.invoice-details__title {
+  font-size: 20px;
+
+  @media (min-width: $invoice-bp) {
+    font-size: 23px;
+  }
+}
+
+@media (min-width: 768px) {
+
+  .invoice-details-sm-screen {
+    display: none;
+  }
+
+  .invoice-details-lrg-screen {
+    display: block;
+  }
+
+  .invoice__footer {
+    display: flex;
+    width: 100%;
+
+    &__col {
+      flex: 1;
+    }
+  }
+}
