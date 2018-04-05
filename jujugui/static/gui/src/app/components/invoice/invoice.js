@@ -28,8 +28,9 @@ class Invoice extends React.Component {
     if (this.state.loading) {
       content = (<Spinner />);
     } else {
-      const rows = (this.state.data).map(invoice => {
+      const rows = (this.state.data).map((invoice, index) => {
         return {
+          key: `${index}`,
           columns: [{
             content: 'Ubuntu Advantage Essential',
             columnSize: 3
