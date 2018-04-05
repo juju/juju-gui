@@ -1,0 +1,28 @@
+.expert-block {
+  margin-bottom: 20px;
+  padding: 0 20px 20px 20px;
+  border: 1px solid $light-mid-grey;
+  border-radius: 2px;
+
+  &__top-title {
+    $height: 32px;
+    position: relative;
+    height: $height;
+    margin: 0 -20px;
+    padding: 10px 12px;
+    background-color: $light-grey;
+    font-size: 14px;
+    line-height: 13px;
+    text-transform: uppercase;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      height: $height + 1px;
+      border-left: 3px solid $ubuntu-orange;
+      border-top-left-radius: $border-radius;
+    }
+  }
+}

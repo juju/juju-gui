@@ -1,12 +1,19 @@
 'use strict';
 
+const React = require('react');
+
 const enzyme = require('enzyme');
 const JsDiff = require('diff');
 
 var assert = chai.assert;
 assert.compareJSX = function(actual, expected) {
   const actualOutput = actual.debug();
-  const expectedOutput = enzyme.shallow(expected).debug();
+  // If the very first child of a component is another component then this
+  // will render that components markup making it impossible to actually
+  // compare the two outputs. By wrapping the expected in a div we stop
+  // enzyme from rendering the supplied component and then we compare against
+  // the actual output.
+  const expectedOutput = enzyme.shallow(<div>{expected}</div>).children().debug();
   const diff = JsDiff.diffLines(actualOutput, expectedOutput);
   if (!diff.some(part => part.added || part.removed)) {
     return;
