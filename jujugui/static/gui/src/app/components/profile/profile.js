@@ -47,22 +47,23 @@ class Profile extends React.Component {
 
   render() {
     const props = this.props;
-    const profileUrl = this._getProfileURL();
+    const profileUrl = this._getSectionInfo();
     const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
     const sectionsMap = new Map();
-<<<<<<< HEAD
     const sectionInfo = this._getSectionInfo();
-    if (sectionInfo.active === 'invoices' && sectionInfo.sub !== null) {
-      return (
-        <Panel instanceName="invoice" visible={true}>
-          <Invoice />
-=======
 
     if (profileUrl.full === 'revenue-statement') {
       return (
         <Panel instanceName="revenue-statement" visible={true}>
           <RevenueStatement />
->>>>>>> Correct routing for Revenue statement
+        </Panel>
+      );
+    }
+
+    if (sectionInfo.active === 'invoices' && sectionInfo.sub !== null) {
+      return (
+        <Panel instanceName="invoice" visible={true}>
+          <Invoice />
         </Panel>
       );
     }
