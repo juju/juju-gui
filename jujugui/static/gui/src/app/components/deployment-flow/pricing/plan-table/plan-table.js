@@ -96,7 +96,8 @@ class DeploymentPlanTable extends React.Component {
           }]}
           rowClasses={['deployment-plan-table__row']}
           rowColumnClasses={['deployment-plan-table__column']}
-          rows={this._generateRows()} />
+          rows={this._generateRows()}
+          tableClasses={['no-margin-bottom']} />
       </div>
     );
   }
