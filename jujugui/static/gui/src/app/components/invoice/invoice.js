@@ -211,9 +211,6 @@ class Invoice extends React.Component {
                 rows={rows} />
             </div>
             <hr />
-
-
-
             <div className="u-btn-mar">
               <img
                 alt="Canonical logo"
