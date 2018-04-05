@@ -240,14 +240,14 @@ class Invoice extends React.Component {
                 <span className="invoice__value">UK</span>
               </div>
             </div>
-
           </div>
         </div>);
     }
     return (
-      <div>
+      <React.Fragment>
         {content}
-      </div>);
+      </React.Fragment>
+    );
   }
 };
 
