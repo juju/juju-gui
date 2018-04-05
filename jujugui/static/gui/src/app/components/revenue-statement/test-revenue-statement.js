@@ -14,7 +14,8 @@ describe('Revenue statement', function() {
 
   it('can render', () => {
     const wrapper = renderComponent();
-    assert.equal(wrapper.find('.revenue-statement__inner')
-      .length, 1, 'Revenue statement inner wrapper');
+    assert.equal(wrapper.find('.revenue-statement__inner').length,
+      1,
+      'Revenue statement inner wrapper');
   });
 });
