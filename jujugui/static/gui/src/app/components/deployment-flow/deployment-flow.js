@@ -16,6 +16,7 @@ const DeploymentMachines = require('./machines/machines');
 const DeploymentModelName = require('./model-name/model-name');
 const DeploymentPanel = require('./panel/panel');
 const DeploymentPayment = require('./payment/payment');
+const DeploymentPricing = require('./pricing/pricing');
 const DeploymentSection = require('./section/section');
 const DeploymentServices = require('./services/services');
 const DeploymentSSHKey = require('./sshkey/sshkey');
