@@ -6,8 +6,11 @@ const React = require('react');
 const BasicTable = require('../../../basic-table/basic-table');
 
 class DeploymentPlanTable extends React.Component {
+  /**
+     Generate the plan rows.
+     @returns {Array} the list of rows.
+   */
   _generateRows() {
-
     const data = [{
       charm: {
         name: 'Apache Drill',
@@ -16,9 +19,9 @@ class DeploymentPlanTable extends React.Component {
       },
       plan: {
         title: 'Databonus Dash',
-        description: `Spicule’s standard plan for Apache Drill is suitable for
-          large to very large workloads on clusters of 4-16 nodes.
-          Pricing is for the sum of RAM on all processing nodes.`
+        description: 'Spicule’s standard plan for Apache Drill is suitable for ' +
+          'large to very large workloads on clusters of 4-16 nodes. ' +
+          'Pricing is for the sum of RAM on all processing nodes.'
       },
       metered: 'Memory',
       price: '$3.25 per GB of RAM per month'
@@ -30,8 +33,8 @@ class DeploymentPlanTable extends React.Component {
       },
       plan: {
         title: 'Starter pack',
-        description: `Our default plan for Saiku Business Intelligence covers
-          up to 50 users.`
+        description: 'Our default plan for Saiku Business Intelligence covers ' +
+          'up to 50 users.'
       },
       metered: 'Users',
       price: '$6 per user per month'

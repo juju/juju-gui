@@ -1083,7 +1083,6 @@ class DeploymentFlow extends React.Component {
           title={this.props.modelName}>
           {this._generateDirectDeploy()}
           {this._generateModelNameSection()}
-          {this._generatePricingSection()}
           {this._generateCloudSection()}
           {this._generateCredentialSection()}
           {this._generateSSHKeySection()}
