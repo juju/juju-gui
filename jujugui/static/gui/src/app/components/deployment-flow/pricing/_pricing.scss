@@ -1,0 +1,24 @@
+.deployment-pricing {
+  padding-top: 10px;
+
+  &__secondary-text {
+    color: $dark-warm-grey;
+    font-size: 14px;
+    line-height: 150%;
+  }
+
+  &__support-title {
+    font-weight: 400;
+  }
+
+  &__estimated-price {
+    color: $dark-warm-grey;
+
+    &-number {
+      margin-left: 10px;
+      color: $color-dark;
+      font-size: 20px;
+      font-weight: 400;
+    }
+  }
+}
