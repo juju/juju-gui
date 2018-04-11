@@ -233,6 +233,7 @@ class GenericInput extends React.Component {
     var {labelElement, id} = this._generateLabel();
     var classes = classNames(
       'generic-input', {
+        'generic-input--no-label': !this.props.label,
         'has-error': showErrors
       }
     );
