@@ -103,6 +103,7 @@ def config(request):
         'charmstoreURL': settings['jujugui.charmstore_url'],
         'plansURL': settings['jujugui.plans_url'],
         'paymentURL': settings['jujugui.payment_url'],
+        'ratesURL': settings['jujugui.rates_url'],
         'statsURL': settings['jujugui.stats_url'],
         'termsURL': settings['jujugui.terms_url'],
         # Any provided macaroons.

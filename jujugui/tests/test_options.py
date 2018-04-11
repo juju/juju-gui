@@ -32,6 +32,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.stripe_key': '',
         'jujugui.terms_url': options.DEFAULT_TERMS_URL,
         'jujugui.payment_url': options.DEFAULT_PAYMENT_URL,
+        'jujugui.rates_url': options.DEFAULT_RATES_URL,
         'jujugui.user': None,
         'jujugui.flags': {},
     }
@@ -65,6 +66,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.stats_url': '/_stats',
             'jujugui.stripe_key': '123',
             'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
+            'jujugui.rates_url': 'https://1.2.3.4/rates-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
             'jujugui.flags': {'foo': True}
@@ -91,6 +93,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.stats_url': '/_stats',
             'jujugui.stripe_key': '123',
             'jujugui.payment_url': 'https://1.2.3.4/payment-api/',
+            'jujugui.rates_url': 'https://1.2.3.4/rates-api/',
             'jujugui.terms_url': 'https://1.2.3.4/terms-api/',
             'jujugui.user': 'who',
             'jujugui.flags': {'foo': True}

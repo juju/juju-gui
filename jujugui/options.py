@@ -11,6 +11,7 @@ DEFAULT_BUNDLESERVICE_URL = 'https://api.jujucharms.com/bundleservice/'
 DEFAULT_CHARMSTORE_URL = 'https://api.jujucharms.com/charmstore/'
 DEFAULT_PLANS_URL = 'https://api.jujucharms.com/omnibus/'
 DEFAULT_PAYMENT_URL = 'https://api.jujucharms.com/payment/'
+DEFAULT_RATES_URL = 'https://api.jujucharms.com/omnibus/'
 DEFAULT_TERMS_URL = 'https://api.jujucharms.com/terms/'
 
 
@@ -39,6 +40,7 @@ def update(settings):
                 default=DEFAULT_CHARMSTORE_URL)
     _update_url(settings, 'jujugui.payment_url', default=DEFAULT_PAYMENT_URL)
     _update_url(settings, 'jujugui.plans_url', default=DEFAULT_PLANS_URL)
+    _update_url(settings, 'jujugui.rates_url', default=DEFAULT_RATES_URL)
     _update_url(settings, 'jujugui.terms_url', default=DEFAULT_TERMS_URL)
 
     _update_bool(settings, 'jujugui.combine', default=True)

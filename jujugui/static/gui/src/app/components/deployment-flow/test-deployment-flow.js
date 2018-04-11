@@ -88,6 +88,7 @@ describe('DeploymentFlow', function() {
       getCountries: sinon.stub(),
       getCurrentChangeSet: sinon.stub(),
       getDiagramURL: sinon.stub(),
+      getSLAMachineRates: sinon.stub(),
       getServiceByName: sinon.stub(),
       getUser: sinon.stub(),
       getUserName: sinon.stub().returns('dalek'),

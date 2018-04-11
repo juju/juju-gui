@@ -9,10 +9,11 @@ var module = module;
   jujulib provides API access for services used by juju.
 
   jujulib provies access to the APIs for the following services:
-  - the Juju Intelligent Model Manager (JIMM);
-  - the Juju charm store;
-  - the Juju identity manager (IdM);
-  - the Romulus plans service;
+  - the Juju Intelligent Model Manager (JIMM);.
+  - the Juju charm store.
+  - the Juju identity manager (Candid).
+  - the Romulus rates service.
+  - the Romulus plans service.
   - the Romulus terms service.
   - the payment service.
   - the Stripe service.
