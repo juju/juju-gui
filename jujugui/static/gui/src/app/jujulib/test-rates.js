@@ -7,13 +7,14 @@ describe('jujulib rates service', () => {
   it('exists', () => {
     const webHandler = {};
     const rates = new window.jujulib.rates('http://1.2.3.4/', webHandler);
-    assert.equal(rates.url, 'http://1.2.3.4/' + window.jujulib.ratesAPIVersion);
+    assert.equal(rates.url, 'http://1.2.3.4/v3');
   });
 
   it('can return the SLA machine rates', done => {
     const webHandler = {
-      sendGetRequest: (url, a, b, c, d, e, callback) => {
-        callback({
+      sendGetRequest: (url, headers, username, password,
+        withCredentials, progressCallback, completedCallback) => {
+        completedCallback({
           target: {
             responseText: JSON.stringify({
               unsupported: '0.000',

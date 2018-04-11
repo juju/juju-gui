@@ -36,13 +36,13 @@ var module = module;
     getSLAMachineRates: function(callback) {
       this.webHandler.sendGetRequest(
         this.url + '/rates/machine-hour', null, null, null, null, null, response => {
-          let dollars = {};
+          let rates = {};
           try {
-            dollars = JSON.parse(response.target.responseText);
+            rates = JSON.parse(response.target.responseText);
           } catch (e) {
-            dollars = null;
+            rates = null;
           }
-          callback(dollars);
+          callback(rates);
         });
     }
 

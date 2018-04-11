@@ -697,30 +697,30 @@ class GUIApp {
         'romulus services are being redefined:', this.plans, this.terms);
     }
     /**
-      Application instance of the plans api.
+      Application instance of the plans API.
       @type {Object}
     */
     this.plans = new window.jujulib.plans(config.plansURL, this.bakery);
     /**
-      Application instance of the terms api.
+      Application instance of the terms API.
       @type {Object}
     */
     this.terms = new window.jujulib.terms(config.termsURL, this.bakery);
     if (config.flags.pay) {
       /**
-        Application instance of the payment api.
+        Application instance of the payment API.
         @type {Object}
       */
       this.payment = new window.jujulib.payment(
         config.paymentURL, this.bakery);
       /**
-        Application instance of the stripe api.
+        Application instance of the stripe API.
         @type {Object}
       */
       this.stripe = new window.jujulib.stripe(
         'https://js.stripe.com/', config.stripeKey);
       /**
-        Application instance of the rates api.
+        Application instance of the rates API.
         @type {Object}
       */
       this.rates = new window.jujulib.rates(
