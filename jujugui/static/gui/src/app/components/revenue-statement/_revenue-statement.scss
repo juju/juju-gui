@@ -1,0 +1,250 @@
+$revenue-statement-bp: 600px;
+
+.revenue-statement {
+  @extend %floating-panel;
+  min-height: 500vh;
+  width: 100vw;
+  z-index: index($z-indexed-elements, revenue-statement);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  &__inner {
+    padding: 1.5rem;
+    overflow-y: auto;
+    height: calc(100vh - 4rem);
+
+    @media (min-width: $revenue-statement-bp) {
+      margin: 2rem auto;
+      max-width: 1200px;
+      padding: 2rem;
+    }
+  }
+
+  &__label {
+    color: $dark-warm-grey;
+  }
+
+  &__header {
+    position: relative;
+
+    @media (min-width: $revenue-statement-bp) {
+      .revenue-statement__meta {
+        position: relative;
+        top: 3rem;
+        min-height: 4rem;
+      }
+
+      .u-emphasis-value {
+        position: relative;
+        top: -1rem;
+      }
+    }
+  }
+
+  &__heading {
+    border-top: 1px solid $light-mid-grey;
+    font-size: 2rem;
+    margin-top: 1.5rem;
+    padding-top: .5rem;
+
+    @media (min-width: $revenue-statement-bp) {
+      position: absolute;
+      top: 2.25rem;
+      left: 0;
+      width: 100%;
+
+      .revenue-statement__meta {
+        position: relative;
+        top: 3rem;
+      }
+    }
+  }
+
+  &__logo {
+    width: 80px;
+  }
+
+  &__info {
+    border-top: 1px solid $light-mid-grey;
+    margin-top: 1.5rem;
+
+    @media (min-width: $revenue-statement-bp) {
+      position: relative;
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+    }
+  }
+
+  &__address {
+    width: 100%;
+    margin: 1rem 0;
+
+    & > * {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.25rem;
+    }
+
+    @media (min-width: $revenue-statement-bp) {
+      position: absolute;
+      top: 1rem;
+      left: 0;
+    }
+  }
+
+  .basic-table {
+    margin-top: 1rem;
+  }
+
+  &__meta {
+    display: flex;
+
+    &__col {
+      flex: 1;
+
+      span {
+        display: block;
+        margin-bottom: 0.5rem;
+        text-align: right;
+      }
+
+      @media (min-width: $revenue-statement-bp) {
+        &:first-child {
+          flex: 7.5;
+        }
+
+        &:last-child {
+          flex: 2.5;
+        }
+      }
+    }
+  }
+
+  &__summary {
+    margin-top: 1rem;
+    padding: 1rem 0;
+
+    * {
+      display: block;
+    }
+
+    & + .revenue-statement__meta .u-emphasis-value {
+      @media (min-width: $revenue-statement-bp) {
+        margin-top: -0.75rem;
+      }
+    }
+
+    @media (max-width: $revenue-statement-bp) {
+      .revenue-statement__label {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    @media (min-width: $revenue-statement-bp) {
+      margin-top: 0;
+      padding-top: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      .revenue-statement__label {
+        margin-bottom: 0.5rem;
+      }
+
+      & + .revenue-statement__meta {
+        padding-bottom: 2rem;
+      }
+    }
+  }
+
+  &__billing-package {
+    border: 1px solid $light-mid-grey;
+    margin-bottom: 1rem;
+    padding: 1rem;
+
+    .revenue-statement__meta {
+      min-height: 0;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    &__model-name {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  &__rel-wrap {
+    position: relative;
+
+    @media (min-width: $revenue-statement-bp) {
+      padding-top: 0.5rem;
+    }
+  }
+
+  .u-btn-mar {
+    margin-bottom: 1rem;
+  }
+
+  .u-block-children * {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .u-emphasis-value {
+    font-size: 2rem;
+  }
+
+  .u-text-align--left {
+    text-align: left;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid $light-mid-grey;
+    margin: 2rem 0 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .address-container {
+      min-height: 8rem;
+    }
+  }
+}
+
+.revenue-statement-details-lrg-screen {
+  display: none;
+}
+
+.revenue-statement-details__title {
+  font-size: 20px;
+
+  @media (min-width: $revenue-statement-bp) {
+    font-size: 23px;
+  }
+}
+
+@media (min-width: 768px) {
+  .revenue-statement-details-sm-screen {
+    display: none;
+  }
+
+  .revenue-statement-details-lrg-screen {
+    display: block;
+  }
+
+  .revenue-statement__footer {
+    display: flex;
+    width: 100%;
+
+    &__col {
+      flex: 1;
+    }
+
+
+  }
+}
