@@ -719,6 +719,12 @@ class GUIApp {
       */
       this.stripe = new window.jujulib.stripe(
         'https://js.stripe.com/', config.stripeKey);
+      /**
+        Application instance of the rates api.
+        @type {Object}
+      */
+      this.rates = new window.jujulib.rates(
+        config.ratesURL, new WebHandler());
     }
   }
 
