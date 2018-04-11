@@ -12,6 +12,7 @@ var juju_config = {
     "bundleServiceURL": "https://api.jujucharms.com/bundleservice/",
     "plansURL": "https://api.jujucharms.com/omnibus/",
     "paymentURL": "https://api.jujucharms.com/payment/",
+    "ratesURL": "https://api.jujucharms.com/rates/",
     "termsURL": "https://api.jujucharms.com/terms/",
     "interactiveLogin": true,
     "html5": true,
