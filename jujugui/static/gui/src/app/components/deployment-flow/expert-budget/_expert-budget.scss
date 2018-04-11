@@ -1,0 +1,34 @@
+.deployment-expert-budget {
+  &__row {
+    margin-bottom: 20px;
+    color: $dark-warm-grey;
+    text-align: right;
+  }
+
+  &__cost {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 20px 10px;
+    border-width: 2px 0;
+    border-style: solid;
+    border-color: $dark-warm-grey;
+    color: $color-dark;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  &__budget-input {
+    margin-left: 10px;
+  }
+
+  .generic-input {
+    display: inline-block;
+    margin-left: 10px;
+
+    &__field[type=text] {
+      width: 134px;
+      margin-bottom: 0;
+      padding-right: 8px;
+    }
+  }
+}
