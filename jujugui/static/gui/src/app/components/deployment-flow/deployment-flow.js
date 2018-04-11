@@ -16,6 +16,7 @@ const DeploymentMachines = require('./machines/machines');
 const DeploymentModelName = require('./model-name/model-name');
 const DeploymentPanel = require('./panel/panel');
 const DeploymentPayment = require('./payment/payment');
+const DeploymentPricing = require('./pricing/pricing');
 const DeploymentSection = require('./section/section');
 const DeploymentServices = require('./services/services');
 const DeploymentSSHKey = require('./sshkey/sshkey');
@@ -183,6 +184,11 @@ class DeploymentFlow extends React.Component {
         visible = loggedIn && newTerms && newTerms.length > 0;
         break;
       case 'deploy':
+        completed = false;
+        disabled = false;
+        visible = loggedIn;
+        break;
+      case 'pricing':
         completed = false;
         disabled = false;
         visible = loggedIn;
@@ -613,6 +619,25 @@ class DeploymentFlow extends React.Component {
           ddEntity={this.state.ddEntity}
           modelName={this.props.modelName}
           setModelName={this.props.setModelName} />
+      </DeploymentSection>);
+  }
+
+  /**
+    Generate the pricing section.
+    @returns {Object} The markup.
+  */
+  _generatePricingSection() {
+    const status = this._getSectionStatus('pricing');
+    if (!status.visible) {
+      return;
+    }
+    return (
+      <DeploymentSection
+        completed={status.completed}
+        instance="deployment-pricing"
+        showCheck={true}
+        title="Pricing">
+        <DeploymentPricing />
       </DeploymentSection>);
   }
 

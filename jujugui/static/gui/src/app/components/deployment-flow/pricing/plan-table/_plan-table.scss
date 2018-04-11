@@ -1,0 +1,31 @@
+.deployment-plan-table {
+  &__charm-name,
+  &__plan-title {
+    font-size: 16px;
+  }
+
+  &__charm-icon {
+    $size: 24px;
+    width: $size;
+    height: $size;
+    margin-right: 10px;
+    border-radius: $size / 2;
+    vertical-align: middle;
+  }
+
+  &__plan-description {
+    font-size: 14px;
+  }
+
+  &__header-column {
+    font-weight: 300;
+  }
+
+  &__row {
+    border-bottom: none;
+
+    &:last-child {
+      border-bottom: 1px solid $light-mid-grey;
+    }
+  }
+}

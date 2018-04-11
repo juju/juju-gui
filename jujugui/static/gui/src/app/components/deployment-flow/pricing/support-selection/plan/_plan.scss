@@ -1,0 +1,58 @@
+.deployment-support-select-plan {
+  $highlight: 0 1px 5px 4px rgba(14, 132, 32, 0.3);
+  display: flex;
+  flex-direction: column;
+
+  &__card {
+    @extend %floating-panel;
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: $highlight;
+    }
+  }
+
+  &--selected .deployment-support-select-plan__card {
+    box-shadow: $highlight;
+  }
+
+  &__features {
+    @extend %list-style;
+    flex: auto;
+    margin: 20px 0;
+  }
+
+  &__feature {
+    .svg-icon {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+  }
+
+  &__hour-price,
+  &__price {
+    color: $dark-warm-grey;
+  }
+
+  &__price {
+    padding-top: 20px;
+    border-top: 1px solid $light-mid-grey;
+
+    &-number {
+      float: right;
+      margin-top: -3px;
+      color: $color-dark;
+      font-size: 20px;
+      font-weight: 400;
+    }
+  }
+
+  &__hour-price {
+    padding-top: 20px;
+    font-size: 14px;
+  }
+}
