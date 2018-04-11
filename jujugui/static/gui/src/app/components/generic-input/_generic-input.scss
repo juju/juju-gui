@@ -2,6 +2,16 @@
   $padding: 8px;
   position: relative;
 
+  &--no-label {
+    .generic-input {
+      &__multiline-field,
+      &__field[type=text],
+      &__field[type=password] {
+        padding-top: 8px;
+      }
+    }
+  }
+
   &__label {
     // Needs to be positioned to appear above the input.
     color: $dark-warm-grey;

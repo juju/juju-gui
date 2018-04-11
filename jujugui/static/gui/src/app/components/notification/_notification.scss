@@ -82,6 +82,17 @@ $sp-large: 2rem;
   }
 }
 
+// Info notification styling
+.p-notification--info {
+  @include notification;
+  border-color: $uncommitted;
+
+  .p-notification__response {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='none' d='M0 0h16v16H0z'/%3E%3Cg fill='" + url-friendly-color($uncommitted) + "'%3E%3Cpath d='M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14.5c-3.6 0-6.5-2.9-6.5-6.5S4.4 1.5 8 1.5s6.5 2.9 6.5 6.5-2.9 6.5-6.5 6.5z'/%3E%3Cpath d='M7 10h2v2H7zM7 4h2v5H7z'/%3E%3C/g%3E%3C/svg%3E");
+    padding-left: $sp-large;
+  }
+}
+
 // Caution notification styling
 .p-notification--caution {
   @include notification;

@@ -88,7 +88,7 @@ Notification.propTypes = {
   dismiss: PropTypes.func,
   extraClasses: PropTypes.string,
   isBlocking: PropTypes.bool,
-  // Types: positive, caution, negative
+  // Types: positive, caution, negative, info
   type: PropTypes.string
 };
 

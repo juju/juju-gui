@@ -11,6 +11,7 @@ const DeploymentBudget = require('./budget/budget');
 const DeploymentCloud = require('./cloud/cloud');
 const DeploymentCredential = require('./credential/credential');
 const DeploymentDirectDeploy = require('./direct-deploy/direct-deploy');
+const DeploymentExpertBudget = require('./expert-budget/expert-budget');
 const DeploymentLogin = require('./login/login');
 const DeploymentMachines = require('./machines/machines');
 const DeploymentModelName = require('./model-name/model-name');
@@ -189,6 +190,11 @@ class DeploymentFlow extends React.Component {
         visible = loggedIn;
         break;
       case 'pricing':
+        completed = false;
+        disabled = false;
+        visible = loggedIn;
+        break;
+      case 'expert-budget':
         completed = false;
         disabled = false;
         visible = loggedIn;
@@ -638,6 +644,25 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title="Pricing">
         <DeploymentPricing />
+      </DeploymentSection>);
+  }
+
+  /**
+    Generate the budget section for experts.
+    @returns {Object} The markup.
+  */
+  _generateExpertBudgetSection() {
+    const status = this._getSectionStatus('expert-budget');
+    if (!status.visible) {
+      return;
+    }
+    return (
+      <DeploymentSection
+        completed={status.completed}
+        instance="deployment-expert-budget"
+        showCheck={true}
+        title="Set your maximum monthly budget (optional)">
+        <DeploymentExpertBudget />
       </DeploymentSection>);
   }
 
