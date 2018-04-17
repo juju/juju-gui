@@ -34,7 +34,7 @@ class ExpertStoreCard extends React.Component {
 };
 
 ExpertStoreCard.propTypes = {
-  classes: PropTypes.array.isRequired,
+  classes: PropTypes.array,
   expert: PropTypes.string.isRequired,
   staticURL: PropTypes.string
 };
