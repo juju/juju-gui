@@ -12,6 +12,7 @@ const DeploymentCloud = require('./cloud/cloud');
 const DeploymentCredential = require('./credential/credential');
 const DeploymentDirectDeploy = require('./direct-deploy/direct-deploy');
 const DeploymentExpertBudget = require('./expert-budget/expert-budget');
+const DeploymentExpertIntro = require('./expert-intro/expert-intro');
 const DeploymentLogin = require('./login/login');
 const DeploymentMachines = require('./machines/machines');
 const DeploymentModelName = require('./model-name/model-name');
@@ -1017,6 +1018,24 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Generates the Expert Intro component if necessary.
+    @returns {Object} The React elements.
+  */
+  _generateExpertIntro() {
+    return (
+      <DeploymentExpertIntro
+        addNotification={this.props.addNotification}
+        changeState={this.props.changeState}
+        ddData={this.props.ddData}
+        entityModel={this.state.ddEntity}
+        generatePath={this.props.generatePath}
+        getDiagramURL={this.props.getDiagramURL}
+        renderMarkdown={this.props.renderMarkdown}
+        sendAnalytics={this.props.sendAnalytics}
+        staticURL={this.props.staticURL} />);
+  }
+
+  /**
     Generates the Direct Deploy component if necessary.
     @returns {Object} The React elements.
   */
@@ -1158,7 +1177,7 @@ DeploymentFlow.propTypes = {
   getDiagramURL: PropTypes.func,
   getEntity: PropTypes.func,
   getGithubSSHKeys: PropTypes.func.isRequired,
-  getSLAMachineRates: PropTypes.func.isRequired,
+  getSLAMachineRates: PropTypes.func,
   getServiceByName: PropTypes.func.isRequired,
   getUser: PropTypes.func,
   getUserName: PropTypes.func.isRequired,
@@ -1182,6 +1201,7 @@ DeploymentFlow.propTypes = {
   showPay: PropTypes.bool,
   showTerms: PropTypes.func.isRequired,
   sortDescriptionsByApplication: PropTypes.func.isRequired,
+  staticURL: PropTypes.string.isRequired,
   stats: PropTypes.object,
   updateCloudCredential: PropTypes.func,
   updateModelName: PropTypes.func,

@@ -108,6 +108,7 @@ describe('DeploymentFlow', function() {
       showPay: false,
       showTerms: sinon.stub(),
       sortDescriptionsByApplication: sinon.stub(),
+      staticURL: '/static/url',
       stats: null,
       updateCloudCredential: sinon.stub(),
       validateForm: sinon.stub(),
