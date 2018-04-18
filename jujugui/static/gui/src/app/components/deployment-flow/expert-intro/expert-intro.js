@@ -6,18 +6,35 @@ const React = require('react');
 
 const DeploymentSection = require('../section/section');
 const ExpertBlock = require('../../expert-block/expert-block');
+const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 class DeploymentExpertIntro extends React.Component {
+  constructor(props) {
+    super(props);
+    this.isBundle = this.props.ddData.id.includes('bundle');
+  }
+
+  /**
+    Navigate to the store state.
+  */
+  _handleStoreClick() {
+    this.props.changeState({
+      gui: {deploy: null},
+      profile: null,
+      store: '',
+      special: {dd: null}
+    });
+  }
 
   /**
     Generate the entity diagram or icon.
     @returns {Object} The markup.
   */
   _generateImage() {
-    if (this.props.ddData.id.includes('bundle')) {
+    if (this.isBundle) {
       return (
         <div className="deployment-expert-intro__diagram">
           <EntityContentDiagram
@@ -27,9 +44,25 @@ class DeploymentExpertIntro extends React.Component {
   }
 
   render() {
-    return (
-      <DeploymentSection
-        instance="deployment-expert-intro-section">
+    const { entityModel } = this.props;
+    let content;
+    if (!entityModel) {
+      content = (
+        <div className="deployment-expert-intro__not-found">
+          This {this.isBundle ? 'bundle' : 'charm'} could not be found.
+          Visit the&nbsp;
+          <span className="link"
+            onClick={this._handleStoreClick.bind(this)}
+            role="button"
+            tabIndex="0">
+            store
+          </span>&nbsp;
+          to find more charms and bundles.
+        </div>);
+    } else {
+      const entity = entityModel.toEntity();
+      const machineNumber = this.isBundle ? entity.machineCount : 1;
+      content = (
         <div className="deployment-expert-intro">
           <div className="twelve-col">
             <div className="eight-col">
@@ -37,22 +70,12 @@ class DeploymentExpertIntro extends React.Component {
                 You are about to deploy:
               </div>
               <h2>
-                Saiku Drill
+                {entity.displayName}
               </h2>
               <div className="six-col">
-                <p>
-                  Get faster insights with less effort. Apache Drill is a
-                  schema-free SQL Query Engine.
-                </p>
-                <p>
-                  Saiku-Drill combines traditional SQL queries on modern,
-                  nontraditional datastores with the power of Saiku’s Business
-                  Intelligence engine.
-                </p>
-                <p>
-                  You can access multiple non-relational datastores directly,
-                  connecting to Hadoop, NoSQL or Cloud Storage.
-                </p>
+                <EntityContentDescription
+                  entityModel={entityModel}
+                  renderMarkdown={this.props.renderMarkdown} />
                 {this._generateImage()}
               </div>
               <div className="twelve-col">
@@ -61,8 +84,15 @@ class DeploymentExpertIntro extends React.Component {
                 </div>
                 <ul>
                   <li>
-                    Your <span className="link">cloud credentials</span>.
-                    6 machines-instances will be created at your cloud provider
+                    Your&nbsp;
+                    <a href="https://jujucharms.com/docs/stable/credentials"
+                      target="_blank">
+                      cloud credentials
+                    </a>.&nbsp;
+                    <span className="deployment-expert-intro__machine-count">
+                      {machineNumber}
+                    </span>&nbsp;
+                    machines-instances will be created at your cloud provider
                   </li>
                   <li>
                     A valid credit credit card
@@ -114,7 +144,12 @@ class DeploymentExpertIntro extends React.Component {
                 staticURL={this.props.staticURL} />
             </div>
           </div>
-        </div>
+        </div>);
+    }
+    return (
+      <DeploymentSection
+        instance="deployment-expert-intro-section">
+        {content}
       </DeploymentSection>
     );
   }
