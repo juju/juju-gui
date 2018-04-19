@@ -15,16 +15,14 @@ describe('EntityContentDescription', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityContentDescription
       changeState={options.changeState || sinon.stub()}
-      entityModel={options.entityModel || mockEntity}
+      description={options.description || mockEntity.get('description')}
       includeHeading={options.includeHeading}
       renderMarkdown={options.renderMarkdown || marked} />
   );
 
   it('can render markdown in the description', () => {
-    let mockEntity = jsTestUtils.makeEntity();
     const description = 'A simple [link](http://google.com/).';
-    mockEntity.set('description', description);
-    const wrapper = renderComponent({ entityModel: mockEntity });
+    const wrapper = renderComponent({ description });
     assert.equal(
       wrapper.find('.entity-content__description-content').html().includes(description),
       true);
@@ -40,13 +38,12 @@ describe('EntityContentDescription', function() {
     });
 
     it('can render without description', () => {
-      mockEntity.set('description', null);
-      const wrapper = renderComponent({ entityModel: mockEntity });
+      const wrapper = renderComponent({ description: null });
       assert.equal(wrapper.text(), false);
     });
 
     it('can render with a description', () => {
-      const wrapper = renderComponent({ entityModel: mockEntity });
+      const wrapper = renderComponent();
       const expected = (
         <div className="entity-content__description">
           <div className="entity-content__description-content"
@@ -67,13 +64,12 @@ describe('EntityContentDescription', function() {
     });
 
     it('can render without description', () => {
-      mockEntity.set('description', null);
-      const wrapper = renderComponent({ entityModel: mockEntity });
+      const wrapper = renderComponent({ description: null });
       assert.equal(wrapper.text(), false);
     });
 
     it('can render with a description', () => {
-      const wrapper = renderComponent({ entityModel: mockEntity });
+      const wrapper = renderComponent();
       const expected = (
         <div className="entity-content__description">
           <div className="entity-content__description-content"
