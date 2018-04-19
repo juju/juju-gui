@@ -328,7 +328,7 @@ class EntityContent extends React.Component {
   _generateDescription(entityModel) {
     return (<EntityContentDescription
       changeState={this.props.changeState}
-      entityModel={entityModel}
+      description={entityModel.get('description')}
       includeHeading={true}
       renderMarkdown={this.props.renderMarkdown} />);
   }

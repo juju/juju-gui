@@ -6,6 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentSection = require('../section/section');
 const ExpertBlock = require('../../expert-block/expert-block');
+const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
 const SvgIcon = require('../../svg-icon/svg-icon');
@@ -18,9 +19,15 @@ describe('DeploymentExpertIntro', () => {
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
       ddData={options.ddData || {
-        id: 'apache2'
+        id: 'cs:apache-21'
       }}
-      entityModel={options.ddEntity || {}}
+      entityModel={options.entityModel === undefined ? {
+        toEntity: sinon.stub().returns({
+          description: 'Description',
+          displayName: 'Apache 2',
+          iconPath: 'http://example.com/icon.svg'
+        })
+      } : options.entityModel}
       generatePath={options.generatePath || sinon.stub()}
       getDiagramURL={options.getDiagramURL || sinon.stub()}
       renderMarkdown={options.renderMarkdown || sinon.stub()}
@@ -28,7 +35,26 @@ describe('DeploymentExpertIntro', () => {
       staticURL={options.staticURL || '/static/url'} />
   );
 
-  it('can render', () => {
+  it('can render for without an entity', () => {
+    const wrapper = renderComponent({
+      entityModel: null
+    });
+    const expected = (
+      <div className="deployment-expert-intro__not-found">
+        This {'charm'} could not be found.
+        Visit the&nbsp;
+        <span className="link"
+          onClick={wrapper.find('.deployment-expert-intro__not-found .link').prop('onClick')}
+          role="button"
+          tabIndex="0">
+          store
+        </span>&nbsp;
+        to find more charms and bundles.
+      </div>);
+    assert.compareJSX(wrapper.find('.deployment-expert-intro__not-found'), expected);
+  });
+
+  it('can render for a charm', () => {
     const wrapper = renderComponent();
     const expected = (
       <DeploymentSection
@@ -40,22 +66,12 @@ describe('DeploymentExpertIntro', () => {
                 You are about to deploy:
               </div>
               <h2>
-                Saiku Drill
+                Apache 2
               </h2>
               <div className="six-col">
-                <p>
-                  Get faster insights with less effort. Apache Drill is a
-                  schema-free SQL Query Engine.
-                </p>
-                <p>
-                  Saiku-Drill combines traditional SQL queries on modern,
-                  nontraditional datastores with the power of Saiku’s Business
-                  Intelligence engine.
-                </p>
-                <p>
-                  You can access multiple non-relational datastores directly,
-                  connecting to Hadoop, NoSQL or Cloud Storage.
-                </p>
+                <EntityContentDescription
+                  description="Description"
+                  renderMarkdown={sinon.stub()} />
               </div>
               <div className="twelve-col">
                 <div className="deployment-expert-intro__section-title">
@@ -63,8 +79,15 @@ describe('DeploymentExpertIntro', () => {
                 </div>
                 <ul>
                   <li>
-                    Your <span className="link">cloud credentials</span>.
-                    6 machines-instances will be created at your cloud provider
+                    Your&nbsp;
+                    <a href="https://jujucharms.com/docs/stable/credentials"
+                      target="_blank">
+                      cloud credentials
+                    </a>.&nbsp;
+                    <span className="deployment-expert-intro__machine-count">
+                      {1}
+                    </span>&nbsp;
+                    machines-instances will be created at your cloud provider
                   </li>
                   <li>
                     A valid credit credit card
@@ -121,18 +144,33 @@ describe('DeploymentExpertIntro', () => {
     assert.compareJSX(wrapper, expected);
   });
 
-  it('can render', () => {
+  it('can render for a bundle', () => {
+    const bundle = {
+      toEntity: sinon.stub().returns({
+        description: 'Description',
+        displayName: 'Kubernetes core',
+        machineCount: 4
+      })
+    };
     const wrapper = renderComponent({
       ddData: {
-        id: 'bundle/kubernetes'
+        id: 'cs:bundle/kubernetes-core-8'
       },
+      entityModel: bundle,
       getDiagramURL: sinon.stub().returns('/diagram/url')
     });
-    const expected = (
+    const expectedDiagram = (
       <div className="deployment-expert-intro__diagram">
         <EntityContentDiagram
           diagramUrl="/diagram/url" />
       </div>);
-    assert.compareJSX(wrapper.find('.deployment-expert-intro__diagram'), expected);
+    const expectedMachineCount = (
+      <span className="deployment-expert-intro__machine-count">
+        {4}
+      </span>);
+    assert.compareJSX(wrapper.find('.deployment-expert-intro__diagram'), expectedDiagram);
+    assert.compareJSX(
+      wrapper.find('.deployment-expert-intro__machine-count'),
+      expectedMachineCount);
   });
 });
