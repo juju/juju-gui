@@ -23,6 +23,7 @@ describe('DeploymentExpertIntro', () => {
       }}
       entityModel={options.entityModel === undefined ? {
         toEntity: sinon.stub().returns({
+          description: 'Description',
           displayName: 'Apache 2',
           iconPath: 'http://example.com/icon.svg'
         })
@@ -69,10 +70,7 @@ describe('DeploymentExpertIntro', () => {
               </h2>
               <div className="six-col">
                 <EntityContentDescription
-                  entityModel={{
-                    displayName: 'Apache 2',
-                    iconPath: 'http://example.com/icon.svg'
-                  }}
+                  description="Description"
                   renderMarkdown={sinon.stub()} />
               </div>
               <div className="twelve-col">
@@ -149,6 +147,7 @@ describe('DeploymentExpertIntro', () => {
   it('can render for a bundle', () => {
     const bundle = {
       toEntity: sinon.stub().returns({
+        description: 'Description',
         displayName: 'Kubernetes core',
         machineCount: 4
       })

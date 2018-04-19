@@ -113,7 +113,7 @@ class DeploymentDirectDeploy extends React.Component {
               {entity.displayName}
             </h2>
             <EntityContentDescription
-              entityModel={entityModel}
+              description={entity.description}
               renderMarkdown={this.props.renderMarkdown} />
             <ul>
               <li>

@@ -80,7 +80,7 @@ describe('EntityContent', function() {
             <div className="eight-col">
               <EntityContentDescription
                 changeState={sinon.stub()}
-                entityModel={mockEntity}
+                description={description}
                 includeHeading={true}
                 renderMarkdown={sinon.stub()} />
               <div className="entity-content__terms">
@@ -341,7 +341,7 @@ describe('EntityContent', function() {
             <div className="eight-col">
               <EntityContentDescription
                 changeState={sinon.stub()}
-                entityModel={mockEntity}
+                description={mockEntity.get('description')}
                 includeHeading={true}
                 renderMarkdown={sinon.stub()} />
               <EntityContentDiagram

@@ -63,6 +63,7 @@ describe('DirectDeploy', function() {
   it('renders the Direct deploy for a charm', () => {
     const charm = {
       toEntity: sinon.stub().returns({
+        description: 'Description',
         displayName: 'Apache 2',
         iconPath: 'http://example.com/icon.svg'
       })
@@ -82,7 +83,7 @@ describe('DirectDeploy', function() {
             Apache 2
           </h2>
           <EntityContentDescription
-            entityModel={charm}
+            description="Description"
             renderMarkdown={renderMarkdown} />
           <ul>
             <li>
@@ -120,6 +121,7 @@ describe('DirectDeploy', function() {
   it('renders the Direct Deploy for a bundle', () => {
     const bundle = {
       toEntity: sinon.stub().returns({
+        description: 'Description',
         displayName: 'Kubernetes core',
         machineCount: 4
       })
@@ -141,7 +143,7 @@ describe('DirectDeploy', function() {
             Kubernetes core
           </h2>
           <EntityContentDescription
-            entityModel={bundle}
+            description="Description"
             renderMarkdown={renderMarkdown} />
           <ul>
             <li>

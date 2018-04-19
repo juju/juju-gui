@@ -74,7 +74,7 @@ class DeploymentExpertIntro extends React.Component {
               </h2>
               <div className="six-col">
                 <EntityContentDescription
-                  entityModel={entityModel}
+                  description={entity.description}
                   renderMarkdown={this.props.renderMarkdown} />
                 {this._generateImage()}
               </div>
