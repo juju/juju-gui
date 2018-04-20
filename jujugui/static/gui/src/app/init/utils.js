@@ -525,14 +525,14 @@ utils._hidePopup = () => {
 
 /**
   Switch models using the correct username and password.
-  @param {Object} env Reference to the app env.
+  @param {Object} modelAPI Reference to the app model API.
   @param {Object} model The model to switch to, with these attributes:
     - name: the model name;
     - id: the model unique identifier;
     - owner: the user owning the model, like "admin" or "who@external".
   @param {Boolean} clearProfileState Whether to close the profile.
 */
-utils._switchModel = function(env, model, clearProfileState=true) {
+utils._switchModel = function(modelAPI, model, clearProfileState=true) {
   // Remove the switch model confirmation popup if it has been displayed to
   // the user.
   utils._hidePopup();
@@ -562,10 +562,14 @@ utils._switchModel = function(env, model, clearProfileState=true) {
     newState.model = null;
     if (!current || !current.profile) {
       newState.root = 'new';
+      // Clear the ECS here preemptively, so that if a model switch is not
+      // triggered (for instance as we are going from new model to new model)
+      // we still clear the canvas.
+      modelAPI.get('ecs').clear();
     }
   }
   this.state.changeState(newState);
-  env.set('environmentName', name);
+  modelAPI.set('environmentName', name);
   // It is the new init.
   this.modelUUID = uuid;
 };

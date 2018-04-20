@@ -513,8 +513,12 @@ describe('init utils', () => {
         set: sinon.stub().withArgs('modelUUID'),
         state: {changeState: sinon.stub(), current: {}}
       };
-      const env = {set: sinon.stub()};
-      utils._switchModel.call(app, env, null);
+      const clear = sinon.stub().withArgs();
+      const modelAPI = {
+        get: sinon.stub().withArgs('ecs').returns({clear: clear}),
+        set: sinon.stub()
+      };
+      utils._switchModel.call(app, modelAPI, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: {status: null, inspector: null},
@@ -522,6 +526,7 @@ describe('init utils', () => {
         hash: null,
         model: null
       }]);
+      assert.equal(clear.callCount, 1, 'clear');
     });
 
     it('does not set root state to new if profile state exists', () => {
@@ -562,8 +567,12 @@ describe('init utils', () => {
         set: sinon.stub().withArgs('modelUUID'),
         state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
       };
-      const env = {set: sinon.stub()};
-      utils._switchModel.call(app, env, null);
+      const clear = sinon.stub().withArgs();
+      const modelAPI = {
+        get: sinon.stub().withArgs('ecs').returns({clear: clear}),
+        set: sinon.stub()
+      };
+      utils._switchModel.call(app, modelAPI, null);
       assert.deepEqual(app.state.changeState.args[0], [{
         profile: null,
         gui: {status: null, inspector: null},
@@ -571,6 +580,7 @@ describe('init utils', () => {
         root: 'new',
         model: null
       }]);
+      assert.equal(clear.callCount, 1, 'clear');
     });
   });
 
