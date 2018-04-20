@@ -644,7 +644,7 @@ class DeploymentFlow extends React.Component {
         instance="deployment-pricing"
         showCheck={true}
         title="Pricing">
-        <DeploymentPricing />
+        <DeploymentPricing getSLAMachineRates={this.props.getSLAMachineRates} />
       </DeploymentSection>);
   }
 
@@ -1177,7 +1177,7 @@ DeploymentFlow.propTypes = {
   getDiagramURL: PropTypes.func,
   getEntity: PropTypes.func,
   getGithubSSHKeys: PropTypes.func.isRequired,
-  getSLAMachineRates: PropTypes.func,
+  getSLAMachineRates: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,
   getUser: PropTypes.func,
   getUserName: PropTypes.func.isRequired,
