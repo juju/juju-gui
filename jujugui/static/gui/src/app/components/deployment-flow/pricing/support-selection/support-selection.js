@@ -2,15 +2,22 @@
 'use strict';
 
 const React = require('react');
+const PropTypes = require('prop-types');
 
 const DeploymentSupportSelectionPlan = require('./plan/plan');
+const Spinner = require('../../../spinner/spinner');
 
 class DeploymentSupportSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedPlan: null
+      selectedPlan: null,
+      slaMachineRates: null
     };
+  }
+
+  componentWillMount() {
+    this.props.getSLAMachineRates(data => this.setState({slaMachineRates: data}));
   }
 
   /**
@@ -26,10 +33,15 @@ class DeploymentSupportSelection extends React.Component {
    @returns {Array} the list of cards.
   */
   _generateCards() {
+    const state = this.state;
+    if (!state.slaMachineRates) {
+      return (<Spinner />);
+    }
+    const slaMachineRates = state.slaMachineRates;
     const plans = [{
       cost: '8.75',
       features: ['8hx5d ticked'],
-      hourPrice: '0.00856',
+      hourPrice: slaMachineRates.essential,
       name: 'Essential'
     }, {
       cost: '77.00',
@@ -37,7 +49,7 @@ class DeploymentSupportSelection extends React.Component {
         '10x5 phone support',
         '2hr critical response'
       ],
-      hourPrice: '0.02853',
+      hourPrice: slaMachineRates.standard,
       name: 'Standard'
     }, {
       cost: '154.00',
@@ -45,7 +57,7 @@ class DeploymentSupportSelection extends React.Component {
         '24x7 phone support',
         '1hr critical response'
       ],
-      hourPrice: '0.05707',
+      hourPrice: slaMachineRates.advanced,
       name: 'Advanced'
     }];
     return plans.map((plan, i) => {
@@ -73,6 +85,10 @@ class DeploymentSupportSelection extends React.Component {
       </div>
     );
   }
+};
+
+DeploymentSupportSelection.propTypes = {
+  getSLAMachineRates: PropTypes.func.isRequired
 };
 
 module.exports = DeploymentSupportSelection;
