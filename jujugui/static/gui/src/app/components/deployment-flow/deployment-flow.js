@@ -644,7 +644,7 @@ class DeploymentFlow extends React.Component {
         instance="deployment-pricing"
         showCheck={true}
         title="Pricing">
-        <DeploymentPricing />
+        <DeploymentPricing getSLAMachineRates={this.props.getSLAMachineRates} />
       </DeploymentSection>);
   }
 

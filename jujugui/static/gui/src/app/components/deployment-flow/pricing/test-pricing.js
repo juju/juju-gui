@@ -11,7 +11,7 @@ const DeploymentSupportSelection = require('./support-selection/support-selectio
 describe('DeploymentPricing', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentPricing />
+    <DeploymentPricing getSLAMachineRates={options.getSLAMachineRates || sinon.stub()} />
   );
 
   it('can render', function() {
@@ -40,7 +40,7 @@ describe('DeploymentPricing', () => {
             </span>
           </div>
         </div>
-        <DeploymentSupportSelection />
+        <DeploymentSupportSelection getSLAMachineRates={sinon.stub()} />
         <div className="twelve-col no-margin-bottom">
           <div className="six-col no-margin-bottom deployment-pricing__secondary-text">
             <strong>Estimated costs based on 8 machines.</strong> Support is
