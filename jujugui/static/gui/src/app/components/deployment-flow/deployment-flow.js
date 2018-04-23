@@ -1177,7 +1177,7 @@ DeploymentFlow.propTypes = {
   getDiagramURL: PropTypes.func,
   getEntity: PropTypes.func,
   getGithubSSHKeys: PropTypes.func.isRequired,
-  getSLAMachineRates: PropTypes.func.isRequired,
+  getSLAMachineRates: PropTypes.func,
   getServiceByName: PropTypes.func.isRequired,
   getUser: PropTypes.func,
   getUserName: PropTypes.func.isRequired,
