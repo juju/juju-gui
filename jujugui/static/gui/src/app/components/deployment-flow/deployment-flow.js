@@ -644,7 +644,11 @@ class DeploymentFlow extends React.Component {
         instance="deployment-pricing"
         showCheck={true}
         title="Pricing">
-        <DeploymentPricing getSLAMachineRates={this.props.getSLAMachineRates} />
+        <DeploymentPricing
+          applications={this.props.applications}
+          charms={this.props.charms}
+          getSLAMachineRates={this.props.getSLAMachineRates}
+          listPlansForCharm={this.props.listPlansForCharm} />
       </DeploymentSection>);
   }
 
@@ -1152,6 +1156,7 @@ DeploymentFlow.propTypes = {
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
   changesFilterByParent: PropTypes.func.isRequired,
+  charms: PropTypes.object.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
   cloud: PropTypes.object,

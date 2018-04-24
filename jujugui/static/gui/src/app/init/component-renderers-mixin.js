@@ -968,6 +968,7 @@ Browser: ${navigator.userAgent}`
         changesFilterByParent={
           changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
         changeState={this._bound.changeState}
+        charms={db.charms}
         charmsGetById={db.charms.getById.bind(db.charms)}
         charmstore={charmstore}
         cloud={cloud}

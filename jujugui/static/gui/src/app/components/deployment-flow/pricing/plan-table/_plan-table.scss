@@ -1,6 +1,5 @@
 .deployment-plan-table {
-  &__charm-name,
-  &__plan-title {
+  &__charm-name {
     font-size: 16px;
   }
 
@@ -27,5 +26,9 @@
     &:last-child {
       border-bottom: 1px solid $light-mid-grey;
     }
+  }
+
+  &__metered {
+    text-transform: capitalize;
   }
 }

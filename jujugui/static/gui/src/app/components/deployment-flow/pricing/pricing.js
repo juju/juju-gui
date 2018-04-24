@@ -10,7 +10,10 @@ const DeploymentSupportSelection = require('./support-selection/support-selectio
 const DeploymentPricing = props => {
   return (
     <div className="deployment-pricing">
-      <DeploymentPlanTable />
+      <DeploymentPlanTable
+        applications={props.applications}
+        charms={props.charms}
+        listPlansForCharm={props.listPlansForCharm} />
       <div className="twelve-col">
         <div className="six-col deployment-pricing__secondary-text">
           Monthly cost is determined by price plan, support level, and by usage.
@@ -50,7 +53,10 @@ const DeploymentPricing = props => {
 };
 
 DeploymentPricing.propTypes = {
-  getSLAMachineRates: PropTypes.func.isRequired
+  applications: PropTypes.array.isRequired,
+  charms: PropTypes.object.isRequired,
+  getSLAMachineRates: PropTypes.func.isRequired,
+  listPlansForCharm: PropTypes.func.isRequired
 };
 
 module.exports = DeploymentPricing;
