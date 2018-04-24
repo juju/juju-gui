@@ -427,6 +427,7 @@ var module = module;
       price: plan.price,
       description: plan.description,
       createdAt: new Date(milliseconds),
+      metrics: plan.model.metrics,
       yaml: plan.plan
     };
   };
