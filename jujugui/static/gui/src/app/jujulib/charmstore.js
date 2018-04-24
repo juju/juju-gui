@@ -182,6 +182,7 @@ var module = module;
         owner: owner,
         revisions: revisionInfo.Revisions || [],
         tags: tags.Tags || [],
+        supported: extraInfo.supported === 'true',
         code_source: {
           location: extraInfo['bzr-url']
         }
