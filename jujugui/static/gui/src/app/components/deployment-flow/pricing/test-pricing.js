@@ -11,14 +11,21 @@ const DeploymentSupportSelection = require('./support-selection/support-selectio
 describe('DeploymentPricing', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentPricing getSLAMachineRates={options.getSLAMachineRates || sinon.stub()} />
+    <DeploymentPricing
+      applications={options.applications || []}
+      charms={options.charms || {}}
+      getSLAMachineRates={options.getSLAMachineRates || sinon.stub()}
+      listPlansForCharm={options.listPlansForCharm || sinon.stub()} />
   );
 
   it('can render', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="deployment-pricing">
-        <DeploymentPlanTable />
+        <DeploymentPlanTable
+          applications={[]}
+          charms={{}}
+          listPlansForCharm={sinon.stub()} />
         <div className="twelve-col">
           <div className="six-col deployment-pricing__secondary-text">
             Monthly cost is determined by price plan, support level, and by usage.

@@ -8,10 +8,46 @@ const BasicTable = require('../../../basic-table/basic-table');
 const DeploymentPlanTable = require('./plan-table');
 
 describe('DeploymentPlanTable', () => {
+  let applications, charms, listPlansForCharm;
 
   const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentPlanTable />
+    <DeploymentPlanTable
+      applications={options.applications || applications}
+      charms={options.charms || charms}
+      listPlansForCharm={options.listPlansForCharm || listPlansForCharm} />
   );
+
+  beforeEach(() => {
+    applications = [{
+      getAttrs: sinon.stub().returns({
+        icon: 'apache2.svg',
+        charm: 'cs:apache2',
+        id: 'apache2-123',
+        name: 'apache2'
+      })
+    }, {
+      getAttrs: sinon.stub().returns({
+        charm: 'cs:mysql'
+      })
+    }];
+    charms = {
+      getById: sinon.stub()
+    };
+    charms.getById.withArgs('cs:apache2').returns({
+      get: sinon.stub().withArgs('id').returns('cs:apache2'),
+      hasMetrics: sinon.stub().returns(true)
+    });
+    charms.getById.withArgs('cs:mysql').returns({
+      hasMetrics: sinon.stub().returns(false)
+    });
+    listPlansForCharm = sinon.stub().callsArgWith(1, null, [{
+      description: 'The standard plan description',
+      metrics: {
+        memory: 'something'
+      },
+      price: '$3.25 per GB of RAM per month'
+    }]);
+  });
 
   it('can render', function() {
     const wrapper = renderComponent();
@@ -42,8 +78,7 @@ describe('DeploymentPlanTable', () => {
                 <div>
                   <img alt="Apache Drill"
                     className="deployment-plan-table__charm-icon"
-                    src={'https://api.jujucharms.com/charmstore/v5/' +
-                      '~spiculecharms/apache-drill-25/icon.svg'} />
+                    src="apache2.svg" />
                   <span className="deployment-plan-table__charm-name">
                     Apache Drill
                   </span>
@@ -53,12 +88,10 @@ describe('DeploymentPlanTable', () => {
               content: (
                 <div>
                   <h4 className="deployment-plan-table__plan-title">
-                    Databonus Dash
+                    --
                   </h4>
                   <p className="deployment-plan-table__plan-description">
-                    Spicule’s standard plan for Apache Drill is suitable for
-                    large to very large workloads on clusters of 4-16 nodes.
-                    Pricing is for the sum of RAM on all processing nodes.
+                    The standard plan description
                   </p>
                 </div>),
               columnSize: 3
@@ -66,7 +99,10 @@ describe('DeploymentPlanTable', () => {
               content: '',
               columnSize: 1
             }, {
-              content: 'Memory',
+              content: (
+                <span className="deployment-plan-table__metered">
+                  Memory
+                </span>),
               columnSize: 2
             }, {
               content: '$3.25 per GB of RAM per month',
@@ -74,43 +110,6 @@ describe('DeploymentPlanTable', () => {
               classes: ['u-align--right']
             }],
             key: 'Apache Drill'
-          }, {
-            columns: [{
-              content: (
-                <div>
-                  <img alt="Saiku EE"
-                    className="deployment-plan-table__charm-icon"
-                    src={'https://api.jujucharms.com/charmstore/v5/~spicule/' +
-                      'saikuanalytics-enterprise-22/icon.svg'} />
-                  <span className="deployment-plan-table__charm-name">
-                    Saiku EE
-                  </span>
-                </div>),
-              columnSize: 3
-            }, {
-              content: (
-                <div>
-                  <h4 className="deployment-plan-table__plan-title">
-                    Starter pack
-                  </h4>
-                  <p className="deployment-plan-table__plan-description">
-                    Our default plan for Saiku Business Intelligence covers
-                    up to 50 users.
-                  </p>
-                </div>),
-              columnSize: 3
-            }, {
-              content: '',
-              columnSize: 1
-            }, {
-              content: 'Users',
-              columnSize: 2
-            }, {
-              content: '$6 per user per month',
-              columnSize: 3,
-              classes: ['u-align--right']
-            }],
-            key: 'Saiku EE'
           }]}
           tableClasses={['no-margin-bottom']} />
       </div>);
