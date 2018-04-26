@@ -37,9 +37,18 @@ class DeploymentPlanTable extends React.Component {
     @param error {String} An error message, or null if there's no error.
     @param plans {Array} A list of the plans found.
   */
-  _getPlansCallback(charmId, error, plans=[]) {
+  _getPlansCallback(charmId, error, plans) {
+    if (error) {
+      const message = 'Fetching plans failed';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
+    }
     const newPlans = this.state.plans;
-    newPlans[charmId] = plans[0];
+    newPlans[charmId] = (plans || [])[0];
     this.setState({ plans: newPlans });
   }
 
@@ -128,6 +137,7 @@ class DeploymentPlanTable extends React.Component {
 };
 
 DeploymentPlanTable.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   applications: PropTypes.array.isRequired,
   charms: PropTypes.object.isRequired,
   listPlansForCharm: PropTypes.func.isRequired

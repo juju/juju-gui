@@ -11,6 +11,7 @@ const DeploymentPricing = props => {
   return (
     <div className="deployment-pricing">
       <DeploymentPlanTable
+        addNotification={props.addNotification}
         applications={props.applications}
         charms={props.charms}
         listPlansForCharm={props.listPlansForCharm} />
@@ -53,6 +54,7 @@ const DeploymentPricing = props => {
 };
 
 DeploymentPricing.propTypes = {
+  addNotification: PropTypes.func.isRequired,
   applications: PropTypes.array.isRequired,
   charms: PropTypes.object.isRequired,
   getSLAMachineRates: PropTypes.func.isRequired,

@@ -12,6 +12,7 @@ describe('DeploymentPlanTable', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentPlanTable
+      addNotification={options.addNotification || sinon.stub()}
       applications={options.applications || applications}
       charms={options.charms || charms}
       listPlansForCharm={options.listPlansForCharm || listPlansForCharm} />
@@ -114,5 +115,17 @@ describe('DeploymentPlanTable', () => {
           tableClasses={['no-margin-bottom']} />
       </div>);
     assert.compareJSX(wrapper, expected);
+  });
+
+  it('can handle errors when getting plans', function() {
+    const addNotification = sinon.stub();
+    listPlansForCharm.callsArgWith(1, 'Uh oh!', null);
+    renderComponent({ addNotification });
+    assert.equal(addNotification.callCount, 1);
+    assert.deepEqual(addNotification.args[0][0], {
+      title: 'Fetching plans failed',
+      message: 'Fetching plans failed: Uh oh!',
+      level: 'error'
+    });
   });
 });

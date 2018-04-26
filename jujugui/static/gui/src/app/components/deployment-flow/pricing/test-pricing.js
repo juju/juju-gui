@@ -12,6 +12,7 @@ describe('DeploymentPricing', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentPricing
+      addNotification={options.addNotification || sinon.stub()}
       applications={options.applications || []}
       charms={options.charms || {}}
       getSLAMachineRates={options.getSLAMachineRates || sinon.stub()}
@@ -23,6 +24,7 @@ describe('DeploymentPricing', () => {
     const expected = (
       <div className="deployment-pricing">
         <DeploymentPlanTable
+          addNotification={sinon.stub()}
           applications={[]}
           charms={{}}
           listPlansForCharm={sinon.stub()} />

@@ -645,6 +645,7 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title="Pricing">
         <DeploymentPricing
+          addNotification={this.props.addNotification}
           applications={this.props.applications}
           charms={this.props.charms}
           getSLAMachineRates={this.props.getSLAMachineRates}
