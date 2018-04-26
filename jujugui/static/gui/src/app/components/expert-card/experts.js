@@ -2,7 +2,7 @@
 'use strict';
 
 module.exports = {
-  spicule: {
+  spiculecharms: {
     logo: 'spicule.png',
     highlights: [
       'Machine learning',
@@ -21,5 +21,22 @@ module.exports = {
     storeDescription: (
       'Learn how Spicule and Canonical can help solve your Big Data ' +
       'challenges with JAAS:')
+  },
+  'tengu-team': {
+    logo: 'tengu.png',
+    highlights: [
+      'Your own Big Data workspace',
+      'Use all Juju-charmed technologies',
+      'Machine Learning, IoT, Microservices'
+    ],
+    contactDescription: (
+      'Please let us know if you have a question, or would like further ' +
+      'information about Tengu.'),
+    website: 'https://tengu.io',
+    email: 'info@tengu.io',
+    phoneNumbers: [
+      'BE +32 478 66 84 89'
+    ],
+    storeDescription: ''
   }
 };

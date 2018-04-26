@@ -11,7 +11,7 @@ describe('ExpertStoreCard', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <ExpertStoreCard
       classes={options.classes || ['extra-class']}
-      expert={options.expert || 'spicule'}
+      expert={options.expert || 'spiculecharms'}
       staticURL="/media" />
   );
 

@@ -12,7 +12,7 @@ describe('ExpertCard', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <ExpertCard
-      expert={options.expert || EXPERTS['spicule']}
+      expert={options.expert || EXPERTS['spiculecharms']}
       staticURL="/media">
       <span>Content</span>
     </ExpertCard>

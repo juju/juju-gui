@@ -12,7 +12,7 @@ describe('ExpertContactCard', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <ExpertContactCard
-      expert={options.expert || 'spicule'}
+      expert={options.expert || 'spiculecharms'}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
       staticURL="/media" />
   );
