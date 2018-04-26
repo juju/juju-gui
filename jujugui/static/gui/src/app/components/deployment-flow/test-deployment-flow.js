@@ -273,9 +273,12 @@ describe('DeploymentFlow', function() {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
+    const entityGet = sinon.stub();
+    entityGet.withArgs('terms').returns([]);
+    entityGet.withArgs('supported').returns(false);
     const entityModel = {
       id: entityId,
-      get: sinon.stub().returns([]),
+      get: entityGet,
       toEntity: sinon.stub().returns({
         displayName: 'Kubernetes Core'
       })
@@ -301,6 +304,51 @@ describe('DeploymentFlow', function() {
     const directDeploy = wrapper.find('DeploymentDirectDeploy');
     assert.equal(directDeploy.length, 1);
     assert.deepEqual(directDeploy.prop('ddData'), {id: 'cs:bundle/kubernetes-core-8'});
+  });
+
+  it('can render the expert flow', () => {
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const entityId = 'cs:bundle/kubernetes-core-8';
+    const entityGet = sinon.stub();
+    entityGet.withArgs('terms').returns([]);
+    entityGet.withArgs('supported').returns(true);
+    const entityModel = {
+      id: entityId,
+      get: entityGet,
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
+    const entityData = [entityModel];
+    const getEntity = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      addNotification: addNotification,
+      changeState: changeState,
+      ddData: {id: entityId},
+      getEntity: getEntity,
+      makeEntityModel: sinon.stub().returns(entityModel),
+      modelCommitted: false,
+      renderMarkdown: sinon.stub(),
+      showPay: true
+    });
+    assert.equal(wrapper.find('Spinner').length, 1);
+    assert.equal(getEntity.args[0][0], entityId);
+    // Call the getEntity callback and then re-render.
+    getEntity.args[0][1](null, entityData);
+    wrapper.update();
+    assert.equal(wrapper.find('DeploymentExpertIntro').length, 1);
+    assert.equal(wrapper.find('DeploymentPricing').length, 1);
+    assert.equal(wrapper.find('DeploymentExpertBudget').length, 1);
+    assert.equal(wrapper.find('DeploymentPayment').length, 0);
+    assert.equal(wrapper.find('.deployment-flow__agreements').length, 0);
+    assert.equal(wrapper.find('.deployment-flow__deploy-action').length, 0);
+    const instance = wrapper.instance();
+    instance.setState({ budget: 125 });
+    wrapper.update();
+    assert.equal(wrapper.find('DeploymentPayment').length, 1);
+    assert.equal(wrapper.find('.deployment-flow__agreements').length, 1);
+    assert.equal(wrapper.find('.deployment-flow__deploy-action').length, 1);
   });
 
   it('can display the cloud section as complete', function() {
@@ -501,7 +549,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: true
     });
     const expected = (
-      <div className="deployment-flow__deploy-option">
+      <div className="deployment-flow__agreements deployment-flow__deploy-option">
         <input className="deployment-flow__deploy-checkbox"
           disabled={false}
           id="terms"

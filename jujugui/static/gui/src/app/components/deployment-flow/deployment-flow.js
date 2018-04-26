@@ -37,6 +37,7 @@ class DeploymentFlow extends React.Component {
     // mount they can't be changed.
     const modelCommitted = this.props.modelCommitted;
     this.state = {
+      budget: null,
       cloud: modelCommitted ? this.props.cloud : null,
       cloudCount: 0,
       credential: this.props.credential,
@@ -126,6 +127,8 @@ class DeploymentFlow extends React.Component {
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this.props.groupedChanges;
     const loggedIn = this.props.isLoggedIn();
+    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
+    const hasBudget = !!this.state.budget;
     switch (section) {
       case 'model-name':
         completed = !!this.props.modelName;
@@ -135,17 +138,19 @@ class DeploymentFlow extends React.Component {
       case 'cloud':
         completed = hasCloud && hasCredential;
         disabled = !loggedIn;
-        visible = loggedIn && (willCreateModel || !completed);
+        visible = loggedIn && (willCreateModel || !completed) &&
+          (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'credential':
         completed = false;
         disabled = !hasCloud;
-        visible = loggedIn && willCreateModel && hasCloud;
+        visible = loggedIn && willCreateModel && hasCloud &&
+          (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'ssh-key':
         completed = hasSSHkey;
         disabled = !hasCloud;
-        visible = loggedIn && willCreateModel;
+        visible = loggedIn && willCreateModel && !isExpertFlow;
         break;
       case 'vpc':
         completed = false;
@@ -155,50 +160,53 @@ class DeploymentFlow extends React.Component {
           willCreateModel &&
           hasCloud &&
           hasCredential &&
-          this.state.cloud.name === 'aws');
+          this.state.cloud.name === 'aws') &&
+          !isExpertFlow;
         break;
       case 'machines':
         const addMachines = groupedChanges._addMachines;
         completed = false;
         disabled = !hasCloud || !hasCredential;
         visible = loggedIn && addMachines &&
-          Object.keys(addMachines).length > 0;
+          Object.keys(addMachines).length > 0 && !isExpertFlow;
         break;
       case 'services':
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn;
+        visible = loggedIn && !isExpertFlow;
         break;
       case 'budget':
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn && this.props.withPlans;
+        visible = loggedIn && this.props.withPlans && !isExpertFlow;
         break;
       case 'payment':
         completed = !!this.state.paymentUser;
         disabled = false;
-        visible = loggedIn && this.props.showPay;
+        visible = loggedIn && this.props.showPay &&
+          (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'agreements':
         const newTerms = this.state.newTerms;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn && newTerms && newTerms.length > 0;
+        visible = loggedIn && newTerms && newTerms.length > 0 &&
+          (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'deploy':
         completed = false;
         disabled = false;
-        visible = loggedIn;
+        visible = loggedIn && (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'pricing':
         completed = false;
         disabled = false;
-        visible = loggedIn;
+        visible = loggedIn && isExpertFlow;
         break;
       case 'expert-budget':
         completed = false;
         disabled = false;
-        visible = loggedIn;
+        visible = loggedIn && isExpertFlow;
         break;
     }
     return {
@@ -965,6 +973,7 @@ class DeploymentFlow extends React.Component {
     }
     const disabled = this.props.acl.isReadOnly() || status.disabled;
     const classes = classNames(
+      'deployment-flow__agreements',
       'deployment-flow__deploy-option',
       {
         'deployment-flow__deploy-option--disabled': status.disabled
@@ -1054,6 +1063,9 @@ class DeploymentFlow extends React.Component {
       return (<Spinner />);
     }
     if (!state.loadingEntity) {
+      if (state.ddEntity && state.ddEntity.get('supported')) {
+        return this._generateExpertIntro();
+      }
       // As long as we're not loading the entity then pass what data we do have
       // through to the DirectDeploy component and have it determine what to
       // render.
@@ -1132,6 +1144,8 @@ class DeploymentFlow extends React.Component {
           title={this.props.modelName}>
           {this._generateDirectDeploy()}
           {this._generateModelNameSection()}
+          {this._generatePricingSection()}
+          {this._generateExpertBudgetSection()}
           {this._generateCloudSection()}
           {this._generateCredentialSection()}
           {this._generateSSHKeySection()}
