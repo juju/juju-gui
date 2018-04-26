@@ -1,80 +1,110 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
+const PropTypes = require('prop-types');
 const React = require('react');
 
 const BasicTable = require('../../../basic-table/basic-table');
 
 class DeploymentPlanTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.xhrs = [];
+    this.state = {
+      plans: {}
+    };
+  }
+
+  componentWillUnmount() {
+    this.xhrs.forEach(xhr => {
+      xhr.abort();
+    });
+  }
+
+  /**
+    Get the list of plans available for a charm.
+    @param charm {Object} A charm model.
+  */
+  _getPlans(charm) {
+    const id = charm.get('id');
+    const xhr = this.props.listPlansForCharm(id, this._getPlansCallback.bind(this, id));
+    this.xhrs.push(xhr);
+  }
+
+  /**
+    Callback for when plans for an entity have been successfully fetched.
+    @param charmId {String} The charm id for the returned plans.
+    @param error {String} An error message, or null if there's no error.
+    @param plans {Array} A list of the plans found.
+  */
+  _getPlansCallback(charmId, error, plans) {
+    if (error) {
+      const message = 'Fetching plans failed';
+      this.props.addNotification({
+        title: message,
+        message: `${message}: ${error}`,
+        level: 'error'
+      });
+      console.error(message, error);
+    }
+    const newPlans = this.state.plans;
+    newPlans[charmId] = (plans || [])[0];
+    this.setState({ plans: newPlans });
+  }
+
   /**
      Generate the plan rows.
      @returns {Array} the list of rows.
    */
   _generateRows() {
-    const data = [{
-      charm: {
-        name: 'Apache Drill',
-        icon:
-          'https://api.jujucharms.com/charmstore/v5/~spiculecharms/apache-drill-25/icon.svg'
-      },
-      plan: {
-        title: 'Databonus Dash',
-        description: 'Spicule’s standard plan for Apache Drill is suitable for ' +
-          'large to very large workloads on clusters of 4-16 nodes. ' +
-          'Pricing is for the sum of RAM on all processing nodes.'
-      },
-      metered: 'Memory',
-      price: '$3.25 per GB of RAM per month'
-    }, {
-      charm: {
-        name: 'Saiku EE',
-        icon: 'https://api.jujucharms.com/charmstore/v5/~spicule/' +
-          'saikuanalytics-enterprise-22/icon.svg'
-      },
-      plan: {
-        title: 'Starter pack',
-        description: 'Our default plan for Saiku Business Intelligence covers ' +
-          'up to 50 users.'
-      },
-      metered: 'Users',
-      price: '$6 per user per month'
-    }];
-    return data.map(row => ({
-      columns: [{
-        content: (
-          <div>
-            <img alt={row.charm.name}
-              className="deployment-plan-table__charm-icon"
-              src={row.charm.icon} />
-            <span className="deployment-plan-table__charm-name">
-              {row.charm.name}
-            </span>
-          </div>),
-        columnSize: 3
-      }, {
-        content: (
-          <div>
-            <h4 className="deployment-plan-table__plan-title">
-              {row.plan.title}
-            </h4>
-            <p className="deployment-plan-table__plan-description">
-              {row.plan.description}
-            </p>
-          </div>),
-        columnSize: 3
-      }, {
-        content: '',
-        columnSize: 1
-      }, {
-        content: row.metered,
-        columnSize: 2
-      }, {
-        content: row.price,
-        columnSize: 3,
-        classes: ['u-align--right']
-      }],
-      key: row.charm.name
-    }));
+    const rows = [];
+    this.props.applications.map(application => {
+      const app = application.getAttrs();
+      const charm = this.props.charms.getById(app.charm);
+      if (!charm.hasMetrics()) {
+        return;
+      }
+      this._getPlans(charm);
+      const plan = this.state.plans[app.charm] || {};
+      const metered = Object.keys(plan.metrics || {}).join(', ');
+      rows.push({
+        columns: [{
+          content: (
+            <div>
+              <img alt={app.name}
+                className="deployment-plan-table__charm-icon"
+                src={app.icon} />
+              <span className="deployment-plan-table__charm-name">
+                {app.name}
+              </span>
+            </div>),
+          columnSize: 3
+        }, {
+          content: (
+            <div>
+              <p className="deployment-plan-table__plan-description">
+                {plan.description || '--'}
+              </p>
+            </div>),
+          columnSize: 3
+        }, {
+          content: '',
+          columnSize: 1
+        }, {
+          content: (
+            <span className="deployment-plan-table__metered">
+              {metered}
+            </span>),
+          columnSize: 2
+        }, {
+          content: plan.price || '--',
+          columnSize: 3,
+          classes: ['u-align--right']
+        }],
+        key: app.id
+      });
+    });
+    return rows;
   }
 
   render() {
@@ -104,6 +134,13 @@ class DeploymentPlanTable extends React.Component {
       </div>
     );
   }
+};
+
+DeploymentPlanTable.propTypes = {
+  addNotification: PropTypes.func.isRequired,
+  applications: PropTypes.array.isRequired,
+  charms: PropTypes.object.isRequired,
+  listPlansForCharm: PropTypes.func.isRequired
 };
 
 module.exports = DeploymentPlanTable;

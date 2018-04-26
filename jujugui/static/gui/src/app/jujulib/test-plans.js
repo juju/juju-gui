@@ -39,18 +39,27 @@ describe('jujulib plans service', function() {
           plan: '1',
           'created-on': '2016-06-09T22:07:24Z',
           description: 'Delivers the highest level of support.',
+          model: {
+            metrics: 'metric'
+          },
           price: 'the/price'
         }, {
           url: 'canonical-landscape/8-5',
           plan: 'B',
           'created-on': '2016-06-09T22:07:24Z',
           description: 'Offers a high level of support.',
+          model: {
+            metrics: 'metric'
+          },
           price: 'the/price'
         }, {
           url: 'canonical-landscape/free',
           plan: '9 from outer space',
           'created-on': '2015-06-09T22:07:24Z',
           description: 'No support available.',
+          model: {
+            metrics: 'metric'
+          },
           price: 'Free'
         }]);
         callback(null, xhr);
@@ -64,18 +73,21 @@ describe('jujulib plans service', function() {
         yaml: '1',
         createdAt: new Date(1465510044000),
         description: 'Delivers the highest level of support.',
+        metrics: 'metric',
         price: 'the/price'
       }, {
         url: 'canonical-landscape/8-5',
         yaml: 'B',
         createdAt: new Date(1465510044000),
         description: 'Offers a high level of support.',
+        metrics: 'metric',
         price: 'the/price'
       }, {
         url: 'canonical-landscape/free',
         yaml: '9 from outer space',
         createdAt: new Date(1433887644000),
         description: 'No support available.',
+        metrics: 'metric',
         price: 'Free'
       }]);
       done();
@@ -147,6 +159,9 @@ describe('jujulib plans service', function() {
               plan: 'B',
               'created-on': '2016-06-09T22:07:24Z',
               description: 'Offers a high level of support.',
+              model: {
+                metrics: 'metric'
+              },
               price: 'the/price'
             },
             'canonical-landscape/free': {
@@ -154,6 +169,9 @@ describe('jujulib plans service', function() {
               plan: '9 from outer space',
               'created-on': '2015-06-09T22:07:24Z',
               description: 'No support available.',
+              model: {
+                metrics: 'metric'
+              },
               price: 'Free'
             }
           }
@@ -169,6 +187,7 @@ describe('jujulib plans service', function() {
         yaml: '9 from outer space',
         createdAt: new Date(1433887644000),
         description: 'No support available.',
+        metrics: 'metric',
         price: 'Free'
       });
       assert.deepEqual(all, [{
@@ -176,12 +195,14 @@ describe('jujulib plans service', function() {
         yaml: 'B',
         createdAt: new Date(1465510044000),
         description: 'Offers a high level of support.',
+        metrics: 'metric',
         price: 'the/price'
       }, {
         url: 'canonical-landscape/free',
         yaml: '9 from outer space',
         createdAt: new Date(1433887644000),
         description: 'No support available.',
+        metrics: 'metric',
         price: 'Free'
       }]);
       done();

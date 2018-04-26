@@ -68,6 +68,7 @@ describe('DeploymentFlow', function() {
       changeState: sinon.stub(),
       changes: {},
       changesFilterByParent: sinon.stub(),
+      charms: {},
       charmsGetById: charmsGetById,
       charmstore: {},
       controllerIsReady: sinon.stub(),
