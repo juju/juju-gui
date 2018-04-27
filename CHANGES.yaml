@@ -1,3 +1,14 @@
+- 2.12.2:
+  - Sort charms and bundles in the user profile by name.
+  - Show the controller model in the model dropdown list on the canvas.
+  - (Fix) Clear the canvas when switching between new models.
+  - (Fix) Owner permission no longer a requirement to destroy a model.
+  - (Fix) Improved handling of unknown series in search results.
+  - (Fix) cpu-cores constraint now respected in the machine view.
+  - (Fix) Inspector screen scaling disabled in read-only mode.
+  - (Fix) Disable 'add-keys' button after adding GitHub keys.
+  - (Fix) Disconnect from current model when destroying it.
+
 - 2.12.1:
   - Only show the controller info on the current user's profile.
   - Juju Shell can now handle possible initial welcome message.
