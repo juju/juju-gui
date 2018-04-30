@@ -221,7 +221,7 @@ update-downloadcache: $(CACHE)
 ifeq ($(LSB_RELEASE),precise)
   COLLECT_CMD=@cp $(PYTHON_FILES)/* $(COLLECTED_REQUIREMENTS)
 else
-  COLLECT_CMD=bin/pip install -d $(COLLECTED_REQUIREMENTS) --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r requirements.txt
+  COLLECT_CMD=bin/pip download -d $(COLLECTED_REQUIREMENTS) --no-index --no-deps --find-links $(WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r requirements.txt
 endif
 
 .PHONY: collect-requirements
