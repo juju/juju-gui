@@ -1,6 +1,10 @@
 .deployment-pricing {
   padding-top: 10px;
 
+  a {
+    color: $link-blue;
+  }
+
   &__secondary-text {
     color: $dark-warm-grey;
     font-size: 14px;

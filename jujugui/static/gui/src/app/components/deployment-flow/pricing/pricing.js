@@ -31,9 +31,10 @@ const DeploymentPricing = props => {
           Choose your level of support
         </div>
         <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
-          <span className="link">
+          <a href="https://www.ubuntu.com/support/plans-and-pricing#ua-support"
+            target="_blank">
             Support details
-          </span>
+          </a>
         </div>
       </div>
       <DeploymentSupportSelection getSLAMachineRates={props.getSLAMachineRates} />
