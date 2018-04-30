@@ -936,8 +936,8 @@ class GUIApp {
     if ((
       !creds.areAvailable && gisf && rootState === 'new'
     ) || (
-        this.anonymousMode && rootState !== 'login'
-      )) {
+      this.anonymousMode && rootState !== 'login'
+    )) {
       this.anonymousMode = true;
       console.log('now in anonymous mode');
       this.maskVisibility(false);

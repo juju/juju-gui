@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const zip = require('zip');
 const proxyquire = require('proxyquire');
 
 const entries = ['readme', 'version'];
@@ -12,13 +11,14 @@ const ReaderStub = sinon.stub().returns({
 
 const zipUtils = proxyquire('./zip-utils', {
   zip: {
-    Reader: ReaderStub
+    Reader: ReaderStub,
+    createReader: null
   }
 });
 
 describe('Zip utils', function() {
   describe('getEntries', function() {
-    let addEventListenerMock, callback, errback, createReaderMock, _FileReader;
+    let addEventListenerMock, callback, errback, _FileReader;
     const file = 'a file object';
 
     beforeEach(function() {
@@ -28,8 +28,6 @@ describe('Zip utils', function() {
       fileReader.prototype.addEventListener = addEventListenerMock;
       fileReader.prototype.readAsArrayBuffer = sinon.stub();
       window.FileReader = fileReader;
-      // Patch the zip library.
-      createReaderMock = sinon.stub(zip, 'createReader');
       // Set up the callback and errback mocks.
       callback = sinon.stub();
       errback = sinon.stub();
@@ -37,7 +35,6 @@ describe('Zip utils', function() {
 
     afterEach(function() {
       window.FileReader = _FileReader;
-      createReaderMock.restore();
     });
 
     it('can get entries from a zip file', function() {
