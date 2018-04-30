@@ -27,7 +27,8 @@ describe('DeploymentExpertIntro', () => {
           supportedDescription: '#### supported description',
           price: '8',
           displayName: 'Apache 2',
-          iconPath: 'http://example.com/icon.svg'
+          iconPath: 'http://example.com/icon.svg',
+          owner: 'spinach'
         })
       } : options.entityModel}
       generatePath={options.generatePath || sinon.stub()}
@@ -117,7 +118,7 @@ describe('DeploymentExpertIntro', () => {
                 </div>
               </ExpertBlock>
               <ExpertContactCard
-                expert="spicule"
+                expert="spinach"
                 sendAnalytics={sinon.stub()}
                 staticURL="/static/url" />
             </div>
@@ -132,7 +133,8 @@ describe('DeploymentExpertIntro', () => {
       toEntity: sinon.stub().returns({
         description: 'Description',
         displayName: 'Kubernetes core',
-        machineCount: 4
+        machineCount: 4,
+        owner: 'spinach'
       })
     };
     const wrapper = renderComponent({

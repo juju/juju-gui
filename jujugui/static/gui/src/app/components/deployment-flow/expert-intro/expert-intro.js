@@ -120,7 +120,7 @@ class DeploymentExpertIntro extends React.Component {
                 </div>
               </ExpertBlock>
               <ExpertContactCard
-                expert="spicule"
+                expert={entity.owner}
                 sendAnalytics={this.props.sendAnalytics}
                 staticURL={this.props.staticURL} />
             </div>
