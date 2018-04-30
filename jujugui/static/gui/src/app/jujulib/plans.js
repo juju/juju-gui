@@ -396,7 +396,7 @@ var module = module;
           };
         }));
       }
-      let url = `${this.url}/kpimetrics`;
+      let url = `${this.url}/metrics/kpi`;
       let payload = filters || {};
       payload['charm-url'] = charmId;
       const qs = jujulib.serializeObject(payload);
