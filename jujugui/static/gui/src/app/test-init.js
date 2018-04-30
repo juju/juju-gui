@@ -420,8 +420,6 @@ describe('init', () => {
       app.destructor();
       app = createApp({conn: conn, gisf: true});
       sinon.stub(app, 'maskVisibility');
-      sinon.stub(app, 'navigate');
-      sinon.stub(app, 'dispatch');
       sinon.stub(app.state, 'changeState');
       sinon.stub(app, '_sendGISFPostBack');
       sinon.stub(app, '_ensureLoggedIntoCharmstore');
