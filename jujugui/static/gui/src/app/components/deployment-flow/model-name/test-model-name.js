@@ -14,6 +14,7 @@ describe('DeploymentModelName', () => {
     <DeploymentModelName
       acl={options.acl || acl}
       ddEntity={options.ddEntity}
+      focusName={options.focusName}
       modelName={options.modelName || 'mymodel'}
       setModelName={options.setModelName || sinon.stub()} />
   );
@@ -68,6 +69,15 @@ describe('DeploymentModelName', () => {
     instance.refs = {modelName: {focus}};
     instance.componentDidMount();
     assert.equal(focus.callCount, 1);
+  });
+
+  it('does not focus on the model name field when specified', () => {
+    const wrapper = renderComponent({ focusName: false });
+    const instance = wrapper.instance();
+    const focus = sinon.stub();
+    instance.refs = { modelName: { focus } };
+    instance.componentDidMount();
+    assert.equal(focus.callCount, 0);
   });
 
   it('can update the model name on blur', () => {

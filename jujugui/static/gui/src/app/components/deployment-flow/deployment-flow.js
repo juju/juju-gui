@@ -623,6 +623,7 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
+    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
     return (
       <DeploymentSection
         completed={status.completed}
@@ -632,6 +633,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentModelName
           acl={this.props.acl}
           ddEntity={this.state.ddEntity}
+          focusName={!isExpertFlow}
           modelName={this.props.modelName}
           setModelName={this.props.setModelName} />
       </DeploymentSection>);

@@ -10,7 +10,7 @@ class DeploymentModelName extends React.Component {
 
   componentDidMount() {
     const modelName = this.refs.modelName;
-    if (modelName) {
+    if (modelName && this.props.focusName) {
       modelName.focus();
     }
   }
@@ -67,8 +67,13 @@ class DeploymentModelName extends React.Component {
 DeploymentModelName.propTypes = {
   acl: PropTypes.object.isRequired,
   ddEntity: PropTypes.object,
+  focusName: PropTypes.bool,
   modelName: PropTypes.string.isRequired,
   setModelName: PropTypes.func.isRequired
+};
+
+DeploymentModelName.defaultProps = {
+  focusName: true
 };
 
 module.exports = DeploymentModelName;

@@ -166,6 +166,7 @@ describe('DeploymentFlow', function() {
             <DeploymentModelName
               acl={acl}
               ddEntity={null}
+              focusName={true}
               modelName="Pavlova"
               setModelName={sinon.stub()} />
           </DeploymentSection>
