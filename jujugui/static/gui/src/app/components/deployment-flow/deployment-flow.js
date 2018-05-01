@@ -3,6 +3,7 @@
 
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
+const ReactDOM = require('react-dom');
 const React = require('react');
 
 const AccordionSection = require('../accordion-section/accordion-section');
@@ -78,6 +79,12 @@ class DeploymentFlow extends React.Component {
     const appDiff = newApps.filter(a => currentApps.indexOf(a) === -1);
     if (newApps.length !== currentApps.length || appDiff.length > 0) {
       this._getAgreements();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.hash && (this.props.hash !== prevProps.hash)) {
+      this._scrollDeploymentFlow();
     }
   }
 
@@ -1087,6 +1094,23 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Scroll the deployment flow to an element with an id that matches the
+    hash state.
+  */
+  _scrollDeploymentFlow() {
+    const { hash } = this.props;
+    const target = document.querySelector(`#${hash}`);
+    // The deployment flow panel element does the scrolling.
+    const deploymentFlow = ReactDOM.findDOMNode(this).querySelector(
+      '.deployment-panel__content');
+    if (target && deploymentFlow) {
+      // Set the scroll position to the element's top position taking into
+      // account the sticky header size.
+      deploymentFlow.scrollTop += target.getBoundingClientRect().top - 100;
+    }
+  }
+
+  /**
     Report whether going forward with the deployment is currently allowed.
 
     @method _deploymentAllowed
@@ -1208,6 +1232,7 @@ DeploymentFlow.propTypes = {
   gisf: PropTypes.bool,
   groupedChanges: PropTypes.object.isRequired,
   gtmEnabled: PropTypes.bool,
+  hash: PropTypes.string,
   importSSHKeys: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.func.isRequired,
   listBudgets: PropTypes.func.isRequired,

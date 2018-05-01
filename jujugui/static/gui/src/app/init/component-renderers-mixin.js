@@ -1015,6 +1015,7 @@ Browser: ${navigator.userAgent}`
         gisf={this.gisf}
         groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
         gtmEnabled={this.applicationConfig.GTM_enabled}
+        hash={state.hash}
         importSSHKeys={modelAPI.importKeys.bind(modelAPI)}
         isLoggedIn={isLoggedIn}
         listBudgets={this.plans.listBudgets.bind(this.plans)}

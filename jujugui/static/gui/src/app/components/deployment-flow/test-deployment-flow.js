@@ -95,6 +95,7 @@ describe('DeploymentFlow', function() {
       getUserName: sinon.stub().returns('dalek'),
       getGithubSSHKeys: sinon.stub(),
       groupedChanges: groupedChanges,
+      hash: null,
       isLoggedIn: sinon.stub().returns(true),
       listBudgets: sinon.stub(),
       listClouds: sinon.stub(),

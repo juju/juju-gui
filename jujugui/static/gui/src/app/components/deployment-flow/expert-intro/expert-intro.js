@@ -9,6 +9,7 @@ const ExpertBlock = require('../../expert-block/expert-block');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
+const Link = require('../../link/link');
 
 class DeploymentExpertIntro extends React.Component {
   constructor(props) {
@@ -114,9 +115,11 @@ class DeploymentExpertIntro extends React.Component {
                   <div
                     className="deployment-expert-intro__description"
                     dangerouslySetInnerHTML={{__html: supportedDescription}}></div>
-                  <span className="link">
+                  <Link changeState={this.props.changeState}
+                    clickState={{ hash: 'support-level' }}
+                    generatePath={this.props.generatePath}>
                     View other support options
-                  </span>
+                  </Link>
                 </div>
               </ExpertBlock>
               <ExpertContactCard
