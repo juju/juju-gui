@@ -9,7 +9,6 @@ const ExpertBlock = require('../../expert-block/expert-block');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
-const SvgIcon = require('../../svg-icon/svg-icon');
 
 class DeploymentExpertIntro extends React.Component {
   constructor(props) {
@@ -62,6 +61,8 @@ class DeploymentExpertIntro extends React.Component {
     } else {
       const entity = entityModel.toEntity();
       const machineNumber = this.isBundle ? entity.machineCount : 1;
+      const price = `From $${entity.price} per month`;
+      const supportedDescription = this.props.renderMarkdown(entity.supportedDescription);
       content = (
         <div className="deployment-expert-intro">
           <div className="twelve-col">
@@ -105,34 +106,14 @@ class DeploymentExpertIntro extends React.Component {
                 title="Juju expert partners">
                 <div className="deployment-expert-intro__plan-details">
                   <h3>
-                    From $3577 per month
+                    {price}
                   </h3>
                   <div className="deployment-expert-intro__plan-description">
                     Default plan with standard support
                   </div>
-                  <p>
-                    Ideal for enterprise teams processing large to very large data sets.
-                  </p>
-                  <ul className="deployment-expert-intro__features">
-                    <li className="deployment-expert-intro__feature">
-                      <SvgIcon
-                        name="bullet"
-                        size="14" />
-                      Up to 50 users
-                    </li>
-                    <li className="deployment-expert-intro__feature">
-                      <SvgIcon
-                        name="bullet"
-                        size="14" />
-                      8 nodes x 64 GB RAM
-                    </li>
-                    <li className="deployment-expert-intro__feature">
-                      <SvgIcon
-                        name="bullet"
-                        size="14" />
-                      Drag and drop dashboard
-                    </li>
-                  </ul>
+                  <div
+                    className="deployment-expert-intro__description"
+                    dangerouslySetInnerHTML={{__html: supportedDescription}}></div>
                   <span className="link">
                     View other support options
                   </span>

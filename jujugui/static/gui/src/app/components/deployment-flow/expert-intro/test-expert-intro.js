@@ -3,13 +3,13 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const marked = require('marked');
 
 const DeploymentSection = require('../section/section');
 const ExpertBlock = require('../../expert-block/expert-block');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
-const SvgIcon = require('../../svg-icon/svg-icon');
 const DeploymentExpertIntro = require('./expert-intro');
 
 describe('DeploymentExpertIntro', () => {
@@ -24,6 +24,8 @@ describe('DeploymentExpertIntro', () => {
       entityModel={options.entityModel === undefined ? {
         toEntity: sinon.stub().returns({
           description: 'Description',
+          supportedDescription: '#### supported description',
+          price: '8',
           displayName: 'Apache 2',
           iconPath: 'http://example.com/icon.svg'
         })
@@ -56,6 +58,7 @@ describe('DeploymentExpertIntro', () => {
 
   it('can render for a charm', () => {
     const wrapper = renderComponent();
+    const md = marked('#### supported description');
     const expected = (
       <DeploymentSection
         instance="deployment-expert-intro-section">
@@ -100,34 +103,14 @@ describe('DeploymentExpertIntro', () => {
                 title="Juju expert partners">
                 <div className="deployment-expert-intro__plan-details">
                   <h3>
-                    From $3577 per month
+                    From $8 per month
                   </h3>
                   <div className="deployment-expert-intro__plan-description">
                     Default plan with standard support
                   </div>
-                  <p>
-                    Ideal for enterprise teams processing large to very large data sets.
-                  </p>
-                  <ul className="deployment-expert-intro__features">
-                    <li className="deployment-expert-intro__feature">
-                      <SvgIcon
-                        name="bullet"
-                        size="14" />
-                      Up to 50 users
-                    </li>
-                    <li className="deployment-expert-intro__feature">
-                      <SvgIcon
-                        name="bullet"
-                        size="14" />
-                      8 nodes x 64 GB RAM
-                    </li>
-                    <li className="deployment-expert-intro__feature">
-                      <SvgIcon
-                        name="bullet"
-                        size="14" />
-                      Drag and drop dashboard
-                    </li>
-                  </ul>
+                  <div
+                    className="deployment-expert-intro__description"
+                    dangerouslySetInnerHTML={{_html: md}} />
                   <span className="link">
                     View other support options
                   </span>

@@ -47,7 +47,10 @@ describe('Entity Extension', function() {
       downloads: '0',
       is_approved: false,
       revisions: [],
-      url: 'http://example.com/'
+      url: 'http://example.com/',
+      price: '8',
+      supported: true,
+      supportedDescription: 'supported description'
     };
     entityModel.setAttrs(attrs);
   });
@@ -77,9 +80,12 @@ describe('Entity Extension', function() {
       model: entityModel,
       name: 'foo-bar-entity',
       owner: 'owner',
+      price: '8',
       promulgated: false,
       revisions: [],
       special: undefined,
+      supported: true,
+      supportedDescription: 'supported description',
       type: 'charm',
       url: 'http://example.com/',
       iconPath: iconPath,
@@ -101,7 +107,10 @@ describe('Entity Extension', function() {
       applications: [],
       machineCount: 2,
       serviceCount: 3,
-      unitCount: 5
+      unitCount: 5,
+      price: '8',
+      supported: true,
+      supportedDescription: 'supported description'
     };
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
@@ -116,9 +125,12 @@ describe('Entity Extension', function() {
       model: entityModel,
       name: 'foo-bar-entity',
       owner: 'foobar-charmers',
+      price: '8',
       promulgated: false,
       revisions: [],
       special: undefined,
+      supported: true,
+      supportedDescription: 'supported description',
       type: 'bundle',
       url: 'http://example.com/',
       // no staticURL is defined on window.juju_config.staticURL so this
