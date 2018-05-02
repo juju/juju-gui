@@ -183,6 +183,8 @@ var module = module;
         revisions: revisionInfo.Revisions || [],
         tags: tags.Tags || [],
         supported: extraInfo.supported === 'true',
+        price: extraInfo.price,
+        supportedDescription: extraInfo.description,
         code_source: {
           location: extraInfo['bzr-url']
         }

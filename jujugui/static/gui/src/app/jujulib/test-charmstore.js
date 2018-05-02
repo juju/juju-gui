@@ -142,7 +142,9 @@ describe('jujulib charmstore', function() {
           },
           'extra-info': {
             'bzr-url': 'cs:precise/mongodb',
-            'supported': 'true'
+            supported: 'true',
+            price: '8',
+            description: 'supported description'
           },
           'revision-info': {
             Revisions: ['rev1', 'rev2', 'rev4']
@@ -202,6 +204,8 @@ describe('jujulib charmstore', function() {
         owner: 'hatch',
         revisions: ['rev1', 'rev2', 'rev4'],
         supported: true,
+        price: '8',
+        supportedDescription: 'supported description',
         code_source: {
           location: 'cs:precise/mongodb'
         },
@@ -270,7 +274,9 @@ describe('jujulib charmstore', function() {
           },
           'extra-info': {
             'bzr-url': 'lp:~charmers/charms/bundles/mongodb-cluster/bundle',
-            'supported': 'true'
+            supported: 'true',
+            price: '8',
+            description: 'supported description'
           },
           'revision-info': {
             Revisions: ['rev1', 'rev2']
@@ -298,6 +304,8 @@ describe('jujulib charmstore', function() {
         revisions: ['rev1', 'rev2'],
         services: '',
         supported: true,
+        price: '8',
+        supportedDescription: 'supported description',
         tags: [],
         unitCount: 7
       });
