@@ -308,6 +308,92 @@ describe('DeploymentFlow', function() {
     assert.deepEqual(directDeploy.prop('ddData'), {id: 'cs:bundle/kubernetes-core-8'});
   });
 
+  it('can update the direct deploy state', () => {
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const entityId = 'cs:bundle/kubernetes-core-8';
+    const entityId2 ='cs:new/entity';
+    const entityGet = sinon.stub();
+    entityGet.withArgs('terms').returns([]);
+    entityGet.withArgs('supported').returns(false);
+    const entityModel = {
+      id: entityId,
+      get: entityGet,
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
+    const entityModel2 = {
+      id: entityId2,
+      get: entityGet,
+      toEntity: sinon.stub().returns({
+        displayName: 'New Bundle'
+      })
+    };
+    const getEntity = sinon.stub();
+    getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
+    getEntity.withArgs(entityId2).callsArgWith(1, null, [entityId2]);
+    const makeEntityModel = sinon.stub();
+    makeEntityModel.withArgs(entityId).returns(entityModel);
+    makeEntityModel.withArgs(entityId2).returns(entityModel2);
+    const renderMarkdown = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      addNotification: addNotification,
+      changeState: changeState,
+      ddData: { id: entityId },
+      getEntity: getEntity,
+      makeEntityModel: makeEntityModel,
+      modelCommitted: false,
+      renderMarkdown: renderMarkdown
+    });
+    const instance = wrapper.instance();
+    assert.equal(instance.state.isDirectDeploy, true);
+    assert.deepEqual(instance.state.ddEntity, entityModel);
+    wrapper.setProps({
+      ddData: {
+        id: entityId2
+      }
+    });
+    assert.equal(instance.state.isDirectDeploy, true);
+    assert.deepEqual(instance.state.ddEntity, entityModel2);
+  });
+
+  it('can update the direct deploy state to not be direct deploy', () => {
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const entityId = 'cs:bundle/kubernetes-core-8';
+    const entityGet = sinon.stub();
+    entityGet.withArgs('terms').returns([]);
+    entityGet.withArgs('supported').returns(false);
+    const entityModel = {
+      id: entityId,
+      get: entityGet,
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
+    const getEntity = sinon.stub();
+    getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
+    const makeEntityModel = sinon.stub();
+    makeEntityModel.withArgs(entityId).returns(entityModel);
+    const renderMarkdown = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      addNotification: addNotification,
+      changeState: changeState,
+      ddData: { id: entityId },
+      getEntity: getEntity,
+      makeEntityModel: makeEntityModel,
+      modelCommitted: false,
+      renderMarkdown: renderMarkdown
+    });
+    const instance = wrapper.instance();
+    assert.equal(instance.state.isDirectDeploy, true);
+    assert.deepEqual(instance.state.ddEntity, entityModel);
+    wrapper.setProps({ ddData: null });
+    assert.equal(instance.state.isDirectDeploy, false);
+    assert.strictEqual(instance.state.ddEntity, null);
+  });
+
   it('can render the expert flow', () => {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();

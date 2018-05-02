@@ -80,6 +80,15 @@ class DeploymentFlow extends React.Component {
     if (newApps.length !== currentApps.length || appDiff.length > 0) {
       this._getAgreements();
     }
+    if (nextProps.ddData !== this.props.ddData) {
+      const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
+      this.setState({ isDirectDeploy });
+      if (isDirectDeploy) {
+        this._getDirectDeployEntity(nextProps.ddData.id);
+      } else {
+        this.setState({ ddEntity: null });
+      }
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -664,7 +673,9 @@ class DeploymentFlow extends React.Component {
         <DeploymentPricing
           addNotification={this.props.addNotification}
           applications={this.props.applications}
+          changeState={this.props.changeState}
           charms={this.props.charms}
+          generatePath={this.props.generatePath}
           getSLAMachineRates={this.props.getSLAMachineRates}
           listPlansForCharm={this.props.listPlansForCharm} />
       </DeploymentSection>);
