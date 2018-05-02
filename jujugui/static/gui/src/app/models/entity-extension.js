@@ -57,10 +57,13 @@ YUI.add('entity-extension', function(Y) {
         model: this,
         name: attrs.name,
         owner: attrs.owner,
+        price: attrs.price,
         promulgated: attrs.is_approved,
         revision_id: attrs.revision_id,
         revisions: attrs.revisions,
         special: attrs.special, // XXX Not currently implemented.
+        supported: attrs.supported,
+        supportedDescription: attrs.supportedDescription,
         type: type,
         url: attrs.url
       };
