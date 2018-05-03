@@ -40,24 +40,9 @@
     }
   }
 
-  // xterm.scss overrides.
-  .terminal {
+  // xterm.scss styles and overrides.
+  .terminal .xterm-viewport::-webkit-scrollbar-track  {
     background-color: $color-dark;
-    color: $light-grey;
-
-    .xterm-viewport::-webkit-scrollbar-track  {
-      background-color: $color-dark;
-    }
-
-    .xterm-viewport {
-      background-color: $color-dark;
-    }
-
-    .xterm-rows,
-    .xterm-selection {
-      font-family: "ubuntu mono";
-      background-color: $color-dark;
-      left: 10px;
-    }
   }
+
 }
