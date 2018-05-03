@@ -12,11 +12,13 @@ const Notification = require('../../notification/notification');
 describe('DeploymentExpertBudget', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentExpertBudget />
+    <DeploymentExpertBudget
+      budget={options.budget}
+      setBudget={options.setBudget || sinon.stub()} />
   );
 
   it('can render', function() {
-    const wrapper = renderComponent();
+    const wrapper = renderComponent({ budget: 99 });
     const expected = (
       <div className="deployment-expert-budget">
         <Notification
@@ -33,7 +35,7 @@ describe('DeploymentExpertBudget', () => {
             Total estimated monthly cost:
           </span>
           <span className="deployment-expert-budget__cost">
-            $3577.00
+            ${99}
           </span>
         </div>
         <div className="deployment-expert-budget__row">
@@ -43,13 +45,15 @@ describe('DeploymentExpertBudget', () => {
           <span className="deployment-expert-budget__budget-input">
             $
             <GenericInput
-              disabled={false} />
+              disabled={false}
+              onChange={wrapper.find('GenericInput').prop('onChange')}
+              value={99} />
           </span>
         </div>
         <div className="deployment-expert-budget__row">
           <GenericButton
-            action={() => {}}
-            disabled={true}
+            action={wrapper.find('GenericButton').prop('action')}
+            disabled={false}
             type="inline-positive">
             Set budget
           </GenericButton>

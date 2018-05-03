@@ -268,7 +268,10 @@ GenericInput.propTypes = {
   required: PropTypes.bool,
   type: PropTypes.string,
   validate: PropTypes.array,
-  value: PropTypes.string
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ])
 };
 
 GenericInput.defaultProps = {

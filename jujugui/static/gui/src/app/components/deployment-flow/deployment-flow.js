@@ -676,7 +676,9 @@ class DeploymentFlow extends React.Component {
         instance="deployment-expert-budget"
         showCheck={true}
         title="Set your maximum monthly budget (optional)">
-        <DeploymentExpertBudget />
+        <DeploymentExpertBudget
+          budget={this.state.budget}
+          setBudget={this._setBudget.bind(this)} />
       </DeploymentSection>);
   }
 
