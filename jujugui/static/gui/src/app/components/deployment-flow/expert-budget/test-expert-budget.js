@@ -45,9 +45,9 @@ describe('DeploymentExpertBudget', () => {
           <span className="deployment-expert-budget__budget-input">
             $
             <GenericInput
-              defaultValue={99}
               disabled={false}
-              onChange={wrapper.find('GenericInput').prop('onChange')} />
+              onChange={wrapper.find('GenericInput').prop('onChange')}
+              value={99} />
           </span>
         </div>
         <div className="deployment-expert-budget__row">

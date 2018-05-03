@@ -53,9 +53,9 @@ class DeploymentExpertBudget extends React.Component {
           <span className="deployment-expert-budget__budget-input">
             $
             <GenericInput
-              defaultValue={this.props.budget}
               disabled={false}
-              onChange={this._inputChange.bind(this)} />
+              onChange={this._inputChange.bind(this)}
+              value={this.props.budget} />
           </span>
         </div>
         <div className="deployment-expert-budget__row">
