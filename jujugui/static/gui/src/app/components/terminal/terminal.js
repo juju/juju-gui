@@ -109,6 +109,7 @@ class Terminal extends React.Component {
             if (resp[1].indexOf(suffix, resp[1].length-suffix.length) !== -1) {
               // Call to resize the terminal after getting the first PS1.
               term.fit();
+              this.focus();
               this.initialCommandsSent = true;
               const commands = props.commands;
               if (commands) {
@@ -218,7 +219,7 @@ class Terminal extends React.Component {
     Set the focus back to the terminal so that users can keep typing.
   */
   focus() {
-    const textarea = this.refs.terminal.querySelector('textarea');
+    const textarea = this.refs.terminal.querySelector('.xterm-helper-textarea');
     textarea.focus();
   }
 
