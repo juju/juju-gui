@@ -7,6 +7,7 @@ const enzyme = require('enzyme');
 const DeploymentPlanTable = require('./plan-table/plan-table');
 const DeploymentPricing = require('./pricing');
 const DeploymentSupportSelection = require('./support-selection/support-selection');
+const Link = require('../../link/link');
 
 describe('DeploymentPricing', () => {
 
@@ -14,7 +15,9 @@ describe('DeploymentPricing', () => {
     <DeploymentPricing
       addNotification={options.addNotification || sinon.stub()}
       applications={options.applications || []}
+      changeState={options.addNotification || sinon.stub()}
       charms={options.charms || {}}
+      generatePath={options.addNotification || sinon.stub()}
       getSLAMachineRates={options.getSLAMachineRates || sinon.stub()}
       listPlansForCharm={options.listPlansForCharm || sinon.stub()} />
   );
@@ -39,14 +42,16 @@ describe('DeploymentPricing', () => {
             </span>
           </div>
         </div>
-        <div className="twelve-col no-margin-bottom">
+        <div className="twelve-col no-margin-bottom"
+          id="support-level">
           <div className="six-col deployment-pricing__support-title">
             Choose your level of support
           </div>
           <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
-            <span className="link">
+            <a href="https://www.ubuntu.com/support/plans-and-pricing#ua-support"
+              target="_blank">
               Support details
-            </span>
+            </a>
           </div>
         </div>
         <DeploymentSupportSelection getSLAMachineRates={sinon.stub()} />
@@ -57,9 +62,15 @@ describe('DeploymentPricing', () => {
             at the end of a month.
           </div>
           <div className="six-col last-col u-align--right no-margin-bottom">
-            <span className="link">
+            <Link changeState={sinon.stub()}
+              clickState={{
+                gui: {
+                  deploy: ''
+                }
+              }}
+              generatePath={sinon.stub()}>
               Unsupported trial version
-            </span>
+            </Link>
           </div>
         </div>
       </div>);

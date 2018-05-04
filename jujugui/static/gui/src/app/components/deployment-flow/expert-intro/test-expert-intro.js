@@ -10,6 +10,7 @@ const ExpertBlock = require('../../expert-block/expert-block');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
+const Link = require('../../link/link');
 const DeploymentExpertIntro = require('./expert-intro');
 
 describe('DeploymentExpertIntro', () => {
@@ -27,7 +28,8 @@ describe('DeploymentExpertIntro', () => {
           supportedDescription: '#### supported description',
           price: '8',
           displayName: 'Apache 2',
-          iconPath: 'http://example.com/icon.svg'
+          iconPath: 'http://example.com/icon.svg',
+          owner: 'spinach'
         })
       } : options.entityModel}
       generatePath={options.generatePath || sinon.stub()}
@@ -111,13 +113,15 @@ describe('DeploymentExpertIntro', () => {
                   <div
                     className="deployment-expert-intro__description"
                     dangerouslySetInnerHTML={{_html: md}} />
-                  <span className="link">
+                  <Link changeState={sinon.stub()}
+                    clickState={{ hash: 'support-level' }}
+                    generatePath={sinon.stub()}>
                     View other support options
-                  </span>
+                  </Link>
                 </div>
               </ExpertBlock>
               <ExpertContactCard
-                expert="spicule"
+                expert="spinach"
                 sendAnalytics={sinon.stub()}
                 staticURL="/static/url" />
             </div>
@@ -132,7 +136,8 @@ describe('DeploymentExpertIntro', () => {
       toEntity: sinon.stub().returns({
         description: 'Description',
         displayName: 'Kubernetes core',
-        machineCount: 4
+        machineCount: 4,
+        owner: 'spinach'
       })
     };
     const wrapper = renderComponent({

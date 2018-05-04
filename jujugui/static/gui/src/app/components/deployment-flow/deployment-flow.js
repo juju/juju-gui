@@ -3,6 +3,7 @@
 
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
+const ReactDOM = require('react-dom');
 const React = require('react');
 
 const AccordionSection = require('../accordion-section/accordion-section');
@@ -78,6 +79,24 @@ class DeploymentFlow extends React.Component {
     const appDiff = newApps.filter(a => currentApps.indexOf(a) === -1);
     if (newApps.length !== currentApps.length || appDiff.length > 0) {
       this._getAgreements();
+    }
+    // If the direct deploy data changes then get and store the new entity or
+    // clear the state.
+    if (nextProps.ddData !== this.props.ddData) {
+      const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
+      this.setState({ isDirectDeploy });
+      if (isDirectDeploy) {
+        this._getDirectDeployEntity(nextProps.ddData.id);
+      } else {
+        this.setState({ ddEntity: null });
+      }
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { hash } = this.props;
+    if (hash && (hash !== prevProps.hash)) {
+      this._scrollDeploymentFlow(`#${hash}`);
     }
   }
 
@@ -623,6 +642,7 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
+    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
     return (
       <DeploymentSection
         completed={status.completed}
@@ -632,6 +652,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentModelName
           acl={this.props.acl}
           ddEntity={this.state.ddEntity}
+          focusName={!isExpertFlow}
           modelName={this.props.modelName}
           setModelName={this.props.setModelName} />
       </DeploymentSection>);
@@ -655,7 +676,9 @@ class DeploymentFlow extends React.Component {
         <DeploymentPricing
           addNotification={this.props.addNotification}
           applications={this.props.applications}
+          changeState={this.props.changeState}
           charms={this.props.charms}
+          generatePath={this.props.generatePath}
           getSLAMachineRates={this.props.getSLAMachineRates}
           listPlansForCharm={this.props.listPlansForCharm} />
       </DeploymentSection>);
@@ -1085,6 +1108,23 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Scroll the deployment flow to an element with an id that matches the
+    hash state.
+    @param selector {String} The selector for the element to scroll to.
+  */
+  _scrollDeploymentFlow(selector) {
+    const target = document.querySelector(selector);
+    // The deployment flow panel element does the scrolling.
+    const deploymentFlow = ReactDOM.findDOMNode(this).querySelector(
+      '.deployment-panel__content');
+    if (target && deploymentFlow) {
+      // Set the scroll position to the element's top position taking into
+      // account the sticky header size.
+      deploymentFlow.scrollTop += target.getBoundingClientRect().top - 100;
+    }
+  }
+
+  /**
     Report whether going forward with the deployment is currently allowed.
 
     @method _deploymentAllowed
@@ -1206,6 +1246,7 @@ DeploymentFlow.propTypes = {
   gisf: PropTypes.bool,
   groupedChanges: PropTypes.object.isRequired,
   gtmEnabled: PropTypes.bool,
+  hash: PropTypes.string,
   importSSHKeys: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.func.isRequired,
   listBudgets: PropTypes.func.isRequired,

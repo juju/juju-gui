@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 
 const DeploymentPlanTable = require('./plan-table/plan-table');
 const DeploymentSupportSelection = require('./support-selection/support-selection');
+const Link = require('../../link/link');
 
 const DeploymentPricing = props => {
   return (
@@ -26,14 +27,16 @@ const DeploymentPricing = props => {
           </span>
         </div>
       </div>
-      <div className="twelve-col no-margin-bottom">
+      <div className="twelve-col no-margin-bottom"
+        id="support-level">
         <div className="six-col deployment-pricing__support-title">
           Choose your level of support
         </div>
         <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
-          <span className="link">
+          <a href="https://www.ubuntu.com/support/plans-and-pricing#ua-support"
+            target="_blank">
             Support details
-          </span>
+          </a>
         </div>
       </div>
       <DeploymentSupportSelection getSLAMachineRates={props.getSLAMachineRates} />
@@ -44,9 +47,15 @@ const DeploymentPricing = props => {
           at the end of a month.
         </div>
         <div className="six-col last-col u-align--right no-margin-bottom">
-          <span className="link">
+          <Link changeState={props.changeState}
+            clickState={{
+              gui: {
+                deploy: ''
+              }
+            }}
+            generatePath={props.generatePath}>
             Unsupported trial version
-          </span>
+          </Link>
         </div>
       </div>
     </div>
@@ -56,7 +65,9 @@ const DeploymentPricing = props => {
 DeploymentPricing.propTypes = {
   addNotification: PropTypes.func.isRequired,
   applications: PropTypes.array.isRequired,
+  changeState: PropTypes.func.isRequired,
   charms: PropTypes.object.isRequired,
+  generatePath: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired
 };
