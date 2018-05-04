@@ -5,15 +5,16 @@ const classnames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const XTerm = require('xterm');
+const XTerm = require('xterm').Terminal;
+const WebfontLoader = require('xterm-webfont');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
 // xterm.js loads plugins by requiring them. This changes the prototype of the
 // xterm object. This is inherently dirty, but not really up to us, and perhaps
 // not something we can change.
-require('xterm/lib/addons/terminado/terminado');
-require('xterm/lib/addons/fit/fit');
+const terminado = require('xterm/lib/addons/terminado/terminado');
+const fit = require('xterm/lib/addons/fit/fit');
 
 /** Terminal component used to display the Juju shell. */
 class Terminal extends React.Component {
@@ -41,10 +42,18 @@ class Terminal extends React.Component {
   */
   componentDidMount() {
     const props = this.props;
-    const term = new XTerm();
+    XTerm.applyAddon(fit);
+    XTerm.applyAddon(terminado);
+    XTerm.applyAddon(WebfontLoader);
+    const term = new XTerm({
+      fontFamily: 'ubuntu mono',
+      theme: {
+        background: '#111'
+      }
+    });
     term.writeln('connecting (this operation could take a minute)... ');
     this.term = term;
-    term.open(this.refs.terminal, true);
+    term.loadWebfontAndOpen(this.refs.terminal, true);
     const ws = new props.WebSocket(props.address);
     this.ws = ws;
     const creds = props.creds;
@@ -100,6 +109,7 @@ class Terminal extends React.Component {
             if (resp[1].indexOf(suffix, resp[1].length-suffix.length) !== -1) {
               // Call to resize the terminal after getting the first PS1.
               term.fit();
+              this.focus();
               this.initialCommandsSent = true;
               const commands = props.commands;
               if (commands) {
@@ -141,6 +151,7 @@ class Terminal extends React.Component {
     @param {String} message The optional response message from the server.
   */
   _welcome(term, message) {
+    term.fit();
     term.writeln('connected to workspace');
     const msg = message.replace(/\s+$/, '');
     // Split and write each line to avoid xterm weird text formatting.
@@ -208,7 +219,7 @@ class Terminal extends React.Component {
     Set the focus back to the terminal so that users can keep typing.
   */
   focus() {
-    const textarea = this.refs.terminal.querySelector('textarea');
+    const textarea = this.refs.terminal.querySelector('.xterm-helper-textarea');
     textarea.focus();
   }
 

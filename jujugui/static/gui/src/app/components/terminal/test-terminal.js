@@ -126,6 +126,7 @@ describe('Terminal', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     const term = instance.term;
+    instance.term.fit = sinon.stub(); // eslint-disable-line
     term.terminadoAttach = sinon.stub();
     term.writeln = sinon.stub();
     // Simulate that the server session is ready.
@@ -156,6 +157,7 @@ describe('Terminal', () => {
   it('sends multiple commands when it is set up', () => {
     const wrapper = renderComponent({ commands: ['juju status', 'juju switch'] });
     const instance = wrapper.instance();
+    instance.term.fit = sinon.stub(); // eslint-disable-line
     // Send the setup from the term.
     instance.ws.onmessage({data: '["setup", {}]'});
     // Send the initial PS1
