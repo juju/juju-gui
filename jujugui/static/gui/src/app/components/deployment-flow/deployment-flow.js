@@ -80,6 +80,8 @@ class DeploymentFlow extends React.Component {
     if (newApps.length !== currentApps.length || appDiff.length > 0) {
       this._getAgreements();
     }
+    // If the direct deploy data changes then get and store the new entity or
+    // clear the state.
     if (nextProps.ddData !== this.props.ddData) {
       const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
       this.setState({ isDirectDeploy });
@@ -92,8 +94,9 @@ class DeploymentFlow extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.hash && (this.props.hash !== prevProps.hash)) {
-      this._scrollDeploymentFlow();
+    const { hash } = this.props;
+    if (hash && (hash !== prevProps.hash)) {
+      this._scrollDeploymentFlow(`#${hash}`);
     }
   }
 
@@ -1107,10 +1110,10 @@ class DeploymentFlow extends React.Component {
   /**
     Scroll the deployment flow to an element with an id that matches the
     hash state.
+    @param selector {String} The selector for the element to scroll to.
   */
-  _scrollDeploymentFlow() {
-    const { hash } = this.props;
-    const target = document.querySelector(`#${hash}`);
+  _scrollDeploymentFlow(selector) {
+    const target = document.querySelector(selector);
     // The deployment flow panel element does the scrolling.
     const deploymentFlow = ReactDOM.findDOMNode(this).querySelector(
       '.deployment-panel__content');
