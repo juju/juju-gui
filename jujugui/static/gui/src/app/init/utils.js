@@ -562,13 +562,6 @@ utils._switchModel = function(modelAPI, model, clearProfileState=true) {
     newState.model = null;
     if (!current || !current.profile) {
       newState.root = 'new';
-      // Clear the ECS here preemptively, so that if a model switch is not
-      // triggered (for instance as we are going from new model to new model)
-      // we still clear the canvas.
-      // XXX This causes position annotations to be lost on model creation and
-      // will need to be addressed in a future branch.
-      // Makyo 2018-05-07
-      //modelAPI.get('ecs').clear();
     }
   }
   this.state.changeState(newState);

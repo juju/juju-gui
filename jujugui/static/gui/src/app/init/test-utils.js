@@ -526,8 +526,6 @@ describe('init utils', () => {
         hash: null,
         model: null
       }]);
-      // XXX Clearing the ECS is temporarily disabled. See note in utils.js
-      //assert.equal(clear.callCount, 1, 'clear');
     });
 
     it('does not set root state to new if profile state exists', () => {
@@ -581,8 +579,6 @@ describe('init utils', () => {
         root: 'new',
         model: null
       }]);
-      // XXX Clearing the ECS is temporarily disabled. See note in utils.js
-      //assert.equal(clear.callCount, 1, 'clear');
     });
   });
 
