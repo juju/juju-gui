@@ -526,6 +526,7 @@ describe('init utils', () => {
         hash: null,
         model: null
       }]);
+      assert.equal(clear.callCount, 1, 'clear');
     });
 
     it('does not set root state to new if profile state exists', () => {
@@ -579,6 +580,7 @@ describe('init utils', () => {
         root: 'new',
         model: null
       }]);
+      assert.equal(clear.callCount, 1, 'clear');
     });
   });
 
