@@ -465,16 +465,25 @@ class BundleImporter {
         return;
       }
       const name = ghostService.get('name');
-      ghostService.setAttrs({
-        id: name,
-        displayName: undefined,
-        pending: false,
-        loading: false,
-        config: ghostService.get('config'),
-        constraints: constraints
-      });
-      this.modelAPI.update_annotations(
-        name, 'application', ghostService.get('annotations'));
+      // The deployed application could already be in the database in the case
+      // the mega-watcher handler is faster than the browser. If instead we are
+      // still waiting for the mega-watcher, update the ghost service so that
+      // users still have some visual feedback of the deployment preceeding.
+      const deployed = this.db.services.getById(name);
+      let annotations = ghostService.get('annotations');
+      if (deployed) {
+        annotations = deployed.get('annotations');
+      } else {
+        ghostService.setAttrs({
+          id: name,
+          displayName: undefined,
+          pending: false,
+          loading: false,
+          config: ghostService.get('config'),
+          constraints: constraints
+        });
+      }
+      this.modelAPI.update_annotations(name, 'application', annotations);
     }.bind(this, ghostService);
 
     const charmURL = charm.get('id');
@@ -502,7 +511,6 @@ class BundleImporter {
         ghostService.set('resourceIds', ids);
       });
     }
-
     this.modelAPI.deploy({
       charmURL: charmURL,
       applicationName: record.args[2],

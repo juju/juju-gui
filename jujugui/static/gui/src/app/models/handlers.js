@@ -327,6 +327,18 @@ YUI.add('juju-delta-handlers', function(Y) {
         subordinate: change.subordinate,
         workloadVersion: change['workload-version'] || ''
       };
+      // Check whether there is a ghost for this application, in which case
+      // we need to summon and resurrect it.
+      db.services.filter(model => {
+        return model.get('pending') && model.get('name') === change.name;
+      }).forEach(model => {
+        model.setAttrs({
+          id: change.name,
+          displayName: undefined,
+          pending: false,
+          loading: false
+        });
+      });
       // Process the stream.
       db.services.process_delta(action, data);
       if (action !== 'remove') {

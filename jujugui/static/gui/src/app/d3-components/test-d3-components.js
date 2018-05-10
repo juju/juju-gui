@@ -145,20 +145,6 @@ describe('d3-components', function() {
       assert.strictEqual(state.dbldbl, true);
     });
 
-  it('should correctly handle synthetic event bindings', function(done) {
-    comp = new Component({container: container});
-    class modA extends TestModule {
-      windowResizeHandler(evt) {
-        resized = true;
-        done();
-      }
-    }
-    var resized = false;
-    comp.addModule(modA, {name: 'modA', container: container});
-    window.dispatchEvent(new Event('resize'));
-    assert.isTrue(resized);
-  });
-
   it('deep clones event objects to avoid shared bindings', function() {
     var compA = new Component({container: container});
     compA.addModule(TestModule);

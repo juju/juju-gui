@@ -337,6 +337,30 @@ describe('Juju delta handlers', function() {
       assert.strictEqual(application.get('workloadVersion'), '2.0.1');
     });
 
+    it('promote a ghost application in the database', function() {
+      db.services.add({
+        id: '4247',
+        name: 'wordpress',
+        pending: true,
+        loading: true,
+        charm: 'cs:quantal/wordpress-11',
+        exposed: true
+      });
+      var change = {
+        name: 'wordpress',
+        'charm-url': 'cs:quantal/wordpress-11',
+        exposed: false
+      };
+      applicationInfo(db, 'change', change);
+      assert.strictEqual(db.services.size(), 1);
+      // Retrieve the application from the database.
+      var application = db.services.getById('wordpress');
+      assert.strictEqual(application.get('charm'), 'cs:quantal/wordpress-11');
+      assert.strictEqual(application.get('exposed'), false, 'exposed');
+      assert.strictEqual(application.get('pending'), false, 'pending');
+      assert.strictEqual(application.get('loading'), false, 'loading');
+    });
+
     it('handles missing constraints', function() {
       db.services.add({
         id: 'wordpress',
