@@ -309,7 +309,7 @@ class Store extends React.Component {
         return (
           <ExpertStoreCard
             classes={sharedClasses.concat(['box--expert'])}
-            expert="spicule"
+            expert="spiculecharms"
             key="expert"
             staticURL={this.props.staticURL} />);
     }
