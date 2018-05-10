@@ -4,7 +4,7 @@
 const BundleImporter = require('./bundle-importer');
 const jujulibConversionUtils = require('./jujulib-conversion-utils');
 
-// XXX There are test failures in thsi branch when it's not run in the full
+// XXX There are test failures in this branch when it's not run in the full
 // suite of tests.
 describe('BundleImporter', () => {
   let bundleImporter, charmstore, db, getBundleChanges,
@@ -52,9 +52,12 @@ describe('BundleImporter', () => {
     });
   });
 
-  afterEach(() => {
+  afterEach(done => {
     db.destroy();
-    modelAPI.destroy();
+    modelAPI.close(() => {
+      modelAPI.destroy();
+      done();
+    });
   });
 
   it('can be instantiated', () => {
