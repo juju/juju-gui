@@ -1,3 +1,8 @@
+- 2.12.3:
+  - Updated jujushell, new version is considerably more performant.
+  - (Fix) Direct Deploy will no longer loop until all charms have loaded in some rare instances.
+  - (Fix) A race condition generating weird app placement in bundle deploys on the canvas has been resolved.
+
 - 2.12.2:
   - Sort charms and bundles in the user profile by name.
   - Show the controller model in the model dropdown list on the canvas.
