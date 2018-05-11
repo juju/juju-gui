@@ -82,14 +82,14 @@ class DeploymentFlow extends React.Component {
     }
     // If the direct deploy data changes then get and store the new entity or
     // clear the state.
-    if (nextProps.ddData !== this.props.ddData) {
-      const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
-      this.setState({ isDirectDeploy });
-      if (isDirectDeploy) {
+    const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
+    this.setState({ isDirectDeploy });
+    if (isDirectDeploy) {
+      if (nextProps.ddData.id !== this.props.ddData.id) {
         this._getDirectDeployEntity(nextProps.ddData.id);
-      } else {
-        this.setState({ ddEntity: null });
       }
+    } else {
+      this.setState({ ddEntity: null });
     }
   }
 
