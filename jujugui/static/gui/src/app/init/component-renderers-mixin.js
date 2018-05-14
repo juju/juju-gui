@@ -835,8 +835,6 @@ Browser: ${navigator.userAgent}`
           destroyService={initUtils.destroyService.bind(
             this, db, model, service)}
           destroyUnits={model.remove_units.bind(model)}
-          displayPlans={initUtils.compareSemver(
-            this.applicationConfig.jujuCoreVersion, '2') > -1}
           entityPath={window.jujulib.URL.fromAnyString(charm.get('id')).path()}
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}

@@ -19,11 +19,6 @@ class ServiceOverview extends React.Component {
 
   componentWillMount() {
     const props = this.props;
-
-    if (!props.displayPlans) {
-      return;
-    }
-
     if (!props.charm.hasMetrics()) {
       // Do not request or update the plans if this charm doesn't
       // have any metrics.
@@ -218,7 +213,7 @@ class ServiceOverview extends React.Component {
               activeComponent: 'change-version'}}}});
     }
 
-    if (this.props.displayPlans && (state.activePlan || plans)) {
+    if (state.activePlan || plans) {
       actions.push({
         title: 'Plan',
         icon: 'plan',
@@ -299,7 +294,6 @@ ServiceOverview.propTypes = {
   charm: PropTypes.object.isRequired,
   clearState: PropTypes.func.isRequired,
   destroyService: PropTypes.func.isRequired,
-  displayPlans: PropTypes.bool.isRequired,
   getUnitStatusCounts: PropTypes.func.isRequired,
   modelUUID: PropTypes.string.isRequired,
   service: PropTypes.object.isRequired,
