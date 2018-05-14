@@ -17,8 +17,6 @@ describe('ServiceOverview', function() {
       charm={options.charm || charm}
       clearState={options.clearState || sinon.stub()}
       destroyService={options.destroyService || sinon.stub()}
-      displayPlans={
-        options.displayPlans === undefined ? false : options.displayPlans}
       getUnitStatusCounts={options.getUnitStatusCounts || getUnitStatusCounts()}
       modelUUID={options.modelUUID || 'abc123'}
       service={options.service || service}
@@ -75,7 +73,6 @@ describe('ServiceOverview', function() {
   it('queries for active plans if none are stored on the charm', function() {
     const showActivePlan = sinon.stub();
     const wrapper = renderComponent({
-      displayPlans: true,
       showActivePlan,
       showPlans: true
     });
@@ -98,7 +95,6 @@ describe('ServiceOverview', function() {
     const showActivePlan = sinon.stub().callsArgWith(2, 'Uh oh!', null, null);
     renderComponent({
       addNotification,
-      displayPlans: true,
       showActivePlan,
       showPlans: true
     });
@@ -119,7 +115,6 @@ describe('ServiceOverview', function() {
     const showActivePlan = sinon.stub();
     const wrapper = renderComponent({
       charm,
-      displayPlans: true,
       service,
       showActivePlan,
       showPlans: true
@@ -253,7 +248,7 @@ describe('ServiceOverview', function() {
     assert.equal(
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');
-    assert.equal(wrapper.find('OverviewAction[title="Plan"]').length, 0);
+    assert.equal(wrapper.find('OverviewAction[title="Plan"]').length, 1);
   });
 
   it('disables the delete button when read only', function() {

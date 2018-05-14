@@ -78,7 +78,6 @@ class Inspector extends React.Component {
             charm={nextProps.charm}
             clearState={nextProps.clearState}
             destroyService={nextProps.destroyService}
-            displayPlans={nextProps.displayPlans}
             getUnitStatusCounts={nextProps.getUnitStatusCounts}
             modelUUID={nextProps.modelUUID}
             service={service}
@@ -394,7 +393,6 @@ Inspector.propTypes = {
   destroyRelations: PropTypes.func.isRequired,
   destroyService: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
-  displayPlans: PropTypes.bool.isRequired,
   entityPath: PropTypes.string.isRequired,
   envResolved: PropTypes.func.isRequired,
   exposeService: PropTypes.func.isRequired,

@@ -36,8 +36,6 @@ describe('Inspector', function() {
       destroyRelations={options.destroyRelations || sinon.stub()}
       destroyService={options.destroyService || sinon.stub()}
       destroyUnits={options.destroyUnits || sinon.stub()}
-      displayPlans={
-        options.displayPlans === undefined ? true : options.displayPlans}
       entityPath={options.entityPath || 'u/foo/bar'}
       envResolved={options.envResolved || sinon.stub()}
       exposeService={options.exposeService || sinon.stub()}
@@ -126,7 +124,6 @@ describe('Inspector', function() {
             charm={charm}
             clearState={sinon.stub()}
             destroyService={sinon.stub()}
-            displayPlans={true}
             getUnitStatusCounts={sinon.stub()}
             modelUUID="abc123"
             service={service}
