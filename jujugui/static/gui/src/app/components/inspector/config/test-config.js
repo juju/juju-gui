@@ -10,9 +10,6 @@ describe('Configuration', function() {
   var acl, charm, service;
 
   const renderComponent = (options = {}) => {
-    const linkify = sinon.stub();
-    linkify.onCall(0).returns('description 1');
-    linkify.onCall(1).returns('description 2');
     const wrapper = enzyme.shallow(
       <Configuration
         acl={options.acl || acl}
@@ -21,7 +18,6 @@ describe('Configuration', function() {
         charm={options.charm || charm}
         getServiceByName={options.getServiceByName || sinon.stub()}
         getYAMLConfig={options.getYAMLConfig || sinon.stub()}
-        linkify={options.linkify || linkify}
         service={options.service || service}
         serviceRelations={options.serviceRelations || []}
         setConfig={options.setConfig || sinon.stub()}
@@ -48,8 +44,16 @@ describe('Configuration', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    const option1 = { key: 'option1key', type: 'string' };
-    const option2 = { key: 'option2key', type: 'boolean' };
+    const option1 = {
+      key: 'option1key',
+      type: 'string',
+      description: 'description 1'
+    };
+    const option2 = {
+      key: 'option2key',
+      type: 'boolean',
+      description: 'description 2'
+    };
     const option1key = 'string body value';
     const option2key = true;
     const charmGet = sinon.stub();

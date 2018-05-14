@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const anchorme = require('anchorme').default;
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
@@ -236,7 +237,7 @@ class Configuration extends React.Component {
       // Clone the options so that we're not updating the stored options.
       const option = this._clone(charmOptions[key]);
       option.key = key;
-      option.description = this.props.linkify(option.description);
+      option.description = anchorme(option.description || '');
       const ref = 'Config-' + key;
       // We use one component for numeric and string values and
       // another for boolean values.
@@ -434,7 +435,6 @@ Configuration.propTypes = {
   charm: PropTypes.object.isRequired,
   getServiceByName: PropTypes.func.isRequired,
   getYAMLConfig: PropTypes.func.isRequired,
-  linkify: PropTypes.func.isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
   setConfig: PropTypes.func.isRequired,

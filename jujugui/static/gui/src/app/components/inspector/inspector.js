@@ -194,7 +194,6 @@ class Inspector extends React.Component {
               charm={nextProps.charm}
               getServiceByName={nextProps.getServiceByName}
               getYAMLConfig={nextProps.getYAMLConfig}
-              linkify={nextProps.linkify}
               service={service}
               serviceRelations={nextProps.serviceRelations}
               setConfig={nextProps.setConfig}
@@ -403,7 +402,6 @@ Inspector.propTypes = {
   getServiceByName: PropTypes.func.isRequired,
   getUnitStatusCounts: PropTypes.func.isRequired,
   getYAMLConfig: PropTypes.func.isRequired,
-  linkify: PropTypes.func.isRequired,
   modelUUID: PropTypes.string.isRequired,
   providerType: PropTypes.string,
   relatableApplications: PropTypes.array.isRequired,
