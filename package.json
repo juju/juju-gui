@@ -9,6 +9,7 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "dependencies": {
+    "anchorme": "^1.1.2",
     "classnames": "2.2.5",
     "clipboard": "1.7.1",
     "cloud-vanilla-theme": "0.1.2",
