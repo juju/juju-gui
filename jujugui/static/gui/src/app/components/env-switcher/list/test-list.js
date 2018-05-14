@@ -4,10 +4,10 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const DateDisplay = require('../../date-display/date-display');
 const EnvList = require('./list');
 
 describe('EnvList', function() {
-  const humanizeTimestamp = sinon.stub().returns('less than a minute ago');
   const acl = {canAddModels: sinon.stub().returns(true)};
 
   const renderComponent = (options = {}) => enzyme.shallow(
@@ -17,7 +17,6 @@ describe('EnvList', function() {
       environmentName={options.environmentName || 'model-name-1'}
       envs={options.envs || []}
       handleModelClick={options.handleModelClick || sinon.stub()}
-      humanizeTimestamp={options.humanizeTimestamp || humanizeTimestamp}
       switchModel={options.switchModel || sinon.stub()}
       user={options.user || {username: 'who@external', displayName: 'who'}} />
   );
@@ -28,13 +27,13 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who@external',
-        lastConnection: {a: 0, getTime: function() {}}
+        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek@external',
-        lastConnection: {a: 1, getTime: function() {}}
+        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       }
     ];
     const wrapper = renderComponent({ envs: models });
@@ -56,7 +55,12 @@ describe('EnvList', function() {
           tabIndex="0">
           model-name-1
           <div className="env-list__last-connected">
-            Last accessed less than a minute ago
+            <span>
+              Last accessed&nbsp;
+              <DateDisplay
+                date={models[0].lastConnection}
+                relative={true} />
+            </span>
           </div>
         </li>
         <li className="env-list__environment"
@@ -69,7 +73,12 @@ describe('EnvList', function() {
           tabIndex="0">
           dalek/model-name-2
           <div className="env-list__last-connected">
-            Last accessed less than a minute ago
+            <span>
+              Last accessed&nbsp;
+              <DateDisplay
+                date={models[1].lastConnection}
+                relative={true} />
+            </span>
           </div>
         </li>
       </ul>);
@@ -121,7 +130,12 @@ describe('EnvList', function() {
             tabIndex="0">
             {'model-name-1'}
             <div className="env-list__last-connected">
-              {'Last accessed less than a minute ago'}
+              <span>
+                Last accessed&nbsp;
+                <DateDisplay
+                  date={models[0].lastConnection}
+                  relative={true} />
+              </span>
             </div>
           </li>,
           <li className="env-list__environment"
@@ -134,7 +148,12 @@ describe('EnvList', function() {
             tabIndex="0">
             {'model-name-3'}
             <div className="env-list__last-connected">
-              {'Last accessed less than a minute ago'}
+              <span>
+                Last accessed&nbsp;
+                <DateDisplay
+                  date={models[1].lastConnection}
+                  relative={true} />
+              </span>
             </div>
           </li>,
           <li className="env-list__environment"
@@ -147,7 +166,12 @@ describe('EnvList', function() {
             tabIndex="0">
             {'dalek/model-name-2'}
             <div className="env-list__last-connected">
-              {'Last accessed less than a minute ago'}
+              <span>
+                Last accessed&nbsp;
+                <DateDisplay
+                  date={models[2].lastConnection}
+                  relative={true} />
+              </span>
             </div>
           </li>,
           <li className="env-list__environment"
@@ -174,13 +198,13 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who',
-        lastConnection: {getTime: function() {}}
+        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek',
-        lastConnection: {getTime: function() {}}
+        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       }
     ];
     const wrapper = renderComponent({ envs: models });
@@ -202,7 +226,12 @@ describe('EnvList', function() {
           tabIndex="0">
           who/model-name-1
           <div className="env-list__last-connected">
-            Last accessed less than a minute ago
+            <span>
+              Last accessed&nbsp;
+              <DateDisplay
+                date={models[0].lastConnection}
+                relative={true} />
+            </span>
           </div>
         </li>,
         <li
@@ -215,7 +244,12 @@ describe('EnvList', function() {
           role="menuitem" tabIndex="0">
           dalek/model-name-2
           <div className="env-list__last-connected">
-            Last accessed less than a minute ago
+            <span>
+              Last accessed&nbsp;
+              <DateDisplay
+                date={models[1].lastConnection}
+                relative={true} />
+            </span>
           </div>
         </li>]}
       </ul>);

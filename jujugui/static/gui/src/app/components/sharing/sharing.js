@@ -4,6 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const DateDisplay = require('../date-display/date-display');
 const GenericButton = require('../generic-button/generic-button');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
@@ -172,8 +173,14 @@ class Sharing extends React.Component {
       }
       let lastConnection = 'never connected';
       if (user.lastConnection) {
-        const humanTime = this.props.humanizeTimestamp(user.lastConnection);
-        lastConnection = `last connection: ${humanTime}`;
+        lastConnection = (
+          <span>
+            last connection:&nbsp;
+            <DateDisplay
+              date={user.lastConnection}
+              relative={true} />
+          </span>
+        );
       }
       let revokeMarkup;
       if (this.props.canShareModel) {
@@ -353,7 +360,6 @@ Sharing.propTypes = {
   closeHandler: PropTypes.func,
   getModelUserInfo: PropTypes.func.isRequired,
   grantModelAccess: PropTypes.func.isRequired,
-  humanizeTimestamp: PropTypes.func,
   revokeModelAccess: PropTypes.func.isRequired
 };
 
@@ -364,10 +370,6 @@ Sharing.defaultProps = {
   canShareModel: false,
   closeHandler: () => {
     console.log('No closeHandler specified.');
-  },
-  humanizeTimestamp: timestamp => {
-    // Least we can do.
-    return timestamp.toLocaleDateString();
   }
 };
 

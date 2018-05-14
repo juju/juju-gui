@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const DateDisplay = require('../date-display/date-display');
 const Sharing = require('./sharing');
 const GenericButton = require('../generic-button/generic-button');
 const GenericInput = require('../generic-input/generic-input');
@@ -12,7 +13,7 @@ const Popup = require('../popup/popup');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 describe('Sharing', () => {
-  let users, getModelUserInfo, humanizeTimestamp;
+  let users, getModelUserInfo;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Sharing
@@ -22,7 +23,6 @@ describe('Sharing', () => {
       closeHandler={options.closeHandler || sinon.stub()}
       getModelUserInfo={options.getModelUserInfo || getModelUserInfo}
       grantModelAccess={options.grantModelAccess || sinon.stub()}
-      humanizeTimestamp={options.humanizeTimestamp || humanizeTimestamp}
       revokeModelAccess={options.revokeModelAccess || sinon.stub()} />
   );
 
@@ -32,7 +32,7 @@ describe('Sharing', () => {
         name: 'drwho@external',
         displayName: 'drwho',
         domain: 'Ubuntu SSO',
-        lastConnection: '9 minutes ago',
+        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT'),
         access: 'admin'
       }, {
         name: 'rose',
@@ -49,7 +49,6 @@ describe('Sharing', () => {
       }
     ];
     getModelUserInfo = sinon.stub().callsArgWith(0, null, users);
-    humanizeTimestamp = sinon.stub().returns('9 minutes ago');
   });
 
   it('can render with no users', () => {
@@ -99,7 +98,12 @@ describe('Sharing', () => {
               {'Ubuntu SSO'} user
             </div>
             <div className="sharing__user-last-connection">
-              last connection: 9 minutes ago
+              <span>
+                last connection:&nbsp;
+                <DateDisplay
+                  date={users[0].lastConnection}
+                  relative={true} />
+              </span>
             </div>
           </div>
           <div className="sharing__user-access">

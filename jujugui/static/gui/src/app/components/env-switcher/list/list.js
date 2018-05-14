@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const CreateModelButton = require('../../create-model-button/create-model-button');
+const DateDisplay = require('../../date-display/date-display');
 const Panel = require('../../panel/panel');
 
 class EnvList extends React.Component {
@@ -44,8 +45,14 @@ class EnvList extends React.Component {
         let owner = model.owner;
         let lastConnected = 'Never accessed';
         if (model.lastConnection) {
-          lastConnected = 'Last accessed ' + this.props.humanizeTimestamp(
-            model.lastConnection);
+          lastConnected = (
+            <span>
+              Last accessed&nbsp;
+              <DateDisplay
+                date={model.lastConnection}
+                relative={true} />
+            </span>
+          );
         }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
@@ -155,7 +162,6 @@ EnvList.propTypes = {
   environmentName: PropTypes.string,
   envs: PropTypes.array.isRequired,
   handleModelClick: PropTypes.func.isRequired,
-  humanizeTimestamp: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   user: PropTypes.object
 };

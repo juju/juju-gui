@@ -62,15 +62,6 @@ describe('init utils', () => {
     });
   });
 
-  describe('humanizeTimestamp', () => {
-    it('must be able to display humanize time ago messages', () => {
-      const now = new Date().getTime();
-      // Javascript timestamps are in milliseconds
-      utils.humanizeTimestamp(now).should.equal('less than a minute ago');
-      utils.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');
-    });
-  });
-
   describe('_generateBundleExportFileName', () => {
     it('generates the correct export file name', () => {
       let envName = 'foobar';
