@@ -184,7 +184,6 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         closeHandler={this._sharingVisibility.bind(this, false)}
         getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
-        humanizeTimestamp={initUtils.humanizeTimestamp}
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />, sharing);
   }
 
@@ -1222,7 +1221,6 @@ Browser: ${navigator.userAgent}`
         addNotification={this._bound.addNotification}
         appState={this.state}
         changeState={this._bound.changeState}
-        humanizeTimestamp={initUtils.humanizeTimestamp}
         listModelsWithInfo={listModelsWithInfo}
         loadingModel={modelAPI.loading}
         modelCommitted={!!modelAPI.get('modelUUID')}

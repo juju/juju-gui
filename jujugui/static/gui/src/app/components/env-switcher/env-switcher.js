@@ -128,7 +128,6 @@ class EnvSwitcher extends React.Component {
           environmentName={this.props.environmentName}
           envs={this.state.envList}
           handleModelClick={this.handleModelClick.bind(this)}
-          humanizeTimestamp={this.props.humanizeTimestamp}
           switchModel={this.props.switchModel}
           user={this.props.user} />);
     }
@@ -250,7 +249,6 @@ EnvSwitcher.propTypes = {
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
-  humanizeTimestamp: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,
   modelCommitted: PropTypes.bool,
   setModelName: PropTypes.func.isRequired,

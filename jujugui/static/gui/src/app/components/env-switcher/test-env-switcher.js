@@ -14,7 +14,6 @@ describe('EnvSwitcher', function() {
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
       environmentName={options.environmentName || 'MyEnv'}
-      humanizeTimestamp={options.humanizeTimestamp || sinon.stub()}
       listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
       modelCommitted={
         options.modelCommitted === undefined ? false : options.modelCommitted}
