@@ -426,30 +426,6 @@ utils.linkify = str => {
 };
 
 /**
-  Compare two semver version strings and return if one is
-  older than the other.
-  @param {String} a Version.
-  @param {String} b Version to compare to.
-  @param {Integer} returns -1 if a is older than b, 0 if a is equal to b,
-    and 1 if a is newer than b.
-*/
-utils.compareSemver = (a, b) => {
-  a = a.split('-')[0];
-  b = b.split('-')[0];
-  const pa = a.split('.');
-  const pb = b.split('.');
-  for (let i = 0; i < 3; i++) {
-    const na = Number(pa[i]);
-    const nb = Number(pb[i]);
-    if (na > nb) { return 1; }
-    if (nb > na) { return -1; }
-    if (!isNaN(na) && isNaN(nb)) { return 1; }
-    if (isNaN(na) && !isNaN(nb)) { return -1; }
-  }
-  return 0;
-};
-
-/**
   Switch model, displaying a confirmation if there are uncommitted changes.
   @param {Object} modelAPI Reference to the app modelAPI.
   @param {Object} model The model to switch to, with these attributes:
