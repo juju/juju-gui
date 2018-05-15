@@ -205,7 +205,7 @@ class EntityFiles extends React.Component {
 
 EntityFiles.propTypes = {
   apiUrl: PropTypes.string.isRequired,
-  entityModel: PropTypes.object.isRequired,
+  entityModel: PropTypes.object.isRequired
 };
 
 module.exports = EntityFiles;
