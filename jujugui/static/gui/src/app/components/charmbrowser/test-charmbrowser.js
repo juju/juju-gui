@@ -155,9 +155,7 @@ describe('Charmbrowser', function() {
     const listPlansForCharm = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
-    const utils = {
-      pluralize: sinon.spy()
-    };
+    const utils = {};
     const setPageTitle = sinon.spy();
     const urllib = sinon.stub();
     const wrapper = renderComponent({
@@ -206,7 +204,6 @@ describe('Charmbrowser', function() {
           importBundleYAML={importBundleYAML}
           listPlansForCharm={listPlansForCharm}
           makeEntityModel={makeEntityModel}
-          pluralize={utils.pluralize}
           renderMarkdown={renderMarkdown}
           scrollCharmbrowser={entityDetails.prop('scrollCharmbrowser')}
           scrollPosition={0}
