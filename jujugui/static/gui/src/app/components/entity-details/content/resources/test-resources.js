@@ -12,7 +12,6 @@ describe('EntityResources', function() {
     <EntityResources
       apiUrl={options.apiUrl || '/api'}
       entityId={options.entityId || 'cs:foo-0'}
-      pluralize={options.pluralize || sinon.stub()}
       resources={options.resources || []} />
   );
 
@@ -45,7 +44,6 @@ describe('EntityResources', function() {
       Path: 'file3.tar'
     }];
     const wrapper = renderComponent({
-      pluralize: sinon.stub().returns('resources'),
       resources: resources
     });
     const expected = (
