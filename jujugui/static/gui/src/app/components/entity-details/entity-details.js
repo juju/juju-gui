@@ -82,7 +82,6 @@ class EntityDetails extends React.Component {
               hasPlans={this.state.hasPlans}
               importBundleYAML={this.props.importBundleYAML}
               plans={this.state.plans}
-              pluralize={this.props.pluralize}
               scrollPosition={this.props.scrollPosition}
               urllib={this.props.urllib} />
             <EntityContent
@@ -98,7 +97,6 @@ class EntityDetails extends React.Component {
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
               plans={this.state.plans}
-              pluralize={this.props.pluralize}
               renderMarkdown={this.props.renderMarkdown}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
               sendAnalytics={this.props.sendAnalytics}
@@ -265,7 +263,6 @@ EntityDetails.propTypes = {
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
-  pluralize: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
