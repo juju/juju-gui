@@ -119,7 +119,6 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       <EnvSizeDisplay
         appState={this.state}
         machineCount={machineCount}
-        pluralize={initUtils.pluralize.bind(this)}
         serviceCount={serviceCount} />,
       document.getElementById('env-size-display-container'));
   }
