@@ -26,7 +26,6 @@ describe('EntityHeader', function() {
       hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
       importBundleYAML={options.importBundleYAML || sinon.stub()}
       plans={options.plans}
-      pluralize={options.pluralize || sinon.stub()}
       scrollPosition={
         options.scrollPosition === undefined ? 0 : options.scrollPosition}
       urllib={options.urllib || urllib} />,
@@ -186,14 +185,9 @@ describe('EntityHeader', function() {
   });
 
   it('displays the counts for a bundle', function() {
-    const pluralize = sinon.stub();
-    pluralize.withArgs('application').returns('applications');
-    pluralize.withArgs('machine').returns('machines');
-    pluralize.withArgs('unit').returns('units');
     const entity = jsTestUtils.makeEntity(true);
     const wrapper = renderComponent({
-      entityModel: entity,
-      pluralize
+      entityModel: entity
     });
     const expected = (
       <li className="entity-header__counts">
