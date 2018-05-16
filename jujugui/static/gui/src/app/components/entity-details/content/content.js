@@ -385,7 +385,6 @@ class EntityContent extends React.Component {
         <EntityResources
           apiUrl={this.props.apiUrl}
           entityId={entityModel.get('id')}
-          pluralize={this.props.pluralize}
           resources={entityModel.get('resources')} />);
     }
   }
@@ -639,8 +638,7 @@ class EntityContent extends React.Component {
               {this._showEntityRelations()}
               <EntityFiles
                 apiUrl={this.props.apiUrl}
-                entityModel={entityModel}
-                pluralize={this.props.pluralize} />
+                entityModel={entityModel} />
               {this._generateCard()}
             </div>
           </div>
@@ -668,7 +666,6 @@ EntityContent.propTypes = {
   hasPlans: PropTypes.bool.isRequired,
   hash: PropTypes.string,
   plans: PropTypes.array,
-  pluralize: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,

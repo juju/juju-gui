@@ -13,7 +13,6 @@ describe('EnvSizeDisplay', function() {
     <EnvSizeDisplay
       appState={options.appState || appState}
       machineCount={options.machineCount || 4}
-      pluralize={options.pluralize || sinon.stub()}
       serviceCount={options.serviceCount || 3}
       showStatus={options.showStatus === undefined ? true : options.showStatus} />
   );
@@ -30,12 +29,7 @@ describe('EnvSizeDisplay', function() {
   });
 
   it('shows applications and machines count', function() {
-    var pluralize = sinon.stub();
-    pluralize.withArgs('application').returns('applications');
-    pluralize.withArgs('machine').returns('machines');
-    const wrapper = renderComponent({
-      pluralize: pluralize
-    });
+    const wrapper = renderComponent();
     assert.equal(
       wrapper.find('a[data-view="application"]').text(),
       '3 applications');

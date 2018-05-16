@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const initUtils = require('../../init/utils');
+
 class EnvSizeDisplay extends React.Component {
   /**
     Click handler for the service | machine links which calls the changeState
@@ -65,7 +67,6 @@ class EnvSizeDisplay extends React.Component {
     var props = this.props;
     var serviceCount = props.serviceCount;
     var machineCount = props.machineCount;
-    var pluralize = props.pluralize;
     return (
       <div className="env-size-display">
         <ul className="env-size-display__list">
@@ -74,7 +75,7 @@ class EnvSizeDisplay extends React.Component {
               data-view="application"
               onClick={this._changeEnvironmentView.bind(this)}>
               {serviceCount}&nbsp;
-              {pluralize('application', serviceCount)}
+              {initUtils.pluralize('application', serviceCount)}
             </a>
           </li>
           <li className={this._genClasses('machines')}>
@@ -82,7 +83,7 @@ class EnvSizeDisplay extends React.Component {
               data-view="machines"
               onClick={this._changeEnvironmentView.bind(this)}>
               {machineCount}&nbsp;
-              {pluralize('machine', machineCount)}
+              {initUtils.pluralize('machine', machineCount)}
             </a>
           </li>
           {this._generateStatus()}
@@ -95,7 +96,6 @@ class EnvSizeDisplay extends React.Component {
 EnvSizeDisplay.propTypes = {
   appState: PropTypes.object.isRequired,
   machineCount: PropTypes.number.isRequired,
-  pluralize: PropTypes.func.isRequired,
   serviceCount: PropTypes.number.isRequired
 };
 

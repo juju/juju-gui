@@ -47,7 +47,6 @@ describe('EntityContent', function() {
       hash={options.hash || 'readme'}
       hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
       plans={options.plans}
-      pluralize={options.pluralize || sinon.stub()}
       renderMarkdown={options.renderMarkdown || sinon.stub()}
       scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
@@ -146,15 +145,13 @@ describe('EntityContent', function() {
               <EntityResources
                 apiUrl={apiUrl}
                 entityId={mockEntity.get('id')}
-                pluralize={sinon.stub()}
                 resources={[{resource: 'one'}]} />
               <EntityContentRelations
                 changeState={sinon.stub()}
                 relations={mockEntity.get('relations')} />
               <EntityFiles
                 apiUrl={apiUrl}
-                entityModel={mockEntity}
-                pluralize={sinon.stub()} />
+                entityModel={mockEntity} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
                   Embed this charm
@@ -426,8 +423,7 @@ describe('EntityContent', function() {
               {undefined}
               <EntityFiles
                 apiUrl={apiUrl}
-                entityModel={mockEntity}
-                pluralize={sinon.stub()} />
+                entityModel={mockEntity} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
                   Embed this charm

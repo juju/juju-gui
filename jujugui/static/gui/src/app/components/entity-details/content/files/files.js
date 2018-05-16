@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const initUtils = require('../../../../init/utils');
+
 class EntityFiles extends React.Component {
 
   constructor() {
@@ -178,7 +180,7 @@ class EntityFiles extends React.Component {
     return (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
-          {this.props.pluralize('File', files.length)}
+          {initUtils.pluralize('File', files.length)}
         </h3>
         <ul aria-multiselectable="true"
           className="p-list-tree"
@@ -203,8 +205,7 @@ class EntityFiles extends React.Component {
 
 EntityFiles.propTypes = {
   apiUrl: PropTypes.string.isRequired,
-  entityModel: PropTypes.object.isRequired,
-  pluralize: PropTypes.func.isRequired
+  entityModel: PropTypes.object.isRequired
 };
 
 module.exports = EntityFiles;

@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const initUtils = require('../../init/utils');
+
 class DateDisplay extends React.Component {
   constructor() {
     super();
@@ -138,10 +140,7 @@ class DateDisplay extends React.Component {
       return this._generateDate();
     }
     time = Math.floor(time);
-    // Not using the pluralize util here so that it doesn't have to be passed
-    // through every component.
-    var plural = time === 1 ? '' : 's';
-    return `${time} ${unit}${plural} ago`;
+    return `${time} ${initUtils.pluralize(unit, time)} ago`;
   }
 
   /**

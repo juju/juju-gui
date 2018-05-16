@@ -7,6 +7,7 @@ const React = require('react');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const GenericButton = require('../../generic-button/generic-button');
+const initUtils = require('../../../init/utils');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 class EntityHeader extends React.Component {
@@ -232,11 +233,11 @@ class EntityHeader extends React.Component {
     var machineCount = entity.machineCount;
     return (<ul className="bullets inline entity-header__properties">
       <li className="entity-header__counts">
-        {serviceCount} {this.props.pluralize('application', serviceCount)},
+        {serviceCount} {initUtils.pluralize('application', serviceCount)},
           &nbsp;
-        {machineCount} {this.props.pluralize('machine', machineCount)},
+        {machineCount} {initUtils.pluralize('machine', machineCount)},
           &nbsp;
-        {unitCount} {this.props.pluralize('unit', unitCount)}
+        {unitCount} {initUtils.pluralize('unit', unitCount)}
       </li>
     </ul>);
   }
@@ -459,7 +460,6 @@ EntityHeader.propTypes = {
   hasPlans: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   plans: PropTypes.array,
-  pluralize: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
   urllib: PropTypes.func.isRequired
 };

@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const initUtils = require('../../../../init/utils');
+
 class EntityResources extends React.Component {
   constructor(props) {
     super(props);
@@ -70,7 +72,7 @@ class EntityResources extends React.Component {
       <div className="entity-resources section" id="files">
         <h3 className="section__title">
           {resourceList.length}&nbsp;
-          {props.pluralize('resource', resourceList.length)}
+          {initUtils.pluralize('resource', resourceList.length)}
         </h3>
         <ul className="section__list entity-files__listing">
           {resourceList}
@@ -90,7 +92,6 @@ class EntityResources extends React.Component {
 EntityResources.propTypes = {
   apiUrl: PropTypes.string.isRequired,
   entityId: PropTypes.string.isRequired,
-  pluralize: PropTypes.func.isRequired,
   resources: PropTypes.array
 };
 

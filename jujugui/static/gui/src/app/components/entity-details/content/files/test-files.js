@@ -14,8 +14,7 @@ describe('EntityFiles', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityFiles
       apiUrl={options.apiUrl || 'http://example.com/'}
-      entityModel={options.entityModel}
-      pluralize={sinon.stub().returns('files')} />
+      entityModel={options.entityModel} />
   );
 
   beforeEach(function() {
@@ -68,7 +67,7 @@ describe('EntityFiles', function() {
     var expected = (
       <div className="entity-files section" id="files">
         <h3 className="section__title">
-          files
+          Files
         </h3>
         <ul aria-multiselectable="true" className="p-list-tree"
           ref="files"

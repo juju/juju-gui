@@ -35,7 +35,6 @@ describe('EntityDetails', function() {
         importBundleYAML={options.importBundleYAML || sinon.stub()}
         listPlansForCharm={options.listPlansForCharm || sinon.stub()}
         makeEntityModel={options.makeEntityModel || sinon.stub().returns(mockEntity)}
-        pluralize={options.pluralize || sinon.stub()}
         renderMarkdown={options.renderMarkdown || sinon.stub()}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
         scrollPosition={options.scrollPosition || 100}
@@ -91,7 +90,6 @@ describe('EntityDetails', function() {
             hasPlans={false}
             importBundleYAML={sinon.stub()}
             plans={null}
-            pluralize={sinon.stub()}
             scrollPosition={100}
             urllib={urllib} />
           {undefined}
@@ -108,7 +106,6 @@ describe('EntityDetails', function() {
             hash="readme"
             hasPlans={false}
             plans={null}
-            pluralize={sinon.stub()}
             renderMarkdown={sinon.stub()}
             scrollCharmbrowser={sinon.stub()}
             sendAnalytics={sinon.stub()}
