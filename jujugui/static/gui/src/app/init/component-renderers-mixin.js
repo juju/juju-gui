@@ -846,7 +846,6 @@ Browser: ${navigator.userAgent}`
           getServiceByName={db.services.getServiceByName.bind(db.services)}
           getUnitStatusCounts={initUtils.getUnitStatusCounts}
           getYAMLConfig={initUtils.getYAMLConfig.bind(this)}
-          linkify={initUtils.linkify}
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}
           relatableApplications={relatableApplications}

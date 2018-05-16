@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const BooleanConfig = require('../../boolean-config/boolean-config');
+const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
 const ButtonRow = require('../../button-row/button-row');
 
@@ -236,7 +237,7 @@ class Configuration extends React.Component {
       // Clone the options so that we're not updating the stored options.
       const option = this._clone(charmOptions[key]);
       option.key = key;
-      option.description = this.props.linkify(option.description);
+      option.description = initUtils.linkify(option.description || '');
       const ref = 'Config-' + key;
       // We use one component for numeric and string values and
       // another for boolean values.
@@ -434,7 +435,6 @@ Configuration.propTypes = {
   charm: PropTypes.object.isRequired,
   getServiceByName: PropTypes.func.isRequired,
   getYAMLConfig: PropTypes.func.isRequired,
-  linkify: PropTypes.func.isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
   setConfig: PropTypes.func.isRequired,

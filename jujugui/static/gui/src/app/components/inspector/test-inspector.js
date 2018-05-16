@@ -47,7 +47,6 @@ describe('Inspector', function() {
       getServiceByName={options.getServiceByName || sinon.stub()}
       getUnitStatusCounts={options.getUnitStatusCounts || sinon.stub()}
       getYAMLConfig={options.getYAMLConfig || sinon.stub()}
-      linkify={options.linkify || sinon.stub()}
       modelUUID={options.modelUUID || 'abc123'}
       providerType={options.providerType}
       relatableApplications={options.relatableApplications || []}
@@ -177,7 +176,6 @@ describe('Inspector', function() {
           charm={charm}
           getServiceByName={sinon.stub()}
           getYAMLConfig={sinon.stub()}
-          linkify={sinon.stub()}
           service={service}
           serviceRelations={['relations']}
           setConfig={sinon.stub()}
