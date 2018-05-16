@@ -113,7 +113,6 @@ describe('DeploymentFlow', function() {
       staticURL: '/static/url',
       stats: null,
       updateCloudCredential: sinon.stub(),
-      validateForm: sinon.stub(),
       withPlans: true
     };
     // Merge the user-specified props with the default props.
@@ -589,7 +588,6 @@ describe('DeploymentFlow', function() {
     const createUser = sinon.stub();
     const getCountries = sinon.stub();
     const getUser = sinon.stub();
-    const validateForm = sinon.stub();
     const createCardElement = sinon.stub();
     const wrapper = createDeploymentFlow({
       acl: acl,
@@ -603,8 +601,7 @@ describe('DeploymentFlow', function() {
       getUser: getUser,
       isLegacyJuju: false,
       profileUsername: 'spinach',
-      showPay: true,
-      validateForm: validateForm
+      showPay: true
     });
     assert.equal(wrapper.find('DeploymentPayment').length, 1);
   });

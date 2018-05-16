@@ -844,8 +844,7 @@ class DeploymentFlow extends React.Component {
           setCredential={this._setCredential.bind(this)}
           setRegion={this._setRegion.bind(this)}
           updateCloudCredential={this.props.updateCloudCredential}
-          user={this.props.getUserName()}
-          validateForm={this.props.validateForm} />
+          user={this.props.getUserName()} />
         {this._generateVPCSection()}
       </DeploymentSection>);
   }
@@ -970,8 +969,7 @@ class DeploymentFlow extends React.Component {
           getUser={this.props.getUser}
           paymentUser={this.state.paymentUser}
           setPaymentUser={this._setPaymentUser.bind(this)}
-          username={this.props.profileUsername}
-          validateForm={this.props.validateForm} />
+          username={this.props.profileUsername} />
       </DeploymentSection>);
   }
 
@@ -1269,7 +1267,6 @@ DeploymentFlow.propTypes = {
   updateCloudCredential: PropTypes.func,
   updateModelName: PropTypes.func,
   username: PropTypes.string,
-  validateForm: PropTypes.func.isRequired,
   withPlans: PropTypes.bool
 };
 
