@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
+const initUtils = require('../../init/utils');
 const InsetSelect = require('../inset-select/inset-select');
 const GenericInput = require('../generic-input/generic-input');
 
@@ -76,7 +77,7 @@ class AddressForm extends React.Component {
     if (this.props.showPhone) {
       fields.push('phoneNumber');
     }
-    return this.props.validateForm(fields, this.refs);
+    return initUtils.validateForm(fields, this.refs);
   }
 
   /**
@@ -248,8 +249,7 @@ AddressForm.propTypes = {
   disabled: PropTypes.bool,
   getCountries: PropTypes.func,
   showName: PropTypes.bool,
-  showPhone: PropTypes.bool,
-  validateForm: PropTypes.func
+  showPhone: PropTypes.bool
 };
 
 AddressForm.defaultProps = {

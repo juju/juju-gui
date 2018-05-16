@@ -12,7 +12,7 @@ const ButtonRow = require('../../../button-row/button-row');
 const FileField = require('../../../file-field/file-field');
 
 describe('DeploymentCredentialAdd', function() {
-  let acl, sendAnalytics, getCloudProviderDetails;
+  let acl, sendAnalytics, getCloudProviderDetails, refs;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -92,6 +92,30 @@ describe('DeploymentCredentialAdd', function() {
       },
       message: 'a message'
     });
+    refs = {
+      'credentialName': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('new@test')
+      },
+      'client-id': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client id')
+      },
+      'client-email': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('client email')
+      },
+      'private-key': {
+        validate: sinon.stub().returns(true),
+        getValue: sinon.stub().returns('private key')
+      },
+      'project-id': {
+        getValue: sinon.stub().returns('project id')
+      },
+      'password': {
+        getValue: sinon.stub().returns('password')
+      }
+    };
   });
 
   const renderComponent = (options = {}) => enzyme.shallow(
@@ -108,8 +132,7 @@ describe('DeploymentCredentialAdd', function() {
       sendAnalytics={sendAnalytics}
       setCredential={sinon.stub()}
       updateCloudCredential={options.updateCloudCredential || sinon.stub()}
-      user="user-admin"
-      validateForm={options.validateForm || sinon.stub()} />
+      user="user-admin" />
   );
 
   it('can render without a provided cloud', function() {
@@ -447,34 +470,10 @@ describe('DeploymentCredentialAdd', function() {
       cloud: {name: 'google', cloudType: 'gce'},
       onCredentialUpdated,
       updateCloudCredential,
-      generateCloudCredentialName: sinon.stub().returns('new@test'),
-      validateForm: sinon.stub().returns(true)
+      generateCloudCredentialName: sinon.stub().returns('new@test')
     });
     const instance = wrapper.instance();
-    instance.refs = {
-      'credentialName': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('new@test')
-      },
-      'client-id': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client id')
-      },
-      'client-email': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client email')
-      },
-      'private-key': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('private key')
-      },
-      'project-id': {
-        getValue: sinon.stub().returns('project id')
-      },
-      'password': {
-        getValue: sinon.stub().returns('password')
-      }
-    };
+    instance.refs = refs;
     instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
@@ -501,34 +500,10 @@ describe('DeploymentCredentialAdd', function() {
       cloud: {name: 'google', cloudType: 'gce'},
       onCredentialUpdated,
       updateCloudCredential,
-      generateCloudCredentialName: sinon.stub().returns('new@test'),
-      validateForm: sinon.stub().returns(true)
+      generateCloudCredentialName: sinon.stub().returns('new@test')
     });
     const instance = wrapper.instance();
-    instance.refs = {
-      'credentialName': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('new@test')
-      },
-      'client-id': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client id')
-      },
-      'client-email': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client email')
-      },
-      'private-key': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('private key')
-      },
-      'project-id': {
-        getValue: sinon.stub().returns('project id')
-      },
-      'password': {
-        getValue: sinon.stub().returns('password')
-      }
-    };
+    instance.refs = refs;
     wrapper.find('form').simulate('submit', {preventDefault: sinon.stub()});
     assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
@@ -552,37 +527,12 @@ describe('DeploymentCredentialAdd', function() {
     const updateCloudCredential = sinon.stub();
     const wrapper = renderComponent({
       updateCloudCredential,
-      cloud: {name: 'google', cloudType: 'gce'},
-      validateForm: sinon.stub().returns(true)
+      cloud: {name: 'google', cloudType: 'gce'}
     });
     const instance = wrapper.instance();
     instance.setState({authType: 'oauth2'});
-    instance.refs = {
-      'credentialName': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('new@test')
-      },
-      'client-id': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client id')
-      },
-      'client-email': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client email')
-      },
-      'private-key': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('foo%20\\n')
-      },
-      'project-id': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('project id')
-      },
-      'password': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('password')
-      }
-    };
+    instance.refs = refs;
+    instance.refs['private-key'].getValue.returns('foo%20\\n');
     instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(updateCloudCredential.callCount, 1);
     assert.equal(updateCloudCredential.args[0][2]['private-key'], 'foo \n');
@@ -592,10 +542,11 @@ describe('DeploymentCredentialAdd', function() {
     const updateCloudCredential = sinon.stub();
     const wrapper = renderComponent({
       updateCloudCredential,
-      cloud: {name: 'google', cloudType: 'gce'},
-      validateForm: sinon.stub().returns(false)
+      cloud: {name: 'google', cloudType: 'gce'}
     });
     const instance = wrapper.instance();
+    instance.refs = refs;
+    instance.refs.credentialName.validate = sinon.stub().returns(false);
     instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(updateCloudCredential.callCount, 0);
   });
@@ -608,34 +559,10 @@ describe('DeploymentCredentialAdd', function() {
       addNotification,
       updateCloudCredential,
       cloud: {name: 'google', cloudType: 'gce'},
-      generateCloudCredentialName: sinon.stub().returns('new@test'),
-      validateForm: sinon.stub().returns(true)
+      generateCloudCredentialName: sinon.stub().returns('new@test')
     });
     const instance = wrapper.instance();
-    instance.refs = {
-      'credentialName': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('new@test')
-      },
-      'client-id': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client id')
-      },
-      'client-email': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('client email')
-      },
-      'private-key': {
-        validate: sinon.stub().returns(true),
-        getValue: sinon.stub().returns('private key')
-      },
-      'project-id': {
-        getValue: sinon.stub().returns('project id')
-      },
-      'password': {
-        getValue: sinon.stub().returns('password')
-      }
-    };
+    instance.refs = refs;
     instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.isTrue(addNotification.called, 'addNotification was not called');
     assert.deepEqual(addNotification.args[0][0], {

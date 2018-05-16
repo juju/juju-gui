@@ -18,8 +18,7 @@ describe('AddressForm', function() {
       disabled={options.disabled === undefined ? false : options.disabled}
       getCountries={options.getCountries || getCountries}
       showName={options.showName === undefined ? true : options.showName}
-      showPhone={options.showPhone === undefined ? true : options.showPhone}
-      validateForm={options.validateForm || sinon.stub()} />
+      showPhone={options.showPhone === undefined ? true : options.showPhone} />
   );
 
   beforeEach(() => {
@@ -167,10 +166,10 @@ describe('AddressForm', function() {
   });
 
   it('can validate the form', function() {
-    const wrapper = renderComponent({
-      validateForm: sinon.stub().returns(false)
-    });
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
+    instance.refs = refs;
+    instance.refs.line1.validate = sinon.stub().returns(false);
     assert.isFalse(instance.validate());
   });
 
@@ -199,9 +198,7 @@ describe('AddressForm', function() {
 
 
   it('can get the address', function() {
-    const wrapper = renderComponent({
-      validateForm: sinon.stub().returns(true)
-    });
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
     assert.deepEqual(instance.getValue(), {
@@ -219,8 +216,7 @@ describe('AddressForm', function() {
   it('can get the address without some fields', function() {
     const wrapper = renderComponent({
       showName: false,
-      showPhone: false,
-      validateForm: sinon.stub().returns(true)
+      showPhone: false
     });
     const instance = wrapper.instance();
     instance.refs = refs;

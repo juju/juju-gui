@@ -98,8 +98,7 @@ class CredentialAddEdit extends React.Component {
         onCredentialUpdated={this.props.onCredentialUpdated}
         sendAnalytics={this.props.sendAnalytics}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
-        user={this.props.username}
-        validateForm={this.props.initUtils.validateForm} />);
+        user={this.props.username} />);
   }
 
   /**
@@ -165,8 +164,7 @@ CredentialAddEdit.propTypes = {
   initUtils: shapeup.shape({
     generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
-    validateForm: PropTypes.func.isRequired
+    reshape: shapeup.reshapeFunc
   }).isRequired,
   onCancel: PropTypes.func,
   onCredentialUpdated: PropTypes.func.isRequired,

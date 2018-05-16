@@ -23,8 +23,7 @@ describe('DeploymentPayment', function() {
       getUser={options.getUser || getUser}
       paymentUser={options.paymentUser}
       setPaymentUser={options.setPaymentUser || sinon.stub()}
-      username={options.username || 'spinach'}
-      validateForm={options.validateForm || sinon.stub()} />
+      username={options.username || 'spinach'} />
   );
 
   beforeEach(() => {
@@ -99,8 +98,7 @@ describe('DeploymentPayment', function() {
           createUser={sinon.stub()}
           getCountries={getCountries}
           onUserCreated={wrapper.find('CreatePaymentUser').prop('onUserCreated')}
-          username="spinach"
-          validateForm={sinon.stub()} />
+          username="spinach" />
       </div>);
     assert.compareJSX(wrapper, expected);
   });

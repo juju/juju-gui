@@ -155,8 +155,7 @@ class Profile extends React.Component {
               addNotification={props.addNotification}
               payment={props.payment}
               stripe={props.stripe}
-              username={props.userInfo.profile}
-              validateForm={props.initUtils.validateForm} />);
+              username={props.userInfo.profile} />);
         }
       });
       sectionsMap.set('invoices', {
@@ -247,8 +246,7 @@ Profile.propTypes = {
   initUtils: shapeup.shape({
     generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
-    validateForm: PropTypes.func.isRequired
+    reshape: shapeup.reshapeFunc
   }).isRequired,
   payment: shapeup.shape({
     addAddress: PropTypes.func,

@@ -111,8 +111,7 @@ class Payment extends React.Component {
           paymentUser={this.state.paymentUser}
           stripe={this.props.stripe}
           updateUser={this._getUser.bind(this)}
-          username={this.props.username}
-          validateForm={this.props.validateForm} />
+          username={this.props.username} />
         <PaymentDetails
           acl={this.props.acl}
           addNotification={this.props.addNotification}
@@ -127,8 +126,7 @@ class Payment extends React.Component {
           })}
           paymentUser={this.state.paymentUser}
           updateUser={this._getUser.bind(this)}
-          username={this.props.username}
-          validateForm={this.props.validateForm} />
+          username={this.props.username} />
         <PaymentCharges
           acl={this.props.acl}
           addNotification={this.props.addNotification}
@@ -160,8 +158,7 @@ class Payment extends React.Component {
             createUser={this.props.payment.createUser}
             getCountries={this.props.payment.getCountries}
             onUserCreated={this._handleUserCreated.bind(this)}
-            username={this.props.username}
-            validateForm={this.props.validateForm} />
+            username={this.props.username} />
         </div>
       </div>);
   }
@@ -235,8 +232,7 @@ Payment.propTypes = {
     createToken: PropTypes.func,
     reshape: shapeup.reshapeFunc
   }),
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = Payment;

@@ -22,8 +22,7 @@ describe('PaymentMethod', () => {
         payment={options.payment || payment}
         paymentMethod={options.paymentMethod || paymentMethod}
         updateUser={options.updateUser || sinon.stub()}
-        username={options.username || 'spinach'}
-        validateForm={options.validateForm || sinon.stub().returns(true)} />
+        username={options.username || 'spinach'} />
     );
     const instance = wrapper.instance();
     instance.refs = refs;
@@ -101,8 +100,7 @@ describe('PaymentMethod', () => {
           getCountries={sinon.stub()}
           ref="cardAddress"
           showName={false}
-          showPhone={false}
-          validateForm={sinon.stub()} />
+          showPhone={false} />
         <div className="twelve-col">
           <GenericInput
             disabled={false}
@@ -136,9 +134,9 @@ describe('PaymentMethod', () => {
 
   it('validates the form when updating the payment method', () => {
     payment.updatePaymentMethod = sinon.stub();
-    const wrapper = renderComponent({
-      validateForm: sinon.stub().returns(false)
-    });
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    instance.refs.cardAddress.validate = sinon.stub().returns(false);
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
     wrapper.find('GenericButton').at(1).props().action();

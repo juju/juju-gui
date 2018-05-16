@@ -38,8 +38,7 @@ describe('CredentialAddEdit', () => {
     initUtils = {
       generateCloudCredentialName: sinon.stub(),
       getCloudProviderDetails: getCloudProviderDetails,
-      reshape: shapeup.reshapeFunc,
-      validateForm: sinon.stub()
+      reshape: shapeup.reshapeFunc
     };
   });
 
@@ -122,8 +121,7 @@ describe('CredentialAddEdit', () => {
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sinon.stub()}
             updateCloudCredential={sinon.stub()}
-            user="spinach@external"
-            validateForm={sinon.stub()} />
+            user="spinach@external" />
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -151,8 +149,7 @@ describe('CredentialAddEdit', () => {
           onCredentialUpdated={sinon.stub()}
           sendAnalytics={sinon.stub()}
           updateCloudCredential={sinon.stub()}
-          user="spinach@external"
-          validateForm={sinon.stub()} />
+          user="spinach@external" />
       </div>);
     assert.compareJSX(wrapper, expected);
   });

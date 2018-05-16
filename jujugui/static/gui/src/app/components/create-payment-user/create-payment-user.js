@@ -6,6 +6,7 @@ const React = require('react');
 
 const GenericInput = require('../generic-input/generic-input');
 const GenericButton = require('../generic-button/generic-button');
+const initUtils = require('../../init/utils');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
 
@@ -51,7 +52,7 @@ class CreatePaymentUser extends React.Component {
     if (!this.state.cardAddressSame) {
       fields.push('cardAddress');
     }
-    return this.props.validateForm(fields, this.refs);
+    return initUtils.validateForm(fields, this.refs);
   }
 
   /**
@@ -176,8 +177,7 @@ class CreatePaymentUser extends React.Component {
           addNotification={this.props.addNotification}
           disabled={this.props.acl.isReadOnly()}
           getCountries={this.props.getCountries}
-          ref="cardAddress"
-          validateForm={this.props.validateForm} />
+          ref="cardAddress" />
       </div>);
   }
 
@@ -199,8 +199,7 @@ class CreatePaymentUser extends React.Component {
           addNotification={this.props.addNotification}
           disabled={this.props.acl.isReadOnly()}
           getCountries={this.props.getCountries}
-          ref="billingAddress"
-          validateForm={this.props.validateForm} />
+          ref="billingAddress" />
       </div>);
   }
 
@@ -302,16 +301,14 @@ class CreatePaymentUser extends React.Component {
               addNotification={this.props.addNotification}
               disabled={disabled}
               getCountries={this.props.getCountries}
-              ref="userAddress"
-              validateForm={this.props.validateForm} />
+              ref="userAddress" />
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
             <CardForm
               acl={this.props.acl}
               createCardElement={this.props.createCardElement}
-              ref="cardForm"
-              validateForm={this.props.validateForm} />
+              ref="cardForm" />
             <label htmlFor="cardAddressSame">
               <input checked={this.state.cardAddressSame}
                 id="cardAddressSame"
@@ -355,8 +352,7 @@ CreatePaymentUser.propTypes = {
   createUser: PropTypes.func.isRequired,
   getCountries: PropTypes.func.isRequired,
   onUserCreated: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = CreatePaymentUser;

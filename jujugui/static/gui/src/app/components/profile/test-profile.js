@@ -70,8 +70,7 @@ describe('Profile', function() {
     initUtils = {
       generateCloudCredentialName: sinon.stub(),
       getCloudProviderDetails: sinon.stub(),
-      reshape: shapeup.reshapeFunc,
-      validateForm: sinon.stub()
+      reshape: shapeup.reshapeFunc
     };
     userInfo = {
       isCurrent: true,

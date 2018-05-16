@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 
 const GenericButton = require('../../../generic-button/generic-button');
 const GenericInput = require('../../../generic-input/generic-input');
+const initUtils = require('../../../../init/utils');
 const ExpandingRow = require('../../../expanding-row/expanding-row');
 const AddressForm = require('../../../address-form/address-form');
 const PaymentMethodCard = require('../card/card');
@@ -46,7 +47,7 @@ class PaymentMethod extends React.Component {
     Update a payment method.
   */
   _updatePaymentMethod() {
-    const valid = this.props.validateForm(
+    const valid = initUtils.validateForm(
       ['expiry', 'cardAddress'], this.refs);
     if (!valid) {
       return;
@@ -98,8 +99,7 @@ class PaymentMethod extends React.Component {
           getCountries={this.props.payment.getCountries}
           ref="cardAddress"
           showName={false}
-          showPhone={false}
-          validateForm={this.props.validateForm} />
+          showPhone={false} />
         <div className="twelve-col">
           <GenericInput
             disabled={this.props.acl.isReadOnly()}
@@ -160,8 +160,7 @@ PaymentMethod.propTypes = {
   }),
   paymentMethod: PropTypes.object.isRequired,
   updateUser: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = PaymentMethod;

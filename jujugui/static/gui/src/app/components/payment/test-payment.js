@@ -20,8 +20,7 @@ describe('Payment', function() {
       addNotification={options.addNotification || sinon.stub()}
       payment={options.payment || payment}
       stripe={options.stripe || stripe}
-      username={options.spinach || 'spinach'}
-      validateForm={options.validateForm || sinon.stub().returns(true)} />
+      username={options.spinach || 'spinach'} />
   );
 
   beforeEach(() => {
@@ -83,8 +82,7 @@ describe('Payment', function() {
             paymentUser={user}
             stripe={stripe}
             updateUser={wrapper.find('PaymentMethods').prop('updateUser')}
-            username="spinach"
-            validateForm={sinon.stub()} />
+            username="spinach" />
           <PaymentDetails
             acl={acl}
             addNotification={sinon.stub()}
@@ -100,8 +98,7 @@ describe('Payment', function() {
             }}
             paymentUser={user}
             updateUser={wrapper.find('PaymentDetails').prop('updateUser')}
-            username="spinach"
-            validateForm={sinon.stub()} />
+            username="spinach" />
           <PaymentCharges
             acl={acl}
             addNotification={sinon.stub()}

@@ -7,6 +7,7 @@ const React = require('react');
 const AddressForm = require('../../../address-form/address-form');
 const ExpandingRow = require('../../../expanding-row/expanding-row');
 const GenericButton = require('../../../generic-button/generic-button');
+const initUtils = require('../../../../init/utils');
 
 class PaymentDetailsAddress extends React.Component {
   constructor() {
@@ -26,7 +27,7 @@ class PaymentDetailsAddress extends React.Component {
     @method _updateAddress
   */
   _updateAddress() {
-    const valid = this.props.validateForm(['addressForm'], this.refs);
+    const valid = initUtils.validateForm(['addressForm'], this.refs);
     if (!valid) {
       return;
     }
@@ -71,8 +72,7 @@ class PaymentDetailsAddress extends React.Component {
               address={this.props.address}
               disabled={disabled}
               getCountries={this.props.getCountries}
-              ref="addressForm"
-              validateForm={this.props.validateForm} />
+              ref="addressForm" />
             <div className={
               'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
               <GenericButton
@@ -106,8 +106,7 @@ PaymentDetailsAddress.propTypes = {
   showEdit: PropTypes.bool,
   updateAddress: PropTypes.func.isRequired,
   updated: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = PaymentDetailsAddress;

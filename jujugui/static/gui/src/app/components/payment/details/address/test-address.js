@@ -24,8 +24,7 @@ describe('PaymentDetailsAddress', () => {
       showEdit={options.showEdit === undefined ? true : options.showEdit}
       updateAddress={options.updateAddress || sinon.stub()}
       updated={options.updated || sinon.stub()}
-      username={options.username || 'spinach'}
-      validateForm={options.validateForm || sinon.stub().returns(true)} />
+      username={options.username || 'spinach'} />
   );
 
   beforeEach(() => {
@@ -74,8 +73,7 @@ describe('PaymentDetailsAddress', () => {
               address={address}
               disabled={false}
               getCountries={sinon.stub()}
-              ref="addressForm"
-              validateForm={sinon.stub()} />
+              ref="addressForm" />
             <div className={
               'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
               <GenericButton
@@ -106,10 +104,13 @@ describe('PaymentDetailsAddress', () => {
 
   it('can validate the form', () => {
     const removeAddress = sinon.stub();
-    const wrapper = renderComponent({
-      removeAddress,
-      validateForm: sinon.stub().returns(false)
-    });
+    const wrapper = renderComponent({ removeAddress });
+    const instance = wrapper.instance();
+    instance.refs = {
+      addressForm: {
+        validate: sinon.stub().returns(false)
+      }
+    };
     wrapper.find('GenericButton').at(1).props().action();
     assert.equal(removeAddress.callCount, 0);
   });

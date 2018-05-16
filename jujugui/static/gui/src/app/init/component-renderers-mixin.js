@@ -1037,7 +1037,6 @@ Browser: ${navigator.userAgent}`
         updateCloudCredential={
           controllerAPI.updateCloudCredential.bind(controllerAPI)}
         username={this.user ? this.user.displayName : undefined}
-        validateForm={initUtils.validateForm.bind(initUtils)}
         WebHandler={WebHandler}
         withPlans={false} />,
       document.getElementById('deployment-container'));
