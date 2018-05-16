@@ -22,8 +22,7 @@ describe('CreatePaymentUser', function() {
       createUser={options.createUser || sinon.stub()}
       getCountries={options.getCountries || getCountries}
       onUserCreated={options.onUserCreated || onUserCreated}
-      username={options.username || 'spinach'}
-      validateForm={options.validateForm || sinon.stub().returns(true)} />
+      username={options.username || 'spinach'} />
   );
 
   beforeEach(() => {
@@ -57,12 +56,10 @@ describe('CreatePaymentUser', function() {
 
   it('can display a personal form', function() {
     const addNotification = sinon.stub();
-    const validateForm = sinon.stub();
     const createCardElement = sinon.stub();
     const wrapper = renderComponent({
       addNotification,
-      createCardElement,
-      validateForm
+      createCardElement
     });
     const options = wrapper.find('input');
     const expected = (
@@ -109,16 +106,14 @@ describe('CreatePaymentUser', function() {
               addNotification={addNotification}
               disabled={false}
               getCountries={getCountries}
-              ref="userAddress"
-              validateForm={validateForm} />
+              ref="userAddress" />
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
             <CardForm
               acl={acl}
               createCardElement={createCardElement}
-              ref="cardForm"
-              validateForm={validateForm} />
+              ref="cardForm" />
             <label htmlFor="cardAddressSame">
               <input checked={true}
                 id="cardAddressSame"
@@ -164,11 +159,7 @@ describe('CreatePaymentUser', function() {
 
   it('can display card and billing address fields', function() {
     const addNotification = sinon.stub();
-    const validateForm = sinon.stub();
-    const wrapper = renderComponent({
-      addNotification,
-      validateForm
-    });
+    const wrapper = renderComponent({ addNotification });
     wrapper.find('#cardAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.find('#billingAddressSame').simulate('change',
@@ -182,8 +173,7 @@ describe('CreatePaymentUser', function() {
           addNotification={addNotification}
           disabled={false}
           getCountries={getCountries}
-          ref="cardAddress"
-          validateForm={validateForm} />
+          ref="cardAddress" />
       </div>);
     const billingExpected = (
       <div className="create-payment-user__billing-address-form">
@@ -194,8 +184,7 @@ describe('CreatePaymentUser', function() {
           addNotification={addNotification}
           disabled={false}
           getCountries={getCountries}
-          ref="billingAddress"
-          validateForm={validateForm} />
+          ref="billingAddress" />
       </div>);
     assert.compareJSX(
       wrapper.find('.create-payment-user__card-address-form'), cardExpected);
@@ -216,10 +205,10 @@ describe('CreatePaymentUser', function() {
 
   it('does not add the user if there is a validation error', function() {
     const createToken = sinon.stub();
-    const wrapper = renderComponent({
-      createToken,
-      validateForm: sinon.stub().returns(false)
-    });
+    const wrapper = renderComponent({ createToken });
+    const instance = wrapper.instance();
+    instance.refs = refs;
+    instance.refs.emailAddress.validate = sinon.stub().returns(false);
     wrapper.find('GenericButton').props().action();
     assert.equal(createToken.callCount, 0);
   });
