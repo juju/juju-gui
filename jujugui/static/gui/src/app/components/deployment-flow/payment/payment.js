@@ -90,8 +90,7 @@ class DeploymentPayment extends React.Component {
         createUser={this.props.createUser}
         getCountries={this.props.getCountries}
         onUserCreated={this._getUser.bind(this)}
-        username={this.props.username}
-        validateForm={this.props.validateForm} />);
+        username={this.props.username} />);
   }
 
   render() {
@@ -122,8 +121,7 @@ DeploymentPayment.propTypes = {
   getUser: PropTypes.func,
   paymentUser: PropTypes.object,
   setPaymentUser: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = DeploymentPayment;
