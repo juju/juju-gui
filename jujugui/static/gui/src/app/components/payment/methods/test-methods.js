@@ -22,8 +22,7 @@ describe('PaymentMethods', () => {
         paymentUser={options.paymentUser || user}
         stripe={options.stripe || stripe}
         updateUser={options.updateUser || sinon.stub()}
-        username={options.username || 'spinach'}
-        validateForm={options.validateForm || sinon.stub().returns(true)} />
+        username={options.username || 'spinach'} />
     );
     const instance = wrapper.instance();
     instance.refs = {
@@ -90,8 +89,7 @@ describe('PaymentMethods', () => {
             }}
             paymentMethod={user.paymentMethods[0]}
             updateUser={sinon.stub()}
-            username="spinach"
-            validateForm={sinon.stub()} />]}
+            username="spinach" />]}
         </ul>
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -134,8 +132,7 @@ describe('PaymentMethods', () => {
           <CardForm
             acl={acl}
             createCardElement={sinon.stub()}
-            ref="cardForm"
-            validateForm={sinon.stub()} />
+            ref="cardForm" />
           <label htmlFor="cardAddressSame">
             <input checked={true}
               className="payment-methods__form-checkbox"
@@ -178,9 +175,9 @@ describe('PaymentMethods', () => {
   });
 
   it('validates the form when adding a new payment method', () => {
-    const wrapper = renderComponent({
-      validateForm: sinon.stub().returns(false)
-    });
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    instance.refs.cardForm.validate = sinon.stub().returns(false);
     wrapper.find('GenericButton').props().action();
     wrapper.update();
     wrapper.find('GenericButton').at(1).props().action();

@@ -6,6 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const GenericButton = require('../../generic-button/generic-button');
+const initUtils = require('../../../init/utils');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const CardForm = require('../../card-form/card-form');
 const AddressForm = require('../../address-form/address-form');
@@ -38,7 +39,7 @@ class PaymentMethods extends React.Component {
       return (
         <div className="payment-methods__no-methods">
           <p>You do not have a payment method.</p>
-          <p>            
+          <p>
             <GenericButton
               action={this._toggleAdd.bind(this)}
               type="inline-positive">
@@ -61,8 +62,7 @@ class PaymentMethods extends React.Component {
           })}
           paymentMethod={method}
           updateUser={this.props.updateUser}
-          username={this.props.username}
-          validateForm={this.props.validateForm} />);
+          username={this.props.username} />);
     });
     return (
       <ul className="user-profile__list twelve-col">
@@ -80,7 +80,7 @@ class PaymentMethods extends React.Component {
     if (!this.state.cardAddressSame) {
       fields.push('cardAddress');
     }
-    const valid = this.props.validateForm(fields, this.refs);;
+    const valid = initUtils.validateForm(fields, this.refs);;
     if (!valid) {
       return;
     }
@@ -175,8 +175,7 @@ class PaymentMethods extends React.Component {
         getCountries={this.props.payment.getCountries}
         ref="cardAddress"
         showName={false}
-        showPhone={false}
-        validateForm={this.props.validateForm} />);
+        showPhone={false} />);
   }
 
   /**
@@ -199,8 +198,7 @@ class PaymentMethods extends React.Component {
             <CardForm
               acl={this.props.acl}
               createCardElement={this.props.stripe.createCardElement}
-              ref="cardForm"
-              validateForm={this.props.validateForm} />
+              ref="cardForm" />
             <label htmlFor="cardAddressSame">
               <input checked={this.state.cardAddressSame}
                 className="payment-methods__form-checkbox"
@@ -260,8 +258,7 @@ PaymentMethods.propTypes = {
     reshape: shapeup.reshapeFunc
   }),
   updateUser: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = PaymentMethods;
