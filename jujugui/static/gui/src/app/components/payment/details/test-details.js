@@ -20,8 +20,7 @@ describe('PaymentDetails', () => {
       payment={options.payment || payment}
       paymentUser={options.paymentUser || sinon.stub()}
       updateUser={options.updateUser || sinon.stub()}
-      username={options.username || 'spinach'}
-      validateForm={options.validateForm || sinon.stub()} />
+      username={options.username || 'spinach'} />
   );
 
   beforeEach(() => {
@@ -123,8 +122,7 @@ describe('PaymentDetails', () => {
               showEdit={false}
               updateAddress={sinon.stub()}
               updated={sinon.stub()}
-              username="spinach"
-              validateForm={sinon.stub()} />]}
+              username="spinach" />]}
           </ul>
           <h4>
             Billing addresses
@@ -158,8 +156,7 @@ describe('PaymentDetails', () => {
               showEdit={false}
               updateAddress={sinon.stub()}
               updated={sinon.stub()}
-              username="spinach"
-              validateForm={sinon.stub()} />]}
+              username="spinach" />]}
           </ul>
         </div>
       </div>);

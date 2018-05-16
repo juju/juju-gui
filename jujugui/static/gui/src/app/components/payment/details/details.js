@@ -125,8 +125,7 @@ class PaymentDetails extends React.Component {
             billing ? this.props.payment.updateBillingAddress :
               this.props.payment.updateAddress}
           updated={this.props.updateUser}
-          username={this.props.username}
-          validateForm={this.props.validateForm} />);
+          username={this.props.username} />);
     });
     return (
       <ul className="payment-details-addresses">
@@ -161,8 +160,7 @@ PaymentDetails.propTypes = {
   }),
   paymentUser: PropTypes.object.isRequired,
   updateUser: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  validateForm: PropTypes.func.isRequired
+  username: PropTypes.string.isRequired
 };
 
 module.exports = PaymentDetails;
