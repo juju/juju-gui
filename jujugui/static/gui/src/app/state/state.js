@@ -506,7 +506,6 @@ const State = class State {
     // there is nothing to parse so we can return early or it's an invalid path.
     const invalidParts =
       parts => !parts || (parts.length === 1 && parts[0] === '');
-    const invalidRootPath = 'invalid root path.';
     const invalidStorePath = 'invalid store path.';
     let error = null;
     let state = {};
@@ -523,23 +522,6 @@ const State = class State {
       return {error, state};
     }
     state = this._parseRoot(parts, state);
-    // If we have root paths in the URL then we can ignore everything else.
-    if (state.root) {
-      // If there is anything after this then it's an invalid URL unless it's
-      // the store or the user delimiter.
-      if (parts.length > 1 && parts[0] !== 'new') {
-        error = invalidRootPath;
-      }
-      if (parts[1] === 'store') {
-        state.store = '';
-      } else if (parts[1] === PATH_DELIMETERS.get('user')) {
-        // If this is a store URL starting with a username then set the correct
-        // store URL e.g. /u/spinach/trusty/mysql/9.
-        parts.shift();
-        state.store = parts.join('/');
-      }
-      return {error, state};
-    }
     // The order of the PATH_DELIMETERS is important so we can assume the
     // order for easy parsing of the path.
     if (!invalidParts(parts) && parts[0] === PATH_DELIMETERS.get('search')) {
@@ -786,6 +768,7 @@ const State = class State {
   _parseRoot(urlParts, state) {
     ROOT_RESERVED.some(key => {
       if (urlParts && urlParts[0] === key) {
+        urlParts.splice(0, 1);
         state.root = key;
         return true;
       }
