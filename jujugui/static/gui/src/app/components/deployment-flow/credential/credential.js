@@ -297,8 +297,7 @@ class DeploymentCredential extends React.Component {
         onCredentialUpdated={this._onCredentialUpdated.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
         updateCloudCredential={this.props.updateCloudCredential}
-        user={this.props.user}
-        validateForm={this.props.validateForm} />);
+        user={this.props.user} />);
   }
 
   /**
@@ -349,8 +348,7 @@ DeploymentCredential.propTypes = {
   setCredential: PropTypes.func.isRequired,
   setRegion: PropTypes.func.isRequired,
   updateCloudCredential: PropTypes.func.isRequired,
-  user: PropTypes.string,
-  validateForm: PropTypes.func.isRequired
+  user: PropTypes.string
 };
 
 module.exports = DeploymentCredential;

@@ -32,8 +32,7 @@ describe('DeploymentCredential', function() {
       setCredential={options.setCredential || sinon.stub()}
       setRegion={options.setRegion || sinon.stub()}
       updateCloudCredential={options.updateCloudCredential || sinon.stub()}
-      user={options.user === undefined ? user : options.user}
-      validateForm={options.validateForm || sinon.stub()} />
+      user={options.user === undefined ? user : options.user} />
   );
 
   beforeEach(() => {
@@ -84,8 +83,7 @@ describe('DeploymentCredential', function() {
               wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
             sendAnalytics={sendAnalytics}
             updateCloudCredential={sinon.stub()}
-            user={user}
-            validateForm={sinon.stub()} />
+            user={user} />
         </ExpandingRow>
       </div>);
     assert.compareJSX(wrapper, expected);
