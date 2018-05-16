@@ -96,6 +96,10 @@ describe('State', () => {
     state: { root: 'new', store: 'u/spinach/django/xenial/9' },
     error: null
   }, {
+    path: 'http://abc.com:123/new/apache2',
+    state: { root: 'new', store: 'apache2' },
+    error: null
+  }, {
     path: 'http://abc.com:123/about',
     state: { root: 'about' },
     error: null
@@ -978,12 +982,6 @@ describe('State', () => {
         state: {},
         error: 'cannot parse the User path: invalid user path.'
       }, {
-        path: 'http://abc.com:123/about/wat',
-        state: {
-          root: 'about'
-        },
-        error: 'invalid root path.'
-      }, {
         path: 'http://abc.com:123/no-such/i',
         state: {},
         error: 'cannot parse the GUI path: invalid GUI path.'
@@ -1003,33 +1001,6 @@ describe('State', () => {
           {error: test.error, state: test.state},
           `${test.path} did not properly generate the state object: ` +
           JSON.stringify(test.state));
-      });
-    });
-
-    it('works with new as the root, but not other ROOT_RESERVED', () => {
-      const ROOT_RESERVED = [
-        'about', 'account', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new'];
-
-      const state = new window.jujugui.State({
-        baseURL: 'http://abc.com:123',
-        seriesList: ['precise', 'trusty', 'xenial']
-      });
-
-      const tests = ROOT_RESERVED.map(root => {
-        return {
-          path: `http://abc.com:123/${root}/i/machines`,
-          state: {
-            root: root
-          },
-          error: root === 'new' ? null : 'invalid root path.'
-        };
-      });
-
-      tests.forEach(test => {
-        assert.deepEqual(
-          state.generateState(test.path),
-          {error: test.error, state: test.state}
-        );
       });
     });
 
