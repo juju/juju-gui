@@ -13,8 +13,7 @@ describe('CardForm', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <CardForm
       acl={options.acl || acl}
-      createCardElement={options.createCardElement || sinon.stub()}
-      validateForm={options.validateForm || sinon.stub()} />
+      createCardElement={options.createCardElement || sinon.stub()} />
   );
 
   beforeEach(() => {
@@ -53,9 +52,13 @@ describe('CardForm', function() {
   });
 
   it('can validate the form', function() {
-    const validateForm = sinon.stub().returns(false);
-    const wrapper = renderComponent({ validateForm });
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
+    instance.refs = {
+      name: {
+        validate: sinon.stub().returns(false)
+      }
+    };
     assert.isFalse(instance.validate());
   });
 

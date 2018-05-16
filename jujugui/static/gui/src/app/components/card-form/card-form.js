@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericInput = require('../generic-input/generic-input');
+const initUtils = require('../../init/utils');
 
 class CardForm extends React.Component {
   componentDidMount() {
@@ -26,7 +27,7 @@ class CardForm extends React.Component {
     const fields = [
       'name'
     ];
-    return this.props.validateForm(fields, this.refs);
+    return initUtils.validateForm(fields, this.refs);
   }
 
   /**
@@ -64,8 +65,7 @@ class CardForm extends React.Component {
 
 CardForm.propTypes = {
   acl: PropTypes.object.isRequired,
-  createCardElement: PropTypes.func.isRequired,
-  validateForm: PropTypes.func.isRequired
+  createCardElement: PropTypes.func.isRequired
 };
 
 module.exports = CardForm;
