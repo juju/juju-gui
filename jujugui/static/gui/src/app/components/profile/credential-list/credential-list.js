@@ -413,8 +413,7 @@ ProfileCredentialList.propTypes = {
   initUtils: shapeup.shape({
     generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
-    validateForm: PropTypes.func.isRequired
+    reshape: shapeup.reshapeFunc
   }).isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
