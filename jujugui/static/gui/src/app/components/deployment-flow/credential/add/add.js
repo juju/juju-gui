@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../../../svg-icon/svg-icon');
+const initUtils = require('../../../../init/utils');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
 const ButtonRow = require('../../../button-row/button-row');
@@ -66,7 +67,7 @@ class DeploymentCredentialAdd extends React.Component {
     if (!props.credentialName) {
       fields.push('credentialName');
     }
-    var valid = props.validateForm(fields, this.refs);
+    var valid = initUtils.validateForm(fields, this.refs);
     if (!valid) {
       // If there are any form validation errors then stop adding the
       // credentials.
@@ -317,8 +318,7 @@ DeploymentCredentialAdd.propTypes = {
   onCredentialUpdated: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   updateCloudCredential: PropTypes.func.isRequired,
-  user: PropTypes.string,
-  validateForm: PropTypes.func.isRequired
+  user: PropTypes.string
 };
 
 module.exports = DeploymentCredentialAdd;
