@@ -15,6 +15,17 @@ class DeploymentPlanTable extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.props.applications.forEach(application => {
+      const app = application.getAttrs();
+      const charm = this.props.charms.getById(app.charm);
+      if (!charm.hasMetrics()) {
+        return;
+      }
+      this._getPlans(charm);
+    });
+  }
+
   componentWillUnmount() {
     this.xhrs.forEach(xhr => {
       xhr.abort();
@@ -64,7 +75,6 @@ class DeploymentPlanTable extends React.Component {
       if (!charm.hasMetrics()) {
         return;
       }
-      this._getPlans(charm);
       const plan = this.state.plans[app.charm] || {};
       const metered = Object.keys(plan.metrics || {}).join(', ');
       rows.push({
