@@ -158,116 +158,126 @@ describe('DeploymentFlow', function() {
           loggedIn={true}
           sendAnalytics={wrapper.find('DeploymentPanel').prop('sendAnalytics')}
           title="Pavlova">
-          <DeploymentSection
-            completed={true}
-            instance="deployment-model-name"
-            showCheck={true}
-            title="Set your model name">
-            <DeploymentModelName
-              acl={acl}
-              ddEntity={null}
-              focusName={true}
-              modelName="Pavlova"
-              setModelName={sinon.stub()} />
-          </DeploymentSection>
-          <DeploymentSection
-            buttons={undefined}
-            completed={false}
-            disabled={false}
-            instance="deployment-cloud"
-            showCheck={true}
-            title="Choose cloud to deploy to">
-            <DeploymentCloud
-              acl={acl}
-              addNotification={sinon.stub()}
-              cloud={null}
-              controllerIsReady={sinon.stub()}
-              getCloudProviderDetails={sinon.stub()}
-              listClouds={sinon.stub()}
-              setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
-              setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')} />
-          </DeploymentSection>
-          <DeploymentSection
-            completed={false}
-            disabled={true}
-            instance="deployment-ssh-key"
-            showCheck={true}
-            title={<span>Add public SSH keys <em>(optional)</em></span>}>
-            <DeploymentSSHKey
-              addNotification={sinon.stub()}
-              cloud={null}
-              getGithubSSHKeys={sinon.stub()}
-              setLaunchpadUsernames={
-                wrapper.find('DeploymentSSHKey').prop('setLaunchpadUsernames')}
-              setSSHKeys={wrapper.find('DeploymentSSHKey').prop('setSSHKeys')}
-              username={undefined}
-              WebHandler={sinon.stub()} />
-          </DeploymentSection>
-          {undefined}
-          <DeploymentSection
-            completed={false}
-            disabled={true}
-            instance="deployment-machines"
-            showCheck={false}
-            title="Machines to be provisioned">
-            <DeploymentMachines
-              acl={acl}
-              cloud={null}
-              formatConstraints={sinon.stub()}
-              generateMachineDetails={sinon.stub()}
-              machines={{machine: 'machine1'}} />
-          </DeploymentSection>
-          <div className="deployment-services">
-            <AccordionSection
-              startOpen={false}
-              title="Model changes">
-              <DeploymentServices
+          <React.Fragment>
+            <DeploymentSection
+              completed={true}
+              instance="deployment-model-name"
+              showCheck={true}
+              title="Set your model name">
+              <DeploymentModelName
+                acl={acl}
+                ddEntity={null}
+                focusName={true}
+                modelName="Pavlova"
+                setModelName={sinon.stub()} />
+            </DeploymentSection>
+            <DeploymentSection
+              buttons={undefined}
+              completed={false}
+              disabled={false}
+              instance="deployment-cloud"
+              showCheck={true}
+              title="Choose cloud to deploy to">
+              <DeploymentCloud
                 acl={acl}
                 addNotification={sinon.stub()}
-                changesFilterByParent={sinon.stub()}
-                charmsGetById={sinon.stub()}
-                generateAllChangeDescriptions={sinon.stub()}
-                generateChangeDescription={sinon.stub()}
-                getCurrentChangeSet={sinon.stub()}
-                getServiceByName={sinon.stub()}
-                listPlansForCharm={sinon.stub()}
-                parseTermId={wrapper.find('DeploymentServices').prop('parseTermId')}
-                showTerms={sinon.stub()}
-                sortDescriptionsByApplication={sinon.stub()}
-                withPlans={true} />
-            </AccordionSection>
-          </div>
-          <DeploymentSection
-            completed={false}
-            disabled={true}
-            instance="deployment-budget"
-            showCheck={true}
-            title="Confirm budget">
-            <DeploymentBudget
-              acl={acl}
-              addNotification={sinon.stub()}
-              listBudgets={sinon.stub()}
-              setBudget={wrapper.find('DeploymentBudget').prop('setBudget')}
-              user="dalek" />
-          </DeploymentSection>
-          {null}
-          <div className="twelve-col">
-            <div className="inner-wrapper deployment-flow__deploy">
-              {undefined}
-              <div className="deployment-flow__deploy-action">
-                <GenericButton
-                  action={wrapper.find('GenericButton').prop('action')}
-                  disabled={true}
-                  type="positive">
-                  Deploy
-                </GenericButton>
+                cloud={null}
+                controllerIsReady={sinon.stub()}
+                getCloudProviderDetails={sinon.stub()}
+                listClouds={sinon.stub()}
+                setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
+                setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')} />
+            </DeploymentSection>
+            <DeploymentSection
+              completed={false}
+              disabled={true}
+              instance="deployment-ssh-key"
+              showCheck={true}
+              title={<span>Add public SSH keys <em>(optional)</em></span>}>
+              <DeploymentSSHKey
+                addNotification={sinon.stub()}
+                cloud={null}
+                getGithubSSHKeys={sinon.stub()}
+                setLaunchpadUsernames={
+                  wrapper.find('DeploymentSSHKey').prop('setLaunchpadUsernames')}
+                setSSHKeys={wrapper.find('DeploymentSSHKey').prop('setSSHKeys')}
+                username={undefined}
+                WebHandler={sinon.stub()} />
+            </DeploymentSection>
+            {undefined}
+            <DeploymentSection
+              completed={false}
+              disabled={true}
+              instance="deployment-machines"
+              showCheck={false}
+              title="Machines to be provisioned">
+              <DeploymentMachines
+                acl={acl}
+                cloud={null}
+                formatConstraints={sinon.stub()}
+                generateMachineDetails={sinon.stub()}
+                machines={{machine: 'machine1'}} />
+            </DeploymentSection>
+            <div className="deployment-services">
+              <AccordionSection
+                startOpen={false}
+                title="Model changes">
+                <DeploymentServices
+                  acl={acl}
+                  addNotification={sinon.stub()}
+                  changesFilterByParent={sinon.stub()}
+                  charmsGetById={sinon.stub()}
+                  generateAllChangeDescriptions={sinon.stub()}
+                  generateChangeDescription={sinon.stub()}
+                  getCurrentChangeSet={sinon.stub()}
+                  getServiceByName={sinon.stub()}
+                  listPlansForCharm={sinon.stub()}
+                  parseTermId={wrapper.find('DeploymentServices').prop('parseTermId')}
+                  showTerms={sinon.stub()}
+                  sortDescriptionsByApplication={sinon.stub()}
+                  withPlans={true} />
+              </AccordionSection>
+            </div>
+            <DeploymentSection
+              completed={false}
+              disabled={true}
+              instance="deployment-budget"
+              showCheck={true}
+              title="Confirm budget">
+              <DeploymentBudget
+                acl={acl}
+                addNotification={sinon.stub()}
+                listBudgets={sinon.stub()}
+                setBudget={wrapper.find('DeploymentBudget').prop('setBudget')}
+                user="dalek" />
+            </DeploymentSection>
+            {null}
+            <div className="twelve-col">
+              <div className="inner-wrapper deployment-flow__deploy">
+                {undefined}
+                <div className="deployment-flow__deploy-action">
+                  <GenericButton
+                    action={wrapper.find('GenericButton').prop('action')}
+                    disabled={true}
+                    type="positive">
+                    Deploy
+                  </GenericButton>
+                </div>
               </div>
             </div>
-          </div>
-          {null}
+            {null}
+          </React.Fragment>
         </DeploymentPanel>
       </div>);
     assert.compareJSX(wrapper, expected);
+  });
+
+  it('shows a spinnner when loading the direct deploy entity', () => {
+    const wrapper = createDeploymentFlow({
+      ddData: { id: 'cs:bundle/kubernetes-core-8' },
+      getEntity: sinon.stub()
+    });
+    assert.equal(wrapper.find('Spinner').length, 1);
   });
 
   it('renders direct deploy when ddData is set', () => {
