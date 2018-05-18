@@ -1174,14 +1174,14 @@ class DeploymentFlow extends React.Component {
   }
 
   render() {
-    return (
-      <div className="deployment-flow">
-        <DeploymentPanel
-          changeState={this.props.changeState}
-          isDirectDeploy={this.state.isDirectDeploy}
-          loggedIn={this.props.isLoggedIn()}
-          sendAnalytics={this.sendAnalytics.bind(this)}
-          title={this.props.modelName}>
+    let content;
+    // If this is the direct deploy then don't try and render any components until
+    // after the entity has loaded.
+    if (this.state.isDirectDeploy && !this.state.ddEntity) {
+      return (<Spinner />);
+    } else {
+      content = (
+        <React.Fragment>
           {this._generateDirectDeploy()}
           {this._generateModelNameSection()}
           {this._generatePricingSection()}
@@ -1195,6 +1195,17 @@ class DeploymentFlow extends React.Component {
           {this._generatePaymentSection()}
           {this._generateDeploySection()}
           {this._generateLogin()}
+        </React.Fragment>);
+    }
+    return (
+      <div className="deployment-flow">
+        <DeploymentPanel
+          changeState={this.props.changeState}
+          isDirectDeploy={this.state.isDirectDeploy}
+          loggedIn={this.props.isLoggedIn()}
+          sendAnalytics={this.sendAnalytics.bind(this)}
+          title={this.props.modelName}>
+          {content}
         </DeploymentPanel>
       </div>
     );
