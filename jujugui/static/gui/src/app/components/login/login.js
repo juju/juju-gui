@@ -82,6 +82,9 @@ class Login extends React.Component {
   }
 
   _generateUSSOLink() {
+    if (!this.props.bakeryEnabled) {
+      return '';
+    }
     return (
       <USSOLoginLink
         addNotification={this.props.addNotification}
@@ -150,6 +153,7 @@ class Login extends React.Component {
 
 Login.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  bakeryEnabled: PropTypes.bool.isRequired,
   controllerIsConnected: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
   gisf: PropTypes.bool.isRequired,

@@ -15,6 +15,7 @@ describe('LoginComponent', function() {
     const wrapper = enzyme.shallow(
       <Login
         addNotification={options.addNotification || sinon.stub()}
+        bakeryEnabled={!!options.bakeryEnabled}
         controllerIsConnected={options.controllerIsConnected || sinon.stub()}
         errorMessage={options.errorMessage}
         gisf={options.gisf === undefined ? false : options.gisf}
@@ -44,7 +45,7 @@ describe('LoginComponent', function() {
   });
 
   it('renders', function() {
-    const wrapper = renderComponent();
+    const wrapper = renderComponent({bakeryEnabled: true});
     var expected = (
       <div className="login">
         <div className="login__logo">
@@ -87,6 +88,63 @@ describe('LoginComponent', function() {
               displayType="button"
               loginToController={sinon.stub()}
               ref="USSOLoginLink" />
+          </form>
+        </div>
+        <div className="login__message">
+          <p>
+            Find your username and password with<br />
+            <code>juju show-controller --show-password</code>
+          </p>
+          <div className="login__message-link">
+            <a href="https://jujucharms.com" target="_blank">
+              jujucharms.com
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+    assert.compareJSX(wrapper, expected);
+  });
+
+  it('renders without the USSO login button', function() {
+    const wrapper = renderComponent({bakeryEnabled: false});
+    var expected = (
+      <div className="login">
+        <div className="login__logo">
+          <SvgIcon height="30" name="juju-logo" width="75" />
+        </div>
+        <div className="login__full-form">
+          <div className="login__env-name">
+            Login
+          </div>
+          {undefined}
+          <form
+            className="login__form"
+            onSubmit={wrapper.find('form').prop('onSubmit')}
+            ref="form">
+            <label
+              className="login__label">
+              Username
+              <input
+                className="login__input"
+                name="username"
+                ref="username"
+                type="text" />
+            </label>
+            <label
+              className="login__label">
+              Password
+              <input
+                className="login__input"
+                name="password"
+                ref="password"
+                type="password" />
+            </label>
+            <GenericButton
+              submit={true}
+              type="positive">
+              Login
+            </GenericButton>
           </form>
         </div>
         <div className="login__message">
