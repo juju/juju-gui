@@ -291,14 +291,6 @@ utils.destroyModel = (
 };
 
 /**
-  Fire the clearState event.
-  @param {Object} topo The topology object.
-*/
-utils.clearState = topo => {
-  document.dispatchEvent(new Event('topo.clearState'));
-};
-
-/**
   Calculate the number of units per status.
   @param {Array} units An array of units.
   @returns {Object} The unit statuses.
