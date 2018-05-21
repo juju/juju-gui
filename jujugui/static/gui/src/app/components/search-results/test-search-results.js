@@ -11,7 +11,7 @@ const SearchResultsSelectFilter = require('./select-filter/select-filter');
 const SearchResultsTypeFilter = require('./type-filter/type-filter');
 
 describe('SearchResults', function() {
-  let acl, addToModel, charmstoreSearch, generatePath, getName,
+  let acl, addToModel, charmstoreSearch, generatePath,
       makeEntityModel, results;
 
   const renderComponent = (options = {}) => enzyme.shallow(
@@ -21,7 +21,6 @@ describe('SearchResults', function() {
       changeState={options.changeState || sinon.stub()}
       charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
       generatePath={options.generatePath || generatePath}
-      getName={options.getName || getName}
       makeEntityModel={options.makeEntityModel || makeEntityModel}
       query={options.query || 'spinach'}
       series={options.series}
@@ -87,9 +86,6 @@ describe('SearchResults', function() {
     }];
     charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
     makeEntityModel = sinon.stub().returnsArg(0);
-    getName = val => {
-      return val;
-    };
   });
 
   describe('functional tests', function() {
@@ -339,16 +335,13 @@ describe('SearchResults', function() {
     });
 
     it('collapses identical charms with different series', function() {
-      var getName = val => {
-        return val.split('/').pop();
-      };
       var entities = [
         {id: 'foo', name: 'foo', owner: 'bar', type: 'charm', series: 'trusty'},
         {id: 'foo', name: 'foo', owner: 'bar', type: 'charm',
           series: 'precise'},
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
-      var actual = searchResults._collapseSeries(entities, getName),
+      var actual = searchResults._collapseSeries(entities),
           first = entities[0],
           last = entities[2];
       var expected = [{
@@ -372,9 +365,6 @@ describe('SearchResults', function() {
     });
 
     it('can collapse charms when the id contains "cs:"', () => {
-      const getName = val => {
-        return val.split('/').pop();
-      };
       const entities = [
         {id: 'cs:foo', name: 'foo', owner: 'bar', type: 'charm',
           series: 'trusty'},
@@ -382,12 +372,11 @@ describe('SearchResults', function() {
           series: 'precise'},
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
-      const actual = searchResults._collapseSeries(entities, getName);
+      const actual = searchResults._collapseSeries(entities);
       assert.equal(actual.length, 2);
     });
 
     it('aggregates downloads when collapsing charms', function() {
-      var getName = sinon.stub();
       var entities = [
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's1',
           downloads: 1},
@@ -396,15 +385,12 @@ describe('SearchResults', function() {
         {name: 'c1', id: 'c1', owner: 'o2', type: 'c', series: 's3',
           downloads: 3}
       ];
-      var actual = searchResults._collapseSeries(entities, getName);
+      var actual = searchResults._collapseSeries(entities);
       assert.equal(actual[0].downloads, 6, 'downloads not aggregated');
       assert.equal(actual[1].downloads, 3, 'downloads improperly aggregated');
     });
 
     it('maintains sort order when collapsing charms', function() {
-      var getName = val => {
-        return val;
-      };
       var entities = [
         {id: 'foo1', name: 'foo1', owner: 'bar', type: 'c', series: 's1',
           downloads: 6},
@@ -423,7 +409,7 @@ describe('SearchResults', function() {
         {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's5',
           downloads: 3}
       ];
-      var actual = searchResults._collapseSeries(entities, getName);
+      var actual = searchResults._collapseSeries(entities);
       assert.equal(actual[0].name, 'foo1',
         'foo1 did not maintain sort position');
       assert.equal(actual[0].downloads, 10,
@@ -439,13 +425,12 @@ describe('SearchResults', function() {
     });
 
     it('sorts the series within collapsed results', function() {
-      var getName = sinon.stub();
       var entities = [
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'precise'},
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
       ];
-      var actual = searchResults._collapseSeries(entities, getName),
+      var actual = searchResults._collapseSeries(entities),
           actualSeries = actual[0].series,
           seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
@@ -455,13 +440,12 @@ describe('SearchResults', function() {
     });
 
     it('de-dupes the series within collapsed results', function() {
-      var getName = sinon.stub();
       var entities = [
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'},
-        {name: 'c1', id: 'cs', owner: 'o1', type: 'c', series: 'precise'},
+        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'precise'},
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
       ];
-      var actual = searchResults._collapseSeries(entities, getName),
+      var actual = searchResults._collapseSeries(entities),
           actualSeries = actual[0].series,
           seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {

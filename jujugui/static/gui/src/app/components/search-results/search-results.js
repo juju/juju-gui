@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericButton = require('../generic-button/generic-button');
+const initUtils = require('../../init/utils');
 const SearchResultsItem = require('./item/item');
 const SearchResultsSelectFilter = require('./select-filter/select-filter');
 const SearchResultsTypeFilter = require('./type-filter/type-filter');
@@ -55,14 +56,13 @@ class SearchResults extends React.Component {
 
     @method _collapseSeries
     @param {Array} entities The entities in their uncollapsed state.
-    @param {Function} getName The util for getting names from the charm ids.
     @returns {Array} The entities with collapsed series.
    */
-  _collapseSeries(entities, getName) {
-    function entityKey(entity, getName) {
+  _collapseSeries(entities) {
+    function entityKey(entity) {
       return [
         // Some ids include "cs:", so normalise the ids for comparison.
-        getName(entity.id.replace('cs:', '')),
+        initUtils.getName(entity.id.replace('cs:', '')),
         entity.owner,
         entity.type,
         entity.promulgated
@@ -73,7 +73,7 @@ class SearchResults extends React.Component {
         orderedKeys = [];
     for (var i = 0, l = entities.length; i < l; i++) {
       var entity = entities[i],
-          key = entityKey(entity, getName),
+          key = entityKey(entity),
           series = entity.series,
           storeId = entity.storeId || '',
           value = {name: series, storeId: storeId};
@@ -159,7 +159,7 @@ class SearchResults extends React.Component {
       return model.toEntity();
     }, this);
     var activeComponent;
-    results = this._collapseSeries(results, this.props.getName);
+    results = this._collapseSeries(results);
     // Split the results into promulgated and normal.
     var promulgatedResults = [],
         communityResults = [];
@@ -564,7 +564,6 @@ SearchResults.propTypes = {
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
-  getName: PropTypes.func.isRequired,
   makeEntityModel: PropTypes.func.isRequired,
   owner: PropTypes.string,
   provides: PropTypes.string,
