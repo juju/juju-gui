@@ -83,7 +83,7 @@ class Login extends React.Component {
 
   _generateUSSOLink() {
     if (!this.props.bakeryEnabled) {
-      return '';
+      return null;
     }
     return (
       <USSOLoginLink
