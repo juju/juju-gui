@@ -41,8 +41,7 @@ describe('Charmbrowser', function() {
       setPageTitle={options.setPageTitle || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
       staticURL={options.staticURL}
-      urllib={options.urllib || sinon.stub()}
-      utils={options.utils || {}} />
+      urllib={options.urllib || sinon.stub()} />
   );
 
   beforeEach(function() {
@@ -66,7 +65,6 @@ describe('Charmbrowser', function() {
     const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
     const makeEntityModel = sinon.spy();
-    const utils = {getName: sinon.stub()};
     const wrapper = renderComponent({
       addNotification,
       addToModel,
@@ -77,8 +75,7 @@ describe('Charmbrowser', function() {
       importBundleYAML,
       makeEntityModel,
       series,
-      setPageTitle,
-      utils
+      setPageTitle
     });
     const searchResults = wrapper.find('SearchResults');
     const expected = (
@@ -90,7 +87,6 @@ describe('Charmbrowser', function() {
           changeState={searchResults.prop('changeState')}
           charmstoreSearch={charmstoreSearch}
           generatePath={searchResults.prop('generatePath')}
-          getName={utils.getName}
           makeEntityModel={makeEntityModel}
           owner={undefined}
           provides={undefined}
@@ -109,7 +105,6 @@ describe('Charmbrowser', function() {
   it('displays the store when the app state calls for it', function() {
     const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
-    const utils = {getName: sinon.stub()};
     const makeEntityModel = sinon.spy();
     const seriesList = {};
     const wrapper = renderComponent({
@@ -118,8 +113,7 @@ describe('Charmbrowser', function() {
       makeEntityModel,
       seriesList,
       setPageTitle,
-      staticURL: 'surl',
-      utils
+      staticURL: 'surl'
     });
     const expected = (
       <div className="charmbrowser"
@@ -155,7 +149,6 @@ describe('Charmbrowser', function() {
     const listPlansForCharm = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
-    const utils = {};
     const setPageTitle = sinon.spy();
     const urllib = sinon.stub();
     const wrapper = renderComponent({
@@ -178,8 +171,7 @@ describe('Charmbrowser', function() {
       setPageTitle,
       showTerms,
       staticURL: 'http://example.com',
-      urllib,
-      utils
+      urllib
     });
     const entityDetails = wrapper.find('EntityDetails');
     const expected = (

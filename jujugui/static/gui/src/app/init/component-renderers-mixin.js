@@ -663,8 +663,7 @@ Browser: ${navigator.userAgent}`
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         staticURL={this.applicationConfig.staticURL || ''}
-        urllib={window.jujulib.URL}
-        utils={initUtils} />,
+        urllib={window.jujulib.URL} />,
       document.getElementById('charmbrowser-container'));
     next();
   }

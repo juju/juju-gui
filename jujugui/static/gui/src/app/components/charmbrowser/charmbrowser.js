@@ -120,7 +120,6 @@ class Charmbrowser extends React.Component {
   */
   _generateContent() {
     let activeChild;
-    const utils = this.props.utils;
     const appState = this.props.appState;
     const currentState = appState.current;
     const changeState = appState.changeState.bind(appState);
@@ -146,7 +145,6 @@ class Charmbrowser extends React.Component {
             changeState={changeState}
             charmstoreSearch={this.props.charmstoreSearch}
             generatePath={appState.generatePath.bind(appState)}
-            getName={utils.getName}
             makeEntityModel={this.props.makeEntityModel}
             owner={search.owner}
             provides={search.provides}
@@ -246,8 +244,7 @@ Charmbrowser.propTypes = {
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string,
-  urllib: PropTypes.func.isRequired,
-  utils: PropTypes.object.isRequired
+  urllib: PropTypes.func.isRequired
 };
 
 module.exports = Charmbrowser;
