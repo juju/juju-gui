@@ -292,7 +292,6 @@ ServiceOverview.propTypes = {
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
-  clearState: PropTypes.func.isRequired,
   destroyService: PropTypes.func.isRequired,
   getUnitStatusCounts: PropTypes.func.isRequired,
   modelUUID: PropTypes.string.isRequired,
