@@ -44,7 +44,6 @@ describe('Inspector', function() {
       getMacaroon={options.getMacaroon || sinon.stub()}
       getServiceById={options.getServiceById || sinon.stub()}
       getServiceByName={options.getServiceByName || sinon.stub()}
-      getYAMLConfig={options.getYAMLConfig || sinon.stub()}
       modelUUID={options.modelUUID || 'abc123'}
       providerType={options.providerType}
       relatableApplications={options.relatableApplications || []}
@@ -171,7 +170,6 @@ describe('Inspector', function() {
           changeState={wrapper.find('Configuration').prop('changeState')}
           charm={charm}
           getServiceByName={sinon.stub()}
-          getYAMLConfig={sinon.stub()}
           service={service}
           serviceRelations={['relations']}
           setConfig={sinon.stub()}

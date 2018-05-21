@@ -841,7 +841,6 @@ Browser: ${navigator.userAgent}`
           getCharm={model.get_charm.bind(model)}
           getServiceById={db.services.getById.bind(db.services)}
           getServiceByName={db.services.getServiceByName.bind(db.services)}
-          getYAMLConfig={initUtils.getYAMLConfig.bind(this)}
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}
           relatableApplications={relatableApplications}
