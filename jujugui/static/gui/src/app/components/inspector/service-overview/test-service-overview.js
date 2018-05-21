@@ -15,7 +15,6 @@ describe('ServiceOverview', function() {
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
       charm={options.charm || charm}
-      clearState={options.clearState || sinon.stub()}
       destroyService={options.destroyService || sinon.stub()}
       getUnitStatusCounts={options.getUnitStatusCounts || getUnitStatusCounts()}
       modelUUID={options.modelUUID || 'abc123'}

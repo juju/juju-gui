@@ -30,7 +30,6 @@ describe('Inspector', function() {
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       charm={options.charm || charm}
-      clearState={options.clearState || sinon.stub()}
       createMachinesPlaceUnits={options.createMachinesPlaceUnits || sinon.stub()}
       createRelation={sinon.stub()}
       destroyRelations={options.destroyRelations || sinon.stub()}
@@ -121,7 +120,6 @@ describe('Inspector', function() {
             addNotification={sinon.stub()}
             changeState={wrapper.find('ServiceOverview').prop('changeState')}
             charm={charm}
-            clearState={sinon.stub()}
             destroyService={sinon.stub()}
             getUnitStatusCounts={sinon.stub()}
             modelUUID="abc123"

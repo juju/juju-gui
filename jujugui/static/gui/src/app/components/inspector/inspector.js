@@ -76,7 +76,6 @@ class Inspector extends React.Component {
             addNotification={nextProps.addNotification}
             changeState={changeState}
             charm={nextProps.charm}
-            clearState={nextProps.clearState}
             destroyService={nextProps.destroyService}
             getUnitStatusCounts={nextProps.getUnitStatusCounts}
             modelUUID={nextProps.modelUUID}
@@ -386,7 +385,6 @@ Inspector.propTypes = {
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
-  clearState: PropTypes.func.isRequired,
   createMachinesPlaceUnits: PropTypes.func.isRequired,
   createRelation: PropTypes.func.isRequired,
   destroyRelations: PropTypes.func.isRequired,

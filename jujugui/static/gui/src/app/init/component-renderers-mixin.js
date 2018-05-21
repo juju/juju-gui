@@ -825,7 +825,6 @@ Browser: ${navigator.userAgent}`
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          clearState={initUtils.clearState.bind(this, topo)}
           createMachinesPlaceUnits={initUtils.createMachinesPlaceUnits.bind(
             this, db, model, service)}
           createRelation={relationUtils.createRelation.bind(this, db, model)}
