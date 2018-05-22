@@ -68,7 +68,6 @@ class CredentialAddEdit extends React.Component {
         addNotification={this.props.addNotification}
         cloud={this.state.cloud}
         controllerIsReady={this.props.controllerIsReady}
-        getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         key="deployment-cloud"
         listClouds={this.props.controllerAPI.listClouds}
         setCloud={this._setCloud.bind(this)} />);
@@ -91,7 +90,6 @@ class CredentialAddEdit extends React.Component {
         credentialName={
           credential && (credential.name || credential.displayName) || null}
         credentials={this.props.credentials}
-        getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         key="deployment-credential-add"
         onCancel={this.props.onCancel}
         onCredentialUpdated={this.props.onCredentialUpdated}
@@ -161,7 +159,6 @@ CredentialAddEdit.propTypes = {
   credential: PropTypes.object,
   credentials: PropTypes.arrayOf(PropTypes.string.isRequired),
   initUtils: shapeup.shape({
-    getCloudProviderDetails: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).isRequired,
   onCancel: PropTypes.func,
