@@ -411,7 +411,6 @@ ProfileCredentialList.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   initUtils: shapeup.shape({
-    generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).isRequired,
