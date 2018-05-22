@@ -15,7 +15,6 @@ describe('AddedServicesListItem', function() {
     <AddedServicesListItem
       changeState={options.changeState || sinon.stub()}
       focusService={options.focusService || sinon.stub()}
-      getUnitStatusCounts={options.getUnitStatusCounts || getUnitStatusCounts()}
       hoverService={options.hoverService || sinon.stub()}
       panToService={options.panToService || sinon.stub()}
       service={options.service || mockService}
@@ -25,15 +24,6 @@ describe('AddedServicesListItem', function() {
   beforeEach(function() {
     mockService = jsTestUtils.makeModel();
   });
-
-  function getUnitStatusCounts(error=0, pending=0, uncommitted=0, started=0) {
-    return sinon.stub().returns({
-      error: {size: error, priority: 0},
-      pending: {size: pending, priority: 1},
-      uncommitted: {size: uncommitted, priority: 3},
-      started: {size: started, priority: 2}
-    });
-  }
 
   it('renders the icon, count, visibility toggles and display name', () => {
     mockService.set('highlight', false);
@@ -54,7 +44,9 @@ describe('AddedServicesListItem', function() {
           demo
         </span>
         <span className="inspector-view__status-block">
-          {undefined}
+          <span className="inspector-view__status--pending">
+            1
+          </span>
         </span>
       </li>);
     assert.compareJSX(wrapper, expected);
@@ -62,17 +54,13 @@ describe('AddedServicesListItem', function() {
 
   it('only shows the status icon for pending, uncommitted, error', function() {
     var statuses = [{
-      name: 'started', icon: false,
-      statusCounts: getUnitStatusCounts(0, 0, 0, 1)
+      name: 'started', icon: false
     }, {
-      name: 'uncommitted', icon: true, statusCounts:
-      getUnitStatusCounts(0, 0, 1)
+      name: 'uncommitted', icon: true
     }, {
-      name: 'pending', icon: true,
-      statusCounts: getUnitStatusCounts(0, 1)
+      name: 'pending', icon: true
     }, {
-      name: 'error', icon: true,
-      statusCounts: getUnitStatusCounts(1)
+      name: 'error', icon: true
     }];
 
     // Generate what the icon should look like depending on the value in
@@ -98,10 +86,7 @@ describe('AddedServicesListItem', function() {
         get: function() {
           return false;
         }};
-      const wrapper = renderComponent({
-        getUnitStatusCounts: status.statusCounts,
-        service
-      });
+      const wrapper = renderComponent({ service });
       const expected = (
         <span className="inspector-view__status-block">
           {statusIcon(status)}
@@ -144,10 +129,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({
-      getUnitStatusCounts: getUnitStatusCounts(1, 1),
-      service
-    });
+    const wrapper = renderComponent({ service });
     assert.equal(wrapper.find('.inspector-view__status--error').length, 1);
   });
 
@@ -164,10 +146,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({
-      getUnitStatusCounts: getUnitStatusCounts(0, 1, 1),
-      service
-    });
+    const wrapper = renderComponent({ service });
     assert.equal(wrapper.find('.inspector-view__status--pending').length, 1);
   });
 
