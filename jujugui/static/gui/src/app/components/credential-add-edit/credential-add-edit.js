@@ -91,7 +91,6 @@ class CredentialAddEdit extends React.Component {
         credentialName={
           credential && (credential.name || credential.displayName) || null}
         credentials={this.props.credentials}
-        generateCloudCredentialName={this.props.initUtils.generateCloudCredentialName}
         getCloudProviderDetails={this.props.initUtils.getCloudProviderDetails}
         key="deployment-credential-add"
         onCancel={this.props.onCancel}
@@ -162,7 +161,6 @@ CredentialAddEdit.propTypes = {
   credential: PropTypes.object,
   credentials: PropTypes.arrayOf(PropTypes.string.isRequired),
   initUtils: shapeup.shape({
-    generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).isRequired,

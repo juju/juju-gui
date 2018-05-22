@@ -835,7 +835,6 @@ class DeploymentFlow extends React.Component {
           controllerIsReady={this.props.controllerIsReady}
           credential={this.state.credential}
           editable={!this.props.modelCommitted}
-          generateCloudCredentialName={this.props.generateCloudCredentialName}
           getCloudCredentialNames={this.props.getCloudCredentialNames}
           getCloudCredentials={this.props.getCloudCredentials}
           getCloudProviderDetails={this.props.getCloudProviderDetails}
@@ -1236,7 +1235,6 @@ DeploymentFlow.propTypes = {
   formatConstraints: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,
   generateChangeDescription: PropTypes.func.isRequired,
-  generateCloudCredentialName: PropTypes.func.isRequired,
   generateMachineDetails: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getAgreementsByTerms: PropTypes.func.isRequired,

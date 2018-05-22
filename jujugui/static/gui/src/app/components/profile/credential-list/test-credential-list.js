@@ -59,7 +59,6 @@ describe('ProfileCredentialList', () => {
       updateCloudCredential: sinon.stub()
     };
     initUtils = {
-      generateCloudCredentialName: sinon.stub(),
       getCloudProviderDetails: sinon.stub(),
       reshape: sinon.stub()
     };

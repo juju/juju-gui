@@ -36,7 +36,6 @@ describe('CredentialAddEdit', () => {
       updateCloudCredential: sinon.stub()
     };
     initUtils = {
-      generateCloudCredentialName: sinon.stub(),
       getCloudProviderDetails: getCloudProviderDetails,
       reshape: shapeup.reshapeFunc
     };
@@ -114,7 +113,6 @@ describe('CredentialAddEdit', () => {
             cloud={{title: 'aws'}}
             credentialName={null}
             credentials={['test1', 'test2']}
-            generateCloudCredentialName={sinon.stub()}
             getCloudProviderDetails={sinon.stub()}
             key="deployment-credential-add"
             onCancel={sinon.stub()}
@@ -142,7 +140,6 @@ describe('CredentialAddEdit', () => {
           cloud={{cloudType: 'aws'}}
           credentialName="cred-name"
           credentials={['test1', 'test2']}
-          generateCloudCredentialName={sinon.stub()}
           getCloudProviderDetails={sinon.stub()}
           key="deployment-credential-add"
           onCancel={sinon.stub()}

@@ -125,7 +125,6 @@ describe('DeploymentCredentialAdd', function() {
       cloud={options.cloud || null}
       credentialName={options.credentialName || undefined}
       credentials={options.credentials || []}
-      generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
       getCloudProviderDetails={getCloudProviderDetails}
       onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
       onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
@@ -469,8 +468,7 @@ describe('DeploymentCredentialAdd', function() {
     const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
       onCredentialUpdated,
-      updateCloudCredential,
-      generateCloudCredentialName: sinon.stub().returns('new@test')
+      updateCloudCredential
     });
     const instance = wrapper.instance();
     instance.refs = refs;
@@ -480,7 +478,7 @@ describe('DeploymentCredentialAdd', function() {
       ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
-    assert.equal(args[0], 'new@test');
+    assert.equal(args[0], 'google_user-admin_new@test');
     assert.equal(args[1], 'oauth2');
     assert.deepEqual(args[2], {
       'client-id': 'client id',
@@ -499,8 +497,7 @@ describe('DeploymentCredentialAdd', function() {
     const wrapper = renderComponent({
       cloud: {name: 'google', cloudType: 'gce'},
       onCredentialUpdated,
-      updateCloudCredential,
-      generateCloudCredentialName: sinon.stub().returns('new@test')
+      updateCloudCredential
     });
     const instance = wrapper.instance();
     instance.refs = refs;
@@ -510,7 +507,7 @@ describe('DeploymentCredentialAdd', function() {
       ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
-    assert.equal(args[0], 'new@test');
+    assert.equal(args[0], 'google_user-admin_new@test');
     assert.equal(args[1], 'oauth2');
     assert.deepEqual(args[2], {
       'client-id': 'client id',
@@ -558,8 +555,7 @@ describe('DeploymentCredentialAdd', function() {
     const wrapper = renderComponent({
       addNotification,
       updateCloudCredential,
-      cloud: {name: 'google', cloudType: 'gce'},
-      generateCloudCredentialName: sinon.stub().returns('new@test')
+      cloud: {name: 'google', cloudType: 'gce'}
     });
     const instance = wrapper.instance();
     instance.refs = refs;

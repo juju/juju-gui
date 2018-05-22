@@ -79,7 +79,6 @@ describe('DeploymentFlow', function() {
       formatConstraints: sinon.stub(),
       generateAllChangeDescriptions: sinon.stub(),
       generateChangeDescription: sinon.stub(),
-      generateCloudCredentialName: sinon.stub(),
       generateMachineDetails: sinon.stub(),
       generatePath: sinon.stub(),
       getAgreementsByTerms: getAgreementsByTerms,

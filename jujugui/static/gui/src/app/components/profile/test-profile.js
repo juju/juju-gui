@@ -68,7 +68,6 @@ describe('Profile', function() {
       updateCloudCredential: sinon.stub()
     };
     initUtils = {
-      generateCloudCredentialName: sinon.stub(),
       getCloudProviderDetails: sinon.stub(),
       reshape: shapeup.reshapeFunc
     };
