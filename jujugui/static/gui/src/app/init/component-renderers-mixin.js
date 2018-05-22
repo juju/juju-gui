@@ -982,7 +982,6 @@ Browser: ${navigator.userAgent}`
         generateChangeDescription={
           changesUtils.generateChangeDescription.bind(
             changesUtils, services, db.units)}
-        generateCloudCredentialName={initUtils.generateCloudCredentialName}
         generateMachineDetails={
           initUtils.generateMachineDetails.bind(
             initUtils, modelAPI.genericConstraints, db.units)}
