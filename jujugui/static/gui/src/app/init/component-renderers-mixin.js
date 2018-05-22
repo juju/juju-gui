@@ -347,7 +347,6 @@ Browser: ${navigator.userAgent}`
         getModelName={this._getModelName.bind(this)}
         getUser={this.identity.getUser.bind(this.identity)}
         gisf={this.applicationConfig.gisf}
-        initUtils={shapeup.fromShape(initUtils, Profile.propTypes.initUtils)}
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
         sendAnalytics={this.sendAnalytics}
         showPay={this.applicationConfig.flags.pay || false}

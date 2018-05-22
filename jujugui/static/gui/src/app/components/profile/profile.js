@@ -139,7 +139,6 @@ class Profile extends React.Component {
                 shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
-              initUtils={props.initUtils}
               sendAnalytics={this._sendAnalytics.bind(this)}
               username={props.controllerUser} />);
         }
@@ -243,10 +242,6 @@ Profile.propTypes = {
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
-  initUtils: shapeup.shape({
-    getCloudProviderDetails: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
-  }).isRequired,
   payment: shapeup.shape({
     addAddress: PropTypes.func,
     addBillingAddress: PropTypes.func,

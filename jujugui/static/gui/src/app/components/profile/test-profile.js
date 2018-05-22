@@ -38,7 +38,6 @@ describe('Profile', function() {
       getModelName={options.getModelName || sinon.stub()}
       getUser={options.getUser || sinon.stub()}
       gisf={true}
-      initUtils={initUtils}
       payment={options.payment}
       sendAnalytics={sinon.stub()}
       showPay={options.showPay || false}
@@ -55,7 +54,7 @@ describe('Profile', function() {
     // return navigation.props.sectionsMap;
   }
 
-  let acl, controllerAPI, initUtils, userInfo;
+  let acl, controllerAPI, userInfo;
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -66,10 +65,6 @@ describe('Profile', function() {
       reshape: shapeup.reshapeFunc,
       revokeCloudCredential: sinon.stub(),
       updateCloudCredential: sinon.stub()
-    };
-    initUtils = {
-      getCloudProviderDetails: sinon.stub(),
-      reshape: shapeup.reshapeFunc
     };
     userInfo = {
       isCurrent: true,
