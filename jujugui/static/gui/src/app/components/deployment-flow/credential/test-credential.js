@@ -21,7 +21,6 @@ describe('DeploymentCredential', function() {
       controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
       credential={options.credential}
       editable={options.editable === undefined ? true : options.editable}
-      generateCloudCredentialName={options.generateCloudCredentialName || sinon.stub()}
       getCloudCredentialNames={
         options.getCloudCredentialNames || sinon.stub().callsArgWith(1, null, credentialNames)}
       getCloudCredentials={
@@ -76,7 +75,6 @@ describe('DeploymentCredential', function() {
             addNotification={sinon.stub()}
             cloud={cloud}
             credentials={[]}
-            generateCloudCredentialName={sinon.stub()}
             getCloudProviderDetails={sinon.stub()}
             onCancel={null}
             onCredentialUpdated={

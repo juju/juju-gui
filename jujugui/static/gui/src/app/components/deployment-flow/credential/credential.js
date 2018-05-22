@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const Spinner = require('../../spinner/spinner');
+const initUtils = require('../../../init/utils');
 const InsetSelect = require('../../inset-select/inset-select');
 const ExpandingRow = require('../../expanding-row/expanding-row');
 const DeploymentCredentialAdd = require('./add/add');
@@ -268,7 +269,7 @@ class DeploymentCredential extends React.Component {
     // Load the credentials again so that the list will contain the newly
     // added credential.
     this._getCredentials(
-      this.props.generateCloudCredentialName(
+      initUtils.generateCloudCredentialName(
         this.props.cloud.name, this.props.user, credential));
     this._toggleAdd();
   }
@@ -290,7 +291,6 @@ class DeploymentCredential extends React.Component {
         cloud={this.props.cloud}
         credentials={this.state.credentials.map(credential =>
           credential.displayName)}
-        generateCloudCredentialName={this.props.generateCloudCredentialName}
         getCloudProviderDetails={this.props.getCloudProviderDetails}
         onCancel={
           this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
@@ -339,7 +339,6 @@ DeploymentCredential.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   editable: PropTypes.bool,
-  generateCloudCredentialName: PropTypes.func.isRequired,
   getCloudCredentialNames: PropTypes.func.isRequired,
   getCloudCredentials: PropTypes.func.isRequired,
   getCloudProviderDetails: PropTypes.func.isRequired,
