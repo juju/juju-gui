@@ -99,7 +99,6 @@ const ComponentRenderersMixin = superclass => class extends superclass {
           changeState={this._bound.changeState}
           findRelatedServices={db.findRelatedServices.bind(db)}
           findUnrelatedServices={db.findUnrelatedServices.bind(db)}
-          getUnitStatusCounts={initUtils.getUnitStatusCounts}
           hoveredId={hoveredId}
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
@@ -842,7 +841,6 @@ Browser: ${navigator.userAgent}`
           getCharm={model.get_charm.bind(model)}
           getServiceById={db.services.getById.bind(db.services)}
           getServiceByName={db.services.getServiceByName.bind(db.services)}
-          getUnitStatusCounts={initUtils.getUnitStatusCounts}
           getYAMLConfig={initUtils.getYAMLConfig.bind(this)}
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}

@@ -16,7 +16,6 @@ describe('ServiceOverview', function() {
       changeState={options.changeState || sinon.stub()}
       charm={options.charm || charm}
       destroyService={options.destroyService || sinon.stub()}
-      getUnitStatusCounts={options.getUnitStatusCounts || getUnitStatusCounts()}
       modelUUID={options.modelUUID || 'abc123'}
       service={options.service || service}
       serviceRelations={options.serviceRelations || [1]}
@@ -46,14 +45,6 @@ describe('ServiceOverview', function() {
       toArray: sinon.stub().returns([])
     });
   });
-
-  function getUnitStatusCounts(error=0, pending=0, uncommitted=0) {
-    return sinon.stub().returns({
-      error: {size: error},
-      pending: {size: pending},
-      uncommitted: {size: uncommitted}
-    });
-  }
 
   it('does not request plans if charm does not have metrics', function() {
     service.get.withArgs('activePlan')
@@ -165,9 +156,7 @@ describe('ServiceOverview', function() {
       {agent_state: 'started'},
       {}
     ]});
-    const wrapper = renderComponent({
-      getUnitStatusCounts: getUnitStatusCounts(0, 0, 2)
-    });
+    const wrapper = renderComponent();
     assert.equal(
       wrapper.find('OverviewAction[valueType="uncommitted"]').length, 1);
   });
@@ -176,9 +165,7 @@ describe('ServiceOverview', function() {
     service.get.withArgs('units').returns({toArray: () => [
       {agent_state: 'pending'}
     ]});
-    const wrapper = renderComponent({
-      getUnitStatusCounts: getUnitStatusCounts(0, 1, 0)
-    });
+    const wrapper = renderComponent();
     assert.equal(wrapper.find('OverviewAction[valueType="pending"]').length, 1);
   });
 
@@ -186,9 +173,7 @@ describe('ServiceOverview', function() {
     service.get.withArgs('units').returns({toArray: () => [
       {agent_state: 'error'}
     ]});
-    const wrapper = renderComponent({
-      getUnitStatusCounts: getUnitStatusCounts(1, 0, 0)
-    });
+    const wrapper = renderComponent();
     assert.equal(wrapper.find('OverviewAction[valueType="error"]').length, 1);
   });
 

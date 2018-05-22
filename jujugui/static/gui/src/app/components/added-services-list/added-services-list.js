@@ -18,7 +18,6 @@ class AddedServicesList extends React.Component {
           // to treat them as the same record instead of re-rendering
           // when they key changes.
           changeState={this.props.changeState}
-          getUnitStatusCounts={this.props.getUnitStatusCounts}
           hovered={service.get('id') === this.props.hoveredId}
           hoverService={this.props.hoverService}
           key={service.get('name')}
@@ -44,7 +43,6 @@ AddedServicesList.propTypes = {
   changeState: PropTypes.func.isRequired,
   findRelatedServices: PropTypes.func.isRequired,
   findUnrelatedServices: PropTypes.func.isRequired,
-  getUnitStatusCounts: PropTypes.func.isRequired,
   hoverService: PropTypes.func.isRequired,
   hoveredId: PropTypes.oneOfType([
     PropTypes.string,

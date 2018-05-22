@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const initUtils = require('../../../init/utils');
+
 class AddedServicesListItem extends React.Component {
   /**
     Parses the supplied unit data to return the status color and number
@@ -12,7 +14,7 @@ class AddedServicesListItem extends React.Component {
     @param {Array} units An array of units.
   */
   _getPriorityUnits(units) {
-    var unitStatuses = this.props.getUnitStatusCounts(units);
+    var unitStatuses = initUtils.getUnitStatusCounts(units);
     var top = { priority: 99, key: '', size: 0 };
     var status;
     for (var key in unitStatuses) {
@@ -121,7 +123,6 @@ class AddedServicesListItem extends React.Component {
 
 AddedServicesListItem.propTypes = {
   changeState: PropTypes.func.isRequired,
-  getUnitStatusCounts: PropTypes.func.isRequired,
   hoverService: PropTypes.func.isRequired,
   hovered: PropTypes.oneOfType([
     PropTypes.string,

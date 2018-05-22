@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const ButtonRow = require('../../button-row/button-row');
+const initUtils = require('../../../init/utils');
 const InspectorConfirm = require('../confirm/confirm');
 const OverviewAction = require('../overview-action/overview-action');
 
@@ -121,7 +122,7 @@ class ServiceOverview extends React.Component {
     const state = this.state;
     const actions = [];
     const units = service.get('units').toArray();
-    const statusCounts = this.props.getUnitStatusCounts(units);
+    const statusCounts = initUtils.getUnitStatusCounts(units);
     const plans = this.props.charm.get('plans');
     statusCounts.all = {size: units.length};
     const statuses = [{
@@ -293,7 +294,6 @@ ServiceOverview.propTypes = {
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   destroyService: PropTypes.func.isRequired,
-  getUnitStatusCounts: PropTypes.func.isRequired,
   modelUUID: PropTypes.string.isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
