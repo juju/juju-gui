@@ -77,7 +77,6 @@ class Inspector extends React.Component {
             changeState={changeState}
             charm={nextProps.charm}
             destroyService={nextProps.destroyService}
-            getUnitStatusCounts={nextProps.getUnitStatusCounts}
             modelUUID={nextProps.modelUUID}
             service={service}
             serviceRelations={nextProps.serviceRelations}
@@ -398,7 +397,6 @@ Inspector.propTypes = {
   getCharm: PropTypes.func.isRequired,
   getServiceById: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,
-  getUnitStatusCounts: PropTypes.func.isRequired,
   getYAMLConfig: PropTypes.func.isRequired,
   modelUUID: PropTypes.string.isRequired,
   providerType: PropTypes.string,
