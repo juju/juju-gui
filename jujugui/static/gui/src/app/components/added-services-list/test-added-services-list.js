@@ -14,7 +14,6 @@ describe('AddedServicesList', () => {
       changeState={options.changeState || sinon.stub()}
       findRelatedServices={options.findRelatedServices || sinon.stub()}
       findUnrelatedServices={options.findUnrelatedServices || sinon.stub()}
-      getUnitStatusCounts={options.getUnitStatusCounts || sinon.stub()}
       hoveredId={options.hoveredId || 'mysql'}
       hoverService={options.hoverService || sinon.stub()}
       panToService={options.panToService || sinon.stub()}
@@ -36,7 +35,6 @@ describe('AddedServicesList', () => {
         <ul className="added-services-list inspector-view__list">
           <AddedServicesListItem
             changeState={instance.props.changeState}
-            getUnitStatusCounts={instance.props.getUnitStatusCounts}
             hovered={false}
             hoverService={instance.props.hoverService}
             key={allServices[0].get()}
@@ -45,7 +43,6 @@ describe('AddedServicesList', () => {
             service={allServices[0]} />
           <AddedServicesListItem
             changeState={instance.props.changeState}
-            getUnitStatusCounts={instance.props.getUnitStatusCounts}
             hovered={false}
             hoverService={instance.props.hoverService}
             key={allServices[1].get()}
@@ -54,7 +51,6 @@ describe('AddedServicesList', () => {
             service={allServices[1]} />
           <AddedServicesListItem
             changeState={instance.props.changeState}
-            getUnitStatusCounts={instance.props.getUnitStatusCounts}
             hovered={false}
             hoverService={instance.props.hoverService}
             key={allServices[2].get()}
