@@ -244,7 +244,6 @@ Profile.propTypes = {
   getUser: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
   initUtils: shapeup.shape({
-    generateCloudCredentialName: PropTypes.func.isRequired,
     getCloudProviderDetails: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).isRequired,
