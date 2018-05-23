@@ -158,9 +158,6 @@ CredentialAddEdit.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.object,
   credentials: PropTypes.arrayOf(PropTypes.string.isRequired),
-  initUtils: shapeup.shape({
-    reshape: shapeup.reshapeFunc
-  }).isRequired,
   onCancel: PropTypes.func,
   onCredentialUpdated: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,

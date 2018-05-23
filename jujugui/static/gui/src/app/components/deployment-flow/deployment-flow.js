@@ -803,7 +803,6 @@ class DeploymentFlow extends React.Component {
           addNotification={this.props.addNotification}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
-          getCloudProviderDetails={this.props.getCloudProviderDetails}
           listClouds={this.props.listClouds}
           setCloud={this._setCloud.bind(this)}
           setCloudCount={this._setCloudCount.bind(this)} />
@@ -837,7 +836,6 @@ class DeploymentFlow extends React.Component {
           editable={!this.props.modelCommitted}
           getCloudCredentialNames={this.props.getCloudCredentialNames}
           getCloudCredentials={this.props.getCloudCredentials}
-          getCloudProviderDetails={this.props.getCloudProviderDetails}
           region={this.state.region}
           sendAnalytics={this.sendAnalytics.bind(this)}
           setCredential={this._setCredential.bind(this)}
@@ -1240,7 +1238,6 @@ DeploymentFlow.propTypes = {
   getAgreementsByTerms: PropTypes.func.isRequired,
   getCloudCredentialNames: PropTypes.func,
   getCloudCredentials: PropTypes.func,
-  getCloudProviderDetails: PropTypes.func.isRequired,
   getCountries: PropTypes.func,
   getCurrentChangeSet: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func,

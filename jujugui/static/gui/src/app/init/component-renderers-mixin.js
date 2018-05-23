@@ -989,7 +989,6 @@ Browser: ${navigator.userAgent}`
           controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
         getCloudCredentials={
           controllerAPI.getCloudCredentials.bind(controllerAPI)}
-        getCloudProviderDetails={initUtils.getCloudProviderDetails.bind(initUtils)}
         getCountries={
           this.payment && this.payment.getCountries.bind(this.payment)
             || null}

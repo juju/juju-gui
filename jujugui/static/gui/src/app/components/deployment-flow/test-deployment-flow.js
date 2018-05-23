@@ -84,7 +84,6 @@ describe('DeploymentFlow', function() {
       getAgreementsByTerms: getAgreementsByTerms,
       getCloudCredentialNames: sinon.stub(),
       getCloudCredentials: sinon.stub(),
-      getCloudProviderDetails: sinon.stub(),
       getCountries: sinon.stub(),
       getCurrentChangeSet: sinon.stub(),
       getDiagramURL: sinon.stub(),
@@ -182,7 +181,6 @@ describe('DeploymentFlow', function() {
                 addNotification={sinon.stub()}
                 cloud={null}
                 controllerIsReady={sinon.stub()}
-                getCloudProviderDetails={sinon.stub()}
                 listClouds={sinon.stub()}
                 setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
                 setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')} />
