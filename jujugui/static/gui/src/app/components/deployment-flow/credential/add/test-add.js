@@ -12,86 +12,11 @@ const ButtonRow = require('../../../button-row/button-row');
 const FileField = require('../../../file-field/file-field');
 
 describe('DeploymentCredentialAdd', function() {
-  let acl, sendAnalytics, getCloudProviderDetails, refs;
+  let acl, sendAnalytics, refs;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     sendAnalytics = sinon.stub();
-    getCloudProviderDetails = sinon.stub();
-    getCloudProviderDetails.withArgs('gce').returns({
-      id: 'google',
-      showLogo: true,
-      signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-      svgHeight: 33,
-      svgWidth: 256,
-      title: 'Google Compute Engine',
-      forms: {
-        oauth2: [{
-          id: 'client-id',
-          title: 'Client ID'
-        }, {
-          id: 'client-email',
-          required: true,
-          title: 'Client e-mail address'
-        }, {
-          id: 'private-key',
-          title: 'Private key',
-          multiLine: true,
-          unescape: true
-        }, {
-          id: 'project-id',
-          required: false,
-          title: 'Project ID'
-        }, {
-          id: 'password',
-          required: false,
-          title: 'Password',
-          type: 'password'
-        }],
-        jsonfile: [{
-          id: 'file',
-          title: 'Google Compute Engine project credentials .json file',
-          json: true
-        }]
-      },
-      message: 'a message'
-    });
-    getCloudProviderDetails.withArgs('ec2').returns({
-      id: 'aws',
-      showLogo: true,
-      signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-        'registration/index.html',
-      svgHeight: 48,
-      svgWidth: 120,
-      title: 'Amazon Web Services',
-      forms: {
-        'access-key': [{
-          id: 'access-key',
-          title: 'The EC2 access key'
-        }, {
-          autocomplete: false,
-          id: 'secret-key',
-          title: 'The EC2 secret key'
-        }]
-      },
-      message: 'a message'
-    });
-    getCloudProviderDetails.withArgs('maas').returns({
-      id: 'maas',
-      showLogo: false,
-      title: 'MAAS',
-      forms: {
-        'access-key': [{
-          id: 'access-key',
-          title: 'The MAAS access key'
-        }, {
-          autocomplete: false,
-          id: 'secret-key',
-          title: 'The MAAS secret key'
-        }]
-      },
-      message: 'a message'
-    });
     refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -125,7 +50,6 @@ describe('DeploymentCredentialAdd', function() {
       cloud={options.cloud || null}
       credentialName={options.credentialName || undefined}
       credentials={options.credentials || []}
-      getCloudProviderDetails={getCloudProviderDetails}
       onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
       onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
       sendAnalytics={sendAnalytics}
@@ -135,13 +59,14 @@ describe('DeploymentCredentialAdd', function() {
   );
 
   it('can render without a provided cloud', function() {
-    const cloud = getCloudProviderDetails('gce');
     const wrapper = renderComponent();
+    wrapper.find('InsetSelect').simulate('change', 'oauth2');
     const expected = (
       <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link" href={cloud.signupUrl}
+          <a className="deployment-credential-add__link"
+            href="https://console.cloud.google.com/billing/freetrial"
             target="_blank">
             Sign up for {'Google Compute Engine'}
             &nbsp;
@@ -174,7 +99,16 @@ describe('DeploymentCredentialAdd', function() {
           </h3>
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
-              a message
+              <p>
+                Need help? Read more about <a className="deployment-panel__link"
+                  href="https://jujucharms.com/docs/stable/credentials"
+                  target="_blank" title="Cloud credentials help">credentials in
+                general</a> or <a className="deployment-panel__link"
+                  href="https://jujucharms.com/docs/stable/help-google"
+                  target="_blank"
+                  title="Help using the Google Compute Engine public cloud">
+                  setting up GCE credentials</a>.
+              </p>
               <InsetSelect
                 disabled={false}
                 label="Authentication type"
@@ -214,7 +148,7 @@ describe('DeploymentCredentialAdd', function() {
                     error: 'This field is required.'
                   }]} />,
                 <GenericInput
-                  autocomplete={undefined}
+                  autocomplete={false}
                   disabled={false}
                   key="private-key"
                   label="Private key"
@@ -227,25 +161,18 @@ describe('DeploymentCredentialAdd', function() {
                     error: 'This field is required.'
                   }]} />,
                 <GenericInput
-                  autocomplete={undefined}
+                  autocomplete={true}
                   disabled={false}
                   key="project-id"
                   label="Project ID"
                   multiLine={undefined}
                   ref="project-id"
-                  required={false}
+                  required={true}
                   type={undefined}
-                  validate={undefined} />,
-                <GenericInput
-                  autocomplete={undefined}
-                  disabled={false}
-                  key="password"
-                  label="Password"
-                  multiLine={undefined}
-                  ref="password"
-                  required={false}
-                  type="password"
-                  validate={undefined} />
+                  validate={[{
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }]} />
               ]}
             </div>
             <div className={
@@ -294,6 +221,7 @@ describe('DeploymentCredentialAdd', function() {
   it('can update to a new cloud', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
+    wrapper.find('InsetSelect').simulate('change', 'oauth2');
     assert.equal(instance.state.authType, 'oauth2');
     wrapper.setProps({
       cloud: {name: 'aws', cloudType: 'ec2'}
@@ -309,10 +237,20 @@ describe('DeploymentCredentialAdd', function() {
       cloud: {name: 'google', cloudType: 'gce'},
       credentials: ['cred1']
     });
+    wrapper.find('InsetSelect').simulate('change', 'oauth2');
     const expected = (
       <div className="deployment-credential-add__credentials">
         <div className="six-col">
-          a message
+          <p>
+            Need help? Read more about <a className="deployment-panel__link"
+              href="https://jujucharms.com/docs/stable/credentials"
+              target="_blank" title="Cloud credentials help">credentials in
+            general</a> or <a className="deployment-panel__link"
+              href="https://jujucharms.com/docs/stable/help-google"
+              target="_blank"
+              title="Help using the Google Compute Engine public cloud">
+              setting up GCE credentials</a>.
+          </p>
           <InsetSelect
             disabled={false}
             label="Authentication type"
@@ -351,7 +289,7 @@ describe('DeploymentCredentialAdd', function() {
               error: 'This field is required.'
             }]} />,
           <GenericInput
-            autocomplete={undefined}
+            autocomplete={false}
             disabled={false}
             key="private-key"
             label="Private key"
@@ -364,25 +302,18 @@ describe('DeploymentCredentialAdd', function() {
               error: 'This field is required.'
             }]} />,
           <GenericInput
-            autocomplete={undefined}
+            autocomplete={true}
             disabled={false}
             key="project-id"
             label="Project ID"
             multiLine={undefined}
             ref="project-id"
-            required={false}
+            required={true}
             type={undefined}
-            validate={undefined} />,
-          <GenericInput
-            autocomplete={undefined}
-            disabled={false}
-            key="password"
-            label="Password"
-            multiLine={undefined}
-            ref="password"
-            required={false}
-            type="password"
-            validate={undefined} />
+            validate={[{
+              regex: /\S+/,
+              error: 'This field is required.'
+            }]} />
           ]}
         </div>
         <div className={
@@ -411,7 +342,16 @@ describe('DeploymentCredentialAdd', function() {
     const expected = (
       <div className="deployment-credential-add__credentials">
         <div className="six-col">
-          a message
+          <p>
+            Need help? Read more about <a className="deployment-panel__link"
+              href="https://jujucharms.com/docs/stable/credentials"
+              target="_blank" title="Cloud credentials help">credentials in
+            general</a> or <a className="deployment-panel__link"
+              href="https://jujucharms.com/docs/stable/help-google"
+              target="_blank"
+              title="Help using the Google Compute Engine public cloud">
+              setting up GCE credentials</a>.
+          </p>
           <InsetSelect
             disabled={false}
             label="Authentication type"
@@ -472,6 +412,7 @@ describe('DeploymentCredentialAdd', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
+    wrapper.find('InsetSelect').simulate('change', 'oauth2');
     instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
@@ -484,8 +425,7 @@ describe('DeploymentCredentialAdd', function() {
       'client-id': 'client id',
       'client-email': 'client email',
       'private-key': 'private key',
-      'project-id': 'project id',
-      'password': 'password'
+      'project-id': 'project id'
     });
     assert.equal(onCredentialUpdated.callCount, 1, 'getCredentials not called');
     assert.equal(onCredentialUpdated.args[0][0], 'new@test');
@@ -501,6 +441,7 @@ describe('DeploymentCredentialAdd', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
+    wrapper.find('InsetSelect').simulate('change', 'oauth2');
     wrapper.find('form').simulate('submit', {preventDefault: sinon.stub()});
     assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
     assert.deepEqual(sendAnalytics.args[0],
@@ -513,8 +454,7 @@ describe('DeploymentCredentialAdd', function() {
       'client-id': 'client id',
       'client-email': 'client email',
       'private-key': 'private key',
-      'project-id': 'project id',
-      'password': 'password'
+      'project-id': 'project id'
     });
     assert.equal(onCredentialUpdated.callCount, 1, 'getCredentials not called');
     assert.equal(onCredentialUpdated.args[0][0], 'new@test');
@@ -559,6 +499,7 @@ describe('DeploymentCredentialAdd', function() {
     });
     const instance = wrapper.instance();
     instance.refs = refs;
+    wrapper.find('InsetSelect').simulate('change', 'oauth2');
     instance._handleAddCredentials({preventDefault: sinon.stub()});
     assert.isTrue(addNotification.called, 'addNotification was not called');
     assert.deepEqual(addNotification.args[0][0], {
