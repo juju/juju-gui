@@ -329,7 +329,7 @@ class GUIApp {
     if (!config.flags) {
       config.flags = {};
     }
-    // Support old Juju versions in which bakeryEnabled is not provided.
+    // Support old Juju versions (<2.4) in which bakeryEnabled is not provided.
     if (config.bakeryEnabled === undefined) {
       config.bakeryEnabled = true;
     }
