@@ -15,6 +15,7 @@ describe('LoginComponent', function() {
     const wrapper = enzyme.shallow(
       <Login
         addNotification={options.addNotification || sinon.stub()}
+        bakeryEnabled={!!options.bakeryEnabled}
         controllerIsConnected={options.controllerIsConnected || sinon.stub()}
         errorMessage={options.errorMessage}
         gisf={options.gisf === undefined ? false : options.gisf}
@@ -44,7 +45,7 @@ describe('LoginComponent', function() {
   });
 
   it('renders', function() {
-    const wrapper = renderComponent();
+    const wrapper = renderComponent({bakeryEnabled: true});
     var expected = (
       <div className="login">
         <div className="login__logo">
@@ -103,6 +104,11 @@ describe('LoginComponent', function() {
       </div>
     );
     assert.compareJSX(wrapper, expected);
+  });
+
+  it('renders without the USSO login button', function() {
+    const wrapper = renderComponent({bakeryEnabled: false});
+    assert.equal(wrapper.find('USSOLoginLink').length, 0);
   });
 
   it('renders but is hidden in gisf', function() {

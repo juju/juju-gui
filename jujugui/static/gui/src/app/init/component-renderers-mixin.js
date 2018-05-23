@@ -1099,6 +1099,7 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <Login
         addNotification={this._bound.addNotification}
+        bakeryEnabled={this.applicationConfig.bakeryEnabled}
         controllerIsConnected={controllerIsConnected}
         errorMessage={err}
         gisf={this.applicationConfig.gisf}
