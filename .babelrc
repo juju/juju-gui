@@ -1,6 +1,7 @@
 {
   "presets": [],
   "plugins": [
-    "transform-react-jsx"
+    "transform-react-jsx",
+    "rewire"
   ]
 }
