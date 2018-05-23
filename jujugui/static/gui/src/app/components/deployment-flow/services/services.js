@@ -131,7 +131,6 @@ class DeploymentServices extends React.Component {
 DeploymentServices.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  changesFilterByParent: PropTypes.func.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,
   generateChangeDescription: PropTypes.func.isRequired,

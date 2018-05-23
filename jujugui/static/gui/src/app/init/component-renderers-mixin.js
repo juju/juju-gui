@@ -955,8 +955,6 @@ Browser: ${navigator.userAgent}`
         addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
         applications={services.toArray()}
         changes={currentChangeSet}
-        changesFilterByParent={
-          changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
         changeState={this._bound.changeState}
         charms={db.charms}
         charmsGetById={db.charms.getById.bind(db.charms)}

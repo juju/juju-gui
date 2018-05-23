@@ -67,7 +67,6 @@ describe('DeploymentFlow', function() {
       applications: [],
       changeState: sinon.stub(),
       changes: {},
-      changesFilterByParent: sinon.stub(),
       charms: {},
       charmsGetById: charmsGetById,
       charmstore: {},
@@ -222,7 +221,6 @@ describe('DeploymentFlow', function() {
                 <DeploymentServices
                   acl={acl}
                   addNotification={sinon.stub()}
-                  changesFilterByParent={sinon.stub()}
                   charmsGetById={sinon.stub()}
                   generateAllChangeDescriptions={sinon.stub()}
                   generateChangeDescription={sinon.stub()}

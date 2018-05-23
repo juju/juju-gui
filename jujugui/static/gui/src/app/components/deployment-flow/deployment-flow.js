@@ -893,7 +893,6 @@ class DeploymentFlow extends React.Component {
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
-            changesFilterByParent={this.props.changesFilterByParent}
             charmsGetById={this.props.charmsGetById}
             generateAllChangeDescriptions={
               this.props.generateAllChangeDescriptions}
@@ -1218,7 +1217,6 @@ DeploymentFlow.propTypes = {
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
-  changesFilterByParent: PropTypes.func.isRequired,
   charms: PropTypes.object.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
