@@ -25,7 +25,6 @@ describe('DeploymentCredential', function() {
         options.getCloudCredentialNames || sinon.stub().callsArgWith(1, null, credentialNames)}
       getCloudCredentials={
         options.getCloudCredentials || sinon.stub().callsArgWith(1, null, credentials)}
-      getCloudProviderDetails={options.getCloudProviderDetails || sinon.stub()}
       region={options.region}
       sendAnalytics={options.sendAnalytics || sendAnalytics}
       setCredential={options.setCredential || sinon.stub()}
@@ -75,7 +74,6 @@ describe('DeploymentCredential', function() {
             addNotification={sinon.stub()}
             cloud={cloud}
             credentials={[]}
-            getCloudProviderDetails={sinon.stub()}
             onCancel={null}
             onCredentialUpdated={
               wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
