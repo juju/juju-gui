@@ -9,7 +9,7 @@ const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('DeploymentCloud', function() {
-  let acl, cloudList, getCloudProviderDetails;
+  let acl, cloudList;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentCloud
@@ -17,7 +17,6 @@ describe('DeploymentCloud', function() {
       addNotification={options.addNotification || sinon.stub()}
       cloud={options.cloud || null}
       controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
-      getCloudProviderDetails={options.getCloudProviderDetails || getCloudProviderDetails}
       listClouds={options.listClouds || sinon.stub().callsArgWith(0, null, cloudList)}
       setCloud={options.setCloud || sinon.stub()}
       setCloudCount={options.setCloudCount} />
@@ -25,32 +24,6 @@ describe('DeploymentCloud', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    getCloudProviderDetails = sinon.stub();
-    getCloudProviderDetails.withArgs('gce').returns({
-      id: 'google',
-      showLogo: true,
-      signupUrl: 'https://console.cloud.google.com/billing/freetrial',
-      svgHeight: 33,
-      svgWidth: 256,
-      title: 'Google Compute Engine'
-    });
-    getCloudProviderDetails.withArgs('azure').returns({
-      id: 'azure',
-      showLogo: true,
-      signupUrl: 'https://azure.microsoft.com/en-us/free/',
-      svgHeight: 24,
-      svgWidth: 204,
-      title: 'Microsoft Azure'
-    });
-    getCloudProviderDetails.withArgs('ec2').returns({
-      id: 'aws',
-      showLogo: true,
-      signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-      'registration/index.html',
-      svgHeight: 48,
-      svgWidth: 120,
-      title: 'Amazon Web Services'
-    });
     cloudList = {
       'google': {
         name: 'google',
@@ -104,9 +77,9 @@ describe('DeploymentCloud', function() {
             tabIndex="0">
             <span className="deployment-cloud__cloud-logo">
               <SvgIcon
-                height={48}
+                height={44}
                 name="aws"
-                width={120} />
+                width={117} />
             </span>
           </li>
         </ul>

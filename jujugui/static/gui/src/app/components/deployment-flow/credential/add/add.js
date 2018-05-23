@@ -153,7 +153,7 @@ class DeploymentCredentialAdd extends React.Component {
   _getInfo(props=this.props) {
     const cloud = props.cloud;
     const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
-    return props.getCloudProviderDetails(id);
+    return initUtils.getCloudProviderDetails(id);
   }
 
   /**
@@ -312,7 +312,6 @@ DeploymentCredentialAdd.propTypes = {
   cloud: PropTypes.object,
   credentialName: PropTypes.string,
   credentials: PropTypes.array.isRequired,
-  getCloudProviderDetails: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
   onCredentialUpdated: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,

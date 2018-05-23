@@ -248,7 +248,6 @@ class ProfileCredentialList extends React.Component {
         credential={overrides.credential}
         credentials={
           credentials ? Array.from(credentials).map(credential => credential[0]) : []}
-        initUtils={this.props.initUtils}
         key="deployment-credential-add"
         onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
         onCredentialUpdated={
@@ -410,10 +409,6 @@ ProfileCredentialList.propTypes = {
   }),
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
-  initUtils: shapeup.shape({
-    getCloudProviderDetails: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
-  }).isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
 };

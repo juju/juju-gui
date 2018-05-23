@@ -12,14 +12,11 @@ const GenericButton = require('../generic-button/generic-button');
 const Spinner = require('../spinner/spinner');
 
 describe('CredentialAddEdit', () => {
-  let acl, controllerAPI, controllerIsReady, initUtils;
+  let acl, controllerAPI, controllerIsReady;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     controllerIsReady = sinon.stub().returns(true);
-    const getCloudProviderDetails = sinon.stub();
-    getCloudProviderDetails.withArgs('aws').returns({title: 'Amazon'});
-    getCloudProviderDetails.withArgs('gce').returns({title: 'Google'});
     controllerAPI = {
       listClouds: sinon.stub().callsArgWith(0, null, {
         aws: {
@@ -35,10 +32,6 @@ describe('CredentialAddEdit', () => {
       reshape: shapeup.reshapeFunc,
       updateCloudCredential: sinon.stub()
     };
-    initUtils = {
-      getCloudProviderDetails: getCloudProviderDetails,
-      reshape: shapeup.reshapeFunc
-    };
   });
 
   const renderComponent = (options = {}) => enzyme.shallow(
@@ -49,7 +42,6 @@ describe('CredentialAddEdit', () => {
       controllerIsReady={controllerIsReady}
       credential={options.credential}
       credentials={['test1', 'test2']}
-      initUtils={initUtils}
       onCancel={options.onCancel || sinon.stub()}
       onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
@@ -65,7 +57,6 @@ describe('CredentialAddEdit', () => {
           addNotification={sinon.stub()}
           cloud={null}
           controllerIsReady={controllerIsReady}
-          getCloudProviderDetails={sinon.stub()}
           key="deployment-cloud"
           listClouds={sinon.stub()}
           setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
@@ -103,7 +94,6 @@ describe('CredentialAddEdit', () => {
             addNotification={sinon.stub()}
             cloud={{title: 'aws'}}
             controllerIsReady={controllerIsReady}
-            getCloudProviderDetails={sinon.stub()}
             key="deployment-cloud"
             listClouds={sinon.stub()}
             setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
@@ -113,7 +103,6 @@ describe('CredentialAddEdit', () => {
             cloud={{title: 'aws'}}
             credentialName={null}
             credentials={['test1', 'test2']}
-            getCloudProviderDetails={sinon.stub()}
             key="deployment-credential-add"
             onCancel={sinon.stub()}
             onCredentialUpdated={sinon.stub()}
@@ -140,7 +129,6 @@ describe('CredentialAddEdit', () => {
           cloud={{cloudType: 'aws'}}
           credentialName="cred-name"
           credentials={['test1', 'test2']}
-          getCloudProviderDetails={sinon.stub()}
           key="deployment-credential-add"
           onCancel={sinon.stub()}
           onCredentialUpdated={sinon.stub()}

@@ -15,7 +15,7 @@ const ProfileCredentialList = require('./credential-list');
 const ProfileCredentialListDelete = require('./delete/delete');
 
 describe('ProfileCredentialList', () => {
-  let acl, cloudData, controllerAPI, credentialData, initUtils, modelData;
+  let acl, cloudData, controllerAPI, credentialData, modelData;
 
   beforeEach(() => {
     acl = {
@@ -58,10 +58,6 @@ describe('ProfileCredentialList', () => {
       revokeCloudCredential: sinon.stub(),
       updateCloudCredential: sinon.stub()
     };
-    initUtils = {
-      getCloudProviderDetails: sinon.stub(),
-      reshape: sinon.stub()
-    };
   });
 
   function renderComponentToDOM(options = {}) {
@@ -71,7 +67,6 @@ describe('ProfileCredentialList', () => {
         addNotification={options.addNotification || sinon.stub()}
         controllerAPI={options.controllerAPI || controllerAPI}
         controllerIsReady={options.controllerIsReady || sinon.stub()}
-        initUtils={options.initUtils || initUtils}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
         username={options.username || 'foo@external'} />);
     return component;
@@ -84,7 +79,6 @@ describe('ProfileCredentialList', () => {
       controllerAPI={options.controllerAPI || controllerAPI}
       controllerIsReady={options.controllerIsReady || sinon.stub()}
       credential="azure_foo@external_cred1"
-      initUtils={options.initUtils || initUtils}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
       username={options.username || 'foo@external'} />
   );
@@ -405,7 +399,6 @@ describe('ProfileCredentialList', () => {
             credentials={[
               'aws_foo@external_cred1', 'aws_foo@external_testcred',
               'azure_foo@external_cred1', 'google_foo@external_admin']}
-            initUtils={initUtils}
             key="deployment-credential-add"
             onCancel={wrapper.find('CredentialAddEdit').prop('onCancel')}
             onCredentialUpdated={wrapper.find('CredentialAddEdit').prop('onCredentialUpdated')}
@@ -480,7 +473,6 @@ describe('ProfileCredentialList', () => {
                   credentials={[
                     'aws_foo@external_cred1', 'aws_foo@external_testcred',
                     'azure_foo@external_cred1', 'google_foo@external_admin']}
-                  initUtils={initUtils}
                   key="deployment-credential-add"
                   onCancel={sinon.stub()}
                   onCredentialUpdated={sinon.stub()}

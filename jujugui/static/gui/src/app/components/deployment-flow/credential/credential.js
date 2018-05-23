@@ -291,7 +291,6 @@ class DeploymentCredential extends React.Component {
         cloud={this.props.cloud}
         credentials={this.state.credentials.map(credential =>
           credential.displayName)}
-        getCloudProviderDetails={this.props.getCloudProviderDetails}
         onCancel={
           this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
         onCredentialUpdated={this._onCredentialUpdated.bind(this)}
@@ -341,7 +340,6 @@ DeploymentCredential.propTypes = {
   editable: PropTypes.bool,
   getCloudCredentialNames: PropTypes.func.isRequired,
   getCloudCredentials: PropTypes.func.isRequired,
-  getCloudProviderDetails: PropTypes.func.isRequired,
   region: PropTypes.string,
   sendAnalytics: PropTypes.func.isRequired,
   setCredential: PropTypes.func.isRequired,
