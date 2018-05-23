@@ -5,9 +5,10 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const Configuration = require('./config');
+const initUtils = require('../../../init/utils');
 
 describe('Configuration', function() {
-  var acl, charm, service;
+  let acl, charm, getYAMLConfig, service;
 
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
@@ -17,7 +18,6 @@ describe('Configuration', function() {
         changeState={options.changeState || sinon.stub()}
         charm={options.charm || charm}
         getServiceByName={options.getServiceByName || sinon.stub()}
-        getYAMLConfig={options.getYAMLConfig || sinon.stub()}
         service={options.service || service}
         serviceRelations={options.serviceRelations || []}
         setConfig={options.setConfig || sinon.stub()}
@@ -43,6 +43,11 @@ describe('Configuration', function() {
   };
 
   beforeEach(() => {
+    getYAMLConfig = sinon.stub();
+    Configuration.__Rewire__('initUtils', {
+      getYAMLConfig: getYAMLConfig,
+      linkify: initUtils.linkify
+    });
     acl = {isReadOnly: sinon.stub().returns(false)};
     const option1 = {
       key: 'option1key',
@@ -72,6 +77,10 @@ describe('Configuration', function() {
       get: serviceGet,
       set: sinon.stub()
     };
+  });
+
+  afterEach(() => {
+    Configuration.__ResetDependency__('initUtils');
   });
 
   it('renders binary and string config inputs', function() {
@@ -332,10 +341,7 @@ describe('Configuration', function() {
   });
 
   it('can get a YAML file when a file is selected', function() {
-    var getYAMLConfig = sinon.stub();
-    const wrapper = renderComponent({
-      getYAMLConfig
-    });
+    const wrapper = renderComponent();
     wrapper.find('input').simulate('change');
     const instance = wrapper.instance();
     assert.equal(getYAMLConfig.callCount, 1);
@@ -344,10 +350,10 @@ describe('Configuration', function() {
   });
 
   it('can apply the uploaded config', function() {
-    var getYAMLConfig = sinon.stub().callsArgWith(1, {
+    getYAMLConfig.callsArgWith(1, {
       apache2: {option1: 'my apache2', option2: false}
     });
-    const wrapper = renderComponent({ getYAMLConfig });
+    const wrapper = renderComponent();
     wrapper.find('input').simulate('change');
     wrapper.update();
     assert.equal(wrapper.find('StringConfig').prop('config'), 'my apache2');
@@ -355,10 +361,10 @@ describe('Configuration', function() {
   });
 
   it('does not try to apply the config for the wrong charm', function() {
-    var getYAMLConfig = sinon.stub().callsArgWith(1, {
+    getYAMLConfig.callsArgWith(1, {
       postgresql: {option1: 'my apache2', option2: false}
     });
-    const wrapper = renderComponent({ getYAMLConfig });
+    const wrapper = renderComponent();
     wrapper.find('input').simulate('change');
     wrapper.update();
     assert.equal(wrapper.find('StringConfig').prop('config'), 'string body value');
