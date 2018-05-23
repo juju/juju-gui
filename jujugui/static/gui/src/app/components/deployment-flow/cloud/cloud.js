@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const initUtils = require('../../../init/utils');
 const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -124,7 +125,7 @@ class DeploymentCloud extends React.Component {
     @returns {Array} The logo.
   */
   _generateLogo(cloud) {
-    const info = this.props.getCloudProviderDetails(cloud.cloudType);
+    const info = initUtils.getCloudProviderDetails(cloud.cloudType);
     if (!info) {
       return cloud.name;
     }
@@ -150,7 +151,6 @@ DeploymentCloud.propTypes = {
   addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
   controllerIsReady: PropTypes.func.isRequired,
-  getCloudProviderDetails: PropTypes.func.isRequired,
   listClouds: PropTypes.func.isRequired,
   setCloud: PropTypes.func.isRequired,
   setCloudCount: PropTypes.func
