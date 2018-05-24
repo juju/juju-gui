@@ -999,7 +999,6 @@ Browser: ${navigator.userAgent}`
         getUser={this.payment && this.payment.getUser.bind(this.payment)}
         getUserName={getUserName}
         gisf={this.gisf}
-        groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
         gtmEnabled={this.applicationConfig.GTM_enabled}
         hash={state.hash}
         importSSHKeys={modelAPI.importKeys.bind(modelAPI)}

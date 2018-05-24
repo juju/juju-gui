@@ -7,6 +7,7 @@ const ReactDOM = require('react-dom');
 const React = require('react');
 
 const AccordionSection = require('../accordion-section/accordion-section');
+const changesUtils = require('../../init/changes-utils');
 const cookieUtil = require('../../init/cookie-util');
 const DeploymentBudget = require('./budget/budget');
 const DeploymentCloud = require('./cloud/cloud');
@@ -129,6 +130,14 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
+    Get the current changes by group
+    @returns {Object} The grouped changes.
+  */
+  _getGroupedChanges() {
+    return changesUtils.getGroupedChanges(this.props.changes);
+  }
+
+  /**
     Use the props and state to figure out if a section should be visible,
     disabled or completed.
 
@@ -144,7 +153,7 @@ class DeploymentFlow extends React.Component {
     const hasSSHkey = !!this.state.sshKeys.length;
     const hasCredential = !!this.state.credential;
     const willCreateModel = !this.props.modelCommitted;
-    const groupedChanges = this.props.groupedChanges;
+    const groupedChanges = this._getGroupedChanges();
     const loggedIn = this.props.isLoggedIn();
     const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
     const hasBudget = !!this.state.budget;
@@ -463,7 +472,7 @@ class DeploymentFlow extends React.Component {
   _getTerms() {
     const appIds = [];
     // Get the list of undeployed apps. _deploy is the key for added apps.
-    const deployCommands = this.props.groupedChanges['_deploy'];
+    const deployCommands = this._getGroupedChanges()['_deploy'];
     if (!deployCommands) {
       return;
     }
@@ -870,7 +879,7 @@ class DeploymentFlow extends React.Component {
           cloud={cloud}
           formatConstraints={this.props.formatConstraints}
           generateMachineDetails={this.props.generateMachineDetails}
-          machines={this.props.groupedChanges._addMachines} />
+          machines={this._getGroupedChanges()._addMachines} />
       </DeploymentSection>);
   }
 
@@ -1246,7 +1255,6 @@ DeploymentFlow.propTypes = {
   getUser: PropTypes.func,
   getUserName: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
-  groupedChanges: PropTypes.object.isRequired,
   gtmEnabled: PropTypes.bool,
   hash: PropTypes.string,
   importSSHKeys: PropTypes.func.isRequired,
