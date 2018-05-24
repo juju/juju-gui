@@ -14,6 +14,7 @@ describe('DeploymentExpertBudget', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentExpertBudget
       budget={options.budget}
+      estimateWithSLA={99}
       setBudget={options.setBudget || sinon.stub()} />
   );
 

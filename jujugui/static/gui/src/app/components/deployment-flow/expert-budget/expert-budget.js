@@ -43,7 +43,7 @@ class DeploymentExpertBudget extends React.Component {
             Total estimated monthly cost:
           </span>
           <span className="deployment-expert-budget__cost">
-            ${this.props.budget || 0}
+            ${this.props.estimateWithSLA || 0}
           </span>
         </div>
         <div className="deployment-expert-budget__row">
@@ -73,6 +73,7 @@ class DeploymentExpertBudget extends React.Component {
 
 DeploymentExpertBudget.propTypes = {
   budget: PropTypes.any,
+  estimateWithSLA: PropTypes.any,
   setBudget: PropTypes.func.isRequired
 };
 
