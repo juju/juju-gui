@@ -50,6 +50,7 @@ class DeploymentFlow extends React.Component {
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
+      selectedSLA: null,
       sshKeys: [],
       lpUsernames: [],
       // The list of term ids for the uncommitted applications.
@@ -271,6 +272,14 @@ class DeploymentFlow extends React.Component {
   */
   _setRegion(region) {
     this.setState({region: region});
+  }
+
+  /**
+    Store the selected SLA details.
+    @param {Object} sla The selected sla information.
+  */
+  _setSLA(sla) {
+    this.setState({selectedSLA: sla});
   }
 
   /**
@@ -678,9 +687,14 @@ class DeploymentFlow extends React.Component {
           applications={this.props.applications}
           changeState={this.props.changeState}
           charms={this.props.charms}
+          estimate={this.state.ddEntity.toEntity().price}
           generatePath={this.props.generatePath}
           getSLAMachineRates={this.props.getSLAMachineRates}
-          listPlansForCharm={this.props.listPlansForCharm} />
+          listPlansForCharm={this.props.listPlansForCharm}
+          // machineCount is only defined in bundles so if it's not there it is
+          // a charm and the count is one.
+          machineCount={this.state.ddEntity.get('machineCount') || '1'}
+          setSLA={this._setSLA.bind(this)} />
       </DeploymentSection>);
   }
 
@@ -690,9 +704,13 @@ class DeploymentFlow extends React.Component {
   */
   _generateExpertBudgetSection() {
     const status = this._getSectionStatus('expert-budget');
+    const state = this.state;
     if (!status.visible) {
       return;
     }
+    const estimate = parseInt(state.ddEntity.toEntity().price, 10);
+    const hourPrice = (state.selectedSLA && state.selectedSLA.hourPrice) || 0;
+    const machineCount = state.ddEntity.get('machineCount') || '1';
     return (
       <DeploymentSection
         completed={status.completed}
@@ -701,6 +719,7 @@ class DeploymentFlow extends React.Component {
         title="Set your maximum monthly budget (optional)">
         <DeploymentExpertBudget
           budget={this.state.budget}
+          estimateWithSLA={((hourPrice * machineCount * 720) + estimate).toFixed(2)}
           setBudget={this._setBudget.bind(this)} />
       </DeploymentSection>);
   }

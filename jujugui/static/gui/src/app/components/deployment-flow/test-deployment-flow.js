@@ -404,7 +404,8 @@ describe('DeploymentFlow', function() {
       id: entityId,
       get: entityGet,
       toEntity: sinon.stub().returns({
-        displayName: 'Kubernetes Core'
+        displayName: 'Kubernetes Core',
+        price: '8'
       })
     };
     const entityData = [entityModel];
