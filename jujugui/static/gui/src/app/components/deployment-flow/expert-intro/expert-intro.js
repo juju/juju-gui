@@ -93,8 +93,8 @@ class DeploymentExpertIntro extends React.Component {
                     </a>.&nbsp;
                     <span className="deployment-expert-intro__machine-count">
                       {machineNumber}
-                    </span>&nbsp;
-                    machines-instances will be created at your cloud provider
+                    </span>
+                    machine-instances will be created at your cloud provider
                   </li>
                   <li>
                     A valid credit credit card
