@@ -16,7 +16,6 @@ describe('DeploymentServices', function() {
     <DeploymentServices
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
-      changesFilterByParent={options.changesFilterByParent || sinon.stub()}
       charmsGetById={options.charmsGetById || sinon.stub()}
       generateAllChangeDescriptions={
         options.generateAllChangeDescriptions || sinon.stub()}

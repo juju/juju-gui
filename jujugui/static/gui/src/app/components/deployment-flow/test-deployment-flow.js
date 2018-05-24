@@ -46,16 +46,6 @@ describe('DeploymentFlow', function() {
       content: 'Mysql terms.',
       revision: 9
     }]);
-    const groupedChanges = {
-      _deploy: {
-        appId: {
-          command: {
-            args: [{charmURL: appId}]
-          }
-        }
-      },
-      _addMachines: {machine: 'machine1'}
-    };
     // Note that the defaults are *only* set for required DeploymentFlow props.
     const defaults = {
       WebHandler: sinon.stub(),
@@ -66,8 +56,20 @@ describe('DeploymentFlow', function() {
       importSSHKeys: sinon.stub(),
       applications: [],
       changeState: sinon.stub(),
-      changes: {},
-      changesFilterByParent: sinon.stub(),
+      changes: {
+        one: {
+          command: {
+            method: '_deploy',
+            args: [{charmURL: appId}]
+          }
+        },
+        two: {
+          command: {
+            method: '_addMachines',
+            args: [{machine: 'machine1'}]
+          }
+        }
+      },
       charms: {},
       charmsGetById: charmsGetById,
       charmstore: {},
@@ -92,7 +94,6 @@ describe('DeploymentFlow', function() {
       getUser: sinon.stub(),
       getUserName: sinon.stub().returns('dalek'),
       getGithubSSHKeys: sinon.stub(),
-      groupedChanges: groupedChanges,
       hash: null,
       isLoggedIn: sinon.stub().returns(true),
       listBudgets: sinon.stub(),
@@ -222,7 +223,6 @@ describe('DeploymentFlow', function() {
                 <DeploymentServices
                   acl={acl}
                   addNotification={sinon.stub()}
-                  changesFilterByParent={sinon.stub()}
                   charmsGetById={sinon.stub()}
                   generateAllChangeDescriptions={sinon.stub()}
                   generateChangeDescription={sinon.stub()}
@@ -622,9 +622,16 @@ describe('DeploymentFlow', function() {
 
   it('can handle the agreements when there are no added apps', function() {
     const wrapper = createDeploymentFlow({
+      changes: {
+        two: {
+          command: {
+            method: '_addMachines',
+            args: [{machine: 'machine1'}]
+          }
+        }
+      },
       cloud: {name: 'cloud'},
       credential: 'cred',
-      groupedChanges: {_addMachines: {machine: 'machine1'}},
       modelCommitted: true
     });
     assert.equal(wrapper.find('.deployment-flow__deploy-option').length, 0);

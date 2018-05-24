@@ -955,8 +955,6 @@ Browser: ${navigator.userAgent}`
         addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
         applications={services.toArray()}
         changes={currentChangeSet}
-        changesFilterByParent={
-          changesUtils.filterByParent.bind(changesUtils, currentChangeSet)}
         changeState={this._bound.changeState}
         charms={db.charms}
         charmsGetById={db.charms.getById.bind(db.charms)}
@@ -1001,7 +999,6 @@ Browser: ${navigator.userAgent}`
         getUser={this.payment && this.payment.getUser.bind(this.payment)}
         getUserName={getUserName}
         gisf={this.gisf}
-        groupedChanges={changesUtils.getGroupedChanges(currentChangeSet)}
         gtmEnabled={this.applicationConfig.GTM_enabled}
         hash={state.hash}
         importSSHKeys={modelAPI.importKeys.bind(modelAPI)}
