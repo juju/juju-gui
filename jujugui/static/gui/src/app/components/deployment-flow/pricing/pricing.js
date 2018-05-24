@@ -8,6 +8,8 @@ const DeploymentPlanTable = require('./plan-table/plan-table');
 const DeploymentSupportSelection = require('./support-selection/support-selection');
 const Link = require('../../link/link');
 
+const initUtils = require('../../../init/utils');
+
 const DeploymentPricing = props => {
   return (
     <div className="deployment-pricing">
@@ -23,7 +25,7 @@ const DeploymentPricing = props => {
         <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
           Estimated application cost:
           <span className="deployment-pricing__estimated-price-number">
-            $3500.00
+            ${props.estimate}
           </span>
         </div>
       </div>
@@ -39,12 +41,18 @@ const DeploymentPricing = props => {
           </a>
         </div>
       </div>
-      <DeploymentSupportSelection getSLAMachineRates={props.getSLAMachineRates} />
+      <DeploymentSupportSelection
+        getSLAMachineRates={props.getSLAMachineRates}
+        machineCount={props.machineCount}
+        setSLA={props.setSLA} />
       <div className="twelve-col no-margin-bottom">
         <div className="six-col no-margin-bottom deployment-pricing__secondary-text">
-          <strong>Estimated costs based on 8 machines.</strong> Support is
-          billed monthly. You can upgrade the level at any time, and downgrade
-          at the end of a month.
+          <strong>
+            Estimated costs based on
+            {props.machineCount}
+            {initUtils.pluralize('machine', parseInt(props.machineCount, 10))}.
+          </strong> Support is billed monthly. You can upgrade the level at any time, and
+          downgrade at the end of a month.
         </div>
         <div className="six-col last-col u-align--right no-margin-bottom">
           <Link changeState={props.changeState}
@@ -67,9 +75,12 @@ DeploymentPricing.propTypes = {
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   charms: PropTypes.object.isRequired,
+  estimate: PropTypes.any.isRequired,
   generatePath: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func.isRequired,
-  listPlansForCharm: PropTypes.func.isRequired
+  listPlansForCharm: PropTypes.func.isRequired,
+  machineCount: PropTypes.string.isRequired,
+  setSLA: PropTypes.func.isRequired
 };
 
 module.exports = DeploymentPricing;
