@@ -26,6 +26,10 @@ class DeploymentSupportSelection extends React.Component {
   */
   _handlePlanSelect(plan) {
     this.setState({selectedPlan: plan});
+    this.props.setSLA({
+      name: plan,
+      hourPrice: this.state.slaMachineRates[plan.toLowerCase()]
+    });
   }
 
   /**
@@ -39,12 +43,10 @@ class DeploymentSupportSelection extends React.Component {
     }
     const slaMachineRates = state.slaMachineRates;
     const plans = [{
-      cost: '8.75',
       features: ['8hx5d ticked'],
       hourPrice: slaMachineRates.essential,
       name: 'Essential'
     }, {
-      cost: '77.00',
       features: [
         '10x5 phone support',
         '2hr critical response'
@@ -52,7 +54,6 @@ class DeploymentSupportSelection extends React.Component {
       hourPrice: slaMachineRates.standard,
       name: 'Standard'
     }, {
-      cost: '154.00',
       features: [
         '24x7 phone support',
         '1hr critical response'
@@ -68,10 +69,10 @@ class DeploymentSupportSelection extends React.Component {
       return (
         <DeploymentSupportSelectionPlan
           classes={classes}
-          cost={plan.cost}
           features={plan.features}
           hourPrice={plan.hourPrice}
           key={plan.name}
+          machineCount={parseInt(this.props.machineCount, 10)}
           onSelect={this._handlePlanSelect.bind(this, plan.name)}
           selected={plan.name === this.state.selectedPlan}
           title={plan.name} />);
@@ -88,7 +89,9 @@ class DeploymentSupportSelection extends React.Component {
 };
 
 DeploymentSupportSelection.propTypes = {
-  getSLAMachineRates: PropTypes.func.isRequired
+  getSLAMachineRates: PropTypes.func.isRequired,
+  machineCount: PropTypes.string.isRequired,
+  setSLA: PropTypes.func.isRequired
 };
 
 module.exports = DeploymentSupportSelection;
