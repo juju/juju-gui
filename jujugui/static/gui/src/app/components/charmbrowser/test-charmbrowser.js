@@ -34,7 +34,6 @@ describe('Charmbrowser', function() {
       gisf={options.gisf === undefined ? true : options.gisf}
       importBundleYAML={options.importBundleYAML || sinon.stub()}
       listPlansForCharm={options.listPlansForCharm || sinon.stub()}
-      makeEntityModel={options.makeEntityModel || sinon.stub()}
       renderMarkdown={options.renderMarkdown || sinon.stub()}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
       series={options.series || {}}
@@ -64,7 +63,6 @@ describe('Charmbrowser', function() {
     const importBundleYAML = sinon.stub();
     const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
-    const makeEntityModel = sinon.spy();
     const wrapper = renderComponent({
       addNotification,
       addToModel,
@@ -73,7 +71,6 @@ describe('Charmbrowser', function() {
       deployService,
       getBundleYAML,
       importBundleYAML,
-      makeEntityModel,
       series,
       setPageTitle
     });
@@ -87,7 +84,6 @@ describe('Charmbrowser', function() {
           changeState={searchResults.prop('changeState')}
           charmstoreSearch={charmstoreSearch}
           generatePath={searchResults.prop('generatePath')}
-          makeEntityModel={makeEntityModel}
           owner={undefined}
           provides={undefined}
           query={query}
@@ -105,12 +101,10 @@ describe('Charmbrowser', function() {
   it('displays the store when the app state calls for it', function() {
     const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
-    const makeEntityModel = sinon.spy();
     const seriesList = {};
     const wrapper = renderComponent({
       appState,
       charmstoreSearch,
-      makeEntityModel,
       seriesList,
       setPageTitle,
       staticURL: 'surl'
@@ -136,7 +130,6 @@ describe('Charmbrowser', function() {
     appState.current.store = id;
     appState.current.hash = 'readme';
     const getEntity = sinon.spy();
-    const makeEntityModel = sinon.spy();
     const clearLightbox = sinon.stub();
     const displayLightbox = sinon.stub();
     const deployService = sinon.spy();
@@ -166,7 +159,6 @@ describe('Charmbrowser', function() {
       getModelName,
       importBundleYAML,
       listPlansForCharm,
-      makeEntityModel,
       renderMarkdown,
       setPageTitle,
       showTerms,
@@ -195,7 +187,6 @@ describe('Charmbrowser', function() {
           id={id}
           importBundleYAML={importBundleYAML}
           listPlansForCharm={listPlansForCharm}
-          makeEntityModel={makeEntityModel}
           renderMarkdown={renderMarkdown}
           scrollCharmbrowser={entityDetails.prop('scrollCharmbrowser')}
           scrollPosition={0}
