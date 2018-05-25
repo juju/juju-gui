@@ -1,22 +1,26 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const proxyquire = require('proxyquire');
-
-const entries = ['readme', 'version'];
-
-const ReaderStub = sinon.stub().returns({
-  toObject: sinon.stub().returns(entries)
-});
-
-const zipUtils = proxyquire('./zip-utils', {
-  zip: {
-    Reader: ReaderStub,
-    createReader: null
-  }
-});
+const zipUtils = require('./zip-utils');
 
 describe('Zip utils', function() {
+  let entries;
+
+  beforeEach(function() {
+    entries = ['readme', 'version'];
+    const ReaderStub = sinon.stub().returns({
+      toObject: sinon.stub().returns(entries)
+    });
+    zipUtils.__Rewire__('zip', {
+      Reader: ReaderStub,
+      createReader: null
+    });
+  });
+
+  afterEach(function() {
+    zipUtils.__ResetDependency__('zip');
+  });
+
   describe('getEntries', function() {
     let addEventListenerMock, callback, errback, _FileReader;
     const file = 'a file object';

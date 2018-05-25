@@ -1,19 +1,11 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const proxyquire = require('proxyquire');
-
+const RelationModule = require('./relation');
 const utils = require('../../../test/utils');
 
-const locateRelativePointOnCanvas = sinon.stub();
-const RelationModule = proxyquire('./relation', {
-  './utils': {
-    locateRelativePointOnCanvas: locateRelativePointOnCanvas
-  }
-});
-
 describe('topology relation module', function() {
-  var cleanups, view, container, topo, models;
+  var cleanups, view, container, locateRelativePointOnCanvas, topo, models;
 
   beforeAll(function(done) {
     YUI(GlobalConfig).use(
@@ -26,6 +18,10 @@ describe('topology relation module', function() {
 
   beforeEach(function() {
     cleanups = [];
+    locateRelativePointOnCanvas = sinon.stub();
+    RelationModule.__Rewire__('topoUtils', {
+      locateRelativePointOnCanvas
+    });
     container = utils.makeContainer(this);
     view = new RelationModule();
   });
@@ -36,6 +32,7 @@ describe('topology relation module', function() {
     if (topo) {
       topo.unbind();
     }
+    RelationModule.__ResetDependency__('topoUtils');
   });
 
   // XXX: this test fails when the full test suite is run.

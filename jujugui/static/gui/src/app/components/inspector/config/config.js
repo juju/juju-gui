@@ -87,7 +87,7 @@ class Configuration extends React.Component {
     @method _openFileDialog
   */
   _importConfig() {
-    this.props.getYAMLConfig(
+    initUtils.getYAMLConfig(
       this.refs.file.files[0], this._applyConfig.bind(this));
     // Reset the form so the file can be uploaded again
     this.refs['file-form'].reset();
@@ -434,7 +434,6 @@ Configuration.propTypes = {
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   getServiceByName: PropTypes.func.isRequired,
-  getYAMLConfig: PropTypes.func.isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
   setConfig: PropTypes.func.isRequired,
