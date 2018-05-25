@@ -25,6 +25,7 @@ const DeploymentSection = require('./section/section');
 const DeploymentServices = require('./services/services');
 const DeploymentSSHKey = require('./sshkey/sshkey');
 const DeploymentVPC = require('./vpc/vpc');
+const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
 const GenericButton = require('../generic-button/generic-button');
 
@@ -125,7 +126,7 @@ class DeploymentFlow extends React.Component {
         });
         return;
       }
-      this.setState({ddEntity: this.props.makeEntityModel(data[0])});
+      this.setState({ddEntity: jujulibConversionUtils.makeEntityModel(data[0])});
     });
   }
 
@@ -1263,7 +1264,6 @@ DeploymentFlow.propTypes = {
   listClouds: PropTypes.func,
   listPlansForCharm: PropTypes.func.isRequired,
   loginToController: PropTypes.func.isRequired,
-  makeEntityModel: PropTypes.func.isRequired,
   modelCommitted: PropTypes.bool,
   modelName: PropTypes.string.isRequired,
   profileUsername: PropTypes.string.isRequired,

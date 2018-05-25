@@ -19,6 +19,7 @@ const GenericButton = require('../generic-button/generic-button');
 describe('DeploymentFlow', function() {
   let applications;
   let acl;
+  let models;
 
 
   /**
@@ -100,7 +101,6 @@ describe('DeploymentFlow', function() {
       listClouds: sinon.stub(),
       listPlansForCharm: sinon.stub(),
       loginToController: sinon.stub(),
-      makeEntityModel: sinon.stub(),
       modelName: 'Pavlova',
       profileUsername: 'Spinach',
       renderMarkdown: sinon.stub(),
@@ -131,12 +131,22 @@ describe('DeploymentFlow', function() {
 
   beforeEach(() => {
     window.juju_config = {flags: {}};
+    // The makeEntityModel util uses the global models variable, so fake that here.
+    models = window.models;
+    window.models = {
+      Bundle: sinon.stub(),
+      Charm: sinon.stub()
+    };
     applications = [
       {get: sinon.stub().returns('service1')},
       {get: sinon.stub().returns('mysql')},
       {get: sinon.stub().returns('service1')}
     ];
     acl = {isReadOnly: sinon.stub().returns(false)};
+  });
+
+  afterEach(() => {
+    window.models = models;
   });
 
   it('can render', function() {
@@ -293,14 +303,13 @@ describe('DeploymentFlow', function() {
     };
     const entityData = [entityModel];
     const getEntity = sinon.stub();
-    const makeEntityModel = sinon.stub().returns(entityModel);
+    window.models.Bundle.returns(entityModel);
     const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
       getEntity: getEntity,
-      makeEntityModel: makeEntityModel,
       modelCommitted: false,
       renderMarkdown: renderMarkdown
     });
@@ -339,16 +348,14 @@ describe('DeploymentFlow', function() {
     const getEntity = sinon.stub();
     getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
     getEntity.withArgs(entityId2).callsArgWith(1, null, [entityId2]);
-    const makeEntityModel = sinon.stub();
-    makeEntityModel.withArgs(entityId).returns(entityModel);
-    makeEntityModel.withArgs(entityId2).returns(entityModel2);
+    window.models.Bundle.withArgs(entityId).returns(entityModel);
+    window.models.Bundle.withArgs(entityId2).returns(entityModel2);
     const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: { id: entityId },
       getEntity: getEntity,
-      makeEntityModel: makeEntityModel,
       modelCommitted: false,
       renderMarkdown: renderMarkdown
     });
@@ -380,15 +387,13 @@ describe('DeploymentFlow', function() {
     };
     const getEntity = sinon.stub();
     getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
-    const makeEntityModel = sinon.stub();
-    makeEntityModel.withArgs(entityId).returns(entityModel);
+    window.models.Bundle.withArgs(entityId).returns(entityModel);
     const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: { id: entityId },
       getEntity: getEntity,
-      makeEntityModel: makeEntityModel,
       modelCommitted: false,
       renderMarkdown: renderMarkdown
     });
@@ -414,6 +419,7 @@ describe('DeploymentFlow', function() {
         displayName: 'Kubernetes Core'
       })
     };
+    window.models.Bundle.returns(entityModel);
     const entityData = [entityModel];
     const getEntity = sinon.stub();
     const wrapper = createDeploymentFlow({
@@ -421,7 +427,6 @@ describe('DeploymentFlow', function() {
       changeState: changeState,
       ddData: {id: entityId},
       getEntity: getEntity,
-      makeEntityModel: sinon.stub().returns(entityModel),
       modelCommitted: false,
       renderMarkdown: sinon.stub(),
       showPay: true
