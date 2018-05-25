@@ -8,6 +8,7 @@ const React = require('react');
 const SvgIcon = require('../../../../svg-icon/svg-icon');
 
 class DeploymentSupportSelectionPlan extends React.Component {
+
   _generateFeatures() {
     const features = this.props.features.map((feature, i) => (
       <li className="deployment-support-select-plan__feature"
@@ -23,6 +24,12 @@ class DeploymentSupportSelectionPlan extends React.Component {
         {features}
       </ul>);
   }
+
+  _calculateCost() {
+    // 720 is the average number of hours in a month.
+    return (this.props.machineCount * parseFloat(this.props.hourPrice) * 720).toFixed(2);
+  }
+
   render() {
     const classes = classNames(
       'deployment-support-select-plan',
@@ -42,7 +49,7 @@ class DeploymentSupportSelectionPlan extends React.Component {
           <div className="deployment-support-select-plan__price">
             Monthly cost
             <span className="deployment-support-select-plan__price-number">
-              ${this.props.cost}
+              ${this._calculateCost()}
             </span>
           </div>
         </div>
@@ -57,9 +64,9 @@ class DeploymentSupportSelectionPlan extends React.Component {
 
 DeploymentSupportSelectionPlan.propTypes = {
   classes: PropTypes.array,
-  cost: PropTypes.string.isRequired,
   features: PropTypes.array.isRequired,
   hourPrice: PropTypes.string.isRequired,
+  machineCount: PropTypes.number.isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired

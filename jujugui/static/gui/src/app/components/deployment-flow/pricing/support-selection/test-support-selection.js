@@ -11,7 +11,9 @@ describe('DeploymentSupportSelection', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentSupportSelection
-      getSLAMachineRates={options.getSLAMachineRates || sinon.stub()} />
+      getSLAMachineRates={options.getSLAMachineRates || sinon.stub()}
+      machineCount="3"
+      setSLA={options.setSLA || sinon.stub()} />
   );
 
   it('can render', () => {
@@ -29,34 +31,34 @@ describe('DeploymentSupportSelection', () => {
       <div className="deployment-support-selection equal-height">
         <DeploymentSupportSelectionPlan
           classes={[]}
-          cost="8.75"
           features={['8hx5d ticked']}
           hourPrice="0.011"
           key="Essential"
+          machineCount={3}
           onSelect={plans.at(0).prop('onSelect')}
           selected={false}
           title="Essential" />
         <DeploymentSupportSelectionPlan
           classes={[]}
-          cost="77.00"
           features={[
             '10x5 phone support',
             '2hr critical response'
           ]}
           hourPrice="0.055"
           key="Standard"
+          machineCount={3}
           onSelect={plans.at(1).prop('onSelect')}
           selected={false}
           title="Standard" />
         <DeploymentSupportSelectionPlan
           classes={['last-col']}
-          cost="154.00"
           features={[
             '24x7 phone support',
             '1hr critical response'
           ]}
           hourPrice="0.110"
           key="Advanced"
+          machineCount={3}
           onSelect={plans.at(2).prop('onSelect')}
           selected={false}
           title="Advanced" />

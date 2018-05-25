@@ -12,9 +12,9 @@ describe('DeploymentSupportSelectionPlan', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentSupportSelectionPlan
       classes={options.classes}
-      cost={options.cost || '99.99'}
       features={options.features || ['feature 1', 'feature 2']}
       hourPrice={options.hourPrice || '0.5'}
+      machineCount={10}
       onSelect={options.onSelect || sinon.stub()}
       selected={options.selected === undefined ? false : options.selected}
       title={options.title || 'Gold'} />
@@ -48,7 +48,7 @@ describe('DeploymentSupportSelectionPlan', () => {
           <div className="deployment-support-select-plan__price">
             Monthly cost
             <span className="deployment-support-select-plan__price-number">
-              ${'99.99'}
+              ${'3600.00'}
             </span>
           </div>
         </div>
