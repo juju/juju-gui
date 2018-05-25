@@ -3,6 +3,8 @@
 
 const jsyaml = require('js-yaml');
 
+const jujulibConversionUtils = require('./jujulib-conversion-utils');
+
 class BundleImporter {
   constructor(cfg) {
     this.modelAPI = cfg.modelAPI;
@@ -12,7 +14,6 @@ class BundleImporter {
     this.hideDragOverNotification = cfg.hideDragOverNotification;
     this._dryRunIndex = -1;
     this._collectedServices = [];
-    this.makeEntityModel = cfg.makeEntityModel;
     this.recordSet = null;
   }
 
@@ -403,7 +404,7 @@ class BundleImporter {
           return;
         }
         this._deploy_addCharm_success(
-          this.makeEntityModel(charm[0]), record, next);
+          jujulibConversionUtils.makeEntityModel(charm[0]), record, next);
       });
   }
 
@@ -550,7 +551,7 @@ class BundleImporter {
           notify(`Charm ${charmId} was not able to be loaded.`);
           return;
         }
-        const charm = this.makeEntityModel(charmObj[0]);
+        const charm = jujulibConversionUtils.makeEntityModel(charmObj[0]);
         if (db.charms.getById(charm.get('id')) === null) {
           // Mark the charm as loaded so that its endpoints get added
           // to the map of available endpoints.

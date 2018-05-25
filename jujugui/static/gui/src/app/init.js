@@ -243,7 +243,6 @@ class GUIApp {
       modelAPI: this.modelAPI,
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI),
-      makeEntityModel: jujulibConversionUtils.makeEntityModel,
       charmstore: this.charmstore,
       hideDragOverNotification: this._hideDragOverNotification.bind(this)
     });

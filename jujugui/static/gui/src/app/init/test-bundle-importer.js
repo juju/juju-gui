@@ -2,7 +2,6 @@
 'use strict';
 
 const BundleImporter = require('./bundle-importer');
-const jujulibConversionUtils = require('./jujulib-conversion-utils');
 
 // XXX There are test failures in this branch when it's not run in the full
 // suite of tests.
@@ -47,7 +46,6 @@ describe('BundleImporter', () => {
       charmstore,
       db,
       getBundleChanges: getBundleChanges,
-      makeEntityModel: jujulibConversionUtils.makeEntityModel,
       modelAPI
     });
   });
