@@ -7,6 +7,7 @@ const React = require('react');
 
 const GenericButton = require('../generic-button/generic-button');
 const initUtils = require('../../init/utils');
+const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const SearchResultsItem = require('./item/item');
 const SearchResultsSelectFilter = require('./select-filter/select-filter');
 const SearchResultsTypeFilter = require('./type-filter/type-filter');
@@ -155,7 +156,7 @@ class SearchResults extends React.Component {
       return;
     }
     var results = rawResults.map(function(result) {
-      var model = this.props.makeEntityModel(result);
+      var model = jujulibConversionUtils.makeEntityModel(result);
       return model.toEntity();
     }, this);
     var activeComponent;
@@ -564,7 +565,6 @@ SearchResults.propTypes = {
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
-  makeEntityModel: PropTypes.func.isRequired,
   owner: PropTypes.string,
   provides: PropTypes.string,
   query: PropTypes.string,

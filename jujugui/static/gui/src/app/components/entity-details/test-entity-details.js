@@ -11,7 +11,7 @@ const EntityHeader = require('./header/header');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EntityDetails', function() {
-  var acl, mockEntity, urllib;
+  let acl, mockEntity, models, urllib;
 
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
@@ -34,7 +34,6 @@ describe('EntityDetails', function() {
         id={options.id || mockEntity.get('id')}
         importBundleYAML={options.importBundleYAML || sinon.stub()}
         listPlansForCharm={options.listPlansForCharm || sinon.stub()}
-        makeEntityModel={options.makeEntityModel || sinon.stub().returns(mockEntity)}
         renderMarkdown={options.renderMarkdown || sinon.stub()}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
         scrollPosition={options.scrollPosition || 100}
@@ -53,12 +52,19 @@ describe('EntityDetails', function() {
   };
 
   beforeEach(function() {
-    acl = {isReadOnly: sinon.stub().returns(false)};
     mockEntity = jsTestUtils.makeEntity();
+    // The makeEntityModel util uses the global models variable, so fake that here.
+    models = window.models;
+    window.models = {
+      Bundle: sinon.stub().returns(mockEntity),
+      Charm: sinon.stub().returns(mockEntity)
+    };
+    acl = {isReadOnly: sinon.stub().returns(false)};
     urllib = sinon.stub();
   });
 
   afterEach(function() {
+    window.models = models;
     mockEntity = undefined;
   });
 

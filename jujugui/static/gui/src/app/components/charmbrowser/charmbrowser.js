@@ -145,7 +145,6 @@ class Charmbrowser extends React.Component {
             changeState={changeState}
             charmstoreSearch={this.props.charmstoreSearch}
             generatePath={appState.generatePath.bind(appState)}
-            makeEntityModel={this.props.makeEntityModel}
             owner={search.owner}
             provides={search.provides}
             query={search.text}
@@ -181,7 +180,6 @@ class Charmbrowser extends React.Component {
             importBundleYAML={this.props.importBundleYAML}
             key={id}
             listPlansForCharm={this.props.listPlansForCharm}
-            makeEntityModel={this.props.makeEntityModel}
             renderMarkdown={this.props.renderMarkdown}
             scrollCharmbrowser={this._scrollCharmbrowser.bind(this)}
             scrollPosition={this.state.scrollPosition}
@@ -237,7 +235,6 @@ Charmbrowser.propTypes = {
   gisf: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
-  makeEntityModel: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.object.isRequired,

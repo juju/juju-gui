@@ -20,11 +20,6 @@ describe('PostDeployment', () => {
         getEntity={
           options.getEntity || sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}])}
         getFile={options.getFile || getFile}
-        makeEntityModel={options.makeEntityModel || sinon.stub().returns({
-          toEntity: sinon.stub().returns({
-            displayName: 'Test Name'
-          })
-        })}
         marked={options.marked || marked}
         showEntityDetails={options.showEntityDetails || sinon.stub()} />
     );
