@@ -7,6 +7,7 @@ const React = require('react');
 
 const EntityContent = require('./content/content');
 const EntityHeader = require('./header/header');
+const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
 
 class EntityDetails extends React.Component {
@@ -153,7 +154,7 @@ class EntityDetails extends React.Component {
     }
     if (data.length > 0) {
       data = data[0];
-      const model = this.props.makeEntityModel(data);
+      const model = jujulibConversionUtils.makeEntityModel(data);
       this.setState({entityModel: model}, () => {
         this._changeActiveComponent('entity-details');
         this._getPlans();
@@ -262,7 +263,6 @@ EntityDetails.propTypes = {
   id: PropTypes.string.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
-  makeEntityModel: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
