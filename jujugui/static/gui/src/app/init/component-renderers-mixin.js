@@ -15,7 +15,6 @@ const yui = window.yui;
 const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
-const jujulibConversionUtils = require('./jujulib-conversion-utils');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
@@ -513,7 +512,6 @@ Browser: ${navigator.userAgent}`
           entityId={entityId}
           getEntity={charmstore.getEntity.bind(charmstore)}
           getFile={charmstore.getFile.bind(charmstore)}
-          makeEntityModel={jujulibConversionUtils.makeEntityModel}
           marked={marked}
           showEntityDetails={showEntityDetails.bind(this, entityId)} />,
         document.getElementById('post-deployment')
@@ -654,7 +652,6 @@ Browser: ${navigator.userAgent}`
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-        makeEntityModel={jujulibConversionUtils.makeEntityModel}
         renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
         series={viewUtils.getSeriesList()}
@@ -1007,7 +1004,6 @@ Browser: ${navigator.userAgent}`
         listClouds={controllerAPI.listClouds.bind(controllerAPI)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         loginToController={loginToController}
-        makeEntityModel={jujulibConversionUtils.makeEntityModel}
         modelCommitted={connected}
         modelName={modelName}
         profileUsername={this._getUserInfo(state).profile}
@@ -1020,7 +1016,6 @@ Browser: ${navigator.userAgent}`
         sortDescriptionsByApplication={
           changesUtils.sortDescriptionsByApplication.bind(null,
             services.getById.bind(services))}
-
         staticURL={this.applicationConfig.staticURL || ''}
         stats={this.stats}
         updateCloudCredential={
