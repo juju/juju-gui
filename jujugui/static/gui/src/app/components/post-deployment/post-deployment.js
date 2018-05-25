@@ -233,7 +233,6 @@ PostDeployment.propTypes = {
   entityId: PropTypes.string.isRequired,
   getEntity: PropTypes.func.isRequired,
   getFile: PropTypes.func.isRequired,
-  makeEntityModel: PropTypes.func.isRequired,
   marked: PropTypes.func.isRequired,
   showEntityDetails: PropTypes.func.isRequired
 };
