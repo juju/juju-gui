@@ -12,7 +12,7 @@ const SearchResultsTypeFilter = require('./type-filter/type-filter');
 
 describe('SearchResults', function() {
   let acl, addToModel, charmstoreSearch, generatePath,
-      makeEntityModel, results;
+      models, results;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <SearchResults
@@ -21,7 +21,6 @@ describe('SearchResults', function() {
       changeState={options.changeState || sinon.stub()}
       charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
       generatePath={options.generatePath || generatePath}
-      makeEntityModel={options.makeEntityModel || makeEntityModel}
       query={options.query || 'spinach'}
       series={options.series}
       seriesList={options.seriesList || {}}
@@ -31,6 +30,12 @@ describe('SearchResults', function() {
   );
 
   beforeEach(function() {
+    // The makeEntityModel util uses the global models variable, so fake that here.
+    models = window.models;
+    window.models = {
+      Bundle: sinon.stub().returnsArg(0),
+      Charm: sinon.stub().returnsArg(0)
+    };
     acl = {isReadOnly: sinon.stub().returns(false)};
     addToModel = sinon.stub();
     generatePath = sinon.stub();
@@ -85,7 +90,10 @@ describe('SearchResults', function() {
       toEntity: sinon.stub().returns(results[3])
     }];
     charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
-    makeEntityModel = sinon.stub().returnsArg(0);
+  });
+
+  afterEach(() => {
+    window.models = models;
   });
 
   describe('functional tests', function() {
@@ -154,11 +162,10 @@ describe('SearchResults', function() {
       var mockModel = {};
       mockModel.toEntity = sinon.stub().returns(result);
       var mockData = [mockModel];
-      var makeEntityModel = sinon.stub().returns(mockModel);
+      window.models.Bundle.returns(mockModel);
       var charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
       const wrapper = renderComponent({
-        charmstoreSearch,
-        makeEntityModel
+        charmstoreSearch
       });
       const instance = wrapper.instance();
       assert.isTrue(charmstoreSearch.calledOnce,
@@ -459,8 +466,7 @@ describe('SearchResults', function() {
       searchResults._changeActiveComponent = sinon.stub();
       var query = 'spinach';
       searchResults.props = {
-        query: query,
-        makeEntityModel: sinon.stub().returnsArg(0)
+        query: query
       };
       var results = [{
         name: 'spinach',
@@ -593,8 +599,7 @@ describe('SearchResults', function() {
       var _changeActiveComponent = searchResults._changeActiveComponent;
       searchResults._changeActiveComponent = sinon.stub();
       searchResults.props = {
-        query: 'mysql',
-        makeEntityModel: sinon.stub().returnsArg(0)
+        query: 'mysql'
       };
       var results = [{
         name: 'mysql',
