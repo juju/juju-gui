@@ -50,6 +50,8 @@ class DeploymentFlow extends React.Component {
       newTerms: [],
       paymentUser: null,
       region: this.props.region,
+      // selectedSLA is in the format:
+      //  { name: nameOfTheSLA, hourPrice: hourlyRateOfSLA }
       selectedSLA: null,
       sshKeys: [],
       lpUsernames: [],
@@ -687,7 +689,7 @@ class DeploymentFlow extends React.Component {
           applications={this.props.applications}
           changeState={this.props.changeState}
           charms={this.props.charms}
-          estimate={this.state.ddEntity.toEntity().price}
+          estimate={this.state.ddEntity.get('price')}
           generatePath={this.props.generatePath}
           getSLAMachineRates={this.props.getSLAMachineRates}
           listPlansForCharm={this.props.listPlansForCharm}
@@ -708,9 +710,9 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    const estimate = parseInt(state.ddEntity.toEntity().price, 10);
+    const estimate = state.ddEntity.get('price');
     const hourPrice = (state.selectedSLA && state.selectedSLA.hourPrice) || 0;
-    const machineCount = state.ddEntity.get('machineCount') || '1';
+    const machineCount = state.ddEntity.get('machineCount') || 1;
     return (
       <DeploymentSection
         completed={status.completed}
@@ -719,6 +721,7 @@ class DeploymentFlow extends React.Component {
         title="Set your maximum monthly budget (optional)">
         <DeploymentExpertBudget
           budget={this.state.budget}
+          // 720 is the average number of hours in a month.
           estimateWithSLA={((hourPrice * machineCount * 720) + estimate).toFixed(2)}
           setBudget={this._setBudget.bind(this)} />
       </DeploymentSection>);

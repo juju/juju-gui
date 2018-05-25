@@ -582,6 +582,9 @@ YUI.add('juju-charm-models', function(Y) {
       owner: {},
       peers: {},
       proof: {},
+      price: {
+        setter: val => parseInt(val, 10)
+      },
       /**
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.

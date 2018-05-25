@@ -291,6 +291,9 @@ YUI.add('juju-bundle-models', function(Y) {
         @type {Object}
       */
       applications: {},
+      price: {
+        setter: val => parseInt(val, 10)
+      },
 
       /**
        * @attribute serviceCount

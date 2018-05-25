@@ -400,12 +400,12 @@ describe('DeploymentFlow', function() {
     const entityGet = sinon.stub();
     entityGet.withArgs('terms').returns([]);
     entityGet.withArgs('supported').returns(true);
+    entityGet.withArgs('price').returns(8);
     const entityModel = {
       id: entityId,
       get: entityGet,
       toEntity: sinon.stub().returns({
-        displayName: 'Kubernetes Core',
-        price: '8'
+        displayName: 'Kubernetes Core'
       })
     };
     const entityData = [entityModel];

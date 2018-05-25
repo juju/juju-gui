@@ -26,6 +26,7 @@ class DeploymentSupportSelectionPlan extends React.Component {
   }
 
   _calculateCost() {
+    // 720 is the average number of hours in a month.
     return (this.props.machineCount * parseFloat(this.props.hourPrice) * 720).toFixed(2);
   }
 
