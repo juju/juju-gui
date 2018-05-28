@@ -9,6 +9,7 @@ const React = require('react');
 const AccordionSection = require('../accordion-section/accordion-section');
 const changesUtils = require('../../init/changes-utils');
 const cookieUtil = require('../../init/cookie-util');
+const DeploymentAgreements = require('./agreements/agreements');
 const DeploymentBudget = require('./budget/budget');
 const DeploymentCloud = require('./cloud/cloud');
 const DeploymentCredential = require('./credential/credential');
@@ -1022,25 +1023,14 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    const disabled = this.props.acl.isReadOnly() || status.disabled;
-    const classes = classNames(
-      'deployment-flow__agreements',
-      'deployment-flow__deploy-option',
-      {
-        'deployment-flow__deploy-option--disabled': status.disabled
-      });
+    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
     return (
-      <div className={classes}>
-        <input className="deployment-flow__deploy-checkbox"
-          disabled={disabled}
-          id="terms"
-          onChange={this._handleTermsAgreement.bind(this)}
-          type="checkbox" />
-        <label className="deployment-flow__deploy-label"
-          htmlFor="terms">
-          I agree to all terms.
-        </label>
-      </div>);
+      <DeploymentAgreements
+        acl={this.props.acl}
+        disabled={status.disabled}
+        onCheckboxChange={this._handleTermsAgreement.bind(this)}
+        showTerms={!!isExpertFlow}
+        terms={this.state.newTerms} />);
   }
 
   /**
