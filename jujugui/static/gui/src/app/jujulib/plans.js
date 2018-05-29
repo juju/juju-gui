@@ -168,19 +168,26 @@ var module = module;
       Create a new budget for the authorised user.
 
       @public createBudget
-      @param budget {String} The budget name.
-      @param limit {String} The numeric limit.
+      @param limit {Number} The budget limit.
+      @param modelUUID {String} The model UUID for the budget to be assigned to.
+      @param wallet {String} Optional - The name of the wallet to add the budget
+        to. If none is provided a wallet will be created or added to under the
+        active users namespace.
       @param callback {Function} A callback to handle errors or accept the
         data from the request. Must accept an error message or null as its
         first parameter and an authorization object as its second.
     */
-    createBudget: function(budget, limit, callback) {
-      const url = this.url + '/budget';
-      const body = JSON.stringify({
-        'budget': budget,
-        'limit': limit
-      });
-      const headers = null;
+    createBudget: function(limit, modelUUID, wallet, callback) {
+      if (!wallet) {
+        wallet = 'default';
+      }
+      const url = this.url + `/wallet/${wallet}/budget`;
+      const data = {
+        'limit': `${limit}`,
+        'model': modelUUID
+      };
+      const body = JSON.stringify(data);
+      const headers = {'Content-type': 'application/json'};
       return this.bakery.post(
         url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
     },
