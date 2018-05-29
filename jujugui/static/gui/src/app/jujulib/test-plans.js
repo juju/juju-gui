@@ -329,7 +329,7 @@ describe('jujulib plans service', function() {
           url,
           'http://1.2.3.4/' +
           window.jujulib.plansAPIVersion +
-          '/budget');
+          '/wallet/default/budget');
         const xhr = makeXHRRequest({
           'auth': 'I\'m a macaroon',
           'params': body
@@ -339,12 +339,42 @@ describe('jujulib plans service', function() {
     };
     const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
     plans.createBudget(
-      'budget',
-      'limit',
+      '9000',
+      'abc123',
+      null,
       function(error, data) {
         assert.isNull(error);
         assert.equal(data['auth'], 'I\'m a macaroon');
-        assert.equal(data.params, '{"budget":"budget","limit":"limit"}');
+        assert.equal(data.params, '{"limit":"9000","model":"abc123"}');
+        done();
+      }
+    );
+  });
+
+  it('can have a wallet supplied when adding a budget', done => {
+    const bakery = {
+      post: function(url, headers, body, callback) {
+        assert.equal(
+          url,
+          'http://1.2.3.4/' +
+          window.jujulib.plansAPIVersion +
+          '/wallet/super-wallet/budget');
+        const xhr = makeXHRRequest({
+          'auth': 'I\'m a macaroon',
+          'params': body
+        });
+        callback(null, xhr);
+      }
+    };
+    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.createBudget(
+      '9000',
+      'abc123',
+      'super-wallet',
+      function(error, data) {
+        assert.isNull(error);
+        assert.equal(data['auth'], 'I\'m a macaroon');
+        assert.equal(data.params, '{"limit":"9000","model":"abc123"}');
         done();
       }
     );
@@ -357,15 +387,16 @@ describe('jujulib plans service', function() {
           url,
           'http://1.2.3.4/' +
           window.jujulib.plansAPIVersion +
-          '/budget');
+          '/wallet/default/budget');
         const xhr = makeXHRRequest({error: 'bad wolf'});
         callback(null, xhr);
       }
     };
     const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
     plans.createBudget(
-      'budget',
-      'limit',
+      '9000',
+      'abc123',
+      null,
       function(error, data) {
         assert.equal(error, 'bad wolf');
         done();
