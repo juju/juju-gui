@@ -5,23 +5,55 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
 
-class DeploymentAgreements extends React.Component {
-  /**
-    Generate select options for the available budgets.
+const GenericButton = require('../../generic-button/generic-button');
+const TermsPopup = require('../../terms-popup/terms-popup');
 
-    @method _generateBudgetOptions
+class DeploymentAgreements extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showTerms: false
+    };
+  }
+
+  /**
+   Toggle the terms state.
   */
-  _generateBudgetOptions() {
-    var budgets = this.state.budgets;
-    if (!budgets) {
-      return [];
+  _toggleTerms() {
+    this.setState({ showTerms: !this.state.showTerms });
+  }
+
+  /**
+  Generate the terms the user needs to agree to.
+  @returns {Object} The terms markup.
+  */
+  _generateTerms() {
+    if (!this.state.showTerms) {
+      return null;
     }
-    return budgets.budgets.map(budget => {
-      return {
-        label: `${budget.budget} ($${budget.limit})`,
-        value: budget.budget
-      };
-    });
+    return (
+      <TermsPopup
+        close={this._toggleTerms.bind(this)}
+        terms={this.props.terms} />);
+  }
+
+  /**
+    Generate the terms link.
+    @returns {Object} The terms link markup.
+  */
+  _generateTermsLink() {
+    if (!this.props.showTerms) {
+      return null;
+    }
+    const terms = this.props.terms;
+    if (terms && terms.length) {
+      return (
+        <GenericButton
+          action={this._toggleTerms.bind(this)}
+          type="base">
+          View terms
+        </GenericButton>);
+    }
   }
 
   render() {
@@ -34,6 +66,7 @@ class DeploymentAgreements extends React.Component {
       });
     return (
       <div className={classes}>
+        {this._generateTermsLink()}
         <input className="deployment-flow__deploy-checkbox"
           disabled={disabled}
           id="terms"
@@ -43,6 +76,7 @@ class DeploymentAgreements extends React.Component {
           htmlFor="terms">
           I agree to all terms.
         </label>
+        {this._generateTerms()}
       </div>
     );
   }

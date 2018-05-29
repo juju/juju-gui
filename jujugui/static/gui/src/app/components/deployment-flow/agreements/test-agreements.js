@@ -5,6 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentAgreements = require('./agreements');
+const GenericButton = require('../../generic-button/generic-button');
 
 describe('DeploymentAgreements', function() {
   let acl, terms;
@@ -49,5 +50,25 @@ describe('DeploymentAgreements', function() {
     acl.isReadOnly.returns(true);
     const wrapper = renderComponent();
     assert.strictEqual(wrapper.find('input').prop('disabled'), true);
+  });
+
+  it('can show the terms link', function() {
+    terms = [{}, {}];
+    const wrapper = renderComponent({ showTerms: true });
+    const expected = (
+      <GenericButton
+        action={wrapper.find('GenericButton').prop('action')}
+        type="base">
+        View terms
+      </GenericButton>);
+    assert.compareJSX(wrapper.find('GenericButton'), expected);
+  });
+
+  it('can show the terms popup', function() {
+    terms = [{}, {}];
+    const wrapper = renderComponent({ showTerms: true });
+    wrapper.find('GenericButton').props().action();
+    wrapper.update();
+    assert.equal(wrapper.find('TermsPopup').length, 1);
   });
 });
