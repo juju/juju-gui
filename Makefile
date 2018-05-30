@@ -84,7 +84,8 @@ sysdeps:
 	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 	sudo apt install -y nodejs
 	sudo apt update
-	sudo apt install -y coreutils g++ git inotify-tools python-virtualenv realpath xvfb chromium-browser
+	sudo apt install -y chromium-browser coreutils g++ git inotify-tools python-dev python-virtualenv xvfb 
+	realpath --version || sudo apt-get install -y realpath # realpath is already present on bionic.
 
 #######
 # TOOLS
