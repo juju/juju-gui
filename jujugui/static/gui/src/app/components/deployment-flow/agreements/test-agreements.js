@@ -58,7 +58,7 @@ describe('DeploymentAgreements', function() {
     const expected = (
       <GenericButton
         action={wrapper.find('GenericButton').prop('action')}
-        type="base">
+        type="inline-base">
         View terms
       </GenericButton>);
     assert.compareJSX(wrapper.find('GenericButton'), expected);

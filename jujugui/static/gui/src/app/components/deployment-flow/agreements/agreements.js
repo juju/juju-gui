@@ -50,7 +50,7 @@ class DeploymentAgreements extends React.Component {
       return (
         <GenericButton
           action={this._toggleTerms.bind(this)}
-          type="base">
+          type="inline-base">
           View terms
         </GenericButton>);
     }
@@ -66,7 +66,6 @@ class DeploymentAgreements extends React.Component {
       });
     return (
       <div className={classes}>
-        {this._generateTermsLink()}
         <input className="deployment-flow__deploy-checkbox"
           disabled={disabled}
           id="terms"
@@ -75,6 +74,7 @@ class DeploymentAgreements extends React.Component {
         <label className="deployment-flow__deploy-label"
           htmlFor="terms">
           I agree to all terms.
+          {this._generateTermsLink()}
         </label>
         {this._generateTerms()}
       </div>

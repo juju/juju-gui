@@ -280,6 +280,48 @@ describe('DeploymentFlow', function() {
     assert.compareJSX(wrapper, expected);
   });
 
+  it('updates terms and agreements when applications change', () => {
+    const getAgreementsByTerms = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      getAgreementsByTerms,
+      isLoggedIn: sinon.stub().returns(true),
+      modelCommitted: false
+    });
+    assert.equal(getAgreementsByTerms.callCount, 1);
+    applications.push({ get: sinon.stub().returns('service2') });
+    wrapper.setProps({ applications });
+    assert.equal(getAgreementsByTerms.callCount, 2);
+    assert.deepEqual(getAgreementsByTerms.args[0][0], ['service1-terms']);
+  });
+
+  it('updates terms and agreements when deploy changes change', () => {
+    const getAgreementsByTerms = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      getAgreementsByTerms,
+      isLoggedIn: sinon.stub().returns(true),
+      modelCommitted: false
+    });
+    assert.equal(getAgreementsByTerms.callCount, 1);
+    wrapper.setProps({
+      changes: {
+        one: {
+          command: {
+            method: '_deploy',
+            args: [{ charmURL: 'service1' }]
+          }
+        },
+        two: {
+          command: {
+            method: '_deploy',
+            args: [{ charmURL: 'mysql' }]
+          }
+        }
+      }
+    });
+    assert.equal(getAgreementsByTerms.callCount, 2);
+    assert.deepEqual(getAgreementsByTerms.args[0][0], ['service1-terms']);
+  });
+
   it('shows a spinnner when loading the direct deploy entity', () => {
     const wrapper = createDeploymentFlow({
       ddData: { id: 'cs:bundle/kubernetes-core-8' },
