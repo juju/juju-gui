@@ -9,6 +9,7 @@ const React = require('react');
 const AccordionSection = require('../accordion-section/accordion-section');
 const changesUtils = require('../../init/changes-utils');
 const cookieUtil = require('../../init/cookie-util');
+const DeploymentAgreements = require('./agreements/agreements');
 const DeploymentBudget = require('./budget/budget');
 const DeploymentCloud = require('./cloud/cloud');
 const DeploymentCredential = require('./credential/credential');
@@ -57,8 +58,6 @@ class DeploymentFlow extends React.Component {
       selectedSLA: null,
       sshKeys: [],
       lpUsernames: [],
-      // The list of term ids for the uncommitted applications.
-      terms: this._getTerms() || [],
       // Whether the user has ticked the checked to agree to terms.
       termsAgreed: false,
       vpcId: INITIAL_VPC_ID,
@@ -77,14 +76,6 @@ class DeploymentFlow extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const newApps = nextProps.applications;
-    const currentApps = this.props.applications;
-    // Filter the list of new apps to find that don't exist in the current
-    // list of apps.
-    const appDiff = newApps.filter(a => currentApps.indexOf(a) === -1);
-    if (newApps.length !== currentApps.length || appDiff.length > 0) {
-      this._getAgreements();
-    }
     // If the direct deploy data changes then get and store the new entity or
     // clear the state.
     const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
@@ -102,6 +93,22 @@ class DeploymentFlow extends React.Component {
     const { hash } = this.props;
     if (hash && (hash !== prevProps.hash)) {
       this._scrollDeploymentFlow(`#${hash}`);
+    }
+    const prevApps = prevProps.applications;
+    const currentApps = this.props.applications;
+    const currentDeployCommands = this._getGroupedChanges(prevProps)._deploy || {};
+    const newDeployCommands = this._getGroupedChanges()._deploy || {};
+    // Filter the list of new apps to find that don't exist in the current
+    // list of apps.
+    const appDiff = prevApps.filter(a => !currentApps.includes(a));
+    // Filter the list for new deploy commands.
+    const deployCommandsDiff = Object.keys(newDeployCommands).filter(
+      a => !Object.keys(currentDeployCommands).includes(a));
+    const appChanges = prevApps.length !== currentApps.length || appDiff.length > 0;
+    const commandChanges = newDeployCommands.length !== currentDeployCommands.length ||
+      deployCommandsDiff.length > 0;
+    if (appChanges || commandChanges) {
+      this._getAgreements();
     }
   }
 
@@ -135,10 +142,11 @@ class DeploymentFlow extends React.Component {
 
   /**
     Get the current changes by group
+    @param props {Object} A set of component props.
     @returns {Object} The grouped changes.
   */
-  _getGroupedChanges() {
-    return changesUtils.getGroupedChanges(this.props.changes);
+  _getGroupedChanges(props=this.props) {
+    return changesUtils.getGroupedChanges(props.changes);
   }
 
   /**
@@ -484,7 +492,7 @@ class DeploymentFlow extends React.Component {
   _getTerms() {
     const appIds = [];
     // Get the list of undeployed apps. _deploy is the key for added apps.
-    const deployCommands = this._getGroupedChanges()['_deploy'];
+    const deployCommands = this._getGroupedChanges()._deploy;
     if (!deployCommands) {
       return;
     }
@@ -517,10 +525,10 @@ class DeploymentFlow extends React.Component {
   */
   _getAgreements() {
     // Get the list of terms for the uncommitted apps.
-    const terms = this.state.terms;
+    const terms = this._getTerms();
     // If there are no charms with terms then we don't need to display
     // anything.
-    if (terms.length === 0) {
+    if (!terms || terms.length === 0) {
       this.setState({newTerms: [], loadingTerms: false});
       return;
     }
@@ -1022,25 +1030,14 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    const disabled = this.props.acl.isReadOnly() || status.disabled;
-    const classes = classNames(
-      'deployment-flow__agreements',
-      'deployment-flow__deploy-option',
-      {
-        'deployment-flow__deploy-option--disabled': status.disabled
-      });
+    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
     return (
-      <div className={classes}>
-        <input className="deployment-flow__deploy-checkbox"
-          disabled={disabled}
-          id="terms"
-          onChange={this._handleTermsAgreement.bind(this)}
-          type="checkbox" />
-        <label className="deployment-flow__deploy-label"
-          htmlFor="terms">
-          I agree to all terms.
-        </label>
-      </div>);
+      <DeploymentAgreements
+        acl={this.props.acl}
+        disabled={status.disabled}
+        onCheckboxChange={this._handleTermsAgreement.bind(this)}
+        showTerms={!!isExpertFlow}
+        terms={this.state.newTerms} />);
   }
 
   /**
