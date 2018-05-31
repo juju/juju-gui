@@ -1,13 +1,15 @@
-/* Copyright (C) 2017 Canonical Ltd. */
+/* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
-const classNames = require('classnames');
 
 const GenericButton = require('../../generic-button/generic-button');
 const TermsPopup = require('../../terms-popup/terms-popup');
-
+/**
+  A component for the user to agree to terms in the deployment flow.
+*/
 class DeploymentAgreements extends React.Component {
   constructor(props) {
     super(props);

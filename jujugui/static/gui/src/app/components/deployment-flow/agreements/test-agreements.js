@@ -1,8 +1,8 @@
-/* Copyright (C) 2017 Canonical Ltd. */
+/* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
 
 const DeploymentAgreements = require('./agreements');
 const GenericButton = require('../../generic-button/generic-button');
