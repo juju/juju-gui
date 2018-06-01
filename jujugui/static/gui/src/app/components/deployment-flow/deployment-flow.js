@@ -998,9 +998,11 @@ class DeploymentFlow extends React.Component {
         <DeploymentPayment
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          changeState={this.props.changeState}
           createCardElement={this.props.createCardElement}
           createToken={this.props.createToken}
           createUser={this.props.createUser}
+          generatePath={this.props.generatePath}
           getCountries={this.props.getCountries}
           getUser={this.props.getUser}
           paymentUser={this.state.paymentUser}

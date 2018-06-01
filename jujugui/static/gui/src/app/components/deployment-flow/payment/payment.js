@@ -4,8 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const PaymentMethodCard = require('../../payment/methods/card/card');
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
+const Link = require('../../link/link');
+const PaymentMethodCard = require('../../payment/methods/card/card');
 const Spinner = require('../../spinner/spinner');
 
 class DeploymentPayment extends React.Component {
@@ -93,13 +94,41 @@ class DeploymentPayment extends React.Component {
         username={this.props.username} />);
   }
 
+  /**
+    Generate the form for adding a payment method.
+    @returns {Object} The form component JSX.
+  */
+  _generateProfileLink() {
+    return (
+      <div className="deployment-payment__no-methods">
+        You do not have a payment method, you can add one from your&nbsp;
+        <Link
+          changeState={this.props.changeState}
+          clickState={{
+            gui: {
+              deploy: null
+            },
+            hash: 'payment',
+            profile: this.props.username
+          }}
+          generatePath={this.props.generatePath}>
+          Profile
+        </Link>.
+      </div>);
+  }
+
   render() {
     let content;
+    const { paymentUser } = this.props;
+    const hasPaymentMethods = paymentUser && paymentUser.paymentMethods &&
+      paymentUser.paymentMethods.length;
     if (this.state.loading) {
       content = (
         <Spinner />);
-    } else if (this.props.paymentUser) {
+    } else if (paymentUser && hasPaymentMethods) {
       content = this._generatePaymentMethods();
+    } else if (paymentUser && !hasPaymentMethods) {
+      content = this._generateProfileLink();
     } else {
       content = this._generatePaymentForm();
     }
@@ -114,9 +143,11 @@ class DeploymentPayment extends React.Component {
 DeploymentPayment.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
   createCardElement: PropTypes.func,
   createToken: PropTypes.func,
   createUser: PropTypes.func,
+  generatePath: PropTypes.func.isRequired,
   getCountries: PropTypes.func,
   getUser: PropTypes.func,
   paymentUser: PropTypes.object,
