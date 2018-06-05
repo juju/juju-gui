@@ -140,6 +140,24 @@ var module = module;
     },
 
     /**
+      Sets the specified SLA on the provided modelUUID with the provided budget
+      value on the users default wallet.
+      @param {String} sla The name of the SLA, like 'essential', 'advanced'...
+      @param {String} model The UUID of the model to attach the SLA to.
+      @param {Number} budget The amount to set the budget for this model do.
+      @param {Function} callback The function that'll be called once the request
+        has been completed. Called with the arguments (error, response).
+    */
+    authorizeSLA: function(sla, model, budget, callback) {
+      const url = this.url + '/sla/authorize';
+      const data = {model, sla, budget};
+      const body = JSON.stringify(data);
+      const headers = {'Content-type': 'application/json'};
+      return this.bakery.post(
+        url, headers, body, jujulib._wrap(callback, {parseJSON: true}));
+    },
+
+    /**
       Lists a user's budgets.
 
       @public listBudgets
