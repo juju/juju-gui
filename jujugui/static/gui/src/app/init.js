@@ -27,6 +27,8 @@ window.juju.utils.RelationUtils = require('./init/relation-utils');
 const yui = window.yui;
 window.models = yui.namespace('juju.models');
 
+window.jujulib = require('./jujulib');
+
 class GUIApp {
   constructor(config) {
     /**
