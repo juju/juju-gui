@@ -270,6 +270,33 @@ describe('jujulib plans service', function() {
     );
   });
 
+  it('can authorize an SLA', done => {
+    const bakery = {
+      post: function(url, headers, body, callback) {
+        assert.equal(
+          url, `http://1.2.3.4/${window.jujulib.plansAPIVersion}/sla/authorize`);
+        const xhr = makeXHRRequest({
+          'look ma': 'I\'m a macaroon',
+          'params': body
+        });
+        callback(null, xhr);
+      }
+    };
+    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
+    plans.authorizeSLA(
+      'essential',
+      'abc123',
+      '1000',
+      (error, data) => {
+        assert.isNull(error);
+        assert.equal(data['look ma'], 'I\'m a macaroon');
+        assert.equal(data.params,
+          '{"model":"abc123","sla":"essential","budget":"1000"}');
+        done();
+      }
+    );
+  });
+
   it('lists budgets', function(done) {
     const budgets = {
       'budgets': [{
