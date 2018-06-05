@@ -446,8 +446,19 @@ class DeploymentFlow extends React.Component {
       args.config['vpc-id'] = this.state.vpcId;
       args.config['vpc-id-force'] = this.state.vpcIdForce;
     }
-    const deploy = this.props.deploy.bind(
-      this, this._deployCallback.bind(this), true, this.props.modelName, args);
+    let slaData = null;
+    if (this.state.selectedSLA) {
+      slaData = {
+        name: this.state.selectedSLA.name,
+        budget: this.state.budget
+      };
+    }
+    const deploy = this.props.deploy.bind(this,
+      this._deployCallback.bind(this),
+      true,
+      this.props.modelName,
+      args,
+      slaData);
     if (this.state.newTerms.length > 0) {
       const terms = this.state.newTerms.map(term => {
         const args = {
