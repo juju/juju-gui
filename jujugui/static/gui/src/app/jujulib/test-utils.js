@@ -2,11 +2,10 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const utils = require('./utils');
 
 describe('jujulib utility functions', () => {
-  const wrap = window.jujulib._wrap;
+  const wrap = utils._wrap;
 
   describe('_wrap', () => {
     it('returns a wrapped version of the supplied function', () => {
@@ -58,7 +57,7 @@ describe('jujulib utility functions', () => {
   describe('serializeObject', () => {
     it('serializes an object', () => {
       assert.equal(
-        window.jujulib.serializeObject({
+        utils.serializeObject({
           'foo': 'bar',
           'baz': 'qux'
         }),
@@ -67,13 +66,13 @@ describe('jujulib utility functions', () => {
 
     it('serializes an empty object', () => {
       assert.equal(
-        window.jujulib.serializeObject({}),
+        utils.serializeObject({}),
         '');
     });
   });
 
   describe('_transformAuthObject', () => {
-    const transform = window.jujulib._transformAuthObject;
+    const transform = utils._transformAuthObject;
     it('calls supplied callback if error', () => {
       const stub = sinon.stub();
       transform(stub, 'error', 'data');

@@ -2,8 +2,7 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const payment = require('./payment');
 
 describe('jujulib payment service', function() {
   let parsedUser, returnedUser;
@@ -112,13 +111,13 @@ describe('jujulib payment service', function() {
 
   it('exists', function() {
     const bakery = {};
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
     assert.strictEqual(
-      payment instanceof window.jujulib.payment, true);
+      paymentInstance instanceof payment.payment, true);
     assert.strictEqual(
-      payment.url,
-      `http://1.2.3.4/${window.jujulib.paymentAPIVersion}`);
+      paymentInstance.url,
+      `http://1.2.3.4/${payment.paymentAPIVersion}`);
   });
 
   it('can get a user', function(done) {
@@ -127,15 +126,15 @@ describe('jujulib payment service', function() {
         assert.equal(
           path,
           'http://1.2.3.4/' +
-          window.jujulib.paymentAPIVersion +
+          payment.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest(returnedUser);
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
-    payment.getUser('spinach', function(error, user) {
+    paymentInstance.getUser('spinach', function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, parsedUser);
       done();
@@ -148,15 +147,15 @@ describe('jujulib payment service', function() {
         assert.equal(
           path,
           'http://1.2.3.4/' +
-          window.jujulib.paymentAPIVersion +
+          payment.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest();
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
-    payment.getUser('spinach', function(error, user) {
+    paymentInstance.getUser('spinach', function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, null);
       done();
@@ -169,7 +168,7 @@ describe('jujulib payment service', function() {
         assert.equal(
           path,
           'http://1.2.3.4/' +
-          window.jujulib.paymentAPIVersion +
+          payment.paymentAPIVersion +
           '/u/spinach');
         const xhr = makeXHRRequest({
           'billing-addresses': [{
@@ -187,9 +186,9 @@ describe('jujulib payment service', function() {
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
-    payment.getUser('spinach', function(error, user) {
+    paymentInstance.getUser('spinach', function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, {
         nickname: null,
@@ -245,9 +244,9 @@ describe('jujulib payment service', function() {
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
-    payment.getUser('spinach', function(error, user) {
+    paymentInstance.getUser('spinach', function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.strictEqual(user, null);
       done();
@@ -258,7 +257,7 @@ describe('jujulib payment service', function() {
     const bakery = {
       post: sinon.stub()
     };
-    const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+    const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
     const newUser = {
       nickname: 'spinach',
       name: 'Geoffrey Spinach',
@@ -278,7 +277,7 @@ describe('jujulib payment service', function() {
       allowEmail: true,
       token: '54321'
     };
-    payment.createUser(newUser, sinon.stub());
+    paymentInstance.createUser(newUser, sinon.stub());
     assert.deepEqual(JSON.parse(bakery.post.args[0][2]), {
       nickname: 'spinach',
       name: 'Geoffrey Spinach',
@@ -318,13 +317,13 @@ describe('jujulib payment service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.paymentAPIVersion +
+          payment.paymentAPIVersion +
           '/u');
         const xhr = makeXHRRequest(returnedUser);
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
     const newUser = {
       name: 'Geoffrey Spinach',
@@ -345,7 +344,7 @@ describe('jujulib payment service', function() {
       allowEmail: true,
       token: '54321'
     };
-    payment.createUser(newUser, function(error, user) {
+    paymentInstance.createUser(newUser, function(error, user) {
       assert.strictEqual(error, null);
       assert.deepEqual(user, parsedUser);
     });
@@ -358,9 +357,9 @@ describe('jujulib payment service', function() {
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment(
+    const paymentInstance = new payment.payment(
       'http://1.2.3.4/', bakery);
-    payment.createUser({}, function(error, user) {
+    paymentInstance.createUser({}, function(error, user) {
       assert.equal(error, 'Uh oh!');
       assert.strictEqual(user, null);
       done();
@@ -377,14 +376,14 @@ describe('jujulib payment service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.paymentAPIVersion +
+          payment.paymentAPIVersion +
           '/country');
         const xhr = makeXHRRequest({countries: countries});
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-    payment.getCountries((error, response) => {
+    const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+    paymentInstance.getCountries((error, response) => {
       assert.strictEqual(error, null);
       assert.deepEqual(response, countries);
       done();
@@ -398,8 +397,8 @@ describe('jujulib payment service', function() {
         callback(null, xhr);
       }
     };
-    const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-    payment.getCountries((error, response) => {
+    const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+    paymentInstance.getCountries((error, response) => {
       assert.equal(error, 'Uh oh!');
       assert.strictEqual(response, null);
       done();
@@ -413,7 +412,7 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/payment-methods');
           const xhr = makeXHRRequest({
             'payment-methods': [{
@@ -440,8 +439,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.getPaymentMethods('spinach', function(error, response) {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.getPaymentMethods('spinach', function(error, response) {
         assert.strictEqual(error, null);
         assert.deepEqual(response, [{
           address: {
@@ -474,8 +473,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.getPaymentMethods('spinach', function(error, user) {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.getPaymentMethods('spinach', function(error, user) {
         assert.equal(error, 'Uh oh!');
         assert.strictEqual(user, null);
         done();
@@ -488,8 +487,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         post: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.createPaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.createPaymentMethod(
         'spinach', 'token123', 'Business',
         sinon.stub());
       assert.equal(bakery.post.callCount, 1);
@@ -506,7 +505,7 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/payment-methods');
           const xhr = makeXHRRequest({
             address: {
@@ -531,8 +530,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.createPaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.createPaymentMethod(
         'spinach', 'token123', null, (error, response) => {
           assert.strictEqual(error, null);
           assert.deepEqual(response, {
@@ -566,8 +565,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.createPaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.createPaymentMethod(
         'spinach', 'token123', null, (error, response) => {
           assert.equal(error, 'Uh oh!');
           assert.strictEqual(response, null);
@@ -581,7 +580,7 @@ describe('jujulib payment service', function() {
       const bakery = {
         put: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
       const address = {
         line1: '10 Maple St',
         line2: '',
@@ -590,7 +589,7 @@ describe('jujulib payment service', function() {
         postcode: '90210',
         country: 'CA'
       };
-      payment.updatePaymentMethod(
+      paymentInstance.updatePaymentMethod(
         'spinach', 'paymentmethod1', address, '12/17', sinon.stub());
       assert.equal(bakery.put.callCount, 1);
       assert.deepEqual(bakery.put.args[0][2], JSON.stringify({
@@ -615,14 +614,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/payment-methods/paymentmethod1/content');
           const xhr = makeXHRRequest('success');
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updatePaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updatePaymentMethod(
         'spinach', 'paymentmethod1', {}, '12/17', error => {
           assert.strictEqual(error, null);
           done();
@@ -636,8 +635,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updatePaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updatePaymentMethod(
         'spinach', 'paymentmethod1', {}, '12/17', error => {
           assert.equal(error, 'Uh oh!');
           done();
@@ -650,8 +649,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         delete: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removePaymentMethod('spinach', 'paymentmethod1', sinon.stub());
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removePaymentMethod('spinach', 'paymentmethod1', sinon.stub());
       assert.equal(bakery.delete.callCount, 1);
       assert.deepEqual(bakery.delete.args[0][2], JSON.stringify({
         'payment-method-name': 'paymentmethod1'
@@ -664,14 +663,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/payment-methods/paymentmethod1');
           const xhr = makeXHRRequest('success');
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removePaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removePaymentMethod(
         'spinach', 'paymentmethod1', (error, response) => {
           assert.strictEqual(error, null);
           done();
@@ -685,8 +684,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removePaymentMethod(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removePaymentMethod(
         'spinach', 'paymentmethod1', (error, response) => {
           assert.equal(error, 'Uh oh!');
           done();
@@ -713,8 +712,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         put: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.addAddress('spinach', address, sinon.stub());
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.addAddress('spinach', address, sinon.stub());
       assert.equal(bakery.put.callCount, 1);
       assert.deepEqual(bakery.put.args[0][2], JSON.stringify({
         name: 'Home',
@@ -734,14 +733,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/addresses');
           const xhr = makeXHRRequest();
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.addAddress('spinach', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.addAddress('spinach', address, error => {
         assert.strictEqual(error, null);
         done();
       });
@@ -754,8 +753,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.addAddress('spinach', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.addAddress('spinach', address, error => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -781,8 +780,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         put: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.addBillingAddress('spinach', address, sinon.stub());
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.addBillingAddress('spinach', address, sinon.stub());
       assert.equal(bakery.put.callCount, 1);
       assert.deepEqual(bakery.put.args[0][2], JSON.stringify({
         name: 'Home',
@@ -802,14 +801,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/billing-addresses');
           const xhr = makeXHRRequest();
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.addBillingAddress('spinach', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.addBillingAddress('spinach', address, error => {
         assert.strictEqual(error, null);
         done();
       });
@@ -822,8 +821,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.addBillingAddress('spinach', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.addBillingAddress('spinach', address, error => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -835,8 +834,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         delete: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeAddress('spinach', 'address1', sinon.stub());
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removeAddress('spinach', 'address1', sinon.stub());
       assert.equal(bakery.delete.callCount, 1);
       assert.strictEqual(bakery.delete.args[0][2], null);
     });
@@ -847,14 +846,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/addresses/address1');
           const xhr = makeXHRRequest('success');
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeAddress('spinach', 'address1', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removeAddress('spinach', 'address1', (error, response) => {
         assert.strictEqual(error, null);
         done();
       });
@@ -867,8 +866,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeAddress('spinach', 'address1', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removeAddress('spinach', 'address1', (error, response) => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -880,8 +879,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         delete: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeBillingAddress('spinach', 'address1', sinon.stub());
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removeBillingAddress('spinach', 'address1', sinon.stub());
       assert.equal(bakery.delete.callCount, 1);
       assert.strictEqual(bakery.delete.args[0][2], null);
     });
@@ -892,14 +891,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/billing-addresses/address1');
           const xhr = makeXHRRequest('success');
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeBillingAddress('spinach', 'address1', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removeBillingAddress('spinach', 'address1', (error, response) => {
         assert.strictEqual(error, null);
         done();
       });
@@ -912,8 +911,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.removeBillingAddress('spinach', 'address1', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.removeBillingAddress('spinach', 'address1', (error, response) => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -939,8 +938,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         put: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updateAddress('spinach', 'address1', address, sinon.stub());
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updateAddress('spinach', 'address1', address, sinon.stub());
       assert.equal(bakery.put.callCount, 1);
       assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
         id: 'address1',
@@ -961,14 +960,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/addresses/address1');
           const xhr = makeXHRRequest();
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updateAddress('spinach', 'address1', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updateAddress('spinach', 'address1', address, error => {
         assert.strictEqual(error, null);
         done();
       });
@@ -981,8 +980,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updateAddress('spinach', 'address1', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updateAddress('spinach', 'address1', address, error => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -1008,8 +1007,8 @@ describe('jujulib payment service', function() {
       const bakery = {
         put: sinon.stub()
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updateBillingAddress(
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updateBillingAddress(
         'spinach', 'address1', address, sinon.stub());
       assert.equal(bakery.put.callCount, 1);
       assert.deepEqual(JSON.parse(bakery.put.args[0][2]), {
@@ -1031,14 +1030,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/u/spinach/billing-addresses/address1');
           const xhr = makeXHRRequest();
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updateBillingAddress('spinach', 'address1', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updateBillingAddress('spinach', 'address1', address, error => {
         assert.strictEqual(error, null);
         done();
       });
@@ -1051,8 +1050,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.updateBillingAddress('spinach', 'address1', address, error => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.updateBillingAddress('spinach', 'address1', address, error => {
         assert.equal(error, 'Uh oh!');
         done();
       });
@@ -1066,7 +1065,7 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/charges?nickname=spinach');
           const xhr = makeXHRRequest({
             charges: [{
@@ -1115,8 +1114,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.getCharges('spinach', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.getCharges('spinach', (error, response) => {
         assert.strictEqual(error, null);
         assert.deepEqual(response, [{
           id: 'TEST-12344',
@@ -1171,8 +1170,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.getCharges('spinach', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.getCharges('spinach', (error, response) => {
         assert.equal(error, 'Uh oh!');
         assert.strictEqual(response, null);
         done();
@@ -1187,14 +1186,14 @@ describe('jujulib payment service', function() {
           assert.equal(
             url,
             'http://1.2.3.4/' +
-            window.jujulib.paymentAPIVersion +
+            payment.paymentAPIVersion +
             '/receipts/charge123');
           const xhr = makeXHRRequest('<html>...</html>', false);
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.getReceipt('charge123', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.getReceipt('charge123', (error, response) => {
         assert.strictEqual(error, null);
         assert.equal(response, '<html>...</html>');
         done();
@@ -1208,8 +1207,8 @@ describe('jujulib payment service', function() {
           callback(null, xhr);
         }
       };
-      const payment = new window.jujulib.payment('http://1.2.3.4/', bakery);
-      payment.getReceipt('charge123', (error, response) => {
+      const paymentInstance = new payment.payment('http://1.2.3.4/', bakery);
+      paymentInstance.getReceipt('charge123', (error, response) => {
         assert.equal(error, 'Uh oh!');
         assert.strictEqual(response, null);
         done();

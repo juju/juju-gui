@@ -2,42 +2,44 @@
 
 'use strict';
 
+const charmstore = require('./charmstore');
+
 describe('jujulib charmstore', function() {
-  let charmstore;
+  let charmstoreInstance;
 
   beforeEach(function() {
     const bakery = {
       get: sinon.stub(),
       put: sinon.stub()
     };
-    charmstore = new window.jujulib.charmstore('local/', bakery);
+    charmstoreInstance = new charmstore.charmstore('local/', bakery);
   });
 
   afterEach(function() {
-    charmstore = null;
+    charmstoreInstance = null;
   });
 
   it('can be instantiated with the proper config values', function() {
-    assert.strictEqual(charmstore.url, 'local/v5');
+    assert.strictEqual(charmstoreInstance.url, 'local/v5');
   });
 
   it('is smart enough to handle missing trailing slash in URL', function() {
     var bakery = {};
-    charmstore = new window.jujulib.charmstore('http://example.com', bakery);
-    assert.strictEqual(charmstore.url, 'http://example.com/v5');
+    charmstoreInstance = new charmstore.charmstore('http://example.com', bakery);
+    assert.strictEqual(charmstoreInstance.url, 'http://example.com/v5');
   });
 
   describe('_generatePath', function() {
 
     it('generates a valid url using provided args', function() {
-      var path = charmstore._generatePath('search/', 'text=foo');
+      var path = charmstoreInstance._generatePath('search/', 'text=foo');
       assert.equal(path, 'local/v5/search/?text=foo');
     });
   });
 
   describe('getLogoutUrl', function() {
     it('returns a valid logout url', function() {
-      var path = charmstore.getLogoutUrl();
+      var path = charmstoreInstance.getLogoutUrl();
       assert.equal(path, 'local/v5/logout');
     });
   });
@@ -69,23 +71,23 @@ describe('jujulib charmstore', function() {
     });
 
     it('calls to process query response data for each record', function() {
-      var process = sinon.stub(charmstore, '_processEntityQueryData');
-      charmstore._transformQueryResults(cb, null, data);
+      var process = sinon.stub(charmstoreInstance, '_processEntityQueryData');
+      charmstoreInstance._transformQueryResults(cb, null, data);
       assert.equal(process.callCount, 4);
     });
 
     it('can use a processing function to massage data', function() {
-      charmstore._processEntityQueryData = function(entity) {
+      charmstoreInstance._processEntityQueryData = function(entity) {
         return entity;
       };
-      charmstore.processEntity = function(data) {
+      charmstoreInstance.processEntity = function(data) {
         if (data.entityType === 'charm') {
           return 'It\'s a charm.';
         } else {
           return 'It\'s a bundle.';
         }
       };
-      charmstore._transformQueryResults(cb, null, data);
+      charmstoreInstance._transformQueryResults(cb, null, data);
       var models = cb.lastCall.args[1];
       assert.equal(models[0], 'It\'s a charm.');
       assert.equal(models[1], 'It\'s a charm.');
@@ -94,7 +96,7 @@ describe('jujulib charmstore', function() {
     });
 
     it('errors when no data is provided even if there is no error', function() {
-      charmstore._transformQueryResults(cb, null, null);
+      charmstoreInstance._transformQueryResults(cb, null, null);
       assert.equal(
         cb.args[0][0],
         'no entity data returned, can you access the charmstore?');
@@ -106,14 +108,14 @@ describe('jujulib charmstore', function() {
     it('can recursively transform an objects keys to lowercase', function() {
       var uppercase = { Baz: '1', Foo: { Bar: { Baz: '1' }}};
       var host = {};
-      charmstore._lowerCaseKeys(uppercase, host);
+      charmstoreInstance._lowerCaseKeys(uppercase, host);
       assert.deepEqual(host, { baz: '1', foo: { bar: { baz: '1'}}});
     });
 
     it('can skip one level of keys in an object', function() {
       var uppercase = { Baz: '1', Foo: { Bar: { Baz: '1' }}, Fee: '2'};
       var host = {};
-      charmstore._lowerCaseKeys(uppercase, host, 0);
+      charmstoreInstance._lowerCaseKeys(uppercase, host, 0);
       assert.deepEqual(host, { Baz: '1', Foo: { bar: { baz: '1'}}, Fee: '2'});
     });
   });
@@ -186,7 +188,7 @@ describe('jujulib charmstore', function() {
           }
         }
       };
-      const processed = charmstore._processEntityQueryData(data);
+      const processed = charmstoreInstance._processEntityQueryData(data);
       assert.deepEqual(processed, {
         id: 'cs:trusty/mongodb-9',
         channels: [{
@@ -253,7 +255,7 @@ describe('jujulib charmstore', function() {
           stats: {ArchiveDownloadCount: 42}
         }
       };
-      var processed = charmstore._processEntityQueryData(data);
+      var processed = charmstoreInstance._processEntityQueryData(data);
       assert.strictEqual(processed.owner, undefined);
       assert.strictEqual(processed.code_source.location, undefined);
       assert.deepEqual(processed.revisions, []);
@@ -286,7 +288,7 @@ describe('jujulib charmstore', function() {
           }
         }
       };
-      const processed = charmstore._processEntityQueryData(data);
+      const processed = charmstoreInstance._processEntityQueryData(data);
       assert.deepEqual(processed, {
         code_source: {
           location: 'lp:~charmers/charms/bundles/mongodb-cluster/bundle'
@@ -316,11 +318,11 @@ describe('jujulib charmstore', function() {
     var generatePath;
 
     beforeEach(function() {
-      generatePath = sinon.stub(charmstore, '_generatePath').returns('path');
+      generatePath = sinon.stub(charmstoreInstance, '_generatePath').returns('path');
     });
 
     it('accepts custom filters & calls to generate an api path', function() {
-      charmstore.search({ text: 'foo' });
+      charmstoreInstance.search({ text: 'foo' });
       assert.equal(generatePath.callCount, 1, 'generatePath not called');
       assert.deepEqual(generatePath.lastCall.args, [
         'search',
@@ -335,7 +337,7 @@ describe('jujulib charmstore', function() {
     });
 
     it('accepts a custom limit when generating an api path', function() {
-      charmstore.search({ text: 'foo' }, null, 99);
+      charmstoreInstance.search({ text: 'foo' }, null, 99);
       assert.equal(generatePath.callCount, 1, 'generatePath not called');
       assert.deepEqual(generatePath.lastCall.args, [
         'search',
@@ -350,12 +352,12 @@ describe('jujulib charmstore', function() {
     });
 
     it('calls to make a valid charmstore search request', function() {
-      var transform = sinon.stub(charmstore, '_transformQueryResults');
-      charmstore.search({}, 'cb');
+      var transform = sinon.stub(charmstoreInstance, '_transformQueryResults');
+      charmstoreInstance.search({}, 'cb');
       assert.equal(
-        charmstore.bakery.get.callCount, 1,
+        charmstoreInstance.bakery.get.callCount, 1,
         'sendGetRequest not called');
-      var requestArgs = charmstore.bakery.get.lastCall.args;
+      var requestArgs = charmstoreInstance.bakery.get.lastCall.args;
       var successCb = requestArgs[2];
       assert.equal(requestArgs[0], 'path');
       // Call the success handler to make sure it's passed the callback.
@@ -368,11 +370,11 @@ describe('jujulib charmstore', function() {
     var generatePath;
 
     beforeEach(function() {
-      generatePath = sinon.stub(charmstore, '_generatePath').returns('path');
+      generatePath = sinon.stub(charmstoreInstance, '_generatePath').returns('path');
     });
 
     it('accepts an author & calls to generate an api path', function() {
-      charmstore.list('test-author', 'cb');
+      charmstoreInstance.list('test-author', 'cb');
       assert.equal(generatePath.callCount, 1, 'generatePath not called');
       assert.deepEqual(generatePath.lastCall.args, [
         'list',
@@ -391,19 +393,19 @@ describe('jujulib charmstore', function() {
     });
 
     it('can list bundles', function() {
-      charmstore.list('test-author', 'cb', 'bundle');
+      charmstoreInstance.list('test-author', 'cb', 'bundle');
       var qs = generatePath.lastCall.args[1];
       assert.equal(qs.indexOf('type=bundle') > -1, true,
         'bundle not set in query string');
     });
 
     it('calls to make a valid charmstore list request', function() {
-      var transform = sinon.stub(charmstore, '_transformQueryResults');
-      charmstore.list('test-author', 'cb');
+      var transform = sinon.stub(charmstoreInstance, '_transformQueryResults');
+      charmstoreInstance.list('test-author', 'cb');
       assert.equal(
-        charmstore.bakery.get.callCount, 1,
+        charmstoreInstance.bakery.get.callCount, 1,
         'sendGetRequest not called');
-      var requestArgs = charmstore.bakery.get.lastCall.args;
+      var requestArgs = charmstoreInstance.bakery.get.lastCall.args;
       var successCb = requestArgs[2];
       assert.equal(requestArgs[0], 'path');
       // Call the success handler to make sure it's passed the callback.
@@ -414,7 +416,7 @@ describe('jujulib charmstore', function() {
 
   describe('getDiagramURL', function() {
     it('can generate a URL for a bundle diagram', function() {
-      assert.equal(charmstore.getDiagramURL('apache2'),
+      assert.equal(charmstoreInstance.getDiagramURL('apache2'),
         'local/v5/apache2/diagram.svg');
     });
   });
@@ -427,10 +429,10 @@ describe('jujulib charmstore', function() {
     });
 
     it('calls to get the bundle entity', function() {
-      var getEntity = sinon.stub(charmstore, 'getEntity');
-      var response = sinon.stub(charmstore, '_getBundleYAMLResponse');
+      var getEntity = sinon.stub(charmstoreInstance, 'getEntity');
+      var response = sinon.stub(charmstoreInstance, '_getBundleYAMLResponse');
       var bundleId = 'bundle/elasticsearch';
-      charmstore.getBundleYAML(bundleId, cb);
+      charmstoreInstance.getBundleYAML(bundleId, cb);
       var getEntityArgs = getEntity.lastCall.args;
       assert.equal(getEntity.callCount, 1);
       assert.equal(getEntityArgs[0], bundleId);
@@ -442,9 +444,9 @@ describe('jujulib charmstore', function() {
     });
 
     it('_getBundleYAMLResponse fetches yaml file contents', function() {
-      charmstore._getBundleYAMLResponse(
+      charmstoreInstance._getBundleYAMLResponse(
         cb, null, [{ deployerFileUrl: 'deployer file' }]);
-      var requestArgs = charmstore.bakery.get.lastCall.args;
+      var requestArgs = charmstoreInstance.bakery.get.lastCall.args;
       assert.equal(requestArgs[0], 'deployer file');
       // Should be the anon success callback handler.
       requestArgs[2](null, {
@@ -459,8 +461,8 @@ describe('jujulib charmstore', function() {
 
   describe('getAvailableVersions', function() {
     it('makes a request to fetch the ids', function() {
-      charmstore.getAvailableVersions('cs:precise/ghost-5');
-      assert.equal(charmstore.bakery.get.callCount, 1);
+      charmstoreInstance.getAvailableVersions('cs:precise/ghost-5');
+      assert.equal(charmstoreInstance.bakery.get.callCount, 1);
     });
 
     it('calls the success handler with a list of charm ids', function(done) {
@@ -472,8 +474,8 @@ describe('jujulib charmstore', function() {
         assert.deepEqual(list, ['cs:precise/ghost-4']);
         done();
       };
-      charmstore.getAvailableVersions('cs:precise/ghost-5', cb);
-      var requestArgs = charmstore.bakery.get.lastCall.args;
+      charmstoreInstance.getAvailableVersions('cs:precise/ghost-5', cb);
+      var requestArgs = charmstoreInstance.bakery.get.lastCall.args;
       // The path should not have cs: in it.
       assert.equal(requestArgs[0], 'local/v5/precise/ghost-5/expand-id');
       // Call the makeRequest success handler simulating a response object;
@@ -489,17 +491,17 @@ describe('jujulib charmstore', function() {
           assert.fail('callback should not succeed.');
         }
       };
-      charmstore.getAvailableVersions('cs:precise/ghost-5', cb);
+      charmstoreInstance.getAvailableVersions('cs:precise/ghost-5', cb);
       // Call the makeRequest success handler simulating a response object;
-      charmstore.bakery.get.lastCall.args[2](null,
+      charmstoreInstance.bakery.get.lastCall.args[2](null,
         {target: { responseText: '[notvalidjson]'}});
     });
   });
 
   describe('whoami', function() {
     it('queries who the current user is', function() {
-      charmstore.whoami();
-      assert.equal(charmstore.bakery.get.callCount, 1);
+      charmstoreInstance.whoami();
+      assert.equal(charmstoreInstance.bakery.get.callCount, 1);
     });
 
     it('calls the success handler with an auth object', function(done) {
@@ -511,8 +513,8 @@ describe('jujulib charmstore', function() {
         assert.deepEqual(auth, {user: 'test', groups: []});
         done();
       };
-      charmstore.whoami(cb);
-      var requestArgs = charmstore.bakery.get.lastCall.args;
+      charmstoreInstance.whoami(cb);
+      var requestArgs = charmstoreInstance.bakery.get.lastCall.args;
       assert.equal(requestArgs[0], 'local/v5/whoami');
       // Call the makeRequest success handler simulating a response object;
       requestArgs[2](null,
@@ -527,9 +529,9 @@ describe('jujulib charmstore', function() {
           assert.fail('callback should not succeed.');
         }
       };
-      charmstore.whoami(cb);
+      charmstoreInstance.whoami(cb);
       // Call the makeRequest success handler simulating a response object;
-      charmstore.bakery.get.lastCall.args[2](
+      charmstoreInstance.bakery.get.lastCall.args[2](
         {target: { responseText: '[notvalidjson]'}});
     });
   });
@@ -537,8 +539,8 @@ describe('jujulib charmstore', function() {
   describe('getCanonicalId', function() {
     it('makes a request to fetch the canonical id for an entity', function() {
       const callback = sinon.stub();
-      charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
-      const bakeryGet = charmstore.bakery.get;
+      charmstoreInstance.getCanonicalId('cs:xenial/ghost-4', callback);
+      const bakeryGet = charmstoreInstance.bakery.get;
       assert.equal(bakeryGet.callCount, 1);
       const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
@@ -554,8 +556,8 @@ describe('jujulib charmstore', function() {
 
     it('properly calls the callback when there is an error', function() {
       const callback = sinon.stub();
-      charmstore.getCanonicalId('cs:xenial/ghost-4', callback);
-      const bakeryGet = charmstore.bakery.get;
+      charmstoreInstance.getCanonicalId('cs:xenial/ghost-4', callback);
+      const bakeryGet = charmstoreInstance.bakery.get;
       assert.equal(bakeryGet.callCount, 1);
       const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/id');
@@ -568,15 +570,15 @@ describe('jujulib charmstore', function() {
 
   describe('getEntity', function() {
     it('strips cs from bundle IDs', function() {
-      charmstore.getEntity('cs:foobar', sinon.stub());
-      var path = charmstore.bakery.get.lastCall.args[0];
+      charmstoreInstance.getEntity('cs:foobar', sinon.stub());
+      var path = charmstoreInstance.bakery.get.lastCall.args[0];
       assert.equal(path.indexOf('cs:'), -1,
         'The string "cs:" should not be found in the path');
     });
 
     it('calls the correct path', function() {
-      charmstore.getEntity('cs:foobar', sinon.stub());
-      const path = charmstore.bakery.get.lastCall.args[0];
+      charmstoreInstance.getEntity('cs:foobar', sinon.stub());
+      const path = charmstoreInstance.bakery.get.lastCall.args[0];
       const expectedPath = (
         'local/v5/foobar/meta/any' +
         '?include=bundle-metadata' +
@@ -603,8 +605,8 @@ describe('jujulib charmstore', function() {
   describe('getResources', function() {
     it('can get resources for a charm', function() {
       const callback = sinon.stub();
-      charmstore.getResources('cs:xenial/ghost-4', callback);
-      const bakeryGet = charmstore.bakery.get;
+      charmstoreInstance.getResources('cs:xenial/ghost-4', callback);
+      const bakeryGet = charmstoreInstance.bakery.get;
       assert.equal(bakeryGet.callCount, 1);
       const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/resources');
@@ -631,8 +633,8 @@ describe('jujulib charmstore', function() {
 
     it('properly calls the callback when there is an error', function() {
       const callback = sinon.stub();
-      charmstore.getResources('cs:xenial/ghost-4', callback);
-      const bakeryGet = charmstore.bakery.get;
+      charmstoreInstance.getResources('cs:xenial/ghost-4', callback);
+      const bakeryGet = charmstoreInstance.bakery.get;
       assert.equal(bakeryGet.callCount, 1);
       const requestPath = bakeryGet.args[0][0];
       assert.equal(requestPath, 'local/v5/xenial/ghost-4/meta/resources');

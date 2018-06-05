@@ -2,11 +2,10 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const urls = require('./urls');
 
 describe('jujulib urls', () => {
-  const URL = window.jujulib.URL;
+  const URL = urls.URL;
 
   const pathTests = [{
     url: new URL({name: 'django'}),
