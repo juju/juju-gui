@@ -708,7 +708,7 @@ describe('DeploymentFlow', function() {
     // Click to deploy.
     wrapper.find('GenericButton').props().action();
     assert.equal(props.deploy.callCount, 1);
-    assert.strictEqual(props.deploy.args[0].length, 4);
+    assert.strictEqual(props.deploy.args[0].length, 5);
     assert.equal(props.deploy.args[0][2], 'Pavlova');
     assert.deepEqual(props.deploy.args[0][3], {
       config: {},
@@ -1009,7 +1009,7 @@ describe('DeploymentFlow', function() {
     wrapper.find('GenericButton').props().action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
-    assert.strictEqual(deploy.args[0].length, 4);
+    assert.strictEqual(deploy.args[0].length, 5);
     assert.equal(deploy.args[0][2], 'mymodel');
     assert.deepEqual(deploy.args[0][3], {
       credential: 'creds',
@@ -1059,7 +1059,7 @@ describe('DeploymentFlow', function() {
     wrapper.find('GenericButton').props().action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
-    assert.strictEqual(deploy.args[0].length, 4);
+    assert.strictEqual(deploy.args[0].length, 5);
     assert.equal(deploy.args[0][2], 'mymodel');
     assert.deepEqual(deploy.args[0][3], {
       credential: 'creds',
@@ -1088,7 +1088,7 @@ describe('DeploymentFlow', function() {
     wrapper.find('GenericButton').props().action();
     const deploy = instance.props.deploy;
     assert.equal(deploy.callCount, 1);
-    assert.strictEqual(deploy.args[0].length, 4);
+    assert.strictEqual(deploy.args[0].length, 5);
     assert.equal(deploy.args[0][2], 'mymodel');
     assert.deepEqual(deploy.args[0][3], {
       credential: 'creds',
