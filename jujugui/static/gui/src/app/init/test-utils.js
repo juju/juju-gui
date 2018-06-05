@@ -698,7 +698,13 @@ describe('init utils', () => {
       app.switchEnv.args[0][3](args);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.args[0], [null]);
+      assert.deepEqual(callback.args[0], [
+        null, {
+          id: 'abc123',
+          name: 'model-name',
+          owner: 'foo@external',
+          uuid: 'the-uuid'
+        }]);
       // Check to make sure that the state was changed.
       assert.equal(app.state.changeState.callCount, 2);
       assert.deepEqual(app.state.changeState.args[0], [{
@@ -754,7 +760,7 @@ describe('init utils', () => {
         level: 'error'
       }]);
       assert.equal(callback.callCount, 1);
-      assert.deepEqual(callback.args[0], [expectedError]);
+      assert.deepEqual(callback.args[0], [expectedError, null]);
     });
   });
 
