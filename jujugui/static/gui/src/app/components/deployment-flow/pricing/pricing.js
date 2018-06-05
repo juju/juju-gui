@@ -62,7 +62,7 @@ const DeploymentPricing = props => {
               }
             }}
             generatePath={props.generatePath}>
-            Unsupported trial version
+            Unsupported version
           </Link>
         </div>
       </div>
