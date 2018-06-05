@@ -8,6 +8,7 @@ const shapeup = require('shapeup');
 
 const Status = require('./status');
 const BasicTable = require('../basic-table/basic-table');
+const urls = require('../../jujulib/urls');
 
 describe('Status', function() {
   let changeState;
@@ -22,7 +23,7 @@ describe('Status', function() {
       db={shapeup.fromShape(options.db, propTypes.db)}
       generatePath={options.generatePath || generatePath}
       model={shapeup.fromShape(options.model || model, propTypes.model)}
-      urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />
+      urllib={shapeup.fromShape(urls.URL, propTypes.urllib)} />
   );
 
   beforeEach(() => {

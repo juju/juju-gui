@@ -6,9 +6,10 @@ const enzyme = require('enzyme');
 
 const InspectorChangeVersionItem = require('./item');
 const GenericButton = require('../../../generic-button/generic-button');
+const urls = require('../../../../jujulib/urls');
 
 describe('InspectorChangeVersionItem', function() {
-  let acl;
+  let acl, windowJujulib;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorChangeVersionItem
@@ -20,7 +21,15 @@ describe('InspectorChangeVersionItem', function() {
   );
 
   beforeEach(() => {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
     acl = {isReadOnly: sinon.stub().returns(false)};
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
   });
 
   it('can display the version item', function() {

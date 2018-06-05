@@ -9,6 +9,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const ProfileBundleList = require('./bundle-list');
+const urls = require('../../../jujulib/urls');
 
 describe('Profile Bundle List', function() {
   const rawBundleData = `[{
@@ -59,10 +60,18 @@ describe('Profile Bundle List', function() {
     "unitCount": 5
   }]`;
   const bundles = JSON.parse(rawBundleData);
-  let acl;
+  let acl, windowJujulib;
 
   beforeEach(() => {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
     acl = shapeup.deepFreeze({isReadOnly: () => false});
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
   });
 
   const renderComponent = (options = {}) => {

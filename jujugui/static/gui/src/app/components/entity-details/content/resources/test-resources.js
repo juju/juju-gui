@@ -5,8 +5,10 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const EntityResources = require('./resources');
+const urls = require('../../../../jujulib/urls');
 
 describe('EntityResources', function() {
+  let windowJujulib;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityResources
@@ -14,6 +16,17 @@ describe('EntityResources', function() {
       entityId={options.entityId || 'cs:foo-0'}
       resources={options.resources || []} />
   );
+
+  beforeEach(() => {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
+  });
 
   it('can display an empty list', function() {
     const wrapper = renderComponent();

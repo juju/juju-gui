@@ -8,9 +8,11 @@ const GenericButton = require('../../generic-button/generic-button');
 const IconList = require('../../icon-list/icon-list');
 const SearchResultsItem = require('./item');
 const SvgIcon = require('../../svg-icon/svg-icon');
+const urls = require('../../../jujulib/urls');
+
 
 describe('SearchResultsItem', function() {
-  let acl, item, generatePath;
+  let acl, item, generatePath, windowJujulib;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <SearchResultsItem
@@ -22,6 +24,10 @@ describe('SearchResultsItem', function() {
   );
 
   beforeEach(() => {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
     acl = {isReadOnly: sinon.stub().returns(false)};
     item = {
       name: 'mysql',
@@ -41,6 +47,10 @@ describe('SearchResultsItem', function() {
       ]
     };
     generatePath = sinon.stub().returns('/u/spinach/apache2');
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
   });
 
   it('can render an item', function() {
