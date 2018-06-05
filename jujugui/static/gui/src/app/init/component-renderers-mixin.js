@@ -991,7 +991,7 @@ Browser: ${navigator.userAgent}`
         getEntity={charmstore.getEntity.bind(charmstore)}
         getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
         getServiceByName={services.getServiceByName.bind(services)}
-        getSLAMachineRates={this.rates && this.rates.getSLAMachineRates.bind(this.rates)}
+        getSLAMachineRates={this.rates.getSLAMachineRates.bind(this.rates)}
         getUser={this.payment && this.payment.getUser.bind(this.payment)}
         getUserName={getUserName}
         gisf={this.gisf}
