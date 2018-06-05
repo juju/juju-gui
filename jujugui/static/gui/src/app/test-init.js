@@ -17,6 +17,7 @@ describe('init', () => {
       flags: {},
       gisf: false,
       plansURL: 'http://plans.example.com/',
+      ratesURL: 'http://rates.example.com/',
       termsURL: 'http://terms.example.com/',
       identityURL: 'http://identity.example.com/'
     };
