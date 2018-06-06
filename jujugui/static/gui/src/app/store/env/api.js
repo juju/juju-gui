@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule api.go
  */
 
-YUI.add('juju-env-api', function(Y) {
+window.yui.add('juju-env-api', function(Y) {
   const module = Y.juju.environments;
   const tags = module.tags;
   const utils = Y.namespace('juju.views.utils');

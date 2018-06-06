@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('environment-change-set', function(Y) {
+window.yui.add('environment-change-set', function(Y) {
   var ns = Y.namespace('juju'),
       utils = Y.namespace('juju.views.utils');
 

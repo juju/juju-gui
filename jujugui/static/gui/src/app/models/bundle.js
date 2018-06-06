@@ -31,7 +31,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule models.bundle
  */
 
-YUI.add('juju-bundle-models', function(Y) {
+window.yui.add('juju-bundle-models', function(Y) {
 
   var models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');

@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule models.charm
  */
 
-YUI.add('juju-charm-models', function(Y) {
+window.yui.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
   var utils = Y.namespace('juju.views.utils');

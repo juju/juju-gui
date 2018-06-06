@@ -171,7 +171,7 @@ try {
 } catch (e) {}
 
 if (YUI) {
-  YUI.add('juju-view-utils', function(Y) {
+  window.yui.add('juju-view-utils', function(Y) {
     Y.namespace('juju.views').utils = viewsUtils;
   }, '0.1.0', {
     requires: [

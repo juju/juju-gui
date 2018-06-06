@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule env.base
  */
 
-YUI.add('juju-env-base', function(Y) {
+window.yui.add('juju-env-base', function(Y) {
 
   const module = Y.namespace('juju.environments');
   // Define a Juju tags management object.

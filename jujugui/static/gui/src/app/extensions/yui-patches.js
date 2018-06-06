@@ -22,7 +22,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Provides a consistant place to put any monkey patches to YUI modules.
  */
-YUI.add('yui-patches', function(Y) {
+window.yui.add('yui-patches', function(Y) {
 
   /**
     Lazy Model List maintains a _idMap property with id's of all of the models
