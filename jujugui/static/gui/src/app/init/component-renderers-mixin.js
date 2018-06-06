@@ -184,7 +184,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />, sharing);
   }
 
-  _renderTerminal(address) {
+  _renderTerminal(address, payload) {
     const config = this.applicationConfig;
     const user = this.user;
     const identityURL = user.identityURL();
@@ -194,6 +194,11 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     if (modelName) {
       const modelOwner = modelAPI.get('modelOwner');
       commands.push(`juju switch ${modelOwner}/${modelName}`);
+    }
+    if (payload) {
+      if (payload.ssh) {
+        commands.push(`juju ssh ${payload.ssh}`);
+      }
     }
     const creds = {};
     if (identityURL && config.gisf) {
@@ -261,7 +266,8 @@ Browser: ${navigator.userAgent}`
       this.state.changeState({terminal: null});
       return;
     }
-    this._renderTerminal(address);
+    const payload = state.terminal;
+    this._renderTerminal(address, payload);
     next();
   }
 

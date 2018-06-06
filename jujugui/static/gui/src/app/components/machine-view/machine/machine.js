@@ -8,6 +8,7 @@ const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
+const GenericButton = require('../../generic-button/generic-button');
 const Constraints = require('../../constraints/constraints');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
@@ -244,6 +245,24 @@ class MachineViewMachine extends React.Component {
     );
   }
 
+  _sshToMachine() {
+    const machine = this.props.machineAPI.machine.id;
+    const data = { ssh: machine };
+    this.props.changeState({terminal: data});
+  }
+
+  _generateTerminalButton() {
+    debugger;
+    if (this.props.type != 'container') {
+        return (<GenericButton
+          action={this._sshToMachine.bind(this)}>
+            SSH to machine
+        </GenericButton>);
+    } else {
+      return null;
+    }
+  }
+
   render() {
     var machine = this.props.machineAPI.machine;
     var menuItems = [{
@@ -269,6 +288,7 @@ class MachineViewMachine extends React.Component {
         <div className="machine-view__machine-name">
           {this.props.machineAPI.machine.displayName}
         </div>
+        {this._generateTerminalButton()}
         {this._generateHardware()}
         {this._generateUnits()}
         {this._generateConstraintsForm()}

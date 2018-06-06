@@ -349,6 +349,7 @@ class MachineView extends React.Component {
             selectMachine: this.selectMachine.bind(this),
             selected: selectedMachine === machine.id
           }}
+          changeState={props.changeState}
           modelAPI={modelAPI}
           parseConstraints={props.parseConstraints}
           ref={`machine-${machine.id}`}
