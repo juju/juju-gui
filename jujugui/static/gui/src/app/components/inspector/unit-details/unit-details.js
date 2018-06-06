@@ -129,14 +129,17 @@ class UnitDetails extends React.Component {
     const props = this.props;
     const unit = props.unit;
     const buttons = [{
-      disabled: false,
-      title: 'SSH to unit',
-      action: this._sshToUnit.bind(this)
-    }, {
       disabled: props.acl.isReadOnly(),
       title: 'Remove',
       action: this._handleRemoveUnit.bind(this)
     }];
+    if (props.showSSHButtons) {
+      buttons.splice(0, 0, {
+        disabled: false,
+        title: 'SSH to unit',
+        action: this._sshToUnit.bind(this)
+      });
+    }
     const privateList = this._generateAddresses(
       unit.private_address, unit.portRanges, true);
     const publicList = this._generateAddresses(
@@ -167,6 +170,7 @@ UnitDetails.propTypes = {
   destroyUnits: PropTypes.func.isRequired,
   previousComponent: PropTypes.string,
   service: PropTypes.object.isRequired,
+  showSSHButtons: PropTypes.bool.isRequired,
   unit: PropTypes.object.isRequired,
   unitStatus: PropTypes.string
 };

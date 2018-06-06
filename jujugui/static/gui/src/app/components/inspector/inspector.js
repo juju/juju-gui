@@ -152,6 +152,7 @@ class Inspector extends React.Component {
               destroyUnits={nextProps.destroyUnits}
               previousComponent={previousComponent}
               service={service}
+              showSSHButtons={nextProps.showSSHButtons}
               unit={unit}
               unitStatus={unitStatus} />,
           backState: {
@@ -405,6 +406,7 @@ Inspector.propTypes = {
   setConfig: PropTypes.func.isRequired,
   showActivePlan: PropTypes.func.isRequired,
   showPlans: PropTypes.bool.isRequired,
+  showSSHButtons: PropTypes.bool.isRequired,
   unexposeService: PropTypes.func.isRequired,
   unplaceServiceUnits: PropTypes.func.isRequired,
   updateServiceUnitsDisplayname: PropTypes.func.isRequired

@@ -693,6 +693,18 @@ Browser: ${navigator.userAgent}`
     this._clearDeployment(state, noop);
     this._clearInspector(state, noop);
   }
+
+  _showSSHButtons() {
+    return (
+      this.applicationConfig.flags.terminal ||
+      // Always allow for opening the terminal if the user specified a
+      // jujushell URL in the GUI settings.
+      !!localStorage.getItem('jujushell-url') ||
+      // Also allow for opening the terminal if the user deployed the juju
+      // shell charm.
+      !!this.db.environment.get('jujushellURL')
+    );
+  }
   /**
     Handles rendering and/or updating the machine UI component.
     @param {Object} state - The app state.
@@ -704,15 +716,6 @@ Browser: ${navigator.userAgent}`
     const ecs = modelAPI.get('ecs');
     const decorated = MachineView.DecoratedComponent;
     const propTypes = decorated.propTypes;
-    const showSSHButtons = (
-      this.applicationConfig.flags.terminal ||
-      // Always allow for opening the terminal if the user specified a
-      // jujushell URL in the GUI settings.
-      !!localStorage.getItem('jujushell-url') ||
-      // Also allow for opening the terminal if the user deployed the juju
-      // shell charm.
-      !!this.db.environment.get('jujushellURL')
-    );
     ReactDOM.render(
       <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
@@ -743,7 +746,7 @@ Browser: ${navigator.userAgent}`
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
         series={window.jujulib.CHARM_SERIES}
-        showSSHButtons={showSSHButtons} />,
+        showSSHButtons={this._showSSHButtons()} />,
       document.getElementById('machine-view'));
     next();
   }
@@ -863,6 +866,7 @@ Browser: ${navigator.userAgent}`
           setConfig={model.set_config.bind(model)}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
           showPlans={window.juju_config.flags.plans || false}
+          showSSHButtons={this._showSSHButtons()}
           unexposeService={model.unexpose.bind(model)}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
