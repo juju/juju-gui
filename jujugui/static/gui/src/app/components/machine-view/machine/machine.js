@@ -253,7 +253,7 @@ class MachineViewMachine extends React.Component {
 
   _generateTerminalButton() {
     const props = this.props;
-    if (props.type != 'container' && props.showSSHButton) {
+    if (props.type !== 'container' && props.showSSHButton) {
       return (
         <GenericButton
           action={this._sshToMachine.bind(this)}>
