@@ -1406,6 +1406,10 @@ describe('State', () => {
         }
       });
       assert.deepEqual(state.current.test, {test1: false, test2: true});
+      state.changeState({
+        test: ['a', 'b', 'c']
+      });
+      assert.deepEqual(state.current.test, ['a', 'b', 'c']);
     });
   });
 
