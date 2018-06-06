@@ -29,6 +29,8 @@ window.models = yui.namespace('juju.models');
 
 window.jujulib = require('./jujulib');
 
+require('./yui-modules');
+
 class GUIApp {
   constructor(config) {
     /**

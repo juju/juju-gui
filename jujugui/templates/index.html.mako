@@ -312,48 +312,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // function which will be picked up by the setTimeout, and the app will
       // start.
       startTheApp = function() {
-        var GlobalConfig = {
-          combine: true,
-          base: '${convoy_url}?/app/assets/javascripts/yui/',
-          comboBase: '${convoy_url}?',
-          maxURLLenght: 1300,
-          root: 'app/assets/javascripts/yui/',
-          groups: {
-            app: {
-                % if raw:
-                filter: 'raw',
-                % endif
-                % if combine:
-                combine: true,
-                % else:
-                combine: false,
-                % endif
-                base: "${convoy_url}?app/",
-                comboBase: "${convoy_url}?",
-                root: 'app/',
-                // From modules.js
-                modules: YUI_MODULES
-            }
-          }
-        };
-
-        YUI(GlobalConfig).use([
-            'juju-charm-models',
-            'juju-bundle-models',
-            'juju-controller-api',
-            'juju-env-base',
-            'juju-env-api',
-            'juju-models',
-            'base',
-            'bundle-import-notifications',
-            'model',
-            'model-controller',
-            'ghost-deployer-extension',
-            'environment-change-set',
-            'yui-patches'], function(Y) {
+        YUI().use([], function(Y) {
           window.yui = Y;
           const JujuGUI = require('init');
-          window.JujuGUI = new JujuGUI(juju_config);
+          window.yui.use([
+              'juju-charm-models',
+              'juju-bundle-models',
+              'juju-controller-api',
+              'juju-env-base',
+              'juju-env-api',
+              'juju-models',
+              'base',
+              'bundle-import-notifications',
+              'model',
+              'model-controller',
+              'ghost-deployer-extension',
+              'environment-change-set',
+              'yui-patches'
+          ], function () {
+            window.JujuGUI = new JujuGUI(juju_config);
+          });
 
           const stopHandler = () => {
             document.removeEventListener('login', stopHandler);
