@@ -28,14 +28,17 @@ describe('init', () => {
   beforeAll(done => {
     // The module list is copied from index.html.mako and is required by
     // init.js.
-    YUI(GlobalConfig).use(MODULES, Y => {
+    YUI(GlobalConfig).use([], Y => {
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.
       window.GUI_VERSION = {version: '1.2.3'};
-      // The require needs to be after the yui modules have been loaded.
-      JujuGUI = require('../app/init');
-      done();
+      require('./yui-modules');
+      window.yui.use(window.MODULES, function() {
+        // The require needs to be after the yui modules have been loaded.
+        JujuGUI = require('../app/init');
+        done();
+      });
     });
   });
 

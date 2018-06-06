@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../views/utils');
+
 /**
  * The database models.
  *
@@ -27,7 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 window.yui.add('juju-models', function(Y) {
 
   var models = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils'),
       environments = Y.namespace('juju.environments'),
       handlers = models.handlers;
 
@@ -2951,7 +2952,6 @@ window.yui.add('juju-models', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'juju-delta-handlers',
-    'juju-view-utils',
     'juju-charm-models',
     'juju-env-api'
   ]
