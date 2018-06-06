@@ -196,9 +196,9 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       commands.push(`juju switch ${modelOwner}/${modelName}`);
     }
     if (payload) {
-      if (payload.ssh) {
-        commands.push(`juju ssh ${payload.ssh}`);
-      }
+      payload.forEach((command) => {
+        commands.push(command);
+      });
     }
     const creds = {};
     if (identityURL && config.gisf) {

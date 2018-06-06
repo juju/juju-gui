@@ -247,17 +247,17 @@ class MachineViewMachine extends React.Component {
 
   _sshToMachine() {
     const machine = this.props.machineAPI.machine.id;
-    const data = { ssh: machine };
-    this.props.changeState({terminal: data});
+    const commands = [`juju ssh ${machine}`]
+    this.props.changeState({terminal: commands});
   }
 
   _generateTerminalButton() {
-    debugger;
     if (this.props.type != 'container') {
-        return (<GenericButton
-          action={this._sshToMachine.bind(this)}>
+        return (
+          <GenericButton
+            action={this._sshToMachine.bind(this)}>
             SSH to machine
-        </GenericButton>);
+          </GenericButton>);
     } else {
       return null;
     }
