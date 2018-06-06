@@ -8,6 +8,7 @@ const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
+const GenericButton = require('../../generic-button/generic-button');
 const Constraints = require('../../constraints/constraints');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
@@ -244,6 +245,25 @@ class MachineViewMachine extends React.Component {
     );
   }
 
+  _sshToMachine() {
+    const machine = this.props.machineAPI.machine.id;
+    const commands = [`juju ssh ${machine}`];
+    this.props.changeState({terminal: commands});
+  }
+
+  _generateTerminalButton() {
+    const props = this.props;
+    if (props.type !== 'container' && props.showSSHButton) {
+      return (
+        <GenericButton
+          action={this._sshToMachine.bind(this)}>
+          SSH to machine
+        </GenericButton>);
+    } else {
+      return null;
+    }
+  }
+
   render() {
     var machine = this.props.machineAPI.machine;
     var menuItems = [{
@@ -269,6 +289,7 @@ class MachineViewMachine extends React.Component {
         <div className="machine-view__machine-name">
           {this.props.machineAPI.machine.displayName}
         </div>
+        {this._generateTerminalButton()}
         {this._generateHardware()}
         {this._generateUnits()}
         {this._generateConstraintsForm()}
@@ -288,6 +309,7 @@ MachineViewMachine.propTypes = {
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
   canDrop: PropTypes.bool.isRequired,
+  changeState: PropTypes.func,
   connectDropTarget: PropTypes.func.isRequired,
   dbAPI: shapeup.shape({
     applications: PropTypes.object.isRequired,
@@ -312,6 +334,7 @@ MachineViewMachine.propTypes = {
   parseConstraints: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   showConstraints: PropTypes.bool,
+  showSSHButton: PropTypes.bool,
   type: PropTypes.string.isRequired
 };
 

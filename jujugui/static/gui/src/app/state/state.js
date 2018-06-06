@@ -373,7 +373,7 @@ const State = class State {
     */
     let nullKeys = [];
     function merge(target, source, keys = []) {
-      if (typeof source === 'object' && source !== null) {
+      if (!Array.isArray(source) && typeof source === 'object' && source !== null) {
         Object.keys(source).forEach(key => {
           keys.push(key);
           const value = source[key];

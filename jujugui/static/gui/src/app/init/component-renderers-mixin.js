@@ -184,7 +184,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />, sharing);
   }
 
-  _renderTerminal(address) {
+  _renderTerminal(address, payload) {
     const config = this.applicationConfig;
     const user = this.user;
     const identityURL = user.identityURL();
@@ -194,6 +194,11 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     if (modelName) {
       const modelOwner = modelAPI.get('modelOwner');
       commands.push(`juju switch ${modelOwner}/${modelName}`);
+    }
+    if (payload) {
+      payload.forEach(command => {
+        commands.push(command);
+      });
     }
     const creds = {};
     if (identityURL && config.gisf) {
@@ -261,7 +266,8 @@ Browser: ${navigator.userAgent}`
       this.state.changeState({terminal: null});
       return;
     }
-    this._renderTerminal(address);
+    const payload = state.terminal;
+    this._renderTerminal(address, payload);
     next();
   }
 
@@ -698,6 +704,15 @@ Browser: ${navigator.userAgent}`
     const ecs = modelAPI.get('ecs');
     const decorated = MachineView.DecoratedComponent;
     const propTypes = decorated.propTypes;
+    const showSSHButtons = (
+      this.applicationConfig.flags.terminal ||
+      // Always allow for opening the terminal if the user specified a
+      // jujushell URL in the GUI settings.
+      !!localStorage.getItem('jujushell-url') ||
+      // Also allow for opening the terminal if the user deployed the juju
+      // shell charm.
+      !!this.db.environment.get('jujushellURL')
+    );
     ReactDOM.render(
       <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
@@ -727,7 +742,8 @@ Browser: ${navigator.userAgent}`
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
-        series={window.jujulib.CHARM_SERIES} />,
+        series={window.jujulib.CHARM_SERIES}
+        showSSHButtons={showSSHButtons} />,
       document.getElementById('machine-view'));
     next();
   }

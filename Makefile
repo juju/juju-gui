@@ -91,7 +91,7 @@ sysdeps:
 # TOOLS
 #######
 $(PY):
-	virtualenv .
+	virtualenv . --python=python2
 
 $(NODE_MODULES):
 	npm install
