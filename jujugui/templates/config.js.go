@@ -6,7 +6,7 @@ var juju_config = {
     "apiAddress": "wss://{{.host}}",
     "controllerSocketTemplate": "{{.controllerSocket}}",
     "socketTemplate": "{{.socket}}",
-    "bakeryEnabled": {{.bakeryEnabled}},
+    "bakeryEnabled": {{or (.bakeryEnabled) "true"}},
     "socket_protocol": "wss",
     "charmstoreAPIPath": "v4",
     "charmstoreURL": "https://api.jujucharms.com/charmstore/",
