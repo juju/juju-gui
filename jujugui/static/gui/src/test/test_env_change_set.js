@@ -18,22 +18,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const viewUtils = require('../app/views/utils');
+
 describe('Environment Change Set', function() {
-  var Y, ECS, ecs, envObj, dbObj, models, testUtils, viewUtils;
+  var Y, ECS, ecs, envObj, dbObj, models, testUtils;
 
   before(function(done) {
-    var modules = [
-      'environment-change-set',
-      'juju-models',
-      'juju-tests-utils',
-      'juju-view-utils'
-    ];
-    Y = YUI(GlobalConfig).use(modules, function(Y) {
-      ECS = Y.namespace('juju').EnvironmentChangeSet;
-      testUtils = Y.namespace('juju-tests').utils;
-      viewUtils = Y.namespace('juju.views.utils');
-      models = Y.namespace('juju.models');
-      done();
+    Y = YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES.concat(['juju-tests-utils']), function() {
+        ECS = window.yui.namespace('juju').EnvironmentChangeSet;
+        testUtils = window.yui.namespace('juju-tests').utils;
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 

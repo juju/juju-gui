@@ -18,9 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../views/utils');
+
 window.yui.add('environment-change-set', function(Y) {
-  var ns = Y.namespace('juju'),
-      utils = Y.namespace('juju.views.utils');
+  var ns = Y.namespace('juju');
 
   var name = 'environment-change-set';
 
@@ -1653,7 +1654,6 @@ window.yui.add('environment-change-set', function(Y) {
 }, '', {
   requires: [
     'base',
-    'base-build',
-    'juju-view-utils'
+    'base-build'
   ]
 });

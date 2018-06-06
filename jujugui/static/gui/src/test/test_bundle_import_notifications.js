@@ -24,11 +24,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     var db, env, ns;
 
     before(function(done) {
-      YUI(GlobalConfig).use(
-        'bundle-import-notifications',
+      YUI(GlobalConfig).use([],
         function(Y) {
-          ns = Y.namespace('juju');
-          done();
+          window.yui = Y;
+          require('../app/yui-modules');
+          window.yui.use(window.MODULES, function() {
+            ns = window.yui.namespace('juju');
+            done();
+          });
         });
     });
 
