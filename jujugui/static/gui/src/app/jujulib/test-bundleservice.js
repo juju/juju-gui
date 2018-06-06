@@ -2,8 +2,7 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const bundleservice = require('./bundleservice');
 
 describe('jujulib bundleservice', function() {
   describe('getBundleChangesFromYAML', function() {
@@ -12,7 +11,7 @@ describe('jujulib bundleservice', function() {
 
     beforeEach(() => {
       sendPostRequest = sinon.stub();
-      bundleService = new window.jujulib.bundleservice(
+      bundleService = new bundleservice(
         'http://you-are-el/', {sendPostRequest: sendPostRequest});
     });
 

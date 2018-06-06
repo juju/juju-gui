@@ -2,6 +2,8 @@
 
 'use strict';
 
+const identity = require('./identity');
+
 describe('jujulib identity service', () => {
 
   const baseURL = 'http://1.2.3.4';
@@ -28,15 +30,15 @@ describe('jujulib identity service', () => {
     it('returns the identity url with the api version', () => {
       const bakery = setupBakery();
       const userStorage = setupUserStorage(baseURL);
-      const identity = new window.jujulib.identity(userStorage, bakery);
-      assert.equal(identity.getIdentityURL(), `${baseURL}/v1`);
+      const identityInstance = new identity(userStorage, bakery);
+      assert.equal(identityInstance.getIdentityURL(), `${baseURL}/v1`);
     });
 
     it('returns null if no identity url is available', () => {
       const bakery = setupBakery();
       const userStorage = setupUserStorage(null);
-      const identity = new window.jujulib.identity(userStorage, bakery);
-      assert.strictEqual(identity.getIdentityURL(), null);
+      const identityInstance = new identity(userStorage, bakery);
+      assert.strictEqual(identityInstance.getIdentityURL(), null);
     });
   });
 
@@ -51,8 +53,8 @@ describe('jujulib identity service', () => {
       }];
       const bakery = setupBakery(returnVal);
       const userStorage = setupUserStorage(baseURL);
-      const identity = new window.jujulib.identity(userStorage, bakery);
-      identity.getUser('hatch', (err, data) => {
+      const identityInstance = new identity(userStorage, bakery);
+      identityInstance.getUser('hatch', (err, data) => {
         assert.deepEqual(data, userData);
         done();
       });
@@ -62,8 +64,8 @@ describe('jujulib identity service', () => {
       const returnVal = [{error: 'foo'}, null];
       const bakery = setupBakery(returnVal);
       const userStorage = setupUserStorage(baseURL);
-      const identity = new window.jujulib.identity(userStorage, bakery);
-      identity.getUser('hatch', (err, data) => {
+      const identityInstance = new identity(userStorage, bakery);
+      identityInstance.getUser('hatch', (err, data) => {
         assert.deepEqual(err, returnVal[0]);
         done();
       });
@@ -73,8 +75,8 @@ describe('jujulib identity service', () => {
       const returnVal = [null, 'invalid'];
       const bakery = setupBakery(returnVal);
       const userStorage = setupUserStorage(baseURL);
-      const identity = new window.jujulib.identity(userStorage, bakery);
-      identity.getUser('hatch', (err, data) => {
+      const identityInstance = new identity(userStorage, bakery);
+      identityInstance.getUser('hatch', (err, data) => {
         assert.deepEqual(
           err, 'TypeError: Cannot read property \'responseText\' of undefined');
         done();
@@ -85,8 +87,8 @@ describe('jujulib identity service', () => {
       const returnVal = [null, 'invalid'];
       const bakery = setupBakery(returnVal);
       const userStorage = setupUserStorage(null);
-      const identity = new window.jujulib.identity(userStorage, bakery);
-      identity.getUser('hatch', (err, data) => {
+      const identityInstance = new identity(userStorage, bakery);
+      identityInstance.getUser('hatch', (err, data) => {
         assert.deepEqual(
           err, 'no identity URL available');
         done();

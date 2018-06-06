@@ -18,9 +18,24 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const urls = require('../app/jujulib/urls');
+
 describe('test_model.js', function() {
+  let windowJujulib;
+
+  beforeEach(() => {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
+  });
+
   describe('Charm initialization', function() {
-    var models;
+    let models;
 
     before(function(done) {
       YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {

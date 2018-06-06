@@ -166,9 +166,10 @@ viewsUtils.formatConstraints = constraints => {
   }, []).join(' ');
 };
 
-if (module && module.exports) {
+try {
   module.exports = viewsUtils;
-}
+} catch (e) {}
+
 if (YUI) {
   YUI.add('juju-view-utils', function(Y) {
     Y.namespace('juju.views').utils = viewsUtils;

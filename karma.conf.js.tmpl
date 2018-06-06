@@ -18,25 +18,15 @@ module.exports = function(config) {
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
+      'jujugui/static/gui/build/app/assets/javascripts/sjcl.js',
+      'jujugui/static/gui/build/app/assets/javascripts/tweetnacl.js',
       'jujugui/static/gui/build/app/assets/javascripts/js-macaroon.js',
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
       'jujugui/static/gui/src/test/factory.js',
 
-      'jujugui/static/gui/src/app/jujulib/index.js',
-      'jujugui/static/gui/src/app/jujulib/charmstore.js',
-      'jujugui/static/gui/src/app/jujulib/identity.js',
-      'jujugui/static/gui/src/app/jujulib/plans.js',
-      'jujugui/static/gui/src/app/jujulib/payment.js',
-      'jujugui/static/gui/src/app/jujulib/rates.js',
-      'jujugui/static/gui/src/app/jujulib/stripe.js',
-      'jujugui/static/gui/src/app/jujulib/terms.js',
-      'jujugui/static/gui/src/app/jujulib/reconnecting-websocket.js',
-      'jujugui/static/gui/src/app/jujulib/urls.js',
-      'jujugui/static/gui/src/app/jujulib/bundleservice.js',
-      'jujugui/static/gui/src/app/jujulib/bakery.js',
-      'jujugui/static/gui/src/app/jujulib/test-*.js',
+      'jujugui/static/gui/src/app/jujulib/*.js',
 
       'jujugui/static/gui/src/app/state/*.js',
 
@@ -70,11 +60,16 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'jujugui/static/gui/build/app/assets/javascripts/sjcl.js': ['browserify'],
+      'jujugui/static/gui/build/app/assets/javascripts/tweetnacl.js': ['browserify'],
+      'jujugui/static/gui/build/app/assets/javascripts/js-macaroon.js': ['browserify'],
+      'jujugui/static/gui/src/app/jujulib/*.js': ['browserify'],
       'jujugui/static/gui/src/app/components/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/d3-components/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/topology/environment-utils.js': ['browserify'],
+      'jujugui/static/gui/src/app/jujulib/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
       'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
       'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],

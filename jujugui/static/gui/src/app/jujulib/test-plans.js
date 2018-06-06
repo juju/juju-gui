@@ -2,8 +2,7 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const plans = require('./plans');
 
 describe('jujulib plans service', function() {
 
@@ -13,17 +12,17 @@ describe('jujulib plans service', function() {
 
   it('exists', function() {
     const bakery = {};
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    assert.strictEqual(plans instanceof window.jujulib.plans, true);
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    assert.strictEqual(plansInstance instanceof plans.plans, true);
     assert.strictEqual(
-      plans.url, 'http://1.2.3.4/' + window.jujulib.plansAPIVersion);
+      plansInstance.url, 'http://1.2.3.4/' + plans.plansAPIVersion);
   });
 
   it('is smart enough to handle missing trailing slash in URL', function() {
     const bakery = {};
-    const plans = new window.jujulib.plans('http://1.2.3.4', bakery);
+    const plansInstance = new plans.plans('http://1.2.3.4', bakery);
     assert.strictEqual(
-      plans.url, 'http://1.2.3.4/' + window.jujulib.plansAPIVersion);
+      plansInstance.url, 'http://1.2.3.4/' + plans.plansAPIVersion);
   });
 
   it('lists plans for a charm', function(done) {
@@ -32,7 +31,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/charm?charm-url=cs:juju-gui-42');
         const xhr = makeXHRRequest([{
           url: 'canonical-landscape/24-7',
@@ -65,8 +64,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.listPlansForCharm('cs:juju-gui-42', function(error, plans) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.listPlansForCharm('cs:juju-gui-42', function(error, plans) {
       assert.isNull(error);
       assert.deepEqual(plans, [{
         url: 'canonical-landscape/24-7',
@@ -100,14 +99,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/charm?charm-url=cs:django');
         const xhr = makeXHRRequest([]);
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.listPlansForCharm('django', function(error, plans) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.listPlansForCharm('django', function(error, plans) {
       assert.isNull(error);
       done();
     });
@@ -120,8 +119,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.listPlansForCharm('cs:juju-gui/42', function(error, plans) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.listPlansForCharm('cs:juju-gui/42', function(error, plans) {
       assert.isNull(error);
       assert.deepEqual(plans, []);
       done();
@@ -135,8 +134,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.listPlansForCharm('django', function(error, plans) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.listPlansForCharm('django', function(error, plans) {
       assert.equal(error, 'bad wolf');
       assert.isNull(plans);
       done();
@@ -149,7 +148,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/plan/model/uuid/service/app-name');
         const xhr = makeXHRRequest({
           'current-plan': 'canonical-landscape/free',
@@ -179,8 +178,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.showActivePlan('uuid', 'app-name', function(error, current, all) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.showActivePlan('uuid', 'app-name', function(error, current, all) {
       assert.isNull(error);
       assert.deepEqual(current, {
         url: 'canonical-landscape/free',
@@ -215,8 +214,8 @@ describe('jujulib plans service', function() {
         assert.fail('request should not have been made');
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.showActivePlan(undefined, 'app-name', () => {});
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.showActivePlan(undefined, 'app-name', () => {});
   });
 
   it('handles errors retrieving the currently active plan', function(done) {
@@ -226,8 +225,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.showActivePlan('uuid', 'app-name', function(error, current, all) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.showActivePlan('uuid', 'app-name', function(error, current, all) {
       assert.equal(error, 'bad wolf');
       assert.isNull(current);
       assert.deepEqual(all, []);
@@ -241,7 +240,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/plan/authorize');
         const xhr = makeXHRRequest({
           'look ma': 'I\'m a macaroon',
@@ -250,8 +249,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.authorizePlan(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.authorizePlan(
       'envUUID',
       'charmUrl',
       'applicationName',
@@ -293,14 +292,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget');
         const xhr = makeXHRRequest(budgets);
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.listBudgets(function(error, data) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.listBudgets(function(error, data) {
       assert.isNull(error);
       assert.deepEqual(data, budgets);
       done();
@@ -314,8 +313,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.listBudgets(function(error, data) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.listBudgets(function(error, data) {
       assert.equal(error, 'bad wolf');
       assert.isNull(data);
       done();
@@ -328,7 +327,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget');
         const xhr = makeXHRRequest({
           'auth': 'I\'m a macaroon',
@@ -337,8 +336,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.createBudget(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.createBudget(
       'budget',
       'limit',
       function(error, data) {
@@ -356,14 +355,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget');
         const xhr = makeXHRRequest({error: 'bad wolf'});
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.createBudget(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.createBudget(
       'budget',
       'limit',
       function(error, data) {
@@ -379,15 +378,15 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget/budgetid');
         assert.equal(body, '{"limit":"limit"}');
         const xhr = makeXHRRequest({ data: 'data' });
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.updateBudget(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.updateBudget(
       'budgetid',
       'limit',
       function(error, data) {
@@ -404,14 +403,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget/budgetid');
         const xhr = makeXHRRequest({ data: 'data' });
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.removeBudget(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.removeBudget(
       'budgetid',
       function(error, data) {
         assert.strictEqual(error, null);
@@ -427,7 +426,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget/budgetid/allocation');
         assert.deepEqual(body,
           '{"services":["application"],"model":"model","limit":"limit"}');
@@ -435,8 +434,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.createAllocation(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.createAllocation(
       'budgetid',
       'application',
       'model',
@@ -455,15 +454,15 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/model/model/service/application/allocation');
         assert.deepEqual(body, '{"limit":"limit"}');
         const xhr = makeXHRRequest({ data: 'data' });
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.updateAllocation(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.updateAllocation(
       'model',
       'application',
       'limit',
@@ -481,14 +480,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/environment/model/service/application/allocation');
         const xhr = makeXHRRequest({ data: 'data' });
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.removeAllocation(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.removeAllocation(
       'application',
       'model',
       function(error, data) {
@@ -505,15 +504,15 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/profile/user');
         assert.deepEqual(body, '{"update":{"limit":"limit"}}');
         const xhr = makeXHRRequest({ data: 'data' });
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.updateCreditLimit(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.updateCreditLimit(
       'user',
       'limit',
       function(error, data) {
@@ -530,7 +529,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/profile');
         assert.deepEqual(body,
           '{"update":{"default-budget":"defaultBudget"}}');
@@ -538,8 +537,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.updateDefaultBudget(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.updateDefaultBudget(
       'defaultBudget',
       function(error, data) {
         assert.strictEqual(error, null);
@@ -578,14 +577,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/budget/my-budget');
         const xhr = makeXHRRequest(budget);
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.showBudget('my-budget', function(error, data) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.showBudget('my-budget', function(error, data) {
       assert.isNull(error);
       assert.deepEqual(data, budget);
       done();
@@ -599,8 +598,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.showBudget('my-budget', function(error, data) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.showBudget('my-budget', function(error, data) {
       assert.equal(error, 'bad wolf');
       assert.isNull(data);
       done();
@@ -613,7 +612,7 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/profile');
         const xhr = makeXHRRequest({
           'auth': 'I\'m a macaroon',
@@ -622,8 +621,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.createProfile(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.createProfile(
       'user',
       'limit',
       'default-budget',
@@ -643,14 +642,14 @@ describe('jujulib plans service', function() {
         assert.equal(
           url,
           'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/profile');
         const xhr = makeXHRRequest({error: 'bad wolf'});
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.createProfile(
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.createProfile(
       'user',
       'limit',
       'default-budget',
@@ -666,7 +665,7 @@ describe('jujulib plans service', function() {
     const bakery = {
       get: function(url, headers, callback) {
         assert.equal(url, 'http://1.2.3.4/' +
-          window.jujulib.plansAPIVersion +
+          plans.plansAPIVersion +
           '/metrics/kpi?charm-url=cs%3Ajuju-gui-42');
         const xhr = makeXHRRequest([{
           Metric: 'metric',
@@ -693,8 +692,8 @@ describe('jujulib plans service', function() {
         callback(null, xhr);
       }
     };
-    const plans = new window.jujulib.plans('http://1.2.3.4/', bakery);
-    plans.getKpiMetrics('cs:juju-gui-42', {}, function(error, metrics) {
+    const plansInstance = new plans.plans('http://1.2.3.4/', bakery);
+    plansInstance.getKpiMetrics('cs:juju-gui-42', {}, function(error, metrics) {
       assert.isNull(error);
       assert.deepEqual(metrics, [{
         metric: 'metric',

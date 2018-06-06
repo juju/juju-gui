@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const charmstoreUtils = require('../app/jujulib/charmstore');
+
 describe('Bundle initialization', function() {
   var models;
 
@@ -48,7 +50,7 @@ describe('The bundle model', function() {
     ], function(Y) {
       models = Y.namespace('juju.models');
       utils = Y.namespace('juju-tests.utils');
-      charmstore = new window.jujulib.charmstore('local/');
+      charmstore = new charmstoreUtils.charmstore('local/');
       origData = charmstore._processEntityQueryData(
         utils.loadFixture('data/apiv5-bundle.json', true));
       done();

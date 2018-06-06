@@ -2,12 +2,14 @@
 
 'use strict';
 
+const rates = require('./rates');
+
 describe('jujulib rates service', () => {
 
   it('exists', () => {
     const webHandler = {};
-    const rates = new window.jujulib.rates('http://1.2.3.4/', webHandler);
-    assert.equal(rates.url, 'http://1.2.3.4/v3');
+    const ratesInstance = new rates.rates('http://1.2.3.4/', webHandler);
+    assert.equal(ratesInstance.url, 'http://1.2.3.4/v3');
   });
 
   it('can return the SLA machine rates', done => {
@@ -26,8 +28,8 @@ describe('jujulib rates service', () => {
         });
       }
     };
-    const rates = new window.jujulib.rates('http://1.2.3.4/', webHandler);
-    rates.getSLAMachineRates(data => {
+    const ratesInstance = new rates.rates('http://1.2.3.4/', webHandler);
+    ratesInstance.getSLAMachineRates(data => {
       assert.deepEqual(data, {
         unsupported: '0.000',
         essential: '0.011',

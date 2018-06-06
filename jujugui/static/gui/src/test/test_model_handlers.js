@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const urls = require('../app/jujulib/urls');
+
 describe('Juju delta handlers', function() {
   var db, models, handlers;
   var requirements = [
@@ -1031,13 +1033,24 @@ describe('Juju delta handlers', function() {
 });
 
 describe('Juju delta handlers utilities', function() {
-  var utils;
+  let utils, windowJujulib;
 
   before(function(done) {
     YUI(GlobalConfig).use(['juju-delta-handlers'], function(Y) {
       utils = Y.namespace('juju.models').utils;
       done();
     });
+  });
+
+  beforeEach(function() {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
   });
 
   describe('Go Juju Entity Tag cleaner', function() {

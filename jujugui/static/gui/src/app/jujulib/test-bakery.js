@@ -18,11 +18,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const bakery = require('./bakery');
+
 describe('Bakery', () => {
-  let bakery, fakeLocalStorage, macaroonlib, storage, client;
+  let bakeryInstance, fakeLocalStorage, macaroonlib, storage, client;
 
   beforeAll(done => {
-    macaroonlib = require('js-macaroon');
+    macaroonlib = require('../assets/javascripts/js-macaroon');
     done();
   });
 
@@ -59,7 +61,7 @@ describe('Bakery', () => {
       }
     };
 
-    storage = new jujulib.BakeryStorage(
+    storage = new bakery.BakeryStorage(
       fakeLocalStorage, {
         services: {
           charmstore: 'http://example.com/charmstore',
@@ -67,11 +69,11 @@ describe('Bakery', () => {
         }
       }
     );
-    bakery = new jujulib.Bakery(client, storage);
+    bakeryInstance = new bakery.Bakery(client, storage);
   });
 
   afterEach(() => {
-    bakery = null;
+    bakeryInstance = null;
     storage = null;
   });
 
@@ -83,7 +85,7 @@ describe('Bakery', () => {
       let body = 'content';
       let args;
       ['PATCH', 'post', 'PUT'].forEach(method => {
-        bakery.sendRequest(url, method, headers, body, callback);
+        bakeryInstance.sendRequest(url, method, headers, body, callback);
         assert.equal(client._sendRequest.callCount, 1);
         args = client._sendRequest.args[0];
         assert.equal(args[0], method.toLowerCase());
@@ -94,7 +96,7 @@ describe('Bakery', () => {
         client._sendRequest.reset();
       });
       ['GET', 'delete'].forEach(method => {
-        bakery.sendRequest(url, method, headers, callback);
+        bakeryInstance.sendRequest(url, method, headers, callback);
         assert.equal(client._sendRequest.callCount, 1);
         args = client._sendRequest.args[0];
         assert.equal(args[0], method.toLowerCase());
@@ -109,7 +111,7 @@ describe('Bakery', () => {
       const sendRequest = client._sendRequest;
       const assertWithCredentials = (method, path, expectedValue) => {
         sendRequest.reset();
-        bakery.sendRequest('http://example.com' + path, method);
+        bakeryInstance.sendRequest('http://example.com' + path, method);
         assert.strictEqual(
           sendRequest.args[0][6], expectedValue, `${method} ${path}`);
       };
@@ -128,7 +130,7 @@ describe('Bakery', () => {
     });
 
     it('sets the headers', () => {
-      bakery.sendRequest('http://example.com/', 'GET', {'foo': 'bar'});
+      bakeryInstance.sendRequest('http://example.com/', 'GET', {'foo': 'bar'});
       const expectedHeaders = {
         'Bakery-Protocol-Version': 1,
         'foo': 'bar'
@@ -142,7 +144,7 @@ describe('Bakery', () => {
       fakeLocalStorage.store['charmstore'] = 'doctor';
       fakeLocalStorage.store['identity'] = 'bad wolf';
 
-      bakery.sendRequest('http://example.com/charmstore', 'GET');
+      bakeryInstance.sendRequest('http://example.com/charmstore', 'GET');
       const expectedHeaders = {
         'Bakery-Protocol-Version': 1,
         'Macaroons': 'doctor'
@@ -151,8 +153,8 @@ describe('Bakery', () => {
     });
 
     it('wraps callbacks with discharge functionality', () => {
-      const wrapper = sinon.stub(bakery, '_wrapCallback');
-      bakery.sendRequest('http://example.com/', 'GET');
+      const wrapper = sinon.stub(bakeryInstance, '_wrapCallback');
+      bakeryInstance.sendRequest('http://example.com/', 'GET');
       assert.equal(wrapper.callCount, 1);
     });
   });
@@ -179,7 +181,7 @@ describe('Bakery', () => {
         console.error(msg);
         assert.fail();
       };
-      bakery.discharge(macaroon, success, failure);
+      bakeryInstance.discharge(macaroon, success, failure);
       assert.equal(
         dischargeStub.callCount, 1,
         'macaroonlib discharge not called');
@@ -194,14 +196,14 @@ describe('Bakery', () => {
       const failure = msg => {
         assert.equal(msg, `discharge failed: ${error.message}`);
       };
-      bakery.discharge('macaroons', success, failure);
+      bakeryInstance.discharge('macaroons', success, failure);
     });
 
     it('handles third party discharge', () => {
       const condition = 'this is a caveat';
       const success = macaroons => {};
       const failure = err => {};
-      bakery._getThirdPartyDischarge(
+      bakeryInstance._getThirdPartyDischarge(
         'http://example.com/',
         'http://example.com/identity',
         condition, success, failure);
@@ -234,7 +236,7 @@ describe('Bakery', () => {
 
     it('handles requests normally if nothing is needed', () => {
       const cb = sinon.stub();
-      const wrappedCB = bakery._wrapCallback(
+      const wrappedCB = bakeryInstance._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget();
       wrappedCB({ target });
@@ -242,9 +244,9 @@ describe('Bakery', () => {
     });
 
     it('handles interaction if needed', () => {
-      const interact = sinon.stub(bakery, '_interact');
+      const interact = sinon.stub(bakeryInstance, '_interact');
       const cb = sinon.stub();
-      const wrappedCB = bakery._wrapCallback(
+      const wrappedCB = bakeryInstance._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget({
         Code: 'interaction required',
@@ -261,9 +263,9 @@ describe('Bakery', () => {
     });
 
     it('handles discharge if needed', () => {
-      const dischargeStub = sinon.stub(bakery, 'discharge');
+      const dischargeStub = sinon.stub(bakeryInstance, 'discharge');
       const cb = sinon.stub();
-      const wrappedCB = bakery._wrapCallback(
+      const wrappedCB = bakeryInstance._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget({
         Code: 'macaroon discharge required',
@@ -276,10 +278,10 @@ describe('Bakery', () => {
     });
 
     it('do not acquire macaroons if discharge is disabled', () => {
-      bakery = bakery.withoutDischarge();
-      const dischargeStub = sinon.stub(bakery, 'discharge');
+      bakeryInstance = bakeryInstance.withoutDischarge();
+      const dischargeStub = sinon.stub(bakeryInstance, 'discharge');
       const cb = sinon.stub();
-      const wrappedCB = bakery._wrapCallback(
+      const wrappedCB = bakeryInstance._wrapCallback(
         'http://example.com', 'POST', {}, 'body', cb);
       const target = getTarget({
         Code: 'macaroon discharge required',
@@ -315,8 +317,8 @@ describe('Bakery', () => {
       const params = {
         visitPage: () => { return 'visits'; }
       };
-      bakery = new jujulib.Bakery(client, storage, params);
-      assert.equal(bakery._visitPage(), 'visits');
+      bakeryInstance = new bakery.Bakery(client, storage, params);
+      assert.equal(bakeryInstance._visitPage(), 'visits');
     });
 
     it('opens the visit page', () => {
@@ -326,7 +328,7 @@ describe('Bakery', () => {
           VisitURL: 'http://example.com'
         }
       };
-      bakery._visitPage(error);
+      bakeryInstance._visitPage(error);
       assert.equal(windowStub.callCount, 1);
       assert.equal(windowStub.args[0][0], error.Info.VisitURL);
       windowStub.restore();
@@ -339,7 +341,7 @@ describe('Bakery', () => {
           VisitURL: 'http://example.com/visit'
         }
       };
-      bakery._interact(error, ()=>{}, ()=>{});
+      bakeryInstance._interact(error, ()=>{}, ()=>{});
       assert.equal(client._sendRequest.callCount, 1);
       assert.equal(
         client._sendRequest.args[0][1], 'http://example.com/wait');
@@ -357,7 +359,7 @@ describe('Bakery', () => {
       client._sendRequest
         .onFirstCall().callsArgWith(7, getResponse(true))
         .onSecondCall().callsArgWith(7, getResponse(false));
-      bakery._interact(error, ()=>{}, ()=>{});
+      bakeryInstance._interact(error, ()=>{}, ()=>{});
       assert.equal(client._sendRequest.callCount, 2);
     });
 
@@ -369,7 +371,7 @@ describe('Bakery', () => {
         }
       };
       client._sendRequest.callsArgWith(7, getResponse(true));
-      bakery._interact(error, ()=>{}, ()=>{});
+      bakeryInstance._interact(error, ()=>{}, ()=>{});
       assert.equal(client._sendRequest.callCount, 6); // 6 is retrycount limit
     });
 
@@ -381,10 +383,10 @@ describe('Bakery', () => {
         }
       };
       client._sendRequest.callsArgWith(7, getResponse(true));
-      sinon.stub(bakery, '_getError').returns({'message': 'bad wolf'});
+      sinon.stub(bakeryInstance, '_getError').returns({'message': 'bad wolf'});
       const ok = sinon.stub();
       const fail = sinon.stub();
-      bakery._interact(error, ok, fail);
+      bakeryInstance._interact(error, ok, fail);
       assert.equal(ok.callCount, 0);
       assert.equal(fail.callCount, 1);
       assert.equal(fail.args[0][0], 'cannot interact: bad wolf');
@@ -398,10 +400,10 @@ describe('Bakery', () => {
         }
       };
       client._sendRequest.callsArgWith(7, getResponse(true));
-      sinon.stub(bakery, '_getError').returns(null);
+      sinon.stub(bakeryInstance, '_getError').returns(null);
       const ok = sinon.stub();
       const fail = sinon.stub();
-      bakery._interact(error, ok, fail);
+      bakeryInstance._interact(error, ok, fail);
       assert.equal(ok.callCount, 1);
       assert.equal(fail.callCount, 0);
     });
@@ -426,7 +428,7 @@ describe('Bakery', () => {
         },
         charmstoreCookieSetter: cookieSet
       };
-      storage = new jujulib.BakeryStorage(fakeLocalStorage, params);
+      storage = new bakery.BakeryStorage(fakeLocalStorage, params);
       const macaroonValue = btoa(JSON.stringify('macaroon'));
       storage.set('http://example.com/charmstore', macaroonValue, () => {});
       assert.equal(cookieSet.callCount, 1);

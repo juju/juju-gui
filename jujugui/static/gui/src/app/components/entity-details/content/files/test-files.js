@@ -5,11 +5,12 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const EntityFiles = require('./files');
+const urls = require('../../../../jujulib/urls');
 
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('EntityFiles', function() {
-  var mockEntity;
+  let mockEntity, windowJujulib;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityFiles
@@ -18,11 +19,16 @@ describe('EntityFiles', function() {
   );
 
   beforeEach(function() {
+    windowJujulib = window.jujulib;
+    window.jujulib = {
+      URL: urls.URL
+    };
     mockEntity = jsTestUtils.makeEntity(
       false, {files: ['foo.zip', 'bar/foo.txt']});
   });
 
   afterEach(function() {
+    window.jujulib = windowJujulib;
     mockEntity = undefined;
   });
 
