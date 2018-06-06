@@ -196,7 +196,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       commands.push(`juju switch ${modelOwner}/${modelName}`);
     }
     if (payload) {
-      payload.forEach((command) => {
+      payload.forEach(command => {
         commands.push(command);
       });
     }
@@ -704,6 +704,15 @@ Browser: ${navigator.userAgent}`
     const ecs = modelAPI.get('ecs');
     const decorated = MachineView.DecoratedComponent;
     const propTypes = decorated.propTypes;
+    const showSSHButtons = (
+      this.applicationConfig.flags.terminal ||
+      // Always allow for opening the terminal if the user specified a
+      // jujushell URL in the GUI settings.
+      !!localStorage.getItem('jujushell-url') ||
+      // Also allow for opening the terminal if the user deployed the juju
+      // shell charm.
+      !!this.db.environment.get('jujushellURL')
+    );
     ReactDOM.render(
       <MachineView
         acl={shapeup.fromShape(this.acl, propTypes.acl)}
@@ -733,7 +742,8 @@ Browser: ${navigator.userAgent}`
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
-        series={window.jujulib.CHARM_SERIES} />,
+        series={window.jujulib.CHARM_SERIES}
+        showSSHButtons={showSSHButtons} />,
       document.getElementById('machine-view'));
     next();
   }

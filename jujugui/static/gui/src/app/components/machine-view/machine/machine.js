@@ -247,17 +247,18 @@ class MachineViewMachine extends React.Component {
 
   _sshToMachine() {
     const machine = this.props.machineAPI.machine.id;
-    const commands = [`juju ssh ${machine}`]
+    const commands = [`juju ssh ${machine}`];
     this.props.changeState({terminal: commands});
   }
 
   _generateTerminalButton() {
-    if (this.props.type != 'container') {
-        return (
-          <GenericButton
-            action={this._sshToMachine.bind(this)}>
-            SSH to machine
-          </GenericButton>);
+    const props = this.props;
+    if (props.type != 'container' && props.showSSHButton) {
+      return (
+        <GenericButton
+          action={this._sshToMachine.bind(this)}>
+          SSH to machine
+        </GenericButton>);
     } else {
       return null;
     }
@@ -308,6 +309,7 @@ MachineViewMachine.propTypes = {
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
   canDrop: PropTypes.bool.isRequired,
+  changeState: PropTypes.func,
   connectDropTarget: PropTypes.func.isRequired,
   dbAPI: shapeup.shape({
     applications: PropTypes.object.isRequired,
@@ -332,6 +334,7 @@ MachineViewMachine.propTypes = {
   parseConstraints: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   showConstraints: PropTypes.bool,
+  showSSHButton: PropTypes.bool,
   type: PropTypes.string.isRequired
 };
 
