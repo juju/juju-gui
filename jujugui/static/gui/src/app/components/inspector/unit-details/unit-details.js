@@ -26,6 +26,20 @@ class UnitDetails extends React.Component {
   }
 
   /**
+    Open the terminal and SSH to the unit.
+
+    @method _sshToUnit
+  */
+  _sshToUnit() {
+    const unit = this.props.unit;
+    const commands = [
+      `juju ssh ${unit.id}`,
+      `cd /var/lib/juju/agents/unit-${unit.urlName}/charm`
+    ];
+    this.props.changeState({terminal: commands});
+  }
+
+  /**
     Build a HTML list from an array of port ranges and an IP address.
 
     @param {String} address An IP address.
@@ -119,6 +133,13 @@ class UnitDetails extends React.Component {
       title: 'Remove',
       action: this._handleRemoveUnit.bind(this)
     }];
+    if (props.showSSHButtons) {
+      buttons.splice(0, 0, {
+        disabled: false,
+        title: 'SSH to unit',
+        action: this._sshToUnit.bind(this)
+      });
+    }
     const privateList = this._generateAddresses(
       unit.private_address, unit.portRanges, true);
     const publicList = this._generateAddresses(
@@ -149,6 +170,7 @@ UnitDetails.propTypes = {
   destroyUnits: PropTypes.func.isRequired,
   previousComponent: PropTypes.string,
   service: PropTypes.object.isRequired,
+  showSSHButtons: PropTypes.bool.isRequired,
   unit: PropTypes.object.isRequired,
   unitStatus: PropTypes.string
 };
