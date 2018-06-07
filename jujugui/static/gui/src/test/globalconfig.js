@@ -29,7 +29,6 @@ window.MODULES = [
   'juju-env-api',
   'juju-models',
   'base',
-  'bundle-import-notifications',
   'model',
   'model-controller',
   'environment-change-set',

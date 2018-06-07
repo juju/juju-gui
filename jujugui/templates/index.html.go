@@ -323,7 +323,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               'juju-env-api',
               'juju-models',
               'base',
-              'bundle-import-notifications',
               'model',
               'model-controller',
               'environment-change-set',
