@@ -326,7 +326,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               'bundle-import-notifications',
               'model',
               'model-controller',
-              'ghost-deployer-extension',
               'environment-change-set',
               'yui-patches'
           ], function () {

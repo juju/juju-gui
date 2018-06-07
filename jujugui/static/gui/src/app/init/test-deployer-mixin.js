@@ -18,16 +18,17 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const DeployerMixin = require('./deployer-mixin');
+
 describe('Ghost Deployer Extension', function() {
 
-  var Y, juju, ghostDeployer, GhostDeployer, models;
+  var Y, ghostDeployer, models;
 
-  before(function(done) {
+  beforeAll(function(done) {
     Y = YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      require('../app/yui-modules');
+      require('../yui-modules');
       window.yui.use(window.MODULES.concat(['base-build']), function() {
-        juju = window.yui.namespace('juju');
         models = window.yui.namespace('juju.models');
         models._getECS = sinon.stub().returns({changeSet: {}});
         done();
@@ -36,54 +37,42 @@ describe('Ghost Deployer Extension', function() {
   });
 
   beforeEach(function() {
-    GhostDeployer = Y.Base.create(
-      'deployer', Y.Base, [juju.GhostDeployer], {
-        views: {
-          environment: {
-            instance: {
-              topo: {service_boxes: {}},
-              createServiceInspector: sinon.stub()
-            }
-          }
-        },
-        env: {
+    class app {
+      constructor() {
+        var getMethod = sinon.stub();
+        this.db = {
+          charms: { add: sinon.stub().returns({ get: getMethod }) },
+          services: {
+            ghostService: sinon.stub().returns({
+              get: sinon.stub().returns('ghost-service-id'),
+              set: sinon.stub()
+            })
+          },
+          notifications: { add: sinon.stub() },
+          addUnits: sinon.stub(),
+          removeUnits: sinon.stub()
+        };
+        this.modelAPI = {
           deploy: sinon.stub(),
           add_unit: sinon.stub(),
           addCharm: sinon.stub(),
           addPendingResources: sinon.stub()
-        },
-        state: {
+        };
+        this.state = {
           changeState: sinon.stub()
-        }
-      }, {
-        ATTRS: {
-          charmstore: {
-            value: {
-              bakery: {
-                getMacaroon: sinon.stub().returns('cookies are better')
-              }
-            }
+        };
+        this.topology = {
+          topo: {service_boxes: {}}
+        };
+        this.charmstore = {
+          bakery: {
+            getMacaroon: sinon.stub().returns('cookies are better')
           }
-        }
-      });
+        };
+      }
+    }
+    const GhostDeployer = DeployerMixin(app);
     ghostDeployer = new GhostDeployer();
-    var getMethod = sinon.stub();
-    ghostDeployer.db = {
-      charms: { add: sinon.stub().returns({ get: getMethod }) },
-      services: {
-        ghostService: sinon.stub().returns({
-          get: sinon.stub().returns('ghost-service-id'),
-          set: sinon.stub()
-        })
-      },
-      notifications: { add: sinon.stub() },
-      addUnits: sinon.stub(),
-      removeUnits: sinon.stub()
-    };
-  });
-
-  afterEach(function() {
-    ghostDeployer.destroy();
   });
 
   // Create and return a charm model instance.
@@ -135,36 +124,36 @@ describe('Ghost Deployer Extension', function() {
   it('calls to add the charm before deploying', function() {
     var charm = makeCharm();
     var addCharmCalled = false;
-    ghostDeployer.env.addCharm = function(charmId, charmstore, callback, opt) {
+    ghostDeployer.modelAPI.addCharm = function(charmId, charmstore, callback, opt) {
       addCharmCalled = true;
       assert.equal(charmId, charm.get('id'));
-      assert.deepEqual(charmstore, ghostDeployer.get('charmstore'));
+      assert.deepEqual(charmstore, ghostDeployer.charmstore);
       assert.equal(typeof callback, 'function');
       assert.deepEqual(opt, {
         applicationId: 'ghost-service-id'
       });
-      assert.equal(ghostDeployer.env.deploy.callCount, 0,
+      assert.equal(ghostDeployer.modelAPI.deploy.callCount, 0,
         'deploy should not have been called before charm was added');
     };
     ghostDeployer.deployService(charm);
     assert.equal(addCharmCalled, true);
-    assert.equal(ghostDeployer.env.deploy.callCount, 1);
+    assert.equal(ghostDeployer.modelAPI.deploy.callCount, 1);
   });
 
   it('does not call addCharm for local charms and juju 2', function() {
     const charm = makeCharm('local:trusty/django-42');
-    ghostDeployer.env.addCharm = sinon.stub();
+    ghostDeployer.modelAPI.addCharm = sinon.stub();
     ghostDeployer.deployService(charm);
-    assert.equal(ghostDeployer.env.addCharm.callCount, 0);
-    assert.equal(ghostDeployer.env.deploy.callCount, 1);
+    assert.equal(ghostDeployer.modelAPI.addCharm.callCount, 0);
+    assert.equal(ghostDeployer.modelAPI.deploy.callCount, 1);
   });
 
   it('calls the env addPendingResources method with default charm data', () => {
     const charm = makeCharm();
     charm.set('resources', {a: 'resource'});
     ghostDeployer.deployService(charm);
-    assert.strictEqual(ghostDeployer.env.addPendingResources.calledOnce, true);
-    const args = ghostDeployer.env.addPendingResources.lastCall.args;
+    assert.strictEqual(ghostDeployer.modelAPI.addPendingResources.calledOnce, true);
+    const args = ghostDeployer.modelAPI.addPendingResources.lastCall.args;
     assert.equal(args[0].charmURL, 'cs:trusty/django-42');
     assert.equal(args[0].applicationName, 'ghost-service-id');
     assert.deepEqual(args[0].resources, {a: 'resource'});
@@ -174,8 +163,8 @@ describe('Ghost Deployer Extension', function() {
   it('adds the ECS modelId option when deploying the charm', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
-    assert.strictEqual(ghostDeployer.env.deploy.calledOnce, true);
-    var args = ghostDeployer.env.deploy.lastCall.args;
+    assert.strictEqual(ghostDeployer.modelAPI.deploy.calledOnce, true);
+    var args = ghostDeployer.modelAPI.deploy.lastCall.args;
     var options = args[args.length - 1];
     assert.property(options, 'modelId');
     // The model id is the ghost service identifier.
@@ -321,7 +310,7 @@ describe('Ghost Deployer Extension', function() {
   it('deploys the ghost unit using the ECS', function() {
     var charm = makeCharm();
     ghostDeployer.deployService(charm);
-    var env = ghostDeployer.env;
+    var env = ghostDeployer.modelAPI;
     // Ensure env.add_unit has been called with the expected arguments.
     assert.strictEqual(env.add_unit.calledOnce, true);
     var args = env.add_unit.lastCall.args;
@@ -336,7 +325,7 @@ describe('Ghost Deployer Extension', function() {
       name: 'django',
       config: {}
     });
-    const topo = ghostDeployer.views.environment.instance.topo;
+    const topo = ghostDeployer.topology.topo;
     topo.annotateBoxPosition = sinon.stub();
     topo.service_boxes.ghostid = {};
     ghostDeployer._deployCallbackHandler(ghostService, null);
