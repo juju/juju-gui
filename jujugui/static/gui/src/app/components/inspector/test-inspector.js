@@ -53,6 +53,7 @@ describe('Inspector', function() {
       setConfig={options.setConfig || sinon.stub()}
       showActivePlan={options.showActivePlan || sinon.stub()}
       showPlans={options.showPlans === undefined ? false : options.showPlans}
+      showSSHButtons={false}
       unexposeService={options.unexposeService || sinon.stub()}
       unplaceServiceUnits={options.unplaceServiceUnits || sinon.stub()}
       updateServiceUnitsDisplayname={
@@ -206,6 +207,7 @@ describe('Inspector', function() {
           destroyUnits={sinon.stub()}
           previousComponent={undefined}
           service={service}
+          showSSHButtons={false}
           unit={unit}
           unitStatus={null} />
       </div>);
