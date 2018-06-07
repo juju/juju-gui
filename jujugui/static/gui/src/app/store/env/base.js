@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const ReconnectingWebSocket = require('../../jujulib/reconnecting-websocket');
+
 /**
  * The base store environment.
  *
@@ -295,7 +297,7 @@ window.yui.add('juju-env-base', function(Y) {
         const url = this.get('socket_url');
         console.log('connecting to ' + url);
         this.set('connecting', true);
-        this.ws = new jujulib.ReconnectingWebSocket(url);
+        this.ws = new ReconnectingWebSocket(url);
         this._txn_callbacks = {};
       }
       this.ws.debug = this.get('debug');

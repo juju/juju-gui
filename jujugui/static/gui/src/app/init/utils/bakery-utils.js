@@ -8,6 +8,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 const Notification = require('../../components/notification/notification');
+const bakery = require('../../jujulib/bakery');
 
 /**
   Implement the bakery storage store interface by using the user local
@@ -53,7 +54,7 @@ const UserStore = class UserStore {
 const newBakery = (config, user, stateGetter, cookieSetter, webHandler) => {
   // Use the user object to persist macaroons.
   const userStore = new UserStore(user);
-  const storage = new jujulib.BakeryStorage(userStore, {
+  const storage = new bakery.BakeryStorage(userStore, {
     charmstoreCookieSetter: cookieSetter,
     // Some initial macaroons may be provided in the GUI configuration.
     initial: {
@@ -125,7 +126,7 @@ const newBakery = (config, user, stateGetter, cookieSetter, webHandler) => {
     params.visitPage = nonInteractiveVisit;
   }
 
-  return new jujulib.Bakery(webHandler, storage, params);
+  return new bakery.Bakery(webHandler, storage, params);
 };
 
 module.exports = newBakery;

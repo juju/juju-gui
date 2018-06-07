@@ -10,6 +10,7 @@ const IconList = require('../../icon-list/icon-list');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
+const urls = require('../../../jujulib/urls');
 
 /**
   Charm list React component used to display a list of the users bundles in
@@ -147,7 +148,7 @@ class ProfileBundleList extends React.Component {
       }
     } else {
       const rows = (this.state.data || []).map(bundle => {
-        const url = window.jujulib.URL.fromLegacyString(bundle.id);
+        const url = urls.URL.fromLegacyString(bundle.id);
         const path = url.path();
         const version = `#${url.revision}`;
         const charmstore = this.props.charmstore;

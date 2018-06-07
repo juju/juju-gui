@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const utils = require('../views/utils');
+const urls = require('../jujulib/urls');
 
 /**
  * Provide the Charm and CharmList classes.
@@ -119,7 +120,7 @@ window.yui.add('juju-charm-models', function(Y) {
           this.set('id', cfg.url);
         }
       }
-      const url = window.jujulib.URL.fromLegacyString(this.get('id'));
+      const url = urls.URL.fromLegacyString(this.get('id'));
       this.loaded = false;
       this.on('load', function() {
         this.loaded = true;

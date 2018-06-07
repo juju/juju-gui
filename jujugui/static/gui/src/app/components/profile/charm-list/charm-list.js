@@ -10,6 +10,7 @@ const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
+const urls = require('../../../jujulib/urls');
 
 /**
   Charm list React component used to display a list of the users charms in
@@ -191,7 +192,7 @@ class ProfileCharmList extends React.Component {
       const rows = this.state.data.map(charm => {
         const id = charm.id;
         const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
-        const url = window.jujulib.URL.fromLegacyString(id);
+        const url = urls.URL.fromLegacyString(id);
         const path = url.path();
         const version = `#${url.revision}`;
         const series = charm.series.join(', ');

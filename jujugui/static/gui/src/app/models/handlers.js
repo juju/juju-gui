@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const urls = require('../jujulib/urls');
+
 /**
    Delta handlers.
    This module contains delta stream handlers and converters to be used
@@ -106,7 +108,7 @@ window.yui.add('juju-delta-handlers', function(Y) {
       if (!unit.charmUrl) {
         return;
       }
-      const url = window.jujulib.URL.fromLegacyString(unit.charmUrl);
+      const url = urls.URL.fromLegacyString(unit.charmUrl);
       if (
         url.name !== 'jujushell' || (
           url.user && url.user !== 'juju-gui' && url.user !== 'yellow'
