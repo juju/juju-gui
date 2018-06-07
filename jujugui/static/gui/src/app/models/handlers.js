@@ -27,7 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
    @module handlers
  */
 
-YUI.add('juju-delta-handlers', function(Y) {
+window.yui.add('juju-delta-handlers', function(Y) {
 
   var models = Y.namespace('juju.models');
 

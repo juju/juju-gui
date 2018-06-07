@@ -31,16 +31,19 @@ describe('Relation endpoints logic', () => {
       sample_env, JujuGUI;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use(MODULES, Y => {
+    YUI(GlobalConfig).use([], Y => {
       sample_env = utils.loadFixture('data/large_stream.json', true);
       sample_endpoints = utils.loadFixture('data/large_endpoints.json', true);
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.
       window.GUI_VERSION = {version: '1.2.3'};
-      // The require needs to be after the yui modules have been loaded.
-      JujuGUI = require('../init');
-      done();
+      require('../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        // The require needs to be after the yui modules have been loaded.
+        JujuGUI = require('../init');
+        done();
+      });
     });
   });
 
@@ -369,18 +372,21 @@ describe('Endpoints map handlers', function() {
   let app, container, controller, destroyMe, factory, JujuGUI;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use(MODULES.concat([
+    YUI(GlobalConfig).use([
       'juju-tests-factory',
-      'datasource-local']),
+      'datasource-local'],
     Y => {
       factory = Y.namespace('juju-tests.factory');
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.
       window.GUI_VERSION = {version: '1.2.3'};
-      // The require needs to be after the yui modules have been loaded.
-      JujuGUI = require('../init');
-      done();
+      require('../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        // The require needs to be after the yui modules have been loaded.
+        JujuGUI = require('../init');
+        done();
+      });
     });
   });
 
@@ -514,14 +520,17 @@ describe('Application config handlers', () => {
   let JujuGUI, app, conn, container, destroyMe;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use(MODULES.concat(['environment-change-set']), Y => {
+    YUI(GlobalConfig).use([], Y => {
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.
       window.GUI_VERSION = {version: '1.2.3'};
-      // The require needs to be after the yui modules have been loaded.
-      JujuGUI = require('../init');
-      done();
+      require('../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        // The require needs to be after the yui modules have been loaded.
+        JujuGUI = require('../init');
+        done();
+      });
     });
   });
 

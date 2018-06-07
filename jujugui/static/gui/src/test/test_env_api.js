@@ -27,8 +27,12 @@ const urls = require('../app/jujulib/urls');
 
     before(function(done) {
       YUI(GlobalConfig).use(['juju-env-api'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        done();
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES, function() {
+          environments = window.yui.namespace('juju.environments');
+          done();
+        });
       });
     });
 
@@ -101,15 +105,15 @@ const urls = require('../app/jujulib/urls');
         utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
-        'environment-change-set',
-        'juju-tests-utils',
-        'juju-env-api'
-      ], function(Y) {
-        juju = Y.namespace('juju');
-        utils = Y.namespace('juju-tests.utils');
-        machineJobs = Y.namespace('juju.environments').machineJobs;
-        done();
+      Y = YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES.concat(['juju-tests-utils']), function() {
+          juju = window.yui.namespace('juju');
+          utils = window.yui.namespace('juju-tests.utils');
+          machineJobs = window.yui.namespace('juju.environments').machineJobs;
+          done();
+        });
       });
     });
 

@@ -26,7 +26,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   @submodule views.ghostInspector
  */
 
-YUI.add('ghost-deployer-extension', function(Y) {
+window.yui.add('ghost-deployer-extension', function(Y) {
 
   /**
     JujuGUI app extension to add the ghost deployer method.

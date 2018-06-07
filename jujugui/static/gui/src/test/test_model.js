@@ -38,10 +38,14 @@ describe('test_model.js', function() {
     let models;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
-        models = Y.namespace('juju.models');
-        models._getECS = sinon.stub().returns({changeSet: {}});
-        done();
+      YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES, function() {
+          models = window.yui.namespace('juju.models');
+          models._getECS = sinon.stub().returns({changeSet: {}});
+          done();
+        });
       });
     });
 

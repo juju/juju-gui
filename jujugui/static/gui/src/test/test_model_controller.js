@@ -27,17 +27,21 @@ describe('Model Controller Promises', function() {
       windowJujulib, yui;
 
   before(function(done) {
-    YUI(GlobalConfig).use(
-      'juju-charm-models', 'juju-models', 'juju-tests-factory',
-      'juju-tests-utils', 'model-controller',
+    YUI(GlobalConfig).use([],
       function(Y) {
-        var goenv = Y.juju.environments.GoEnvironment;
         yui = Y;
-        load = Y.juju.models.Charm.prototype.load;
-        getApplicationConfig = goenv.prototype.getApplicationConfig;
-        utils = Y.namespace('juju-tests.utils');
-        factory = Y.namespace('juju-tests.factory');
-        done();
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(
+          window.MODULES.concat(['juju-tests-factory', 'juju-tests-utils']),
+          function() {
+            var goenv = window.yui.juju.environments.GoEnvironment;
+            load = window.yui.juju.models.Charm.prototype.load;
+            getApplicationConfig = goenv.prototype.getApplicationConfig;
+            utils = window.yui.namespace('juju-tests.utils');
+            factory = window.yui.namespace('juju-tests.factory');
+            done();
+          });
       });
   });
 

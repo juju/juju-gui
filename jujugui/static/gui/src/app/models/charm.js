@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../views/utils');
+
 /**
  * Provide the Charm and CharmList classes.
  *
@@ -25,10 +27,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule models.charm
  */
 
-YUI.add('juju-charm-models', function(Y) {
+window.yui.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
-  var utils = Y.namespace('juju.views.utils');
 
   /**
    * Helper to use a setter so that we can set null when the api returns an
@@ -846,7 +847,6 @@ YUI.add('juju-charm-models', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'juju-view-utils',
     'model',
     'model-list',
     'entity-extension'

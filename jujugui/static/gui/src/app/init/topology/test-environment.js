@@ -6,6 +6,7 @@ const proxyquire = require('proxyquire');
 
 const environmentUtils = require('./environment-utils');
 const testUtils = require('../../../test/utils');
+const jujulib = require('../../jujulib');
 
 const getEndpoints = sinon.stub();
 
@@ -20,7 +21,17 @@ const EnvironmentView = proxyquire('./environment', {
   })
 });
 
-(function() {
+describe('EnvironmentView', function() {
+  let windowJujulib;
+
+  beforeEach(() => {
+    windowJujulib = window.jujulib;
+    window.jujulib = jujulib;
+  });
+
+  afterEach(() => {
+    window.jujulib = windowJujulib;
+  });
 
   describe('juju environment view', function() {
     var view, models, Y, container, db, conn, juju, jujuConfig,
@@ -213,27 +224,27 @@ const EnvironmentView = proxyquire('./environment', {
     ]};
 
     beforeAll(function(done) {
-      Y = YUI(GlobalConfig).use([
-        'juju-models',
-        'dump',
-        'juju-charm-models', 'environment-change-set'
-      ], function(Y) {
-        const getMockStorage = function() {
-          return new function() {
-            return {
-              store: {},
-              setItem: function(name, val) { this.store['name'] = val; },
-              getItem: function(name) { return this.store['name'] || null; }
+      console.log('beforeAll');
+      Y = YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../../yui-modules');
+        window.yui.use(window.MODULES, function() {
+          const getMockStorage = function() {
+            return new function() {
+              return {
+                store: {},
+                setItem: function(name, val) { this.store['name'] = val; },
+                getItem: function(name) { return this.store['name'] || null; }
+              };
             };
           };
-        };
-        const userClass = new window.jujugui.User(
-          {sessionStorage: getMockStorage()});
-        userClass.controller = {user: 'user', password: 'password'};
-        models = Y.namespace('juju.models');
-        juju = Y.namespace('juju');
-        window.yui = Y;
-        done();
+          const userClass = new window.jujugui.User(
+            {sessionStorage: getMockStorage()});
+          userClass.controller = {user: 'user', password: 'password'};
+          models = window.yui.namespace('juju.models');
+          juju = window.yui.namespace('juju');
+          done();
+        });
       });
     });
 
@@ -257,7 +268,7 @@ const EnvironmentView = proxyquire('./environment', {
         conn: conn, ecs: ecs, user: userClass});
       env.connect();
       conn.open();
-      fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
+      fakeStore = new jujulib.charmstore('http://1.2.3.4/');
       jujuConfig = window.juju_config;
       window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
       container = testUtils.makeContainer(this, 'content');
@@ -1691,4 +1702,4 @@ const EnvironmentView = proxyquire('./environment', {
       assert.equal(boxes['cs:mysql-1'].icon, 'v5/mysql-1/icon.svg');
     });
   });
-})();
+});

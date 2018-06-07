@@ -26,10 +26,14 @@ const ReconnectingWebSocket = require('../app/jujulib/reconnecting-websocket');
     let environments, juju, windowJujulib;
 
     before(function(done) {
-      YUI(GlobalConfig).use('juju-env-base', function(Y) {
-        juju = Y.namespace('juju');
-        environments = juju.environments;
-        done();
+      YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES.concat(['base-build']), function() {
+          juju = window.yui.namespace('juju');
+          environments = juju.environments;
+          done();
+        });
       });
     });
 
@@ -177,14 +181,17 @@ const ReconnectingWebSocket = require('../app/jujulib/reconnecting-websocket');
   });
 
   describe('tags management', function() {
-    const requires = ['juju-env-base'];
     let tags;
 
     before(done => {
-      YUI(GlobalConfig).use(requires, function(Y) {
-        const module = Y.namespace('juju').environments;
-        tags = module.tags;
-        done();
+      YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES.concat(['base-build']), function() {
+          const module = window.yui.namespace('juju').environments;
+          tags = module.tags;
+          done();
+        });
       });
     });
 

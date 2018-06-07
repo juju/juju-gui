@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('model-controller', function(Y) {
+window.yui.add('model-controller', function(Y) {
   /**
     Provides a collection of utility methods to interact
     with the db and it's models.

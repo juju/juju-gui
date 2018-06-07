@@ -169,9 +169,8 @@ viewsUtils.formatConstraints = constraints => {
 try {
   module.exports = viewsUtils;
 } catch (e) {}
-
-if (YUI) {
-  YUI.add('juju-view-utils', function(Y) {
+if (window.yui) {
+  window.yui.add('juju-view-utils', function(Y) {
     Y.namespace('juju.views').utils = viewsUtils;
   }, '0.1.0', {
     requires: [

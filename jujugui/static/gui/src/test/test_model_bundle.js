@@ -24,9 +24,13 @@ describe('Bundle initialization', function() {
   var models;
 
   before(function(done) {
-    YUI(GlobalConfig).use('juju-models', 'juju-bundle-models', function(Y) {
-      models = Y.namespace('juju.models');
-      done();
+    YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES.concat(['juju-delta-handlers']), function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 

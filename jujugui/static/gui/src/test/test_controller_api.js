@@ -22,13 +22,14 @@ describe('Controller API', function() {
   var cleanups, conn, controllerAPI, juju, utils, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'juju-controller-api',
-      'juju-tests-utils'
-    ], function(Y) {
-      juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
-      done();
+    Y = YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES.concat(['juju-tests-utils']), function() {
+        juju = window.yui.namespace('juju');
+        utils = window.yui.namespace('juju-tests.utils');
+        done();
+      });
     });
   });
 

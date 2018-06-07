@@ -15,7 +15,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('bundle-import-notifications', function(Y) {
+window.yui.add('bundle-import-notifications', function(Y) {
   var ns = Y.namespace('juju');
 
   // Maps bundle deployment statuses to notification messages.

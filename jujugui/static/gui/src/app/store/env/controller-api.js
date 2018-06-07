@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('juju-controller-api', function(Y) {
+window.yui.add('juju-controller-api', function(Y) {
   const module = Y.juju.environments;
   const tags = module.tags;
 
