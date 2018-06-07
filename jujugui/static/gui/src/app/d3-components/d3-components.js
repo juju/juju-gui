@@ -3,7 +3,7 @@
 
 const d3 = require('d3');
 
-const viewUtils = require('../views/utils');
+const viewUtils = require('../init/view-utils');
 
 class Component {
   /**

@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const viewUtils = require('../app/views/utils');
+const viewUtils = require('../app/init/view-utils');
 
 describe('Environment Change Set', function() {
   var Y, ECS, ecs, envObj, dbObj, models, testUtils;

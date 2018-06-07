@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const utils = require('../views/utils');
+const utils = require('../init/view-utils');
 
 window.yui.add('environment-change-set', function(Y) {
   var ns = Y.namespace('juju');

@@ -2,7 +2,7 @@
 'use strict';
 
 const environmentUtils = require('./environment-utils');
-const viewUtils = require('../../views/utils');
+const viewUtils = require('../view-utils');
 
 /**
   Manage panning and zooming events on the canvas.

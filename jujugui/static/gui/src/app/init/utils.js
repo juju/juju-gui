@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const FileSaver = require('file-saver');
 
 const Popup = require('../components/popup/popup');
-const viewUtils = require('../views/utils');
+const viewUtils = require('./view-utils');
 
 let utils = {};
 

@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = require('../app/views/utils');
+const utils = require('../app/init/view-utils');
 
 describe('view utils', function() {
 

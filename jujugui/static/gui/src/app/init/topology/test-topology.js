@@ -8,7 +8,7 @@ const Topology = require('./topology');
 const ViewportModule = require('./viewport');
 
 const utils = require('../../../test/utils');
-const viewUtils = require('../../views/utils');
+const viewUtils = require('../view-utils');
 
 
 describe('topology', function() {

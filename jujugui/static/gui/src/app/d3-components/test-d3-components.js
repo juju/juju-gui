@@ -3,7 +3,7 @@
 
 const Component = require('./d3-components');
 const testUtils = require('../../test/utils');
-const viewUtils = require('../views/utils');
+const viewUtils = require('../init/view-utils');
 
 describe('d3-components', function() {
   let TestModule, state, container, comp;

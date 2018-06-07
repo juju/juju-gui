@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const viewUtils = require('../../views/utils');
+const viewUtils = require('../view-utils');
 
 let environmentUtils = {};
 
