@@ -6,10 +6,9 @@ const enzyme = require('enzyme');
 
 const Configuration = require('./config');
 const initUtils = require('../../../init/utils');
-const urls = require('../../../jujulib/urls');
 
 describe('Configuration', function() {
-  let acl, charm, getYAMLConfig, service, windowJujulib;
+  let acl, charm, getYAMLConfig, service;
 
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
@@ -44,10 +43,6 @@ describe('Configuration', function() {
   };
 
   beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      isValidName: urls.isValidName
-    };
     getYAMLConfig = sinon.stub();
     Configuration.__Rewire__('initUtils', {
       getYAMLConfig: getYAMLConfig,
@@ -86,7 +81,6 @@ describe('Configuration', function() {
 
   afterEach(() => {
     Configuration.__ResetDependency__('initUtils');
-    window.jujulib = windowJujulib;
   });
 
   it('renders binary and string config inputs', function() {

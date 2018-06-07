@@ -21,13 +21,18 @@ const EnvironmentView = require('./init/topology/environment');
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
-// Hacks until all of the global references have been removed.
-window.juju.utils.RelationUtils = require('./init/relation-utils');
-
 const yui = window.yui;
 window.models = yui.namespace('juju.models');
 
-window.jujulib = require('./jujulib');
+const bundleservice = require('./jujulib/bundleservice');
+const charmstore = require('./jujulib/charmstore');
+const identity = require('./jujulib/identity');
+const payment = require('./jujulib/payment');
+const plans = require('./jujulib/plans');
+const rates = require('./jujulib/rates');
+const stripe = require('./jujulib/stripe');
+const terms = require('./jujulib/terms');
+const urls = require('./jujulib/urls');
 
 require('./yui-modules');
 
@@ -125,20 +130,20 @@ class GUIApp {
       Used to retrieve information about the currently logged in user.
       @type {Object}
     */
-    this.identity = this._setupIdentity(this.user, window.jujulib.identity);
+    this.identity = this._setupIdentity(this.user, identity);
     /**
       A charm store API client instance.
       Used to retrieve information about charms and bundles via the charm store.
       @type {Object}
     */
-    this.charmstore = this._setupCharmstore(config, window.jujulib.charmstore);
+    this.charmstore = this._setupCharmstore(config, charmstore.charmstore);
     /**
       A bundle service API client instance.
       Used to retrieve a list of actions to generate a bundle.
       @type {Object}
     */
     this.bundleService = this._setupBundleservice(
-      config, window.jujulib.bundleservice);
+      config, bundleservice);
 
     this.ecs = this._setupEnvironmentChangeSet();
     const modelOptions = {
@@ -225,7 +230,7 @@ class GUIApp {
 
     this._setupControllerAPI();
 
-    this._setupRomulusServices(config, window.jujulib);
+    this._setupRomulusServices(config);
 
     /**
       A statsd client that can be used to send metrics to be consumed by
@@ -510,7 +515,7 @@ class GUIApp {
     }
     const state = new window.jujugui.State({
       baseURL: baseURL,
-      seriesList: window.jujulib.SERIES,
+      seriesList: urls.SERIES,
       sendAnalytics: this.sendAnalytics
     });
     state.register([
@@ -691,9 +696,8 @@ class GUIApp {
     Creates new API client instances for Romulus services.
     Assign them to the "plans" and "terms" app properties.
     @param {Object} config The GUI application configuration.
-    @param {Object} jujulib The Juju API client library.
   */
-  _setupRomulusServices(config, jujulib) {
+  _setupRomulusServices(config) {
     if (!config) {
       // We are probably running tests.
       return;
@@ -706,30 +710,30 @@ class GUIApp {
       Application instance of the plans API.
       @type {Object}
     */
-    this.plans = new window.jujulib.plans(config.plansURL, this.bakery);
+    this.plans = new plans.plans(config.plansURL, this.bakery);
     /**
       Application instance of the terms API.
       @type {Object}
     */
-    this.terms = new window.jujulib.terms(config.termsURL, this.bakery);
+    this.terms = new terms.terms(config.termsURL, this.bakery);
     if (config.flags.pay) {
       /**
         Application instance of the payment API.
         @type {Object}
       */
-      this.payment = new window.jujulib.payment(
+      this.payment = new payment.payment(
         config.paymentURL, this.bakery);
       /**
         Application instance of the stripe API.
         @type {Object}
       */
-      this.stripe = new window.jujulib.stripe(
+      this.stripe = new stripe(
         'https://js.stripe.com/', config.stripeKey);
       /**
         Application instance of the rates API.
         @type {Object}
       */
-      this.rates = new window.jujulib.rates(
+      this.rates = new rates.rates(
         config.ratesURL, new WebHandler());
     }
   }
@@ -764,8 +768,7 @@ class GUIApp {
     const entityPromise = new Promise((resolve, reject) => {
       let legacyPath = undefined;
       try {
-        legacyPath =
-          window.jujulib.URL.fromString('u/' + userState).legacyPath();
+        legacyPath = urls.URL.fromString('u/' + userState).legacyPath();
       } catch (e) {
         // If the state cannot be parsed into a url we can be sure it's
         // not an entity.
@@ -1572,7 +1575,7 @@ class GUIApp {
     // The charmstore apiv4 format can have the bundle keyword either at the
     // start, for charmers bundles, or after the username, for namespaced
     // bundles. ex) bundle/swift & ~jorge/bundle/swift
-    const entityURL = window.jujulib.URL.fromLegacyString(entityId);
+    const entityURL = urls.URL.fromLegacyString(entityId);
     if (entityURL.isBundle()) {
       charmstore.getBundleYAML(entityId, (error, bundleYAML) => {
         if (error) {

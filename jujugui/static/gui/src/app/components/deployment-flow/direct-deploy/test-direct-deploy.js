@@ -8,10 +8,8 @@ const DeploymentDirectDeploy = require('./direct-deploy');
 const GenericButton = require('../../generic-button/generic-button');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
-const urls = require('../../../jujulib/urls');
 
 describe('DirectDeploy', function() {
-  let windowJujulib;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentDirectDeploy
@@ -23,17 +21,6 @@ describe('DirectDeploy', function() {
       getDiagramURL={options.getDiagramURL || sinon.stub()}
       renderMarkdown={options.renderMarkdown || sinon.stub()} />
   );
-
-  beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
-  });
 
   it('can show a message for an invalid bundle', () => {
     const wrapper = renderComponent({

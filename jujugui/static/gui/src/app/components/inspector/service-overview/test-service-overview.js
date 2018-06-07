@@ -5,10 +5,9 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ServiceOverview = require('./service-overview');
-const urls = require('../../../jujulib/urls');
 
 describe('ServiceOverview', function() {
-  let acl, charm, service, windowJujulib;
+  let acl, charm, service;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <ServiceOverview
@@ -25,10 +24,6 @@ describe('ServiceOverview', function() {
   );
 
   beforeEach(function() {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
     acl = {isReadOnly: sinon.stub().returns(false)};
     service = {
       get: sinon.stub(),
@@ -49,10 +44,6 @@ describe('ServiceOverview', function() {
     charm.get.withArgs('resources').returns({
       toArray: sinon.stub().returns([])
     });
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
   });
 
   it('does not request plans if charm does not have metrics', function() {

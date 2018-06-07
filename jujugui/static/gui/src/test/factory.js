@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const charmstore = require('../app/jujulib/charmstore');
+
 YUI.add('juju-tests-factory', function(Y) {
   var tests = Y.namespace('juju-tests');
 
@@ -68,7 +70,7 @@ YUI.add('juju-tests-factory', function(Y) {
           }
         }
       };
-      var fakeCharmstore = new window.jujulib.charmstore('local/', fakeBakery);
+      var fakeCharmstore = new charmstore.charmstore('local/', fakeBakery);
       // We need to stub out the _makeRequest method so that we can simulate
       // api responses from the server.
       return fakeCharmstore;

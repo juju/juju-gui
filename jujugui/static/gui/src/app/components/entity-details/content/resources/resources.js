@@ -5,11 +5,12 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const initUtils = require('../../../../init/utils');
+const urls = require('../../../../jujulib/urls');
 
 class EntityResources extends React.Component {
   constructor(props) {
     super(props);
-    const url = window.jujulib.URL.fromLegacyString(this.props.entityId);
+    const url = urls.URL.fromLegacyString(this.props.entityId);
     const entityPath = url.legacyPath();
     this.state = {
       baseUrl: `${this.props.apiUrl}/${entityPath}/resource`

@@ -9,7 +9,6 @@ const enzyme = require('enzyme');
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmList = require('./charm-list');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
-const urls = require('../../../jujulib/urls');
 
 describe('Profile Charm List', function() {
 
@@ -70,18 +69,10 @@ describe('Profile Charm List', function() {
         user={
           options.user !== undefined ? options.user : 'hatch@external'} />, true);
   };
-  let acl, windowJujulib;
+  let acl;
 
   beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
     acl = shapeup.deepFreeze({isReadOnly: () => false});
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
   });
 
   it('can render', () => {

@@ -1,6 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const charmstore = require('../jujulib/charmstore');
+
 var viewsUtils = {};
 
 /**
@@ -79,7 +81,7 @@ viewsUtils.getIconPath = function(charmId, isBundle, env) {
       // then check that boolean because the author cares specifically if
       // it's a bundle or not.
       path = charmstoreURL + [
-        window.jujulib.charmstoreAPIVersion, charmId, 'icon.svg'].join('/');
+        charmstore.charmstoreAPIVersion, charmId, 'icon.svg'].join('/');
     }
   } else {
     // If no env is provided as necessary then return the default icon.

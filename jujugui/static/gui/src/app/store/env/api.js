@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const utils = require('../../views/utils');
+const urls = require('../../jujulib/urls');
 
 /**
  * The Go model API connection.
@@ -3061,7 +3062,7 @@ window.yui.add('juju-env-api', function(Y) {
           return;
         }
         // Define some reusable helpers.
-        const URL = window.jujulib.URL;
+        const URL = urls.URL;
         const objMap = (obj, func) => {
           if (!obj) {
             return {};

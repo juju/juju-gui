@@ -3,6 +3,7 @@
 
 const proxyquire = require('proxyquire');
 
+const charmstore = require('../../jujulib/charmstore');
 const utils = require('../../../test/utils');
 
 const findCharmEntries = sinon.stub();
@@ -197,7 +198,7 @@ describe('service module events', function() {
 
   beforeEach(function(done) {
     cleanups = [];
-    fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
+    fakeStore = new charmstore.charmstore('http://1.2.3.4/');
     fakeStore.getIconPath = function() {
       return 'charm icon url';
     };

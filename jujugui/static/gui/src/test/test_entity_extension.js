@@ -18,10 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const charmstore = require('../app/jujulib/charmstore');
-
 describe('Entity Extension', function() {
-  var Y, EntityModel, entityModel, jujuConfig, models, utils, windowJujulib;
+  var Y, EntityModel, entityModel, jujuConfig, models, utils;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([], function(Y) {
@@ -36,10 +34,6 @@ describe('Entity Extension', function() {
   });
 
   beforeEach(function() {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      charmstoreAPIVersion: charmstore.charmstoreAPIVersion
-    };
     jujuConfig = window.juju_config;
     EntityModel = Y.Base.create(
       'entity-model', Y.Base, [models.EntityExtension], {});
@@ -63,7 +57,6 @@ describe('Entity Extension', function() {
   });
 
   afterEach(function() {
-    window.jujulib = windowJujulib;
     entityModel.destroy();
     window.juju_config = jujuConfig;
   });

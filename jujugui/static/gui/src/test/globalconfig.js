@@ -2,7 +2,6 @@ window.juju = {
   utils: {},
   components: {}
 };
-window.juju.utils.RelationUtils = require('../app/init/relation-utils');
 window.GlobalConfig = {
   combine: true,
   base: '/dev/combo?/app/assets/javascripts/yui/',

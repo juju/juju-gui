@@ -9,6 +9,7 @@ const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
 const ButtonRow = require('../../button-row/button-row');
+const urls = require('../../../jujulib/urls');
 
 class Configuration extends React.Component {
   constructor(props) {
@@ -141,7 +142,7 @@ class Configuration extends React.Component {
         });
         return;
       }
-      if (!window.jujulib.isValidName(nameValue)) {
+      if (!urls.isValidName(nameValue)) {
         props.addNotification({
           title: 'Invalid application name',
           message: 'Invalid application name.',

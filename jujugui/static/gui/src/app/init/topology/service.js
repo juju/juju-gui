@@ -8,6 +8,7 @@ const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
+const urls = require('../../jujulib/urls');
 
 class ServiceModule {
   constructor(options={}) {
@@ -1062,7 +1063,7 @@ class ServiceModule {
             }
             topo.bundleImporter.importBundleYAML(
               bundleYAML,
-              window.jujulib.URL.fromLegacyString(entityData.id).path());
+              urls.URL.fromLegacyString(entityData.id).path());
           }.bind(this));
       }
     }

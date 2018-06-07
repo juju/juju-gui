@@ -8,6 +8,7 @@ const GenericButton = require('../../generic-button/generic-button');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const DeploymentSection = require('../section/section');
+const urls = require('../../../jujulib/urls');
 
 class DeploymentDirectDeploy extends React.Component {
   constructor(props) {
@@ -37,9 +38,9 @@ class DeploymentDirectDeploy extends React.Component {
     const ddEntityId = this.props.ddData.id;
     let url;
     try {
-      url = window.jujulib.URL.fromLegacyString(ddEntityId);
+      url = urls.URL.fromLegacyString(ddEntityId);
     } catch(_) {
-      url = window.jujulib.URL.fromString(ddEntityId);
+      url = urls.URL.fromString(ddEntityId);
     }
     url = this.props.generatePath({
       store: url.path()

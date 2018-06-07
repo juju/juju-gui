@@ -6,6 +6,7 @@ const React = require('react');
 
 const Spinner = require('../../spinner/spinner');
 const InspectorChangeVersionItem = require('./item/item');
+const urls = require('../../../jujulib/urls');
 
 class InspectorChangeVersion extends React.Component {
   constructor() {
@@ -33,7 +34,7 @@ class InspectorChangeVersion extends React.Component {
     The callable to be passed to the version item to view the charm details.
 
     @method _viewCharmDetails
-    @param {Object} url The charm url as a window.jujulib.URL instance.
+    @param {Object} url The charm url as a url.URL instance.
     @param {Object} evt The click event.
   */
   _viewCharmDetails(url, evt) {
@@ -150,9 +151,9 @@ class InspectorChangeVersion extends React.Component {
           No other versions found.
         </li>);
     } else {
-      const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
+      const url = urls.URL.fromLegacyString(this.props.charmId);
       versions.forEach(function(version) {
-        const versionURL = window.jujulib.URL.fromLegacyString(version);
+        const versionURL = urls.URL.fromLegacyString(version);
         let downgrade = false;
         if (versionURL.revision === url.revision) {
           return true;
@@ -195,7 +196,7 @@ class InspectorChangeVersion extends React.Component {
   }
 
   render() {
-    const url = window.jujulib.URL.fromLegacyString(this.props.charmId);
+    const url = urls.URL.fromLegacyString(this.props.charmId);
     return (
       <div className="inspector-change-version">
         <div className="inspector-change-version__current">

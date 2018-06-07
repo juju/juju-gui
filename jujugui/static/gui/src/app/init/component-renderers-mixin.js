@@ -13,6 +13,7 @@ const shapeup = require('shapeup');
 const yui = window.yui;
 
 const autodeploy = require('./autodeploy');
+const charmstoreUtils = require('../jujulib/charmstore');
 const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
@@ -20,6 +21,7 @@ const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
 const viewUtils = require('../views/utils');
 const endpointUtils = require('./endpoint-utils');
+const urls = require('../jujulib/urls');
 const WebHandler = require('../store/env/web-handler');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');
@@ -489,9 +491,9 @@ Browser: ${navigator.userAgent}`
       const showEntityDetails = id => {
         let url;
         try {
-          url = window.jujulib.URL.fromString(id);
+          url = urls.URL.fromString(id);
         } catch (_) {
-          url = window.jujulib.URL.fromLegacyString(id);
+          url = urls.URL.fromLegacyString(id);
         }
 
         const storeState = {
@@ -617,7 +619,7 @@ Browser: ${navigator.userAgent}`
     const getEntity = (id, callback) => {
       let url;
       try {
-        url = window.jujulib.URL.fromString(id);
+        url = urls.URL.fromString(id);
       } catch(err) {
         callback(err, {});
         return;
@@ -631,7 +633,7 @@ Browser: ${navigator.userAgent}`
         addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
         apiUrl={charmstore.url}
-        apiVersion={window.jujulib.charmstoreAPIVersion}
+        apiVersion={charmstoreUtils.charmstoreAPIVersion}
         appState={this.state}
         charmstoreSearch={charmstore.search.bind(charmstore)}
         charmstoreURL={
@@ -655,7 +657,7 @@ Browser: ${navigator.userAgent}`
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         staticURL={this.applicationConfig.staticURL || ''}
-        urllib={window.jujulib.URL} />,
+        urllib={urls.URL} />,
       document.getElementById('charmbrowser-container'));
     next();
   }
@@ -687,7 +689,7 @@ Browser: ${navigator.userAgent}`
 
   /**
     Determines if the jujushell buttons should be shown
-    
+
     @returns {Bool} Inidication of whether jujushell is enabled
    */
   _enableTerminal() {
@@ -742,7 +744,7 @@ Browser: ${navigator.userAgent}`
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
-        series={window.jujulib.CHARM_SERIES}
+        series={urls.CHARM_SERIES}
         showSSHButtons={this._enableTerminal()} />,
       document.getElementById('machine-view'));
     next();
@@ -771,7 +773,7 @@ Browser: ${navigator.userAgent}`
         db={shapeup.fromShape(this.db, propTypes.db)}
         generatePath={this.state.generatePath.bind(this.state)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
-        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />,
+        urllib={shapeup.fromShape(urls.URL, propTypes.urllib)} />,
       document.getElementById('status-container')
     );
     next();
@@ -843,7 +845,7 @@ Browser: ${navigator.userAgent}`
           destroyService={initUtils.destroyService.bind(
             this, db, model, service)}
           destroyUnits={model.remove_units.bind(model)}
-          entityPath={window.jujulib.URL.fromAnyString(charm.get('id')).path()}
+          entityPath={urls.URL.fromAnyString(charm.get('id')).path()}
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
           getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(

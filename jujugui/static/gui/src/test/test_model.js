@@ -18,21 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const urls = require('../app/jujulib/urls');
+const relationUtils = require('../app/init/relation-utils');
 
 describe('test_model.js', function() {
-  let windowJujulib;
-
-  beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
-  });
 
   describe('Charm initialization', function() {
     let models;
@@ -124,7 +112,7 @@ describe('test_model.js', function() {
   });
 
   describe('juju models', function() {
-    var models, Y, relationUtils;
+    var models, Y;
     const cleanups = [];
     var requirements = [
       'juju-models',
@@ -135,7 +123,6 @@ describe('test_model.js', function() {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         models._getECS = sinon.stub().returns({changeSet: {}});
-        relationUtils = window.juju.utils.RelationUtils;
         done();
       });
     });

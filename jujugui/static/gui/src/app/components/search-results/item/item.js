@@ -8,6 +8,7 @@ const React = require('react');
 const GenericButton = require('../../generic-button/generic-button');
 const IconList = require('../../icon-list/icon-list');
 const SvgIcon = require('../../svg-icon/svg-icon');
+const urls = require('../../../jujulib/urls');
 
 class SearchResultsItem extends React.Component {
   /**
@@ -103,9 +104,9 @@ class SearchResultsItem extends React.Component {
     // TODO frankban: it should be clear whether this id is legacy or not.
     let url;
     try {
-      url = window.jujulib.URL.fromLegacyString(id);
+      url = urls.URL.fromLegacyString(id);
     } catch(_) {
-      url = window.jujulib.URL.fromString(id);
+      url = urls.URL.fromString(id);
     }
     return {
       profile: null,
