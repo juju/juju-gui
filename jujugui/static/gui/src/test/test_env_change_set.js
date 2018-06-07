@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const viewUtils = require('../app/views/utils');
+const utils = require('../app/init/utils');
 
 describe('Environment Change Set', function() {
   var Y, ECS, ecs, envObj, dbObj, models, testUtils;
@@ -168,7 +168,7 @@ describe('Environment Change Set', function() {
         for (var i = 0; i < 999; i += 1) {
           result.push(ecs._createNewRecord('service'));
         }
-        var dedupe = viewUtils.arrayDedupe(result);
+        var dedupe = utils.arrayDedupe(result);
         // If there were any duplicates then these would be different.
         assert.equal(dedupe.length, result.length);
       });

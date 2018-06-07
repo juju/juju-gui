@@ -12,4 +12,3 @@ require('./store/env/api');
 require('./store/env/base');
 require('./store/env/controller-api');
 require('./utils/environment-change-set');
-require('./views/utils');

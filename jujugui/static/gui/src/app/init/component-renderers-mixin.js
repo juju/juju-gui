@@ -19,7 +19,6 @@ const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
-const viewUtils = require('../views/utils');
 const endpointUtils = require('./endpoint-utils');
 const urls = require('../jujulib/urls');
 const WebHandler = require('../store/env/web-handler');
@@ -637,7 +636,7 @@ Browser: ${navigator.userAgent}`
         appState={this.state}
         charmstoreSearch={charmstore.search.bind(charmstore)}
         charmstoreURL={
-          viewUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
+          initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         clearLightbox={this._clearLightbox.bind(this)}
         deployService={this.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
@@ -653,7 +652,7 @@ Browser: ${navigator.userAgent}`
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
-        series={viewUtils.getSeriesList()}
+        series={initUtils.getSeriesList()}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         staticURL={this.applicationConfig.staticURL || ''}
@@ -882,7 +881,7 @@ Browser: ${navigator.userAgent}`
           changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
-          series={viewUtils.getSeriesList()}
+          series={initUtils.getSeriesList()}
           services={db.services}
           upgradeServiceUsingLocalCharm={
             localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
@@ -984,8 +983,8 @@ Browser: ${navigator.userAgent}`
         credential={modelAPI.get('credential')}
         ddData={ddData}
         deploy={initUtils.deploy.bind(
-          viewUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
-        formatConstraints={viewUtils.formatConstraints.bind(viewUtils)}
+          initUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
+        formatConstraints={initUtils.formatConstraints.bind(initUtils)}
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
             changesUtils, services, db.units)}

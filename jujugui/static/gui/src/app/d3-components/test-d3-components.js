@@ -3,7 +3,7 @@
 
 const Component = require('./d3-components');
 const testUtils = require('../../test/utils');
-const viewUtils = require('../views/utils');
+const utils = require('../init/utils');
 
 describe('d3-components', function() {
   let TestModule, state, container, comp;
@@ -61,14 +61,14 @@ describe('d3-components', function() {
 
   it('should be able to create a component and add a module', function() {
     comp = new Component();
-    viewUtils.isValue(comp).should.equal(true);
+    utils.isValue(comp).should.equal(true);
   });
 
   it('should be able to add and remove a module', function() {
     comp = new Component({container: container});
     comp.addModule(TestModule);
-    viewUtils.isValue(comp.events).should.equal(true);
-    viewUtils.isValue(comp.modules).should.equal(true);
+    utils.isValue(comp.events).should.equal(true);
+    utils.isValue(comp.modules).should.equal(true);
   });
 
   it('should be able to (un)bind module event subscriptions', function() {
@@ -187,8 +187,8 @@ describe('d3-components', function() {
       comp.addModule(modB, {name: 'modB', container: container});
 
       comp.render();
-      viewUtils.isValue(document.querySelector('#fromA')).should.equal(true);
-      viewUtils.isValue(document.querySelector('#fromB')).should.equal(true);
+      utils.isValue(document.querySelector('#fromA')).should.equal(true);
+      utils.isValue(document.querySelector('#fromB')).should.equal(true);
     });
 
   it('should support d3 event bindings post render', function() {
