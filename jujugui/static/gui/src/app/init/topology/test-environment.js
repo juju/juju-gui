@@ -5,6 +5,7 @@ const d3 = require('d3');
 const proxyquire = require('proxyquire');
 
 const environmentUtils = require('./environment-utils');
+const relationUtils = require('../relation-utils');
 const testUtils = require('../../../test/utils');
 const charmstore = require('../../jujulib/charmstore');
 
@@ -25,7 +26,7 @@ describe('EnvironmentView', function() {
 
   describe('juju environment view', function() {
     var view, models, Y, container, db, conn, juju, jujuConfig,
-        charm, click, ecs, env, relationUtils, fakeStore;
+        charm, click, ecs, env, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -250,7 +251,6 @@ describe('EnvironmentView', function() {
       };
       const userClass = new window.jujugui.User({storage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
-      relationUtils = window.juju.utils.RelationUtils;
       conn = new testUtils.SocketStub();
       db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       ecs = new juju.EnvironmentChangeSet({db: db});

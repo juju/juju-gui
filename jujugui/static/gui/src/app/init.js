@@ -21,9 +21,6 @@ const EnvironmentView = require('./init/topology/environment');
 const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
-// Hacks until all of the global references have been removed.
-window.juju.utils.RelationUtils = require('./init/relation-utils');
-
 const yui = window.yui;
 window.models = yui.namespace('juju.models');
 
