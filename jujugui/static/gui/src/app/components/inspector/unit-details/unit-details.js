@@ -27,8 +27,6 @@ class UnitDetails extends React.Component {
 
   /**
     Open the terminal and run debug-hooks on the unit
-
-    @method _debugHooks
   */
   _debugHooks() {
     const unit = this.props.unit;
@@ -38,8 +36,9 @@ class UnitDetails extends React.Component {
 
   /**
     Open the terminal and SSH to the unit.
-
-    @method _sshToUnit
+    
+    @params cmds {Array} An array of commands (as strings) to be executed after
+      sshing to the unit.
   */
   _sshToUnit(cmds) {
     const unit = this.props.unit;
