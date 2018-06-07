@@ -32,7 +32,6 @@ window.MODULES = [
   'bundle-import-notifications',
   'model',
   'model-controller',
-  'ghost-deployer-extension',
   'environment-change-set',
   'yui-patches'
 ];
