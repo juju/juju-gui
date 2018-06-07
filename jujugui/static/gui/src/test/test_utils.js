@@ -2,21 +2,8 @@
 'use strict';
 
 const utils = require('../app/views/utils');
-const charmstore = require('../app/jujulib/charmstore');
 
 describe('view utils', function() {
-  let windowJujulib;
-
-  beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      charmstoreAPIVersion: charmstore.charmstoreAPIVersion
-    };
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
-  });
 
   describe('utils.ensureTrailingSlash', function() {
     it('adds a trailing slash if not already there', function() {

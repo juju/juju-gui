@@ -9,7 +9,7 @@ const InspectorChangeVersionItem = require('./item/item');
 const urls = require('../../../jujulib/urls');
 
 describe('InspectorChangeVersion', function() {
-  var acl, windowJujulib;
+  let acl;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorChangeVersion
@@ -32,15 +32,7 @@ describe('InspectorChangeVersion', function() {
   );
 
   beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
     acl = {isReadOnly: sinon.stub().returns(false)};
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
   });
 
   it('can display a loading spinner', function() {
@@ -82,14 +74,14 @@ describe('InspectorChangeVersion', function() {
             downgrade={true}
             itemAction={items.at(0).prop('itemAction')}
             key="cs:django-4"
-            url={window.jujulib.URL.fromString('django/4')} />
+            url={urls.URL.fromString('django/4')} />
           <InspectorChangeVersionItem
             acl={acl}
             buttonAction={items.at(1).prop('buttonAction')}
             downgrade={false}
             itemAction={items.at(1).prop('itemAction')}
             key="cs:django-6"
-            url={window.jujulib.URL.fromString('django/6')} />
+            url={urls.URL.fromString('django/6')} />
         </ul>
       </div>);
     assert.compareJSX(wrapper, expected);

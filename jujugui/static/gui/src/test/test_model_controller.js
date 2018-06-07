@@ -18,13 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const charmstore = require('../app/jujulib/charmstore');
-const urls = require('../app/jujulib/urls');
-
 describe('Model Controller Promises', function() {
   var cleanups, conn, db, env, environment, factory,
-      getApplicationConfig, load, modelController, serviceError, utils,
-      windowJujulib, yui;
+      getApplicationConfig, load, modelController, serviceError, utils, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use([],
@@ -46,11 +42,6 @@ describe('Model Controller Promises', function() {
   });
 
   beforeEach(function() {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      charmstore: charmstore.charmstore,
-      URL: urls.URL
-    };
     const getMockStorage = function() {
       return new function() {
         return {
@@ -78,7 +69,6 @@ describe('Model Controller Promises', function() {
   });
 
   afterEach(function() {
-    window.jujulib = windowJujulib;
     serviceError = false;
     env.close();
     [env, db, modelController].forEach(instance => {

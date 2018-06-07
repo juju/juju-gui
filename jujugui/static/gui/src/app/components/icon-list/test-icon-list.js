@@ -5,10 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const IconList = require('./icon-list');
-const urls = require('../../jujulib/urls');
 
 describe('IconList', function() {
-  let windowJujulib;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <IconList
@@ -27,17 +25,6 @@ describe('IconList', function() {
       changeState={options.changeState || sinon.stub()}
       generatePath={sinon.stub().returns('/charm/path')} />
   );
-
-  beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
-  });
 
   it('can render', () => {
     const wrapper = renderComponent();

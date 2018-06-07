@@ -4,6 +4,12 @@
 const utils = require('../test/utils');
 const ReactDOM = require('react-dom');
 
+const charmstore = require('./jujulib/charmstore');
+const identity = require('./jujulib/identity');
+const plans = require('./jujulib/plans');
+const terms = require('./jujulib/terms');
+const urls = require('./jujulib/urls');
+
 describe('init', () => {
   let app, cleanups, container, getMockStorage, JujuGUI;
 
@@ -143,7 +149,7 @@ describe('init', () => {
         assert.equal(typeof app.charmstore, 'object');
         assert.equal(app.charmstore.url, 'http://1.2.3.4/v5');
         app._setupCharmstore(
-          {charmstoreURL: 'it broke'}, window.jujulib.charmstore);
+          {charmstoreURL: 'it broke'}, charmstore.charmstore);
         assert.equal(
           app.charmstore.url,
           'http://1.2.3.4/v5',
@@ -160,7 +166,7 @@ describe('init', () => {
         // The identity attribute is undefined by default
         assert.equal(typeof app.identity, 'object');
         app._setupIdentity(
-          {getIdentityURL: () => 'broken'}, window.jujulib.identity);
+          {getIdentityURL: () => 'broken'}, identity);
         assert.strictEqual(
           app.identity.getIdentityURL(),
           null,
@@ -170,9 +176,9 @@ describe('init', () => {
 
     describe('romulus services', () => {
       it('sets up API clients', () => {
-        assert.strictEqual(app.plans instanceof window.jujulib.plans, true);
+        assert.strictEqual(app.plans instanceof plans.plans, true);
         assert.strictEqual(app.plans.url, 'http://plans.example.com/v3');
-        assert.strictEqual(app.terms instanceof window.jujulib.terms, true);
+        assert.strictEqual(app.terms instanceof terms.terms, true);
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
       });
     });
@@ -1029,7 +1035,7 @@ describe('init', () => {
   describe('_fetchEntityFromUserState', () => {
     it('returns a promise for an entity', done => {
       const legacyPath = sinon.stub().returns('~hatch/ghost');
-      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      urls.URL.fromString = sinon.stub().returns({legacyPath});
       const charmstore = {
         getEntity: sinon.stub()
       };
@@ -1047,7 +1053,7 @@ describe('init', () => {
 
     it('caches the entity promises', () => {
       const legacyPath = sinon.stub().returns('~hatch/ghost');
-      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      urls.URL.fromString = sinon.stub().returns({legacyPath});
       const charmstore = {
         getEntity: sinon.stub()
       };
@@ -1060,7 +1066,7 @@ describe('init', () => {
 
     it('returns a cached promise', () => {
       const legacyPath = sinon.stub().returns('~hatch/ghost');
-      window.jujulib.URL.fromString = sinon.stub().returns({legacyPath});
+      urls.URL.fromString = sinon.stub().returns({legacyPath});
       const charmstore = {
         getEntity: sinon.stub()
       };

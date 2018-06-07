@@ -9,7 +9,7 @@ const GenericButton = require('../../../generic-button/generic-button');
 const urls = require('../../../../jujulib/urls');
 
 describe('InspectorChangeVersionItem', function() {
-  let acl, windowJujulib;
+  let acl;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorChangeVersionItem
@@ -17,19 +17,11 @@ describe('InspectorChangeVersionItem', function() {
       buttonAction={options.buttonAction || sinon.stub()}
       downgrade={options.downgrade === undefined ? false : options.downgrade}
       itemAction={options.itemAction || sinon.stub()}
-      url={options.url || window.jujulib.URL.fromString('django/xenial/5')} />
+      url={options.url || urls.URL.fromString('django/xenial/5')} />
   );
 
   beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = {
-      URL: urls.URL
-    };
     acl = {isReadOnly: sinon.stub().returns(false)};
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
   });
 
   it('can display the version item', function() {

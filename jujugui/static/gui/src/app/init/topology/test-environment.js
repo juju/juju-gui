@@ -6,7 +6,7 @@ const proxyquire = require('proxyquire');
 
 const environmentUtils = require('./environment-utils');
 const testUtils = require('../../../test/utils');
-const jujulib = require('../../jujulib');
+const charmstore = require('../../jujulib/charmstore');
 
 const getEndpoints = sinon.stub();
 
@@ -22,16 +22,6 @@ const EnvironmentView = proxyquire('./environment', {
 });
 
 describe('EnvironmentView', function() {
-  let windowJujulib;
-
-  beforeEach(() => {
-    windowJujulib = window.jujulib;
-    window.jujulib = jujulib;
-  });
-
-  afterEach(() => {
-    window.jujulib = windowJujulib;
-  });
 
   describe('juju environment view', function() {
     var view, models, Y, container, db, conn, juju, jujuConfig,
@@ -268,7 +258,7 @@ describe('EnvironmentView', function() {
         conn: conn, ecs: ecs, user: userClass});
       env.connect();
       conn.open();
-      fakeStore = new jujulib.charmstore('http://1.2.3.4/');
+      fakeStore = new charmstore.charmstore('http://1.2.3.4/');
       jujuConfig = window.juju_config;
       window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
       container = testUtils.makeContainer(this, 'content');

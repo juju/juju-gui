@@ -18,12 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const ReconnectingWebSocket = require('../app/jujulib/reconnecting-websocket');
-
 (function() {
 
   describe('Base Environment', function() {
-    let environments, juju, windowJujulib;
+    let environments, juju;
 
     before(function(done) {
       YUI(GlobalConfig).use([], function(Y) {
@@ -35,17 +33,6 @@ const ReconnectingWebSocket = require('../app/jujulib/reconnecting-websocket');
           done();
         });
       });
-    });
-
-    beforeEach(() => {
-      windowJujulib = window.jujulib;
-      window.jujulib = {
-        ReconnectingWebSocket
-      };
-    });
-
-    afterEach(() => {
-      window.jujulib = windowJujulib;
     });
 
     const getMockStorage = function() {

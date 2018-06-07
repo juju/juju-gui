@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const bakeryUtils = require('../../jujulib/bakery');
 const newBakery = require('./bakery-utils');
 
 describe('bakery utils', () => {
@@ -22,7 +23,7 @@ describe('bakery utils', () => {
   it('returns a new bakery instance', () => {
     const bakery = createNewBakery();
 
-    assert.instanceOf(bakery, jujulib.Bakery);
+    assert.instanceOf(bakery, bakeryUtils.Bakery);
   });
 
   it('returns a non interactive visit instance', () => {
