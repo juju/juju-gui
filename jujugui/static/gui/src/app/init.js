@@ -727,7 +727,7 @@ class GUIApp {
         Application instance of the stripe API.
         @type {Object}
       */
-      this.stripe = new stripe.stripe(
+      this.stripe = new stripe(
         'https://js.stripe.com/', config.stripeKey);
       /**
         Application instance of the rates API.
