@@ -8,7 +8,7 @@ const FileSaver = require('file-saver');
 
 const charmstore = require('../jujulib/charmstore');
 const Popup = require('../components/popup/popup');
-const viewUtils = require('./view-utils');
+const initUtils = require('./utils');
 
 let utils = {};
 
@@ -951,7 +951,7 @@ utils.createMachinesPlaceUnits = function(
   for (let i = 0; i < parseInt(numUnits, 10); i += 1) {
     machine = db.machines.addGhost(
       parentId, containerType,
-      {constraints: viewUtils.formatConstraints(constraints)});
+      {constraints: initUtils.formatConstraints(constraints)});
     env.addMachines([{
       constraints: constraints
     }], function(machine) {

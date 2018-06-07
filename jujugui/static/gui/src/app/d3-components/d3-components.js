@@ -3,7 +3,7 @@
 
 const d3 = require('d3');
 
-const viewUtils = require('../init/view-utils');
+const utils = require('../init/utils');
 
 class Component {
   /**
@@ -95,7 +95,7 @@ class Component {
       result.phase = 'on';
     }
 
-    if (viewUtils.isObject(handler)) {
+    if (utils.isObject(handler)) {
       result.phase = handler.phase || 'on';
       result.callback = handler.callback;
     }
@@ -181,7 +181,7 @@ class Component {
         Object.keys(handlers).forEach(trigger => {
           const handler = self._normalizeHandler(
             handlers[trigger], module, selector);
-          if (viewUtils.isValue(handler)) {
+          if (utils.isValue(handler)) {
             _bindEvent(trigger, handler.callback, selector, handler.context);
           }
         });

@@ -7,7 +7,6 @@ const mixwith = require('mixwith');
 const acl = require('./store/env/acl');
 const analytics = require('./init/analytics');
 const utils = require('./init/utils');
-const viewUtils = require('./init/view-utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
@@ -1163,7 +1162,7 @@ class GUIApp {
     if (!err) {
       return;
     }
-    if (!viewUtils.isRedirectError(err)) {
+    if (!utils.isRedirectError(err)) {
       // There is nothing to do in this case, and the user is already
       // prompted with the error in the login view.
       console.log(`cannot log into ${api.name}: ${err}`);

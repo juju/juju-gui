@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = require('./view-utils');
+const utils = require('./utils');
 
 /**
   Place all the unplaced units on new machines.

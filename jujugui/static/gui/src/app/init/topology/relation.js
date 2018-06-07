@@ -9,7 +9,7 @@ const endpointUtils = require('../endpoint-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
 const environmentUtils = require('./environment-utils');
-const utils = require('../view-utils');
+const utils = require('../utils');
 
 const AmbiguousRelationMenu = require(
   '../../components/relation-menu/ambiguous-relation-menu');

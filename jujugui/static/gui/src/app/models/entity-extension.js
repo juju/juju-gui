@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const utils = require('../init/view-utils');
+const utils = require('../init/utils');
 
 window.yui.add('entity-extension', function(Y) {
   var ns = Y.namespace('juju.models');

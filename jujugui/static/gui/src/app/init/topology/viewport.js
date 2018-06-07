@@ -2,7 +2,7 @@
 'use strict';
 
 const environmentUtils = require('./environment-utils');
-const viewUtils = require('../view-utils');
+const utils = require('../utils');
 
 /**
   Manage panning and zooming events on the canvas.
@@ -88,7 +88,7 @@ class ViewportModule {
     var svg = container.querySelector('.the-canvas');
     var canvas = container.querySelector('.topology-canvas');
     // Early out for tests that do not provide a full rendering environment.
-    if (!viewUtils.isValue(canvas) || !viewUtils.isValue(svg)) {
+    if (!utils.isValue(canvas) || !utils.isValue(svg)) {
       return;
     }
     var topo = this.topo;
