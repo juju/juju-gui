@@ -134,6 +134,13 @@ class UnitDetails extends React.Component {
     );
   }
 
+  /**
+     Generates a row of buttons to be used on a unit in error.
+
+     The buttons are only generated if the unit is in error and jujushell is
+     enabled, otherwise it returns nothing.
+     @returns {String} The button row or nothing
+   */
   _generateErrorButtons() {
     const props = this.props;
     const unit = props.unit;
@@ -153,6 +160,12 @@ class UnitDetails extends React.Component {
     return <ButtonRow buttons={errorButtons} />;
   }
 
+  /**
+     Generates a row of buttons to be used to manage the unit.
+
+     If jujushell is enabled this includes a button to ssh to the unit.
+     @returns {String} The button row.
+   */
   _generateButtons() {
     const props = this.props;
     const unit = props.unit;
