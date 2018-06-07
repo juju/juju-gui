@@ -282,7 +282,7 @@ describe('UnitDetails', function() {
       changeState,
       showSSHButtons: true
     });
-    wrapper.find('ButtonRow').prop('buttons')[0].action()
+    wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       terminal: [
