@@ -26,16 +26,24 @@ class UnitDetails extends React.Component {
   }
 
   /**
-    Open the terminal and SSH to the unit.
-
-    @method _sshToUnit
+    Open the terminal and run debug-hooks on the unit
   */
-  _sshToUnit() {
+  _debugHooks() {
     const unit = this.props.unit;
-    const commands = [
-      `juju ssh ${unit.id}`,
-      `cd /var/lib/juju/agents/unit-${unit.urlName}/charm`
-    ];
+    let commands = [`juju debug-hooks ${unit.id}`];
+    this.props.changeState({terminal: commands});
+  }
+
+  /**
+    Open the terminal and SSH to the unit.
+    
+    @params cmds {Array} An array of commands (as strings) to be executed after
+      sshing to the unit.
+  */
+  _sshToUnit(cmds) {
+    const unit = this.props.unit;
+    let commands = [`juju ssh ${unit.id}`];
+    cmds.forEach(cmd => commands.push(cmd));
     this.props.changeState({terminal: commands});
   }
 
@@ -125,7 +133,39 @@ class UnitDetails extends React.Component {
     );
   }
 
-  render() {
+  /**
+     Generates a row of buttons to be used on a unit in error.
+
+     The buttons are only generated if the unit is in error and jujushell is
+     enabled, otherwise it returns nothing.
+     @returns {String} The button row or nothing
+   */
+  _generateErrorButtons() {
+    const props = this.props;
+    const unit = props.unit;
+    if (unit.agent_state !== 'error' || !props.showSSHButtons) {
+      return null;
+    }
+    const errorButtons = [{
+      disabled: false,
+      title: 'Tail logs',
+      action: this._sshToUnit.bind(
+        this, [`sudo tail -f /var/log/juju/unit-${unit.urlName}.log`])
+    }, {
+      disabled: false,
+      title: 'Debug hooks',
+      action: this._debugHooks.bind(this)
+    }];
+    return <ButtonRow buttons={errorButtons} />;
+  }
+
+  /**
+     Generates a row of buttons to be used to manage the unit.
+
+     If jujushell is enabled this includes a button to ssh to the unit.
+     @returns {String} The button row.
+   */
+  _generateButtons() {
     const props = this.props;
     const unit = props.unit;
     const buttons = [{
@@ -137,9 +177,17 @@ class UnitDetails extends React.Component {
       buttons.splice(0, 0, {
         disabled: false,
         title: 'SSH to unit',
-        action: this._sshToUnit.bind(this)
+        action: this._sshToUnit.bind(
+          this, [`cd /var/lib/juju/agents/unit-${unit.urlName}/charm`])
       });
     }
+    return <ButtonRow buttons={buttons} />;
+  }
+
+  render() {
+    const props = this.props;
+    const unit = props.unit;
+
     const privateList = this._generateAddresses(
       unit.private_address, unit.portRanges, true);
     const publicList = this._generateAddresses(
@@ -157,8 +205,8 @@ class UnitDetails extends React.Component {
           </p>
           {privateList}
         </div>
-        <ButtonRow
-          buttons={buttons} />
+        {this._generateButtons()}
+        {this._generateErrorButtons()}
       </div>
     );
   }

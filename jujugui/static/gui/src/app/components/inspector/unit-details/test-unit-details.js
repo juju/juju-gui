@@ -292,6 +292,44 @@ describe('UnitDetails', function() {
     });
   });
 
+  it('shows tail logs and debug hooks buttons for units in error', function() {
+    unit.agent_state = 'error';
+    const wrapper = renderComponent({showSSHButtons: true});
+    const errorButtons = wrapper.find('ButtonRow').at(1);
+    assert.equal(errorButtons.prop('buttons').length, 2);
+  });
+
+  it('can tail the logs on a unit', function() {
+    unit.agent_state = 'error';
+    const changeState = sinon.stub();
+    const wrapper = renderComponent({
+      changeState,
+      showSSHButtons: true
+    });
+    wrapper.find('ButtonRow').at(1).prop('buttons')[0].action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      terminal: [
+        'juju ssh unit1',
+        'sudo tail -f /var/log/juju/unit-undefined.log'
+      ]
+    });
+  });
+
+  it('can run debug-hooks on a unit', function() {
+    unit.agent_state = 'error';
+    const changeState = sinon.stub();
+    const wrapper = renderComponent({
+      changeState,
+      showSSHButtons: true
+    });
+    wrapper.find('ButtonRow').at(1).prop('buttons')[1].action();
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      terminal: ['juju debug-hooks unit1']
+    });
+  });
+
   it('can disable remove button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const wrapper = renderComponent();

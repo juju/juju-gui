@@ -126,21 +126,12 @@ const ComponentRenderersMixin = superclass => class extends superclass {
   */
   _renderModelActions() {
     const modelAPI = this.modelAPI;
-    const displayTerminalButton = (
-      this.applicationConfig.flags.terminal ||
-      // Always allow for opening the terminal if the user specified a
-      // jujushell URL in the GUI settings.
-      !!localStorage.getItem('jujushell-url') ||
-      // Also allow for opening the terminal if the user deployed the juju
-      // shell charm.
-      !!this.db.environment.get('jujushellURL')
-    );
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
         appState={this.state}
         changeState={this._bound.changeState}
-        displayTerminalButton={displayTerminalButton}
+        displayTerminalButton={this._enableTerminal()}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, this.db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
@@ -694,7 +685,12 @@ Browser: ${navigator.userAgent}`
     this._clearInspector(state, noop);
   }
 
-  _showSSHButtons() {
+  /**
+    Determines if the jujushell buttons should be shown
+    
+    @returns {Bool} Inidication of whether jujushell is enabled
+   */
+  _enableTerminal() {
     return (
       this.applicationConfig.flags.terminal ||
       // Always allow for opening the terminal if the user specified a
@@ -705,6 +701,7 @@ Browser: ${navigator.userAgent}`
       !!this.db.environment.get('jujushellURL')
     );
   }
+
   /**
     Handles rendering and/or updating the machine UI component.
     @param {Object} state - The app state.
@@ -746,7 +743,7 @@ Browser: ${navigator.userAgent}`
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
         series={window.jujulib.CHARM_SERIES}
-        showSSHButtons={this._showSSHButtons()} />,
+        showSSHButtons={this._enableTerminal()} />,
       document.getElementById('machine-view'));
     next();
   }
@@ -866,7 +863,7 @@ Browser: ${navigator.userAgent}`
           setConfig={model.set_config.bind(model)}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
           showPlans={window.juju_config.flags.plans || false}
-          showSSHButtons={this._showSSHButtons()}
+          showSSHButtons={this._enableTerminal()}
           unexposeService={model.unexpose.bind(model)}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
