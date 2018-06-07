@@ -1397,9 +1397,11 @@ describe('State', () => {
       });
       assert.deepEqual(state.current.test, {test1: true, test2: true});
       state.changeState({
-        test1: 'roflcopter'
+        test: {
+          test1: 'roflcopter'
+        }
       });
-      assert.deepEqual(state.current.test, {test1: true, test2: true});
+      assert.deepEqual(state.current.test, {test1: 'roflcopter', test2: true});
       state.changeState({
         test: {
           test1: false
