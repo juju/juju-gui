@@ -4,6 +4,7 @@
 const d3 = require('d3');
 const proxyquire = require('proxyquire');
 
+const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
 const testUtils = require('../../../test/utils');
@@ -253,7 +254,7 @@ describe('EnvironmentView', function() {
       userClass.controller = {user: 'user', password: 'password'};
       conn = new testUtils.SocketStub();
       db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-      ecs = new juju.EnvironmentChangeSet({db: db});
+      ecs = new EnvironmentChangeSet({db: db});
       env = new juju.environments.GoEnvironment({
         conn: conn, ecs: ecs, user: userClass});
       env.connect();
