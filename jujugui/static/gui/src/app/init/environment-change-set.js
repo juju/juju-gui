@@ -22,14 +22,8 @@ const utils = require('./utils');
 const clone = require('lodash.clone');
 
 class EnvironmentChangeSet {
-
-  /**
-    Creates the persistent data storage object.
-
-    @method initializer
-  */
-  constructor() {
-    super();
+  constructor(config) {
+    this.db = config.db;
     this.changeSet = {};
     this.currentCommit = [];
     this.currentIndex = 0;
@@ -114,7 +108,7 @@ class EnvironmentChangeSet {
     @return {String} The charm series.
   */
   _getUnitSeries(unit, db) {
-    db.services.getServiceByName(unit.id.split('/')[0]).get('series');
+    return db.services.getServiceByName(unit.id.split('/')[0]).get('series');
   }
 
   /**
@@ -217,7 +211,7 @@ class EnvironmentChangeSet {
     // Commands may define a prepare method to be called before the actual
     // external command execution.
     if (command.prepare) {
-      command.prepare(this.get('db'), this);
+      command.prepare(this.db, this);
     }
     this._markCommitStatus('in-progress', record.command);
     // XXX we should ensure that the method is actually a function.
@@ -242,7 +236,7 @@ class EnvironmentChangeSet {
         keyToLevelMap = {},
         currLevel = 1,
         keys = [],
-        db = this.get('db'),
+        db = this.db,
         unplacedUnits = db.units.filterByMachine(null);
     this.placedCount = 0;
 
@@ -407,7 +401,7 @@ class EnvironmentChangeSet {
     @param {Object} command The command from the changeSet record.
   */
   _markCommitStatus(status, command) {
-    var db = this.get('db'),
+    var db = this.db,
         modelList;
     // When we add commit status changes to services, relations etc they will
     // be switched here.
@@ -490,7 +484,7 @@ class EnvironmentChangeSet {
     this.currentCommit = [];
     this.committing = false;
     document.dispatchEvent(new Event('ecs.changeSetModified'));
-    this.get('db').fireEvent('update');
+    this.db.fireEvent('update');
   }
 
   /**
@@ -501,7 +495,7 @@ class EnvironmentChangeSet {
     @param {Object} command The command from the changeset.
   */
   _clearFromDB(command) {
-    var db = this.get('db'),
+    var db = this.db,
         services = db.services,
         machines = db.machines,
         relations = db.relations,
@@ -769,7 +763,7 @@ class EnvironmentChangeSet {
     if (existingService) {
       this._destroyQueuedService(existingService, record);
     } else {
-      var service = this.get('db').services.getById(args[0]);
+      var service = this.db.services.getById(args[0]);
       // Remove any unplaced units.
       var units = [];
       service.get('units').each(function(unit) {
@@ -798,7 +792,7 @@ class EnvironmentChangeSet {
       }
     }, this);
     // Remove the service itself.
-    var db = this.get('db');
+    var db = this.db;
     var modelId = this.changeSet[recordKey].command.options.modelId;
     var model = db.services.getById(modelId);
     var units = model.get('units');
@@ -863,7 +857,7 @@ class EnvironmentChangeSet {
         }
       }
     }, this);
-    var db = this.get('db');
+    var db = this.db;
     var machine = db.machines.getById(command.args[0]);
     var units = db.units.filterByMachine(machine.id, true);
     // Remove the unit from the machine.
@@ -919,7 +913,7 @@ class EnvironmentChangeSet {
       }
     }, this);
     // Remove the machine itself.
-    var db = this.get('db');
+    var db = this.db;
     var modelId = this.changeSet[machine].command.options.modelId;
     db.machines.remove(db.machines.getById(modelId));
     this._removeExistingRecord(machine);
@@ -976,7 +970,7 @@ class EnvironmentChangeSet {
     };
 
     var config = args[1];
-    var service = this.get('db').services.getById(ghostServiceName);
+    var service = this.db.services.getById(ghostServiceName);
     // Only the modified options are sent to the API backend. With the
     // new React configuration system the modified values is determined
     // in the view and set in the service model so we can faithfully
@@ -1069,7 +1063,7 @@ class EnvironmentChangeSet {
     const argsEndpoints = [args[0], args[1]];
     let ghosted = false;
     let command, record;
-    const db = this.get('db');
+    const db = this.db;
     const relations = db.relations;
     Object.keys(changeSet).forEach(function(key) {
       command = changeSet[key].command;
@@ -1113,7 +1107,7 @@ class EnvironmentChangeSet {
     // queue.
     var changeSet = this.changeSet,
         toRemove = args[0],
-        db = this.get('db'),
+        db = this.db,
         units = db.units,
         command, record;
     // XXX It is currently not possible to remove pending units, there may
@@ -1172,7 +1166,7 @@ class EnvironmentChangeSet {
     @param {Object} options The ECS options.
   */
   lazyExpose(args, options) {
-    var db = this.get('db');
+    var db = this.db;
     var parent = [];
     // Search for and add the service to parent.
     Object.keys(this.changeSet).forEach(key => {
@@ -1226,7 +1220,7 @@ class EnvironmentChangeSet {
   */
   lazyUnexpose(args, options) {
     var existingExpose;
-    var db = this.get('db');
+    var db = this.db;
     // Check if the service is pending in the change set.
     Object.keys(this.changeSet).forEach(function(key) {
       if (this.changeSet[key].command.method === '_expose') {
@@ -1334,7 +1328,7 @@ class EnvironmentChangeSet {
     @param {String} series The new series.
   */
   updateMachineSeries(machineId, series) {
-    const db = this.get('db');
+    const db = this.db;
     Object.keys(this.changeSet).forEach(key => {
       const value = this.changeSet[key];
       const command = value.command;
@@ -1360,7 +1354,7 @@ class EnvironmentChangeSet {
     @param {Object} constraints The new constraints.
   */
   updateMachineConstraints(machineId, constraints) {
-    const db = this.get('db');
+    const db = this.db;
     Object.keys(this.changeSet).forEach(key => {
       const value = this.changeSet[key];
       const command = value.command;
@@ -1416,7 +1410,7 @@ class EnvironmentChangeSet {
         }
       });
     }
-    var db = this.get('db');
+    var db = this.db;
     var command = {
       method: '_add_unit',
       args: args,
@@ -1494,7 +1488,7 @@ class EnvironmentChangeSet {
     if (!record) {
       return 'attempted to place a unit which has not been added: ' + unit.id;
     }
-    var db = this.get('db');
+    var db = this.db;
     var error = this.validateUnitPlacement(unit, machineId, db);
     if (error) {
       db.notifications.add({
@@ -1555,7 +1549,7 @@ class EnvironmentChangeSet {
     @returns {Array} Any units that had been unplaced, or an empty array.
   */
   unplaceServiceUnits(serviceId) {
-    return this.get('db').units
+    return this.db.units
       // We only want to unplace units which have the matching
       // service id and which are placed on machines.
       .filter(unit => unit.service === serviceId && unit.machine)
@@ -1572,7 +1566,7 @@ class EnvironmentChangeSet {
       already been deployed.
   */
   unplaceUnit(unit) {
-    const db = this.get('db');
+    const db = this.db;
     // Update the revived model to trigger events.
     const unitModel = db.units.revive(unit);
     unit = this._unplaceUnit(unit, unitModel);
@@ -1627,7 +1621,7 @@ class EnvironmentChangeSet {
     // This is a ghost machine. If units are already assigned to this
     // machine, ensure they all share the same series.
     var error = null;
-    var db = this.get('db');
+    var db = this.db;
     db.units.filterByMachine(machine.id).some(existingUnit => {
       var existingUnitSeries = this._getUnitSeries(existingUnit, db);
       if (existingUnitSeries !== unitSeries) {
