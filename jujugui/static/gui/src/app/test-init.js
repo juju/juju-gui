@@ -4,11 +4,14 @@
 const utils = require('../test/utils');
 const ReactDOM = require('react-dom');
 
-const charmstore = require('./jujulib/charmstore');
-const identity = require('./jujulib/identity');
-const plans = require('./jujulib/plans');
-const terms = require('./jujulib/terms');
-const urls = require('./jujulib/urls');
+const {
+  charmstore,
+  identity,
+  plans,
+  terms,
+  urls
+} = require('jaaslib');
+
 
 describe('init', () => {
   let app, cleanups, container, getMockStorage, JujuGUI;
@@ -176,9 +179,11 @@ describe('init', () => {
 
     describe('romulus services', () => {
       it('sets up API clients', () => {
-        assert.strictEqual(app.plans instanceof plans.plans, true);
+        assert.strictEqual(
+          app.plans instanceof plans.plans, true, 'plans is not the correct instance type');
         assert.strictEqual(app.plans.url, 'http://plans.example.com/v3');
-        assert.strictEqual(app.terms instanceof terms.terms, true);
+        assert.strictEqual(
+          app.terms instanceof terms.terms, true, 'termss is not the correct instance type');
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
       });
     });
