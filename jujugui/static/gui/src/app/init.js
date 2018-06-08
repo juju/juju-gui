@@ -13,6 +13,7 @@ const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
+const ModelController = require('./models/model-controller');
 const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
@@ -189,7 +190,7 @@ class GUIApp {
       The application instance of the model controller.
       @type {Object}
     */
-    this.modelController = new yui.juju.ModelController({
+    this.modelController = new ModelController({
       db: this.db,
       env: this.modelAPI,
       charmstore: this.charmstore

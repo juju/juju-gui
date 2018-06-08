@@ -18,182 +18,153 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-window.yui.add('model-controller', function(Y) {
+/**
+  Provides a collection of utility methods to interact
+  with the db and it's models.
+
+  @class ModelController
+  @constructor
+*/
+class ModelController {
+
   /**
-    Provides a collection of utility methods to interact
-    with the db and it's models.
+    Inits promise object stores.
 
-    @class ModelController
-    @constructor
+    @method initializer
   */
-  var ModelController = Y.Base.create('juju-model-controller', Y.Base, [], {
+  constructor(options) {
+    this._charmPromises = {};
+    this._servicePromises = {};
+    this._serviceCharmPromises = {};
+    this.db = options.db;
+    this.env = options.env;
+    this.charmstore = options.charmstore;
+  }
 
-    /**
-      Inits promise object stores.
+  /**
+    Stores promises for a short period of time as a way to avoid multiple
+    instantiations when the application dispatches before the promises return
 
-      @method initializer
-    */
-    initializer: function() {
-      this._charmPromises = {};
-      this._servicePromises = {};
-      this._serviceCharmPromises = {};
-    },
-
-    /**
-      Stores promises for a short period of time as a way to avoid multiple
-      instantiations when the application dispatches before the promises return
-
-      @method _getPromise
-      @param {String} key The id of the charm/service which will be used to
-        store and find the promise in the objects.
-      @param {Object} store Object which stores the various promises of a
-        specific type.
-      @param {Function} fn Promise executor function.
-      @return {Promise} Stored promise matching the provided key.
-    */
-    _getPromise: function(key, store, fn) {
-      var promise = store[key];
-      if (!promise) {
-        store[key] = promise = new Promise(fn);
-        var cleanUp = function() {
-          delete store[key];
-        };
-        promise.then(cleanUp, cleanUp);
-      }
-      return promise;
-    },
+    @method _getPromise
+    @param {String} key The id of the charm/service which will be used to
+      store and find the promise in the objects.
+    @param {Object} store Object which stores the various promises of a
+      specific type.
+    @param {Function} fn Promise executor function.
+    @return {Promise} Stored promise matching the provided key.
+  */
+  _getPromise(key, store, fn) {
+    var promise = store[key];
+    if (!promise) {
+      store[key] = promise = new Promise(fn);
+      var cleanUp = function() {
+        delete store[key];
+      };
+      promise.then(cleanUp, cleanUp);
+    }
+    return promise;
+  }
 
 
-    /**
-      Returns a promise for a fully populated charm model.
+  /**
+    Returns a promise for a fully populated charm model.
 
-      @method getCharm
-      @param {String} charmId The charmId that you want to populate.
-      @return {Promise} A promise for the charm model.
-    */
-    getCharm: function(charmId) {
-      const db = this.get('db');
-      const env = this.get('env');
-      const charmstore = this.get('charmstore');
+    @method getCharm
+    @param {String} charmId The charmId that you want to populate.
+    @return {Promise} A promise for the charm model.
+  */
+  getCharm(charmId) {
+    const db = this.db;
+    const env = this.env;
+    const charmstore = this.charmstore;
 
-      return this._getPromise(
-        charmId, this._charmPromises,
-        (resolve, reject) => {
-          var charm = db.charms.getById(charmId);
-          if (charm && charm.loaded) {
-            resolve(charm);
-          } else {
-            charm = db.charms.add({url: charmId}).load(env,
-              // If views are bound to the charm model, firing "update" is
-              // unnecessary, and potentially even mildly harmful.
-              (err, data) => {
-                const charm = db.charms.getById(charmId);
-                if (charmId.indexOf('local:') === -1) {
-                  charm.populateFileList(
-                    charmstore.getEntity.bind(charmstore), () => {
-                      db.fireEvent('update');
-                      resolve(charm);
-                    });
-                }
-              });
-          }
-        });
-    },
-
-    /**
-      Returns a promise for a fully populated service model or an error.
-
-      @method getService
-      @param {String} serviceId A string ID for the service to fetch.
-      @return {Promise} A promise for fully populated service data.
-    */
-    getService: function(serviceId) {
-      var db = this.get('db'),
-          env = this.get('env');
-
-      return this._getPromise(
-        serviceId, this._servicePromises,
-        function(resolve, reject) {
-          // `this` points to the serviceList
-          var service = db.services.getById(serviceId);
-          // If the service and all data has already been loaded, or if the
-          // service is pending, resolve.
-          if (service && (service.get('loaded') || service.get('pending'))) {
-            resolve(service);
-            return;
-          }
-          if (!service || !service.get('loaded')) {
-            env.getApplicationConfig(serviceId, function(result) {
-              if (result.err) {
-                // The service doesn't exist
-                reject(result);
-              } else {
-                var service = db.services.getById(result.applicationName);
-                service.setAttrs({
-                  config: result.result.config,
-                  constraints: result.result.constraints,
-                  loaded: true,
-                  series: result.result.series
-                });
-                resolve(service);
+    return this._getPromise(
+      charmId, this._charmPromises,
+      (resolve, reject) => {
+        var charm = db.charms.getById(charmId);
+        if (charm && charm.loaded) {
+          resolve(charm);
+        } else {
+          charm = db.charms.add({url: charmId}).load(env,
+            // If views are bound to the charm model, firing "update" is
+            // unnecessary, and potentially even mildly harmful.
+            (err, data) => {
+              const charm = db.charms.getById(charmId);
+              if (charmId.indexOf('local:') === -1) {
+                charm.populateFileList(
+                  charmstore.getEntity.bind(charmstore), () => {
+                    db.fireEvent('update');
+                    resolve(charm);
+                  });
               }
             });
-          }
-        });
-    },
+        }
+      });
+  }
 
-    /**
-      Populates the service and charm data for the supplied service id and
-      returns a promise that you can use to know when it's ready to go.
+  /**
+    Returns a promise for a fully populated service model or an error.
 
-      @method getServiceWithCharm
-      @param {String} serviceId The service id to populate.
-    */
-    getServiceWithCharm: function(serviceId) {
-      var mController = this;
+    @method getService
+    @param {String} serviceId A string ID for the service to fetch.
+    @return {Promise} A promise for fully populated service data.
+  */
+  getService(serviceId) {
+    var db = this.db,
+        env = this.env;
 
-      return this._getPromise(
-        serviceId, this._serviceCharmPromises,
-        function(resolve, reject) {
-          mController.getService(serviceId).then(function(service) {
-            mController.getCharm(service.get('charm')).then(function(charm) {
-              resolve({service: service, charm: charm});
-            }, reject);
+    return this._getPromise(
+      serviceId, this._servicePromises,
+      function(resolve, reject) {
+        // `this` points to the serviceList
+        var service = db.services.getById(serviceId);
+        // If the service and all data has already been loaded, or if the
+        // service is pending, resolve.
+        if (service && (service.get('loaded') || service.get('pending'))) {
+          resolve(service);
+          return;
+        }
+        if (!service || !service.get('loaded')) {
+          env.getApplicationConfig(serviceId, function(result) {
+            if (result.err) {
+              // The service doesn't exist
+              reject(result);
+            } else {
+              var service = db.services.getById(result.applicationName);
+              service.setAttrs({
+                config: result.result.config,
+                constraints: result.result.constraints,
+                loaded: true,
+                series: result.result.series
+              });
+              resolve(service);
+            }
+          });
+        }
+      });
+  }
+
+  /**
+    Populates the service and charm data for the supplied service id and
+    returns a promise that you can use to know when it's ready to go.
+
+    @method getServiceWithCharm
+    @param {String} serviceId The service id to populate.
+  */
+  getServiceWithCharm(serviceId) {
+    var mController = this;
+
+    return this._getPromise(
+      serviceId, this._serviceCharmPromises,
+      function(resolve, reject) {
+        mController.getService(serviceId).then(function(service) {
+          mController.getCharm(service.get('charm')).then(function(charm) {
+            resolve({service: service, charm: charm});
           }, reject);
-        });
-    }
+        }, reject);
+      });
+  }
 
-  }, {
-    ATTRS: {
-      /**
-        Reference to the client db.
+};
 
-        @attribute db
-        @type {Y.Base}
-        @default undefined
-      */
-      db: {},
-
-      /**
-        Reference to the client env.
-
-        @attribute env
-        @type {Y.Base}
-        @default undefined
-      */
-      env: {},
-
-      /**
-        Reference to the client charm store.
-
-        @attribute charmstore
-        @type {Object}
-        @default undefined
-      */
-      charmstore: {}
-    }
-  });
-
-  Y.namespace('juju').ModelController = ModelController;
-
-}, '', { requires: ['base-build', 'base'] });
+module.exports = ModelController;

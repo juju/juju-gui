@@ -18,19 +18,20 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const factory = require('../app/init/testing-factory');
-const utils = require('../app/init/testing-utils');
+const factory = require('../init/testing-factory');
+const utils = require('../init/testing-utils');
+const ModelController = require('./model-controller');
 
 describe('Model Controller Promises', function() {
   var cleanups, conn, db, env, environment,
       getApplicationConfig, load, modelController, serviceError, yui;
 
-  before(function(done) {
+  beforeAll(function(done) {
     YUI(GlobalConfig).use([],
       function(Y) {
         yui = Y;
         window.yui = Y;
-        require('../app/yui-modules');
+        require('../yui-modules');
         window.yui.use(
           window.MODULES,
           function() {
@@ -61,7 +62,7 @@ describe('Model Controller Promises', function() {
     db = new yui.juju.models.Database(
       {getECS: sinon.stub().returns({changeSet: {}})});
     env.connect();
-    modelController = new yui.juju.ModelController({
+    modelController = new ModelController({
       db: db,
       env: env,
       charmstore: factory.makeFakeCharmstore()
@@ -72,7 +73,7 @@ describe('Model Controller Promises', function() {
   afterEach(function() {
     serviceError = false;
     env.close();
-    [env, db, modelController].forEach(instance => {
+    [env, db].forEach(instance => {
       instance.destroy();
     });
     cleanups.forEach(cleanup => {
@@ -168,7 +169,7 @@ describe('Model Controller Promises', function() {
     // This tests the second resolve path
     clobberLoad();
     const charmId = 'cs:precise/wordpress-7';
-    modelController.get('charmstore').getEntity = sinon.stub();
+    modelController.charmstore.getEntity = sinon.stub();
     const populateStub = sinon.stub(yui.juju.models.Charm.prototype, 'populateFileList');
     const promise = modelController.getCharm(charmId);
     assert(promise instanceof Promise, true);
