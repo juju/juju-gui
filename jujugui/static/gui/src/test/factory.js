@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const charmstore = require('../app/jujulib/charmstore');
+const {charmstore} = require('jaaslib');
 
 YUI.add('juju-tests-factory', function(Y) {
   var tests = Y.namespace('juju-tests');

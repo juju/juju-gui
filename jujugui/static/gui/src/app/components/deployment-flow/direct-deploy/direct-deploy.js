@@ -2,13 +2,14 @@
 'use strict';
 
 const PropTypes = require('prop-types');
+const {urls} = require('jaaslib');
 const React = require('react');
 
 const GenericButton = require('../../generic-button/generic-button');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const DeploymentSection = require('../section/section');
-const urls = require('../../../jujulib/urls');
+
 
 class DeploymentDirectDeploy extends React.Component {
   constructor(props) {

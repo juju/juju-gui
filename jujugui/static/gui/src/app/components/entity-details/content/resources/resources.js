@@ -3,9 +3,9 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const initUtils = require('../../../../init/utils');
-const urls = require('../../../../jujulib/urls');
 
 class EntityResources extends React.Component {
   constructor(props) {

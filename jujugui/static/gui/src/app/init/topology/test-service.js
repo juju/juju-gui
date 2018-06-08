@@ -2,8 +2,8 @@
 'use strict';
 
 const proxyquire = require('proxyquire');
+const {charmstore} = require('jaaslib');
 
-const charmstore = require('../../jujulib/charmstore');
 const utils = require('../../../test/utils');
 
 const findCharmEntries = sinon.stub();

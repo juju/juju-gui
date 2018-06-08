@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const urls = require('../../jujulib/urls');
+const {urls} = require('jaaslib');
 
 /**
   Display a list of icons for an entity.

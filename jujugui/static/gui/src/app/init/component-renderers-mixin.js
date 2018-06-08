@@ -9,18 +9,20 @@ const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
+const jaaslib = require('jaaslib');
+
+const urls = jaaslib.urls;
+const charmstoreUtils = jaaslib.charmstore;
 
 const yui = window.yui;
 
 const autodeploy = require('./autodeploy');
-const charmstoreUtils = require('../jujulib/charmstore');
 const initUtils = require('./utils');
 const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
 const endpointUtils = require('./endpoint-utils');
-const urls = require('../jujulib/urls');
 const WebHandler = require('../store/env/web-handler');
 
 const AddedServicesList = require('../components/added-services-list/added-services-list');

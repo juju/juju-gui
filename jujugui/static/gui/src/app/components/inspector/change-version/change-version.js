@@ -3,10 +3,10 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const Spinner = require('../../spinner/spinner');
 const InspectorChangeVersionItem = require('./item/item');
-const urls = require('../../../jujulib/urls');
 
 class InspectorChangeVersion extends React.Component {
   constructor() {

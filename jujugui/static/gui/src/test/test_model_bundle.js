@@ -18,7 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const charmstoreUtils = require('../app/jujulib/charmstore');
+const jaaslib = require('jaaslib');
+const charmstoreUtils = jaaslib.charmstore;
 
 describe('Bundle initialization', function() {
   var models;

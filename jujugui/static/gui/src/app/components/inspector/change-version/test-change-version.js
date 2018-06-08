@@ -3,10 +3,10 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const {urls} = require('jaaslib');
 
 const InspectorChangeVersion = require('./change-version');
 const InspectorChangeVersionItem = require('./item/item');
-const urls = require('../../../jujulib/urls');
 
 describe('InspectorChangeVersion', function() {
   let acl;

@@ -3,12 +3,12 @@
 
 const d3 = require('d3');
 const jsyaml = require('js-yaml');
+const {urls} = require('jaaslib');
 
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
 const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
-const urls = require('../../jujulib/urls');
 
 class ServiceModule {
   constructor(options={}) {
