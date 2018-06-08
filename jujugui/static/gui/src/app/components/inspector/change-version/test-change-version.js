@@ -3,12 +3,13 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const {urls} = require('jaaslib');
 
 const InspectorChangeVersion = require('./change-version');
 const InspectorChangeVersionItem = require('./item/item');
 
 describe('InspectorChangeVersion', function() {
-  var acl;
+  let acl;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorChangeVersion
@@ -73,14 +74,14 @@ describe('InspectorChangeVersion', function() {
             downgrade={true}
             itemAction={items.at(0).prop('itemAction')}
             key="cs:django-4"
-            url={window.jujulib.URL.fromString('django/4')} />
+            url={urls.URL.fromString('django/4')} />
           <InspectorChangeVersionItem
             acl={acl}
             buttonAction={items.at(1).prop('buttonAction')}
             downgrade={false}
             itemAction={items.at(1).prop('itemAction')}
             key="cs:django-6"
-            url={window.jujulib.URL.fromString('django/6')} />
+            url={urls.URL.fromString('django/6')} />
         </ul>
       </div>);
     assert.compareJSX(wrapper, expected);

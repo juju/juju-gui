@@ -18,17 +18,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../app/init/testing-utils');
+
 describe('Entity Extension', function() {
-  var Y, EntityModel, entityModel, jujuConfig, models, utils;
+  var Y, EntityModel, entityModel, jujuConfig, models;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-tests-utils'
-    ], function(Y) {
-      models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
-      done();
+    Y = YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 

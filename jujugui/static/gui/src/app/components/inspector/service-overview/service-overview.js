@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const ButtonRow = require('../../button-row/button-row');
 const initUtils = require('../../../init/utils');
@@ -200,7 +201,7 @@ class ServiceOverview extends React.Component {
     }
     if (!service.get('pending')) {
       const charmId = service.get('charm');
-      const url = window.jujulib.URL.fromLegacyString(charmId);
+      const url = urls.URL.fromLegacyString(charmId);
       actions.push({
         title: 'Change version',
         linkAction: this._viewCharmDetails.bind(this, url),
@@ -232,7 +233,7 @@ class ServiceOverview extends React.Component {
     The callable to view the charm details.
 
     @method _viewCharmDetails
-    @param {Object} url The charm URL as an instance of window.jujulib.URL.
+    @param {Object} url The charm URL as an instance of urls.URL.
     @param {Object} evt The click event.
   */
   _viewCharmDetails(url, e) {

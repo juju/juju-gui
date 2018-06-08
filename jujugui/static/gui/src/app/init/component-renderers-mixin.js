@@ -9,6 +9,10 @@ const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
+const jaaslib = require('jaaslib');
+
+const urls = jaaslib.urls;
+const charmstoreUtils = jaaslib.charmstore;
 
 const yui = window.yui;
 
@@ -18,7 +22,6 @@ const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
-const viewUtils = require('../views/utils');
 const endpointUtils = require('./endpoint-utils');
 const WebHandler = require('../store/env/web-handler');
 
@@ -126,21 +129,12 @@ const ComponentRenderersMixin = superclass => class extends superclass {
   */
   _renderModelActions() {
     const modelAPI = this.modelAPI;
-    const displayTerminalButton = (
-      this.applicationConfig.flags.terminal ||
-      // Always allow for opening the terminal if the user specified a
-      // jujushell URL in the GUI settings.
-      !!localStorage.getItem('jujushell-url') ||
-      // Also allow for opening the terminal if the user deployed the juju
-      // shell charm.
-      !!this.db.environment.get('jujushellURL')
-    );
     ReactDOM.render(
       <ModelActions
         acl={this.acl}
         appState={this.state}
         changeState={this._bound.changeState}
-        displayTerminalButton={displayTerminalButton}
+        displayTerminalButton={this._enableTerminal()}
         exportEnvironmentFile={
           initUtils.exportEnvironmentFile.bind(initUtils, this.db)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
@@ -184,7 +178,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />, sharing);
   }
 
-  _renderTerminal(address) {
+  _renderTerminal(address, payload) {
     const config = this.applicationConfig;
     const user = this.user;
     const identityURL = user.identityURL();
@@ -194,6 +188,11 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     if (modelName) {
       const modelOwner = modelAPI.get('modelOwner');
       commands.push(`juju switch ${modelOwner}/${modelName}`);
+    }
+    if (payload) {
+      payload.forEach(command => {
+        commands.push(command);
+      });
     }
     const creds = {};
     if (identityURL && config.gisf) {
@@ -261,7 +260,8 @@ Browser: ${navigator.userAgent}`
       this.state.changeState({terminal: null});
       return;
     }
-    this._renderTerminal(address);
+    const payload = state.terminal;
+    this._renderTerminal(address, payload);
     next();
   }
 
@@ -492,9 +492,9 @@ Browser: ${navigator.userAgent}`
       const showEntityDetails = id => {
         let url;
         try {
-          url = window.jujulib.URL.fromString(id);
+          url = urls.URL.fromString(id);
         } catch (_) {
-          url = window.jujulib.URL.fromLegacyString(id);
+          url = urls.URL.fromLegacyString(id);
         }
 
         const storeState = {
@@ -620,7 +620,7 @@ Browser: ${navigator.userAgent}`
     const getEntity = (id, callback) => {
       let url;
       try {
-        url = window.jujulib.URL.fromString(id);
+        url = urls.URL.fromString(id);
       } catch(err) {
         callback(err, {});
         return;
@@ -634,11 +634,11 @@ Browser: ${navigator.userAgent}`
         addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
         apiUrl={charmstore.url}
-        apiVersion={window.jujulib.charmstoreAPIVersion}
+        apiVersion={charmstoreUtils.charmstoreAPIVersion}
         appState={this.state}
         charmstoreSearch={charmstore.search.bind(charmstore)}
         charmstoreURL={
-          viewUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
+          initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         clearLightbox={this._clearLightbox.bind(this)}
         deployService={this.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
@@ -654,11 +654,11 @@ Browser: ${navigator.userAgent}`
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
-        series={viewUtils.getSeriesList()}
+        series={initUtils.getSeriesList()}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         staticURL={this.applicationConfig.staticURL || ''}
-        urllib={window.jujulib.URL} />,
+        urllib={urls.URL} />,
       document.getElementById('charmbrowser-container'));
     next();
   }
@@ -687,6 +687,24 @@ Browser: ${navigator.userAgent}`
     this._clearDeployment(state, noop);
     this._clearInspector(state, noop);
   }
+
+  /**
+    Determines if the jujushell buttons should be shown
+
+    @returns {Bool} Inidication of whether jujushell is enabled
+   */
+  _enableTerminal() {
+    return (
+      this.applicationConfig.flags.terminal ||
+      // Always allow for opening the terminal if the user specified a
+      // jujushell URL in the GUI settings.
+      !!localStorage.getItem('jujushell-url') ||
+      // Also allow for opening the terminal if the user deployed the juju
+      // shell charm.
+      !!this.db.environment.get('jujushellURL')
+    );
+  }
+
   /**
     Handles rendering and/or updating the machine UI component.
     @param {Object} state - The app state.
@@ -727,7 +745,8 @@ Browser: ${navigator.userAgent}`
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}
-        series={window.jujulib.CHARM_SERIES} />,
+        series={urls.CHARM_SERIES}
+        showSSHButtons={this._enableTerminal()} />,
       document.getElementById('machine-view'));
     next();
   }
@@ -755,7 +774,7 @@ Browser: ${navigator.userAgent}`
         db={shapeup.fromShape(this.db, propTypes.db)}
         generatePath={this.state.generatePath.bind(this.state)}
         model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
-        urllib={shapeup.fromShape(window.jujulib.URL, propTypes.urllib)} />,
+        urllib={shapeup.fromShape(urls.URL, propTypes.urllib)} />,
       document.getElementById('status-container')
     );
     next();
@@ -827,7 +846,7 @@ Browser: ${navigator.userAgent}`
           destroyService={initUtils.destroyService.bind(
             this, db, model, service)}
           destroyUnits={model.remove_units.bind(model)}
-          entityPath={window.jujulib.URL.fromAnyString(charm.get('id')).path()}
+          entityPath={urls.URL.fromAnyString(charm.get('id')).path()}
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
           getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
@@ -847,6 +866,7 @@ Browser: ${navigator.userAgent}`
           setConfig={model.set_config.bind(model)}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
           showPlans={window.juju_config.flags.plans || false}
+          showSSHButtons={this._enableTerminal()}
           unexposeService={model.unexpose.bind(model)}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
@@ -863,7 +883,7 @@ Browser: ${navigator.userAgent}`
           changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
-          series={viewUtils.getSeriesList()}
+          series={initUtils.getSeriesList()}
           services={db.services}
           upgradeServiceUsingLocalCharm={
             localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
@@ -965,8 +985,8 @@ Browser: ${navigator.userAgent}`
         credential={modelAPI.get('credential')}
         ddData={ddData}
         deploy={initUtils.deploy.bind(
-          viewUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
-        formatConstraints={viewUtils.formatConstraints.bind(viewUtils)}
+          initUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
+        formatConstraints={initUtils.formatConstraints.bind(initUtils)}
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
             changesUtils, services, db.units)}

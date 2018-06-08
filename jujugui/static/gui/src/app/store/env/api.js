@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const {urls} = require('jaaslib');
+
+const utils = require('../../init/utils');
+
 /**
  * The Go model API connection.
  *
@@ -25,10 +29,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule api.go
  */
 
-YUI.add('juju-env-api', function(Y) {
+window.yui.add('juju-env-api', function(Y) {
   const module = Y.juju.environments;
   const tags = module.tags;
-  const utils = Y.namespace('juju.views.utils');
 
   // Define the error returned by Juju when the mega-watcher is stopped and
   // clients make a "Next" request.
@@ -3060,7 +3063,7 @@ YUI.add('juju-env-api', function(Y) {
           return;
         }
         // Define some reusable helpers.
-        const URL = window.jujulib.URL;
+        const URL = urls.URL;
         const objMap = (obj, func) => {
           if (!obj) {
             return {};
@@ -3598,7 +3601,6 @@ YUI.add('juju-env-api', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
-    'juju-env-base',
-    'juju-view-utils'
+    'juju-env-base'
   ]
 });

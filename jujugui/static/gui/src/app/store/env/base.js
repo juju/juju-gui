@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const ReconnectingWebSocket = require('../../jujulib/reconnecting-websocket');
+
 /**
  * The base store environment.
  *
@@ -25,7 +27,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule env.base
  */
 
-YUI.add('juju-env-base', function(Y) {
+window.yui.add('juju-env-base', function(Y) {
 
   const module = Y.namespace('juju.environments');
   // Define a Juju tags management object.
@@ -295,7 +297,7 @@ YUI.add('juju-env-base', function(Y) {
         const url = this.get('socket_url');
         console.log('connecting to ' + url);
         this.set('connecting', true);
-        this.ws = new jujulib.ReconnectingWebSocket(url);
+        this.ws = new ReconnectingWebSocket(url);
         this._txn_callbacks = {};
       }
       this.ws.debug = this.get('debug');

@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
@@ -141,7 +142,7 @@ class Configuration extends React.Component {
         });
         return;
       }
-      if (!window.jujulib.isValidName(nameValue)) {
+      if (!urls.isValidName(nameValue)) {
         props.addNotification({
           title: 'Invalid application name',
           message: 'Invalid application name.',

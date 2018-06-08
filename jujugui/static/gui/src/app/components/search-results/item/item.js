@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const GenericButton = require('../../generic-button/generic-button');
 const IconList = require('../../icon-list/icon-list');
@@ -103,9 +104,9 @@ class SearchResultsItem extends React.Component {
     // TODO frankban: it should be clear whether this id is legacy or not.
     let url;
     try {
-      url = window.jujulib.URL.fromLegacyString(id);
+      url = urls.URL.fromLegacyString(id);
     } catch(_) {
-      url = window.jujulib.URL.fromString(id);
+      url = urls.URL.fromString(id);
     }
     return {
       profile: null,

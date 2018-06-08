@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const viewUtils = require('../views/utils');
+const utils = require('./utils');
 
 /**
  * This controller manages the endpoints for services, handling the events
@@ -151,7 +151,7 @@ class EndpointsController {
   flatten(meta) {
     var result = [];
     var rel;
-    if (viewUtils.isValue(meta)) {
+    if (utils.isValue(meta)) {
 
       Object.keys(meta).forEach(ko => {
         const vo = meta[ko];

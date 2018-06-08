@@ -4,6 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
+const {urls} = require('jaaslib');
 
 const BasicTable = require('../../basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
@@ -147,7 +148,7 @@ class ProfileBundleList extends React.Component {
       }
     } else {
       const rows = (this.state.data || []).map(bundle => {
-        const url = window.jujulib.URL.fromLegacyString(bundle.id);
+        const url = urls.URL.fromLegacyString(bundle.id);
         const path = url.path();
         const version = `#${url.revision}`;
         const charmstore = this.props.charmstore;

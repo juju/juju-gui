@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const {urls} = require('jaaslib');
+
 /**
    Delta handlers.
    This module contains delta stream handlers and converters to be used
@@ -27,7 +29,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
    @module handlers
  */
 
-YUI.add('juju-delta-handlers', function(Y) {
+window.yui.add('juju-delta-handlers', function(Y) {
 
   var models = Y.namespace('juju.models');
 
@@ -106,7 +108,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       if (!unit.charmUrl) {
         return;
       }
-      const url = window.jujulib.URL.fromLegacyString(unit.charmUrl);
+      const url = urls.URL.fromLegacyString(unit.charmUrl);
       if (
         url.name !== 'jujushell' || (
           url.user && url.user !== 'juju-gui' && url.user !== 'yellow'

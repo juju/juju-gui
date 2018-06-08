@@ -4,9 +4,10 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const PaymentMethodCard = require('../../payment/methods/card/card');
-const DeploymentPayment = require('./payment');
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
+const DeploymentPayment = require('./payment');
+const Link = require('../../link/link');
+const PaymentMethodCard = require('../../payment/methods/card/card');
 const Spinner = require('../../spinner/spinner');
 
 describe('DeploymentPayment', function() {
@@ -16,9 +17,11 @@ describe('DeploymentPayment', function() {
     <DeploymentPayment
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      changeState={options.changeState || sinon.stub()}
       createCardElement={options.createCardElement || sinon.stub()}
       createToken={options.createToken || sinon.stub()}
       createUser={options.createUser || sinon.stub()}
+      generatePath={options.generatePath || sinon.stub()}
       getCountries={options.getCountries || getCountries}
       getUser={options.getUser || getUser}
       paymentUser={options.paymentUser}
@@ -68,6 +71,30 @@ describe('DeploymentPayment', function() {
         </li>]}
       </ul>);
     assert.compareJSX(wrapper.find('.deployment-payment__methods'), expected);
+  });
+
+  it('can display a link when there are no payment methods', function() {
+    user.paymentMethods = [];
+    const wrapper = renderComponent({
+      paymentUser: user
+    });
+    const expected = (
+      <div className="deployment-payment__no-methods">
+        You do not have a payment method, you can add one from your&nbsp;
+        <Link
+          changeState={sinon.stub()}
+          clickState={{
+            gui: {
+              deploy: null
+            },
+            hash: 'payment',
+            profile: 'spinach'
+          }}
+          generatePath={sinon.stub()}>
+          Profile
+        </Link>.
+      </div>);
+    assert.compareJSX(wrapper.find('.deployment-payment__no-methods'), expected);
   });
 
   it('can display an error when getting users', function() {

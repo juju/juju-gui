@@ -18,9 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-YUI.add('entity-extension', function(Y) {
-  var ns = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils');
+const utils = require('../init/utils');
+
+window.yui.add('entity-extension', function(Y) {
+  var ns = Y.namespace('juju.models');
 
   /**
    * Class extension containing functionality common to both charms and
@@ -86,5 +87,5 @@ YUI.add('entity-extension', function(Y) {
   ns.EntityExtension = EntityExtension;
 
 }, '', {
-  requires: ['juju-view-utils']
+  requires: []
 });

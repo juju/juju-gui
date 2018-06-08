@@ -2,22 +2,24 @@
 'use strict';
 
 const BundleImporter = require('./bundle-importer');
+const EnvironmentChangeSet = require('./environment-change-set');
+const factory = require('./testing-factory');
+const utils = require('./testing-utils');
 
-// XXX There are test failures in this branch when it's not run in the full
-// suite of tests.
 describe('BundleImporter', () => {
   let bundleImporter, charmstore, db, getBundleChanges,
-      modelAPI, models, utils, yui;
+      modelAPI, models, yui;
 
   beforeAll(done => {
-    const requires = [
-      'juju-tests-utils', 'juju-models', 'juju-env-api',
-      'juju-tests-factory', 'environment-change-set'];
-    YUI(GlobalConfig).use(requires, Y => {
-      utils = Y['juju-tests'].utils;
-      models = Y.namespace('juju.models');
-      yui = Y;
-      done();
+    YUI(GlobalConfig).use([], Y => {
+      window.yui = Y;
+      require('../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        window.models = models;
+        yui = window.yui;
+        done();
+      });
     });
   });
 
@@ -36,11 +38,11 @@ describe('BundleImporter', () => {
     db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     modelAPI = new yui.juju.environments.GoEnvironment({
       user: userClass,
-      ecs: new yui.juju.EnvironmentChangeSet({
+      ecs: new EnvironmentChangeSet({
         db: db
       })
     });
-    charmstore = yui['juju-tests'].factory.makeFakeCharmstore();
+    charmstore = factory.makeFakeCharmstore();
     getBundleChanges = sinon.stub();
     bundleImporter = new BundleImporter({
       charmstore,

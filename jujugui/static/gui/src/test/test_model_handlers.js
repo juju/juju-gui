@@ -20,14 +20,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 describe('Juju delta handlers', function() {
   var db, models, handlers;
-  var requirements = [
-    'juju-models', 'juju-delta-handlers'];
 
   before(function(done) {
-    YUI(GlobalConfig).use(requirements, function(Y) {
-      models = Y.namespace('juju.models');
-      handlers = models.handlers;
-      done();
+    YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES.concat(['juju-delta-handlers']), function() {
+        models = window.yui.namespace('juju.models');
+        handlers = models.handlers;
+        done();
+      });
     });
   });
 
@@ -1031,7 +1033,7 @@ describe('Juju delta handlers', function() {
 });
 
 describe('Juju delta handlers utilities', function() {
-  var utils;
+  let utils;
 
   before(function(done) {
     YUI(GlobalConfig).use(['juju-delta-handlers'], function(Y) {

@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const {urls} = require('jaaslib');
+
 /**
   Display a list of icons for an entity.
 */
@@ -20,7 +22,7 @@ class IconList extends React.Component {
   _generateStoreState(id) {
     let path;
     try {
-      const url = window.jujulib.URL.fromAnyString(id);
+      const url = urls.URL.fromAnyString(id);
       path = url.path();
     } catch(err) {
       // This is probably due to new series introduced and not yet supported.

@@ -18,13 +18,21 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const jaaslib = require('jaaslib');
+const charmstoreUtils = jaaslib.charmstore;
+const utils = require('../app/init/testing-utils');
+
 describe('Bundle initialization', function() {
   var models;
 
   before(function(done) {
-    YUI(GlobalConfig).use('juju-models', 'juju-bundle-models', function(Y) {
-      models = Y.namespace('juju.models');
-      done();
+    YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES.concat(['juju-delta-handlers']), function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 
@@ -38,20 +46,19 @@ describe('Bundle initialization', function() {
 });
 
 describe('The bundle model', function() {
-  var charmstore, data, expected, instance, models, origData,
-      utils, Y;
+  var charmstore, data, expected, instance, models, origData, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'juju-bundle-models',
-      'juju-tests-utils'
-    ], function(Y) {
-      models = Y.namespace('juju.models');
-      utils = Y.namespace('juju-tests.utils');
-      charmstore = new window.jujulib.charmstore('local/');
-      origData = charmstore._processEntityQueryData(
-        utils.loadFixture('data/apiv5-bundle.json', true));
-      done();
+    Y = YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        charmstore = new charmstoreUtils.charmstore('local/');
+        origData = charmstore._processEntityQueryData(
+          utils.loadFixture('data/apiv5-bundle.json', true));
+        done();
+      });
     });
   });
 

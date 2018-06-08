@@ -18,17 +18,19 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../app/init/testing-utils');
+
 describe('Controller API', function() {
-  var cleanups, conn, controllerAPI, juju, utils, Y;
+  var cleanups, conn, controllerAPI, juju, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'juju-controller-api',
-      'juju-tests-utils'
-    ], function(Y) {
-      juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
-      done();
+    Y = YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../app/yui-modules');
+      window.yui.use(window.MODULES, function() {
+        juju = window.yui.namespace('juju');
+        done();
+      });
     });
   });
 

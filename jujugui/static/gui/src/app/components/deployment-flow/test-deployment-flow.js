@@ -6,6 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentFlow = require('./deployment-flow');
 const AccordionSection = require('../accordion-section/accordion-section');
+const DeploymentAgreements = require('./agreements/agreements');
 const DeploymentBudget = require('./budget/budget');
 const DeploymentCloud = require('./cloud/cloud');
 const DeploymentMachines = require('./machines/machines');
@@ -279,6 +280,48 @@ describe('DeploymentFlow', function() {
     assert.compareJSX(wrapper, expected);
   });
 
+  it('updates terms and agreements when applications change', () => {
+    const getAgreementsByTerms = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      getAgreementsByTerms,
+      isLoggedIn: sinon.stub().returns(true),
+      modelCommitted: false
+    });
+    assert.equal(getAgreementsByTerms.callCount, 1);
+    applications.push({ get: sinon.stub().returns('service2') });
+    wrapper.setProps({ applications });
+    assert.equal(getAgreementsByTerms.callCount, 2);
+    assert.deepEqual(getAgreementsByTerms.args[0][0], ['service1-terms']);
+  });
+
+  it('updates terms and agreements when deploy changes change', () => {
+    const getAgreementsByTerms = sinon.stub();
+    const wrapper = createDeploymentFlow({
+      getAgreementsByTerms,
+      isLoggedIn: sinon.stub().returns(true),
+      modelCommitted: false
+    });
+    assert.equal(getAgreementsByTerms.callCount, 1);
+    wrapper.setProps({
+      changes: {
+        one: {
+          command: {
+            method: '_deploy',
+            args: [{ charmURL: 'service1' }]
+          }
+        },
+        two: {
+          command: {
+            method: '_deploy',
+            args: [{ charmURL: 'mysql' }]
+          }
+        }
+      }
+    });
+    assert.equal(getAgreementsByTerms.callCount, 2);
+    assert.deepEqual(getAgreementsByTerms.args[0][0], ['service1-terms']);
+  });
+
   it('shows a spinnner when loading the direct deploy entity', () => {
     const wrapper = createDeploymentFlow({
       ddData: { id: 'cs:bundle/kubernetes-core-8' },
@@ -441,13 +484,13 @@ describe('DeploymentFlow', function() {
     assert.equal(wrapper.find('DeploymentPricing').length, 1);
     assert.equal(wrapper.find('DeploymentExpertBudget').length, 1);
     assert.equal(wrapper.find('DeploymentPayment').length, 0);
-    assert.equal(wrapper.find('.deployment-flow__agreements').length, 0);
+    assert.equal(wrapper.find('DeploymentAgreements').length, 0);
     assert.equal(wrapper.find('.deployment-flow__deploy-action').length, 0);
     const instance = wrapper.instance();
     instance.setState({ budget: 125 });
     wrapper.update();
     assert.equal(wrapper.find('DeploymentPayment').length, 1);
-    assert.equal(wrapper.find('.deployment-flow__agreements').length, 1);
+    assert.equal(wrapper.find('DeploymentAgreements').length, 1);
     assert.equal(wrapper.find('.deployment-flow__deploy-action').length, 1);
   });
 
@@ -623,7 +666,7 @@ describe('DeploymentFlow', function() {
     const wrapper = createDeploymentFlow({
       getAgreementsByTerms: sinon.stub().callsArgWith(1, null, [])
     });
-    assert.equal(wrapper.find('.deployment-flow__deploy-option').length, 0);
+    assert.equal(wrapper.find('DeploymentAgreements').length, 0);
   });
 
   it('can handle the agreements when there are no added apps', function() {
@@ -640,7 +683,7 @@ describe('DeploymentFlow', function() {
       credential: 'cred',
       modelCommitted: true
     });
-    assert.equal(wrapper.find('.deployment-flow__deploy-option').length, 0);
+    assert.equal(wrapper.find('DeploymentAgreements').length, 0);
   });
 
   it('can display the agreements section', function() {
@@ -654,29 +697,20 @@ describe('DeploymentFlow', function() {
       modelCommitted: true
     });
     const expected = (
-      <div className="deployment-flow__agreements deployment-flow__deploy-option">
-        <input className="deployment-flow__deploy-checkbox"
-          disabled={false}
-          id="terms"
-          onChange={wrapper.find('.deployment-flow__deploy-checkbox').prop('onChange')}
-          type="checkbox" />
-        <label className="deployment-flow__deploy-label"
-          htmlFor="terms">
-          I agree to all terms.
-        </label>
-      </div>);
-    assert.compareJSX(wrapper.find('.deployment-flow__deploy-option'), expected);
+      <DeploymentAgreements
+        acl={acl}
+        disabled={false}
+        onCheckboxChange={wrapper.find('DeploymentAgreements').prop('onCheckboxChange')}
+        showTerms={false}
+        terms={null} />);
+    assert.compareJSX(wrapper.find('DeploymentAgreements'), expected);
   });
 
   it('can disable the agreements section', function() {
     const wrapper = createDeploymentFlow({
       modelCommitted: false
     });
-    const expectedClass = 'deployment-flow__deploy-option--disabled';
-    assert.isTrue(
-      wrapper.find('.deployment-flow__deploy-option').prop('className').includes(
-        expectedClass));
-    assert.isTrue(wrapper.find('.deployment-flow__deploy-checkbox').prop('disabled'));
+    assert.strictEqual(wrapper.find('DeploymentAgreements').prop('disabled'), true);
   });
 
   it('renders the login when necessary', function() {

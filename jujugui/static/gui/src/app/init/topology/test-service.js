@@ -2,8 +2,9 @@
 'use strict';
 
 const proxyquire = require('proxyquire');
+const {charmstore} = require('jaaslib');
 
-const utils = require('../../../test/utils');
+const utils = require('../testing-utils');
 
 const findCharmEntries = sinon.stub();
 const getEntries = sinon.stub();
@@ -197,7 +198,7 @@ describe('service module events', function() {
 
   beforeEach(function(done) {
     cleanups = [];
-    fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
+    fakeStore = new charmstore.charmstore('http://1.2.3.4/');
     fakeStore.getIconPath = function() {
       return 'charm icon url';
     };

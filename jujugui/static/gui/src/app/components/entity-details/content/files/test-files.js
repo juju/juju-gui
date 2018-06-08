@@ -9,7 +9,7 @@ const EntityFiles = require('./files');
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('EntityFiles', function() {
-  var mockEntity;
+  let mockEntity;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityFiles

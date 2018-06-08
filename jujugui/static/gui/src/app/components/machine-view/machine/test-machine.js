@@ -24,6 +24,8 @@ describe('MachineViewMachine', function() {
     <MachineViewMachine.DecoratedComponent
       acl={acl}
       canDrop={options.canDrop === undefined ? false : options.canDrop}
+      changeState={
+        options.changeState === undefined ? null : options.changeState}
       connectDropTarget={jsTestUtils.connectDropTarget}
       dbAPI={options.dbAPI || dbAPI}
       dropUnit={options.dropUnit || sinon.stub()}
@@ -35,6 +37,8 @@ describe('MachineViewMachine', function() {
       sendAnalytics={options.sendAnalytics || sinon.stub()}
       showConstraints={
         options.showConstraints === undefined ? true : options.showConstraints}
+      showSSHButton={
+        options.showSSHButton === undefined ? false : options.showSSHButton}
       type={options.type || 'machine'} />
   );
 
@@ -180,6 +184,19 @@ describe('MachineViewMachine', function() {
     assert.equal(
       wrapper.prop('className').includes('machine-view__machine--uncommitted'),
       true);
+  });
+
+  it('can display an ssh button', function() {
+    const changeStateStub = sinon.stub();
+    const wrapper = renderComponent({
+      showSSHButton: true,
+      changeState: changeStateStub
+    });
+    const buttons = wrapper.find('GenericButton');
+    assert.equal(buttons.length, 1);
+    buttons.at(0).props().action();
+    const expected = {'terminal': ['juju ssh new0']};
+    assert.equal(changeStateStub.calledWith(expected), true);
   });
 
   it('can hide units', function() {

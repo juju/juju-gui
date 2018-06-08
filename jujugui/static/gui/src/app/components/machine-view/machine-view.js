@@ -339,6 +339,7 @@ class MachineView extends React.Component {
       components.push(
         <MachineViewMachine
           acl={acl}
+          changeState={props.changeState}
           dbAPI={dbAPI}
           dropUnit={this._dropUnit.bind(this)}
           key={machine.id}
@@ -355,6 +356,7 @@ class MachineView extends React.Component {
           sendAnalytics={props.sendAnalytics}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
+          showSSHButton={props.showSSHButtons}
           type="machine" />);
     });
     return (
@@ -842,7 +844,8 @@ MachineView.propTypes = {
   parseConstraints: PropTypes.func.isRequired,
   parseMachineName: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
-  series: PropTypes.array
+  series: PropTypes.array,
+  showSSHButtons: PropTypes.bool
 };
 
 module.exports = ReactDnD.DragDropContext(

@@ -3,9 +3,12 @@
 
 const d3 = require('d3');
 const proxyquire = require('proxyquire');
+const {charmstore} = require('jaaslib');
 
+const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
-const testUtils = require('../../../test/utils');
+const relationUtils = require('../relation-utils');
+const testUtils = require('../testing-utils');
 
 const getEndpoints = sinon.stub();
 
@@ -20,11 +23,11 @@ const EnvironmentView = proxyquire('./environment', {
   })
 });
 
-(function() {
+describe('EnvironmentView', function() {
 
   describe('juju environment view', function() {
     var view, models, Y, container, db, conn, juju, jujuConfig,
-        charm, click, ecs, env, relationUtils, fakeStore;
+        charm, click, ecs, env, fakeStore;
 
     var environment_delta = {
       'result': [
@@ -213,27 +216,27 @@ const EnvironmentView = proxyquire('./environment', {
     ]};
 
     beforeAll(function(done) {
-      Y = YUI(GlobalConfig).use([
-        'juju-models',
-        'dump',
-        'juju-charm-models', 'environment-change-set'
-      ], function(Y) {
-        const getMockStorage = function() {
-          return new function() {
-            return {
-              store: {},
-              setItem: function(name, val) { this.store['name'] = val; },
-              getItem: function(name) { return this.store['name'] || null; }
+      console.log('beforeAll');
+      Y = YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../../yui-modules');
+        window.yui.use(window.MODULES, function() {
+          const getMockStorage = function() {
+            return new function() {
+              return {
+                store: {},
+                setItem: function(name, val) { this.store['name'] = val; },
+                getItem: function(name) { return this.store['name'] || null; }
+              };
             };
           };
-        };
-        const userClass = new window.jujugui.User(
-          {sessionStorage: getMockStorage()});
-        userClass.controller = {user: 'user', password: 'password'};
-        models = Y.namespace('juju.models');
-        juju = Y.namespace('juju');
-        window.yui = Y;
-        done();
+          const userClass = new window.jujugui.User(
+            {sessionStorage: getMockStorage()});
+          userClass.controller = {user: 'user', password: 'password'};
+          models = window.yui.namespace('juju.models');
+          juju = window.yui.namespace('juju');
+          done();
+        });
       });
     });
 
@@ -249,15 +252,14 @@ const EnvironmentView = proxyquire('./environment', {
       };
       const userClass = new window.jujugui.User({storage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
-      relationUtils = window.juju.utils.RelationUtils;
       conn = new testUtils.SocketStub();
       db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-      ecs = new juju.EnvironmentChangeSet({db: db});
+      ecs = new EnvironmentChangeSet({db: db});
       env = new juju.environments.GoEnvironment({
         conn: conn, ecs: ecs, user: userClass});
       env.connect();
       conn.open();
-      fakeStore = new window.jujulib.charmstore('http://1.2.3.4/');
+      fakeStore = new charmstore.charmstore('http://1.2.3.4/');
       jujuConfig = window.juju_config;
       window.juju_config = {charmstoreURL: 'http://1.2.3.4/'};
       container = testUtils.makeContainer(this, 'content');
@@ -1691,4 +1693,4 @@ const EnvironmentView = proxyquire('./environment', {
       assert.equal(boxes['cs:mysql-1'].icon, 'v5/mysql-1/icon.svg');
     });
   });
-})();
+});

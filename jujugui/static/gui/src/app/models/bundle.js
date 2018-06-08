@@ -24,6 +24,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../init/utils');
+
 /**
  * Provide the Bundle and BundleList classes.
  *
@@ -31,10 +33,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule models.bundle
  */
 
-YUI.add('juju-bundle-models', function(Y) {
+window.yui.add('juju-bundle-models', function(Y) {
 
-  var models = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils');
+  var models = Y.namespace('juju.models');
 
   /**
    * Model to represent the Bundles from the Charmworld API.
@@ -353,7 +354,6 @@ YUI.add('juju-bundle-models', function(Y) {
 
 }, '0.0.1', {
   requires: [
-    'juju-view-utils',
     'model',
     'model-list',
     'entity-extension'

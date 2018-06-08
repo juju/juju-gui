@@ -78,7 +78,7 @@ describe('DeploymentPricing', () => {
                 }
               }}
               generatePath={sinon.stub()}>
-              Unsupported trial version
+              Unsupported version
             </Link>
           </div>
         </div>

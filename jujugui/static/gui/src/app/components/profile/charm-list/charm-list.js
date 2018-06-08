@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-
+const {urls} = require('jaaslib');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
@@ -191,7 +191,7 @@ class ProfileCharmList extends React.Component {
       const rows = this.state.data.map(charm => {
         const id = charm.id;
         const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
-        const url = window.jujulib.URL.fromLegacyString(id);
+        const url = urls.URL.fromLegacyString(id);
         const path = url.path();
         const version = `#${url.revision}`;
         const series = charm.series.join(', ');

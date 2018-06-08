@@ -18,6 +18,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const {urls} = require('jaaslib');
+
+const utils = require('../init/utils');
+
 /**
  * Provide the Charm and CharmList classes.
  *
@@ -25,10 +29,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @submodule models.charm
  */
 
-YUI.add('juju-charm-models', function(Y) {
+window.yui.add('juju-charm-models', function(Y) {
 
   var models = Y.namespace('juju.models');
-  var utils = Y.namespace('juju.views.utils');
 
   /**
    * Helper to use a setter so that we can set null when the api returns an
@@ -118,7 +121,7 @@ YUI.add('juju-charm-models', function(Y) {
           this.set('id', cfg.url);
         }
       }
-      const url = window.jujulib.URL.fromLegacyString(this.get('id'));
+      const url = urls.URL.fromLegacyString(this.get('id'));
       this.loaded = false;
       this.on('load', function() {
         this.loaded = true;
@@ -846,7 +849,6 @@ YUI.add('juju-charm-models', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'juju-view-utils',
     'model',
     'model-list',
     'entity-extension'

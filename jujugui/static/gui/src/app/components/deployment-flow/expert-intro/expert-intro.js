@@ -110,7 +110,7 @@ class DeploymentExpertIntro extends React.Component {
                     {price}
                   </h3>
                   <div className="deployment-expert-intro__plan-description">
-                    Default plan with standard support
+                    Default plan with essential support
                   </div>
                   <div
                     className="deployment-expert-intro__description"

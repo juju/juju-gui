@@ -3,8 +3,10 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const initUtils = require('../../../../init/utils');
+
 
 class EntityFiles extends React.Component {
 
@@ -175,7 +177,7 @@ class EntityFiles extends React.Component {
   render() {
     const entityModel = this.props.entityModel;
     const files = entityModel.get('files');
-    const url = window.jujulib.URL.fromLegacyString(entityModel.get('id'));
+    const url = urls.URL.fromLegacyString(entityModel.get('id'));
     const archiveUrl = `${this.props.apiUrl}/${url.legacyPath()}/archive`;
     return (
       <div className="entity-files section" id="files">

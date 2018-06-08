@@ -3,6 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const {urls} = require('jaaslib');
 
 const InspectorChangeVersionItem = require('./item');
 const GenericButton = require('../../../generic-button/generic-button');
@@ -16,7 +17,7 @@ describe('InspectorChangeVersionItem', function() {
       buttonAction={options.buttonAction || sinon.stub()}
       downgrade={options.downgrade === undefined ? false : options.downgrade}
       itemAction={options.itemAction || sinon.stub()}
-      url={options.url || window.jujulib.URL.fromString('django/xenial/5')} />
+      url={options.url || urls.URL.fromString('django/xenial/5')} />
   );
 
   beforeEach(() => {

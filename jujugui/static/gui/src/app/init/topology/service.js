@@ -3,6 +3,7 @@
 
 const d3 = require('d3');
 const jsyaml = require('js-yaml');
+const {urls} = require('jaaslib');
 
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
@@ -1062,7 +1063,7 @@ class ServiceModule {
             }
             topo.bundleImporter.importBundleYAML(
               bundleYAML,
-              window.jujulib.URL.fromLegacyString(entityData.id).path());
+              urls.URL.fromLegacyString(entityData.id).path());
           }.bind(this));
       }
     }

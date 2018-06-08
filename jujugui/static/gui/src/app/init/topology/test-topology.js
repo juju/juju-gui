@@ -7,8 +7,8 @@ const ServiceModule = require('./service');
 const Topology = require('./topology');
 const ViewportModule = require('./viewport');
 
-const utils = require('../../../test/utils');
-const viewUtils = require('../../views/utils');
+const utils = require('../testing-utils');
+const initUtils = require('../utils');
 
 
 describe('topology', function() {
@@ -75,7 +75,7 @@ describe('topology', function() {
     topo.render();
 
     // Verify that we have built the default scene.
-    viewUtils.isValue(topo.vis).should.equal(true);
+    initUtils.isValue(topo.vis).should.equal(true);
   });
 
   function createStandardTopo() {
@@ -95,7 +95,7 @@ describe('topology', function() {
       topo = createStandardTopo();
       topo.render();
       // Verify that we have built the default scene.
-      viewUtils.isValue(topo.vis).should.equal(true);
+      initUtils.isValue(topo.vis).should.equal(true);
     });
 
   describe('servicePointOutside', function() {
