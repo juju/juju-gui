@@ -20,15 +20,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 const jaaslib = require('jaaslib');
 const charmstoreUtils = jaaslib.charmstore;
-const utils = require('../app/init/testing-utils');
+const utils = require('../init/testing-utils');
 
 describe('Bundle initialization', function() {
   var models;
 
-  before(function(done) {
+  beforeAll(function(done) {
     YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      require('../app/yui-modules');
+      require('../yui-modules');
       window.yui.use(window.MODULES.concat(['juju-delta-handlers']), function() {
         models = window.yui.namespace('juju.models');
         done();
@@ -48,10 +48,10 @@ describe('Bundle initialization', function() {
 describe('The bundle model', function() {
   var charmstore, data, expected, instance, models, origData, Y;
 
-  before(function(done) {
+  beforeAll(function(done) {
     Y = YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      require('../app/yui-modules');
+      require('../yui-modules');
       window.yui.use(window.MODULES, function() {
         models = window.yui.namespace('juju.models');
         charmstore = new charmstoreUtils.charmstore('local/');
