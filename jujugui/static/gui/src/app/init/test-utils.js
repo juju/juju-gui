@@ -2,7 +2,7 @@
 'use strict';
 
 const utils = require('./utils');
-const testUtils = require('../../test/utils');
+const testUtils = require('./testing-utils');
 
 describe('init utils', () => {
   describe('createSocketURL', () => {

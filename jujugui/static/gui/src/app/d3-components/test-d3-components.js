@@ -2,7 +2,7 @@
 'use strict';
 
 const Component = require('./d3-components');
-const testUtils = require('../../test/utils');
+const testUtils = require('../init/testing-utils');
 const utils = require('../init/utils');
 
 describe('d3-components', function() {

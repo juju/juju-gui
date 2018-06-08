@@ -18,6 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const EnvironmentChangeSet = require('../app/init/environment-change-set');
+const utils = require('../app/init/testing-utils');
+
 (function() {
 
   describe('Juju API utilities', function() {
@@ -99,16 +102,14 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   });
 
   describe('Juju API', function() {
-    var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
-        utils, Y;
+    var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
         require('../app/yui-modules');
-        window.yui.use(window.MODULES.concat(['juju-tests-utils']), function() {
+        window.yui.use(window.MODULES, function() {
           juju = window.yui.namespace('juju');
-          utils = window.yui.namespace('juju-tests.utils');
           machineJobs = window.yui.namespace('juju.environments').machineJobs;
           done();
         });
@@ -129,7 +130,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
-      ecs = new juju.EnvironmentChangeSet();
+      ecs = new EnvironmentChangeSet({});
       env = new juju.environments.GoEnvironment({
         conn: conn, user: userClass, ecs: ecs, modelUUID: 'uuid'
       });

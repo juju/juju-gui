@@ -4,7 +4,7 @@
 const proxyquire = require('proxyquire');
 const {charmstore} = require('jaaslib');
 
-const utils = require('../../../test/utils');
+const utils = require('../testing-utils');
 
 const findCharmEntries = sinon.stub();
 const getEntries = sinon.stub();

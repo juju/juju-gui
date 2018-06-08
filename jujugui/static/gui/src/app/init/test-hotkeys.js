@@ -4,7 +4,7 @@
 
 const keysim = require('keysim');
 const hotkeys = require('./hotkeys');
-const utils = require('../../test/utils');
+const utils = require('./testing-utils');
 
 describe('hotkeys', function() {
   let container, context, listener;

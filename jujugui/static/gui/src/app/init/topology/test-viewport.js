@@ -2,7 +2,7 @@
 'use strict';
 
 const ViewportModule = require('./viewport');
-const testUtils = require('../../../test/utils');
+const testUtils = require('../testing-utils');
 
 describe('ViewportModule (Topology module)', function() {
   it('aborts a resize if the canvas is not available', function() {
