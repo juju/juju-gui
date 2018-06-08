@@ -3,10 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
-
-const {urls} = require('jaaslib');
 
 const Status = require('./status');
 const BasicTable = require('../basic-table/basic-table');
@@ -23,8 +20,7 @@ describe('Status', function() {
       changeState={options.changeState || changeState}
       db={shapeup.fromShape(options.db, propTypes.db)}
       generatePath={options.generatePath || generatePath}
-      model={shapeup.fromShape(options.model || model, propTypes.model)}
-      urllib={shapeup.fromShape(urls.URL, propTypes.urllib)} />
+      model={shapeup.fromShape(options.model || model, propTypes.model)} />
   );
 
   beforeEach(() => {

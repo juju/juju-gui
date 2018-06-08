@@ -11,7 +11,7 @@ const EntityHeader = require('./header/header');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EntityDetails', function() {
-  let acl, mockEntity, models, urllib;
+  let acl, mockEntity, models;
 
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
@@ -40,8 +40,7 @@ describe('EntityDetails', function() {
         sendAnalytics={options.sendAnalytics || sinon.stub()}
         setPageTitle={options.setPageTitle || sinon.stub()}
         showTerms={options.showTerms || sinon.stub()}
-        staticURL={options.staticURL || 'http://example.com'}
-        urllib={options.urllib || urllib} />,
+        staticURL={options.staticURL || 'http://example.com'} />,
       { disableLifecycleMethods: true }
     );
     const instance = wrapper.instance();
@@ -60,7 +59,6 @@ describe('EntityDetails', function() {
       Charm: sinon.stub().returns(mockEntity)
     };
     acl = {isReadOnly: sinon.stub().returns(false)};
-    urllib = sinon.stub();
   });
 
   afterEach(function() {
@@ -96,8 +94,7 @@ describe('EntityDetails', function() {
             hasPlans={false}
             importBundleYAML={sinon.stub()}
             plans={null}
-            scrollPosition={100}
-            urllib={urllib} />
+            scrollPosition={100} />
           {undefined}
           <EntityContent
             addNotification={sinon.stub()}

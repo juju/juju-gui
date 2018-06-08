@@ -39,8 +39,7 @@ describe('Charmbrowser', function() {
       series={options.series || {}}
       setPageTitle={options.setPageTitle || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
-      staticURL={options.staticURL}
-      urllib={options.urllib || sinon.stub()} />
+      staticURL={options.staticURL} />
   );
 
   beforeEach(function() {
@@ -143,7 +142,6 @@ describe('Charmbrowser', function() {
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
     const setPageTitle = sinon.spy();
-    const urllib = sinon.stub();
     const wrapper = renderComponent({
       addNotification,
       apiUrl,
@@ -162,8 +160,7 @@ describe('Charmbrowser', function() {
       renderMarkdown,
       setPageTitle,
       showTerms,
-      staticURL: 'http://example.com',
-      urllib
+      staticURL: 'http://example.com'
     });
     const entityDetails = wrapper.find('EntityDetails');
     const expected = (
@@ -193,8 +190,7 @@ describe('Charmbrowser', function() {
           sendAnalytics={sinon.stub()}
           setPageTitle={setPageTitle}
           showTerms={showTerms}
-          staticURL="http://example.com"
-          urllib={urllib} />
+          staticURL="http://example.com" />
       </div>);
     assert.compareJSX(wrapper.find('.charmbrowser'), expected);
   });
