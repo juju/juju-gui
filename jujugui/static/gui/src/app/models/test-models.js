@@ -18,18 +18,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const relationUtils = require('../app/init/relation-utils');
-const utils = require('../app/init/testing-utils');
+const relationUtils = require('../init/relation-utils');
+const utils = require('../init/testing-utils');
 
 describe('test_model.js', function() {
+  let _cleanups;
+
+  beforeEach(() => {
+    _cleanups = [];
+  });
+
+  afterEach(() => {
+    _cleanups.forEach(cleanup => cleanup && cleanup());
+  });
 
   describe('Charm initialization', function() {
     let models;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
-        require('../app/yui-modules');
+        require('../yui-modules');
         window.yui.use(window.MODULES, function() {
           models = window.yui.namespace('juju.models');
           models._getECS = sinon.stub().returns({changeSet: {}});
@@ -120,7 +129,7 @@ describe('test_model.js', function() {
       'juju-charm-models'
     ];
 
-    before(function(done) {
+    beforeAll(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         models._getECS = sinon.stub().returns({changeSet: {}});
@@ -351,7 +360,7 @@ describe('test_model.js', function() {
       var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
       var stub = sinon.stub(
         db.units, 'update_service_unit_aggregates');
-      this._cleanups.push(stub.restore);
+      _cleanups.push(stub.restore);
       db.services.add({id: 'mysql'});
       db.addUnits(service_unit);
       assert.equal(stub.calledOnce, true);
@@ -624,8 +633,8 @@ describe('test_model.js', function() {
         var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
         var machinesStub = sinon.stub(db.machines, 'process_delta'),
             unitsStub = sinon.stub(db.units, 'process_delta');
-        this._cleanups.push(machinesStub.restore);
-        this._cleanups.push(unitsStub.restore);
+        _cleanups.push(machinesStub.restore);
+        _cleanups.push(unitsStub.restore);
         db.onDelta({detail: {data: {result: [
           ['unitInfo', 'remove', {'machine-id': '0'}]
         ]}}});
@@ -697,7 +706,7 @@ describe('test_model.js', function() {
 
       // XXX - We no longer use relation_errors but this test should remain
       // until it's completely removed from the codebase.
-      it.skip('should reset relation_errors',
+      xit('should reset relation_errors',
         function() {
           var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
           var my0 = {
@@ -1319,7 +1328,7 @@ describe('test_model.js', function() {
     describe('machines model list', function() {
       var machineJobs, machines;
 
-      before(function() {
+      beforeAll(function() {
         machineJobs = Y.namespace('juju.environments').machineJobs;
       });
 
@@ -1555,7 +1564,7 @@ describe('test_model.js', function() {
     describe('service state simplification', function() {
       var simplifyState;
 
-      before(() => {
+      beforeAll(() => {
         const units = new models.ServiceUnitList();
         simplifyState = units._simplifyState;
       });
@@ -1595,10 +1604,10 @@ describe('test_model.js', function() {
     var models, conn, env, container, juju;
     const testUtils = utils;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
-        require('../app/yui-modules');
+        require('../yui-modules');
         window.yui.use(window.MODULES.concat(['datasource-local']), function() {
           models = window.yui.namespace('juju.models');
           models._getECS = sinon.stub().returns({changeSet: {}});
@@ -1750,10 +1759,10 @@ describe('test_model.js', function() {
   describe('Charm test', function() {
     var data, instance, models, origData, Y;
 
-    before(function(done) {
+    beforeAll(function(done) {
       Y = YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
-        require('../app/yui-modules');
+        require('../yui-modules');
         window.yui.use(window.MODULES.concat(['datasource-local']), function() {
           models = window.yui.namespace('juju.models');
           models._getECS = sinon.stub().returns({changeSet: {}});
@@ -1886,12 +1895,13 @@ describe('test_model.js', function() {
       it('populates the file list with file list returned from charmstore', function(done) {
         const fileList = ['file1', 'file2', 'file3'];
         const getEntity = (id, cb) => {
-          assert.equal(id, 'foo');
+          assert.equal(id, 'cs:precise/apache2-27');
           cb(null, [{files: fileList}]);
         };
         const callback = function() {
           done();
         };
+        data.files = [];
         instance = new models.Charm(data);
         instance.populateFileList(getEntity, callback);
         assert.deepEqual(instance.get('files'), fileList);
@@ -1931,7 +1941,7 @@ describe('test_model.js', function() {
     var models;
     var db;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(['juju-models',
         'juju-charm-models'],
       function(Y) {
@@ -2501,7 +2511,7 @@ describe('test_model.js', function() {
   describe('service models', function() {
     var models, list, django, rails, wordpress, mysql;
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(['juju-models'], function(Y) {
         models = Y.namespace('juju.models');
         models._getECS = sinon.stub().returns({changeSet: {}});
@@ -2680,7 +2690,7 @@ describe('test_model.js', function() {
     var db, metadata, models, options;
     var requirements = ['juju-models'];
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         models._getECS = sinon.stub().returns({changeSet: {}});
@@ -2788,7 +2798,7 @@ describe('test_model.js', function() {
     var models;
     var requirements = ['juju-charm-models'];
 
-    before(function(done) {
+    beforeAll(function(done) {
       YUI(GlobalConfig).use(requirements, function(Y) {
         models = Y.namespace('juju.models');
         models._getECS = sinon.stub().returns({changeSet: {}});
