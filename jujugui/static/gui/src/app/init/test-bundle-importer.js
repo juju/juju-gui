@@ -2,6 +2,7 @@
 'use strict';
 
 const BundleImporter = require('./bundle-importer');
+const EnvironmentChangeSet = require('./environment-change-set');
 
 // XXX There are test failures in this branch when it's not run in the full
 // suite of tests.
@@ -12,7 +13,7 @@ describe('BundleImporter', () => {
   beforeAll(done => {
     const requires = [
       'juju-tests-utils', 'juju-models', 'juju-env-api',
-      'juju-tests-factory', 'environment-change-set'];
+      'juju-tests-factory'];
     YUI(GlobalConfig).use(requires, Y => {
       utils = Y['juju-tests'].utils;
       models = Y.namespace('juju.models');
@@ -36,7 +37,7 @@ describe('BundleImporter', () => {
     db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     modelAPI = new yui.juju.environments.GoEnvironment({
       user: userClass,
-      ecs: new yui.juju.EnvironmentChangeSet({
+      ecs: new EnvironmentChangeSet({
         db: db
       })
     });

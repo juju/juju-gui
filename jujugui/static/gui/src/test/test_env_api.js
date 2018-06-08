@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const EnvironmentChangeSet = require('../app/init/environment-change-set');
+
 (function() {
 
   describe('Juju API utilities', function() {
@@ -129,7 +131,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
-      ecs = new juju.EnvironmentChangeSet();
+      ecs = new EnvironmentChangeSet({});
       env = new juju.environments.GoEnvironment({
         conn: conn, user: userClass, ecs: ecs, modelUUID: 'uuid'
       });

@@ -31,6 +31,5 @@ window.MODULES = [
   'base',
   'model',
   'model-controller',
-  'environment-change-set',
   'yui-patches'
 ];

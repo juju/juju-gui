@@ -2,18 +2,17 @@
 'use strict';
 
 const changesUtils = require('./changes-utils');
+const ECS = require('./environment-change-set');
 
 describe('ChangesUtils', () => {
-  let cleanups, db, ECS, ecs, models, Y;
+  let cleanups, db, ecs, models, Y;
 
   beforeAll(done => {
     let requirements = [
-      'environment-change-set',
       'juju-models'
     ];
     Y = YUI(GlobalConfig).use(requirements, function(Y) {
       models = Y.namespace('juju.models');
-      ECS = Y.namespace('juju').EnvironmentChangeSet;
       done();
     });
   });
@@ -28,7 +27,6 @@ describe('ChangesUtils', () => {
     cleanups.forEach(cleanup => cleanup());
     cleanups = null;
     window.clearTimeout(ecs.descriptionTimer);
-    ecs.destroy();
   });
 
   // Add a service and a unit to the given database.
