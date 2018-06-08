@@ -325,7 +325,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               'base',
               'model',
               'model-controller',
-              'environment-change-set',
               'yui-patches'
           ], function () {
             window.JujuGUI = new JujuGUI(juju_config);

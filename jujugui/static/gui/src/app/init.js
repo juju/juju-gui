@@ -6,6 +6,7 @@ const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
 const analytics = require('./init/analytics');
+const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
@@ -436,7 +437,7 @@ class GUIApp {
       const listener = this._domEventHandlers['renderDeploymentBarListener'];
       document.addEventListener('ecs.changeSetModified', listener);
       document.addEventListener('ecs.currentCommitFinished', listener);
-      return new yui.juju.EnvironmentChangeSet({db: this.db});
+      return new EnvironmentChangeSet({db: this.db});
     }
     return this.ecs;
   }
