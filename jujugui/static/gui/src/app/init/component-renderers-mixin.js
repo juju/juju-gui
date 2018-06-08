@@ -657,8 +657,7 @@ Browser: ${navigator.userAgent}`
         series={initUtils.getSeriesList()}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
-        staticURL={this.applicationConfig.staticURL || ''}
-        urllib={urls.URL} />,
+        staticURL={this.applicationConfig.staticURL || ''} />,
       document.getElementById('charmbrowser-container'));
     next();
   }
@@ -773,8 +772,7 @@ Browser: ${navigator.userAgent}`
         changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
         generatePath={this.state.generatePath.bind(this.state)}
-        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
-        urllib={shapeup.fromShape(urls.URL, propTypes.urllib)} />,
+        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)} />,
       document.getElementById('status-container')
     );
     next();

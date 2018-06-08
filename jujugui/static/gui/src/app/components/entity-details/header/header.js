@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const { urls } = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const GenericButton = require('../../generic-button/generic-button');
@@ -48,7 +49,7 @@ class EntityHeader extends React.Component {
       // format the method expects.
       props.deployService(entityModel, undefined, plans, activePlan);
     } else {
-      const bundleURL = props.urllib.fromLegacyString(entity.id);
+      const bundleURL = urls.URL.fromLegacyString(entity.id);
       props.getBundleYAML(
         bundleURL.legacyPath(),
         this._getBundleYAMLCallback.bind(this, bundleURL.path()));
@@ -287,7 +288,7 @@ class EntityHeader extends React.Component {
       // We already are at the last revision.
       return null;
     }
-    const url = props.urllib.fromLegacyString(lastRevision);
+    const url = urls.URL.fromLegacyString(lastRevision);
     return (
       <li className="entity-header__series" key={lastRevision}>
         <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
@@ -307,7 +308,7 @@ class EntityHeader extends React.Component {
     evt.stopPropagation();
     const props = this.props;
     const revisions = props.entityModel.get('revisions');
-    const url = props.urllib.fromLegacyString(revisions[0]);
+    const url = urls.URL.fromLegacyString(revisions[0]);
     props.changeState({store: url.path()});
   }
 
@@ -460,8 +461,7 @@ EntityHeader.propTypes = {
   hasPlans: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   plans: PropTypes.array,
-  scrollPosition: PropTypes.number.isRequired,
-  urllib: PropTypes.func.isRequired
+  scrollPosition: PropTypes.number.isRequired
 };
 
 module.exports = EntityHeader;

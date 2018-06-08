@@ -83,8 +83,7 @@ class EntityDetails extends React.Component {
               hasPlans={this.state.hasPlans}
               importBundleYAML={this.props.importBundleYAML}
               plans={this.state.plans}
-              scrollPosition={this.props.scrollPosition}
-              urllib={this.props.urllib} />
+              scrollPosition={this.props.scrollPosition} />
             <EntityContent
               addNotification={this.props.addNotification}
               apiUrl={this.props.apiUrl}
@@ -269,8 +268,7 @@ EntityDetails.propTypes = {
   sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
-  staticURL: PropTypes.string,
-  urllib: PropTypes.func.isRequired
+  staticURL: PropTypes.string
 };
 
 module.exports = EntityDetails;

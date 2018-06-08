@@ -3,8 +3,8 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-
 const shapeup = require('shapeup');
+const { urls } = require('jaaslib');
 
 const BasicTable = require('../basic-table/basic-table');
 const Panel = require('../panel/panel');
@@ -537,10 +537,9 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateApplications(applications) {
-    const urllib = this.props.urllib;
     const rows = applications.map(application => {
       const app = application.getAttrs();
-      const charm = urllib.fromLegacyString(app.charm);
+      const charm = urls.URL.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
       const charmId = charm.path();
@@ -954,9 +953,6 @@ Status.propTypes = {
     region: PropTypes.string,
     sla: PropTypes.string,
     version: PropTypes.string
-  }).frozen.isRequired,
-  urllib: shapeup.shape({
-    fromLegacyString: PropTypes.func.isRequired
   }).frozen.isRequired
 };
 
