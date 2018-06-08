@@ -30,6 +30,5 @@ window.MODULES = [
   'juju-models',
   'base',
   'model',
-  'model-controller',
   'yui-patches'
 ];

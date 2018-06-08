@@ -6,7 +6,6 @@ require('./models/bundle');
 require('./models/charm');
 require('./models/entity-extension');
 require('./models/handlers');
-require('./models/model-controller');
 require('./models/models');
 require('./store/env/api');
 require('./store/env/base');
