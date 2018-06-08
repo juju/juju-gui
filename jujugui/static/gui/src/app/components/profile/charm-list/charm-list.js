@@ -4,13 +4,12 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-
+const {urls} = require('jaaslib');
 
 const BasicTable = require('../../basic-table/basic-table');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
-const urls = require('../../../jujulib/urls');
 
 /**
   Charm list React component used to display a list of the users charms in

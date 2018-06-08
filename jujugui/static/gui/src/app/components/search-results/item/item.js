@@ -4,11 +4,11 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const GenericButton = require('../../generic-button/generic-button');
 const IconList = require('../../icon-list/icon-list');
 const SvgIcon = require('../../svg-icon/svg-icon');
-const urls = require('../../../jujulib/urls');
 
 class SearchResultsItem extends React.Component {
   /**

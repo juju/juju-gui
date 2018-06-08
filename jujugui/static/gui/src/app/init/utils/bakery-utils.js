@@ -6,9 +6,9 @@
 */
 const React = require('react');
 const ReactDOM = require('react-dom');
+const {bakery} = require('jaaslib');
 
 const Notification = require('../../components/notification/notification');
-const bakery = require('../../jujulib/bakery');
 
 /**
   Implement the bakery storage store interface by using the user local

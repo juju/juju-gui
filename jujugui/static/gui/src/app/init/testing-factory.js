@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const charmstore = require('../jujulib/charmstore');
+const {charmstore} = require('jaaslib');
 
 const factory = {
 

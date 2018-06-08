@@ -24,15 +24,17 @@ const DeployerMixin = require('./init/deployer-mixin');
 const yui = window.yui;
 window.models = yui.namespace('juju.models');
 
-const bundleservice = require('./jujulib/bundleservice');
-const charmstore = require('./jujulib/charmstore');
-const identity = require('./jujulib/identity');
-const payment = require('./jujulib/payment');
-const plans = require('./jujulib/plans');
-const rates = require('./jujulib/rates');
-const stripe = require('./jujulib/stripe');
-const terms = require('./jujulib/terms');
-const urls = require('./jujulib/urls');
+const {
+  charmstore,
+  bundleService,
+  identity,
+  payment,
+  plans,
+  rates,
+  stripe,
+  terms,
+  urls
+} = require('jaaslib');
 
 require('./yui-modules');
 
@@ -143,7 +145,7 @@ class GUIApp {
       @type {Object}
     */
     this.bundleService = this._setupBundleservice(
-      config, bundleservice);
+      config, bundleService);
 
     this.ecs = this._setupEnvironmentChangeSet();
     const modelOptions = {

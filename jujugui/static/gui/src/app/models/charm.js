@@ -18,8 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const {urls} = require('jaaslib');
+
 const utils = require('../init/utils');
-const urls = require('../jujulib/urls');
 
 /**
  * Provide the Charm and CharmList classes.

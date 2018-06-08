@@ -5,8 +5,8 @@ const jsyaml = require('js-yaml');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const FileSaver = require('file-saver');
+const {charmstore} = require('jaaslib');
 
-const charmstore = require('../jujulib/charmstore');
 const Popup = require('../components/popup/popup');
 const initUtils = require('./utils');
 

@@ -1,7 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const bakeryUtils = require('../../jujulib/bakery');
+const jaaslib = require('jaaslib');
+
+const bakeryUtils = jaaslib.bakery;
 const newBakery = require('./bakery-utils');
 
 describe('bakery utils', () => {

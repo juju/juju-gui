@@ -3,12 +3,12 @@
 
 const d3 = require('d3');
 const proxyquire = require('proxyquire');
+const {charmstore} = require('jaaslib');
 
 const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
 const testUtils = require('../testing-utils');
-const charmstore = require('../../jujulib/charmstore');
 
 const getEndpoints = sinon.stub();
 

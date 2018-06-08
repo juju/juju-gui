@@ -6,9 +6,10 @@ const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
+const {urls} = require('jaaslib');
+
 const Status = require('./status');
 const BasicTable = require('../basic-table/basic-table');
-const urls = require('../../jujulib/urls');
 
 describe('Status', function() {
   let changeState;

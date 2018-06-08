@@ -4,12 +4,12 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const {urls} = require('jaaslib');
 
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
 const ButtonRow = require('../../button-row/button-row');
-const urls = require('../../../jujulib/urls');
 
 class Configuration extends React.Component {
   constructor(props) {
