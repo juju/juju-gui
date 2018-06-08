@@ -2,7 +2,8 @@
 'use strict';
 
 const endpointUtils = require('./endpoint-utils');
-const utils = require('../../test/utils');
+const factory = require('./testing-factory');
+const utils = require('./testing-utils');
 
 const EndpointsController = require('./endpoints-controller');
 
@@ -369,14 +370,12 @@ describe('Endpoints map', function() {
 });
 
 describe('Endpoints map handlers', function() {
-  let app, container, controller, destroyMe, factory, JujuGUI;
+  let app, container, controller, destroyMe, JujuGUI;
 
   beforeAll(done => {
     YUI(GlobalConfig).use([
-      'juju-tests-factory',
       'datasource-local'],
     Y => {
-      factory = Y.namespace('juju-tests.factory');
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.

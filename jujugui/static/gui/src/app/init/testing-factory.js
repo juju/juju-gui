@@ -18,11 +18,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const charmstore = require('../app/jujulib/charmstore');
+const charmstore = require('../jujulib/charmstore');
 
-const tests = {};
-
-tests.factory = {
+const factory = {
 
   /**
     Fetches the apiv4 response data for the available charms to be used in
@@ -76,3 +74,5 @@ tests.factory = {
   }
 
 };
+
+module.exports = factory;

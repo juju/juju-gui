@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const EnvironmentChangeSet = require('../app/init/environment-change-set');
+const utils = require('../app/init/testing-utils');
 
 (function() {
 
@@ -101,16 +102,14 @@ const EnvironmentChangeSet = require('../app/init/environment-change-set');
   });
 
   describe('Juju API', function() {
-    var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg,
-        utils, Y;
+    var cleanups, conn, endpointA, endpointB, ecs, env, juju, machineJobs, msg, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
         require('../app/yui-modules');
-        window.yui.use(window.MODULES.concat(['juju-tests-utils']), function() {
+        window.yui.use(window.MODULES, function() {
           juju = window.yui.namespace('juju');
-          utils = window.yui.namespace('juju-tests.utils');
           machineJobs = window.yui.namespace('juju.environments').machineJobs;
           done();
         });

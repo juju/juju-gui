@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = require('../test/utils');
+const utils = require('./init/testing-utils');
 const ReactDOM = require('react-dom');
 
 const charmstore = require('./jujulib/charmstore');

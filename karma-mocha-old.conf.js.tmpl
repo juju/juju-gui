@@ -31,8 +31,6 @@ module.exports = function(config) {
 
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
-      'jujugui/static/gui/src/test/utils.js',
-      'jujugui/static/gui/src/test/factory.js',
       'jujugui/static/gui/src/app/state/state.js',
       'jujugui/static/gui/src/app/user/user.js',
 
@@ -86,7 +84,6 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'jujugui/static/gui/src/test/factory.js': ['browserify'],
       'jujugui/static/gui/src/app/assets/javascripts/sjcl.js': ['browserify'],
       'jujugui/static/gui/src/app/assets/javascripts/tweetnacl.js': ['browserify'],
       'jujugui/static/gui/src/app/assets/javascripts/js-macaroon.js': ['browserify'],
@@ -102,7 +99,6 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/jujulib/utils.js': ['browserify'],
       'jujugui/static/gui/src/test/test_*.js': ['browserify'],
       'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],
-      'jujugui/static/gui/src/test/utils.js': ['browserify'],
     },
 
     browserify: {
