@@ -1592,11 +1592,11 @@ describe('test_model.js', function() {
   });
 
   describe('Charm load', function() {
-    var Y, models, conn, env, container, juju;
+    var models, conn, env, container, juju;
     const testUtils = utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([], function(Y) {
+      YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
         require('../app/yui-modules');
         window.yui.use(window.MODULES.concat(['datasource-local']), function() {
