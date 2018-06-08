@@ -7,7 +7,7 @@ const ServiceModule = require('./service');
 const Topology = require('./topology');
 const ViewportModule = require('./viewport');
 
-const utils = require('../../../test/utils');
+const utils = require('../testing-utils');
 const initUtils = require('../utils');
 
 

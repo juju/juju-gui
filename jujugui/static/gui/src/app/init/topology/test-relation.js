@@ -2,7 +2,7 @@
 'use strict';
 
 const RelationModule = require('./relation');
-const utils = require('../../../test/utils');
+const utils = require('../testing-utils');
 
 describe('topology relation module', function() {
   var cleanups, view, container, locateRelativePointOnCanvas, topo, models;

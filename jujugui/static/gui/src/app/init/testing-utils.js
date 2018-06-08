@@ -184,11 +184,4 @@ const testUtils = {
   }
 };
 
-YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
-  var jujuTests = Y.namespace('juju-tests');
-  jujuTests.utils = testUtils;
-}, '0.1.0', {
-  requires: []
-});
-
 module.exports = testUtils;

@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const relationUtils = require('../app/init/relation-utils');
+const utils = require('../app/init/testing-utils');
 
 describe('test_model.js', function() {
 
@@ -1591,16 +1592,19 @@ describe('test_model.js', function() {
   });
 
   describe('Charm load', function() {
-    var Y, models, conn, env, container, juju, testUtils;
+    var models, conn, env, container, juju;
+    const testUtils = utils;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
-        'juju-tests-utils'], function(Y) {
-        models = Y.namespace('juju.models');
-        models._getECS = sinon.stub().returns({changeSet: {}});
-        juju = Y.namespace('juju');
-        testUtils = Y.namespace('juju-tests.utils');
-        done();
+      YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES.concat(['datasource-local']), function() {
+          models = window.yui.namespace('juju.models');
+          models._getECS = sinon.stub().returns({changeSet: {}});
+          juju = window.yui.namespace('juju');
+          done();
+        });
       });
     });
 
@@ -1617,7 +1621,7 @@ describe('test_model.js', function() {
       const userClass = new window.jujugui.User(
         {sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub();
+      conn = new utils.SocketStub();
       env = new juju.environments.GoEnvironment({
         conn: conn, user: userClass});
       env.connect();
@@ -1744,19 +1748,18 @@ describe('test_model.js', function() {
   });
 
   describe('Charm test', function() {
-    var data, instance, models, origData, utils, Y;
+    var data, instance, models, origData, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use([
-        'juju-charm-models',
-        'juju-tests-utils'
-      ], function(Y) {
-        models = Y.namespace('juju.models');
-        models._getECS = sinon.stub().returns({changeSet: {}});
-        utils = Y.namespace('juju-tests.utils');
-
-        origData = utils.loadFixture('data/browsercharm.json', true);
-        done();
+      Y = YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../app/yui-modules');
+        window.yui.use(window.MODULES.concat(['datasource-local']), function() {
+          models = window.yui.namespace('juju.models');
+          models._getECS = sinon.stub().returns({changeSet: {}});
+          origData = utils.loadFixture('data/browsercharm.json', true);
+          done();
+        });
       });
     });
 

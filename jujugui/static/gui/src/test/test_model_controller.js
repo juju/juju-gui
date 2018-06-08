@@ -18,9 +18,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const factory = require('../app/init/testing-factory');
+const utils = require('../app/init/testing-utils');
+
 describe('Model Controller Promises', function() {
-  var cleanups, conn, db, env, environment, factory,
-      getApplicationConfig, load, modelController, serviceError, utils, yui;
+  var cleanups, conn, db, env, environment,
+      getApplicationConfig, load, modelController, serviceError, yui;
 
   before(function(done) {
     YUI(GlobalConfig).use([],
@@ -29,13 +32,11 @@ describe('Model Controller Promises', function() {
         window.yui = Y;
         require('../app/yui-modules');
         window.yui.use(
-          window.MODULES.concat(['juju-tests-factory', 'juju-tests-utils']),
+          window.MODULES,
           function() {
             var goenv = window.yui.juju.environments.GoEnvironment;
             load = window.yui.juju.models.Charm.prototype.load;
             getApplicationConfig = goenv.prototype.getApplicationConfig;
-            utils = window.yui.namespace('juju-tests.utils');
-            factory = window.yui.namespace('juju-tests.factory');
             done();
           });
       });

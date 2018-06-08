@@ -18,17 +18,18 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const utils = require('../app/init/testing-utils');
+
 (function() {
 
   describe('environment login support', function() {
-    let conn, env, utils, juju;
+    let conn, env, juju;
 
     before(function(done) {
       YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
         require('../app/yui-modules');
-        window.yui.use(window.MODULES.concat(['juju-tests-utils']), function() {
-          utils = window.yui.namespace('juju-tests').utils;
+        window.yui.use(window.MODULES, function() {
           juju = window.yui.namespace('juju');
           done();
         });
