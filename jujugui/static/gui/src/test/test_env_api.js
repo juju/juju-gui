@@ -4085,6 +4085,27 @@ const utils = require('../app/init/testing-utils');
       });
     });
 
+    describe('setLSALevel', function() {
+      it('sends the ModelConfig SetSLALevel', done => {
+        env.setSLALevel('standard', 'hatch', {macaroon: 'data'}, data => {
+          assert.deepEqual(data, {
+            'request-id': 1,
+            response: {
+              data: 'ok'
+            }
+          });
+          done();
+        });
+        // Mimic response.
+        conn.msg({
+          'request-id': 1,
+          response: {
+            data: 'ok'
+          }
+        });
+      });
+    });
+
     describe('modelUserInfo', function() {
       it('retrieves model user info', done => {
         // Perform the request.
