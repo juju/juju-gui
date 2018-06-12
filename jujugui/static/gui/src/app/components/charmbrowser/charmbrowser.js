@@ -186,8 +186,7 @@ class Charmbrowser extends React.Component {
             sendAnalytics={this.props.sendAnalytics}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}
-            staticURL={this.props.staticURL}
-            urllib={this.props.urllib} />
+            staticURL={this.props.staticURL} />
         );
         break;
     }
@@ -240,8 +239,7 @@ Charmbrowser.propTypes = {
   series: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
-  staticURL: PropTypes.string,
-  urllib: PropTypes.func.isRequired
+  staticURL: PropTypes.string
 };
 
 module.exports = Charmbrowser;

@@ -12,7 +12,7 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('EntityHeader', function() {
-  let acl, mockEntity, urllib;
+  let acl, mockEntity, attrs;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityHeader
@@ -27,20 +27,16 @@ describe('EntityHeader', function() {
       importBundleYAML={options.importBundleYAML || sinon.stub()}
       plans={options.plans}
       scrollPosition={
-        options.scrollPosition === undefined ? 0 : options.scrollPosition}
-      urllib={options.urllib || urllib} />,
+        options.scrollPosition === undefined ? 0 : options.scrollPosition} />,
     { disableLifecycleMethods: true }
   );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    mockEntity = jsTestUtils.makeEntity();
-    urllib = sinon.stub();
-    urllib.fromLegacyString = sinon.stub().returns({
-      revision: 42,
-      path: sinon.stub().returns('u/who/django/42'),
-      legacyPath: sinon.stub().returns('django-cluster')
-    });
+    attrs = {
+      revisions: ['cs:~who/django-42']
+    };
+    mockEntity = jsTestUtils.makeEntity(false, attrs);
   });
 
   afterEach(function() {
@@ -185,7 +181,7 @@ describe('EntityHeader', function() {
   });
 
   it('displays the counts for a bundle', function() {
-    const entity = jsTestUtils.makeEntity(true);
+    const entity = jsTestUtils.makeEntity(true, attrs);
     const wrapper = renderComponent({
       entityModel: entity
     });
@@ -201,7 +197,8 @@ describe('EntityHeader', function() {
   });
 
   it('can mark charms as subordinates', function() {
-    const entity = jsTestUtils.makeEntity(false, {is_subordinate: true});
+    attrs.is_subordinate = true;
+    const entity = jsTestUtils.makeEntity(false, attrs);
     const wrapper = renderComponent({
       entityModel: entity
     });
@@ -292,7 +289,7 @@ describe('EntityHeader', function() {
     const deployService = sinon.stub();
     const getBundleYAML = sinon.stub().callsArgWith(1, null, 'mock yaml');
     const importBundleYAML = sinon.stub();
-    const entity = jsTestUtils.makeEntity(true);
+    const entity = jsTestUtils.makeEntity(true, attrs);
     const wrapper = renderComponent({
       deployService,
       entityModel: entity,
@@ -305,13 +302,13 @@ describe('EntityHeader', function() {
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
     assert.deepEqual(importBundleYAML.args[0][0], 'mock yaml');
-    assert.equal(importBundleYAML.args[0][1], 'u/who/django/42');
+    assert.equal(importBundleYAML.args[0][1], 'django-cluster');
   });
 
   it('displays a notification if there is a bundle deploy error', function() {
     const getBundleYAML = sinon.stub().callsArgWith(1, 'error');
     const addNotification = sinon.stub();
-    const entity = jsTestUtils.makeEntity(true);
+    const entity = jsTestUtils.makeEntity(true, attrs);
     const wrapper = renderComponent({
       addNotification,
       entityModel: entity,
