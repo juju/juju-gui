@@ -528,8 +528,13 @@ utils.deploy = function(
       return;
     }
     const setSLAOnController = data => {
-      const parsed = JSON.parse(data);
-      modelAPI.setSLALevel(slaData.name, parsed.owner, parsed.credentials, commit);
+      if (data) {
+        const parsed = JSON.parse(data);
+        modelAPI.setSLALevel(slaData.name, parsed.owner, parsed.credentials, commit);
+        return;
+      }
+      // If we have no SLA to add then carry on.
+      commit();
     };
     const commit = args => {
       modelAPI.get('ecs').commit(modelAPI);
