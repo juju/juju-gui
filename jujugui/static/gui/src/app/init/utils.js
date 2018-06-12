@@ -527,6 +527,10 @@ utils.deploy = function(
       callback(msg, null);
       return;
     }
+    const setSLAOnController = data => {
+      const parsed = JSON.parse(data);
+      modelAPI.setSLALevel(slaData.name, parsed.owner, parsed.credentials, commit);
+    };
     const commit = args => {
       modelAPI.get('ecs').commit(modelAPI);
       // After committing then update state to update the url. This is done
@@ -540,7 +544,13 @@ utils.deploy = function(
       });
       callback(null, model);
     };
-    const switchToAndDeploy = () => {
+    const switchToModel = (err, slaData) => {
+      if (err) {
+        console.error(err);
+        const msg = 'Unable to authorize SLA';
+        app.db.notifications.add({title: msg, message: msg, level: 'error'});
+        return;
+      }
       const current = app.state.current;
       const rootState = current.root;
       if (rootState && rootState === 'new') {
@@ -566,18 +576,18 @@ utils.deploy = function(
           show: true
         }
       });
-      app.switchEnv(socketUrl, null, null, commit, true, false);
+      app.switchEnv(
+        socketUrl, null, null, setSLAOnController.bind(this, slaData), true, false);
     };
     // If the user has set a budget and an SLA then authorize that after the
     // model has been created and the entities have been deployed.
     if (slaData) {
-      app.plans.authorizeSLA(slaData.name, model.uuid, slaData.budget, switchToAndDeploy);
+      app.plans.authorizeSLA(slaData.name, model.uuid, slaData.budget, switchToModel);
     } else {
-      switchToAndDeploy();
+      switchToModel();
     }
   };
-  controllerAPI.createModel(
-    modelName, user.controller.user, args, handler);
+  controllerAPI.createModel(modelName, user.controller.user, args, handler);
 };
 
 /**
