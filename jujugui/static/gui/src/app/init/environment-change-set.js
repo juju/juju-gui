@@ -984,7 +984,7 @@ class EnvironmentChangeSet {
     service.set(DIRTYFIELDS, dirtyFields);
     service.set(
       'config',
-      window.yui.mix(service.get('config'), changedFields, true, null, null, true));
+      Object.assign(service.get('config') || {}, changedFields));
     // XXX Jeff - We may want to flatten this into the deploy service
     // command on 'commit' if there is a queued service for this command.
     // We will want to flatten multiple setConfig calls to the same service
