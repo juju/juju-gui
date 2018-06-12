@@ -21,10 +21,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 describe('Juju delta handlers', function() {
   var db, models, handlers;
 
-  before(function(done) {
+  beforeAll(function(done) {
     YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      require('../app/yui-modules');
+      require('../yui-modules');
       window.yui.use(window.MODULES.concat(['juju-delta-handlers']), function() {
         models = window.yui.namespace('juju.models');
         handlers = models.handlers;
@@ -40,7 +40,7 @@ describe('Juju delta handlers', function() {
   describe('unitInfo handler', function() {
     var unitInfo;
 
-    before(function() {
+    beforeAll(function() {
       unitInfo = handlers.unitInfo;
     });
 
@@ -254,7 +254,7 @@ describe('Juju delta handlers', function() {
   describe('applicationInfo handler', function() {
     var applicationInfo, constraints, config, status;
 
-    before(function() {
+    beforeAll(function() {
       applicationInfo = handlers.applicationInfo;
       constraints = {
         arch: 'amd64',
@@ -501,7 +501,7 @@ describe('Juju delta handlers', function() {
   describe('remoteApplicationInfo handler', function() {
     let remoteApplicationInfo, status, url;
 
-    before(function() {
+    beforeAll(function() {
       remoteApplicationInfo = handlers.remoteApplicationInfo;
       status = {
         current: 'idle',
@@ -596,7 +596,7 @@ describe('Juju delta handlers', function() {
   describe('relationInfo handler', function() {
     var dbEndpoints, deltaEndpoints, relationInfo, relationKey;
 
-    before(function() {
+    beforeAll(function() {
       relationInfo = handlers.relationInfo;
       relationKey = 'haproxy:reverseproxy wordpress:website';
     });
@@ -731,7 +731,7 @@ describe('Juju delta handlers', function() {
   describe('machineInfo handler', function() {
     var machineInfo;
 
-    before(function() {
+    beforeAll(function() {
       machineInfo = handlers.machineInfo;
     });
 
@@ -904,7 +904,7 @@ describe('Juju delta handlers', function() {
   describe('annotationInfo handler', function() {
     var annotationInfo;
 
-    before(function() {
+    beforeAll(function() {
       annotationInfo = handlers.annotationInfo;
     });
 
@@ -1035,7 +1035,7 @@ describe('Juju delta handlers', function() {
 describe('Juju delta handlers utilities', function() {
   let utils;
 
-  before(function(done) {
+  beforeAll(function(done) {
     YUI(GlobalConfig).use(['juju-delta-handlers'], function(Y) {
       utils = Y.namespace('juju.models').utils;
       done();
@@ -1045,7 +1045,7 @@ describe('Juju delta handlers utilities', function() {
   describe('Go Juju Entity Tag cleaner', function() {
     var cleanUpEntityTags;
 
-    before(function() {
+    beforeAll(function() {
       cleanUpEntityTags = utils.cleanUpEntityTags;
     });
 
@@ -1078,7 +1078,7 @@ describe('Juju delta handlers utilities', function() {
   describe('Go Juju endpoints converter', function() {
     var createEndpoints;
 
-    before(function() {
+    beforeAll(function() {
       createEndpoints = utils.createEndpoints;
     });
 
@@ -1123,7 +1123,7 @@ describe('Juju delta handlers utilities', function() {
   describe('Go Juju convertConstraints', function() {
     var convertConstraints;
 
-    before(function() {
+    beforeAll(function() {
       convertConstraints = utils.convertConstraints;
     });
 
@@ -1251,7 +1251,7 @@ describe('Juju delta handlers utilities', function() {
   describe('translateToLegacyAgentState', function() {
     var translate;
 
-    before(function() {
+    beforeAll(function() {
       translate = utils.translateToLegacyAgentState;
     });
 
