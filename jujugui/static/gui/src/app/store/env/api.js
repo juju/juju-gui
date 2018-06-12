@@ -3473,6 +3473,28 @@ window.yui.add('juju-env-api', function(Y) {
     },
 
     /**
+      Set the SLA level on the controller for the model.
+      @param {String} level The level of the SLA to set, 'essential', 'advanced'...
+      @param {String} owner The name of the owner of the model.
+      @param {Object} credentials The macaroon provided from omnibus for setting the SLA.
+      @param {Function} callback Called after the RPC call returns.
+    */
+    setSLALevel: function(level, owner, credentials, callback) {
+      function handleSetSLALevel(data) {
+        if (!callback) {
+          console.log(data);
+          return;
+        }
+        callback(data);
+      }
+      this._send_rpc({
+        type: 'ModelConfig',
+        request: 'SetSLALevel',
+        params: {level, owner, credentials}
+      }, handleSetSLALevel);
+    },
+
+    /**
       Lists users who have access to a Juju model by performing a
       Client.ModelUserInfo Juju API request.
 
