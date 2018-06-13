@@ -780,7 +780,7 @@ class EnvironmentChangeSet {
       method: '_update_annotations',
       args: args,
       options: options
-    }
+    };
     return this._createNewRecord('updateAnnotations', command, []);
   }
 
