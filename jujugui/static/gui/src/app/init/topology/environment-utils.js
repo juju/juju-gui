@@ -47,7 +47,7 @@ Object.defineProperties(_box, {
   pos: {
     get: function() { return {x: this.x, y: this.y, w: this.w, h: this.h};},
     set: function(value) {
-      window.yui.mix(this, value, true, ['x', 'y', 'w', 'h']);
+      Object.assign(this, {x: value.x, y: value.y, w: value.w, h: value.h});
     }
   },
 
@@ -62,7 +62,7 @@ Object.defineProperties(_box, {
     },
     set: function(value) {
       if (utils.isValue(value)) {
-        window.yui.mix(this, value.getAttrs(), true);
+        Object.assign(this, value.getAttrs());
         this._modelName = value.name;
       }
     }
