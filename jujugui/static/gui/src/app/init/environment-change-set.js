@@ -775,6 +775,15 @@ class EnvironmentChangeSet {
     }
   }
 
+  lazyUpdateAnnotations(args, options) {
+    const command = {
+      method: '_update_annotations',
+      args: args,
+      options: options
+    }
+    return this._createNewRecord('updateAnnotations', command, []);
+  }
+
   /**
     In the event that a service in the change set needs to be destroyed,
     remove it and all of the entries of which it is a parent as well as

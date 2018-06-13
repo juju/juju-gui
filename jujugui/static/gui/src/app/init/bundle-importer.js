@@ -484,7 +484,8 @@ class BundleImporter {
           constraints: constraints
         });
       }
-      this.modelAPI.update_annotations(name, 'application', annotations);
+      this.modelAPI.update_annotations(name, 'application', annotations,
+        {immediate: true});
     }.bind(this, ghostService);
 
     const charmURL = charm.get('id');

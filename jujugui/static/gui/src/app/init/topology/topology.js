@@ -343,7 +343,8 @@ class Topology extends Component {
       service.set('annotations', annotations);
     } else {
       this.env.update_annotations(
-        box.id, 'application', {'gui-x': box.x, 'gui-y': box.y});
+        box.id, 'application', {'gui-x': box.x, 'gui-y': box.y},
+        {immediate: true});
       box.inDrag = this.DRAG_ENDING;
     }
   }

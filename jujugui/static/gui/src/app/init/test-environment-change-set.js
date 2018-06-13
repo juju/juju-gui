@@ -1035,6 +1035,25 @@ describe('Environment Change Set', function() {
       });
     });
 
+    describe('lazyUpdateAnnotations', function() {
+      it('creates a new update annotations record', function(done) {
+        const args = ['mysql', 'application', 'rose', done];
+        const options = {};
+        const key = ecs.lazyUpdateAnnotations(args, options);
+        const record = ecs.changeSet[key];
+        assert.isObject(record);
+        assert.isObject(record.command);
+        assert.equal(record.executed, false);
+        assert.equal(record.command.method, '_update_annotations');
+        // Remove the functions, which will not be equal.
+        const cb = record.command.args.pop();
+        args.pop();
+        assert.deepEqual(record.command.args, args);
+        assert.deepEqual(record.command.options, options);
+        cb(); // Will call done().
+      });
+    });
+
     describe('lazyDestroyMachines', function() {
       it('creates a new destroy record', function(done) {
         const args = [['0/lxc/0'], false, done];
