@@ -37,10 +37,10 @@ if (FILE_LIST) {
 } else {
   // If no files were provided then we need to determine what files need to be built.
   if (fs.existsSync(LAST_TRANSPILE)) {
-    fileList = childProcess.execSync(`find jujugui/static/gui/src/app -type f -name "*.js" -not -path "*app/assets/javascripts/*" -cnewer ${LAST_TRANSPILE}`); //eslint-disable-line max-len
+    fileList = childProcess.execSync(`find jujugui/static/gui/src/app -type f -name "*.js" -cnewer ${LAST_TRANSPILE}`); //eslint-disable-line max-len
   } else {
     console.log('Building all files, no last-transpile time found.');
-    fileList = childProcess.execSync('find jujugui/static/gui/src/app -type f -name "*.js" -not -path "*app/assets/javascripts/*"'); //eslint-disable-line max-len
+    fileList = childProcess.execSync('find jujugui/static/gui/src/app -type f -name "*.js"');
   }
   fileList = fileList.toString().split('\n');
   // There is an extra newline at the end of the string
