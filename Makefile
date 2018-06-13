@@ -8,7 +8,6 @@ SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
 STATIC_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
-JS_ASSETS := $(GUISRC)/app/assets/javascripts
 SCSS_FILE := $(GUISRC)/app/assets/css/base.scss
 CSS_FILE := $(GUIBUILD)/app/assets/juju-gui.css
 BUILT_JS_ASSETS := $(GUIBUILD)/app/assets/javascripts
@@ -33,7 +32,7 @@ COLLECTED_REQUIREMENTS := collected-requirements
 PIP = bin/pip install --no-index --no-dependencies --find-links $(WHEEL_CACHE) --find-links $(LSB_WHEEL_CACHE) --find-links $(PYTHON_CACHE) -r $(1)
 VPART ?= patch
 
-RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js' -not -path "*app/assets/javascripts/*")
+RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js')
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
 SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
@@ -84,7 +83,7 @@ sysdeps:
 	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 	sudo apt install -y nodejs
 	sudo apt update
-	sudo apt install -y chromium-browser coreutils g++ git inotify-tools python-dev python-virtualenv xvfb 
+	sudo apt install -y chromium-browser coreutils g++ git inotify-tools python-dev python-virtualenv xvfb
 	realpath --version || sudo apt-get install -y realpath # realpath is already present on bionic.
 
 #######
@@ -131,11 +130,9 @@ $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
 	./scripts/transpile.js
 
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
-	mkdir -p $(GUIBUILD)/app/assets
-	cp -Lr $(JS_ASSETS) $(GUIBUILD)/app/assets/
+	mkdir -p $(BUILT_JS_ASSETS)
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
 	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
-		-not -name "js-macaroon*" | \
 		sed s/\.js$$//g | \
 		xargs -I {} $(NODE_MODULES)/.bin/babel --presets babel-preset-babili --minified --no-comments {}.js -o {}-min.js
 
