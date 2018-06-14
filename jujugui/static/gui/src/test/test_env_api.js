@@ -2216,7 +2216,8 @@ const EnvironmentChangeSet = require('../app/init/environment-change-set');
     });
 
     it('sends the correct message to remove annotations', function() {
-      env.remove_annotations('apache', 'application', ['key1', 'key2']);
+      env.remove_annotations('apache', 'application', ['key1', 'key2'],
+        null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
         type: 'Annotations',
@@ -2287,7 +2288,7 @@ const EnvironmentChangeSet = require('../app/init/environment-change-set');
       env.remove_annotations('mysql', 'application', ['key1', 'key2'],
         function(data) {
           err = data.err;
-        });
+        }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2359,7 +2360,7 @@ const EnvironmentChangeSet = require('../app/init/environment-change-set');
       env.remove_annotations('haproxy', 'application', ['key1', 'key2'],
         function(data) {
           err = data.err;
-        });
+        }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,

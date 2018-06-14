@@ -775,6 +775,16 @@ class EnvironmentChangeSet {
     }
   }
 
+  /**
+    Creates a new entry in the queue for updating annotations.
+
+    Receives all parameters received by the model's
+    '_update_annotations' method with the exception of the ECS options object.
+
+    @method lazyUpdateAnnotations
+    @param {Array} args The arguments used for updating annotations.
+    @param {Object} options The ECS options.
+  */
   lazyUpdateAnnotations(args, options) {
     const command = {
       method: '_update_annotations',

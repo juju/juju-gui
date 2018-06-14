@@ -1998,13 +1998,11 @@ window.yui.add('juju-env-api', function(Y) {
     },
 
     /**
-      Calls the environment's _update_annotations method or adds an unexpose
+      Calls the environment's _update_annotations method or adds an annotation
       record to the ECS.
 
-      Parameters match the parameters for the _unexpose method below.
+      Parameters match the parameters for the _update_annotations method below.
       The only new parameter is the last one (ECS options).
-
-      @method unexpose
     */
     update_annotations: function(entity, type, data, callback, options) {
       if (options && options.immediate) {
@@ -2069,13 +2067,12 @@ window.yui.add('juju-env-api', function(Y) {
      *   annotations to be deleted.
      * @return {undefined} Nothing.
      */
-    remove_annotations: function(entity, type, keys, callback) {
+    remove_annotations: function(entity, type, keys, callback, options) {
       var data = keys.reduce(function(collected, key) {
         collected[key] = '';
         return collected;
       }, {});
-      this.update_annotations(entity, type, data, callback,
-        {immediate: true});
+      this.update_annotations(entity, type, data, callback, options);
     },
 
     /**

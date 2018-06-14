@@ -1052,6 +1052,14 @@ describe('Environment Change Set', function() {
         assert.deepEqual(record.command.options, options);
         cb(); // Will call done().
       });
+
+      it('runs update annotations immediately', function() {
+        const options = {immediate: true};
+        envObj._update_annotations = sinon.stub();
+        envObj.update_annotations(
+          'mysql', 'application', 'rose', null, options);
+        assert.equal(envObj._update_annotations.calledOnce, true);
+      });
     });
 
     describe('lazyDestroyMachines', function() {
