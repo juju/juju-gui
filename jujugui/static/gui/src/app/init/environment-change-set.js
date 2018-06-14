@@ -776,6 +776,25 @@ class EnvironmentChangeSet {
   }
 
   /**
+    Creates a new entry in the queue for updating annotations.
+
+    Receives all parameters received by the model's
+    '_update_annotations' method with the exception of the ECS options object.
+
+    @method lazyUpdateAnnotations
+    @param {Array} args The arguments used for updating annotations.
+    @param {Object} options The ECS options.
+  */
+  lazyUpdateAnnotations(args, options) {
+    const command = {
+      method: '_update_annotations',
+      args: args,
+      options: options
+    };
+    return this._createNewRecord('updateAnnotations', command, []);
+  }
+
+  /**
     In the event that a service in the change set needs to be destroyed,
     remove it and all of the entries of which it is a parent as well as
     the addCharm call associated with this application.

@@ -1999,16 +1999,32 @@ window.yui.add('juju-env-api', function(Y) {
     },
 
     /**
+      Calls the environment's _update_annotations method or adds an annotation
+      record to the ECS.
+
+      Parameters match the parameters for the _update_annotations method below.
+      The only new parameter is the last one (ECS options).
+    */
+    update_annotations: function(entity, type, data, callback, options) {
+      if (options && options.immediate) {
+        this._update_annotations(entity, type, data, callback);
+        return;
+      }
+      this.get('ecs').lazyUpdateAnnotations(
+        [entity, type, data, callback], options);
+    },
+
+    /**
      * Update the annotations for an entity by name.
      *
-     * @method update_annotations
+     * @method _update_annotations
      * @param {String} entity The name of a machine, unit, application, or
      *   model, e.g. '0', 'mysql-0', or 'mysql'.
      * @param {String} type The type of entity that is being annotated
      *   (e.g.: 'application', 'unit', 'machine', 'model').
      * @param {Object} data A dictionary of key, value pairs.
      */
-    update_annotations: function(entity, type, data, callback) {
+    _update_annotations: function(entity, type, data, callback) {
       // Decorate the user supplied callback.
       var handler = function(userCallback, entity, data) {
         if (!userCallback) {
@@ -2052,12 +2068,12 @@ window.yui.add('juju-env-api', function(Y) {
      *   annotations to be deleted.
      * @return {undefined} Nothing.
      */
-    remove_annotations: function(entity, type, keys, callback) {
+    remove_annotations: function(entity, type, keys, callback, options) {
       var data = keys.reduce(function(collected, key) {
         collected[key] = '';
         return collected;
       }, {});
-      this.update_annotations(entity, type, data, callback);
+      this.update_annotations(entity, type, data, callback, options);
     },
 
     /**

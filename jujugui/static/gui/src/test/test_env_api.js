@@ -2166,7 +2166,8 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('sends the correct Annotations.Set message', function() {
-      env.update_annotations('apache', 'application', {'mykey': 'myvalue'});
+      env.update_annotations('apache', 'application', {'mykey': 'myvalue'},
+        null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
         type: 'Annotations',
@@ -2186,7 +2187,8 @@ const utils = require('../app/init/testing-utils');
     it('correctly sends all the annotation values as strings', function() {
       var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
           expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
-      env.update_annotations('apache', 'application', annotations);
+      env.update_annotations('apache', 'application', annotations,
+        null, {immediate: true});
       var msg = conn.last_message();
       var pairs = msg.params.annotations[0].annotations;
       assert.deepEqual(expected, pairs);
@@ -2196,7 +2198,7 @@ const utils = require('../app/init/testing-utils');
       env.update_annotations('apache', 'application', {
         'key1': 'value1',
         'key2': 'value2'
-      });
+      }, null, {immediate: true});
       var expectedMessage = {
         type: 'Annotations',
         version: 2,
@@ -2213,7 +2215,8 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('sends the correct message to remove annotations', function() {
-      env.remove_annotations('apache', 'application', ['key1', 'key2']);
+      env.remove_annotations('apache', 'application', ['key1', 'key2'],
+        null, {immediate: true});
       var lastMessage = conn.last_message();
       var expected = {
         type: 'Annotations',
@@ -2284,7 +2287,7 @@ const utils = require('../app/init/testing-utils');
       env.remove_annotations('mysql', 'application', ['key1', 'key2'],
         function(data) {
           err = data.err;
-        });
+        }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2327,7 +2330,7 @@ const utils = require('../app/init/testing-utils');
         'key': 'value'
       }, function(data) {
         err = data.err;
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2342,7 +2345,7 @@ const utils = require('../app/init/testing-utils');
         'key': 'value'
       }, function(data) {
         err = data.err;
-      });
+      }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2356,7 +2359,7 @@ const utils = require('../app/init/testing-utils');
       env.remove_annotations('haproxy', 'application', ['key1', 'key2'],
         function(data) {
           err = data.err;
-        });
+        }, {immediate: true});
       // Mimic response.
       conn.msg({
         'request-id': 1,
