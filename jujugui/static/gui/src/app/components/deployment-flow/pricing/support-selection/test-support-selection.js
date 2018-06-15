@@ -78,17 +78,20 @@ describe('DeploymentSupportSelection', () => {
       standard: '0.055',
       unsupported: '0.000'
     };
+    const setSLA = sinon.stub();
     const wrapper = renderComponent({
-      getSLAMachineRates: cb => cb(data)
+      getSLAMachineRates: cb => cb(data),
+      setSLA: setSLA
     });
     const instance = wrapper.instance();
     const plan = wrapper.find('DeploymentSupportSelectionPlan').at(1);
     assert.equal(plan.prop('selected'), false);
     plan.props().onSelect();
-    assert.equal(instance.state.selectedPlan, 'Standard');
+    assert.equal(instance.state.selectedPlan, 'standard');
     wrapper.update();
     assert.equal(
       wrapper.find('DeploymentSupportSelectionPlan').at(1).prop('selected'),
       true);
+    assert.deepEqual(setSLA.args[0], [{name: 'standard', hourPrice: '0.055'}]);
   });
 });

@@ -22,13 +22,13 @@ class DeploymentSupportSelection extends React.Component {
 
   /**
    Generate the list of cards.
-   @param plan {String} The plan to set as selected.
+   @param planKey {String} The plan to set as selected.
   */
-  _handlePlanSelect(plan) {
-    this.setState({selectedPlan: plan});
+  _handlePlanSelect(planKey) {
+    this.setState({selectedPlan: planKey});
     this.props.setSLA({
-      name: plan,
-      hourPrice: this.state.slaMachineRates[plan.toLowerCase()]
+      name: planKey,
+      hourPrice: this.state.slaMachineRates[planKey]
     });
   }
 
@@ -45,21 +45,24 @@ class DeploymentSupportSelection extends React.Component {
     const plans = [{
       features: ['8hx5d ticked'],
       hourPrice: slaMachineRates.essential,
-      name: 'Essential'
+      name: 'Essential',
+      key: 'essential'
     }, {
       features: [
         '10x5 phone support',
         '2hr critical response'
       ],
       hourPrice: slaMachineRates.standard,
-      name: 'Standard'
+      name: 'Standard',
+      key: 'standard'
     }, {
       features: [
         '24x7 phone support',
         '1hr critical response'
       ],
       hourPrice: slaMachineRates.advanced,
-      name: 'Advanced'
+      name: 'Advanced',
+      key: 'advanced'
     }];
     return plans.map((plan, i) => {
       const classes = [];
@@ -73,8 +76,8 @@ class DeploymentSupportSelection extends React.Component {
           hourPrice={plan.hourPrice}
           key={plan.name}
           machineCount={parseInt(this.props.machineCount, 10)}
-          onSelect={this._handlePlanSelect.bind(this, plan.name)}
-          selected={plan.name === this.state.selectedPlan}
+          onSelect={this._handlePlanSelect.bind(this, plan.key)}
+          selected={plan.name.toLowerCase() === this.state.selectedPlan}
           title={plan.name} />);
     });
   }

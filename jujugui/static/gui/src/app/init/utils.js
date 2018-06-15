@@ -502,7 +502,7 @@ utils.showProfile = (changeState, username) => {
       model's resources.
 */
 utils.deploy = function(
-  app, autoPlaceUnits, createSocketURL, callback, autoplace=true, modelName, args) {
+  app, autoPlaceUnits, createSocketURL, callback, autoplace=true, modelName, args, slaData) {
   const modelAPI = app.modelAPI;
   const controllerAPI = app.controllerAPI;
   const user = app.user;
@@ -524,9 +524,18 @@ utils.deploy = function(
     if (err) {
       const msg = 'cannot create model: ' + err;
       app.db.notifications.add({title: msg, message: msg, level: 'error'});
-      callback(msg);
+      callback(msg, null);
       return;
     }
+    const setSLAOnController = data => {
+      if (data) {
+        const parsed = JSON.parse(data);
+        modelAPI.setSLALevel(slaData.name, parsed.owner, parsed.credentials, commit);
+        return;
+      }
+      // If we have no SLA to add then carry on.
+      commit();
+    };
     const commit = args => {
       modelAPI.get('ecs').commit(modelAPI);
       // After committing then update state to update the url. This is done
@@ -538,37 +547,52 @@ utils.deploy = function(
         name: model.name,
         owner: model.owner
       });
-      callback(null);
+      callback(null, model);
     };
-    const current = app.state.current;
-    const rootState = current.root;
-    if (rootState && rootState === 'new') {
-      // If root is set to new then set it to null otherwise when the app
-      // dispatches again it'll disconnect the model being deployed to.
-      app.state.changeState({root: null});
-    }
-    const special = current.special;
-    if (special && special.dd) {
-      // Cleanup the direct deploy state so that we don't dispatch it again.
-      app.state.changeState({special: {dd: null}});
-    }
-    app.modelUUID = model.uuid;
-    const config = app.applicationConfig;
-    const socketUrl = createSocketURL({
-      apiAddress: config.apiAddress,
-      template: config.socketTemplate,
-      protocol: config.socket_protocol,
-      uuid: model.uuid
-    });
-    app.state.changeState({
-      postDeploymentPanel: {
-        show: true
+    const switchToModel = (err, slaData) => {
+      if (err) {
+        console.error(err);
+        const msg = 'Unable to authorize SLA';
+        app.db.notifications.add({title: msg, message: msg, level: 'error'});
+        return;
       }
-    });
-    app.switchEnv(socketUrl, null, null, commit, true, false);
+      const current = app.state.current;
+      const rootState = current.root;
+      if (rootState && rootState === 'new') {
+        // If root is set to new then set it to null otherwise when the app
+        // dispatches again it'll disconnect the model being deployed to.
+        app.state.changeState({root: null});
+      }
+      const special = current.special;
+      if (special && special.dd) {
+        // Cleanup the direct deploy state so that we don't dispatch it again.
+        app.state.changeState({special: {dd: null}});
+      }
+      app.modelUUID = model.uuid;
+      const config = app.applicationConfig;
+      const socketUrl = createSocketURL({
+        apiAddress: config.apiAddress,
+        template: config.socketTemplate,
+        protocol: config.socket_protocol,
+        uuid: model.uuid
+      });
+      app.state.changeState({
+        postDeploymentPanel: {
+          show: true
+        }
+      });
+      app.switchEnv(
+        socketUrl, null, null, setSLAOnController.bind(this, slaData), true, false);
+    };
+    // If the user has set a budget and an SLA then authorize that after the
+    // model has been created and the entities have been deployed.
+    if (slaData) {
+      app.plans.authorizeSLA(slaData.name, model.uuid, slaData.budget, switchToModel);
+    } else {
+      switchToModel();
+    }
   };
-  controllerAPI.createModel(
-    modelName, user.controller.user, args, handler);
+  controllerAPI.createModel(modelName, user.controller.user, args, handler);
 };
 
 /**

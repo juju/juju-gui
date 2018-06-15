@@ -732,13 +732,13 @@ class GUIApp {
       */
       this.stripe = new stripe(
         'https://js.stripe.com/', config.stripeKey);
-      /**
-        Application instance of the rates API.
-        @type {Object}
-      */
-      this.rates = new rates.rates(
-        config.ratesURL, new WebHandler());
     }
+    /**
+      Application instance of the rates API.
+      @type {Object}
+    */
+    this.rates = new rates.rates(
+      config.ratesURL, new WebHandler());
   }
 
   _handleMaasServer() {
