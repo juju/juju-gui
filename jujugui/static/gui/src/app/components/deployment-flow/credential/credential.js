@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const Spinner = require('../../spinner/spinner');
 const initUtils = require('../../../init/utils');
@@ -45,7 +46,7 @@ class DeploymentCredential extends React.Component {
     const user = this.props.user;
     if (user && this.props.controllerIsReady()) {
       this.setState({credentialsLoading: true}, () => {
-        this.props.getCloudCredentialNames(
+        this.props.controllerAPI.getCloudCredentialNames(
           [[user, cloud]],
           this._getCloudCredentialNamesCallback.bind(this, credential));
       });
@@ -78,7 +79,7 @@ class DeploymentCredential extends React.Component {
     // one pair we can safely assume that we only need the first item in the
     // array.
     const nameList = names.length && names[0].names || [];
-    this.props.getCloudCredentials(
+    this.props.controllerAPI.getCloudCredentials(
       nameList, this._getCredentialsCallback.bind(this, credential));
   }
 
@@ -295,7 +296,7 @@ class DeploymentCredential extends React.Component {
           this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
         onCredentialUpdated={this._onCredentialUpdated.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        updateCloudCredential={this.props.updateCloudCredential}
+        updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
         user={this.props.user} />);
   }
 
@@ -335,16 +336,19 @@ DeploymentCredential.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
+  controllerAPI: shapeup.shape({
+    getCloudCredentialNames: PropTypes.func.isRequired,
+    getCloudCredentials: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    updateCloudCredential: PropTypes.func.isRequired
+  }).isRequired,
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   editable: PropTypes.bool,
-  getCloudCredentialNames: PropTypes.func.isRequired,
-  getCloudCredentials: PropTypes.func.isRequired,
   region: PropTypes.string,
   sendAnalytics: PropTypes.func.isRequired,
   setCredential: PropTypes.func.isRequired,
   setRegion: PropTypes.func.isRequired,
-  updateCloudCredential: PropTypes.func.isRequired,
   user: PropTypes.string
 };
 
