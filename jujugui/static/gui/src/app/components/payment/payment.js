@@ -144,6 +144,7 @@ class Payment extends React.Component {
     @method _generatePaymentForm
   */
   _generatePaymentForm() {
+    const payment = this.props.payment;
     return (
       <div className="payment__section">
         <div className="twelve-col">
@@ -153,11 +154,12 @@ class Payment extends React.Component {
           <CreatePaymentUser
             acl={this.props.acl}
             addNotification={this.props.addNotification}
-            createCardElement={this.props.stripe.createCardElement}
-            createToken={this.props.stripe.createToken}
-            createUser={this.props.payment.createUser}
-            getCountries={this.props.payment.getCountries}
             onUserCreated={this._handleUserCreated.bind(this)}
+            payment={payment && shapeup.addReshape({
+              createUser: payment.createUser.bind(payment),
+              getCountries: payment.getCountries.bind(payment)
+            })}
+            stripe={this.props.stripe}
             username={this.props.username} />
         </div>
       </div>);
