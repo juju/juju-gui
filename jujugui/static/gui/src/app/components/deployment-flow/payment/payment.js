@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
 const Link = require('../../link/link');
@@ -35,7 +36,7 @@ class DeploymentPayment extends React.Component {
   */
   _getUser() {
     this.setState({loading: true}, () => {
-      const xhr = this.props.getUser(this.props.username, (error, user) => {
+      const xhr = this.props.payment.getUser(this.props.username, (error, user) => {
         // If the user is not found we don't want to display the error, but
         // rather display a message about creating a user.
         if (error && error !== 'not found') {
@@ -82,15 +83,17 @@ class DeploymentPayment extends React.Component {
     @method _generatePaymentForm
   */
   _generatePaymentForm() {
+    const payment = this.props.payment;
     return (
       <CreatePaymentUser
         acl={this.props.acl}
         addNotification={this.props.addNotification}
-        createCardElement={this.props.createCardElement}
-        createToken={this.props.createToken}
-        createUser={this.props.createUser}
-        getCountries={this.props.getCountries}
         onUserCreated={this._getUser.bind(this)}
+        payment={payment && shapeup.addReshape({
+          createUser: payment.createUser.bind(payment),
+          getCountries: payment.getCountries.bind(payment)
+        })}
+        stripe={this.props.stripe}
         username={this.props.username} />);
   }
 
@@ -144,14 +147,20 @@ DeploymentPayment.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
-  createCardElement: PropTypes.func,
-  createToken: PropTypes.func,
-  createUser: PropTypes.func,
   generatePath: PropTypes.func.isRequired,
-  getCountries: PropTypes.func,
-  getUser: PropTypes.func,
+  payment: shapeup.shape({
+    createUser: PropTypes.func.isRequired,
+    getCountries: PropTypes.func.isRequired,
+    getUser: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }),
   paymentUser: PropTypes.object,
   setPaymentUser: PropTypes.func.isRequired,
+  stripe: shapeup.shape({
+    createCardElement: PropTypes.func,
+    createToken: PropTypes.func,
+    reshape: shapeup.reshapeFunc
+  }),
   username: PropTypes.string.isRequired
 };
 
