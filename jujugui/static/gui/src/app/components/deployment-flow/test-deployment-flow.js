@@ -1,8 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const DeploymentFlow = require('./deployment-flow');
 const AccordionSection = require('../accordion-section/accordion-section');
@@ -18,9 +19,8 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const GenericButton = require('../generic-button/generic-button');
 
 describe('DeploymentFlow', function() {
-  let applications;
-  let acl;
-  let models;
+  let acl, applications, controllerAPI, charmstore, modelAPI, models, payment,
+      plans, stripe, terms;
 
 
   /**
@@ -38,24 +38,11 @@ describe('DeploymentFlow', function() {
     charmsGetById.withArgs('mysql').returns({
       get: sinon.stub().withArgs('terms').returns(['my-terms', 'general-terms'])
     });
-    const getAgreementsByTerms = sinon.stub().callsArgWith(1, null, [{
-      name: 'service1-terms',
-      content: 'service1 terms.',
-      owner: 'spinach',
-      revision: 5
-    }, {
-      name: 'my-terms',
-      content: 'Mysql terms.',
-      revision: 9
-    }]);
     // Note that the defaults are *only* set for required DeploymentFlow props.
     const defaults = {
       WebHandler: sinon.stub(),
       acl: acl,
-      addAgreement: sinon.stub(),
       addNotification: sinon.stub(),
-      addSSHKeys: sinon.stub(),
-      importSSHKeys: sinon.stub(),
       applications: [],
       changeState: sinon.stub(),
       changes: {
@@ -74,10 +61,9 @@ describe('DeploymentFlow', function() {
       },
       charms: {},
       charmsGetById: charmsGetById,
-      charmstore: {},
+      charmstore,
+      controllerAPI,
       controllerIsReady: sinon.stub(),
-      createToken: sinon.stub(),
-      createUser: sinon.stub(),
       ddData: {},
       deploy: sinon.stub().callsArg(0),
       formatConstraints: sinon.stub(),
@@ -85,34 +71,28 @@ describe('DeploymentFlow', function() {
       generateChangeDescription: sinon.stub(),
       generateMachineDetails: sinon.stub(),
       generatePath: sinon.stub(),
-      getAgreementsByTerms: getAgreementsByTerms,
-      getCloudCredentialNames: sinon.stub(),
-      getCloudCredentials: sinon.stub(),
-      getCountries: sinon.stub(),
       getCurrentChangeSet: sinon.stub(),
-      getDiagramURL: sinon.stub(),
       getSLAMachineRates: sinon.stub(),
       getServiceByName: sinon.stub(),
-      getUser: sinon.stub(),
       getUserName: sinon.stub().returns('dalek'),
       getGithubSSHKeys: sinon.stub(),
       hash: null,
       isLoggedIn: sinon.stub().returns(true),
-      listBudgets: sinon.stub(),
-      listClouds: sinon.stub(),
-      listPlansForCharm: sinon.stub(),
       loginToController: sinon.stub(),
+      modelAPI,
       modelName: 'Pavlova',
+      payment,
+      plans,
       profileUsername: 'Spinach',
       renderMarkdown: sinon.stub(),
       sendAnalytics: sinon.stub(),
       setModelName: sinon.stub(),
       showPay: false,
-      showTerms: sinon.stub(),
       sortDescriptionsByApplication: sinon.stub(),
       staticURL: '/static/url',
       stats: null,
-      updateCloudCredential: sinon.stub(),
+      stripe,
+      terms,
       withPlans: true
     };
     // Merge the user-specified props with the default props.
@@ -144,6 +124,48 @@ describe('DeploymentFlow', function() {
       {get: sinon.stub().returns('service1')}
     ];
     acl = {isReadOnly: sinon.stub().returns(false)};
+    charmstore = shapeup.addReshape({
+      getDiagramURL: sinon.stub(),
+      getEntity: sinon.stub()
+    });
+    controllerAPI = shapeup.addReshape({
+      getCloudCredentialNames: sinon.stub(),
+      getCloudCredentials: sinon.stub(),
+      listClouds: sinon.stub(),
+      updateCloudCredential: sinon.stub()
+    });
+    modelAPI = shapeup.addReshape({
+      addKeys: sinon.stub(),
+      importKeys: sinon.stub()
+    });
+    payment = shapeup.addReshape({
+      createUser: sinon.stub(),
+      getCountries: sinon.stub(),
+      getUser: sinon.stub()
+    });
+    plans = shapeup.addReshape({
+      listBudgets: sinon.stub(),
+      listPlansForCharm: sinon.stub()
+    });
+    stripe = shapeup.addReshape({
+      createCardElement: sinon.stub(),
+      createToken: sinon.stub()
+    });
+    const getAgreementsByTerms = sinon.stub().callsArgWith(1, null, [{
+      name: 'service1-terms',
+      content: 'service1 terms.',
+      owner: 'spinach',
+      revision: 5
+    }, {
+      name: 'my-terms',
+      content: 'Mysql terms.',
+      revision: 9
+    }]);
+    terms = shapeup.addReshape({
+      addAgreement: sinon.stub(),
+      getAgreementsByTerms,
+      showTerms: sinon.stub()
+    });
   });
 
   afterEach(() => {
@@ -151,8 +173,8 @@ describe('DeploymentFlow', function() {
   });
 
   it('can render', function() {
+    terms.getAgreementsByTerms.callsArgWith(1, null, []);
     const wrapper = createDeploymentFlow({
-      getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
       isLoggedIn: sinon.stub().returns(true),
       modelCommitted: false,
       withPlans: true
@@ -281,27 +303,23 @@ describe('DeploymentFlow', function() {
   });
 
   it('updates terms and agreements when applications change', () => {
-    const getAgreementsByTerms = sinon.stub();
     const wrapper = createDeploymentFlow({
-      getAgreementsByTerms,
       isLoggedIn: sinon.stub().returns(true),
       modelCommitted: false
     });
-    assert.equal(getAgreementsByTerms.callCount, 1);
+    assert.equal(terms.getAgreementsByTerms.callCount, 1);
     applications.push({ get: sinon.stub().returns('service2') });
     wrapper.setProps({ applications });
-    assert.equal(getAgreementsByTerms.callCount, 2);
-    assert.deepEqual(getAgreementsByTerms.args[0][0], ['service1-terms']);
+    assert.equal(terms.getAgreementsByTerms.callCount, 2);
+    assert.deepEqual(terms.getAgreementsByTerms.args[0][0], ['service1-terms']);
   });
 
   it('updates terms and agreements when deploy changes change', () => {
-    const getAgreementsByTerms = sinon.stub();
     const wrapper = createDeploymentFlow({
-      getAgreementsByTerms,
       isLoggedIn: sinon.stub().returns(true),
       modelCommitted: false
     });
-    assert.equal(getAgreementsByTerms.callCount, 1);
+    assert.equal(terms.getAgreementsByTerms.callCount, 1);
     wrapper.setProps({
       changes: {
         one: {
@@ -318,8 +336,8 @@ describe('DeploymentFlow', function() {
         }
       }
     });
-    assert.equal(getAgreementsByTerms.callCount, 2);
-    assert.deepEqual(getAgreementsByTerms.args[0][0], ['service1-terms']);
+    assert.equal(terms.getAgreementsByTerms.callCount, 2);
+    assert.deepEqual(terms.getAgreementsByTerms.args[0][0], ['service1-terms']);
   });
 
   it('shows a spinnner when loading the direct deploy entity', () => {
@@ -345,21 +363,19 @@ describe('DeploymentFlow', function() {
       })
     };
     const entityData = [entityModel];
-    const getEntity = sinon.stub();
     window.models.Bundle.returns(entityModel);
     const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
-      getEntity: getEntity,
       modelCommitted: false,
       renderMarkdown: renderMarkdown
     });
     assert.equal(wrapper.find('Spinner').length, 1);
-    assert.equal(getEntity.args[0][0], entityId);
+    assert.equal(charmstore.getEntity.args[0][0], entityId);
     // Call the getEntity callback and then re-render.
-    getEntity.args[0][1](null, entityData);
+    charmstore.getEntity.args[0][1](null, entityData);
     wrapper.update();
     const directDeploy = wrapper.find('DeploymentDirectDeploy');
     assert.equal(directDeploy.length, 1);
@@ -388,9 +404,8 @@ describe('DeploymentFlow', function() {
         displayName: 'New Bundle'
       })
     };
-    const getEntity = sinon.stub();
-    getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
-    getEntity.withArgs(entityId2).callsArgWith(1, null, [entityId2]);
+    charmstore.getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
+    charmstore.getEntity.withArgs(entityId2).callsArgWith(1, null, [entityId2]);
     window.models.Bundle.withArgs(entityId).returns(entityModel);
     window.models.Bundle.withArgs(entityId2).returns(entityModel2);
     const renderMarkdown = sinon.stub();
@@ -398,7 +413,6 @@ describe('DeploymentFlow', function() {
       addNotification: addNotification,
       changeState: changeState,
       ddData: { id: entityId },
-      getEntity: getEntity,
       modelCommitted: false,
       renderMarkdown: renderMarkdown
     });
@@ -428,15 +442,13 @@ describe('DeploymentFlow', function() {
         displayName: 'Kubernetes Core'
       })
     };
-    const getEntity = sinon.stub();
-    getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
+    charmstore.getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
     window.models.Bundle.withArgs(entityId).returns(entityModel);
     const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: { id: entityId },
-      getEntity: getEntity,
       modelCommitted: false,
       renderMarkdown: renderMarkdown
     });
@@ -465,20 +477,18 @@ describe('DeploymentFlow', function() {
     };
     window.models.Bundle.returns(entityModel);
     const entityData = [entityModel];
-    const getEntity = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
-      getEntity: getEntity,
       modelCommitted: false,
       renderMarkdown: sinon.stub(),
       showPay: true
     });
     assert.equal(wrapper.find('Spinner').length, 1);
-    assert.equal(getEntity.args[0][0], entityId);
+    assert.equal(charmstore.getEntity.args[0][0], entityId);
     // Call the getEntity callback and then re-render.
-    getEntity.args[0][1](null, entityData);
+    charmstore.getEntity.args[0][1](null, entityData);
     wrapper.update();
     assert.equal(wrapper.find('DeploymentExpertIntro').length, 1);
     assert.equal(wrapper.find('DeploymentPricing').length, 1);
@@ -663,9 +673,8 @@ describe('DeploymentFlow', function() {
   });
 
   it('can hide the agreements section', function() {
-    const wrapper = createDeploymentFlow({
-      getAgreementsByTerms: sinon.stub().callsArgWith(1, null, [])
-    });
+    terms.getAgreementsByTerms.callsArgWith(1, null, []);
+    const wrapper = createDeploymentFlow();
     assert.equal(wrapper.find('DeploymentAgreements').length, 0);
   });
 
@@ -818,9 +827,9 @@ describe('DeploymentFlow', function() {
     wrapper.find('GenericButton').props().action();
     assert.equal(props.deploy.callCount, 0,
       'The deploy function should not be called');
-    assert.equal(props.addAgreement.callCount, 1,
+    assert.equal(terms.addAgreement.callCount, 1,
       'The addAgreement function was not called');
-    assert.deepEqual(props.addAgreement.args[0][0], [{
+    assert.deepEqual(terms.addAgreement.args[0][0], [{
       name: 'service1-terms',
       owner: 'spinach',
       revision: 5
@@ -1070,9 +1079,8 @@ describe('DeploymentFlow', function() {
     instance._setLaunchpadUsernames(['rose']);
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    const importKeys = instance.props.importSSHKeys;
-    assert.equal(importKeys.callCount, 1);
-    assert.deepEqual(importKeys.args[0][1], ['lp:rose']);
+    assert.equal(modelAPI.importKeys.callCount, 1);
+    assert.deepEqual(modelAPI.importKeys.args[0][1], ['lp:rose']);
   });
 
   it('can deploy with a VPC id', function() {
@@ -1135,9 +1143,9 @@ describe('DeploymentFlow', function() {
 
   it('aborts the requests when unmounting', function() {
     const abort = sinon.stub();
+    terms.getAgreementsByTerms.returns({abort: abort});
     const wrapper = createDeploymentFlow({
-      applications: applications,
-      getAgreementsByTerms: sinon.stub().returns({abort: abort})
+      applications: applications
     });
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
@@ -1184,8 +1192,8 @@ describe('DeploymentFlow', function() {
   });
 
   it('can add a class when the cookie notice is visible', () => {
+    terms.getAgreementsByTerms.callsArgWith(1, null, []);
     const wrapper = createDeploymentFlow({
-      getAgreementsByTerms: sinon.stub().callsArgWith(1, null, []),
       gtmEnabled: true
     });
     assert.equal(
