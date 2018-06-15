@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const GenericInput = require('../generic-input/generic-input');
 const GenericButton = require('../generic-button/generic-button');
@@ -78,7 +79,7 @@ class CreatePaymentUser extends React.Component {
       addressZip: cardAddress.postcode,
       addressCountry: cardAddress.countryCode
     };
-    const xhr = this.props.createToken(card.card, extra, (error, token) => {
+    const xhr = this.props.stripe.createToken(card.card, extra, (error, token) => {
       if (error) {
         const message = 'Could not create Stripe token';
         this.props.addNotification({
@@ -122,7 +123,7 @@ class CreatePaymentUser extends React.Component {
       token: token,
       paymentMethodName: 'Default'
     };
-    const xhr = this.props.createUser(user, (error, user) => {
+    const xhr = this.props.payment.createUser(user, (error, user) => {
       if (error) {
         const message = 'Could not create a payment user';
         this.props.addNotification({
@@ -176,7 +177,7 @@ class CreatePaymentUser extends React.Component {
         <AddressForm
           addNotification={this.props.addNotification}
           disabled={this.props.acl.isReadOnly()}
-          getCountries={this.props.getCountries}
+          getCountries={this.props.payment.getCountries}
           ref="cardAddress" />
       </div>);
   }
@@ -198,7 +199,7 @@ class CreatePaymentUser extends React.Component {
         <AddressForm
           addNotification={this.props.addNotification}
           disabled={this.props.acl.isReadOnly()}
-          getCountries={this.props.getCountries}
+          getCountries={this.props.payment.getCountries}
           ref="billingAddress" />
       </div>);
   }
@@ -300,14 +301,14 @@ class CreatePaymentUser extends React.Component {
             <AddressForm
               addNotification={this.props.addNotification}
               disabled={disabled}
-              getCountries={this.props.getCountries}
+              getCountries={this.props.payment.getCountries}
               ref="userAddress" />
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
             <CardForm
               acl={this.props.acl}
-              createCardElement={this.props.createCardElement}
+              createCardElement={this.props.stripe.createCardElement}
               ref="cardForm" />
             <label htmlFor="cardAddressSame">
               <input checked={this.state.cardAddressSame}
@@ -347,11 +348,17 @@ class CreatePaymentUser extends React.Component {
 CreatePaymentUser.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  createCardElement: PropTypes.func.isRequired,
-  createToken: PropTypes.func.isRequired,
-  createUser: PropTypes.func.isRequired,
-  getCountries: PropTypes.func.isRequired,
   onUserCreated: PropTypes.func.isRequired,
+  payment: shapeup.shape({
+    createUser: PropTypes.func.isRequired,
+    getCountries: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }),
+  stripe: shapeup.shape({
+    createCardElement: PropTypes.func.isRequired,
+    createToken: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   username: PropTypes.string.isRequired
 };
 

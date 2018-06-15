@@ -1,8 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const CreatePaymentUser = require('./create-payment-user');
 const GenericInput = require('../generic-input/generic-input');
@@ -11,24 +12,21 @@ const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
 
 describe('CreatePaymentUser', function() {
-  let acl, getCountries, onUserCreated, refs;
+  let acl, onUserCreated, payment, stripe, refs;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <CreatePaymentUser
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
-      createCardElement={options.createCardElement || sinon.stub()}
-      createToken={options.createToken || sinon.stub()}
-      createUser={options.createUser || sinon.stub()}
-      getCountries={options.getCountries || getCountries}
       onUserCreated={options.onUserCreated || onUserCreated}
+      payment={payment}
+      stripe={stripe}
       username={options.username || 'spinach'} />
   );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     onUserCreated = sinon.stub();
-    getCountries = sinon.stub();
     refs = {
       emailAddress: {
         getValue: sinon.stub().returns('spinach@example.com')
@@ -52,15 +50,19 @@ describe('CreatePaymentUser', function() {
         })
       }
     };
+    payment = shapeup.addReshape({
+      createUser: sinon.stub(),
+      getCountries: sinon.stub()
+    });
+    stripe = shapeup.addReshape({
+      createCardElement: sinon.stub(),
+      createToken: sinon.stub()
+    });
   });
 
   it('can display a personal form', function() {
     const addNotification = sinon.stub();
-    const createCardElement = sinon.stub();
-    const wrapper = renderComponent({
-      addNotification,
-      createCardElement
-    });
+    const wrapper = renderComponent({ addNotification });
     const options = wrapper.find('input');
     const expected = (
       <div className="create-payment-user">
@@ -105,14 +107,14 @@ describe('CreatePaymentUser', function() {
             <AddressForm
               addNotification={addNotification}
               disabled={false}
-              getCountries={getCountries}
+              getCountries={sinon.stub()}
               ref="userAddress" />
             <h2 className="create-payment-user__title">
               Payment information
             </h2>
             <CardForm
               acl={acl}
-              createCardElement={createCardElement}
+              createCardElement={sinon.stub()}
               ref="cardForm" />
             <label htmlFor="cardAddressSame">
               <input checked={true}
@@ -172,7 +174,7 @@ describe('CreatePaymentUser', function() {
         <AddressForm
           addNotification={addNotification}
           disabled={false}
-          getCountries={getCountries}
+          getCountries={sinon.stub()}
           ref="cardAddress" />
       </div>);
     const billingExpected = (
@@ -183,7 +185,7 @@ describe('CreatePaymentUser', function() {
         <AddressForm
           addNotification={addNotification}
           disabled={false}
-          getCountries={getCountries}
+          getCountries={sinon.stub()}
           ref="billingAddress" />
       </div>);
     assert.compareJSX(
@@ -194,8 +196,8 @@ describe('CreatePaymentUser', function() {
 
   it('can abort requests when unmounting', function() {
     const abort = sinon.stub();
-    const createToken = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({ createToken });
+    stripe.createToken.returns({abort: abort});
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('GenericButton').props().action();
@@ -204,24 +206,22 @@ describe('CreatePaymentUser', function() {
   });
 
   it('does not add the user if there is a validation error', function() {
-    const createToken = sinon.stub();
-    const wrapper = renderComponent({ createToken });
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
     instance.refs.emailAddress.validate = sinon.stub().returns(false);
     wrapper.find('GenericButton').props().action();
-    assert.equal(createToken.callCount, 0);
+    assert.equal(stripe.createToken.callCount, 0);
   });
 
   it('can create the token using the correct data', function() {
-    const createToken = sinon.stub();
-    const wrapper = renderComponent({ createToken });
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('GenericButton').props().action();
-    assert.equal(createToken.callCount, 1);
-    assert.deepEqual(createToken.args[0][0], {card: 'value'});
-    assert.deepEqual(createToken.args[0][1], {
+    assert.equal(stripe.createToken.callCount, 1);
+    assert.deepEqual(stripe.createToken.args[0][0], {card: 'value'});
+    assert.deepEqual(stripe.createToken.args[0][1], {
       name: 'Mr Geoffrey Spinach',
       addressLine1: '10 Maple St',
       addressLine2: '',
@@ -233,8 +233,7 @@ describe('CreatePaymentUser', function() {
   });
 
   it('can create the token using the card address', function() {
-    const createToken = sinon.stub();
-    const wrapper = renderComponent({ createToken });
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     refs.cardAddress = {
       getValue: sinon.stub().returns({
@@ -253,9 +252,9 @@ describe('CreatePaymentUser', function() {
       {currentTarget: {checked: false}});
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    assert.equal(createToken.callCount, 1);
-    assert.deepEqual(createToken.args[0][0], {card: 'value'});
-    assert.deepEqual(createToken.args[0][1], {
+    assert.equal(stripe.createToken.callCount, 1);
+    assert.deepEqual(stripe.createToken.args[0][0], {card: 'value'});
+    assert.deepEqual(stripe.createToken.args[0][1], {
       name: 'Mr Geoffrey Spinach',
       addressLine1: '9 Kangaroo St',
       addressLine2: '',
@@ -268,10 +267,8 @@ describe('CreatePaymentUser', function() {
 
   it('can handle errors when trying to create the token', function() {
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({
-      addNotification,
-      createToken: sinon.stub().callsArgWith(2, 'Uh oh!', null)
-    });
+    stripe.createToken.callsArgWith(2, 'Uh oh!', null);
+    const wrapper = renderComponent({ addNotification });
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('GenericButton').props().action();
@@ -284,17 +281,14 @@ describe('CreatePaymentUser', function() {
   });
 
   it('can create the user using the correct data', function() {
-    const createUser = sinon.stub();
-    const wrapper = renderComponent({
-      createUser,
-      createToken: sinon.stub().callsArgWith(2, null, {id: 'token_123'})
-    });
+    stripe.createToken.callsArgWith(2, null, {id: 'token_123'});
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
     wrapper.find('GenericButton').props().action();
-    assert.equal(createUser.callCount, 1);
-    assert.deepEqual(createUser.args[0][0], {
+    assert.equal(payment.createUser.callCount, 1);
+    assert.deepEqual(payment.createUser.args[0][0], {
       nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
@@ -327,11 +321,8 @@ describe('CreatePaymentUser', function() {
   });
 
   it('can create a business user using the correct data', function() {
-    const createUser = sinon.stub();
-    const wrapper = renderComponent({
-      createUser,
-      createToken: sinon.stub().callsArgWith(2, null, {id: 'token_123'})
-    });
+    stripe.createToken.callsArgWith(2, null, {id: 'token_123'});
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     const extraRefs = {
       VATNumber: {
@@ -346,19 +337,16 @@ describe('CreatePaymentUser', function() {
     wrapper.find('#business').simulate('change', { target: { id: 'business'} });
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    assert.equal(createUser.callCount, 1);
-    const args = createUser.args[0][0];
+    assert.equal(payment.createUser.callCount, 1);
+    const args = payment.createUser.args[0][0];
     assert.equal(args.business, true);
     assert.equal(args.businessName, 'Tuques LTD');
     assert.equal(args.vat, 'vat23');
   });
 
   it('can create the user with a different billing address', function() {
-    const createUser = sinon.stub();
-    const wrapper = renderComponent({
-      createUser,
-      createToken: sinon.stub().callsArgWith(2, null, {id: 'token_123'})
-    });
+    stripe.createToken.callsArgWith(2, null, {id: 'token_123'});
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     refs.billingAddress = {
       getValue: sinon.stub().returns({
@@ -378,8 +366,8 @@ describe('CreatePaymentUser', function() {
       {currentTarget: {checked: false}});
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    assert.equal(createUser.callCount, 1);
-    assert.deepEqual(createUser.args[0][0], {
+    assert.equal(payment.createUser.callCount, 1);
+    assert.deepEqual(payment.createUser.args[0][0], {
       nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
@@ -413,11 +401,9 @@ describe('CreatePaymentUser', function() {
 
   it('can handle errors when trying to create the user', function() {
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({
-      addNotification,
-      createToken: sinon.stub().callsArgWith(2, null, {id: 'token_123'}),
-      createUser: sinon.stub().callsArgWith(1, 'Uh oh!', null)
-    });
+    stripe.createToken.callsArgWith(2, null, {id: 'token_123'});
+    payment.createUser.callsArgWith(1, 'Uh oh!', null);
+    const wrapper = renderComponent({ addNotification });
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
@@ -431,10 +417,9 @@ describe('CreatePaymentUser', function() {
   });
 
   it('reloads the user after the user is created', function() {
-    const wrapper = renderComponent({
-      createToken: sinon.stub().callsArgWith(2, null, {id: 'token_123'}),
-      createUser: sinon.stub().callsArgWith(1, null, null)
-    });
+    stripe.createToken.callsArgWith(2, null, {id: 'token_123'});
+    payment.createUser.callsArgWith(1, null, null);
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
