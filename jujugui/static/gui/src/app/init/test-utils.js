@@ -578,7 +578,7 @@ describe('init utils', () => {
       app = {
         applicationConfig: {
           apiAddress: 'apiAddress',
-          socketTemplate: 'socketTemplate',
+          socketTemplate: 'wss://$server/$uuid',
           socket_protocol: 'socket_protocol',
           uuid: 'uuid'
         },
@@ -615,18 +615,18 @@ describe('init utils', () => {
 
     it('can auto place when requested', () => {
       const autoPlaceUnits = sinon.stub();
-      utils.deploy(app, autoPlaceUnits, sinon.stub(), callback, true);
+      utils.deploy(app, autoPlaceUnits, callback, true);
       assert.equal(autoPlaceUnits.callCount, 1);
     });
 
     it('does not auto place when requested', () => {
       const autoPlaceUnits = sinon.stub();
-      utils.deploy(app, autoPlaceUnits, sinon.stub(), callback, false);
+      utils.deploy(app, autoPlaceUnits, callback, false);
       assert.equal(app._autoPlaceUnits.callCount, 0);
     });
 
     it('can commit to an existing model', () => {
-      utils.deploy(app, sinon.stub(), sinon.stub(), callback);
+      utils.deploy(app, sinon.stub(), callback);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
       assert.equal(app.controllerAPI.createModel.callCount, 0);
@@ -642,7 +642,7 @@ describe('init utils', () => {
     it('can create a new model', () => {
       envGet.withArgs('connected').returns(false);
       utils.deploy(
-        app, sinon.stub(), sinon.stub(), callback, true, 'new-model', {
+        app, sinon.stub(), callback, true, 'new-model', {
           credential: 'the-credential',
           cloud: 'azure',
           region: 'north'
@@ -671,24 +671,16 @@ describe('init utils', () => {
       const args = {model: 'args'};
       envGet.withArgs('connected').returns(false);
       const commit = sinon.stub();
-      const createSocketURL = sinon.stub().returns('wss://socket-url');
       envGet.withArgs('ecs').returns({commit});
       utils._hidePopup = sinon.stub();
       utils.deploy(
-        app, sinon.stub(), createSocketURL, callback, false, 'my-model', args);
+        app, sinon.stub(), callback, false, 'my-model', args);
       assert.equal(app.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
       app.controllerAPI.createModel.args[0][3](null, modelData);
       assert.equal(app.modelUUID, modelData.uuid);
-      assert.equal(createSocketURL.callCount, 1);
-      assert.deepEqual(createSocketURL.args[0][0], {
-        apiAddress: 'apiAddress',
-        template: 'socketTemplate',
-        protocol: 'socket_protocol',
-        uuid: modelData.uuid
-      });
       assert.equal(app.switchEnv.callCount, 1);
-      assert.equal(app.switchEnv.args[0][0], 'wss://socket-url');
+      assert.equal(app.switchEnv.args[0][0], 'wss://apiAddress/the-uuid');
       assert.strictEqual(app.switchEnv.args[0][1], null);
       assert.strictEqual(app.switchEnv.args[0][2], null);
       assert.equal(typeof app.switchEnv.args[0][3], 'function');
@@ -729,7 +721,7 @@ describe('init utils', () => {
       envGet.withArgs('ecs').returns({commit});
       sinon.stub(utils, '_switchModel');
       utils.deploy(
-        app, sinon.stub(), sinon.stub(), callback, false, 'my-model', args);
+        app, sinon.stub(), callback, false, 'my-model', args);
       // Call the handler for the createModel callCount
       app.controllerAPI.createModel.args[0][3](null, modelData);
       // Check to make sure that the state was changed.
@@ -748,7 +740,7 @@ describe('init utils', () => {
       const args = {model: 'args'};
       envGet.withArgs('connected').returns(false);
       utils.deploy(
-        app, sinon.stub(), sinon.stub(), callback, false, 'my-model', args);
+        app, sinon.stub(), callback, false, 'my-model', args);
       assert.equal(app.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
       app.controllerAPI.createModel.args[0][3]('it broke', modelData);

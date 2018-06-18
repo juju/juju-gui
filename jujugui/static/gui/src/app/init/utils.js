@@ -502,7 +502,7 @@ utils.showProfile = (changeState, username) => {
       model's resources.
 */
 utils.deploy = function(
-  app, autoPlaceUnits, createSocketURL, callback, autoplace=true, modelName, args, slaData) {
+  app, autoPlaceUnits, callback, autoplace=true, modelName, args, slaData) {
   const modelAPI = app.modelAPI;
   const controllerAPI = app.controllerAPI;
   const user = app.user;
@@ -570,7 +570,7 @@ utils.deploy = function(
       }
       app.modelUUID = model.uuid;
       const config = app.applicationConfig;
-      const socketUrl = createSocketURL({
+      const socketUrl = utils.createSocketURL({
         apiAddress: config.apiAddress,
         template: config.socketTemplate,
         protocol: config.socket_protocol,

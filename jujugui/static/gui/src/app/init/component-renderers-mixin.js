@@ -978,7 +978,7 @@ Browser: ${navigator.userAgent}`
         credential={modelAPI.get('credential')}
         ddData={ddData}
         deploy={initUtils.deploy.bind(
-          initUtils, this, autoPlaceUnits, initUtils.createSocketURL)}
+          initUtils, this, autoPlaceUnits)}
         formatConstraints={initUtils.formatConstraints.bind(initUtils)}
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
