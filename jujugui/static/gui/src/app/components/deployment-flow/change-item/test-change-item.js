@@ -54,6 +54,12 @@ describe('DeploymentChangeItem', function() {
     assert.compareJSX(wrapper.find('.deployment-change-item__icon'), expected);
   });
 
+  it('can render without an icon', function() {
+    delete change.icon;
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('.deployment-change-item__icon').length, 0);
+  });
+
   it('can display without the time', function() {
     const wrapper = renderComponent({ showTime: false });
     assert.equal(wrapper.find('.deployment-change-item__time').length, 0);
