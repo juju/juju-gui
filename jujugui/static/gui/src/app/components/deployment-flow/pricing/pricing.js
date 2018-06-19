@@ -11,6 +11,7 @@ const Link = require('../../link/link');
 const initUtils = require('../../../init/utils');
 
 const DeploymentPricing = props => {
+  const machineLabel = initUtils.pluralize('machine', parseInt(props.machineCount, 10));
   return (
     <div className="deployment-pricing">
       <DeploymentPlanTable
@@ -48,9 +49,7 @@ const DeploymentPricing = props => {
       <div className="twelve-col no-margin-bottom">
         <div className="six-col no-margin-bottom deployment-pricing__secondary-text">
           <strong>
-            Estimated costs based on
-            {props.machineCount}
-            {initUtils.pluralize('machine', parseInt(props.machineCount, 10))}.
+            Estimated costs based on {props.machineCount} {machineLabel}.
           </strong> Support is billed monthly. You can upgrade the level at any time, and
           downgrade at the end of a month.
         </div>

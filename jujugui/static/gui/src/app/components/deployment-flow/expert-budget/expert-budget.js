@@ -6,7 +6,6 @@ const React = require('react');
 
 const GenericInput = require('../../generic-input/generic-input');
 const GenericButton = require('../../generic-button/generic-button');
-const Notification = require('../../notification/notification');
 
 class DeploymentExpertBudget extends React.Component {
   constructor(props) {
@@ -29,15 +28,6 @@ class DeploymentExpertBudget extends React.Component {
     const changed = this.state.budget !== this.props.budget;
     return (
       <div className="deployment-expert-budget">
-        <Notification
-          content={(
-            <React.Fragment>
-              <strong>Info:</strong>&nbsp;
-              We will email you at fake@test.com when you reach
-              80% of this limit.
-            </React.Fragment>
-          )}
-          type="info" />
         <div className="deployment-expert-budget__row">
           <span>
             Total estimated monthly cost:

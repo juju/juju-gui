@@ -92,7 +92,7 @@ describe('DeploymentExpertIntro', () => {
                     <span className="deployment-expert-intro__machine-count">
                       {1}
                     </span>
-                    machine-instances will be created at your cloud provider
+                    &nbsp;machine-instances will be created at your cloud provider
                   </li>
                   <li>
                     A valid credit credit card

@@ -64,9 +64,7 @@ describe('DeploymentPricing', () => {
         <div className="twelve-col no-margin-bottom">
           <div className="six-col no-margin-bottom deployment-pricing__secondary-text">
             <strong>
-              Estimated costs based on
-              {3}
-              {'machines'}.
+              Estimated costs based on {3} {'machines'}.
             </strong> Support is billed monthly. You can upgrade the level at any time, and
               downgrade at the end of a month.
           </div>
