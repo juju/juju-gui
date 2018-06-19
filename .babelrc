@@ -1,4 +1,9 @@
 {
+  "presets": [],
+  "plugins": [
+    "transform-react-jsx",
+    "rewire"
+  ],
   "env": {
     "production": {
       "presets": [
