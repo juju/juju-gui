@@ -7,7 +7,6 @@ const enzyme = require('enzyme');
 const DeploymentExpertBudget = require('./expert-budget');
 const GenericButton = require('../../generic-button/generic-button');
 const GenericInput = require('../../generic-input/generic-input');
-const Notification = require('../../notification/notification');
 
 describe('DeploymentExpertBudget', () => {
 
@@ -22,15 +21,6 @@ describe('DeploymentExpertBudget', () => {
     const wrapper = renderComponent({ budget: 99 });
     const expected = (
       <div className="deployment-expert-budget">
-        <Notification
-          content={(
-            <React.Fragment>
-              <strong>Info:</strong>&nbsp;
-              We will email you at fake@test.com when you reach
-              80% of this limit.
-            </React.Fragment>
-          )}
-          type="info" />
         <div className="deployment-expert-budget__row">
           <span>
             Total estimated monthly cost:
