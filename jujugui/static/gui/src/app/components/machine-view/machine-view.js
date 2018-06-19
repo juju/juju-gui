@@ -356,7 +356,7 @@ class MachineView extends React.Component {
           sendAnalytics={props.sendAnalytics}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
-          showSSHButton={props.showSSHButtons}
+          showSSHButton={props.showSSHButtons && window.juju_config.flags.expert}
           type="machine" />);
     });
     return (

@@ -36,7 +36,7 @@ class UnitDetails extends React.Component {
 
   /**
     Open the terminal and SSH to the unit.
-    
+
     @params cmds {Array} An array of commands (as strings) to be executed after
       sshing to the unit.
   */
