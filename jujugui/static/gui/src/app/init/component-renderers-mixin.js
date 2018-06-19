@@ -17,7 +17,6 @@ const yui = window.yui;
 
 const autodeploy = require('./autodeploy');
 const initUtils = require('./utils');
-const hotkeys = require('./hotkeys');
 const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./changes-utils');
 const relationUtils = require('./relation-utils');
@@ -407,8 +406,7 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <ModalShortcuts
         closeModal={this._clearShortcutsModal.bind(this)}
-        guiVersion={window.GUI_VERSION.version}
-        keybindings={hotkeys.keyBindings} />,
+        guiVersion={window.GUI_VERSION.version} />,
       document.getElementById('modal-shortcuts'));
   }
 
