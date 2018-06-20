@@ -2,7 +2,6 @@
 'use strict';
 
 const classNames = require('classnames');
-const marked = require('marked');
 const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -952,7 +951,6 @@ Browser: ${navigator.userAgent}`
         plans={this.plans && shapeup.fromShape(this.plans, propTypes.plans)}
         profileUsername={this._getUserInfo(state).profile}
         region={modelAPI.get('region')}
-        renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showPay={this.applicationConfig.flags.pay || false}

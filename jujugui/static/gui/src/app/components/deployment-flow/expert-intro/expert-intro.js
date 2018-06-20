@@ -1,6 +1,7 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
+const marked = require('marked');
 const PropTypes = require('prop-types');
 const React = require('react');
 
@@ -63,7 +64,7 @@ class DeploymentExpertIntro extends React.Component {
       const entity = entityModel.toEntity();
       const machineNumber = this.isBundle ? entity.machineCount : 1;
       const price = `From $${entity.price} per month`;
-      const supportedDescription = this.props.renderMarkdown(entity.supportedDescription);
+      const supportedDescription = marked(entity.supportedDescription);
       content = (
         <div className="deployment-expert-intro">
           <div className="twelve-col">
@@ -76,8 +77,7 @@ class DeploymentExpertIntro extends React.Component {
               </h2>
               <div className="six-col">
                 <EntityContentDescription
-                  description={entity.description}
-                  renderMarkdown={this.props.renderMarkdown} />
+                  description={entity.description} />
                 {this._generateImage()}
               </div>
               <div className="twelve-col">
@@ -146,7 +146,6 @@ DeploymentExpertIntro.propTypes = {
   entityModel: PropTypes.object,
   generatePath: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,
-  renderMarkdown: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   staticURL: PropTypes.string
 };

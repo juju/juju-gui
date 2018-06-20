@@ -82,7 +82,6 @@ describe('DeploymentFlow', function() {
       payment,
       plans,
       profileUsername: 'Spinach',
-      renderMarkdown: sinon.stub(),
       sendAnalytics: sinon.stub(),
       setModelName: sinon.stub(),
       showPay: false,
@@ -361,13 +360,11 @@ describe('DeploymentFlow', function() {
     };
     const entityData = [entityModel];
     window.models.Bundle.returns(entityModel);
-    const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: {id: entityId},
-      modelCommitted: false,
-      renderMarkdown: renderMarkdown
+      modelCommitted: false
     });
     assert.equal(wrapper.find('Spinner').length, 1);
     assert.equal(charmstore.getEntity.args[0][0], entityId);
@@ -405,13 +402,11 @@ describe('DeploymentFlow', function() {
     charmstore.getEntity.withArgs(entityId2).callsArgWith(1, null, [entityId2]);
     window.models.Bundle.withArgs(entityId).returns(entityModel);
     window.models.Bundle.withArgs(entityId2).returns(entityModel2);
-    const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: { id: entityId },
-      modelCommitted: false,
-      renderMarkdown: renderMarkdown
+      modelCommitted: false
     });
     const instance = wrapper.instance();
     assert.equal(instance.state.isDirectDeploy, true);
@@ -441,13 +436,11 @@ describe('DeploymentFlow', function() {
     };
     charmstore.getEntity.withArgs(entityId).callsArgWith(1, null, [entityId]);
     window.models.Bundle.withArgs(entityId).returns(entityModel);
-    const renderMarkdown = sinon.stub();
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
       ddData: { id: entityId },
-      modelCommitted: false,
-      renderMarkdown: renderMarkdown
+      modelCommitted: false
     });
     const instance = wrapper.instance();
     assert.equal(instance.state.isDirectDeploy, true);
@@ -479,7 +472,6 @@ describe('DeploymentFlow', function() {
       changeState: changeState,
       ddData: {id: entityId},
       modelCommitted: false,
-      renderMarkdown: sinon.stub(),
       showPay: true
     });
     assert.equal(wrapper.find('Spinner').length, 1);
