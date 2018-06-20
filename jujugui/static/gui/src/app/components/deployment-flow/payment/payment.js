@@ -151,15 +151,13 @@ DeploymentPayment.propTypes = {
   payment: shapeup.shape({
     createUser: PropTypes.func.isRequired,
     getCountries: PropTypes.func.isRequired,
-    getUser: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
+    getUser: PropTypes.func.isRequired
   }),
   paymentUser: PropTypes.object,
   setPaymentUser: PropTypes.func.isRequired,
   stripe: shapeup.shape({
     createCardElement: PropTypes.func,
-    createToken: PropTypes.func,
-    reshape: shapeup.reshapeFunc
+    createToken: PropTypes.func
   }),
   username: PropTypes.string.isRequired
 };

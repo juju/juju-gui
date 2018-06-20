@@ -1262,15 +1262,13 @@ DeploymentFlow.propTypes = {
   charmsGetById: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     getDiagramURL: PropTypes.func.isRequired,
-    getEntity: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
+    getEntity: PropTypes.func.isRequired
   }).isRequired,
   cloud: PropTypes.object,
   controllerAPI: shapeup.shape({
     getCloudCredentialNames: PropTypes.func.isRequired,
     getCloudCredentials: PropTypes.func.isRequired,
     listClouds: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
     updateCloudCredential: PropTypes.func.isRequired
   }).isRequired,
   controllerIsReady: PropTypes.func.isRequired,
@@ -1294,21 +1292,18 @@ DeploymentFlow.propTypes = {
   loginToController: PropTypes.func.isRequired,
   modelAPI: shapeup.shape({
     addKeys: PropTypes.func.isRequired,
-    importKeys: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
+    importKeys: PropTypes.func.isRequired
   }).isRequired,
   modelCommitted: PropTypes.bool,
   modelName: PropTypes.string.isRequired,
   payment: shapeup.shape({
     createUser: PropTypes.func.isRequired,
     getCountries: PropTypes.func.isRequired,
-    getUser: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
+    getUser: PropTypes.func.isRequired
   }),
   plans: shapeup.shape({
     listBudgets: PropTypes.func.isRequired,
-    listPlansForCharm: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
+    listPlansForCharm: PropTypes.func.isRequired
   }).isRequired,
   profileUsername: PropTypes.string.isRequired,
   region: PropTypes.string,
@@ -1321,13 +1316,11 @@ DeploymentFlow.propTypes = {
   stats: PropTypes.object,
   stripe: shapeup.shape({
     createCardElement: PropTypes.func.isRequired,
-    createToken: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
+    createToken: PropTypes.func.isRequired
   }),
   terms: shapeup.shape({
     addAgreement: PropTypes.func.isRequired,
     getAgreementsByTerms: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
     showTerms: PropTypes.func.isRequired
   }).isRequired,
   updateModelName: PropTypes.func,

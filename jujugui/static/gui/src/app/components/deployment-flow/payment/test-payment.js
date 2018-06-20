@@ -39,15 +39,15 @@ describe('DeploymentPayment', function() {
         name: 'Company'
       }]
     });
-    payment = shapeup.addReshape({
+    payment = {
       createUser: sinon.stub(),
       getCountries: sinon.stub(),
       getUser
-    });
-    stripe = shapeup.addReshape({
+    };
+    stripe = {
       createCardElement: sinon.stub(),
       createToken: sinon.stub()
-    });
+    };
   });
 
   it('can display a loading spinner', function() {

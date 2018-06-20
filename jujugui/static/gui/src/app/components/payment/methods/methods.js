@@ -254,8 +254,7 @@ PaymentMethods.propTypes = {
   paymentUser: PropTypes.object.isRequired,
   stripe: shapeup.shape({
     createCardElement: PropTypes.func,
-    createToken: PropTypes.func,
-    reshape: shapeup.reshapeFunc
+    createToken: PropTypes.func
   }),
   updateUser: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired

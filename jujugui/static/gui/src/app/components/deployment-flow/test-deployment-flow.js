@@ -3,7 +3,6 @@
 
 const enzyme = require('enzyme');
 const React = require('react');
-const shapeup = require('shapeup');
 
 const DeploymentFlow = require('./deployment-flow');
 const AccordionSection = require('../accordion-section/accordion-section');
@@ -124,33 +123,33 @@ describe('DeploymentFlow', function() {
       {get: sinon.stub().returns('service1')}
     ];
     acl = {isReadOnly: sinon.stub().returns(false)};
-    charmstore = shapeup.addReshape({
+    charmstore = {
       getDiagramURL: sinon.stub(),
       getEntity: sinon.stub()
-    });
-    controllerAPI = shapeup.addReshape({
+    };
+    controllerAPI = {
       getCloudCredentialNames: sinon.stub(),
       getCloudCredentials: sinon.stub(),
       listClouds: sinon.stub(),
       updateCloudCredential: sinon.stub()
-    });
-    modelAPI = shapeup.addReshape({
+    };
+    modelAPI = {
       addKeys: sinon.stub(),
       importKeys: sinon.stub()
-    });
-    payment = shapeup.addReshape({
+    };
+    payment = {
       createUser: sinon.stub(),
       getCountries: sinon.stub(),
       getUser: sinon.stub()
-    });
-    plans = shapeup.addReshape({
+    };
+    plans = {
       listBudgets: sinon.stub(),
       listPlansForCharm: sinon.stub()
-    });
-    stripe = shapeup.addReshape({
+    };
+    stripe = {
       createCardElement: sinon.stub(),
       createToken: sinon.stub()
-    });
+    };
     const getAgreementsByTerms = sinon.stub().callsArgWith(1, null, [{
       name: 'service1-terms',
       content: 'service1 terms.',
@@ -161,11 +160,11 @@ describe('DeploymentFlow', function() {
       content: 'Mysql terms.',
       revision: 9
     }]);
-    terms = shapeup.addReshape({
+    terms = {
       addAgreement: sinon.stub(),
       getAgreementsByTerms,
       showTerms: sinon.stub()
-    });
+    };
   });
 
   afterEach(() => {

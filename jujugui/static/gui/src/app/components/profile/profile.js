@@ -264,8 +264,7 @@ Profile.propTypes = {
   storeUser: PropTypes.func.isRequired,
   stripe: shapeup.shape({
     createCardElement: PropTypes.func,
-    createToken: PropTypes.func,
-    reshape: shapeup.reshapeFunc
+    createToken: PropTypes.func
   }),
   switchModel: PropTypes.func.isRequired,
   userInfo: shapeup.shape({

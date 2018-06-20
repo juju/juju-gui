@@ -54,10 +54,10 @@ describe('CreatePaymentUser', function() {
       createUser: sinon.stub(),
       getCountries: sinon.stub()
     });
-    stripe = shapeup.addReshape({
+    stripe = {
       createCardElement: sinon.stub(),
       createToken: sinon.stub()
-    });
+    };
   });
 
   it('can display a personal form', function() {

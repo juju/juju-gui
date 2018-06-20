@@ -231,8 +231,7 @@ Payment.propTypes = {
   }),
   stripe: shapeup.shape({
     createCardElement: PropTypes.func,
-    createToken: PropTypes.func,
-    reshape: shapeup.reshapeFunc
+    createToken: PropTypes.func
   }),
   username: PropTypes.string.isRequired
 };

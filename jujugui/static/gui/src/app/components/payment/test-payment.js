@@ -53,8 +53,7 @@ describe('Payment', function() {
     };
     stripe = {
       createCardElement: sinon.stub(),
-      createToken: sinon.stub(),
-      reshape: shapeup.reshapeFunc
+      createToken: sinon.stub()
     };
   });
 
