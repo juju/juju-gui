@@ -31,7 +31,6 @@ describe('Charmbrowser', function() {
       listPlansForCharm={options.listPlansForCharm || sinon.stub()}
       renderMarkdown={options.renderMarkdown || sinon.stub()}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
-      series={options.series || {}}
       setPageTitle={options.setPageTitle || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
       staticURL={options.staticURL} />
@@ -57,7 +56,6 @@ describe('Charmbrowser', function() {
     const query = 'django';
     appState.current.search = {text: query};
     appState.generatePath = sinon.stub();
-    const series = {};
     const addNotification = sinon.stub();
     const deployService = sinon.stub();
     const addToModel = sinon.stub();
@@ -71,7 +69,6 @@ describe('Charmbrowser', function() {
       deployService,
       getBundleYAML,
       importBundleYAML,
-      series,
       setPageTitle
     });
     const searchResults = wrapper.find('SearchResults');
@@ -89,7 +86,6 @@ describe('Charmbrowser', function() {
           query={query}
           requires={undefined}
           series={undefined}
-          seriesList={series}
           setPageTitle={setPageTitle}
           sort={undefined}
           tags={undefined}
@@ -100,10 +96,8 @@ describe('Charmbrowser', function() {
 
   it('displays the store when the app state calls for it', function() {
     const setPageTitle = sinon.stub();
-    const seriesList = {};
     const wrapper = renderComponent({
       appState,
-      seriesList,
       setPageTitle,
       staticURL: 'surl'
     });

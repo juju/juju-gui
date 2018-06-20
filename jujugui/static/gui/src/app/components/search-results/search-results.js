@@ -320,7 +320,7 @@ class SearchResults extends React.Component {
           label: 'All',
           value: ''
         }];
-        var series = this.props.seriesList;
+        var series = initUtils.getSeriesList();
         var seriesMap = Object.keys(series).map(key => {
           return {
             label: series[key].name,
@@ -570,7 +570,6 @@ SearchResults.propTypes = {
   query: PropTypes.string,
   requires: PropTypes.string,
   series: PropTypes.string,
-  seriesList: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   sort: PropTypes.string,
   tags: PropTypes.string,

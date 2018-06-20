@@ -631,7 +631,6 @@ Browser: ${navigator.userAgent}`
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
-        series={initUtils.getSeriesList()}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         staticURL={this.applicationConfig.staticURL || ''} />,

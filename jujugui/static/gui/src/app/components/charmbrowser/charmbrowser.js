@@ -150,7 +150,6 @@ class Charmbrowser extends React.Component {
             query={search.text}
             requires={search.requires}
             series={search.series}
-            seriesList={this.props.series}
             setPageTitle={this.props.setPageTitle}
             sort={search.sort}
             tags={search.tags}
@@ -240,7 +239,6 @@ Charmbrowser.propTypes = {
   listPlansForCharm: PropTypes.func.isRequired,
   renderMarkdown: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
-  series: PropTypes.object.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string
