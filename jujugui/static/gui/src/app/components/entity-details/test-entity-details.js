@@ -25,8 +25,6 @@ describe('EntityDetails', function() {
         deployService={options.deployService || sinon.stub()}
         displayLightbox={options.displayLightbox || sinon.stub()}
         flags={options.flags || {}}
-        getEntity={
-          options.getEntity || sinon.stub().callsArgWith(1, null, [mockEntity])}
         getModelName={options.getModelName || sinon.stub()}
         hash={options.hash || 'readme'}
         id={options.id || mockEntity.get('id')}
@@ -60,6 +58,7 @@ describe('EntityDetails', function() {
     charmstore = {
       getBundleYAML: sinon.stub(),
       getDiagramURL: sinon.stub(),
+      getEntity: sinon.stub().callsArgWith(1, null, [mockEntity]),
       getFile: sinon.stub(),
       reshape: shapeup.reshapeFunc,
       url: 'http://example.com'
@@ -73,15 +72,13 @@ describe('EntityDetails', function() {
 
   it('fetches an entity properly', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
-    const id = mockEntity.get('id');
-    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    charmstore.getEntity.callsArgWith(1, null, [mockEntity]);
     const wrapper = renderComponent({
-      flags: {'test.ddeploy': true},
-      getEntity
+      flags: {'test.ddeploy': true}
     });
-    assert.isTrue(getEntity.calledOnce,
+    assert.isTrue(charmstore.getEntity.calledOnce,
       'getEntity function not called');
-    assert.equal(getEntity.args[0][0], id,
+    assert.equal(charmstore.getEntity.args[0][0], 'django',
       'getEntity not called with the entity ID');
     const expected = (
       <div className="entity-details charm"
@@ -129,10 +126,8 @@ describe('EntityDetails', function() {
   });
 
   it('can display a message if there is a loading error', function() {
-    const getEntity = sinon.stub().callsArgWith(1, 'bad wolf', [mockEntity]);
-    const wrapper = renderComponent({
-      getEntity
-    });
+    charmstore.getEntity.callsArgWith(1, 'bad wolf', [mockEntity]);
+    const wrapper = renderComponent();
     const expected = (
       <div className="entity-details"
         ref="content"
@@ -151,18 +146,15 @@ describe('EntityDetails', function() {
 
   it('will abort the request when unmounting', function() {
     const abort = sinon.stub();
-    const getEntity = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({
-      getEntity
-    });
+    charmstore.getEntity = sinon.stub().returns({abort: abort});
+    const wrapper = renderComponent();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 
   it('sets the focus when rendered', function() {
-    const wrapper = renderComponent({
-      getEntity: sinon.stub()
-    });
+    charmstore.getEntity = sinon.stub();
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
     assert.equal(instance.refs.content.focus.callCount, 1);
   });
@@ -170,12 +162,9 @@ describe('EntityDetails', function() {
   it('can get plans', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
     const plans = ['plan1', 'plan2'];
-    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    charmstore.getEntity.callsArgWith(1, null, [mockEntity]);
     const listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
-    const wrapper = renderComponent({
-      getEntity,
-      listPlansForCharm
-    });
+    const wrapper = renderComponent({ listPlansForCharm });
     assert.equal(wrapper.find('EntityHeader').prop('hasPlans'), true);
     assert.deepEqual(wrapper.find('EntityHeader').prop('plans'), plans);
     assert.equal(wrapper.find('EntityContent').prop('hasPlans'), true);
@@ -186,12 +175,9 @@ describe('EntityDetails', function() {
 
   it('can set plans to empty on error', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
-    const getEntity = sinon.stub().callsArgWith(1, null, [mockEntity]);
+    charmstore.getEntity.callsArgWith(1, null, [mockEntity]);
     const listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
-    const wrapper = renderComponent({
-      getEntity,
-      listPlansForCharm
-    });
+    const wrapper = renderComponent({ listPlansForCharm });
     assert.equal(wrapper.find('EntityHeader').prop('hasPlans'), true);
     assert.deepEqual(wrapper.find('EntityHeader').prop('plans'), []);
     assert.equal(wrapper.find('EntityContent').prop('hasPlans'), true);
@@ -202,11 +188,8 @@ describe('EntityDetails', function() {
   it('handles errors when getting an entity', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
     const addNotification = sinon.stub();
-    const getEntity = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    renderComponent({
-      addNotification,
-      getEntity
-    });
+    charmstore.getEntity.callsArgWith(1, 'Uh oh!', null);
+    renderComponent({ addNotification });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'cannot fetch the entity',

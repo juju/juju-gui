@@ -610,23 +610,6 @@ Browser: ${navigator.userAgent}`
         }
       }
     });
-    /*
-     Retrieve from the charm store information on the charm or bundle with
-     the given new style id.
-
-     @returns {Object} The XHR reference for the getEntity call.
-    */
-    const getEntity = (id, callback) => {
-      let url;
-      try {
-        url = urls.URL.fromString(id);
-      } catch(err) {
-        callback(err, {});
-        return;
-      }
-      // Get the entity and return the XHR.
-      return charmstore.getEntity(url.legacyPath(), callback);
-    };
     const propTypes = Charmbrowser.propTypes;
     ReactDOM.render(
       <Charmbrowser
@@ -641,7 +624,6 @@ Browser: ${navigator.userAgent}`
         deployService={this.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
         flags={window.juju_config.flags}
-        getEntity={getEntity}
         getModelName={this._getModelName.bind(this)}
         gisf={this.applicationConfig.gisf}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(

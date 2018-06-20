@@ -169,6 +169,7 @@ class Charmbrowser extends React.Component {
             charmstore={shapeup.addReshape({
               getBundleYAML: charmstore.getBundleYAML,
               getDiagramURL: charmstore.getDiagramURL,
+              getEntity: charmstore.getEntity,
               getFile: charmstore.getFile,
               url: charmstore.url
             })}
@@ -176,7 +177,6 @@ class Charmbrowser extends React.Component {
             deployService={this.props.deployService}
             displayLightbox={this.props.displayLightbox}
             flags={this.props.flags}
-            getEntity={this.props.getEntity}
             getModelName={this.props.getModelName}
             hash={currentState.hash}
             id={id}
@@ -224,6 +224,7 @@ Charmbrowser.propTypes = {
   charmstore: shapeup.shape({
     getBundleYAML: PropTypes.func.isRequired,
     getDiagramURL: PropTypes.func.isRequired,
+    getEntity: PropTypes.func.isRequired,
     getFile: PropTypes.func.isRequired,
     search: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired
@@ -233,7 +234,6 @@ Charmbrowser.propTypes = {
   deployService: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
-  getEntity: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,

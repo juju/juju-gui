@@ -25,7 +25,6 @@ describe('Charmbrowser', function() {
       deployService={options.deployService || sinon.stub()}
       displayLightbox={options.displayLightbox}
       flags={options.flags || {}}
-      getEntity={options.getEntity || sinon.stub()}
       getModelName={options.getModelName || sinon.stub()}
       gisf={options.gisf === undefined ? true : options.gisf}
       importBundleYAML={options.importBundleYAML || sinon.stub()}
@@ -47,6 +46,7 @@ describe('Charmbrowser', function() {
     charmstore = {
       getBundleYAML: sinon.stub(),
       getDiagramURL: sinon.stub(),
+      getEntity: sinon.stub(),
       getFile: sinon.stub(),
       search: sinon.stub(),
       url: 'http://example.com'
@@ -125,7 +125,6 @@ describe('Charmbrowser', function() {
     const id = 'foobar';
     appState.current.store = id;
     appState.current.hash = 'readme';
-    const getEntity = sinon.spy();
     const clearLightbox = sinon.stub();
     const displayLightbox = sinon.stub();
     const deployService = sinon.spy();
@@ -143,7 +142,6 @@ describe('Charmbrowser', function() {
       deployService,
       displayLightbox,
       flags: {'test.ddeploy': true},
-      getEntity,
       getModelName,
       importBundleYAML,
       listPlansForCharm,
@@ -163,6 +161,7 @@ describe('Charmbrowser', function() {
           charmstore={{
             getBundleYAML: charmstore.getBundleYAML,
             getDiagramURL: charmstore.getDiagramURL,
+            getEntity: charmstore.getEntity,
             getFile: charmstore.getFile,
             reshape: shapeup.reshapeFunc,
             url: charmstore.url
@@ -171,7 +170,6 @@ describe('Charmbrowser', function() {
           deployService={deployService}
           displayLightbox={displayLightbox}
           flags={{'test.ddeploy': true}}
-          getEntity={getEntity}
           getModelName={getModelName}
           hash="readme"
           id={id}

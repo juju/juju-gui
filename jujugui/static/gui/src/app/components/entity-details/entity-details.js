@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
+const { urls } = require('jaaslib');
 
 const EntityContent = require('./content/content');
 const EntityHeader = require('./header/header');
@@ -28,8 +29,7 @@ class EntityDetails extends React.Component {
     this.refs.content.focus();
     // Be sure to convert the id to the legacy id as the URL will be in the
     // new id format.
-    const xhr = this.props.getEntity(
-      this.props.id, this._fetchCallback.bind(this));
+    const xhr = this._getEntity(this.props.id, this._fetchCallback.bind(this));
     this.xhrs.push(xhr);
   }
 
@@ -38,6 +38,26 @@ class EntityDetails extends React.Component {
       xhr.abort();
     });
     this.props.setPageTitle();
+  }
+
+  /**
+   Retrieve from the charm store information on the charm or bundle with
+   the given new style id.
+
+   @param id {String} The entity id.
+   @param callback {Function} The function to call when the entity has be retrieved.
+   @returns {Object} The XHR reference for the getEntity call.
+  */
+  _getEntity(id, callback) {
+    let url;
+    try {
+      url = urls.URL.fromString(id);
+    } catch(err) {
+      callback(err, {});
+      return;
+    }
+    // Get the entity and return the XHR.
+    return this.props.charmstore.getEntity(url.legacyPath(), callback);
   }
 
   /**
@@ -255,6 +275,7 @@ EntityDetails.propTypes = {
   charmstore: shapeup.shape({
     getBundleYAML: PropTypes.func.isRequired,
     getDiagramURL: PropTypes.func.isRequired,
+    getEntity: PropTypes.func.isRequired,
     getFile: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc,
     url: PropTypes.string.isRequired
@@ -263,7 +284,6 @@ EntityDetails.propTypes = {
   deployService: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
-  getEntity: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   hash: PropTypes.string,
   id: PropTypes.string.isRequired,
