@@ -165,13 +165,7 @@ class Charmbrowser extends React.Component {
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             changeState={changeState}
-            charmstore={shapeup.addReshape({
-              getBundleYAML: charmstore.getBundleYAML,
-              getDiagramURL: charmstore.getDiagramURL,
-              getEntity: charmstore.getEntity,
-              getFile: charmstore.getFile,
-              url: charmstore.url
-            })}
+            charmstore={shapeup.fromShape(charmstore, EntityDetails.propTypes.charmstore)}
             clearLightbox={this.props.clearLightbox}
             deployService={this.props.deployService}
             displayLightbox={this.props.displayLightbox}
