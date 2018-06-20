@@ -3,6 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const shapeup = require('shapeup');
 
 const Charmbrowser = require('./charmbrowser');
 const EntityDetails = require('../entity-details/entity-details');
@@ -10,26 +11,22 @@ const SearchResults = require('../search-results/search-results');
 const Store = require('../store/store');
 
 describe('Charmbrowser', function() {
-  var acl, appState;
+  var acl, appState, charmstore;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Charmbrowser
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       addToModel={options.addToModel || sinon.stub()}
-      apiUrl={options.apiUrl || 'http://example.com/'}
-      apiVersion={options.apiUrl || 'v5'}
+      apiVersion={options.apiVersion || 'v5'}
       appState={options.appState || {}}
-      charmstoreSearch={options.charmstoreSearch || sinon.stub()}
-      charmstoreURL={options.apiUrl || 'http://1.2.3.4/'}
+      charmstore={options.charmstore || charmstore}
+      charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
       clearLightbox={options.clearLightbox}
       deployService={options.deployService || sinon.stub()}
       displayLightbox={options.displayLightbox}
       flags={options.flags || {}}
-      getBundleYAML={options.getBundleYAML || sinon.stub()}
-      getDiagramURL={options.getDiagramURL || sinon.stub()}
       getEntity={options.getEntity || sinon.stub()}
-      getFile={options.getFile || sinon.stub()}
       getModelName={options.getModelName || sinon.stub()}
       gisf={options.gisf === undefined ? true : options.gisf}
       importBundleYAML={options.importBundleYAML || sinon.stub()}
@@ -48,6 +45,13 @@ describe('Charmbrowser', function() {
       current: {},
       changeState: sinon.stub()
     };
+    charmstore = {
+      getBundleYAML: sinon.stub(),
+      getDiagramURL: sinon.stub(),
+      getFile: sinon.stub(),
+      search: sinon.stub(),
+      url: 'http://example.com'
+    };
   });
 
   it('displays the search results when the app state calls for it', function() {
@@ -60,13 +64,11 @@ describe('Charmbrowser', function() {
     const addToModel = sinon.stub();
     const getBundleYAML = sinon.stub();
     const importBundleYAML = sinon.stub();
-    const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
     const wrapper = renderComponent({
       addNotification,
       addToModel,
       appState,
-      charmstoreSearch,
       deployService,
       getBundleYAML,
       importBundleYAML,
@@ -81,7 +83,7 @@ describe('Charmbrowser', function() {
           acl={acl}
           addToModel={addToModel}
           changeState={searchResults.prop('changeState')}
-          charmstoreSearch={charmstoreSearch}
+          charmstoreSearch={charmstore.search}
           generatePath={searchResults.prop('generatePath')}
           owner={undefined}
           provides={undefined}
@@ -98,12 +100,10 @@ describe('Charmbrowser', function() {
   });
 
   it('displays the store when the app state calls for it', function() {
-    const charmstoreSearch = sinon.stub();
     const setPageTitle = sinon.stub();
     const seriesList = {};
     const wrapper = renderComponent({
       appState,
-      charmstoreSearch,
       seriesList,
       setPageTitle,
       staticURL: 'surl'
@@ -125,7 +125,6 @@ describe('Charmbrowser', function() {
 
   it('displays entity details when the app state calls for it', function() {
     const id = 'foobar';
-    const apiUrl = 'http://example.com';
     appState.current.store = id;
     appState.current.hash = 'readme';
     const getEntity = sinon.spy();
@@ -133,27 +132,20 @@ describe('Charmbrowser', function() {
     const displayLightbox = sinon.stub();
     const deployService = sinon.spy();
     const importBundleYAML = sinon.spy();
-    const getBundleYAML = sinon.spy();
     const getModelName = sinon.spy();
-    const getFile = sinon.spy();
     const renderMarkdown = sinon.spy();
-    const getDiagramURL = sinon.spy();
     const listPlansForCharm = sinon.spy();
     const addNotification = sinon.spy();
     const showTerms = sinon.stub();
     const setPageTitle = sinon.spy();
     const wrapper = renderComponent({
       addNotification,
-      apiUrl,
       appState,
       clearLightbox,
       deployService,
       displayLightbox,
       flags: {'test.ddeploy': true},
-      getBundleYAML,
-      getDiagramURL,
       getEntity,
-      getFile,
       getModelName,
       importBundleYAML,
       listPlansForCharm,
@@ -169,16 +161,19 @@ describe('Charmbrowser', function() {
         <EntityDetails
           acl={acl}
           addNotification={addNotification}
-          apiUrl={apiUrl}
           changeState={entityDetails.prop('changeState')}
+          charmstore={{
+            getBundleYAML: charmstore.getBundleYAML,
+            getDiagramURL: charmstore.getDiagramURL,
+            getFile: charmstore.getFile,
+            reshape: shapeup.reshapeFunc,
+            url: charmstore.url
+          }}
           clearLightbox={clearLightbox}
           deployService={deployService}
           displayLightbox={displayLightbox}
           flags={{'test.ddeploy': true}}
-          getBundleYAML={getBundleYAML}
-          getDiagramURL={getDiagramURL}
           getEntity={getEntity}
-          getFile={getFile}
           getModelName={getModelName}
           hash="readme"
           id={id}

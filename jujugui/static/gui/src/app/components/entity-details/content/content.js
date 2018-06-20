@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AccordionSection = require('../../accordion-section/accordion-section');
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
@@ -347,7 +348,7 @@ class EntityContent extends React.Component {
     return (
       <EntityContentDiagram
         clearLightbox={this.props.clearLightbox}
-        diagramUrl={this.props.getDiagramURL(entityModel.get('id'))}
+        diagramUrl={this.props.charmstore.getDiagramURL(entityModel.get('id'))}
         displayLightbox={this.props.displayLightbox}
         isExpandable={true}
         isRow={false}
@@ -383,7 +384,7 @@ class EntityContent extends React.Component {
     if (entityModel.get('entityType') === 'charm') {
       return (
         <EntityResources
-          apiUrl={this.props.apiUrl}
+          apiUrl={this.props.charmstore.url}
           entityId={entityModel.get('id')}
           resources={entityModel.get('resources')} />);
     }
@@ -625,7 +626,7 @@ class EntityContent extends React.Component {
                 addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
                 entityModel={entityModel}
-                getFile={this.props.getFile}
+                getFile={this.props.charmstore.getFile}
                 hash={this.props.hash}
                 renderMarkdown={this.props.renderMarkdown}
                 scrollCharmbrowser={this.props.scrollCharmbrowser} />
@@ -637,7 +638,7 @@ class EntityContent extends React.Component {
               {this._generateResources()}
               {this._showEntityRelations()}
               <EntityFiles
-                apiUrl={this.props.apiUrl}
+                apiUrl={this.props.charmstore.url}
                 entityModel={entityModel} />
               {this._generateCard()}
             </div>
@@ -655,14 +656,17 @@ EntityContent.defaultProps = {
 
 EntityContent.propTypes = {
   addNotification: PropTypes.func.isRequired,
-  apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  charmstore: shapeup.shape({
+    getDiagramURL: PropTypes.func.isRequired,
+    getFile: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    url: PropTypes.string.isRequired
+  }).isRequired,
   clearLightbox: PropTypes.func,
   displayLightbox: PropTypes.func,
   entityModel: PropTypes.object.isRequired,
   flags: PropTypes.object,
-  getDiagramURL: PropTypes.func.isRequired,
-  getFile: PropTypes.func.isRequired,
   hasPlans: PropTypes.bool.isRequired,
   hash: PropTypes.string,
   plans: PropTypes.array,

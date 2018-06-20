@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const EntityContent = require('./content/content');
 const EntityHeader = require('./header/header');
@@ -70,6 +71,7 @@ class EntityDetails extends React.Component {
         break;
       case 'entity-details':
         var entityModel = this.state.entityModel;
+        const { charmstore } = this.props;
         activeChild = (
           <div>
             <EntityHeader
@@ -78,7 +80,7 @@ class EntityDetails extends React.Component {
               changeState={this.props.changeState}
               deployService={this.props.deployService}
               entityModel={entityModel}
-              getBundleYAML={this.props.getBundleYAML}
+              getBundleYAML={this.props.charmstore.getBundleYAML}
               getModelName={this.props.getModelName}
               hasPlans={this.state.hasPlans}
               importBundleYAML={this.props.importBundleYAML}
@@ -86,14 +88,16 @@ class EntityDetails extends React.Component {
               scrollPosition={this.props.scrollPosition} />
             <EntityContent
               addNotification={this.props.addNotification}
-              apiUrl={this.props.apiUrl}
               changeState={this.props.changeState}
+              charmstore={shapeup.addReshape({
+                getDiagramURL: charmstore.getDiagramURL,
+                getFile: charmstore.getFile,
+                url: charmstore.url
+              })}
               clearLightbox={this.props.clearLightbox}
               displayLightbox={this.props.displayLightbox}
               entityModel={entityModel}
               flags={this.props.flags}
-              getDiagramURL={this.props.getDiagramURL}
-              getFile={this.props.getFile}
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
               plans={this.state.plans}
@@ -247,16 +251,19 @@ class EntityDetails extends React.Component {
 EntityDetails.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  apiUrl: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
+  charmstore: shapeup.shape({
+    getBundleYAML: PropTypes.func.isRequired,
+    getDiagramURL: PropTypes.func.isRequired,
+    getFile: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    url: PropTypes.string.isRequired
+  }).isRequired,
   clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
-  getBundleYAML: PropTypes.func.isRequired,
-  getDiagramURL: PropTypes.func.isRequired,
   getEntity: PropTypes.func.isRequired,
-  getFile: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   hash: PropTypes.string,
   id: PropTypes.string.isRequired,

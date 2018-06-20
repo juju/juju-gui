@@ -4,6 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const shapeup = require('shapeup');
 
 const EntityDetails = require('../entity-details/entity-details');
 const Panel = require('../panel/panel');
@@ -143,7 +144,7 @@ class Charmbrowser extends React.Component {
             acl={this.props.acl}
             addToModel={this.props.addToModel}
             changeState={changeState}
-            charmstoreSearch={this.props.charmstoreSearch}
+            charmstoreSearch={this.props.charmstore.search}
             generatePath={appState.generatePath.bind(appState)}
             owner={search.owner}
             provides={search.provides}
@@ -160,20 +161,23 @@ class Charmbrowser extends React.Component {
       case 'entity-details':
         // TODO frankban: do we still really need this?
         const id = currentState.store || `~${currentState.user}`;
+        const { charmstore } = this.props;
         activeChild = (
           <EntityDetails
             acl={this.props.acl}
             addNotification={this.props.addNotification}
-            apiUrl={this.props.apiUrl}
             changeState={changeState}
+            charmstore={shapeup.addReshape({
+              getBundleYAML: charmstore.getBundleYAML,
+              getDiagramURL: charmstore.getDiagramURL,
+              getFile: charmstore.getFile,
+              url: charmstore.url
+            })}
             clearLightbox={this.props.clearLightbox}
             deployService={this.props.deployService}
             displayLightbox={this.props.displayLightbox}
             flags={this.props.flags}
-            getBundleYAML={this.props.getBundleYAML}
-            getDiagramURL={this.props.getDiagramURL}
             getEntity={this.props.getEntity}
-            getFile={this.props.getFile}
             getModelName={this.props.getModelName}
             hash={currentState.hash}
             id={id}
@@ -217,19 +221,21 @@ Charmbrowser.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
-  apiUrl: PropTypes.string.isRequired,
   apiVersion: PropTypes.string.isRequired,
   appState: PropTypes.object.isRequired,
-  charmstoreSearch: PropTypes.func.isRequired,
+  charmstore: shapeup.shape({
+    getBundleYAML: PropTypes.func.isRequired,
+    getDiagramURL: PropTypes.func.isRequired,
+    getFile: PropTypes.func.isRequired,
+    search: PropTypes.func.isRequired,
+    url: PropTypes.string.isRequired
+  }).isRequired,
   charmstoreURL: PropTypes.string.isRequired,
   clearLightbox: PropTypes.func,
   deployService: PropTypes.func.isRequired,
   displayLightbox: PropTypes.func,
   flags: PropTypes.object,
-  getBundleYAML: PropTypes.func.isRequired,
-  getDiagramURL: PropTypes.func.isRequired,
   getEntity: PropTypes.func.isRequired,
-  getFile: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,

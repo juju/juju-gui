@@ -1,8 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const AccordionSection = require('../../accordion-section/accordion-section');
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
@@ -31,19 +32,17 @@ function generateScript(isBundle, isDD) {
 }
 
 describe('EntityContent', function() {
-  let mockEntity;
+  let charmstore, mockEntity;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityContent
       addNotification={options.addNotification || sinon.stub()}
-      apiUrl={options.apiUrl || 'http://example.com'}
       changeState={options.changeState || sinon.stub()}
+      charmstore={options.charmstore || charmstore}
       clearLightbox={options.clearLightbox || sinon.stub()}
       displayLightbox={options.displayLightbox || sinon.stub()}
       entityModel={options.entityModel || mockEntity}
       flags={options.flags}
-      getDiagramURL={options.getDiagramURL || sinon.stub()}
-      getFile={options.getFile || sinon.stub()}
       hash={options.hash || 'readme'}
       hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
       plans={options.plans}
@@ -56,6 +55,12 @@ describe('EntityContent', function() {
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
+    charmstore = {
+      getDiagramURL: sinon.stub().returns('testRef'),
+      getFile: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      url: 'http://example.com'
+    };
   });
 
   afterEach(function() {
@@ -63,7 +68,6 @@ describe('EntityContent', function() {
   });
 
   it('can display a charm', function() {
-    const apiUrl = 'http://example.com';
     const description = mockEntity.get('description');
     const renderMarkdown = sinon.stub().returns(description);
     const script = generateScript();
@@ -143,14 +147,14 @@ describe('EntityContent', function() {
                 </ul>
               </div>
               <EntityResources
-                apiUrl={apiUrl}
+                apiUrl={charmstore.url}
                 entityId={mockEntity.get('id')}
                 resources={[{resource: 'one'}]} />
               <EntityContentRelations
                 changeState={sinon.stub()}
                 relations={mockEntity.get('relations')} />
               <EntityFiles
-                apiUrl={apiUrl}
+                apiUrl={charmstore.url}
                 entityModel={mockEntity} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
@@ -323,13 +327,10 @@ describe('EntityContent', function() {
   });
 
   it('can display a bundle for Juju 2', function() {
-    const apiUrl = 'http://example.com';
-    const getDiagramURL = sinon.stub().returns('testRef');
     const mockEntity = jsTestUtils.makeEntity(true);
     const script = generateScript(true);
     const wrapper = renderComponent({
-      entityModel: mockEntity,
-      getDiagramURL
+      entityModel: mockEntity
     });
     const expected = (
       <div className="entity-content">
@@ -422,7 +423,7 @@ describe('EntityContent', function() {
               {undefined}
               {undefined}
               <EntityFiles
-                apiUrl={apiUrl}
+                apiUrl={charmstore.url}
                 entityModel={mockEntity} />
               <div className="entity-content__card section clearfix">
                 <h3 className="section__title">
@@ -454,9 +455,7 @@ describe('EntityContent', function() {
     mockEntity = jsTestUtils.makeEntity(true);
     mockEntity.set('bugUrl', 'http://example.com/bugs');
     mockEntity.set('homepage', 'http://example.com/');
-    const wrapper = renderComponent({
-      getDiagramURL: sinon.stub().returns('testRef')
-    });
+    const wrapper = renderComponent();
     const expected = (
       <div className="section section__contribute">
         <h3 className="section__title">
@@ -615,7 +614,6 @@ describe('EntityContent', function() {
   it('can display an expert card for a bundle', () => {
     mockEntity = jsTestUtils.makeEntity(true);
     const wrapper = renderComponent({
-      getDiagramURL: sinon.stub().returns('testRef'),
       entityModel: mockEntity
     });
     const card = wrapper.find('ExpertContactCard');

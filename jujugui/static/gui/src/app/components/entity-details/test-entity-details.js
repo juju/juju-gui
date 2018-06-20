@@ -3,6 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const shapeup = require('shapeup');
 
 const EntityDetails = require('./entity-details');
 const EntityContent = require('./content/content');
@@ -11,24 +12,21 @@ const EntityHeader = require('./header/header');
 const jsTestUtils = require('../../utils/component-test-utils');
 
 describe('EntityDetails', function() {
-  let acl, mockEntity, models;
+  let acl, charmstore, mockEntity, models;
 
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
       <EntityDetails
         acl={options.acl || acl}
         addNotification={options.addNotification || sinon.stub()}
-        apiUrl={options.apiUrl || 'http://example.com'}
         changeState={options.changeState || sinon.stub()}
+        charmstore={options.charmstore || charmstore}
         clearLightbox={options.clearLightbox || sinon.stub()}
         deployService={options.deployService || sinon.stub()}
         displayLightbox={options.displayLightbox || sinon.stub()}
         flags={options.flags || {}}
-        getBundleYAML={options.getBundleYAML || sinon.stub()}
-        getDiagramURL={options.getDiagramURL || sinon.stub()}
         getEntity={
           options.getEntity || sinon.stub().callsArgWith(1, null, [mockEntity])}
-        getFile={options.getFile || sinon.stub()}
         getModelName={options.getModelName || sinon.stub()}
         hash={options.hash || 'readme'}
         id={options.id || mockEntity.get('id')}
@@ -59,6 +57,13 @@ describe('EntityDetails', function() {
       Charm: sinon.stub().returns(mockEntity)
     };
     acl = {isReadOnly: sinon.stub().returns(false)};
+    charmstore = {
+      getBundleYAML: sinon.stub(),
+      getDiagramURL: sinon.stub(),
+      getFile: sinon.stub(),
+      reshape: shapeup.reshapeFunc,
+      url: 'http://example.com'
+    };
   });
 
   afterEach(function() {
@@ -98,14 +103,17 @@ describe('EntityDetails', function() {
           {undefined}
           <EntityContent
             addNotification={sinon.stub()}
-            apiUrl="http://example.com"
             changeState={sinon.stub()}
+            charmstore={{
+              getDiagramURL: charmstore.getDiagramURL,
+              getFile: charmstore.getFile,
+              reshape: shapeup.reshapeFunc,
+              url: charmstore.url
+            }}
             clearLightbox={sinon.stub()}
             displayLightbox={sinon.stub()}
             entityModel={mockEntity}
             flags={{'test.ddeploy': true}}
-            getDiagramURL={sinon.stub()}
-            getFile={sinon.stub()}
             hash="readme"
             hasPlans={false}
             plans={null}

@@ -633,20 +633,15 @@ Browser: ${navigator.userAgent}`
         acl={this.acl}
         addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
-        apiUrl={charmstore.url}
         apiVersion={charmstoreUtils.charmstoreAPIVersion}
         appState={this.state}
-        charmstoreSearch={charmstore.search.bind(charmstore)}
         charmstoreURL={
           initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         clearLightbox={this._clearLightbox.bind(this)}
         deployService={this.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
         flags={window.juju_config.flags}
-        getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
-        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
         getEntity={getEntity}
-        getFile={charmstore.getFile.bind(charmstore)}
         getModelName={this._getModelName.bind(this)}
         gisf={this.applicationConfig.gisf}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
