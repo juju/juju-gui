@@ -10,7 +10,6 @@ describe('Store', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Store
-      apiVersion={options.apiVersion || 'v5'}
       changeState={options.changeState || sinon.stub()}
       charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
       gisf={options.gisf === undefined ? true : options.gisf}

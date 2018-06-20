@@ -18,7 +18,6 @@ describe('Charmbrowser', function() {
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       addToModel={options.addToModel || sinon.stub()}
-      apiVersion={options.apiVersion || 'v5'}
       appState={options.appState || {}}
       charmstore={options.charmstore || charmstore}
       charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
@@ -112,7 +111,6 @@ describe('Charmbrowser', function() {
       <div className="charmbrowser"
         ref="charmbrowser">
         <Store
-          apiVersion="v5"
           changeState={wrapper.find('Store').prop('changeState')}
           charmstoreURL="http://1.2.3.4/"
           gisf={true}

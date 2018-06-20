@@ -128,7 +128,6 @@ class Charmbrowser extends React.Component {
       case 'store':
         activeChild = (
           <Store
-            apiVersion={this.props.apiVersion}
             changeState={changeState}
             charmstoreURL={this.props.charmstoreURL}
             gisf={this.props.gisf}
@@ -221,7 +220,6 @@ Charmbrowser.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
-  apiVersion: PropTypes.string.isRequired,
   appState: PropTypes.object.isRequired,
   charmstore: shapeup.shape({
     getBundleYAML: PropTypes.func.isRequired,

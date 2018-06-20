@@ -4,6 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
+const { charmstore } = require('jaaslib');
 
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
@@ -34,7 +35,7 @@ class Store extends React.Component {
   */
   _generateIconPath(entityName) {
     const charmstoreURL = this.props.charmstoreURL;
-    const apiVersion = this.props.apiVersion;
+    const apiVersion = charmstore.charmstoreAPIVersion;
     return `${charmstoreURL}${apiVersion}/${entityName}/icon.svg`;
   }
 
@@ -47,7 +48,7 @@ class Store extends React.Component {
   */
   _generateDiagramPath(entityName) {
     const charmstoreURL = this.props.charmstoreURL;
-    const apiVersion = this.props.apiVersion;
+    const apiVersion = charmstore.charmstoreAPIVersion;
     return `${charmstoreURL}${apiVersion}/bundle/${entityName}/diagram.svg`;
   }
 
@@ -1004,7 +1005,6 @@ class Store extends React.Component {
 };
 
 Store.propTypes = {
-  apiVersion: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstoreURL: PropTypes.string.isRequired,
   gisf: PropTypes.bool.isRequired,

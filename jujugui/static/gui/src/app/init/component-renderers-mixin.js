@@ -12,7 +12,6 @@ const shapeup = require('shapeup');
 const jaaslib = require('jaaslib');
 
 const urls = jaaslib.urls;
-const charmstoreUtils = jaaslib.charmstore;
 
 const yui = window.yui;
 
@@ -633,7 +632,6 @@ Browser: ${navigator.userAgent}`
         acl={this.acl}
         addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
-        apiVersion={charmstoreUtils.charmstoreAPIVersion}
         appState={this.state}
         charmstoreURL={
           initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
