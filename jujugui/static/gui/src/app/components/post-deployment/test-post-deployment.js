@@ -8,25 +8,20 @@ const enzyme = require('enzyme');
 const PostDeployment = require('./post-deployment');
 
 describe('PostDeployment', () => {
-  let defaultParsedMarkdown, file, getFile;
+  let file, getFile;
 
   const renderComponent = (options = {}) => {
-    let marked = sinon.stub().returns(defaultParsedMarkdown);
-    Object.defineProperty(marked, 'Renderer', {value: sinon.stub()});
     return enzyme.shallow(
       <PostDeployment
         changeState={options.changeState || sinon.stub()}
         entityId={options.entityId || 'test'}
         getEntity={
           options.getEntity || sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}])}
-        getFile={options.getFile || getFile}
-        marked={options.marked || marked} />
+        getFile={options.getFile || getFile} />
     );
   };
 
   beforeEach(() => {
-    defaultParsedMarkdown =
-      '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>';
     file = `# Test Name
 
 {details_link}{requires_cli_link}`;

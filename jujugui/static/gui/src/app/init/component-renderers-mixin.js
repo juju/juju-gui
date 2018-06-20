@@ -490,8 +490,7 @@ Browser: ${navigator.userAgent}`
           changeState={this._bound.changeState}
           entityId={entityId}
           getEntity={charmstore.getEntity.bind(charmstore)}
-          getFile={charmstore.getFile.bind(charmstore)}
-          marked={marked} />,
+          getFile={charmstore.getFile.bind(charmstore)} />,
         document.getElementById('post-deployment')
       );
     }
