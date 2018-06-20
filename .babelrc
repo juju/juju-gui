@@ -3,5 +3,16 @@
   "plugins": [
     "transform-react-jsx",
     "rewire"
-  ]
+  ],
+  "env": {
+    "production": {
+      "presets": [
+        ["babili", {"mangle": false}]
+      ],
+      "plugins": [
+        "transform-react-jsx",
+        "rewire"
+      ]
+    }
+  }
 }
