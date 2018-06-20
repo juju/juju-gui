@@ -20,8 +20,7 @@ describe('PostDeployment', () => {
         getEntity={
           options.getEntity || sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}])}
         getFile={options.getFile || getFile}
-        marked={options.marked || marked}
-        showEntityDetails={options.showEntityDetails || sinon.stub()} />
+        marked={options.marked || marked} />
     );
   };
 

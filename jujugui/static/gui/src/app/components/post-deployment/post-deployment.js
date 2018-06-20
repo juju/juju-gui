@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const { urls } = require('jaaslib');
 
 const Panel = require('../panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
@@ -189,7 +190,12 @@ class PostDeployment extends React.Component {
     Show the details page of a charm or bundle based on the click.
   */
   _handleViewDetails() {
-    this.props.showEntityDetails();
+    const url = urls.URL.fromAnyString(this.props.entityId);
+    this.props.changeState({
+      profile: null,
+      search: null,
+      store: url.path()
+    });
   }
 
   /**
@@ -233,8 +239,7 @@ PostDeployment.propTypes = {
   entityId: PropTypes.string.isRequired,
   getEntity: PropTypes.func.isRequired,
   getFile: PropTypes.func.isRequired,
-  marked: PropTypes.func.isRequired,
-  showEntityDetails: PropTypes.func.isRequired
+  marked: PropTypes.func.isRequired
 };
 
 module.exports = PostDeployment;
