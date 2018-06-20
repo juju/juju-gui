@@ -17,7 +17,9 @@ class DeploymentChangeItem extends React.Component {
   _generateIcon(icon) {
     var node;
     var className = 'deployment-change-item__icon';
-    if (icon.indexOf('.svg') > -1) {
+    if (!icon) {
+      return null;
+    } else if (icon.indexOf('.svg') > -1) {
       node = <img alt="" className={className} src={icon} />;
     } else {
       node = (
