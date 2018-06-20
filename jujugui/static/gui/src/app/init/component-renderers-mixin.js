@@ -627,12 +627,14 @@ Browser: ${navigator.userAgent}`
       // Get the entity and return the XHR.
       return charmstore.getEntity(url.legacyPath(), callback);
     };
+    const propTypes = Charmbrowser.propTypes;
     ReactDOM.render(
       <Charmbrowser
         acl={this.acl}
         addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
         appState={this.state}
+        charmstore={shapeup.fromShape(this.charmstore, propTypes.charmstore)}
         charmstoreURL={
           initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         clearLightbox={this._clearLightbox.bind(this)}
