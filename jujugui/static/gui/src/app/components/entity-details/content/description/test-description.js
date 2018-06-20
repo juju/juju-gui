@@ -9,23 +9,21 @@ const EntityContentDescription = require('./description');
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('EntityContentDescription', function() {
-  let marked = function(val) { return val; };
   let mockEntity;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityContentDescription
       changeState={options.changeState || sinon.stub()}
       description={options.description || mockEntity.get('description')}
-      includeHeading={options.includeHeading}
-      renderMarkdown={options.renderMarkdown || marked} />
+      includeHeading={options.includeHeading} />
   );
 
   it('can render markdown in the description', () => {
     const description = 'A simple [link](http://google.com/).';
     const wrapper = renderComponent({ description });
-    assert.equal(
-      wrapper.find('.entity-content__description-content').html().includes(description),
-      true);
+    assert.deepEqual(
+      wrapper.find('.entity-content__description-content').prop('dangerouslySetInnerHTML'),
+      { __html: '<p>A simple <a href="http://google.com/">link</a>.</p>\n' });
   });
 
   describe('bundle', () => {

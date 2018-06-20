@@ -3,8 +3,6 @@
 
 const classNames = require('classnames');
 const marked = require('marked');
-const Prism = require('prismjs');
-const prismLanguages = require('prism-languages');
 const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -579,15 +577,6 @@ Browser: ${navigator.userAgent}`
   */
   _renderCharmbrowser(state, next) {
     const charmstore = this.charmstore;
-    // Configure syntax highlighting for the markdown renderer.
-    marked.setOptions({
-      highlight: function(code, lang) {
-        const language = prismLanguages[lang];
-        if (language) {
-          return Prism.highlight(code, language);
-        }
-      }
-    });
     const propTypes = Charmbrowser.propTypes;
     ReactDOM.render(
       <Charmbrowser
@@ -607,7 +596,6 @@ Browser: ${navigator.userAgent}`
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
           this.bundleImporter)}
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-        renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}

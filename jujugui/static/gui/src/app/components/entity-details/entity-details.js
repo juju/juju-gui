@@ -121,7 +121,6 @@ class EntityDetails extends React.Component {
               hash={this.props.hash}
               hasPlans={this.state.hasPlans}
               plans={this.state.plans}
-              renderMarkdown={this.props.renderMarkdown}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
               sendAnalytics={this.props.sendAnalytics}
               showTerms={this.props.showTerms}
@@ -289,7 +288,6 @@ EntityDetails.propTypes = {
   id: PropTypes.string.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
-  renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
   scrollPosition: PropTypes.number.isRequired,
   sendAnalytics: PropTypes.func.isRequired,

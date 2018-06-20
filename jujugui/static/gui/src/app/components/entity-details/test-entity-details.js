@@ -30,7 +30,6 @@ describe('EntityDetails', function() {
         id={options.id || mockEntity.get('id')}
         importBundleYAML={options.importBundleYAML || sinon.stub()}
         listPlansForCharm={options.listPlansForCharm || sinon.stub()}
-        renderMarkdown={options.renderMarkdown || sinon.stub()}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
         scrollPosition={options.scrollPosition || 100}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
@@ -114,7 +113,6 @@ describe('EntityDetails', function() {
             hash="readme"
             hasPlans={false}
             plans={null}
-            renderMarkdown={sinon.stub()}
             scrollCharmbrowser={sinon.stub()}
             sendAnalytics={sinon.stub()}
             showTerms={sinon.stub()}

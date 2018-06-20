@@ -46,7 +46,6 @@ describe('EntityContent', function() {
       hash={options.hash || 'readme'}
       hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
       plans={options.plans}
-      renderMarkdown={options.renderMarkdown || sinon.stub()}
       scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
@@ -69,12 +68,9 @@ describe('EntityContent', function() {
 
   it('can display a charm', function() {
     const description = mockEntity.get('description');
-    const renderMarkdown = sinon.stub().returns(description);
     const script = generateScript();
     mockEntity.set('resources', [{resource: 'one'}]);
-    const wrapper = renderComponent({
-      renderMarkdown
-    });
+    const wrapper = renderComponent();
     const expected = (
       <div className="entity-content">
         {undefined}
@@ -84,8 +80,7 @@ describe('EntityContent', function() {
               <EntityContentDescription
                 changeState={sinon.stub()}
                 description={description}
-                includeHeading={true}
-                renderMarkdown={sinon.stub()} />
+                includeHeading={true} />
               <div className="entity-content__terms">
                 <div className="entity-content__metadata">
                   <h4 className="entity-content__metadata-title">
@@ -104,7 +99,6 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 getFile={sinon.stub()}
                 hash="readme"
-                renderMarkdown={renderMarkdown}
                 scrollCharmbrowser={sinon.stub()} />
               <div className="entity-content__configuration"
                 id="configuration">
@@ -340,8 +334,7 @@ describe('EntityContent', function() {
               <EntityContentDescription
                 changeState={sinon.stub()}
                 description={mockEntity.get('description')}
-                includeHeading={true}
-                renderMarkdown={sinon.stub()} />
+                includeHeading={true} />
               <EntityContentDiagram
                 clearLightbox={sinon.stub()}
                 diagramUrl="testRef"
@@ -355,7 +348,6 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 getFile={sinon.stub()}
                 hash="readme"
-                renderMarkdown={sinon.stub()}
                 scrollCharmbrowser={sinon.stub()} />
               <div className="entity-content__configuration"
                 id="configuration">

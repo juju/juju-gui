@@ -1,6 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const marked = require('marked');
+const Prism = require('prismjs');
+const prismLanguages = require('prism-languages');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -106,9 +109,17 @@ class EntityContentReadme extends React.Component {
       return;
     }
     const readme = data;
-    const renderMarkdown = this.props.renderMarkdown;
     const entity = this.props.entityModel.toEntity();
-    let renderer = new renderMarkdown.Renderer();
+    // Configure syntax highlighting for the markdown renderer.
+    marked.setOptions({
+      highlight: function(code, lang) {
+        const language = prismLanguages[lang];
+        if (language) {
+          return Prism.highlight(code, language);
+        }
+      }
+    });
+    let renderer = new marked.Renderer();
     renderer.heading = (text, level) => {
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
       if (level === 1 &&
@@ -121,7 +132,7 @@ class EntityContentReadme extends React.Component {
         </h${level}>`;
     };
     this.setState(
-      {readme: renderMarkdown(readme, {renderer: renderer})}, () => {
+      {readme: marked(readme, {renderer: renderer})}, () => {
         if (this.props.hash) {
           this.props.scrollCharmbrowser(this._getContainer());
         }
@@ -158,7 +169,6 @@ EntityContentReadme.propTypes = {
   entityModel: PropTypes.object.isRequired,
   getFile: PropTypes.func.isRequired,
   hash: PropTypes.string,
-  renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired
 };
 

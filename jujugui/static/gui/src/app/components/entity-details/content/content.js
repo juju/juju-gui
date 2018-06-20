@@ -330,8 +330,7 @@ class EntityContent extends React.Component {
     return (<EntityContentDescription
       changeState={this.props.changeState}
       description={entityModel.get('description')}
-      includeHeading={true}
-      renderMarkdown={this.props.renderMarkdown} />);
+      includeHeading={true} />);
   }
 
   /**
@@ -628,7 +627,6 @@ class EntityContent extends React.Component {
                 entityModel={entityModel}
                 getFile={this.props.charmstore.getFile}
                 hash={this.props.hash}
-                renderMarkdown={this.props.renderMarkdown}
                 scrollCharmbrowser={this.props.scrollCharmbrowser} />
               {this._generateOptionsList(entityModel)}
             </div>
@@ -670,7 +668,6 @@ EntityContent.propTypes = {
   hasPlans: PropTypes.bool.isRequired,
   hash: PropTypes.string,
   plans: PropTypes.array,
-  renderMarkdown: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
