@@ -484,7 +484,9 @@ class BundleImporter {
           constraints: constraints
         });
       }
-      this.modelAPI.update_annotations(name, 'application', annotations,
+      // This must always have {immediate: true} so that we don't require that
+      // positional annotations have to be committed.
+      this.modelAPI.update_annotations(name, 'application', annotations, null,
         {immediate: true});
     }.bind(this, ghostService);
 
