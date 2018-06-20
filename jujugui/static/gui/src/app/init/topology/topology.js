@@ -342,8 +342,10 @@ class Topology extends Component {
       annotations['gui-y'] = box.y;
       service.set('annotations', annotations);
     } else {
+      // This must always have {immediate: true} so that we don't require that
+      // positional annotations have to be committed.
       this.env.update_annotations(
-        box.id, 'application', {'gui-x': box.x, 'gui-y': box.y},
+        box.id, 'application', {'gui-x': box.x, 'gui-y': box.y}, null,
         {immediate: true});
       box.inDrag = this.DRAG_ENDING;
     }
