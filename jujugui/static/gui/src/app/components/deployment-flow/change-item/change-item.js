@@ -48,10 +48,6 @@ class DeploymentChangeItem extends React.Component {
 
   render() {
     var change = this.props.change;
-    if (!change.icon) {
-      console.log('change', change);
-
-    }
     return (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
