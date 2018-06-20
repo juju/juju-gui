@@ -189,7 +189,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       const modelOwner = modelAPI.get('modelOwner');
       commands.push(`juju switch ${modelOwner}/${modelName}`);
     }
-    if (payload) {
+    if (Array.isArray(payload)) {
       payload.forEach(command => {
         commands.push(command);
       });

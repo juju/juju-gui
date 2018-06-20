@@ -152,7 +152,7 @@ class Inspector extends React.Component {
               destroyUnits={nextProps.destroyUnits}
               previousComponent={previousComponent}
               service={service}
-              showSSHButtons={nextProps.showSSHButtons}
+              showSSHButtons={nextProps.showSSHButtons && window.juju_config.flags.expert}
               unit={unit}
               unitStatus={unitStatus} />,
           backState: {
