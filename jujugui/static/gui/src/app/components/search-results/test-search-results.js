@@ -23,7 +23,6 @@ describe('SearchResults', function() {
       generatePath={options.generatePath || generatePath}
       query={options.query || 'spinach'}
       series={options.series}
-      seriesList={options.seriesList || {}}
       setPageTitle={options.setPageTitle || sinon.stub()}
       sort={options.sort}
       type={options.type} />

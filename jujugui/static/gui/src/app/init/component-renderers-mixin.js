@@ -12,7 +12,6 @@ const shapeup = require('shapeup');
 const jaaslib = require('jaaslib');
 
 const urls = jaaslib.urls;
-const charmstoreUtils = jaaslib.charmstore;
 
 const yui = window.yui;
 
@@ -611,42 +610,20 @@ Browser: ${navigator.userAgent}`
         }
       }
     });
-    /*
-     Retrieve from the charm store information on the charm or bundle with
-     the given new style id.
-
-     @returns {Object} The XHR reference for the getEntity call.
-    */
-    const getEntity = (id, callback) => {
-      let url;
-      try {
-        url = urls.URL.fromString(id);
-      } catch(err) {
-        callback(err, {});
-        return;
-      }
-      // Get the entity and return the XHR.
-      return charmstore.getEntity(url.legacyPath(), callback);
-    };
+    const propTypes = Charmbrowser.propTypes;
     ReactDOM.render(
       <Charmbrowser
         acl={this.acl}
         addNotification={this._bound.addNotification}
         addToModel={this.addToModel.bind(this, charmstore)}
-        apiUrl={charmstore.url}
-        apiVersion={charmstoreUtils.charmstoreAPIVersion}
         appState={this.state}
-        charmstoreSearch={charmstore.search.bind(charmstore)}
+        charmstore={shapeup.fromShape(this.charmstore, propTypes.charmstore)}
         charmstoreURL={
           initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         clearLightbox={this._clearLightbox.bind(this)}
         deployService={this.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
         flags={window.juju_config.flags}
-        getBundleYAML={charmstore.getBundleYAML.bind(charmstore)}
-        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-        getEntity={getEntity}
-        getFile={charmstore.getFile.bind(charmstore)}
         getModelName={this._getModelName.bind(this)}
         gisf={this.applicationConfig.gisf}
         importBundleYAML={this.bundleImporter.importBundleYAML.bind(
@@ -654,7 +631,6 @@ Browser: ${navigator.userAgent}`
         listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
-        series={initUtils.getSeriesList()}
         setPageTitle={this.setPageTitle.bind(this)}
         showTerms={this.terms.showTerms.bind(this.terms)}
         staticURL={this.applicationConfig.staticURL || ''} />,
