@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const ReactDOM = require('react-dom');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AccordionSection = require('../accordion-section/accordion-section');
 const changesUtils = require('../../init/changes-utils');
@@ -125,7 +126,7 @@ class DeploymentFlow extends React.Component {
   _getDirectDeployEntity(entityId) {
     const props = this.props;
     this.setState({loadingEntity: true});
-    props.getEntity(entityId, (error, data) => {
+    props.charmstore.getEntity(entityId, (error, data) => {
       this.setState({loadingEntity: false});
       if (error) {
         console.error('unable to fetch entity: ' + error);
@@ -415,11 +416,11 @@ class DeploymentFlow extends React.Component {
     };
     if (this.state.sshKeys.length) {
       const sshKeys = this.state.sshKeys.slice();
-      // Attempt to provide at least one key in case the addSSHKeys call fails.
+      // Attempt to provide at least one key in case the addKeys call fails.
       args.config['authorized-keys'] = sshKeys.shift().text;
       // Then add the remaining ones to the change set.
       const ecsOptions = {};
-      this.props.addSSHKeys(
+      this.props.modelAPI.addKeys(
         this.props.getUserName(),
         sshKeys.map(key => key.text),
         (error, data) => {
@@ -435,7 +436,7 @@ class DeploymentFlow extends React.Component {
         ecsOptions);
     }
     if (this.state.lpUsernames.length) {
-      this.props.importSSHKeys(
+      this.props.modelAPI.importKeys(
         this.props.getUserName(),
         this.state.lpUsernames.map(key => `lp:${key}`),
         (error, data) => {
@@ -478,7 +479,7 @@ class DeploymentFlow extends React.Component {
         }
         return args;
       });
-      this.props.addAgreement(terms, (error, response) => {
+      this.props.terms.addAgreement(terms, (error, response) => {
         if (error) {
           this.props.addNotification({
             title: 'Could not agree to terms',
@@ -545,7 +546,7 @@ class DeploymentFlow extends React.Component {
     }
     this.setState({loadingTerms: true}, () => {
       // Get the terms the user has not yet agreed to.
-      const xhr = this.props.getAgreementsByTerms(
+      const xhr = this.props.terms.getAgreementsByTerms(
         terms, (error, agreements) => {
           if (error) {
             this.props.addNotification({
@@ -721,7 +722,7 @@ class DeploymentFlow extends React.Component {
           estimate={this.state.ddEntity.get('price')}
           generatePath={this.props.generatePath}
           getSLAMachineRates={this.props.getSLAMachineRates}
-          listPlansForCharm={this.props.listPlansForCharm}
+          listPlansForCharm={this.props.plans.listPlansForCharm}
           // machineCount is only defined in bundles so if it's not there it is
           // a charm and the count is one.
           machineCount={this.state.ddEntity.get('machineCount') || '1'}
@@ -854,7 +855,7 @@ class DeploymentFlow extends React.Component {
           addNotification={this.props.addNotification}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
-          listClouds={this.props.listClouds}
+          listClouds={this.props.controllerAPI.listClouds}
           setCloud={this._setCloud.bind(this)}
           setCloudCount={this._setCloudCount.bind(this)} />
       </DeploymentSection>);
@@ -872,6 +873,7 @@ class DeploymentFlow extends React.Component {
       return;
     }
     var cloud = this.state.cloud;
+    const controllerAPI = this.props.controllerAPI;
     return (
       <DeploymentSection
         completed={status.completed}
@@ -882,16 +884,18 @@ class DeploymentFlow extends React.Component {
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           cloud={cloud}
+          controllerAPI={shapeup.addReshape({
+            getCloudCredentialNames: controllerAPI.getCloudCredentialNames.bind(controllerAPI),
+            getCloudCredentials: controllerAPI.getCloudCredentials.bind(controllerAPI),
+            updateCloudCredential: controllerAPI.updateCloudCredential.bind(controllerAPI)
+          })}
           controllerIsReady={this.props.controllerIsReady}
           credential={this.state.credential}
           editable={!this.props.modelCommitted}
-          getCloudCredentialNames={this.props.getCloudCredentialNames}
-          getCloudCredentials={this.props.getCloudCredentials}
           region={this.state.region}
           sendAnalytics={this.sendAnalytics.bind(this)}
           setCredential={this._setCredential.bind(this)}
           setRegion={this._setRegion.bind(this)}
-          updateCloudCredential={this.props.updateCloudCredential}
           user={this.props.getUserName()} />
         {this._generateVPCSection()}
       </DeploymentSection>);
@@ -951,9 +955,9 @@ class DeploymentFlow extends React.Component {
               this.props.generateChangeDescription}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
             getServiceByName={this.props.getServiceByName}
-            listPlansForCharm={this.props.listPlansForCharm}
+            listPlansForCharm={this.props.plans.listPlansForCharm}
             parseTermId={this._parseTermId.bind(this)}
-            showTerms={this.props.showTerms}
+            showTerms={this.props.terms.showTerms}
             sortDescriptionsByApplication={
               this.props.sortDescriptionsByApplication}
             withPlans={this.props.withPlans} />
@@ -982,7 +986,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentBudget
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          listBudgets={this.props.listBudgets}
+          listBudgets={this.props.plans.listBudgets}
           setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />
       </DeploymentSection>);
@@ -1010,14 +1014,11 @@ class DeploymentFlow extends React.Component {
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           changeState={this.props.changeState}
-          createCardElement={this.props.createCardElement}
-          createToken={this.props.createToken}
-          createUser={this.props.createUser}
           generatePath={this.props.generatePath}
-          getCountries={this.props.getCountries}
-          getUser={this.props.getUser}
+          payment={this.props.payment}
           paymentUser={this.state.paymentUser}
           setPaymentUser={this._setPaymentUser.bind(this)}
+          stripe={this.props.stripe}
           username={this.props.profileUsername} />
       </DeploymentSection>);
   }
@@ -1104,7 +1105,7 @@ class DeploymentFlow extends React.Component {
         ddData={this.props.ddData}
         entityModel={this.state.ddEntity}
         generatePath={this.props.generatePath}
-        getDiagramURL={this.props.getDiagramURL}
+        getDiagramURL={this.props.charmstore.getDiagramURL}
         renderMarkdown={this.props.renderMarkdown}
         sendAnalytics={this.props.sendAnalytics}
         staticURL={this.props.staticURL} />);
@@ -1137,7 +1138,7 @@ class DeploymentFlow extends React.Component {
           ddData={props.ddData}
           entityModel={state.ddEntity}
           generatePath={props.generatePath}
-          getDiagramURL={props.getDiagramURL}
+          getDiagramURL={props.charmstore.getDiagramURL}
           renderMarkdown={props.renderMarkdown} />);
     }
     return null;
@@ -1253,20 +1254,24 @@ class DeploymentFlow extends React.Component {
 DeploymentFlow.propTypes = {
   WebHandler: PropTypes.func.isRequired,
   acl: PropTypes.object.isRequired,
-  addAgreement: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
-  addSSHKeys: PropTypes.func.isRequired,
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
   charms: PropTypes.object.isRequired,
   charmsGetById: PropTypes.func.isRequired,
-  charmstore: PropTypes.object.isRequired,
+  charmstore: shapeup.shape({
+    getDiagramURL: PropTypes.func.isRequired,
+    getEntity: PropTypes.func.isRequired
+  }).isRequired,
   cloud: PropTypes.object,
+  controllerAPI: shapeup.shape({
+    getCloudCredentialNames: PropTypes.func.isRequired,
+    getCloudCredentials: PropTypes.func.isRequired,
+    listClouds: PropTypes.func.isRequired,
+    updateCloudCredential: PropTypes.func.isRequired
+  }).isRequired,
   controllerIsReady: PropTypes.func.isRequired,
-  createCardElement: PropTypes.func,
-  createToken: PropTypes.func,
-  createUser: PropTypes.func,
   credential: PropTypes.string,
   ddData: PropTypes.object,
   deploy: PropTypes.func.isRequired,
@@ -1275,40 +1280,49 @@ DeploymentFlow.propTypes = {
   generateChangeDescription: PropTypes.func.isRequired,
   generateMachineDetails: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
-  getAgreementsByTerms: PropTypes.func.isRequired,
-  getCloudCredentialNames: PropTypes.func,
-  getCloudCredentials: PropTypes.func,
-  getCountries: PropTypes.func,
   getCurrentChangeSet: PropTypes.func.isRequired,
-  getDiagramURL: PropTypes.func,
-  getEntity: PropTypes.func,
   getGithubSSHKeys: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func,
   getServiceByName: PropTypes.func.isRequired,
-  getUser: PropTypes.func,
   getUserName: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
   gtmEnabled: PropTypes.bool,
   hash: PropTypes.string,
-  importSSHKeys: PropTypes.func.isRequired,
   isLoggedIn: PropTypes.func.isRequired,
-  listBudgets: PropTypes.func.isRequired,
-  listClouds: PropTypes.func,
-  listPlansForCharm: PropTypes.func.isRequired,
   loginToController: PropTypes.func.isRequired,
+  modelAPI: shapeup.shape({
+    addKeys: PropTypes.func.isRequired,
+    importKeys: PropTypes.func.isRequired
+  }).isRequired,
   modelCommitted: PropTypes.bool,
   modelName: PropTypes.string.isRequired,
+  payment: shapeup.shape({
+    createUser: PropTypes.func.isRequired,
+    getCountries: PropTypes.func.isRequired,
+    getUser: PropTypes.func.isRequired
+  }),
+  plans: shapeup.shape({
+    listBudgets: PropTypes.func.isRequired,
+    listPlansForCharm: PropTypes.func.isRequired
+  }).isRequired,
   profileUsername: PropTypes.string.isRequired,
   region: PropTypes.string,
   renderMarkdown: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   setModelName: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
-  showTerms: PropTypes.func.isRequired,
   sortDescriptionsByApplication: PropTypes.func.isRequired,
   staticURL: PropTypes.string.isRequired,
   stats: PropTypes.object,
-  updateCloudCredential: PropTypes.func,
+  stripe: shapeup.shape({
+    createCardElement: PropTypes.func.isRequired,
+    createToken: PropTypes.func.isRequired
+  }),
+  terms: shapeup.shape({
+    addAgreement: PropTypes.func.isRequired,
+    getAgreementsByTerms: PropTypes.func.isRequired,
+    showTerms: PropTypes.func.isRequired
+  }).isRequired,
   updateModelName: PropTypes.func,
   username: PropTypes.string,
   withPlans: PropTypes.bool

@@ -1,8 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const CreatePaymentUser = require('../../create-payment-user/create-payment-user');
 const DeploymentPayment = require('./payment');
@@ -11,21 +12,18 @@ const PaymentMethodCard = require('../../payment/methods/card/card');
 const Spinner = require('../../spinner/spinner');
 
 describe('DeploymentPayment', function() {
-  let acl, getCountries, getUser, user;
+  let acl, getUser, payment, stripe, user;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentPayment
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
-      createCardElement={options.createCardElement || sinon.stub()}
-      createToken={options.createToken || sinon.stub()}
-      createUser={options.createUser || sinon.stub()}
       generatePath={options.generatePath || sinon.stub()}
-      getCountries={options.getCountries || getCountries}
-      getUser={options.getUser || getUser}
+      payment={payment}
       paymentUser={options.paymentUser}
       setPaymentUser={options.setPaymentUser || sinon.stub()}
+      stripe={stripe}
       username={options.username || 'spinach'} />
   );
 
@@ -41,11 +39,20 @@ describe('DeploymentPayment', function() {
         name: 'Company'
       }]
     });
-    getCountries = sinon.stub();
+    payment = {
+      createUser: sinon.stub(),
+      getCountries: sinon.stub(),
+      getUser
+    };
+    stripe = {
+      createCardElement: sinon.stub(),
+      createToken: sinon.stub()
+    };
   });
 
   it('can display a loading spinner', function() {
-    const wrapper = renderComponent({ getUser: sinon.stub() });
+    payment.getUser = sinon.stub();
+    const wrapper = renderComponent();
     const expected = (
       <div className="deployment-payment">
         <Spinner />
@@ -98,7 +105,7 @@ describe('DeploymentPayment', function() {
   });
 
   it('can display an error when getting users', function() {
-    getUser = sinon.stub().callsArgWith(1, 'failed', null);
+    payment.getUser.callsArgWith(1, 'failed', null);
     const addNotification = sinon.stub();
     const setPaymentUser = sinon.stub();
     renderComponent({
@@ -120,11 +127,12 @@ describe('DeploymentPayment', function() {
         <CreatePaymentUser
           acl={acl}
           addNotification={sinon.stub()}
-          createCardElement={sinon.stub()}
-          createToken={sinon.stub()}
-          createUser={sinon.stub()}
-          getCountries={getCountries}
           onUserCreated={wrapper.find('CreatePaymentUser').prop('onUserCreated')}
+          payment={shapeup.addReshape({
+            createUser: payment.createUser.bind(payment),
+            getCountries: payment.getCountries.bind(payment)
+          })}
+          stripe={stripe}
           username="spinach" />
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -132,8 +140,8 @@ describe('DeploymentPayment', function() {
 
   it('can abort requests when unmounting', function() {
     const abort = sinon.stub();
-    getUser = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({ getUser });
+    payment.getUser.returns({abort: abort});
+    const wrapper = renderComponent();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

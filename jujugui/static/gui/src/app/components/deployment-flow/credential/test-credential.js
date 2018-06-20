@@ -1,8 +1,9 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const DeploymentCredential = require('./credential');
 const Spinner = require('../../spinner/spinner');
@@ -11,25 +12,21 @@ const ExpandingRow = require('../../expanding-row/expanding-row');
 const DeploymentCredentialAdd = require('./add/add');
 
 describe('DeploymentCredential', function() {
-  var acl, sendAnalytics, cloud, credentials, regions, credentialNames, user;
+  var acl, controllerAPI, sendAnalytics, cloud, credentials, regions, credentialNames, user;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentCredential
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       cloud={options.cloud === undefined ? cloud : options.cloud}
+      controllerAPI={controllerAPI}
       controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
       credential={options.credential}
       editable={options.editable === undefined ? true : options.editable}
-      getCloudCredentialNames={
-        options.getCloudCredentialNames || sinon.stub().callsArgWith(1, null, credentialNames)}
-      getCloudCredentials={
-        options.getCloudCredentials || sinon.stub().callsArgWith(1, null, credentials)}
       region={options.region}
       sendAnalytics={options.sendAnalytics || sendAnalytics}
       setCredential={options.setCredential || sinon.stub()}
       setRegion={options.setRegion || sinon.stub()}
-      updateCloudCredential={options.updateCloudCredential || sinon.stub()}
       user={options.user === undefined ? user : options.user} />
   );
 
@@ -45,10 +42,16 @@ describe('DeploymentCredential', function() {
     };
     credentialNames = [{names: ['lxd_admin@local_default']}];
     user = 'user-admin';
+    controllerAPI = shapeup.addReshape({
+      getCloudCredentialNames: sinon.stub().callsArgWith(1, null, credentialNames),
+      getCloudCredentials: sinon.stub().callsArgWith(1, null, credentials),
+      updateCloudCredential: sinon.stub()
+    });
   });
 
   it('can display a loader when loading regions and credentials', function() {
-    const wrapper = renderComponent({ getCloudCredentialNames: sinon.stub() });
+    controllerAPI.getCloudCredentialNames = sinon.stub();
+    const wrapper = renderComponent();
     var expected = (
       <div className="clearfix">
         <div className="deployment-credential__loading">
@@ -59,9 +62,8 @@ describe('DeploymentCredential', function() {
   });
 
   it('can render with a cloud', function() {
-    const wrapper = renderComponent({
-      getCloudCredentials: sinon.stub().callsArgWith(1, null, [])
-    });
+    controllerAPI.getCloudCredentials.callsArgWith(1, null, []);
+    const wrapper = renderComponent();
     var expected = (
       <div className="clearfix">
         <ExpandingRow
@@ -226,11 +228,9 @@ describe('DeploymentCredential', function() {
 
   it('can handle errors when getting credential names', () => {
     const addNotification = sinon.stub();
-    renderComponent({
-      addNotification,
-      getCloudCredentialNames: sinon.stub().callsArgWith(1, 'Uh oh!', null),
-      getCloudCredentials: sinon.stub().callsArgWith(1, null, [])
-    });
+    controllerAPI.getCloudCredentialNames.callsArgWith(1, 'Uh oh!', null);
+    controllerAPI.getCloudCredentials.callsArgWith(1, null, []);
+    renderComponent({ addNotification });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'unable to get names for credentials',
@@ -241,10 +241,8 @@ describe('DeploymentCredential', function() {
 
   it('can handle errors when getting credentials', () => {
     const addNotification = sinon.stub();
-    renderComponent({
-      addNotification,
-      getCloudCredentials: sinon.stub().callsArgWith(1, 'Uh oh!', null)
-    });
+    controllerAPI.getCloudCredentials.callsArgWith(1, 'Uh oh!', null);
+    renderComponent({ addNotification });
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to get credentials',

@@ -47,8 +47,7 @@ describe('PaymentMethods', () => {
     };
     stripe = {
       createCardElement: sinon.stub(),
-      createToken: sinon.stub().callsArgWith(2, null, {id: 'token123'}),
-      reshape: shapeup.reshapeFunc
+      createToken: sinon.stub().callsArgWith(2, null, {id: 'token123'})
     };
     user = {
       addresses: [{

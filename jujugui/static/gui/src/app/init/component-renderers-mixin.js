@@ -961,25 +961,20 @@ Browser: ${navigator.userAgent}`
     const charmstore = this.charmstore;
     const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
     const autoPlaceUnits = autodeploy.autoPlaceUnits.bind(null, db, modelAPI);
+    const propTypes = DeploymentFlow.propTypes;
     ReactDOM.render(
       <DeploymentFlow
         acl={this.acl}
-        addAgreement={this.terms.addAgreement.bind(this.terms)}
         addNotification={this._bound.addNotification}
-        addSSHKeys={modelAPI.addKeys.bind(modelAPI)}
         applications={services.toArray()}
         changes={currentChangeSet}
         changeState={this._bound.changeState}
         charms={db.charms}
         charmsGetById={db.charms.getById.bind(db.charms)}
-        charmstore={charmstore}
+        charmstore={shapeup.fromShape(charmstore, propTypes.charmstore)}
         cloud={cloud}
+        controllerAPI={shapeup.fromShape(controllerAPI, propTypes.controllerAPI)}
         controllerIsReady={this._controllerIsReady.bind(this)}
-        createCardElement={
-          this.stripe && this.stripe.createCardElement.bind(this.stripe)}
-        createToken={this.stripe && this.stripe.createToken.bind(this.stripe)}
-        createUser={
-          this.payment && this.payment.createUser.bind(this.payment)}
         credential={modelAPI.get('credential')}
         ddData={ddData}
         deploy={initUtils.deploy.bind(
@@ -995,48 +990,34 @@ Browser: ${navigator.userAgent}`
           initUtils.generateMachineDetails.bind(
             initUtils, modelAPI.genericConstraints, db.units)}
         generatePath={this.state.generatePath.bind(this.state)}
-        getAgreementsByTerms={
-          this.terms.getAgreementsByTerms.bind(this.terms)}
-        getCloudCredentialNames={
-          controllerAPI.getCloudCredentialNames.bind(controllerAPI)}
-        getCloudCredentials={
-          controllerAPI.getCloudCredentials.bind(controllerAPI)}
-        getCountries={
-          this.payment && this.payment.getCountries.bind(this.payment)
-            || null}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
-        getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-        getEntity={charmstore.getEntity.bind(charmstore)}
         getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
         getServiceByName={services.getServiceByName.bind(services)}
         getSLAMachineRates={this.rates.getSLAMachineRates.bind(this.rates)}
-        getUser={this.payment && this.payment.getUser.bind(this.payment)}
         getUserName={getUserName}
         gisf={this.gisf}
         gtmEnabled={this.applicationConfig.GTM_enabled}
         hash={state.hash}
-        importSSHKeys={modelAPI.importKeys.bind(modelAPI)}
         isLoggedIn={isLoggedIn}
-        listBudgets={this.plans.listBudgets.bind(this.plans)}
-        listClouds={controllerAPI.listClouds.bind(controllerAPI)}
-        listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
         loginToController={loginToController}
+        modelAPI={shapeup.fromShape(modelAPI, propTypes.modelAPI)}
         modelCommitted={connected}
         modelName={modelName}
+        payment={this.payment && shapeup.fromShape(this.payment, propTypes.payment)}
+        plans={this.plans && shapeup.fromShape(this.plans, propTypes.plans)}
         profileUsername={this._getUserInfo(state).profile}
         region={modelAPI.get('region')}
         renderMarkdown={marked}
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showPay={this.applicationConfig.flags.pay || false}
-        showTerms={this.terms.showTerms.bind(this.terms)}
         sortDescriptionsByApplication={
           changesUtils.sortDescriptionsByApplication.bind(null,
             services.getById.bind(services))}
         staticURL={this.applicationConfig.staticURL || ''}
         stats={this.stats}
-        updateCloudCredential={
-          controllerAPI.updateCloudCredential.bind(controllerAPI)}
+        stripe={this.stripe && shapeup.fromShape(this.stripe, propTypes.stripe)}
+        terms={shapeup.fromShape(this.terms, propTypes.terms)}
         username={this.user ? this.user.displayName : undefined}
         WebHandler={WebHandler}
         withPlans={false} />,
