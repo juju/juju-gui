@@ -1,3 +1,10 @@
+- 2.13.0:
+  - JAASlib has been moved to its own project and imported (https://github.com/juju/jaaslibjs).
+  - Initial work on bundle grouping post deployment.
+  - SSH-to-machine, tail logs, debug hooks, buttons have been added behind a flag.
+  - (Fix) Will no longer show SSO login option if it's not available.
+  - (Fix) Route parsing is less restrictive allowing direct access to more entities via url.
+
 - 2.12.3:
   - Updated jujushell, new version is considerably more performant.
   - (Fix) Direct Deploy will no longer loop until all charms have loaded in some rare instances.
