@@ -1,11 +1,10 @@
 {
   "presets": [],
-  "plugins": [],
+  "plugins": [
+    "transform-react-jsx"
+  ],
   "env": {
     "production": {
-      "plugins": [
-        "transform-react-jsx"
-    ],
       "presets": [
         ["babili", {"mangle": false}]
       ]
