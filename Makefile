@@ -190,7 +190,7 @@ gui: gui-deps
 
 .PHONY: prod-gui
 prod-gui: gui-deps
-	$(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -t [ envify purge --NODE_ENV production --global true ]
+	BABEL_ENV=production $(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -g [ envify purge --NODE_ENV production ] -g uglifyify
 
 .PHONY: watch
 watch:

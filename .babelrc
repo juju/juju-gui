@@ -1,16 +1,16 @@
 {
   "presets": [],
   "plugins": [
-    "transform-react-jsx",
-    "rewire"
+    "transform-react-jsx"
   ],
   "env": {
     "production": {
       "presets": [
         ["babili", {"mangle": false}]
-      ],
+      ]
+    },
+    "development": {
       "plugins": [
-        "transform-react-jsx",
         "rewire"
       ]
     }

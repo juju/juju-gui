@@ -9,7 +9,6 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "dependencies": {
-    "babel-plugin-rewire": "^1.1.0",
     "classnames": "2.2.5",
     "clipboard": "1.7.1",
     "cloud-vanilla-theme": "0.1.2",
@@ -33,6 +32,7 @@
     "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "^16.3.2",
     "shapeup": "^0.2.5",
+    "uglifyify": "^5.0.0",
     "xterm": "^3.3.0",
     "xterm-webfont": "^1.0.1",
     "yui": "^3.18.1",
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-rewire": "^1.1.0",
     "babel-plugin-transform-react-jsx": "6.24.1",
     "babel-preset-babili": "0.1.4",
     "babelify": "https://registry.npmjs.org/babelify/-/babelify-7.3.0.tgz",
