@@ -112,4 +112,21 @@ data-templatetag="details_link">View details</span> A WORD <a \
 href="https://jujucharms.com/docs/stable/reference-install" \
 target="_blank">Juju CLI client</a>');
   });
+
+  it('replaces templateTags in markdown', () => {
+    const changeState = sinon.stub();
+    const wrapper = renderComponent({ changeState });
+    const instance = wrapper.instance();
+    instance._handleContentClick({
+      target: {
+        getAttribute: sinon.stub().withArgs('data-templatetag').returns('details_link')
+      }
+    });
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {
+      profile: null,
+      search: null,
+      store: 'test'
+    });
+  });
 });
