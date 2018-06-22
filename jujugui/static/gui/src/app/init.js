@@ -15,6 +15,7 @@ const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const ModelController = require('./models/model-controller');
 const State = require('./state/state');
+const StatsClient = require('./utils/statsd');
 const User = require('./user/user');
 const WebHandler = require('./store/env/web-handler');
 
@@ -244,7 +245,7 @@ class GUIApp {
     */
     this.stats = null;
     if (config.statsURL) {
-      this.stats = new window.jujugui.StatsClient(config.statsURL, 'gui');
+      this.stats = new StatsClient(config.statsURL, 'gui');
     }
 
     /**

@@ -2,14 +2,10 @@
 
 'use strict';
 
-if (typeof this.jujugui === 'undefined') {
-  this.jujugui = {};
-}
-
 /**
   A statsd client used to send application metrics.
 */
-const StatsClient = class StatsClient {
+class StatsClient {
 
   /**
     Create the statsd client.
@@ -73,4 +69,4 @@ const StatsClient = class StatsClient {
 
 };
 
-this.jujugui.StatsClient = StatsClient;
+module.exports = StatsClient;

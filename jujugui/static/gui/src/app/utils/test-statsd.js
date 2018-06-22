@@ -2,9 +2,7 @@
 
 'use strict';
 
-var juju = {components: {}}; // eslint-disable-line no-unused-vars
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const StatsClient = require('./statsd');
 
 describe('StatsClient', () => {
   let mockXHR;
@@ -46,27 +44,27 @@ describe('StatsClient', () => {
 
   it('increases a counter', () => {
     const url = 'https://example.com/stats/';
-    const client = new window.jujugui.StatsClient(url);
+    const client = new StatsClient(url);
     client.increase('foo');
     assertXHRSent(url, 'foo:1|c');
   });
 
   it('adds the trailing slash to the URL', () => {
-    const client = new window.jujugui.StatsClient('https://example.com');
+    const client = new StatsClient('https://example.com');
     client.increase('bar');
     assertXHRSent('https://example.com/', 'bar:1|c');
   });
 
   it('increases a counter by more than one', () => {
     const url = 'https://example.com/stats/';
-    const client = new window.jujugui.StatsClient(url);
+    const client = new StatsClient(url);
     client.increase('my-key', 42);
     assertXHRSent(url, 'my-key:42|c');
   });
 
   it('can include a prefix', () => {
     const url = 'https://example.com/stats/';
-    const client = new window.jujugui.StatsClient(url, 'gui');
+    const client = new StatsClient(url, 'gui');
     client.increase('awesome');
     assertXHRSent(url, 'gui.awesome:1|c');
   });
@@ -74,7 +72,7 @@ describe('StatsClient', () => {
   it('adds flags as statsd tags', () => {
     const url = 'https://example.com/stats/';
     const flags = {'test.bar': true, 'baz': true};
-    const client = new window.jujugui.StatsClient(url, 'gui', flags);
+    const client = new StatsClient(url, 'gui', flags);
     const name = client._addFlags('foo');
     assert.equal(name, 'foo,test.bar=true');
   });
@@ -87,7 +85,7 @@ describe('StatsClient', () => {
       'test.bad': false,
       'test.foo': true
     };
-    const client = new window.jujugui.StatsClient(url, 'gui', flags);
+    const client = new StatsClient(url, 'gui', flags);
     const name = client._addFlags('deploy');
     assert.equal(name, 'deploy,test.bar=true,test.foo=true');
   });
