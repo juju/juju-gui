@@ -9,6 +9,7 @@ const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
 const testUtils = require('../testing-utils');
+const User = require('../../user/user');
 
 const getEndpoints = sinon.stub();
 
@@ -230,8 +231,7 @@ describe('EnvironmentView', function() {
               };
             };
           };
-          const userClass = new window.jujugui.User(
-            {sessionStorage: getMockStorage()});
+          const userClass = new User({sessionStorage: getMockStorage()});
           userClass.controller = {user: 'user', password: 'password'};
           models = window.yui.namespace('juju.models');
           juju = window.yui.namespace('juju');
@@ -250,7 +250,7 @@ describe('EnvironmentView', function() {
           };
         };
       };
-      const userClass = new window.jujugui.User({storage: getMockStorage()});
+      const userClass = new User({storage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new testUtils.SocketStub();
       db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});

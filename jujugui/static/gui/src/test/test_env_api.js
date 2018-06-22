@@ -19,6 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const EnvironmentChangeSet = require('../app/init/environment-change-set');
+const User = require('../app/user/user');
 const utils = require('../app/init/testing-utils');
 
 (function() {
@@ -126,8 +127,7 @@ const utils = require('../app/init/testing-utils');
           };
         };
       };
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       ecs = new EnvironmentChangeSet({});

@@ -15,6 +15,7 @@ const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const ModelController = require('./models/model-controller');
 const State = require('./state/state');
+const User = require('./user/user');
 const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
@@ -107,7 +108,7 @@ class GUIApp {
       Application instance of the user class.
       @type {Object}
     */
-    this.user = config.user || new window.jujugui.User({
+    this.user = config.user || new User({
       externalAuth: config.auth,
       expiration: window.sessionStorage.getItem('expirationDatetime')
     });

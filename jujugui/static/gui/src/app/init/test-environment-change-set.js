@@ -20,6 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 const ECS = require('./environment-change-set');
 const testUtils = require('./testing-utils');
+const User = require('../user/user');
 const utils = require('./utils');
 
 describe('Environment Change Set', function() {
@@ -47,8 +48,7 @@ describe('Environment Change Set', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
+    const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     dbObj = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     dbObj.fireEvent = sinon.stub();

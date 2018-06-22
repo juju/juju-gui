@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const User = require('../user/user');
 const utils = require('./utils');
 const testUtils = require('./testing-utils');
 
@@ -567,8 +568,7 @@ describe('init utils', () => {
           };
         };
       };
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       callback = sinon.stub();
       commit = sinon.stub();

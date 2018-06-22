@@ -18,13 +18,11 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
-
+const User = require('./user');
 
 describe('user auth class', () => {
   it('exists', () => {
-    const user = new window.jujugui.User();
+    const user = new User();
     assert.isObject(user);
   });
 
@@ -57,12 +55,12 @@ describe('user auth class', () => {
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({sessionStorage: storage});
+      user = new User({sessionStorage: storage});
     });
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({sessionStorage: storage});
+      user = new User({sessionStorage: storage});
     });
 
     it('can be set', () => {
@@ -110,7 +108,7 @@ describe('user auth class', () => {
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({sessionStorage: storage});
+      user = new User({sessionStorage: storage});
     });
 
     it('can be set', () => {
@@ -158,7 +156,7 @@ describe('user auth class', () => {
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({localStorage: storage});
+      user = new User({localStorage: storage});
     });
 
     it('can set a macaroon', () => {
@@ -183,7 +181,7 @@ describe('user auth class', () => {
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({localStorage: storage});
+      user = new User({localStorage: storage});
       storage.setItem('charmstore', '<charmstore macaroon>');
       storage.setItem('identity', '<identity token>');
       storage.setItem('terms', '<terms macaroon>');
@@ -212,7 +210,7 @@ describe('user auth class', () => {
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({localStorage: storage});
+      user = new User({localStorage: storage});
       user.controller = {user: 'dalek'};
     });
 
@@ -236,7 +234,7 @@ describe('user auth class', () => {
 
     beforeEach(() => {
       storage = getMockStorage();
-      user = new window.jujugui.User({sessionStorage: storage});
+      user = new User({sessionStorage: storage});
     });
 
     it('can set an expiration time', () => {
@@ -245,7 +243,7 @@ describe('user auth class', () => {
         sessionStorage: storage,
         expirationDatetime: expiration
       };
-      user = new window.jujugui.User(cfg);
+      user = new User(cfg);
       assert.deepEqual(
         new Date(user.expirationDatetime).getTime(),
         expiration.getTime());
@@ -268,7 +266,7 @@ describe('user auth class', () => {
         sessionStorage: storage,
         expirationDatetime: expiration
       };
-      user = new window.jujugui.User(cfg);
+      user = new User(cfg);
       storage.setItem('foo', 'bar');
       user._purgeIfExpired();
       assert.isNull(storage.getItem('foo'));

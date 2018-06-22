@@ -3,6 +3,7 @@
 
 const endpointUtils = require('./endpoint-utils');
 const factory = require('./testing-factory');
+const User = require('../user/user');
 const utils = require('./testing-utils');
 
 const EndpointsController = require('./endpoints-controller');
@@ -59,8 +60,7 @@ describe('Relation endpoints logic', () => {
         };
       };
     };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
+    const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     container = utils.makeAppContainer();
     app = createApp(JujuGUI);

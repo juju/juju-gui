@@ -1,8 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = require('./init/testing-utils');
 const ReactDOM = require('react-dom');
+
+const User = require('./user/user');
+const utils = require('./init/testing-utils');
 
 const {
   charmstore,
@@ -348,8 +350,7 @@ describe('init', () => {
     beforeEach(() => {
       conn = new utils.SocketStub();
       app.destructor();
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       app = createApp({
         conn: conn,
@@ -447,8 +448,7 @@ describe('init', () => {
   describe('Application Connection State', () => {
     it('should be able to handle env connection status changes', () => {
       const conn = new utils.SocketStub();
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       app.destructor();
       app = createApp({
@@ -1123,8 +1123,7 @@ describe('init', () => {
     };
 
     beforeEach(() => {
-      userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {};
       setupApp();
     });

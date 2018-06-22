@@ -18,6 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const User = require('../app/user/user');
 const utils = require('../app/init/testing-utils');
 
 (function() {
@@ -47,8 +48,7 @@ const utils = require('../app/init/testing-utils');
     };
 
     beforeEach(function() {
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       env = new juju.environments.GoEnvironment({conn: conn, user: userClass});

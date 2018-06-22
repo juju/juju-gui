@@ -18,6 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const User = require('../app/user/user');
 const utils = require('../app/init/testing-utils');
 
 describe('Controller API', function() {
@@ -45,8 +46,7 @@ describe('Controller API', function() {
   };
 
   beforeEach(function() {
-    const user = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
+    const user = new User({sessionStorage: getMockStorage()});
     user.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
     controllerAPI = new juju.ControllerAPI({
@@ -152,8 +152,7 @@ describe('Controller API', function() {
     });
 
     it('stops the pinger when the controller is destroyed', function(done) {
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       const api = new juju.ControllerAPI({conn: conn, user: userClass});
       api.after('destroy', evt => {
