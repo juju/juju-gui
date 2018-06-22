@@ -32,11 +32,10 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/components/**/test-*.js',
 
       'jujugui/static/gui/src/app/user/test-*.js',
+      'jujugui/static/gui/src/app/utils/test-*.js',
 
       'jujugui/static/gui/build/app/utils/statsd.js',
       'jujugui/static/gui/build/app/utils/test-statsd.js',
-      'jujugui/static/gui/build/app/utils/github-ssh-keys.js',
-      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js',
 
       'jujugui/static/gui/src/test/globalconfig.js',
       'jujugui/static/gui/src/app/test-*.js',
@@ -60,7 +59,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/models/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/state/*.js': ['browserify'],
       'jujugui/static/gui/src/app/user/*.js': ['browserify'],
-      'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
+      'jujugui/static/gui/src/app/utils/*.js': ['browserify'],
       'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
       'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],
       'jujugui/static/gui/src/test/enzyme-setup.js': ['browserify'],

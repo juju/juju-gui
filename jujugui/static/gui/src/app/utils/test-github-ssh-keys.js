@@ -2,8 +2,7 @@
 
 'use strict';
 
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const githubSSHKeys = require('./github-ssh-keys');
 
 describe('GitHub SSH key fetching', () => {
   let sendGetRequest, callback;
@@ -14,7 +13,7 @@ describe('GitHub SSH key fetching', () => {
   });
 
   it('fetches github SSH keys', () => {
-    window.jujugui.sshKeys.githubSSHKeys(
+    githubSSHKeys(
       {sendGetRequest: sendGetRequest},
       'rose',
       callback);
@@ -56,7 +55,7 @@ describe('GitHub SSH key fetching', () => {
   });
 
   it('surfaces errors', () => {
-    window.jujugui.sshKeys.githubSSHKeys(
+    githubSSHKeys(
       {sendGetRequest: sendGetRequest},
       'bad-wolf',
       callback);
@@ -81,7 +80,7 @@ describe('GitHub SSH key fetching', () => {
   });
 
   it('handles invalid responses', () => {
-    window.jujugui.sshKeys.githubSSHKeys(
+    githubSSHKeys(
       {sendGetRequest: sendGetRequest},
       'bad-wolf',
       callback);

@@ -15,13 +15,11 @@ describe('DeploymentSSHKey', function() {
   let addNotification;
   let setSSHKeys;
   let setLaunchpadUsernames;
-  let getGithubSSHKeys;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentSSHKey
       addNotification={options.addNotification || addNotification}
       cloud={options.cloud === undefined ? {cloudType: 'aws'} : options.cloud}
-      getGithubSSHKeys={options.getGithubSSHKeys || getGithubSSHKeys}
       setLaunchpadUsernames={options.setLaunchpadUsernames || setLaunchpadUsernames}
       setSSHKeys={options.setSSHKeys || setSSHKeys}
       username={options.username}
@@ -32,7 +30,6 @@ describe('DeploymentSSHKey', function() {
     addNotification = sinon.stub();
     setSSHKeys = sinon.stub();
     setLaunchpadUsernames = sinon.stub();
-    getGithubSSHKeys = sinon.stub();
   });
 
   it('does not render without a cloud', function() {

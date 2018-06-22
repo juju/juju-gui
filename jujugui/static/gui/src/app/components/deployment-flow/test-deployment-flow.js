@@ -74,7 +74,6 @@ describe('DeploymentFlow', function() {
       getSLAMachineRates: sinon.stub(),
       getServiceByName: sinon.stub(),
       getUserName: sinon.stub().returns('dalek'),
-      getGithubSSHKeys: sinon.stub(),
       hash: null,
       isLoggedIn: sinon.stub().returns(true),
       loginToController: sinon.stub(),
@@ -227,7 +226,6 @@ describe('DeploymentFlow', function() {
               <DeploymentSSHKey
                 addNotification={sinon.stub()}
                 cloud={null}
-                getGithubSSHKeys={sinon.stub()}
                 setLaunchpadUsernames={
                   wrapper.find('DeploymentSSHKey').prop('setLaunchpadUsernames')}
                 setSSHKeys={wrapper.find('DeploymentSSHKey').prop('setSSHKeys')}
