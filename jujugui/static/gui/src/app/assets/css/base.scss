@@ -92,6 +92,9 @@ $asset-path: 'static/gui/build/app/assets/';
   transform: translateY(-50%);
 }
 
+// Import normalize.css from node_modules
+@import 'normalize.css/normalize';
+
 // Imports cloud vanilla theme from node_modules
 @import 'cloud-vanilla-theme/scss/theme';
 
