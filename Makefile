@@ -38,8 +38,6 @@ MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
 SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
 FONT_FILES := $(shell find $(GUISRC)/app/assets/fonts -type f -name "*.woff" -or -name "*.woff2")
 STATIC_FONT_FILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(FONT_FILES))
-STATIC_CSS_FILES = \
-	$(GUIBUILD)/app/assets/stylesheets/normalize.css
 
 LSB_RELEASE = $(shell lsb_release -cs)
 
@@ -144,10 +142,6 @@ $(BUILT_YUI): $(YUI) $(BUILT_JS_ASSETS)
 	# dist. Because we do not run YUI in node we can safely delete this folder.
 	rm -rf $(BUILT_YUI)/node_modules
 
-$(STATIC_CSS_FILES):
-	mkdir -p $(GUIBUILD)/app/assets/stylesheets
-	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
-
 $(STATIC_FONT_FILES): $(FONT_FILES)
 	mkdir -p $(GUIBUILD)/app/assets/fonts
 	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
@@ -157,7 +151,7 @@ $(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
 	bin/sassc -I node_modules -s compressed $(SCSS_FILE) $@
 
 .phony: css
-css: $(CSS_FILE) $(STATIC_CSS_FILES)
+css: $(CSS_FILE)
 
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
@@ -182,7 +176,7 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 .PHONY: gui-deps
-gui-deps: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_CSS_FILES) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
+gui-deps: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
 
 .PHONY: gui
 gui: gui-deps
