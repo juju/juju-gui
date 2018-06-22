@@ -18,10 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-if (typeof this.jujugui === 'undefined') {
-  this.jujugui = {};
-}
-
 const ROOT_RESERVED = [
   'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'account'];
 const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
@@ -31,7 +27,7 @@ const GUI_PATH_DELIMETERS = [
   'status'];
 
 /** Class representing the State of the Juju GUI */
-const State = class State {
+class State {
   /**
     Create a new instance of the GUI state.
     @param {Object} cfg - The configuration options for a new State instance.
@@ -982,4 +978,4 @@ const State = class State {
   }
 };
 
-this.jujugui.State = State;
+module.exports = State;

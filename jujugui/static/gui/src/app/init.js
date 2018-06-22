@@ -14,6 +14,7 @@ const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const ModelController = require('./models/model-controller');
+const State = require('./state/state');
 const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
@@ -516,7 +517,7 @@ class GUIApp {
     if (this.state) {
       return this.state;
     }
-    const state = new window.jujugui.State({
+    const state = new State({
       baseURL: baseURL,
       seriesList: urls.SERIES,
       sendAnalytics: this.sendAnalytics
