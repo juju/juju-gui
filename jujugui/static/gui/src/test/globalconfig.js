@@ -15,8 +15,7 @@ window.GlobalConfig = {
         comboBase: "/dev/combo?",
         root: 'app/',
         filter: 'raw',
-        // From modules.js
-        modules: YUI_MODULES,
+        modules: {},
     },
   },
   test_url: window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/"
