@@ -21,14 +21,16 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
 
-      'jujugui/static/gui/src/app/state/test-*.js',
 
       'jujugui/static/gui/src/test/enzyme-setup.js',
       'jujugui/static/gui/src/test/chai-setup.js',
-      // This file needs to go before any tests as it adds a beforEach and
+      // This file needs to go before any tests as it adds a beforeEach and
       // afterEach for every test so that we can ensure there are no prop type
       // errors.
       'jujugui/static/gui/src/test/required-props.js',
+      'jujugui/static/gui/src/test/globalconfig.js',
+
+      'jujugui/static/gui/src/app/state/test-*.js',
       'jujugui/static/gui/src/app/components/**/test-*.js',
       'jujugui/static/gui/src/app/d3-components/test-*.js',
       'jujugui/static/gui/src/app/init/**/test-*.js',
@@ -36,8 +38,7 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/store/env/test-*.js',
       'jujugui/static/gui/src/app/test-*.js',
       'jujugui/static/gui/src/app/user/test-*.js',
-      'jujugui/static/gui/src/app/utils/test-*.js',
-      'jujugui/static/gui/src/test/globalconfig.js'
+      'jujugui/static/gui/src/app/utils/test-*.js'
     ],
 
     // list of files to exclude
