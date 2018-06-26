@@ -30,7 +30,6 @@ describe('Inspector', function() {
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       charm={options.charm || charm}
-      entityPath={options.entityPath || 'u/foo/bar'}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
       getMacaroon={options.getMacaroon || sinon.stub()}
       getServiceById={options.getServiceById || sinon.stub()}
@@ -117,7 +116,6 @@ describe('Inspector', function() {
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
           changeState={wrapper.find('InspectorHeader').prop('changeState')}
           charmId="charmid"
-          entityPath="u/foo/bar"
           hasGetStarted={true}
           icon="icon.png"
           showLinks={true}

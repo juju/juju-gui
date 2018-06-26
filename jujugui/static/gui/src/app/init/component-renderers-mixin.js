@@ -810,7 +810,6 @@ Browser: ${navigator.userAgent}`
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          entityPath={urls.URL.fromAnyString(charm.get('id')).path()}
           getAvailableVersions={charmstore.getAvailableVersions.bind(
             charmstore)}
           getServiceById={db.services.getById.bind(db.services)}

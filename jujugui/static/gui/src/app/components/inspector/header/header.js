@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const { urls } = require('jaaslib');
 
 class InspectorHeader extends React.Component {
   /**
@@ -63,7 +64,7 @@ class InspectorHeader extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     this.props.changeState({
-      store: this.props.entityPath
+      store: urls.URL.fromAnyString(this.props.charmId).path()
     });
   }
 
@@ -122,7 +123,6 @@ InspectorHeader.propTypes = {
   backCallback: PropTypes.func.isRequired,
   changeState: PropTypes.func,
   charmId: PropTypes.string,
-  entityPath: PropTypes.string,
   hasGetStarted: PropTypes.bool,
   icon: PropTypes.string,
   showLinks: PropTypes.bool,

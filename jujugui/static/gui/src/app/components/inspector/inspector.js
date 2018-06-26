@@ -373,7 +373,6 @@ class Inspector extends React.Component {
           backCallback={this._backCallback.bind(this)}
           changeState={this.props.appState.changeState.bind(this.props.appState)}
           charmId={this.props.charm.get('id')}
-          entityPath={this.props.entityPath}
           hasGetStarted={this.props.charm.hasGetStarted()}
           icon={this.state.activeChild.icon}
           showLinks={this.state.showHeaderLinks}
@@ -393,7 +392,6 @@ Inspector.propTypes = {
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
-  entityPath: PropTypes.string.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
   getServiceById: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,

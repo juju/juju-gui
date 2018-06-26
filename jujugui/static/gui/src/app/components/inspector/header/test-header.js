@@ -13,7 +13,6 @@ describe('InspectorHeader', () => {
       backCallback={options.backCallback || sinon.stub()}
       changeState={options.changeState}
       charmId={options.charmId}
-      entityPath={options.entityPath}
       hasGetStarted={options.hasGetStarted}
       icon={options.icon}
       showLinks={options.showLinks}
@@ -110,10 +109,9 @@ describe('InspectorHeader', () => {
 
   it('clicking the Charm Details link changes state to show the details', () => {
     const changeState = sinon.stub();
-    const entityPath = 'u/hatch/ghost';
     const wrapper = renderComponent({
       changeState,
-      entityPath,
+      charmId: 'cs:~hatch/ghost',
       hasGetStarted: true,
       showLinks: true
     });
@@ -122,7 +120,7 @@ describe('InspectorHeader', () => {
       stopPropagation: sinon.stub()
     });
     assert.deepEqual(changeState.args[0], [{
-      store: entityPath
+      store: 'u/hatch/ghost'
     }]);
   });
 });
