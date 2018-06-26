@@ -21,7 +21,7 @@ const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
-  let acl, appState, charm, initUtils, modelAPI, relationUtils, service;
+  let acl, appState, charm, initUtils, modelAPI, relationUtils, service, services;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Inspector
@@ -32,8 +32,6 @@ describe('Inspector', function() {
       charm={options.charm || charm}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
       getMacaroon={options.getMacaroon || sinon.stub()}
-      getServiceById={options.getServiceById || sinon.stub()}
-      getServiceByName={options.getServiceByName || sinon.stub()}
       initUtils={options.initUtils || initUtils}
       modelAPI={options.modelAPI || modelAPI}
       modelUUID={options.modelUUID || 'abc123'}
@@ -42,6 +40,7 @@ describe('Inspector', function() {
       relationUtils={options.relationUtils || relationUtils}
       service={options.service || service}
       serviceRelations={options.serviceRelations || ['relations']}
+      services={options.services || services}
       showActivePlan={options.showActivePlan || sinon.stub()}
       showPlans={options.showPlans === undefined ? false : options.showPlans}
       showSSHButtons={false}
@@ -102,6 +101,10 @@ describe('Inspector', function() {
       createRelation: sinon.stub(),
       destroyRelations: sinon.stub(),
       getAvailableEndpoints: sinon.stub()
+    });
+    services = shapeup.addReshape({
+      getById: sinon.stub(),
+      getServiceByName: sinon.stub()
     });
   });
 
@@ -422,10 +425,10 @@ describe('Inspector', function() {
       'relate-to': 'zee-spouse'
     };
     relationUtils.getAvailableEndpoints.returns([]);
-    var getServiceById = () => ({
+    services.getById = () => ({
       get: sinon.stub().returns('spouse-name')
     });
-    const wrapper = renderComponent({ getServiceById });
+    const wrapper = renderComponent();
     const header = wrapper.find('InspectorHeader');
     assert.equal(header.prop('activeComponent'), 'relate-to');
     assert.equal(header.prop('title'), 'spouse-name');

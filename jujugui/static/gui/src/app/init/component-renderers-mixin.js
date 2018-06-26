@@ -810,10 +810,7 @@ Browser: ${navigator.userAgent}`
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          getAvailableVersions={charmstore.getAvailableVersions.bind(
-            charmstore)}
-          getServiceById={db.services.getById.bind(db.services)}
-          getServiceByName={db.services.getServiceByName.bind(db.services)}
+          getAvailableVersions={charmstore.getAvailableVersions.bind(charmstore)}
           initUtils={shapeup.addReshape({
             addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
               this, db, modelAPI, service),
@@ -844,6 +841,10 @@ Browser: ${navigator.userAgent}`
           service={service}
           serviceRelations={
             relationUtils.getRelationDataForService(db, service)}
+          services={shapeup.addReshape({
+            getById: db.services.getById.bind(db.services),
+            getServiceByName: db.services.getServiceByName.bind(db.services)
+          })}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
           showPlans={window.juju_config.flags.plans || false}
           showSSHButtons={this._enableTerminal()}

@@ -197,7 +197,7 @@ class Inspector extends React.Component {
               addNotification={nextProps.addNotification}
               changeState={changeState}
               charm={nextProps.charm}
-              getServiceByName={nextProps.getServiceByName}
+              getServiceByName={nextProps.services.getServiceByName}
               service={service}
               serviceRelations={nextProps.serviceRelations}
               setConfig={nextProps.modelAPI.setConfig}
@@ -268,7 +268,7 @@ class Inspector extends React.Component {
         const spouse = nextProps.appState.current.gui.inspector['relate-to'];
         if (typeof serviceId === 'string' && typeof spouse === 'string') {
           state.activeChild = {
-            title: nextProps.getServiceById(spouse).get('name'),
+            title: nextProps.services.getById(spouse).get('name'),
             icon: service.get('icon'),
             component:
               <InspectorRelateToEndpoint
@@ -280,7 +280,7 @@ class Inspector extends React.Component {
                 changeState={changeState}
                 createRelation={nextProps.relationUtils.createRelation}
                 endpoints={nextProps.relationUtils.getAvailableEndpoints(
-                  service, nextProps.getServiceById(spouse))} />,
+                  service, nextProps.services.getById(spouse))} />,
             backState: {
               gui: {
                 inspector: {
@@ -393,8 +393,6 @@ Inspector.propTypes = {
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
-  getServiceById: PropTypes.func.isRequired,
-  getServiceByName: PropTypes.func.isRequired,
   initUtils: shapeup.shape({
     addGhostAndEcsUnits: PropTypes.func.isRequired,
     createMachinesPlaceUnits: PropTypes.func.isRequired,
@@ -422,6 +420,11 @@ Inspector.propTypes = {
   }).isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
+  services: shapeup.shape({
+    getById: PropTypes.func.isRequired,
+    getServiceByName: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   showActivePlan: PropTypes.func.isRequired,
   showPlans: PropTypes.bool.isRequired,
   showSSHButtons: PropTypes.bool.isRequired,
