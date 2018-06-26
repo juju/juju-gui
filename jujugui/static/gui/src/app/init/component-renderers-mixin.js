@@ -803,6 +803,7 @@ Browser: ${navigator.userAgent}`
       const addCharm = (url, callback, options) => {
         modelAPI.addCharm(url, charmstore, callback, options);
       };
+      const propTypes = Inspector.propTypes;
       inspector = (
         <Inspector
           acl={this.acl}
@@ -841,10 +842,7 @@ Browser: ${navigator.userAgent}`
           service={service}
           serviceRelations={
             relationUtils.getRelationDataForService(db, service)}
-          services={shapeup.addReshape({
-            getById: db.services.getById.bind(db.services),
-            getServiceByName: db.services.getServiceByName.bind(db.services)
-          })}
+          services={shapeup.fromShape(db.services, propTypes.services)}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
           showPlans={window.juju_config.flags.plans || false}
           showSSHButtons={this._enableTerminal()}
