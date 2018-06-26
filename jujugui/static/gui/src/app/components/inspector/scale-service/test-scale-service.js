@@ -1,26 +1,30 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const ScaleService = require('./scale-service');
 
 describe('ScaleService', function() {
-  var acl;
+  let acl, initUtils;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <ScaleService
       acl={options.acl || acl}
-      addGhostAndEcsUnits={options.addGhostAndEcsUnits || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
-      createMachinesPlaceUnits={options.createMachinesPlaceUnits || sinon.stub()}
+      initUtils={options.initUtils || initUtils}
       serviceId={options.serviceId || '123'} />,
     { disableLifecycleMethods: true }
   );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    initUtils = shapeup.addReshape({
+      addGhostAndEcsUnits: sinon.stub(),
+      createMachinesPlaceUnits: sinon.stub()
+    });
   });
 
   it('hides the constraints on initial rendering', function() {
@@ -47,14 +51,8 @@ describe('ScaleService', function() {
   });
 
   it('creates and autoplaces units if constraints is open', function() {
-    const addGhostAndEcsUnits = sinon.stub();
-    const createMachinesPlaceUnits = sinon.stub();
     const changeState = sinon.stub();
-    const wrapper = renderComponent({
-      addGhostAndEcsUnits,
-      changeState,
-      createMachinesPlaceUnits
-    });
+    const wrapper = renderComponent({ changeState });
     // Set the value in the input.
     wrapper.find('.scale-service--units input').simulate('change', {
       currentTarget: {
@@ -80,12 +78,12 @@ describe('ScaleService', function() {
 
     // Submit the scale-service form.
     wrapper.find('form').simulate('submit');
-    assert.equal(createMachinesPlaceUnits.callCount, 1);
-    assert.equal(addGhostAndEcsUnits.callCount, 0);
+    assert.equal(initUtils.createMachinesPlaceUnits.callCount, 1);
+    assert.equal(initUtils.addGhostAndEcsUnits.callCount, 0);
     assert.equal(changeState.callCount, 1);
     // Check that the createMachinesPlaceUnits call was passed the proper data.
-    assert.equal(createMachinesPlaceUnits.args[0][0], 3);
-    assert.deepEqual(createMachinesPlaceUnits.args[0][1], {
+    assert.equal(initUtils.createMachinesPlaceUnits.args[0][0], 3);
+    assert.deepEqual(initUtils.createMachinesPlaceUnits.args[0][1], {
       arch: '',
       'cpu-power': 'c p u',
       'cpu-cores': 'c o r e s',
@@ -103,13 +101,9 @@ describe('ScaleService', function() {
   });
 
   it('creates and shows the machine view if constraints is closed', function() {
-    var addGhostAndEcsUnits = sinon.stub();
-    var createMachinesPlaceUnits = sinon.stub();
     var changeState = sinon.stub();
     const wrapper = renderComponent({
-      addGhostAndEcsUnits,
       changeState,
-      createMachinesPlaceUnits
     });
     // Set the value in the input.
     wrapper.find('.scale-service--units input').simulate('change', {
@@ -120,12 +114,12 @@ describe('ScaleService', function() {
     });
     // Submit the scale-service form.
     wrapper.find('form').simulate('submit');
-    assert.equal(createMachinesPlaceUnits.callCount, 0);
-    assert.equal(addGhostAndEcsUnits.callCount, 1);
+    assert.equal(initUtils.createMachinesPlaceUnits.callCount, 0);
+    assert.equal(initUtils.addGhostAndEcsUnits.callCount, 1);
     assert.equal(changeState.callCount, 1);
     // Check that the addGhostAndEcsUnits call was called with the number of
     // units.
-    assert.equal(addGhostAndEcsUnits.args[0][0], 3);
+    assert.equal(initUtils.addGhostAndEcsUnits.args[0][0], 3);
     // Check that it modifies state so that it shows the unit list and
     // the machine view.
     assert.deepEqual(changeState.args[0][0], {

@@ -3,6 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const shapeup = require('shapeup');
 
 const Inspector = require('./inspector');
 const InspectorChangeVersion = require('./change-version/change-version');
@@ -20,20 +21,17 @@ const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
-  let acl, appState, charm, service;
+  let acl, appState, charm, initUtils, service;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Inspector
       acl={options.acl || acl}
       addCharm={options.addCharm || sinon.stub()}
-      addGhostAndEcsUnits={options.addGhostAndEcsUnits || sinon.stub()}
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       charm={options.charm || charm}
-      createMachinesPlaceUnits={options.createMachinesPlaceUnits || sinon.stub()}
       createRelation={sinon.stub()}
       destroyRelations={options.destroyRelations || sinon.stub()}
-      destroyService={options.destroyService || sinon.stub()}
       destroyUnits={options.destroyUnits || sinon.stub()}
       entityPath={options.entityPath || 'u/foo/bar'}
       envResolved={options.envResolved || sinon.stub()}
@@ -44,6 +42,7 @@ describe('Inspector', function() {
       getMacaroon={options.getMacaroon || sinon.stub()}
       getServiceById={options.getServiceById || sinon.stub()}
       getServiceByName={options.getServiceByName || sinon.stub()}
+      initUtils={options.initUtils || initUtils}
       modelUUID={options.modelUUID || 'abc123'}
       providerType={options.providerType}
       relatableApplications={options.relatableApplications || []}
@@ -94,6 +93,11 @@ describe('Inspector', function() {
       get: sinon.stub().returns('charmid'),
       hasGetStarted: sinon.stub().returns(true)
     };
+    initUtils = shapeup.addReshape({
+      addGhostAndEcsUnits: sinon.stub(),
+      createMachinesPlaceUnits: sinon.stub(),
+      destroyService: sinon.stub()
+    });
   });
 
   it('displays the service overview for the "inspector" state', function() {
@@ -331,9 +335,12 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <ScaleService
           acl={acl}
-          addGhostAndEcsUnits={sinon.stub()}
           changeState={wrapper.find('ScaleService').prop('changeState')}
-          createMachinesPlaceUnits={sinon.stub()}
+          initUtils={{
+            addGhostAndEcsUnits: sinon.stub(),
+            createMachinesPlaceUnits: sinon.stub(),
+            reshape: shapeup.reshapeFunc
+          }}
           providerType='lxd'
           serviceId={service.get('id')} />
       </div>);

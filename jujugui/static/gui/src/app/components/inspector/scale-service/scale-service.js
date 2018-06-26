@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
 const Constraints = require('../../constraints/constraints');
@@ -88,12 +89,12 @@ class ScaleService extends React.Component {
     if (!state.constraintsVisibility) {
       // db, env, and service have already been bound to this function in
       // the app.js definition.
-      this.props.addGhostAndEcsUnits(numUnits);
+      this.props.initUtils.addGhostAndEcsUnits(numUnits);
       appState.gui.machines = '';
     } else {
       const constraints = this.state.constraints;
       delete constraints.series;
-      this.props.createMachinesPlaceUnits(numUnits, constraints);
+      this.props.initUtils.createMachinesPlaceUnits(numUnits, constraints);
     }
     this.props.changeState(appState);
   }
@@ -164,9 +165,12 @@ class ScaleService extends React.Component {
 
 ScaleService.propTypes = {
   acl: PropTypes.object.isRequired,
-  addGhostAndEcsUnits: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
-  createMachinesPlaceUnits: PropTypes.func.isRequired,
+  initUtils: shapeup.shape({
+    addGhostAndEcsUnits: PropTypes.func.isRequired,
+    createMachinesPlaceUnits: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   providerType: PropTypes.string,
   serviceId: PropTypes.string.isRequired
 };

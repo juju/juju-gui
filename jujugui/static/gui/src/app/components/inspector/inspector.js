@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const InspectorChangeVersion = require('./change-version/change-version');
 const InspectorExpose = require('./expose/expose');
@@ -76,7 +77,7 @@ class Inspector extends React.Component {
             addNotification={nextProps.addNotification}
             changeState={changeState}
             charm={nextProps.charm}
-            destroyService={nextProps.destroyService}
+            destroyService={nextProps.initUtils.destroyService}
             modelUUID={nextProps.modelUUID}
             service={service}
             serviceRelations={nextProps.serviceRelations}
@@ -164,15 +165,19 @@ class Inspector extends React.Component {
                 unitStatus: unitStatus}}}};
         break;
       case 'scale':
+        const { initUtils } = this.props;
         state.activeChild = {
           title: 'Scale',
           icon: service.get('icon'),
           component:
             <ScaleService
               acl={nextProps.acl}
-              addGhostAndEcsUnits={nextProps.addGhostAndEcsUnits}
               changeState={changeState}
-              createMachinesPlaceUnits={nextProps.createMachinesPlaceUnits}
+              initUtils={{
+                addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits,
+                createMachinesPlaceUnits: initUtils.createMachinesPlaceUnits,
+                reshape: shapeup.reshapeFunc
+              }}
               providerType={nextProps.providerType}
               serviceId={serviceId} />,
           backState: {
@@ -380,14 +385,11 @@ class Inspector extends React.Component {
 Inspector.propTypes = {
   acl: PropTypes.object.isRequired,
   addCharm: PropTypes.func.isRequired,
-  addGhostAndEcsUnits: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
-  createMachinesPlaceUnits: PropTypes.func.isRequired,
   createRelation: PropTypes.func.isRequired,
   destroyRelations: PropTypes.func.isRequired,
-  destroyService: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   entityPath: PropTypes.string.isRequired,
   envResolved: PropTypes.func.isRequired,
@@ -397,6 +399,12 @@ Inspector.propTypes = {
   getCharm: PropTypes.func.isRequired,
   getServiceById: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,
+  initUtils: shapeup.shape({
+    addGhostAndEcsUnits: PropTypes.func.isRequired,
+    createMachinesPlaceUnits: PropTypes.func.isRequired,
+    destroyService: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   modelUUID: PropTypes.string.isRequired,
   providerType: PropTypes.string,
   relatableApplications: PropTypes.array.isRequired,

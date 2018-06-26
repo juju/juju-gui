@@ -807,18 +807,12 @@ Browser: ${navigator.userAgent}`
         <Inspector
           acl={this.acl}
           addCharm={addCharm}
-          addGhostAndEcsUnits={initUtils.addGhostAndEcsUnits.bind(
-            this, db, model, service)}
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          createMachinesPlaceUnits={initUtils.createMachinesPlaceUnits.bind(
-            this, db, model, service)}
           createRelation={relationUtils.createRelation.bind(this, db, model)}
           destroyRelations={relationUtils.destroyRelations.bind(
             this, db, model)}
-          destroyService={initUtils.destroyService.bind(
-            this, db, model, service)}
           destroyUnits={model.remove_units.bind(model)}
           entityPath={urls.URL.fromAnyString(charm.get('id')).path()}
           envResolved={model.resolved.bind(model)}
@@ -830,6 +824,14 @@ Browser: ${navigator.userAgent}`
           getCharm={model.get_charm.bind(model)}
           getServiceById={db.services.getById.bind(db.services)}
           getServiceByName={db.services.getServiceByName.bind(db.services)}
+          initUtils={shapeup.addReshape({
+            addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
+              this, db, model, service),
+            createMachinesPlaceUnits: initUtils.createMachinesPlaceUnits.bind(
+              this, db, model, service),
+            destroyService: initUtils.destroyService.bind(
+              this, db, model, service)
+          })}
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}
           relatableApplications={relatableApplications}
