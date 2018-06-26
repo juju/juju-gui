@@ -21,7 +21,7 @@ const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
-  let acl, appState, charm, initUtils, relationUtils, service;
+  let acl, appState, charm, initUtils, modelAPI, relationUtils, service;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Inspector
@@ -30,28 +30,22 @@ describe('Inspector', function() {
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       charm={options.charm || charm}
-      destroyUnits={options.destroyUnits || sinon.stub()}
       entityPath={options.entityPath || 'u/foo/bar'}
-      envResolved={options.envResolved || sinon.stub()}
-      exposeService={options.exposeService || sinon.stub()}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
-      getCharm={options.getCharm || sinon.stub()}
       getMacaroon={options.getMacaroon || sinon.stub()}
       getServiceById={options.getServiceById || sinon.stub()}
       getServiceByName={options.getServiceByName || sinon.stub()}
       initUtils={options.initUtils || initUtils}
+      modelAPI={options.modelAPI || modelAPI}
       modelUUID={options.modelUUID || 'abc123'}
       providerType={options.providerType}
       relatableApplications={options.relatableApplications || []}
       relationUtils={options.relationUtils || relationUtils}
       service={options.service || service}
       serviceRelations={options.serviceRelations || ['relations']}
-      setCharm={options.setCharm || sinon.stub()}
-      setConfig={options.setConfig || sinon.stub()}
       showActivePlan={options.showActivePlan || sinon.stub()}
       showPlans={options.showPlans === undefined ? false : options.showPlans}
       showSSHButtons={false}
-      unexposeService={options.unexposeService || sinon.stub()}
       unplaceServiceUnits={options.unplaceServiceUnits || sinon.stub()}
       updateServiceUnitsDisplayname={
         options.updateServiceUnitsDisplayname || sinon.stub()} />
@@ -95,6 +89,15 @@ describe('Inspector', function() {
       addGhostAndEcsUnits: sinon.stub(),
       createMachinesPlaceUnits: sinon.stub(),
       destroyService: sinon.stub()
+    });
+    modelAPI = shapeup.addReshape({
+      destroyUnits: sinon.stub(),
+      envResolved: sinon.stub(),
+      exposeService: sinon.stub(),
+      getCharm: sinon.stub(),
+      setCharm: sinon.stub(),
+      setConfig: sinon.stub(),
+      unexposeService: sinon.stub()
     });
     relationUtils = shapeup.addReshape({
       createRelation: sinon.stub(),
@@ -366,9 +369,12 @@ describe('Inspector', function() {
           acl={acl}
           addNotification={sinon.stub()}
           changeState={wrapper.find('InspectorExpose').prop('changeState')}
-          exposeService={sinon.stub()}
+          modelAPI={{
+            exposeService: sinon.stub(),
+            reshape: shapeup.reshapeFunc,
+            unexposeService: sinon.stub()
+          }}
           service={service}
-          unexposeService={sinon.stub()}
           units={units} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
@@ -479,9 +485,12 @@ describe('Inspector', function() {
           changeState={wrapper.find('InspectorChangeVersion').prop('changeState')}
           charmId="cs:demo"
           getAvailableVersions={sinon.stub()}
-          getCharm={sinon.stub()}
-          service={service}
-          setCharm={sinon.stub()} />
+          modelAPI={{
+            getCharm: sinon.stub(),
+            reshape: shapeup.reshapeFunc,
+            setCharm: sinon.stub()
+          }}
+          service={service} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });

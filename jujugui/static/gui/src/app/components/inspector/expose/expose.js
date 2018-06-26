@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const InspectorExposeUnit = require('./unit/unit');
@@ -71,10 +72,10 @@ class InspectorExpose extends React.Component {
     var service = this.props.service;
     var serviceId = service.get('id');
     if (service.get('exposed')) {
-      this.props.unexposeService(serviceId,
+      this.props.modelAPI.unexposeService(serviceId,
         this._exposeServiceCallback.bind(this), {});
     } else {
-      this.props.exposeService(serviceId,
+      this.props.modelAPI.exposeService(serviceId,
         this._exposeServiceCallback.bind(this), {});
     }
   }
@@ -127,9 +128,12 @@ InspectorExpose.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
-  exposeService: PropTypes.func.isRequired,
+  modelAPI: shapeup.shape({
+    exposeService: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    unexposeService: PropTypes.func.isRequired
+  }).isRequired,
   service: PropTypes.object.isRequired,
-  unexposeService: PropTypes.func.isRequired,
   units: PropTypes.object.isRequired
 };
 

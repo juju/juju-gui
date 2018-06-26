@@ -1,15 +1,16 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
 const InspectorChangeVersion = require('./change-version');
 const InspectorChangeVersionItem = require('./item/item');
 
 describe('InspectorChangeVersion', function() {
-  let acl;
+  let acl, modelAPI;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorChangeVersion
@@ -22,17 +23,20 @@ describe('InspectorChangeVersion', function() {
         options.getAvailableVersions || sinon.stub().callsArgWith(1, null, [
           'cs:django-4', 'cs:django-5', 'cs:django-6'
         ])}
-      getCharm={options.getCharm || sinon.stub()}
       getMacaroon={options.getMacaroon || sinon.stub()}
+      modelAPI={options.modelAPI || modelAPI}
       service={options.service || {
         get: sinon.stub().returns('django'),
         set: sinon.stub()
-      }}
-      setCharm={options.setCharm || sinon.stub()} />
+      }} />
   );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
+    modelAPI = shapeup.addReshape({
+      getCharm: sinon.stub(),
+      setCharm: sinon.stub()
+    });
   });
 
   it('can display a loading spinner', function() {
@@ -126,13 +130,11 @@ describe('InspectorChangeVersion', function() {
       get: sinon.stub().returns('django'),
       set: serviceSet
     };
-    var setCharm = sinon.stub().callsArgWith(4, 'cs:django-4');
-    var getCharm = sinon.stub().callsArgWith(1, 'cs:django-4');
+    modelAPI.setCharm.callsArgWith(4, 'cs:django-4');
+    modelAPI.getCharm.callsArgWith(1, 'cs:django-4');
     const wrapper = renderComponent({
       addCharm,
-      getCharm,
-      service,
-      setCharm
+      service
     });
     wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     // The charm needs to be added to the model first.
@@ -158,13 +160,11 @@ describe('InspectorChangeVersion', function() {
   it('adds a notification if it can not set a charm', function() {
     var addNotification = sinon.stub();
     var addCharm = sinon.stub().callsArgWith(1, {});
-    var setCharm = sinon.stub().callsArgWith(4, {err: 'error'});
-    var getCharm = sinon.stub().callsArgWith(1);
+    modelAPI.setCharm.callsArgWith(4, {err: 'error'});
+    modelAPI.getCharm.callsArgWith(1);
     const wrapper = renderComponent({
       addNotification,
-      addCharm,
-      getCharm,
-      setCharm
+      addCharm
     });
     wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     assert.equal(addNotification.callCount, 1);
@@ -173,13 +173,11 @@ describe('InspectorChangeVersion', function() {
   it('adds a notification if it can not get a charm', function() {
     var addNotification = sinon.stub();
     var addCharm = sinon.stub().callsArgWith(1, {});
-    var setCharm = sinon.stub().callsArgWith(4, {});
-    var getCharm = sinon.stub().callsArgWith(1, {err: 'error'});
+    modelAPI.setCharm.callsArgWith(4, {});
+    modelAPI.getCharm.callsArgWith(1, {err: 'error'});
     const wrapper = renderComponent({
       addNotification,
-      addCharm,
-      getCharm,
-      setCharm
+      addCharm
     });
     wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
     assert.equal(addNotification.callCount, 1);
