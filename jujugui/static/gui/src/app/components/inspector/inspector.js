@@ -235,7 +235,7 @@ class Inspector extends React.Component {
             <InspectorRelations
               acl={nextProps.acl}
               changeState={changeState}
-              destroyRelations={nextProps.destroyRelations}
+              destroyRelations={nextProps.relationUtils.destroyRelations}
               service={service}
               serviceRelations={nextProps.serviceRelations} />,
           backState: {
@@ -275,8 +275,8 @@ class Inspector extends React.Component {
                       id: serviceId,
                       activeComponent: 'relations'}}}}
                 changeState={changeState}
-                createRelation={nextProps.createRelation}
-                endpoints={nextProps.getAvailableEndpoints(
+                createRelation={nextProps.relationUtils.createRelation}
+                endpoints={nextProps.relationUtils.getAvailableEndpoints(
                   service, nextProps.getServiceById(spouse))} />,
             backState: {
               gui: {
@@ -388,13 +388,10 @@ Inspector.propTypes = {
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
-  createRelation: PropTypes.func.isRequired,
-  destroyRelations: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   entityPath: PropTypes.string.isRequired,
   envResolved: PropTypes.func.isRequired,
   exposeService: PropTypes.func.isRequired,
-  getAvailableEndpoints: PropTypes.func.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
   getCharm: PropTypes.func.isRequired,
   getServiceById: PropTypes.func.isRequired,
@@ -408,6 +405,12 @@ Inspector.propTypes = {
   modelUUID: PropTypes.string.isRequired,
   providerType: PropTypes.string,
   relatableApplications: PropTypes.array.isRequired,
+  relationUtils: shapeup.shape({
+    createRelation: PropTypes.func.isRequired,
+    destroyRelations: PropTypes.func.isRequired,
+    getAvailableEndpoints: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
   setCharm: PropTypes.func.isRequired,

@@ -810,15 +810,10 @@ Browser: ${navigator.userAgent}`
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          createRelation={relationUtils.createRelation.bind(this, db, model)}
-          destroyRelations={relationUtils.destroyRelations.bind(
-            this, db, model)}
           destroyUnits={model.remove_units.bind(model)}
           entityPath={urls.URL.fromAnyString(charm.get('id')).path()}
           envResolved={model.resolved.bind(model)}
           exposeService={model.expose.bind(model)}
-          getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
-            this, this.endpointsController, db, endpointUtils.getEndpoints)}
           getAvailableVersions={charmstore.getAvailableVersions.bind(
             charmstore)}
           getCharm={model.get_charm.bind(model)}
@@ -835,6 +830,13 @@ Browser: ${navigator.userAgent}`
           modelUUID={this.modelUUID || ''}
           providerType={model.get('providerType') || ''}
           relatableApplications={relatableApplications}
+          relationUtils={shapeup.addReshape({
+            createRelation: relationUtils.createRelation.bind(this, db, model),
+            destroyRelations: relationUtils.destroyRelations.bind(
+              this, db, model),
+            getAvailableEndpoints: relationUtils.getAvailableEndpoints.bind(
+              this, this.endpointsController, db, endpointUtils.getEndpoints)
+          })}
           service={service}
           serviceRelations={
             relationUtils.getRelationDataForService(db, service)}

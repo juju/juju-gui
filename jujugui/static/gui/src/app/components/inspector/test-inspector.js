@@ -21,7 +21,7 @@ const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
-  let acl, appState, charm, initUtils, service;
+  let acl, appState, charm, initUtils, relationUtils, service;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Inspector
@@ -30,13 +30,10 @@ describe('Inspector', function() {
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       charm={options.charm || charm}
-      createRelation={sinon.stub()}
-      destroyRelations={options.destroyRelations || sinon.stub()}
       destroyUnits={options.destroyUnits || sinon.stub()}
       entityPath={options.entityPath || 'u/foo/bar'}
       envResolved={options.envResolved || sinon.stub()}
       exposeService={options.exposeService || sinon.stub()}
-      getAvailableEndpoints={options.getAvailableEndpoints || sinon.stub()}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
       getCharm={options.getCharm || sinon.stub()}
       getMacaroon={options.getMacaroon || sinon.stub()}
@@ -46,6 +43,7 @@ describe('Inspector', function() {
       modelUUID={options.modelUUID || 'abc123'}
       providerType={options.providerType}
       relatableApplications={options.relatableApplications || []}
+      relationUtils={options.relationUtils || relationUtils}
       service={options.service || service}
       serviceRelations={options.serviceRelations || ['relations']}
       setCharm={options.setCharm || sinon.stub()}
@@ -97,6 +95,11 @@ describe('Inspector', function() {
       addGhostAndEcsUnits: sinon.stub(),
       createMachinesPlaceUnits: sinon.stub(),
       destroyService: sinon.stub()
+    });
+    relationUtils = shapeup.addReshape({
+      createRelation: sinon.stub(),
+      destroyRelations: sinon.stub(),
+      getAvailableEndpoints: sinon.stub()
     });
   });
 
@@ -414,14 +417,11 @@ describe('Inspector', function() {
       activeComponent: 'relate-to',
       'relate-to': 'zee-spouse'
     };
-    var getAvailableEndpoints = sinon.stub().returns([]);
+    relationUtils.getAvailableEndpoints.returns([]);
     var getServiceById = () => ({
       get: sinon.stub().returns('spouse-name')
     });
-    const wrapper = renderComponent({
-      getAvailableEndpoints,
-      getServiceById
-    });
+    const wrapper = renderComponent({ getServiceById });
     const header = wrapper.find('InspectorHeader');
     assert.equal(header.prop('activeComponent'), 'relate-to');
     assert.equal(header.prop('title'), 'spouse-name');
