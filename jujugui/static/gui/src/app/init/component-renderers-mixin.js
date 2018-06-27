@@ -487,32 +487,13 @@ Browser: ${navigator.userAgent}`
       };
 
       const charmstore = this.charmstore;
-
-      const showEntityDetails = id => {
-        let url;
-        try {
-          url = urls.URL.fromString(id);
-        } catch (_) {
-          url = urls.URL.fromLegacyString(id);
-        }
-
-        const storeState = {
-          profile: null,
-          search: null,
-          store: url.path()
-        };
-
-        this.state.changeState(storeState);
-      };
-
       ReactDOM.render(
         <PostDeployment
           changeState={this._bound.changeState}
           entityId={entityId}
           getEntity={charmstore.getEntity.bind(charmstore)}
           getFile={charmstore.getFile.bind(charmstore)}
-          marked={marked}
-          showEntityDetails={showEntityDetails.bind(this, entityId)} />,
+          marked={marked} />,
         document.getElementById('post-deployment')
       );
     }
