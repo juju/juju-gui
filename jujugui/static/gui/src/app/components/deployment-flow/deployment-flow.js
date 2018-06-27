@@ -643,7 +643,6 @@ class DeploymentFlow extends React.Component {
         <DeploymentSSHKey
           addNotification={this.props.addNotification}
           cloud={cloud}
-          getGithubSSHKeys={this.props.getGithubSSHKeys}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           setSSHKeys={this._setSSHKeys.bind(this)}
           username={this.props.username}
@@ -1281,7 +1280,6 @@ DeploymentFlow.propTypes = {
   generateMachineDetails: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getCurrentChangeSet: PropTypes.func.isRequired,
-  getGithubSSHKeys: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func,
   getServiceByName: PropTypes.func.isRequired,
   getUserName: PropTypes.func.isRequired,

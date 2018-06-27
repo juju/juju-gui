@@ -14,9 +14,9 @@ recursive-exclude jujugui/static/gui/src *
 recursive-exclude jujugui/tests *
 recursive-exclude test *
 
-# To get only the *min.js files we first remove all js files and then add the
-# min.js files back in
+# First remove all js files before adding back in the files we need.
 recursive-exclude jujugui/static/gui/build *.js
-recursive-include jujugui/static/gui/build *min.js
-# Remove the minified test files.
-recursive-exclude jujugui/static/gui/build/app/components test-*.js
+# Add back in the YUI files.
+recursive-include jujugui/static/gui/build/app/assets/javascripts/yui *min.js
+# Add the main file that all components, utils etc. have been combined into.
+include jujugui/static/gui/build/app/init-pkg-min.js

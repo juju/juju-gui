@@ -18,15 +18,6 @@
 
 'use strict';
 
-if (typeof this.jujugui === 'undefined') {
-  this.jujugui = {};
-}
-
-// Future-proof if we want to grab SSH keys from anywhere else
-// (gitlab, gogs, etc).
-if (typeof this.jujugui.sshKeys === 'undefined') {
-  this.jujugui.sshKeys = {};
-}
 
 /**
   Fetch SSH keys from a user's GitHub account.
@@ -47,7 +38,7 @@ const githubSSHKeys = (handler, username, callback) => {
     }
 
     // If there's an error, set it to the message from GitHub
-    const error = response.currentTarget.status !== 200 ? 
+    const error = response.currentTarget.status !== 200 ?
       `cannot retrieve SSH keys from GitHub: ${data.message}` : null;
 
     // If there's no error, pull the key into its respective parts for use by
@@ -77,4 +68,4 @@ const githubSSHKeys = (handler, username, callback) => {
 
 };
 
-this.jujugui.sshKeys.githubSSHKeys = githubSSHKeys;
+module.exports = githubSSHKeys;

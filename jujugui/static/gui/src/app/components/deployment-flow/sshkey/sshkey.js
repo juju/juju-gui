@@ -8,6 +8,7 @@ const InsetSelect = require('../../inset-select/inset-select');
 const SvgIcon = require('../../svg-icon/svg-icon');
 const GenericButton = require('../../generic-button/generic-button');
 const GenericInput = require('../../generic-input/generic-input');
+const githubSSHKeys = require('../../../utils/github-ssh-keys');
 const Notification = require('../../notification/notification');
 
 /**
@@ -144,7 +145,7 @@ class DeploymentSSHKey extends React.Component {
     this.setState({error: null});
     if (source === 'github') {
       const githubUsername = this.refs.githubUsername.getValue();
-      this.props.getGithubSSHKeys(
+      githubSSHKeys(
         new this.props.WebHandler,
         githubUsername,
         this._addGithubKeysCallback.bind(this)
@@ -471,7 +472,6 @@ DeploymentSSHKey.propTypes = {
   WebHandler: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
   cloud: PropTypes.object,
-  getGithubSSHKeys: PropTypes.func.isRequired,
   setLaunchpadUsernames: PropTypes.func.isRequired,
   setSSHKeys: PropTypes.func.isRequired,
   username: PropTypes.string

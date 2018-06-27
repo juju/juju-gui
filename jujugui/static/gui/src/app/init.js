@@ -14,6 +14,9 @@ const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const ModelController = require('./models/model-controller');
+const State = require('./state/state');
+const StatsClient = require('./utils/statsd');
+const User = require('./user/user');
 const WebHandler = require('./store/env/web-handler');
 
 const newBakery = require('./init/utils/bakery-utils');
@@ -106,7 +109,7 @@ class GUIApp {
       Application instance of the user class.
       @type {Object}
     */
-    this.user = config.user || new window.jujugui.User({
+    this.user = config.user || new User({
       externalAuth: config.auth,
       expiration: window.sessionStorage.getItem('expirationDatetime')
     });
@@ -242,7 +245,7 @@ class GUIApp {
     */
     this.stats = null;
     if (config.statsURL) {
-      this.stats = new window.jujugui.StatsClient(config.statsURL, 'gui');
+      this.stats = new StatsClient(config.statsURL, 'gui');
     }
 
     /**
@@ -516,7 +519,7 @@ class GUIApp {
     if (this.state) {
       return this.state;
     }
-    const state = new window.jujugui.State({
+    const state = new State({
       baseURL: baseURL,
       seriesList: urls.SERIES,
       sendAnalytics: this.sendAnalytics

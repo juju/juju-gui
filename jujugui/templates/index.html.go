@@ -297,14 +297,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <script src="{{.comboURL}}?app/init-pkg.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js"></script>
-    <script src="{{.comboURL}}?modules.js"></script>
-    <script src="{{.comboURL}}?app/state/state.js&app/user/user.js&app/utils/github-ssh-keys.js&app/utils/statsd.js"></script>
     {{else}}
     <script src="{{.comboURL}}?app/init-pkg-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/version-min.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js"></script>
-    <script src="{{.comboURL}}?modules-min.js"></script>
-    <script src="{{.comboURL}}?app/state/state-min.js&app/user/user-min.js&app/utils/github-ssh-keys-min.js&app/utils/statsd-min.js"></script>
     {{end}}
 
     <script>

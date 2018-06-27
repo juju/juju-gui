@@ -21,31 +21,24 @@ module.exports = function(config) {
       'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
       'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
 
-      'jujugui/static/gui/src/app/state/*.js',
 
       'jujugui/static/gui/src/test/enzyme-setup.js',
       'jujugui/static/gui/src/test/chai-setup.js',
-      // This file needs to go before any tests as it adds a beforEach and
+      // This file needs to go before any tests as it adds a beforeEach and
       // afterEach for every test so that we can ensure there are no prop type
       // errors.
       'jujugui/static/gui/src/test/required-props.js',
-      'jujugui/static/gui/src/app/components/**/test-*.js',
-
-      'jujugui/static/gui/build/app/user/user.js',
-      'jujugui/static/gui/build/app/user/test-user.js',
-
-      'jujugui/static/gui/build/app/utils/statsd.js',
-      'jujugui/static/gui/build/app/utils/test-statsd.js',
-      'jujugui/static/gui/build/app/utils/github-ssh-keys.js',
-      'jujugui/static/gui/build/app/utils/test-github-ssh-keys.js',
-
-      'jujugui/static/gui/build/modules.js',
       'jujugui/static/gui/src/test/globalconfig.js',
-      'jujugui/static/gui/src/app/test-*.js',
+
+      'jujugui/static/gui/src/app/state/test-*.js',
+      'jujugui/static/gui/src/app/components/**/test-*.js',
       'jujugui/static/gui/src/app/d3-components/test-*.js',
       'jujugui/static/gui/src/app/init/**/test-*.js',
       'jujugui/static/gui/src/app/models/test-*.js',
-      'jujugui/static/gui/src/app/store/env/test-*.js'
+      'jujugui/static/gui/src/app/store/env/test-*.js',
+      'jujugui/static/gui/src/app/test-*.js',
+      'jujugui/static/gui/src/app/user/test-*.js',
+      'jujugui/static/gui/src/app/utils/test-*.js'
     ],
 
     // list of files to exclude
@@ -60,7 +53,9 @@ module.exports = function(config) {
       'jujugui/static/gui/src/app/init/**/test-*.js': ['browserify'],
       'jujugui/static/gui/src/app/init/topology/environment-utils.js': ['browserify'],
       'jujugui/static/gui/src/app/models/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/utils/component-test-utils.js': ['browserify'],
+      'jujugui/static/gui/src/app/state/*.js': ['browserify'],
+      'jujugui/static/gui/src/app/user/*.js': ['browserify'],
+      'jujugui/static/gui/src/app/utils/*.js': ['browserify'],
       'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
       'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],
       'jujugui/static/gui/src/test/enzyme-setup.js': ['browserify'],

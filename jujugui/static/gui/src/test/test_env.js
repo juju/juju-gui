@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+const User = require('../app/user/user');
+
 (function() {
 
   describe('Base Environment', function() {
@@ -46,8 +48,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     it('calls "open" on connection if available.', function() {
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       const conn= {
         open: sinon.stub(),
@@ -61,8 +62,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('calls "cleanup" when the connection is closed', function() {
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'who', password: 'tardis'};
       const conn = {
         open: sinon.stub(),
@@ -94,8 +94,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('sets connecting when it is attempting a connection', function() {
-      const userClass = new window.jujugui.User(
-        {sessionStorage: getMockStorage()});
+      const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       const env = new environments.BaseEnvironment({user: userClass});
       env.set('socket_url', 'ws://sandbox');
@@ -109,8 +108,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       let baseModel;
 
       beforeEach(() => {
-        const userClass = new window.jujugui.User(
-          {sessionStorage: getMockStorage()});
+        const userClass = new User({sessionStorage: getMockStorage()});
         userClass.controller = {user: 'user', password: 'password'};
         const conn = {
           open: sinon.stub(),

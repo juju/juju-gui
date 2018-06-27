@@ -967,7 +967,6 @@ Browser: ${navigator.userAgent}`
             initUtils, modelAPI.genericConstraints, db.units)}
         generatePath={this.state.generatePath.bind(this.state)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
-        getGithubSSHKeys={window.jujugui.sshKeys.githubSSHKeys}
         getServiceByName={services.getServiceByName.bind(services)}
         getSLAMachineRates={this.rates.getSLAMachineRates.bind(this.rates)}
         getUserName={getUserName}

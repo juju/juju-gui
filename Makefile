@@ -17,8 +17,6 @@ PYRAMID := lib/python2.7/site-packages/pyramid
 PYTESTPKG := lib/python2.7/site-packages/pytest.py
 NODE_MODULES := node_modules
 SVG_SPRITE_MODULE := $(NODE_MODULES)/svg-sprite/
-MODULES := $(GUIBUILD)/modules.js
-MODULESMIN := $(GUIBUILD)/modules-min.js
 YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
@@ -120,10 +118,6 @@ venv: $(PY)
 $(JUJUGUI): $(PYRAMID)
 	$(PY) setup.py develop
 
-$(MODULESMIN): $(NODE_MODULES) $(PYRAMID) $(BUILT_RAWJSFILES) $(MIN_JS_FILES) $(BUILT_YUI) $(BUILT_JS_ASSETS)
-	$(PY) scripts/generate_modules.py -n YUI_MODULES -s $(GUIBUILD)/app -o $(MODULES) -x "(-min.js)|(\/yui\/)"
-	BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments $(MODULES) -o $(MODULESMIN)
-
 $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
 	./scripts/transpile.js
 
@@ -176,7 +170,7 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 .PHONY: gui-deps
-gui-deps: $(JUJUGUI) $(MODULESMIN) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
+gui-deps: $(JUJUGUI) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
 
 .PHONY: gui
 gui: gui-deps

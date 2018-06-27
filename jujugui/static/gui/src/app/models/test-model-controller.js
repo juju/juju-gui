@@ -19,8 +19,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const factory = require('../init/testing-factory');
-const utils = require('../init/testing-utils');
 const ModelController = require('./model-controller');
+const User = require('../user/user');
+const utils = require('../init/testing-utils');
 
 describe('Model Controller Promises', function() {
   var cleanups, conn, db, env, environment,
@@ -53,8 +54,7 @@ describe('Model Controller Promises', function() {
         };
       };
     };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
+    const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
     environment = env = new yui.juju.environments.GoEnvironment({

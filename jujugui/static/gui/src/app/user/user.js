@@ -18,10 +18,6 @@
 
 'use strict';
 
-if (typeof this.jujugui === 'undefined') {
-  this.jujugui = {};
-}
-
 // XXX j.c.sackett 2016-05-26 Session expiration should be set via config, but
 // as that also requires an update from blues browser we'll do that in a follow
 // up. For now it's set to the same timeout as in blues browser.
@@ -38,7 +34,7 @@ function getExpirationDate() {
 }
 
 /** Class representing a user's authorizations in the GUI **/
-const User = class User {
+class User {
 
   constructor(cfg = {}) {
     // We pass in these values to make test setup easier.
@@ -313,4 +309,4 @@ const User = class User {
   }
 };
 
-this.jujugui.User = User;
+module.exports = User;

@@ -3,6 +3,7 @@
 
 const endpointUtils = require('./endpoint-utils');
 const factory = require('./testing-factory');
+const User = require('../user/user');
 const utils = require('./testing-utils');
 
 const EndpointsController = require('./endpoints-controller');
@@ -59,8 +60,7 @@ describe('Relation endpoints logic', () => {
         };
       };
     };
-    const userClass = new window.jujugui.User(
-      {sessionStorage: getMockStorage()});
+    const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     container = utils.makeAppContainer();
     app = createApp(JujuGUI);
@@ -558,12 +558,7 @@ describe('Application config handlers', () => {
         id: 'wordpress',
         pending: true,
         charm: charmUrl});
-      assert.equal(conn.messages.length, 1);
-      // This is irrelevant, just confirming that it didn't try and make
-      // the request for the application info.
-      const msg = conn.last_message();
-      assert.equal(msg.type, 'Admin');
-      assert.equal(msg.request, 'Login');
+      assert.equal(conn.messages.length, 0);
     });
 
   it('should call Application.Get when non-pending services are added',
@@ -577,7 +572,7 @@ describe('Application config handlers', () => {
         id: applicationName,
         pending: false,
         charm: charmUrl});
-      assert.equal(conn.messages.length, 2);
+      assert.equal(conn.messages.length, 1);
       var msg = conn.last_message();
       assert.strictEqual(msg.type, 'Application');
       assert.strictEqual(msg.request, 'Get');
@@ -593,7 +588,7 @@ describe('Application config handlers', () => {
       id: applicationName,
       pending: false,
       charm: charmUrl});
-    assert.equal(conn.messages.length, 2);
+    assert.equal(conn.messages.length, 1);
     var msg = conn.last_message();
     assert.strictEqual(msg.type, 'Application');
     assert.strictEqual(msg.request, 'Get');
@@ -602,7 +597,7 @@ describe('Application config handlers', () => {
     var charm2 = app.db.charms.add({id: charmUrl, loaded: true});
     destroyMe.push(charm2);
     svc.set('charm', charmUrl);
-    assert.equal(conn.messages.length, 2);
+    assert.equal(conn.messages.length, 1);
     var msg = conn.last_message();
     assert.strictEqual(msg.type, 'Application');
     assert.strictEqual(msg.request, 'Get');

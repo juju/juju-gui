@@ -4,6 +4,7 @@
 const BundleImporter = require('./bundle-importer');
 const EnvironmentChangeSet = require('./environment-change-set');
 const factory = require('./testing-factory');
+const User = require('../user/user');
 const utils = require('./testing-utils');
 
 describe('BundleImporter', () => {
@@ -33,7 +34,7 @@ describe('BundleImporter', () => {
         };
       };
     };
-    const userClass = new window.jujugui.User({sessionStorage: getMockStorage()});
+    const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     modelAPI = new yui.juju.environments.GoEnvironment({
