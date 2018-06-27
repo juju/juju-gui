@@ -9,17 +9,24 @@ const SvgIcon = require('../svg-icon/svg-icon');
 
 describe('ModalSortcuts', function() {
 
-  const keybindings = {
-    test: {label: 'test', help: 'a test item'},
-    test2: {label: 'test2', help: 'a second test item'}
-  };
-
   const renderComponent = (options = {}) => enzyme.shallow(
     <ModalShortcuts.WrappedComponent
       closeModal={options.closeModal || sinon.stub()}
-      guiVersion={options.guiVersion || '1.2.3'}
-      keybindings={options.keybindings || keybindings} />
+      guiVersion={options.guiVersion || '1.2.3'} />
   );
+
+  beforeEach(function() {
+    ModalShortcuts.__Rewire__('hotkeys', {
+      keyBindings: {
+        test: { label: 'test', help: 'a test item' },
+        test2: { label: 'test2', help: 'a second test item' }
+      }
+    });
+  });
+
+  afterEach(function() {
+    ModalShortcuts.__ResetDependency__('hotkeys');
+  });
 
   it('renders', function() {
     const wrapper = renderComponent();

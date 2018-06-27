@@ -4,9 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../svg-icon/svg-icon');
-
 const enhanceWithClickOutside = require('../../init/react-click-outside');
+const hotkeys = require('../../init/hotkeys');
+const SvgIcon = require('../svg-icon/svg-icon');
 
 class ModalShortcuts extends React.Component {
 
@@ -19,8 +19,8 @@ class ModalShortcuts extends React.Component {
   */
   _generateBindings() {
     let bindings = [];
-    Object.keys(this.props.keybindings).forEach(key => {
-      const binding = this.props.keybindings[key];
+    Object.keys(hotkeys.keyBindings).forEach(key => {
+      const binding = hotkeys.keyBindings[key];
       if (binding.help && (binding.condition === undefined ||
         binding.condition.call(this) === true)) {
         bindings.push({
@@ -83,8 +83,7 @@ class ModalShortcuts extends React.Component {
 
 ModalShortcuts.propTypes = {
   closeModal: PropTypes.func.isRequired,
-  guiVersion: PropTypes.string.isRequired,
-  keybindings: PropTypes.object.isRequired
+  guiVersion: PropTypes.string.isRequired
 };
 
 module.exports = enhanceWithClickOutside(ModalShortcuts);
