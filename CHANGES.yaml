@@ -1,3 +1,7 @@
+- 2.13.1:
+  - Remove test files from dist.
+  - Update JAASlib.
+
 - 2.13.0:
   - JAASlib has been moved to its own project and imported (https://github.com/juju/jaaslibjs).
   - Initial work on bundle grouping post deployment.
