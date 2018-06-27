@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
 const Spinner = require('../../spinner/spinner');
@@ -69,7 +70,7 @@ class InspectorChangeVersion extends React.Component {
       this._addFailureNotification(charmId, error);
       return;
     }
-    this.props.setCharm(this.props.service.get('id'), charmId, false, false,
+    this.props.modelAPI.setCharm(this.props.service.get('id'), charmId, false, false,
       this._setCharmCallback.bind(this, charmId));
   }
 
@@ -83,7 +84,7 @@ class InspectorChangeVersion extends React.Component {
       this._addFailureNotification(charmId, data.err);
       return;
     }
-    this.props.getCharm(charmId, this._getCharmCallback.bind(this, charmId));
+    this.props.modelAPI.getCharm(charmId, this._getCharmCallback.bind(this, charmId));
   }
 
   /**
@@ -221,9 +222,12 @@ InspectorChangeVersion.propTypes = {
   changeState: PropTypes.func.isRequired,
   charmId: PropTypes.string.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
-  getCharm: PropTypes.func.isRequired,
-  service: PropTypes.object.isRequired,
-  setCharm: PropTypes.func.isRequired
+  modelAPI: shapeup.shape({
+    getCharm: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    setCharm: PropTypes.func.isRequired
+  }).isRequired,
+  service: PropTypes.object.isRequired
 };
 
 module.exports = InspectorChangeVersion;

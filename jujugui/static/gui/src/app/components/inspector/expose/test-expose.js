@@ -1,24 +1,24 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const InspectorExpose = require('./expose');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const InspectorExposeUnit = require('./unit/unit');
 
 describe('InspectorExpose', function() {
-  var acl, service, units;
+  var acl, service, modelAPI, units;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorExpose
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
-      exposeService={options.exposeService || sinon.stub()}
+      modelAPI={options.modelAPI || modelAPI}
       service={options.service || service}
-      unexposeService={options.unexposeService || sinon.stub()}
       units={options.units || units} />
   );
 
@@ -30,6 +30,10 @@ describe('InspectorExpose', function() {
     service = {get: getStub};
     var unitList = [{id: 'django/1'}];
     units = {toArray: sinon.stub().returns(unitList)};
+    modelAPI = shapeup.addReshape({
+      exposeService: sinon.stub(),
+      unexposeService: sinon.stub()
+    });
   });
 
   it('can render correctly if not exposed', function() {
@@ -99,30 +103,25 @@ describe('InspectorExpose', function() {
   });
 
   it('can expose the service', function() {
-    var exposeService = sinon.stub();
     service.get.withArgs('exposed').returns(false);
-    const wrapper = renderComponent({ exposeService });
+    const wrapper = renderComponent();
     wrapper.find('BooleanConfig').props().onChange();
-    assert.equal(exposeService.callCount, 1);
-    assert.deepEqual(exposeService.args[0][0], 'demo');
+    assert.equal(modelAPI.exposeService.callCount, 1);
+    assert.deepEqual(modelAPI.exposeService.args[0][0], 'demo');
   });
 
   it('can unexpose the service', function() {
-    var unexposeService = sinon.stub();
-    const wrapper = renderComponent({ unexposeService });
+    const wrapper = renderComponent();
     wrapper.find('BooleanConfig').props().onChange();
-    assert.equal(unexposeService.callCount, 1);
-    assert.deepEqual(unexposeService.args[0][0], 'demo');
+    assert.equal(modelAPI.unexposeService.callCount, 1);
+    assert.deepEqual(modelAPI.unexposeService.args[0][0], 'demo');
   });
 
   it('can display a notification if there is an error', function() {
-    var exposeService = sinon.stub().callsArgWith(1, {err: 'error'});
+    modelAPI.exposeService.callsArgWith(1, {err: 'error'});
     var addNotification = sinon.stub();
     service.get.withArgs('exposed').returns(false);
-    const wrapper = renderComponent({
-      addNotification,
-      exposeService
-    });
+    const wrapper = renderComponent({ addNotification });
     wrapper.find('BooleanConfig').props().onChange();
     assert.equal(addNotification.callCount, 1);
     assert.equal(addNotification.args[0][0].title, 'Exposing charm failed');

@@ -787,7 +787,7 @@ Browser: ${navigator.userAgent}`
     if (hoverHandler) {
       document.removeEventListener('topo.hoverService', hoverHandler);
     }
-    const model = this.modelAPI;
+    const modelAPI = this.modelAPI;
     const db = this.db;
     // If the url was provided with a service id which isn't in the localType
     // db then change state back to the added services list. This usually
@@ -799,49 +799,53 @@ Browser: ${navigator.userAgent}`
       const charm = db.charms.getById(service.get('charm'));
       const relatableApplications = relationUtils.getRelatableApplications(
         db, endpointUtils.getEndpoints(service, this.endpointsController));
-      const ecs = model.get('ecs');
+      const ecs = modelAPI.get('ecs');
       const addCharm = (url, callback, options) => {
-        model.addCharm(url, charmstore, callback, options);
+        modelAPI.addCharm(url, charmstore, callback, options);
       };
+      const propTypes = Inspector.propTypes;
       inspector = (
         <Inspector
           acl={this.acl}
           addCharm={addCharm}
-          addGhostAndEcsUnits={initUtils.addGhostAndEcsUnits.bind(
-            this, db, model, service)}
           addNotification={this._bound.addNotification}
           appState={this.state}
           charm={charm}
-          createMachinesPlaceUnits={initUtils.createMachinesPlaceUnits.bind(
-            this, db, model, service)}
-          createRelation={relationUtils.createRelation.bind(this, db, model)}
-          destroyRelations={relationUtils.destroyRelations.bind(
-            this, db, model)}
-          destroyService={initUtils.destroyService.bind(
-            this, db, model, service)}
-          destroyUnits={model.remove_units.bind(model)}
-          entityPath={urls.URL.fromAnyString(charm.get('id')).path()}
-          envResolved={model.resolved.bind(model)}
-          exposeService={model.expose.bind(model)}
-          getAvailableEndpoints={relationUtils.getAvailableEndpoints.bind(
-            this, this.endpointsController, db, endpointUtils.getEndpoints)}
-          getAvailableVersions={charmstore.getAvailableVersions.bind(
-            charmstore)}
-          getCharm={model.get_charm.bind(model)}
-          getServiceById={db.services.getById.bind(db.services)}
-          getServiceByName={db.services.getServiceByName.bind(db.services)}
+          getAvailableVersions={charmstore.getAvailableVersions.bind(charmstore)}
+          initUtils={shapeup.addReshape({
+            addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
+              this, db, modelAPI, service),
+            createMachinesPlaceUnits: initUtils.createMachinesPlaceUnits.bind(
+              this, db, modelAPI, service),
+            destroyService: initUtils.destroyService.bind(
+              this, db, modelAPI, service)
+          })}
+          modelAPI={shapeup.addReshape({
+            destroyUnits: modelAPI.remove_units.bind(modelAPI),
+            envResolved: modelAPI.resolved.bind(modelAPI),
+            exposeService: modelAPI.expose.bind(modelAPI),
+            getCharm: modelAPI.get_charm.bind(modelAPI),
+            setCharm: modelAPI.setCharm.bind(modelAPI),
+            setConfig: modelAPI.set_config.bind(modelAPI),
+            unexposeService: modelAPI.unexpose.bind(modelAPI)
+          })}
           modelUUID={this.modelUUID || ''}
-          providerType={model.get('providerType') || ''}
+          providerType={modelAPI.get('providerType') || ''}
           relatableApplications={relatableApplications}
+          relationUtils={shapeup.addReshape({
+            createRelation: relationUtils.createRelation.bind(this, db, modelAPI),
+            destroyRelations: relationUtils.destroyRelations.bind(
+              this, db, modelAPI),
+            getAvailableEndpoints: relationUtils.getAvailableEndpoints.bind(
+              this, this.endpointsController, db, endpointUtils.getEndpoints)
+          })}
           service={service}
           serviceRelations={
             relationUtils.getRelationDataForService(db, service)}
-          setCharm={model.setCharm.bind(model)}
-          setConfig={model.set_config.bind(model)}
+          services={shapeup.fromShape(db.services, propTypes.services)}
           showActivePlan={this.plans.showActivePlan.bind(this.plans)}
           showPlans={window.juju_config.flags.plans || false}
           showSSHButtons={this._enableTerminal()}
-          unexposeService={model.unexpose.bind(model)}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
             db.updateServiceUnitsDisplayname.bind(db)} />
@@ -861,10 +865,10 @@ Browser: ${navigator.userAgent}`
           services={db.services}
           upgradeServiceUsingLocalCharm={
             localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
-              this, model, db)}
+              this, modelAPI, db)}
           uploadLocalCharm={
             localCharmHelpers.uploadLocalCharm.bind(
-              this, model, db)} />
+              this, modelAPI, db)} />
       );
     } else {
       this.state.changeState({gui: {inspector: null}});

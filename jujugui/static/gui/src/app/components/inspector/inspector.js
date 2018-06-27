@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const InspectorChangeVersion = require('./change-version/change-version');
 const InspectorExpose = require('./expose/expose');
@@ -42,6 +43,7 @@ class Inspector extends React.Component {
     @return {Object} A generated state object which can be passed to setState.
   */
   generateState(nextProps) {
+    const { modelAPI } = nextProps;
     const service = nextProps.service;
     const serviceId = service.get('id');
     const appState = this.props.appState;
@@ -76,7 +78,7 @@ class Inspector extends React.Component {
             addNotification={nextProps.addNotification}
             changeState={changeState}
             charm={nextProps.charm}
-            destroyService={nextProps.destroyService}
+            destroyService={nextProps.initUtils.destroyService}
             modelUUID={nextProps.modelUUID}
             service={service}
             serviceRelations={nextProps.serviceRelations}
@@ -101,8 +103,8 @@ class Inspector extends React.Component {
             <UnitList
               acl={nextProps.acl}
               changeState={changeState}
-              destroyUnits={nextProps.destroyUnits}
-              envResolved={nextProps.envResolved}
+              destroyUnits={nextProps.modelAPI.destroyUnits}
+              envResolved={nextProps.modelAPI.envResolved}
               service={service}
               units={units}
               unitStatus={unitStatus} />,
@@ -149,7 +151,7 @@ class Inspector extends React.Component {
             <UnitDetails
               acl={nextProps.acl}
               changeState={changeState}
-              destroyUnits={nextProps.destroyUnits}
+              destroyUnits={nextProps.modelAPI.destroyUnits}
               previousComponent={previousComponent}
               service={service}
               showSSHButtons={nextProps.showSSHButtons && window.juju_config.flags.expert}
@@ -164,15 +166,19 @@ class Inspector extends React.Component {
                 unitStatus: unitStatus}}}};
         break;
       case 'scale':
+        const { initUtils } = nextProps;
         state.activeChild = {
           title: 'Scale',
           icon: service.get('icon'),
           component:
             <ScaleService
               acl={nextProps.acl}
-              addGhostAndEcsUnits={nextProps.addGhostAndEcsUnits}
               changeState={changeState}
-              createMachinesPlaceUnits={nextProps.createMachinesPlaceUnits}
+              initUtils={{
+                addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits,
+                createMachinesPlaceUnits: initUtils.createMachinesPlaceUnits,
+                reshape: shapeup.reshapeFunc
+              }}
               providerType={nextProps.providerType}
               serviceId={serviceId} />,
           backState: {
@@ -191,10 +197,10 @@ class Inspector extends React.Component {
               addNotification={nextProps.addNotification}
               changeState={changeState}
               charm={nextProps.charm}
-              getServiceByName={nextProps.getServiceByName}
+              getServiceByName={nextProps.services.getServiceByName}
               service={service}
               serviceRelations={nextProps.serviceRelations}
-              setConfig={nextProps.setConfig}
+              setConfig={nextProps.modelAPI.setConfig}
               unplaceServiceUnits={nextProps.unplaceServiceUnits}
               updateServiceUnitsDisplayname={nextProps.updateServiceUnitsDisplayname} />,
           backState: {
@@ -212,9 +218,11 @@ class Inspector extends React.Component {
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
               changeState={changeState}
-              exposeService={nextProps.exposeService}
+              modelAPI={shapeup.addReshape({
+                exposeService: modelAPI.exposeService,
+                unexposeService: modelAPI.unexposeService
+              })}
               service={service}
-              unexposeService={nextProps.unexposeService}
               units={service.get('units')} />,
           backState: {
             gui: {
@@ -230,7 +238,7 @@ class Inspector extends React.Component {
             <InspectorRelations
               acl={nextProps.acl}
               changeState={changeState}
-              destroyRelations={nextProps.destroyRelations}
+              destroyRelations={nextProps.relationUtils.destroyRelations}
               service={service}
               serviceRelations={nextProps.serviceRelations} />,
           backState: {
@@ -260,7 +268,7 @@ class Inspector extends React.Component {
         const spouse = nextProps.appState.current.gui.inspector['relate-to'];
         if (typeof serviceId === 'string' && typeof spouse === 'string') {
           state.activeChild = {
-            title: nextProps.getServiceById(spouse).get('name'),
+            title: nextProps.services.getById(spouse).get('name'),
             icon: service.get('icon'),
             component:
               <InspectorRelateToEndpoint
@@ -270,9 +278,9 @@ class Inspector extends React.Component {
                       id: serviceId,
                       activeComponent: 'relations'}}}}
                 changeState={changeState}
-                createRelation={nextProps.createRelation}
-                endpoints={nextProps.getAvailableEndpoints(
-                  service, nextProps.getServiceById(spouse))} />,
+                createRelation={nextProps.relationUtils.createRelation}
+                endpoints={nextProps.relationUtils.getAvailableEndpoints(
+                  service, nextProps.services.getById(spouse))} />,
             backState: {
               gui: {
                 inspector: {
@@ -310,9 +318,11 @@ class Inspector extends React.Component {
               changeState={changeState}
               charmId={service.get('charm')}
               getAvailableVersions={nextProps.getAvailableVersions}
-              getCharm={nextProps.getCharm}
-              service={service}
-              setCharm={nextProps.setCharm} />,
+              modelAPI={shapeup.addReshape({
+                getCharm: modelAPI.getCharm,
+                setCharm: modelAPI.setCharm
+              })}
+              service={service} />,
           backState: {
             gui: {
               inspector: {
@@ -363,7 +373,6 @@ class Inspector extends React.Component {
           backCallback={this._backCallback.bind(this)}
           changeState={this.props.appState.changeState.bind(this.props.appState)}
           charmId={this.props.charm.get('id')}
-          entityPath={this.props.entityPath}
           hasGetStarted={this.props.charm.hasGetStarted()}
           icon={this.state.activeChild.icon}
           showLinks={this.state.showHeaderLinks}
@@ -380,34 +389,45 @@ class Inspector extends React.Component {
 Inspector.propTypes = {
   acl: PropTypes.object.isRequired,
   addCharm: PropTypes.func.isRequired,
-  addGhostAndEcsUnits: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
-  createMachinesPlaceUnits: PropTypes.func.isRequired,
-  createRelation: PropTypes.func.isRequired,
-  destroyRelations: PropTypes.func.isRequired,
-  destroyService: PropTypes.func.isRequired,
-  destroyUnits: PropTypes.func.isRequired,
-  entityPath: PropTypes.string.isRequired,
-  envResolved: PropTypes.func.isRequired,
-  exposeService: PropTypes.func.isRequired,
-  getAvailableEndpoints: PropTypes.func.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
-  getCharm: PropTypes.func.isRequired,
-  getServiceById: PropTypes.func.isRequired,
-  getServiceByName: PropTypes.func.isRequired,
+  initUtils: shapeup.shape({
+    addGhostAndEcsUnits: PropTypes.func.isRequired,
+    createMachinesPlaceUnits: PropTypes.func.isRequired,
+    destroyService: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
+  modelAPI: shapeup.shape({
+    destroyUnits: PropTypes.func.isRequired,
+    envResolved: PropTypes.func.isRequired,
+    exposeService: PropTypes.func.isRequired,
+    getCharm: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    setCharm: PropTypes.func.isRequired,
+    setConfig: PropTypes.func.isRequired,
+    unexposeService: PropTypes.func.isRequired
+  }).isRequired,
   modelUUID: PropTypes.string.isRequired,
   providerType: PropTypes.string,
   relatableApplications: PropTypes.array.isRequired,
+  relationUtils: shapeup.shape({
+    createRelation: PropTypes.func.isRequired,
+    destroyRelations: PropTypes.func.isRequired,
+    getAvailableEndpoints: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   service: PropTypes.object.isRequired,
   serviceRelations: PropTypes.array.isRequired,
-  setCharm: PropTypes.func.isRequired,
-  setConfig: PropTypes.func.isRequired,
+  services: shapeup.shape({
+    getById: PropTypes.func.isRequired,
+    getServiceByName: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   showActivePlan: PropTypes.func.isRequired,
   showPlans: PropTypes.bool.isRequired,
   showSSHButtons: PropTypes.bool.isRequired,
-  unexposeService: PropTypes.func.isRequired,
   unplaceServiceUnits: PropTypes.func.isRequired,
   updateServiceUnitsDisplayname: PropTypes.func.isRequired
 };

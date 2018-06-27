@@ -3,6 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const shapeup = require('shapeup');
 
 const Inspector = require('./inspector');
 const InspectorChangeVersion = require('./change-version/change-version');
@@ -20,41 +21,29 @@ const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
-  let acl, appState, charm, service;
+  let acl, appState, charm, initUtils, modelAPI, relationUtils, service, services;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Inspector
       acl={options.acl || acl}
       addCharm={options.addCharm || sinon.stub()}
-      addGhostAndEcsUnits={options.addGhostAndEcsUnits || sinon.stub()}
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       charm={options.charm || charm}
-      createMachinesPlaceUnits={options.createMachinesPlaceUnits || sinon.stub()}
-      createRelation={sinon.stub()}
-      destroyRelations={options.destroyRelations || sinon.stub()}
-      destroyService={options.destroyService || sinon.stub()}
-      destroyUnits={options.destroyUnits || sinon.stub()}
-      entityPath={options.entityPath || 'u/foo/bar'}
-      envResolved={options.envResolved || sinon.stub()}
-      exposeService={options.exposeService || sinon.stub()}
-      getAvailableEndpoints={options.getAvailableEndpoints || sinon.stub()}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
-      getCharm={options.getCharm || sinon.stub()}
       getMacaroon={options.getMacaroon || sinon.stub()}
-      getServiceById={options.getServiceById || sinon.stub()}
-      getServiceByName={options.getServiceByName || sinon.stub()}
+      initUtils={options.initUtils || initUtils}
+      modelAPI={options.modelAPI || modelAPI}
       modelUUID={options.modelUUID || 'abc123'}
       providerType={options.providerType}
       relatableApplications={options.relatableApplications || []}
+      relationUtils={options.relationUtils || relationUtils}
       service={options.service || service}
       serviceRelations={options.serviceRelations || ['relations']}
-      setCharm={options.setCharm || sinon.stub()}
-      setConfig={options.setConfig || sinon.stub()}
+      services={options.services || services}
       showActivePlan={options.showActivePlan || sinon.stub()}
       showPlans={options.showPlans === undefined ? false : options.showPlans}
       showSSHButtons={false}
-      unexposeService={options.unexposeService || sinon.stub()}
       unplaceServiceUnits={options.unplaceServiceUnits || sinon.stub()}
       updateServiceUnitsDisplayname={
         options.updateServiceUnitsDisplayname || sinon.stub()} />
@@ -94,6 +83,29 @@ describe('Inspector', function() {
       get: sinon.stub().returns('charmid'),
       hasGetStarted: sinon.stub().returns(true)
     };
+    initUtils = shapeup.addReshape({
+      addGhostAndEcsUnits: sinon.stub(),
+      createMachinesPlaceUnits: sinon.stub(),
+      destroyService: sinon.stub()
+    });
+    modelAPI = shapeup.addReshape({
+      destroyUnits: sinon.stub(),
+      envResolved: sinon.stub(),
+      exposeService: sinon.stub(),
+      getCharm: sinon.stub(),
+      setCharm: sinon.stub(),
+      setConfig: sinon.stub(),
+      unexposeService: sinon.stub()
+    });
+    relationUtils = shapeup.addReshape({
+      createRelation: sinon.stub(),
+      destroyRelations: sinon.stub(),
+      getAvailableEndpoints: sinon.stub()
+    });
+    services = shapeup.addReshape({
+      getById: sinon.stub(),
+      getServiceByName: sinon.stub()
+    });
   });
 
   it('displays the service overview for the "inspector" state', function() {
@@ -107,7 +119,6 @@ describe('Inspector', function() {
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
           changeState={wrapper.find('InspectorHeader').prop('changeState')}
           charmId="charmid"
-          entityPath="u/foo/bar"
           hasGetStarted={true}
           icon="icon.png"
           showLinks={true}
@@ -331,9 +342,12 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <ScaleService
           acl={acl}
-          addGhostAndEcsUnits={sinon.stub()}
           changeState={wrapper.find('ScaleService').prop('changeState')}
-          createMachinesPlaceUnits={sinon.stub()}
+          initUtils={{
+            addGhostAndEcsUnits: sinon.stub(),
+            createMachinesPlaceUnits: sinon.stub(),
+            reshape: shapeup.reshapeFunc
+          }}
           providerType='lxd'
           serviceId={service.get('id')} />
       </div>);
@@ -356,9 +370,12 @@ describe('Inspector', function() {
           acl={acl}
           addNotification={sinon.stub()}
           changeState={wrapper.find('InspectorExpose').prop('changeState')}
-          exposeService={sinon.stub()}
+          modelAPI={{
+            exposeService: sinon.stub(),
+            reshape: shapeup.reshapeFunc,
+            unexposeService: sinon.stub()
+          }}
           service={service}
-          unexposeService={sinon.stub()}
           units={units} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
@@ -407,14 +424,11 @@ describe('Inspector', function() {
       activeComponent: 'relate-to',
       'relate-to': 'zee-spouse'
     };
-    var getAvailableEndpoints = sinon.stub().returns([]);
-    var getServiceById = () => ({
+    relationUtils.getAvailableEndpoints.returns([]);
+    services.getById = () => ({
       get: sinon.stub().returns('spouse-name')
     });
-    const wrapper = renderComponent({
-      getAvailableEndpoints,
-      getServiceById
-    });
+    const wrapper = renderComponent();
     const header = wrapper.find('InspectorHeader');
     assert.equal(header.prop('activeComponent'), 'relate-to');
     assert.equal(header.prop('title'), 'spouse-name');
@@ -472,9 +486,12 @@ describe('Inspector', function() {
           changeState={wrapper.find('InspectorChangeVersion').prop('changeState')}
           charmId="cs:demo"
           getAvailableVersions={sinon.stub()}
-          getCharm={sinon.stub()}
-          service={service}
-          setCharm={sinon.stub()} />
+          modelAPI={{
+            getCharm: sinon.stub(),
+            reshape: shapeup.reshapeFunc,
+            setCharm: sinon.stub()
+          }}
+          service={service} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
