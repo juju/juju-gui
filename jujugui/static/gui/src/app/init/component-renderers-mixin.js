@@ -481,13 +481,11 @@ Browser: ${navigator.userAgent}`
         entityId: entityId
       };
 
-      const charmstore = this.charmstore;
       ReactDOM.render(
         <PostDeployment
           changeState={this._bound.changeState}
-          entityId={entityId}
-          getEntity={charmstore.getEntity.bind(charmstore)}
-          getFile={charmstore.getFile.bind(charmstore)} />,
+          charmstore={shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
+          entityId={entityId} />,
         document.getElementById('post-deployment')
       );
     }

@@ -4,6 +4,7 @@
 const marked = require('marked');
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
 const Panel = require('../panel/panel');
@@ -37,7 +38,7 @@ class PostDeployment extends React.Component {
   }
 
   componentWillMount() {
-    this.props.getEntity(this.props.entityId,
+    this.props.charmstore.getEntity(this.props.entityId,
       this._getEntityCallback.bind(this));
   }
 
@@ -62,7 +63,7 @@ class PostDeployment extends React.Component {
         return true;
       }
     })) {
-      this.props.getFile(
+      this.props.charmstore.getFile(
         this.props.entityId,
         fileName,
         this._getGetStartedCallback.bind(this)
@@ -237,9 +238,11 @@ class PostDeployment extends React.Component {
 
 PostDeployment.propTypes = {
   changeState: PropTypes.func.isRequired,
-  entityId: PropTypes.string.isRequired,
-  getEntity: PropTypes.func.isRequired,
-  getFile: PropTypes.func.isRequired
+  charmstore: shapeup.shape({
+    getEntity: PropTypes.func.isRequired,
+    getFile: PropTypes.func.isRequired
+  }).isRequired,
+  entityId: PropTypes.string.isRequired
 };
 
 module.exports = PostDeployment;
