@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const marked = require('marked');
 const PropTypes = require('prop-types');
 const React = require('react');
 
@@ -11,7 +12,7 @@ const EntityContentDescription = props => {
   if (!description) {
     return false;
   }
-  const htmlDescription = props.renderMarkdown(description);
+  const htmlDescription = marked(description);
   let heading = null;
   if (props.includeHeading) {
     heading = (
@@ -36,8 +37,7 @@ const EntityContentDescription = props => {
 EntityContentDescription.propTypes = {
   changeState: PropTypes.func,
   description: PropTypes.string,
-  includeHeading: PropTypes.bool,
-  renderMarkdown: PropTypes.func.isRequired
+  includeHeading: PropTypes.bool
 };
 
 module.exports = EntityContentDescription;

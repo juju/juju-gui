@@ -115,8 +115,7 @@ class DeploymentDirectDeploy extends React.Component {
               {entity.displayName}
             </h2>
             <EntityContentDescription
-              description={entity.description}
-              renderMarkdown={this.props.renderMarkdown} />
+              description={entity.description} />
             <ul>
               <li>
                 It will run on {machineNumber}&nbsp;
@@ -153,8 +152,7 @@ DeploymentDirectDeploy.propTypes = {
   ddData: PropTypes.object.isRequired,
   entityModel: PropTypes.object,
   generatePath: PropTypes.func.isRequired,
-  getDiagramURL: PropTypes.func.isRequired,
-  renderMarkdown: PropTypes.func.isRequired
+  getDiagramURL: PropTypes.func.isRequired
 };
 
 module.exports = DeploymentDirectDeploy;

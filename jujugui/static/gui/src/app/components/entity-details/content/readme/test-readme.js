@@ -9,7 +9,7 @@ const EntityContentReadme = require('./readme');
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
 describe('EntityContentReadme', function() {
-  let getContainer, mockEntity, renderMarkdown;
+  let getContainer, mockEntity;
 
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
@@ -19,7 +19,6 @@ describe('EntityContentReadme', function() {
         entityModel={options.entityModel || mockEntity}
         getFile={options.getFile || sinon.stub()}
         hash={options.hash}
-        renderMarkdown={options.renderMarkdown || renderMarkdown}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()} />,
       { disableLifecycleMethods: true });
     const instance = wrapper.instance();
@@ -34,8 +33,6 @@ describe('EntityContentReadme', function() {
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
-    renderMarkdown = sinon.stub().returns('<p>Readme</p>');
-    renderMarkdown.Renderer = sinon.stub();
   });
 
   afterEach(function() {
@@ -53,8 +50,6 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.callCount, 1);
     assert.equal(getFile.args[0][0], 'cs:django');
     assert.equal(getFile.args[0][1], 'Readme.md');
-    assert.equal(renderMarkdown.callCount, 1);
-    assert.equal(renderMarkdown.args[0][0], 'mock markdown');
     const expected = (
       <div className="entity-content__readme">
         <div className="entity-content__readme-content"
@@ -74,7 +69,6 @@ describe('EntityContentReadme', function() {
     });
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
-    assert.equal(renderMarkdown.callCount, 0);
   });
 
   it('can display a message if there is no readme file', function() {
@@ -94,7 +88,6 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.callCount, 1);
     assert.equal(getFile.args[0][0], 'cs:django');
     assert.equal(getFile.args[0][1], 'Readme.md');
-    assert.equal(renderMarkdown.callCount, 0);
     assert.equal(
       wrapper.find('.entity-content__readme-content').html().includes(
         'No readme.'), true);

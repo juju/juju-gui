@@ -217,7 +217,6 @@ describe('EnvironmentView', function() {
     ]};
 
     beforeAll(function(done) {
-      console.log('beforeAll');
       Y = YUI(GlobalConfig).use([], function(Y) {
         window.yui = Y;
         require('../../yui-modules');

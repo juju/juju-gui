@@ -18,8 +18,7 @@ describe('DirectDeploy', function() {
       ddData={options.ddData}
       entityModel={options.entityModel}
       generatePath={options.generatePath || sinon.stub()}
-      getDiagramURL={options.getDiagramURL || sinon.stub()}
-      renderMarkdown={options.renderMarkdown || sinon.stub()} />
+      getDiagramURL={options.getDiagramURL || sinon.stub()} />
   );
 
   it('can show a message for an invalid bundle', () => {
@@ -68,12 +67,10 @@ describe('DirectDeploy', function() {
         iconPath: 'http://example.com/icon.svg'
       })
     };
-    const renderMarkdown = sinon.stub();
     const wrapper = renderComponent({
       ddData: {id: 'cs:apache-21'},
       entityModel: charm,
-      generatePath: sinon.stub().returns('http://example.com/'),
-      renderMarkdown: renderMarkdown
+      generatePath: sinon.stub().returns('http://example.com/')
     });
     const expected = (
       <div className="deployment-direct-deploy__content">
@@ -83,8 +80,7 @@ describe('DirectDeploy', function() {
             Apache 2
           </h2>
           <EntityContentDescription
-            description="Description"
-            renderMarkdown={renderMarkdown} />
+            description="Description" />
           <ul>
             <li>
               It will run on {1}&nbsp;
@@ -126,14 +122,12 @@ describe('DirectDeploy', function() {
         machineCount: 4
       })
     };
-    const renderMarkdown = sinon.stub();
     const getDiagramURL = sinon.stub().returns('imageLink');
     const wrapper = renderComponent({
       ddData: {id: 'cs:bundle/kubernetes-core-8'},
       entityModel: bundle,
       generatePath: sinon.stub().returns('http://example.com/'),
-      getDiagramURL,
-      renderMarkdown: renderMarkdown
+      getDiagramURL
     });
     const expected = (
       <div className="deployment-direct-deploy__content">
@@ -143,8 +137,7 @@ describe('DirectDeploy', function() {
             Kubernetes core
           </h2>
           <EntityContentDescription
-            description="Description"
-            renderMarkdown={renderMarkdown} />
+            description="Description" />
           <ul>
             <li>
               It will run on {4}&nbsp;

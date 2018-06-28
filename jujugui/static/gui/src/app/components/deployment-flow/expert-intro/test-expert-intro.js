@@ -3,7 +3,6 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-const marked = require('marked');
 
 const DeploymentSection = require('../section/section');
 const ExpertBlock = require('../../expert-block/expert-block');
@@ -34,7 +33,6 @@ describe('DeploymentExpertIntro', () => {
       } : options.entityModel}
       generatePath={options.generatePath || sinon.stub()}
       getDiagramURL={options.getDiagramURL || sinon.stub()}
-      renderMarkdown={options.renderMarkdown || sinon.stub()}
       sendAnalytics={options.sendAnalytics || sinon.stub()}
       staticURL={options.staticURL || '/static/url'} />
   );
@@ -60,7 +58,6 @@ describe('DeploymentExpertIntro', () => {
 
   it('can render for a charm', () => {
     const wrapper = renderComponent();
-    const md = marked('#### supported description');
     const expected = (
       <DeploymentSection
         instance="deployment-expert-intro-section">
@@ -75,8 +72,7 @@ describe('DeploymentExpertIntro', () => {
               </h2>
               <div className="six-col">
                 <EntityContentDescription
-                  description="Description"
-                  renderMarkdown={sinon.stub()} />
+                  description="Description" />
               </div>
               <div className="twelve-col">
                 <div className="deployment-expert-intro__section-title">
@@ -112,7 +108,7 @@ describe('DeploymentExpertIntro', () => {
                   </div>
                   <div
                     className="deployment-expert-intro__description"
-                    dangerouslySetInnerHTML={{_html: md}} />
+                    dangerouslySetInnerHTML={{_html: 'md'}} />
                   <Link changeState={sinon.stub()}
                     clickState={{ hash: 'support-level' }}
                     generatePath={sinon.stub()}>
@@ -135,6 +131,7 @@ describe('DeploymentExpertIntro', () => {
     const bundle = {
       toEntity: sinon.stub().returns({
         description: 'Description',
+        supportedDescription: '#### supported description',
         displayName: 'Kubernetes core',
         machineCount: 4,
         owner: 'spinach'

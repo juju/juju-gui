@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const marked = require('marked');
 const PropTypes = require('prop-types');
 const React = require('react');
 const { urls } = require('jaaslib');
@@ -87,11 +88,11 @@ class PostDeployment extends React.Component {
       this.setState({
         metadata: frontmatterAndMarkdown.metadata
       });
-      let renderer = new this.props.marked.Renderer();
+      let renderer = new marked.Renderer();
       renderer.link = (href, title, text) => {
         return `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
       };
-      const markdown = this.props.marked(
+      const markdown = marked(
         this.replaceTemplateTags(
           frontmatterAndMarkdown.markdown
         ),
@@ -238,8 +239,7 @@ PostDeployment.propTypes = {
   changeState: PropTypes.func.isRequired,
   entityId: PropTypes.string.isRequired,
   getEntity: PropTypes.func.isRequired,
-  getFile: PropTypes.func.isRequired,
-  marked: PropTypes.func.isRequired
+  getFile: PropTypes.func.isRequired
 };
 
 module.exports = PostDeployment;

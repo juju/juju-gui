@@ -1105,7 +1105,6 @@ class DeploymentFlow extends React.Component {
         entityModel={this.state.ddEntity}
         generatePath={this.props.generatePath}
         getDiagramURL={this.props.charmstore.getDiagramURL}
-        renderMarkdown={this.props.renderMarkdown}
         sendAnalytics={this.props.sendAnalytics}
         staticURL={this.props.staticURL} />);
   }
@@ -1137,8 +1136,7 @@ class DeploymentFlow extends React.Component {
           ddData={props.ddData}
           entityModel={state.ddEntity}
           generatePath={props.generatePath}
-          getDiagramURL={props.charmstore.getDiagramURL}
-          renderMarkdown={props.renderMarkdown} />);
+          getDiagramURL={props.charmstore.getDiagramURL} />);
     }
     return null;
   }
@@ -1305,7 +1303,6 @@ DeploymentFlow.propTypes = {
   }).isRequired,
   profileUsername: PropTypes.string.isRequired,
   region: PropTypes.string,
-  renderMarkdown: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   setModelName: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
