@@ -950,18 +950,13 @@ class DeploymentFlow extends React.Component {
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            changesUtils={this.props.changesUtils}
             charmsGetById={this.props.charmsGetById}
-            generateAllChangeDescriptions={
-              this.props.generateAllChangeDescriptions}
-            generateChangeDescription={
-              this.props.generateChangeDescription}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
             getServiceByName={this.props.getServiceByName}
             listPlansForCharm={this.props.plans.listPlansForCharm}
             parseTermId={this._parseTermId.bind(this)}
             showTerms={this.props.terms.showTerms}
-            sortDescriptionsByApplication={
-              this.props.sortDescriptionsByApplication}
             withPlans={this.props.withPlans} />
         </AccordionSection>
       </div>);
@@ -1260,6 +1255,12 @@ DeploymentFlow.propTypes = {
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
+  changesUtils: shapeup.shape({
+    generateAllChangeDescriptions: PropTypes.func.isRequired,
+    generateChangeDescription: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    sortDescriptionsByApplication: PropTypes.func.isRequired
+  }).isRequired,
   charms: PropTypes.object.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
@@ -1276,8 +1277,6 @@ DeploymentFlow.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   ddData: PropTypes.object,
-  generateAllChangeDescriptions: PropTypes.func.isRequired,
-  generateChangeDescription: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getCurrentChangeSet: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func,
@@ -1315,7 +1314,6 @@ DeploymentFlow.propTypes = {
   sendAnalytics: PropTypes.func.isRequired,
   setModelName: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
-  sortDescriptionsByApplication: PropTypes.func.isRequired,
   staticURL: PropTypes.string.isRequired,
   stats: PropTypes.object,
   stripe: shapeup.shape({

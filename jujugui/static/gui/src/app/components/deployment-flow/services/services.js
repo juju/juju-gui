@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const BudgetTable = require('../../budget-table/budget-table');
@@ -59,9 +60,9 @@ class DeploymentServices extends React.Component {
   */
   _generateServiceChanges() {
     const currentChangeSet = this.props.getCurrentChangeSet();
-    const changes = this.props.sortDescriptionsByApplication(
+    const changes = this.props.changesUtils.sortDescriptionsByApplication(
       currentChangeSet,
-      this.props.generateAllChangeDescriptions(currentChangeSet));
+      this.props.changesUtils.generateAllChangeDescriptions(currentChangeSet));
     if (!changes || !Object.keys(changes).length) {
       return null;
     }
@@ -95,7 +96,7 @@ class DeploymentServices extends React.Component {
       return null;
     }
     const machines = changes.map(item => {
-      const change = this.props.generateChangeDescription(item);
+      const change = this.props.changesUtils.generateChangeDescription(item);
       return {
         columns: [{
           columnSize: 12,
@@ -131,15 +132,18 @@ class DeploymentServices extends React.Component {
 DeploymentServices.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  changesUtils: shapeup.shape({
+    generateAllChangeDescriptions: PropTypes.func.isRequired,
+    generateChangeDescription: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    sortDescriptionsByApplication: PropTypes.func.isRequired
+  }).isRequired,
   charmsGetById: PropTypes.func.isRequired,
-  generateAllChangeDescriptions: PropTypes.func.isRequired,
-  generateChangeDescription: PropTypes.func.isRequired,
   getCurrentChangeSet: PropTypes.func.isRequired,
   getServiceByName: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
   parseTermId: PropTypes.func.isRequired,
   showTerms: PropTypes.func,
-  sortDescriptionsByApplication: PropTypes.func.isRequired,
   withPlans: PropTypes.bool
 };
 

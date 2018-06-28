@@ -19,8 +19,8 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const GenericButton = require('../generic-button/generic-button');
 
 describe('DeploymentFlow', function() {
-  let acl, applications, controllerAPI, charmstore, initUtils, modelAPI, models, payment,
-      plans, stripe, terms;
+  let acl, applications, changesUtils, controllerAPI, charmstore, initUtils,
+      modelAPI, models, payment, plans, stripe, terms;
 
 
   /**
@@ -59,14 +59,13 @@ describe('DeploymentFlow', function() {
           }
         }
       },
+      changesUtils,
       charms: {},
       charmsGetById: charmsGetById,
       charmstore,
       controllerAPI,
       controllerIsReady: sinon.stub(),
       ddData: {},
-      generateAllChangeDescriptions: sinon.stub(),
-      generateChangeDescription: sinon.stub(),
       generatePath: sinon.stub(),
       getCurrentChangeSet: sinon.stub(),
       getSLAMachineRates: sinon.stub(),
@@ -85,7 +84,6 @@ describe('DeploymentFlow', function() {
       sendAnalytics: sinon.stub(),
       setModelName: sinon.stub(),
       showPay: false,
-      sortDescriptionsByApplication: sinon.stub(),
       staticURL: '/static/url',
       stats: null,
       stripe,
@@ -121,6 +119,11 @@ describe('DeploymentFlow', function() {
       {get: sinon.stub().returns('service1')}
     ];
     acl = {isReadOnly: sinon.stub().returns(false)};
+    changesUtils = shapeup.addReshape({
+      generateAllChangeDescriptions: sinon.stub(),
+      generateChangeDescription: sinon.stub(),
+      sortDescriptionsByApplication: sinon.stub()
+    });
     charmstore = {
       getDiagramURL: sinon.stub(),
       getEntity: sinon.stub()
@@ -260,15 +263,13 @@ describe('DeploymentFlow', function() {
                 <DeploymentServices
                   acl={acl}
                   addNotification={sinon.stub()}
+                  changesUtils={changesUtils}
                   charmsGetById={sinon.stub()}
-                  generateAllChangeDescriptions={sinon.stub()}
-                  generateChangeDescription={sinon.stub()}
                   getCurrentChangeSet={sinon.stub()}
                   getServiceByName={sinon.stub()}
                   listPlansForCharm={sinon.stub()}
                   parseTermId={wrapper.find('DeploymentServices').prop('parseTermId')}
                   showTerms={sinon.stub()}
-                  sortDescriptionsByApplication={sinon.stub()}
                   withPlans={true} />
               </AccordionSection>
             </div>
