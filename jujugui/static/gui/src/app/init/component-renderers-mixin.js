@@ -936,18 +936,12 @@ Browser: ${navigator.userAgent}`
         controllerIsReady={this._controllerIsReady.bind(this)}
         credential={modelAPI.get('credential')}
         ddData={ddData}
-        deploy={initUtils.deploy.bind(
-          initUtils, this, autoPlaceUnits)}
-        formatConstraints={initUtils.formatConstraints.bind(initUtils)}
         generateAllChangeDescriptions={
           changesUtils.generateAllChangeDescriptions.bind(
             changesUtils, services, db.units)}
         generateChangeDescription={
           changesUtils.generateChangeDescription.bind(
             changesUtils, services, db.units)}
-        generateMachineDetails={
-          initUtils.generateMachineDetails.bind(
-            initUtils, modelAPI.genericConstraints, db.units)}
         generatePath={this.state.generatePath.bind(this.state)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getServiceByName={services.getServiceByName.bind(services)}
@@ -956,6 +950,12 @@ Browser: ${navigator.userAgent}`
         gisf={this.gisf}
         gtmEnabled={this.applicationConfig.GTM_enabled}
         hash={state.hash}
+        initUtils={shapeup.addReshape({
+          deploy: initUtils.deploy.bind(initUtils, this, autoPlaceUnits),
+          formatConstraints: initUtils.formatConstraints.bind(initUtils),
+          generateMachineDetails: initUtils.generateMachineDetails.bind(
+            initUtils, modelAPI.genericConstraints, db.units)
+        })}
         isLoggedIn={isLoggedIn}
         loginToController={loginToController}
         modelAPI={shapeup.fromShape(modelAPI, propTypes.modelAPI)}

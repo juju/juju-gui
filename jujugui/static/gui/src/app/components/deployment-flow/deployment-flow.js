@@ -462,7 +462,7 @@ class DeploymentFlow extends React.Component {
         budget: this.state.budget
       };
     }
-    const deploy = this.props.deploy.bind(this,
+    const deploy = this.props.initUtils.deploy.bind(this,
       this._deployCallback.bind(this),
       true,
       this.props.modelName,
@@ -912,6 +912,7 @@ class DeploymentFlow extends React.Component {
       return;
     }
     var cloud = this.state.cloud;
+    const { initUtils } = this.props;
     return (
       <DeploymentSection
         completed={status.completed}
@@ -922,8 +923,10 @@ class DeploymentFlow extends React.Component {
         <DeploymentMachines
           acl={this.props.acl}
           cloud={cloud}
-          formatConstraints={this.props.formatConstraints}
-          generateMachineDetails={this.props.generateMachineDetails}
+          initUtils={shapeup.addReshape({
+            formatConstraints: initUtils.formatConstraints,
+            generateMachineDetails: initUtils.generateMachineDetails
+          })}
           machines={this._getGroupedChanges()._addMachines} />
       </DeploymentSection>);
   }
@@ -1273,11 +1276,8 @@ DeploymentFlow.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   ddData: PropTypes.object,
-  deploy: PropTypes.func.isRequired,
-  formatConstraints: PropTypes.func.isRequired,
   generateAllChangeDescriptions: PropTypes.func.isRequired,
   generateChangeDescription: PropTypes.func.isRequired,
-  generateMachineDetails: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getCurrentChangeSet: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func,
@@ -1286,6 +1286,12 @@ DeploymentFlow.propTypes = {
   gisf: PropTypes.bool,
   gtmEnabled: PropTypes.bool,
   hash: PropTypes.string,
+  initUtils: shapeup.shape({
+    deploy: PropTypes.func.isRequired,
+    formatConstraints: PropTypes.func.isRequired,
+    generateMachineDetails: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   isLoggedIn: PropTypes.func.isRequired,
   loginToController: PropTypes.func.isRequired,
   modelAPI: shapeup.shape({
