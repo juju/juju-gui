@@ -8,7 +8,7 @@ const SvgIcon = require('../svg-icon/svg-icon');
 const Terminal = require('./terminal');
 
 describe('Terminal', () => {
-  let websocket;
+  let websocket, wrapper;
 
   function setupWebsocket() {
     websocket = function() {};
@@ -17,7 +17,7 @@ describe('Terminal', () => {
   }
 
   const renderComponent = (options = {}) => {
-    const wrapper = enzyme.shallow(
+    wrapper = enzyme.shallow(
       <Terminal
         addNotification={options.addNotification || sinon.stub()}
         address={options.address || '1.2.3.4:123'}
@@ -44,8 +44,15 @@ describe('Terminal', () => {
     setupWebsocket();
   });
 
+  afterEach(() => {
+    // Have to manually unmount the component as disableLifeCycleMethods is set
+    // when the component is rendered.
+    wrapper.unmount();
+    wrapper = null;
+  });
+
   it('should render', () => {
-    const wrapper = renderComponent();
+    wrapper = renderComponent();
     const actions = wrapper.find('.juju-shell__header-actions span');
     const expected = (
       <div className="juju-shell">
@@ -79,7 +86,7 @@ describe('Terminal', () => {
   });
 
   it('instantiates the terminal and connects to the websocket on mount', () => {
-    const wrapper = renderComponent();
+    wrapper = renderComponent();
     const instance = wrapper.instance();
     assert.equal(instance.ws instanceof websocket, true);
     assert.equal(typeof instance.term, 'object');
@@ -123,7 +130,7 @@ describe('Terminal', () => {
   // Check that a welcome message is written using term.writeln with the given
   // calls after receiving the given response from the server.
   function checkWelcomeMessage(response, expectedCalls) {
-    const wrapper = renderComponent();
+    wrapper = renderComponent();
     const instance = wrapper.instance();
     const term = instance.term;
     instance.term.fit = sinon.stub(); // eslint-disable-line
@@ -140,7 +147,7 @@ describe('Terminal', () => {
   }
 
   it('sends supplied commands when it is set up', () => {
-    const wrapper = renderComponent({ commands: ['juju status'] });
+    wrapper = renderComponent({ commands: ['juju status'] });
     const instance = wrapper.instance();
     // Check that fit is called after receiving the first PS1.
     instance.term.fit = sinon.stub(); // eslint-disable-line
@@ -155,7 +162,7 @@ describe('Terminal', () => {
   });
 
   it('sends multiple commands when it is set up', () => {
-    const wrapper = renderComponent({ commands: ['juju status', 'juju switch'] });
+    wrapper = renderComponent({ commands: ['juju status', 'juju switch'] });
     const instance = wrapper.instance();
     instance.term.fit = sinon.stub(); // eslint-disable-line
     // Send the setup from the term.
@@ -169,12 +176,10 @@ describe('Terminal', () => {
   });
 
   it('can be closed by clicking the X', () => {
-    const wrapper = renderComponent();
+    wrapper = renderComponent();
     const instance = wrapper.instance();
     // Set the ws onclose to something we control to be sure that it is reset.
-    instance.ws = {
-      onclose: sinon.stub()
-    };
+    instance.ws.onclose = sinon.stub();
     // Call the onClick for the X
     wrapper.find('.juju-shell__header-actions span').at(2).simulate('click');
     assert.equal(instance.ws.onclose.callCount, 0);
@@ -185,7 +190,7 @@ describe('Terminal', () => {
 
   it('handles unexpected WebSocket closures', () => {
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({ addNotification });
+    wrapper = renderComponent({ addNotification });
     const instance = wrapper.instance();
     instance.ws.onclose({
       // Should only throw the notification on code over 1000 which is an
@@ -200,13 +205,13 @@ describe('Terminal', () => {
   });
 
   it('can be resized by clicking the two resize buttons', () => {
-    const wrapper = renderComponent();
+    wrapper = renderComponent();
     const instance = wrapper.instance();
     const textarea = {focus: sinon.stub().withArgs()};
     instance.refs = {terminal: {
       querySelector: sinon.stub().withArgs('textarea').returns(textarea)
     }};
-    instance.term = {fit: sinon.stub()}; // eslint-disable-line
+    instance.term.fit = sinon.stub(); // eslint-disable-line
     // Call the onClick for the maximize
     wrapper.find('.juju-shell__header-actions span').at(1).simulate('click');
     assert.equal(instance.state.size, 'max');

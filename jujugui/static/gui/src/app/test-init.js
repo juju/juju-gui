@@ -557,10 +557,15 @@ describe('init', () => {
 
     beforeEach(() => {
       ecs = app.modelAPI.get('ecs');
-      ecs.clear = sinon.stub();
-      app.modelAPI.close = sinon.stub();
-      app.db.reset = sinon.stub();
-      app.db.fireEvent = sinon.stub();
+      sinon.spy(ecs, 'clear');
+      sinon.spy(app.modelAPI, 'close');
+      sinon.spy(app.db, 'reset');
+      sinon.spy(app.db, 'fireEvent');
+    });
+
+    afterEach(() => {
+      // Clean up the user details, this was causing cascading failures.
+      app.user.model = {};
     });
 
     it('can connect to an env even if not currently connected', () => {
