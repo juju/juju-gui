@@ -462,7 +462,7 @@ class DeploymentFlow extends React.Component {
         budget: this.state.budget
       };
     }
-    const deploy = this.props.deploy.bind(this,
+    const deploy = this.props.initUtils.deploy.bind(this,
       this._deployCallback.bind(this),
       true,
       this.props.modelName,
@@ -912,6 +912,7 @@ class DeploymentFlow extends React.Component {
       return;
     }
     var cloud = this.state.cloud;
+    const { initUtils } = this.props;
     return (
       <DeploymentSection
         completed={status.completed}
@@ -922,8 +923,10 @@ class DeploymentFlow extends React.Component {
         <DeploymentMachines
           acl={this.props.acl}
           cloud={cloud}
-          formatConstraints={this.props.formatConstraints}
-          generateMachineDetails={this.props.generateMachineDetails}
+          initUtils={shapeup.addReshape({
+            formatConstraints: initUtils.formatConstraints,
+            generateMachineDetails: initUtils.generateMachineDetails
+          })}
           machines={this._getGroupedChanges()._addMachines} />
       </DeploymentSection>);
   }
@@ -947,18 +950,13 @@ class DeploymentFlow extends React.Component {
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            changesUtils={this.props.changesUtils}
             charmsGetById={this.props.charmsGetById}
-            generateAllChangeDescriptions={
-              this.props.generateAllChangeDescriptions}
-            generateChangeDescription={
-              this.props.generateChangeDescription}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
             getServiceByName={this.props.getServiceByName}
             listPlansForCharm={this.props.plans.listPlansForCharm}
             parseTermId={this._parseTermId.bind(this)}
             showTerms={this.props.terms.showTerms}
-            sortDescriptionsByApplication={
-              this.props.sortDescriptionsByApplication}
             withPlans={this.props.withPlans} />
         </AccordionSection>
       </div>);
@@ -1255,6 +1253,12 @@ DeploymentFlow.propTypes = {
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
+  changesUtils: shapeup.shape({
+    generateAllChangeDescriptions: PropTypes.func.isRequired,
+    generateChangeDescription: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc,
+    sortDescriptionsByApplication: PropTypes.func.isRequired
+  }).isRequired,
   charms: PropTypes.object.isRequired,
   charmsGetById: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
@@ -1271,11 +1275,6 @@ DeploymentFlow.propTypes = {
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   ddData: PropTypes.object,
-  deploy: PropTypes.func.isRequired,
-  formatConstraints: PropTypes.func.isRequired,
-  generateAllChangeDescriptions: PropTypes.func.isRequired,
-  generateChangeDescription: PropTypes.func.isRequired,
-  generateMachineDetails: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getCurrentChangeSet: PropTypes.func.isRequired,
   getSLAMachineRates: PropTypes.func,
@@ -1284,6 +1283,12 @@ DeploymentFlow.propTypes = {
   gisf: PropTypes.bool,
   gtmEnabled: PropTypes.bool,
   hash: PropTypes.string,
+  initUtils: shapeup.shape({
+    deploy: PropTypes.func.isRequired,
+    formatConstraints: PropTypes.func.isRequired,
+    generateMachineDetails: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }).isRequired,
   isLoggedIn: PropTypes.func.isRequired,
   loginToController: PropTypes.func.isRequired,
   modelAPI: shapeup.shape({
@@ -1306,7 +1311,6 @@ DeploymentFlow.propTypes = {
   sendAnalytics: PropTypes.func.isRequired,
   setModelName: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
-  sortDescriptionsByApplication: PropTypes.func.isRequired,
   staticURL: PropTypes.string.isRequired,
   stats: PropTypes.object,
   stripe: shapeup.shape({

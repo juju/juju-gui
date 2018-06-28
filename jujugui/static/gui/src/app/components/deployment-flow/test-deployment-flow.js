@@ -3,6 +3,7 @@
 
 const enzyme = require('enzyme');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const DeploymentFlow = require('./deployment-flow');
 const AccordionSection = require('../accordion-section/accordion-section');
@@ -18,8 +19,8 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const GenericButton = require('../generic-button/generic-button');
 
 describe('DeploymentFlow', function() {
-  let acl, applications, controllerAPI, charmstore, modelAPI, models, payment,
-      plans, stripe, terms;
+  let acl, applications, changesUtils, controllerAPI, charmstore, initUtils,
+      modelAPI, models, payment, plans, stripe, terms;
 
 
   /**
@@ -58,23 +59,20 @@ describe('DeploymentFlow', function() {
           }
         }
       },
+      changesUtils,
       charms: {},
       charmsGetById: charmsGetById,
       charmstore,
       controllerAPI,
       controllerIsReady: sinon.stub(),
       ddData: {},
-      deploy: sinon.stub().callsArg(0),
-      formatConstraints: sinon.stub(),
-      generateAllChangeDescriptions: sinon.stub(),
-      generateChangeDescription: sinon.stub(),
-      generateMachineDetails: sinon.stub(),
       generatePath: sinon.stub(),
       getCurrentChangeSet: sinon.stub(),
       getSLAMachineRates: sinon.stub(),
       getServiceByName: sinon.stub(),
       getUserName: sinon.stub().returns('dalek'),
       hash: null,
+      initUtils,
       isLoggedIn: sinon.stub().returns(true),
       loginToController: sinon.stub(),
       modelAPI,
@@ -85,7 +83,6 @@ describe('DeploymentFlow', function() {
       sendAnalytics: sinon.stub(),
       setModelName: sinon.stub(),
       showPay: false,
-      sortDescriptionsByApplication: sinon.stub(),
       staticURL: '/static/url',
       stats: null,
       stripe,
@@ -121,6 +118,11 @@ describe('DeploymentFlow', function() {
       {get: sinon.stub().returns('service1')}
     ];
     acl = {isReadOnly: sinon.stub().returns(false)};
+    changesUtils = shapeup.addReshape({
+      generateAllChangeDescriptions: sinon.stub(),
+      generateChangeDescription: sinon.stub(),
+      sortDescriptionsByApplication: sinon.stub()
+    });
     charmstore = {
       getDiagramURL: sinon.stub(),
       getEntity: sinon.stub()
@@ -131,6 +133,11 @@ describe('DeploymentFlow', function() {
       listClouds: sinon.stub(),
       updateCloudCredential: sinon.stub()
     };
+    initUtils = shapeup.addReshape({
+      deploy: sinon.stub().callsArg(0),
+      formatConstraints: sinon.stub(),
+      generateMachineDetails: sinon.stub()
+    });
     modelAPI = {
       addKeys: sinon.stub(),
       importKeys: sinon.stub()
@@ -241,8 +248,11 @@ describe('DeploymentFlow', function() {
               <DeploymentMachines
                 acl={acl}
                 cloud={null}
-                formatConstraints={sinon.stub()}
-                generateMachineDetails={sinon.stub()}
+                initUtils={{
+                  formatConstraints: sinon.stub(),
+                  generateMachineDetails: sinon.stub(),
+                  reshape: shapeup.reshapeFunc
+                }}
                 machines={{machine: 'machine1'}} />
             </DeploymentSection>
             <div className="deployment-services">
@@ -252,15 +262,13 @@ describe('DeploymentFlow', function() {
                 <DeploymentServices
                   acl={acl}
                   addNotification={sinon.stub()}
+                  changesUtils={changesUtils}
                   charmsGetById={sinon.stub()}
-                  generateAllChangeDescriptions={sinon.stub()}
-                  generateChangeDescription={sinon.stub()}
                   getCurrentChangeSet={sinon.stub()}
                   getServiceByName={sinon.stub()}
                   listPlansForCharm={sinon.stub()}
                   parseTermId={wrapper.find('DeploymentServices').prop('parseTermId')}
                   showTerms={sinon.stub()}
-                  sortDescriptionsByApplication={sinon.stub()}
                   withPlans={true} />
               </AccordionSection>
             </div>
@@ -739,10 +747,10 @@ describe('DeploymentFlow', function() {
     const props = instance.props;
     // Click to deploy.
     wrapper.find('GenericButton').props().action();
-    assert.equal(props.deploy.callCount, 1);
-    assert.strictEqual(props.deploy.args[0].length, 5);
-    assert.equal(props.deploy.args[0][2], 'Pavlova');
-    assert.deepEqual(props.deploy.args[0][3], {
+    assert.equal(initUtils.deploy.callCount, 1);
+    assert.strictEqual(initUtils.deploy.args[0].length, 5);
+    assert.equal(initUtils.deploy.args[0][2], 'Pavlova');
+    assert.deepEqual(initUtils.deploy.args[0][3], {
       config: {},
       cloud: 'cloud',
       credential: 'cred',
@@ -762,12 +770,11 @@ describe('DeploymentFlow', function() {
     const charmsGetById = sinon.stub().withArgs('service1').returns({
       get: sinon.stub().withArgs('terms').returns([])
     });
-    const deploy = sinon.stub().callsArgWith(0, 'Uh oh!');
+    initUtils.deploy.callsArgWith(0, 'Uh oh!');
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'cloud'},
       credential: 'cred',
-      deploy,
       modelCommitted: true,
       region: 'north'
     });
@@ -775,7 +782,7 @@ describe('DeploymentFlow', function() {
     const props = instance.props;
     // Click to deploy.
     wrapper.find('GenericButton').props().action();
-    assert.equal(deploy.callCount, 1);
+    assert.equal(initUtils.deploy.callCount, 1);
     assert.equal(props.changeState.callCount, 0);
     wrapper.update();
     assert.equal(wrapper.find('GenericButton').prop('disabled'), false);
@@ -811,10 +818,9 @@ describe('DeploymentFlow', function() {
     });
     const instance = wrapper.instance();
     instance._handleTermsAgreement({target: {checked: true}});
-    const props = instance.props;
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    assert.equal(props.deploy.callCount, 0,
+    assert.equal(initUtils.deploy.callCount, 0,
       'The deploy function should not be called');
     assert.equal(terms.addAgreement.callCount, 1,
       'The addAgreement function was not called');
@@ -1039,7 +1045,7 @@ describe('DeploymentFlow', function() {
     instance._setSSHKeys([{text: 'my SSH key'}]);
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    const deploy = instance.props.deploy;
+    const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
     assert.equal(deploy.args[0][2], 'mymodel');
@@ -1088,7 +1094,7 @@ describe('DeploymentFlow', function() {
     instance._setVPCId('my VPC id');
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    const deploy = instance.props.deploy;
+    const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
     assert.equal(deploy.args[0][2], 'mymodel');
@@ -1117,7 +1123,7 @@ describe('DeploymentFlow', function() {
     instance._setVPCId('my VPC id', true);
     wrapper.update();
     wrapper.find('GenericButton').props().action();
-    const deploy = instance.props.deploy;
+    const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
     assert.equal(deploy.args[0][2], 'mymodel');
