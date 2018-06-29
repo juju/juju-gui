@@ -155,9 +155,6 @@ $asset-path: 'static/gui/build/app/assets/';
 @import 'canvas/service';
 @import 'canvas/footer';
 
-@import 'plugins/prism';
-@import 'plugins/prism-overrides';
-
 @import 'beta';
 
 // Tablet styles
