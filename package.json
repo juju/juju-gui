@@ -23,8 +23,6 @@
     "marked": "^0.3.19",
     "mixwith": "0.1.1",
     "normalize.css": "3.0.1",
-    "prism-languages": "^0.4.0",
-    "prismjs": "^1.14.0",
     "prop-types": "^15.6.1",
     "query-string": "^6.0.0",
     "react": "^16.3.2",
