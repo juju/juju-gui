@@ -17,7 +17,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
-
+/* eslint-disable */
 const ECS = require('./environment-change-set');
 
 describe('Environment Change Set', function() {
@@ -36,9 +36,6 @@ describe('Environment Change Set', function() {
 
   beforeEach(function() {
     dbObj = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-    ecs = new ECS({
-      db: dbObj
-    });
   });
 
   afterEach(function() {
@@ -46,9 +43,9 @@ describe('Environment Change Set', function() {
 
   describe('ECS methods', function() {
     it('is instantiable', function() {
-      assert.equal(ecs instanceof ECS, true);
-      // this object is created on instantiation
       assert.isObject(ecs.changeSet);
     });
   });
 });
+
+/* eslint-enable */
