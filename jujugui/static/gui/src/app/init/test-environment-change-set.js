@@ -18,6 +18,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 /* eslint-disable */
+const ECS = require('./environment-change-set');
+const testUtils = require('./testing-utils');
 const utils = require('./utils');
 
 describe('Environment Change Set', function() {
