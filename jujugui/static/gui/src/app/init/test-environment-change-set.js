@@ -23,7 +23,7 @@ const testUtils = require('./testing-utils');
 const User = require('../user/user');
 const utils = require('./utils');
 
-xdescribe('Environment Change Set', function() {
+describe('Environment Change Set', function() {
   var Y, ecs, envObj, dbObj, models, _cleanups;
 
   beforeAll(function(done) {
@@ -74,7 +74,7 @@ xdescribe('Environment Change Set', function() {
     envObj.destroy();
   });
 
-  describe('ECS methods', function() {
+  xdescribe('ECS methods', function() {
     it('is instantiable', function() {
       assert.equal(ecs instanceof ECS, true);
       // this object is created on instantiation
@@ -536,7 +536,7 @@ xdescribe('Environment Change Set', function() {
     });
   });
 
-  describe('clear', function() {
+  xdescribe('clear', function() {
     beforeEach(function() {
       var db = ecs.db;
       db.units.filterByMachine = sinon.stub();
@@ -595,7 +595,7 @@ xdescribe('Environment Change Set', function() {
 
   });
 
-  describe('_clearFromDB', function() {
+  xdescribe('_clearFromDB', function() {
     it('clears deployed services', function() {
       var db = ecs.db;
       var stubRemove = sinon.stub();
@@ -719,7 +719,7 @@ xdescribe('Environment Change Set', function() {
     });
   });
 
-  describe('lazy methods', function() {
+  xdescribe('lazy methods', function() {
     describe('lazyAddCharm', function() {
       it('adds a new `add Charm` record', function(done) {
         const args = ['id', 'cookies are better', done];
@@ -2118,7 +2118,7 @@ xdescribe('Environment Change Set', function() {
 
   });
 
-  describe('validateUnitPlacement', function() {
+  xdescribe('validateUnitPlacement', function() {
     var db, machines, unit, units;
 
     beforeEach(function() {
@@ -2179,7 +2179,7 @@ xdescribe('Environment Change Set', function() {
 
   });
 
-  describe('_getUnitSeries', function() {
+  xdescribe('_getUnitSeries', function() {
     let db;
 
     beforeEach(function() {
