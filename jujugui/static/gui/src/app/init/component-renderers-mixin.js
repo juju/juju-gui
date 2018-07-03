@@ -914,17 +914,6 @@ Browser: ${navigator.userAgent}`
         applications={services.toArray()}
         changes={currentChangeSet}
         changeState={this._bound.changeState}
-        changesUtils={shapeup.addReshape({
-          generateAllChangeDescriptions:
-            changesUtils.generateAllChangeDescriptions.bind(
-              changesUtils, services, db.units),
-          generateChangeDescription:
-            changesUtils.generateChangeDescription.bind(
-              changesUtils, services, db.units),
-          sortDescriptionsByApplication:
-            changesUtils.sortDescriptionsByApplication.bind(null,
-              services.getById.bind(services))
-        })}
         charms={db.charms}
         charmsGetById={db.charms.getById.bind(db.charms)}
         charmstore={shapeup.fromShape(charmstore, propTypes.charmstore)}
@@ -933,6 +922,18 @@ Browser: ${navigator.userAgent}`
         controllerIsReady={this._controllerIsReady.bind(this)}
         credential={modelAPI.get('credential')}
         ddData={ddData}
+        deploy={initUtils.deploy.bind(
+          initUtils, this, autoPlaceUnits)}
+        formatConstraints={initUtils.formatConstraints.bind(initUtils)}
+        generateAllChangeDescriptions={
+          changesUtils.generateAllChangeDescriptions.bind(
+            changesUtils, services, db.units)}
+        generateChangeDescription={
+          changesUtils.generateChangeDescription.bind(
+            changesUtils, services, db.units)}
+        generateMachineDetails={
+          initUtils.generateMachineDetails.bind(
+            initUtils, modelAPI.genericConstraints, db.units)}
         generatePath={this.state.generatePath.bind(this.state)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getServiceByName={services.getServiceByName.bind(services)}
@@ -941,12 +942,6 @@ Browser: ${navigator.userAgent}`
         gisf={this.gisf}
         gtmEnabled={this.applicationConfig.GTM_enabled}
         hash={state.hash}
-        initUtils={shapeup.addReshape({
-          deploy: initUtils.deploy.bind(initUtils, this, autoPlaceUnits),
-          formatConstraints: initUtils.formatConstraints.bind(initUtils),
-          generateMachineDetails: initUtils.generateMachineDetails.bind(
-            initUtils, modelAPI.genericConstraints, db.units)
-        })}
         isLoggedIn={isLoggedIn}
         loginToController={loginToController}
         modelAPI={shapeup.fromShape(modelAPI, propTypes.modelAPI)}
@@ -959,6 +954,9 @@ Browser: ${navigator.userAgent}`
         sendAnalytics={this.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showPay={this.applicationConfig.flags.pay || false}
+        sortDescriptionsByApplication={
+          changesUtils.sortDescriptionsByApplication.bind(null,
+            services.getById.bind(services))}
         staticURL={this.applicationConfig.staticURL || ''}
         stats={this.stats}
         stripe={this.stripe && shapeup.fromShape(this.stripe, propTypes.stripe)}

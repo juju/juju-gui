@@ -1,29 +1,25 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const enzyme = require('enzyme');
 const React = require('react');
-const shapeup = require('shapeup');
+const enzyme = require('enzyme');
 
 const DeploymentMachines = require('./machines');
 
 describe('DeploymentMachines', function() {
-  let acl, initUtils, machines;
+  var acl, machines;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentMachines
       acl={options.acl || acl}
       cloud={options.cloud === undefined ? {name: 'My cloud'} : options.cloud}
-      initUtils={options.initUtils || initUtils}
+      formatConstraints={options.formatConstraints || sinon.stub()}
+      generateMachineDetails={options.generateMachineDetails || sinon.stub()}
       machines={options.machines || machines} />
   );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    initUtils = shapeup.addReshape({
-      formatConstraints: sinon.stub(),
-      generateMachineDetails: sinon.stub()
-    });
     machines = {
       machine1: {
         command: {
@@ -103,17 +99,18 @@ describe('DeploymentMachines', function() {
   });
 
   it('can render', function() {
-    initUtils.generateMachineDetails.onCall(0).returns(
+    const generateMachineDetails = sinon.stub();
+    generateMachineDetails.onCall(0).returns(
       'xenial, (constraints not set)');
-    initUtils.generateMachineDetails.onCall(1).returns(
+    generateMachineDetails.onCall(1).returns(
       'cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
-    initUtils.generateMachineDetails.onCall(2).returns(
+    generateMachineDetails.onCall(2).returns(
       'trusty, cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
-    initUtils.generateMachineDetails.onCall(3).returns(
+    generateMachineDetails.onCall(3).returns(
       '(constraints not set)');
-    initUtils.generateMachineDetails.onCall(4).returns(
+    generateMachineDetails.onCall(4).returns(
       'cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
-    const wrapper = renderComponent();
+    const wrapper = renderComponent({ generateMachineDetails });
     var expected = (
       <div>
         <p className="deployment-machines__message">
