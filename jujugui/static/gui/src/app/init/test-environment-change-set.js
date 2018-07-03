@@ -81,7 +81,7 @@ describe('Environment Change Set', function() {
       assert.isObject(ecs.changeSet);
     });
 
-    describe('_translateKeysToIds', function() {
+    xdescribe('_translateKeysToIds', function() {
       it('calls keyToId when available', function() {
         ecs.changeSet = {
           'foo-1': {
@@ -98,7 +98,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_updateChangesetFromResults', function() {
+    xdescribe('_updateChangesetFromResults', function() {
       beforeEach(function() {
         // Simulates two related services being autodeployed to two machines,
         // one unit per machine.
@@ -161,7 +161,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_createNewRecord', function() {
+    xdescribe('_createNewRecord', function() {
       it('always creates a unique key for new records', function() {
         var result = [];
         var wrapCallback = sinon.stub(ecs, '_wrapCallback');
@@ -230,7 +230,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_removeExistingRecord', function() {
+    xdescribe('_removeExistingRecord', function() {
       it('deletes the requested record from the changeSet', function() {
         ecs.changeSet.abc123 = 'foo';
         ecs._removeExistingRecord('abc123');
@@ -249,7 +249,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_wrapCallback', function() {
+    xdescribe('_wrapCallback', function() {
       it('wraps the callback provided in the record object', function() {
         var callback = sinon.stub().returns('real cb');
         var record = {
@@ -283,7 +283,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_execute', function() {
+    xdescribe('_execute', function() {
       it('calls to wrap the callback then executes on the env', function() {
         var callback = sinon.stub();
         var record = {
@@ -323,7 +323,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('_buildHierarchy', function() {
+    xdescribe('_buildHierarchy', function() {
       var filterStub, db;
 
       beforeEach(function() {
@@ -438,7 +438,7 @@ describe('Environment Change Set', function() {
       });
     });
 
-    describe('commit', function() {
+    xdescribe('commit', function() {
       beforeEach(function() {
         var db = ecs.db;
         db.units.filterByMachine = sinon.stub();
