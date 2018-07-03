@@ -275,7 +275,7 @@ lint-components:
 	 @./scripts/inspect-components validate --path jujugui/static/gui/src/ --short
 
 .PHONY: test
-test: test-python test-js test-js-old
+test: test-python test-js
 
 .PHONY: test-python
 test-python: $(JUJUGUI) $(PYTEST)
