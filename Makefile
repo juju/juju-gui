@@ -349,7 +349,6 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
-	- rm .last-transpile
 	- rm browserify-cache.json
 
 .PHONY: clean-all
