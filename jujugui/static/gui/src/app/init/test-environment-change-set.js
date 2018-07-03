@@ -25,7 +25,7 @@ describe('Environment Change Set', function() {
 
   describe('ECS methods', function() {
     it('is instantiable', function() {
-      assert.true(true, true);
+      assert.equal(true, true);
     });
   });
 });
