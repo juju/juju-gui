@@ -17,9 +17,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
-
-const utils = require('./utils');
-const clone = require('lodash.clone');
+//
+// const utils = require('./utils');
+// const clone = require('lodash.clone');
 
 class EnvironmentChangeSet {
   constructor(config) {
@@ -28,8 +28,8 @@ class EnvironmentChangeSet {
     this.currentCommit = [];
     this.currentIndex = 0;
     this.committing = false;
-    this.__utils = utils;
-    this.__clone = clone;
+    // this.__utils = utils;
+    // this.__clone = clone;
   }
 
   /* ECS methods */
