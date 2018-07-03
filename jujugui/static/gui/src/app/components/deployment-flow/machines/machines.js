@@ -3,7 +3,6 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-const shapeup = require('shapeup');
 
 class DeploymentMachines extends React.Component {
   /**
@@ -21,9 +20,9 @@ class DeploymentMachines extends React.Component {
     Object.keys(machines).forEach(key => {
       const machine = machines[key];
       const args = machine.command.args[0][0];
-      const info = this.props.initUtils.generateMachineDetails({
+      const info = this.props.generateMachineDetails({
         commitStatus: 'uncommitted',
-        constraints: this.props.initUtils.formatConstraints(args.constraints),
+        constraints: this.props.formatConstraints(args.constraints),
         id: machine.command.options.modelId,
         series: args.series
       });
@@ -85,11 +84,8 @@ class DeploymentMachines extends React.Component {
 DeploymentMachines.propTypes = {
   acl: PropTypes.object.isRequired,
   cloud: PropTypes.object,
-  initUtils: shapeup.shape({
-    formatConstraints: PropTypes.func.isRequired,
-    generateMachineDetails: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc
-  }).isRequired,
+  formatConstraints: PropTypes.func.isRequired,
+  generateMachineDetails: PropTypes.func.isRequired,
   machines: PropTypes.object
 };
 

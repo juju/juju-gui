@@ -3,7 +3,6 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-const shapeup = require('shapeup');
 
 const BasicTable = require('../../basic-table/basic-table');
 const BudgetTable = require('../../budget-table/budget-table');
@@ -11,31 +10,31 @@ const DeploymentChangeItem = require('../change-item/change-item');
 const DeploymentServices = require('./services');
 
 describe('DeploymentServices', function() {
-  let acl, changesUtils;
+  let acl, sortDescriptionsByApplication;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentServices
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
-      changesUtils={options.changesUtils || changesUtils}
       charmsGetById={options.charmsGetById || sinon.stub()}
+      generateAllChangeDescriptions={
+        options.generateAllChangeDescriptions || sinon.stub()}
+      generateChangeDescription={options.generateChangeDescription || sinon.stub()}
       getCurrentChangeSet={options.getCurrentChangeSet || sinon.stub()}
       getServiceByName={options.getServiceByName || sinon.stub()}
       listPlansForCharm={options.listPlansForCharm || sinon.stub()}
       parseTermId={options.parseTermId || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
+      sortDescriptionsByApplication={
+        options.sortDescriptionsByApplication || sortDescriptionsByApplication}
       withPlans={options.withPlans} />
   );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    changesUtils = shapeup.addReshape({
-      generateAllChangeDescriptions: sinon.stub(),
-      generateChangeDescription: sinon.stub(),
-      sortDescriptionsByApplication: sinon.stub().returns(
-        JSON.parse('{"kibana":[{"id":"service-131","icon":"https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg","description":" kibana will be added to the model.","time":"1:28 pm"},{"id":"addUnits-655","icon":"changes-units-added","description":" 1 kibana unit will be added.","time":"1:28 pm"}],"elasticsearch":[{"id":"setConfig-169","icon":"changes-config-changed","description":"Configuration values will be changed for elasticsearch.","time":"1:28 pm"}]}') // eslint-disable-line max-len
-      )
-    });
+    sortDescriptionsByApplication = sinon.stub().returns(
+      JSON.parse('{"kibana":[{"id":"service-131","icon":"https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg","description":" kibana will be added to the model.","time":"1:28 pm"},{"id":"addUnits-655","icon":"changes-units-added","description":" 1 kibana unit will be added.","time":"1:28 pm"}],"elasticsearch":[{"id":"setConfig-169","icon":"changes-config-changed","description":"Configuration values will be changed for elasticsearch.","time":"1:28 pm"}]}') // eslint-disable-line max-len
+    );
   });
 
   it('can render', function() {
@@ -119,10 +118,11 @@ describe('DeploymentServices', function() {
       {id: 'machine0'},
       {id: 'machine1'}
     ];
-    changesUtils.generateChangeDescription.onFirstCall().returns(machineChanges[0]);
-    changesUtils.generateChangeDescription.onSecondCall().returns(machineChanges[1]);
-    changesUtils.sortDescriptionsByApplication.returns(null);
+    const generateChangeDescription = sinon.stub();
+    generateChangeDescription.onFirstCall().returns(machineChanges[0]);
+    generateChangeDescription.onSecondCall().returns(machineChanges[1]);
     const wrapper = renderComponent({
+      generateChangeDescription: generateChangeDescription,
       getCurrentChangeSet: sinon.stub().returns({
         destroy1: {
           command: {
@@ -134,7 +134,8 @@ describe('DeploymentServices', function() {
             method: '_addMachines'
           }
         }
-      })
+      }),
+      sortDescriptionsByApplication: sinon.stub().returns(null)
     });
     const expected = (
       <div>
