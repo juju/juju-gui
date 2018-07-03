@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 /* eslint-disable */
-const User = require('../user/user');
+const utils = require('./utils');
 
 describe('Environment Change Set', function() {
 });
