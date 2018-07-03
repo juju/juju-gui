@@ -74,7 +74,7 @@ describe('Environment Change Set', function() {
     envObj.destroy();
   });
 
-  xdescribe('ECS methods', function() {
+  describe('ECS methods', function() {
     it('is instantiable', function() {
       assert.equal(ecs instanceof ECS, true);
       // this object is created on instantiation
