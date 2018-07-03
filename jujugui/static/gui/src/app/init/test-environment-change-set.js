@@ -18,9 +18,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+/* eslint-disable */
 const ECS = require('./environment-change-set');
 const testUtils = require('./testing-utils');
 const User = require('../user/user');
+const utils = require('./utils');
+/* eslint-enable */
 
 describe('Environment Change Set', function() {
   var Y, ecs, envObj, dbObj, models, _cleanups;
@@ -73,7 +76,11 @@ describe('Environment Change Set', function() {
     envObj.destroy();
   });
 
-  it('is instantiable', function() {
-    assert.equal(true, true);
+  describe('ECS methods', function() {
+    it('is instantiable', function() {
+      assert.equal(ecs instanceof ECS, true);
+      // this object is created on instantiation
+      assert.isObject(ecs.changeSet);
+    });
   });
 });
