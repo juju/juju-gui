@@ -23,7 +23,7 @@ const testUtils = require('./testing-utils');
 const User = require('../user/user');
 const utils = require('./utils');
 
-describe('Environment Change Set', function() {
+xdescribe('Environment Change Set', function() {
   var Y, ecs, envObj, dbObj, models, _cleanups;
 
   beforeAll(function(done) {
