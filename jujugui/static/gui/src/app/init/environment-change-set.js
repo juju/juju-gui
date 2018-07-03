@@ -44,12 +44,12 @@ class EnvironmentChangeSet {
   */
   getCurrentChangeSet() {
     var currentChangeSet = {};
-    Object.keys(this.changeSet).forEach(key => {
-      const value = this.changeSet[key];
-      if (value.index === this.currentIndex) {
-        currentChangeSet[key] = value;
-      }
-    });
+    // Object.keys(this.changeSet).forEach(key => {
+    //   const value = this.changeSet[key];
+    //   if (value.index === this.currentIndex) {
+    //     currentChangeSet[key] = value;
+    //   }
+    // });
     return currentChangeSet;
   }
 
