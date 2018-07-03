@@ -82,22 +82,5 @@ describe('Environment Change Set', function() {
       // this object is created on instantiation
       assert.isObject(ecs.changeSet);
     });
-
-    describe('_translateKeysToIds', function() {
-      it('calls keyToId when available', function() {
-        ecs.changeSet = {
-          'foo-1': {
-            parents: ['bar-1'],
-            command: {
-              onParentResults: sinon.stub()
-            }
-          }
-        };
-        ecs._updateChangesetFromResults({key: 'bar-1'}, null);
-
-        assert.isTrue(
-          ecs.changeSet['foo-1'].command.onParentResults.calledOnce);
-      });
-    });
   });
 });
