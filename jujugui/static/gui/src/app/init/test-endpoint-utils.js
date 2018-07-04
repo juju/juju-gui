@@ -507,7 +507,7 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(charm);
     app.db.services.add({
       id: applicationName,
-      loaded: false,
+      loaded: true,
       charm: charmUrl});
     controller.endpointsMap = {wordpress: 'foo'};
     app.db.services.reset();
@@ -594,7 +594,7 @@ describe('Application config handlers', () => {
     assert.strictEqual(msg.request, 'Get');
     var svc = app.db.services.getById(applicationName);
     charmUrl = 'cs:precise/wordpress-3';
-    var charm2 = app.db.charms.add({id: charmUrl, loaded: false});
+    var charm2 = app.db.charms.add({id: charmUrl, loaded: true});
     destroyMe.push(charm2);
     svc.set('charm', charmUrl);
     assert.equal(conn.messages.length, 1);
