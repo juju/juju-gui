@@ -63,31 +63,6 @@ describe('Endpoints map handlers', function() {
     destroyMe = null;
   });
 
-  it('updates subordinate value when non-pending services are added',
-    function(done) {
-      var applicationName = 'puppet';
-      var charmUrl = 'cs:precise/puppet-2';
-      app.db.charms.add({id: charmUrl, is_subordinate: true});
-      var charm = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm);
-      charm.loaded = true;
-
-      const handler = () => {
-        var svc = app.db.services.getById(applicationName);
-        assert.isTrue(svc.get('subordinate'));
-        destroyMe.push(svc);
-        document.removeEventListener('endpointMapAdded', handler);
-        done();
-      };
-      document.addEventListener('endpointMapAdded', handler);
-      app.db.services.add({
-        id: applicationName,
-        pending: false,
-        loaded: true,
-        charm: charmUrl
-      });
-    });
-
   it('should remove service from endpoints map when it is deleted', function() {
     var applicationName = 'wordpress';
     var charmUrl = 'cs:precise/wordpress-2';
