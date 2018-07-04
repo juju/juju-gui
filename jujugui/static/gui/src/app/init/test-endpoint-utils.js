@@ -492,7 +492,7 @@ describe('Endpoints map handlers', function() {
     app.db.services.add({
       id: applicationName,
       pending: false,
-      loaded: false,
+      loaded: true,
       charm: charmUrl
     });
     controller.endpointsMap = {wordpress: 'foo'};
