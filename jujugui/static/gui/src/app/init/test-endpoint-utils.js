@@ -507,7 +507,7 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(charm);
     app.db.services.add({
       id: applicationName,
-      pending: false,
+      loaded: false,
       charm: charmUrl});
     controller.endpointsMap = {wordpress: 'foo'};
     app.db.services.reset();
