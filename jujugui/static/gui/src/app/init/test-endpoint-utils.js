@@ -97,5 +97,125 @@ describe('Relation endpoints logic', () => {
     available_svcs.should.eql(
       ['memcached', 'mysql', 'puppet', 'rsyslog-forwarder-ha']);
   });
+
+  it('should find valid targets including subordinates', function() {
+    loadDelta(false);
+    app.endpointsController.endpointsMap = sample_endpoints;
+    var service = db.services.getById('memcached'),
+        available = endpointUtils.getEndpoints(service, app.endpointsController),
+        available_svcs;
+    available_svcs = Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(
+      ['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
+  });
+
+  it('should find multi-series subordinates with matching series', function() {
+    loadDelta(false);
+    app.endpointsController.endpointsMap = sample_endpoints;
+    app.db.services.getById('mediawiki').set('series', 'trusty');
+    const puppet = app.db.services.getById('puppet');
+    puppet.set('series', 'xenial');
+    puppet.set('subordinate', true);
+    puppet.set('pending', true);
+    const charm = app.db.charms.add({
+      id: puppet.get('charm'),
+      is_subordinate: true
+    });
+    charm.set('series', ['xenial', 'trusty']);
+    app.db.services.getById('rsyslog-forwarder-ha').set('series', 'precise');
+    let service = db.services.getById('memcached');
+    service.set('series', 'trusty');
+    const available = endpointUtils.getEndpoints(service, app.endpointsController);
+    const available_svcs = Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(
+      ['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
+  });
+
+  it('should match app series if it is a multi-series subordinate', function() {
+    loadDelta(false);
+    app.endpointsController.endpointsMap = sample_endpoints;
+    app.db.services.getById('mediawiki').set('series', 'trusty');
+    app.db.services.getById('wordpress').set('series', 'trusty');
+    app.db.services.getById('rsyslog-forwarder-ha').set('series', 'precise');
+    let service = db.services.getById('memcached');
+    service.set('series', 'xenial');
+    service.set('subordinate', true);
+    service.set('pending', true);
+    const charm = app.db.charms.add({
+      id: service.get('charm'),
+      is_subordinate: true
+    });
+    charm.set('series', ['xenial', 'trusty']);
+    const available = endpointUtils.getEndpoints(service, app.endpointsController);
+    const available_svcs = Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(['mediawiki', 'wordpress']);
+  });
+
+  it('should find ambigious targets', function() {
+    loadDelta();
+    // Mysql already has both subordinates related.
+    app.endpointsController.endpointsMap = sample_endpoints;
+    var service = db.services.getById('mysql'),
+        available = endpointUtils.getEndpoints(service, app.endpointsController),
+        available_svcs = Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(['mediawiki']);
+    // mediawiki has two possible relations (read slave or write master)
+    // it can establish with mysql.
+    available.mediawiki.should.eql([
+      [{name: 'db', service: 'mysql', type: 'mysql'},
+        {name: 'slave', service: 'mediawiki', type: 'mysql'}],
+      [{name: 'db', service: 'mysql', type: 'mysql'},
+        {name: 'db', service: 'mediawiki', type: 'mysql'}]
+    ]);
+
+    // Demonstrate the inverse retrieval of the same.
+    available = endpointUtils.getEndpoints(
+      db.services.getById('mediawiki'), app.endpointsController);
+    available.mysql.should.eql([
+      [{name: 'slave', service: 'mediawiki', type: 'mysql'},
+        {name: 'db', service: 'mysql', type: 'mysql'}],
+      [{name: 'db', service: 'mediawiki', type: 'mysql'},
+        {name: 'db', service: 'mysql', type: 'mysql'}]
+    ]);
+  });
+
+  it('should find valid targets for a requires', function() {
+    loadDelta();
+    // Wordpress already has one subordinates related (puppet)
+    // ..the picture is wrong.. wordpress only has one subordinate
+    app.endpointsController.endpointsMap = sample_endpoints;
+    var service = db.services.getById('wordpress');
+    var available = endpointUtils.getEndpoints(service, app.endpointsController);
+    var available_svcs = Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(['memcached', 'rsyslog-forwarder-ha']);
+  });
+
+  it('should find valid targets for subordinates', function() {
+    loadDelta(false);
+    app.endpointsController.endpointsMap = sample_endpoints;
+    var service = db.services.getById('puppet');
+    var available = endpointUtils.getEndpoints(service, app.endpointsController);
+    var available_svcs = Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(
+      ['mediawiki', 'memcached', 'mysql', 'puppetmaster', 'rsyslog',
+        'rsyslog-forwarder-ha', 'wordpress']);
+
+    service = db.services.getById('rsyslog-forwarder-ha');
+    available = endpointUtils.getEndpoints(service, app.endpointsController);
+    available_svcs = Object.keys(available);
+
+    available_svcs.sort();
+    available_svcs.should.eql(
+      ['mediawiki', 'memcached', 'mysql', 'puppet',
+        'puppetmaster', 'rsyslog', 'wordpress']);
+  });
+
 });
+
 /* eslint-enable */
