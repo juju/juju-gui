@@ -101,10 +101,10 @@ class GUIApp {
       @type {Integer}
     */
     this._dbChangedTimer = null;
-    // this._domEventHandlers['boundOnDatabaseChanged'] =
-    //   this.onDatabaseChanged.bind(this);
-    // document.addEventListener(
-    //   'update', this._domEventHandlers['boundOnDatabaseChanged']);
+    this._domEventHandlers['boundOnDatabaseChanged'] =
+      this.onDatabaseChanged.bind(this);
+    document.addEventListener(
+      'update', this._domEventHandlers['boundOnDatabaseChanged']);
     /**
       Application instance of the user class.
       @type {Object}

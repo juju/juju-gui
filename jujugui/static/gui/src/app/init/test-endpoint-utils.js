@@ -35,13 +35,13 @@ describe('Endpoints map handlers', function() {
       require('../yui-modules');
       window.yui.use(window.MODULES, function() {
         // The require needs to be after the yui modules have been loaded.
-        JujuGUI = require('../init');
         done();
       });
     });
   });
 
   beforeEach(() => {
+    JujuGUI = require('../init');
     destroyMe = [];
     container = utils.makeAppContainer();
     app = createApp(JujuGUI);
@@ -49,6 +49,7 @@ describe('Endpoints map handlers', function() {
   });
 
   afterEach(function() {
+    JujuGUI = null;
     app.destructor();
     container.remove();
     destroyMe.forEach(destroy => destroy.destroy());
