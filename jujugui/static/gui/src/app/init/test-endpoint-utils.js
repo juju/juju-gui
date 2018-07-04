@@ -1,12 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
-/* eslint-disable */
-const endpointUtils = require('./endpoint-utils');
-const factory = require('./testing-factory');
-const User = require('../user/user');
 const utils = require('./testing-utils');
-
-const EndpointsController = require('./endpoints-controller');
 
 const createApp = (JujuGUI, config = {}) => {
   const defaults = {
@@ -75,4 +69,3 @@ describe('Endpoints map handlers', function() {
     });
   });
 });
-/* eslint-enable */
