@@ -8,16 +8,14 @@ const enzyme = require('enzyme');
 const PostDeployment = require('./post-deployment');
 
 describe('PostDeployment', () => {
-  let file, getFile;
+  let charmstore, file;
 
   const renderComponent = (options = {}) => {
     return enzyme.shallow(
       <PostDeployment
         changeState={options.changeState || sinon.stub()}
-        entityId={options.entityId || 'test'}
-        getEntity={
-          options.getEntity || sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}])}
-        getFile={options.getFile || getFile} />
+        charmstore={options.charmstore || charmstore}
+        entityId={options.entityId || 'test'} />
     );
   };
 
@@ -25,7 +23,10 @@ describe('PostDeployment', () => {
     file = `# Test Name
 
 {details_link}{requires_cli_link}`;
-    getFile = sinon.stub().callsArgWith(2, null, file);
+    charmstore = {
+      getEntity: sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}]),
+      getFile: sinon.stub().callsArgWith(2, null, file)
+    };
   });
 
   it('renders with getstarted.md', () => {
@@ -60,7 +61,7 @@ describe('PostDeployment', () => {
     assert.compareJSX(wrapper.find('div'), expected);
     // When requesting the file it should request the actual name as
     // charmstore is case sensitive
-    assert.equal(getFile.args[0][1], 'gEtstArteD.md');
+    assert.equal(charmstore.getFile.args[0][1], 'gEtstArteD.md');
   });
 
   it('extracts metadata in markdown head', () => {
