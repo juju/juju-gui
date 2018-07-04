@@ -27,6 +27,8 @@ const createApp = (JujuGUI, config = {}) => {
   return new JujuGUI(initConfig);
 };
 
+// These are nominally based on improv sample.json delta stream with
+// the addition of puppet subordinate relations.
 describe('Relation endpoints logic', () => {
   let container, db, app, sample_endpoints,
       sample_env, JujuGUI;
@@ -70,8 +72,30 @@ describe('Relation endpoints logic', () => {
     container.remove();
   });
 
+  function loadDelta(relations) {
+    var delta = [];
+    if (relations === false) {
+      // Remove the relations from the delta.
+      sample_env.forEach(function(change, index) {
+        if (change[0] !== 'relationInfo') {
+          delta.push(change);
+        }
+      });
+    } else {
+      delta = sample_env;
+    }
+    db.onDelta({detail: {data: {result: delta}}});
+  }
+
   it('should be able to find relatable services', function() {
-    assert.equal(true, true);
+    loadDelta(false);
+    app.endpointsController.endpointsMap = sample_endpoints;
+    var service = db.services.getById('mediawiki'),
+        available_svcs = Object.keys(endpointUtils.getEndpoints(
+          service, app.endpointsController));
+    available_svcs.sort();
+    available_svcs.should.eql(
+      ['memcached', 'mysql', 'puppet', 'rsyslog-forwarder-ha']);
   });
 });
 /* eslint-enable */
