@@ -426,7 +426,7 @@ describe('Endpoints map handlers', function() {
       app.db.services.add({
         id: applicationName,
         pending: true,
-        loaded: false,
+        loaded: true,
         charmstore: factory.makeFakeCharmstore(),
         charm: charmUrl
       });
