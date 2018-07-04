@@ -426,7 +426,7 @@ describe('Endpoints map handlers', function() {
       app.db.services.add({
         id: applicationName,
         pending: true,
-        loaded: true,
+        loaded: false,
         charmstore: factory.makeFakeCharmstore(),
         charm: charmUrl
       });
@@ -453,7 +453,7 @@ describe('Endpoints map handlers', function() {
       app.db.services.add({
         id: applicationName,
         pending: false,
-        loaded: true,
+        loaded: false,
         charmstore: factory.makeFakeCharmstore(),
         charm: charmUrl
       });
@@ -479,7 +479,7 @@ describe('Endpoints map handlers', function() {
       app.db.services.add({
         id: applicationName,
         pending: false,
-        loaded: true,
+        loaded: false,
         charm: charmUrl
       });
     });
@@ -491,7 +491,7 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(charm);
     app.db.services.add({
       id: applicationName,
-      loaded: true,
+      loaded: false,
       charm: charmUrl
     });
     controller.endpointsMap = {wordpress: 'foo'};
@@ -507,7 +507,7 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(charm);
     app.db.services.add({
       id: applicationName,
-      loaded: true,
+      loaded: false,
       charm: charmUrl});
     controller.endpointsMap = {wordpress: 'foo'};
     app.db.services.reset();
@@ -594,7 +594,7 @@ describe('Application config handlers', () => {
     assert.strictEqual(msg.request, 'Get');
     var svc = app.db.services.getById(applicationName);
     charmUrl = 'cs:precise/wordpress-3';
-    var charm2 = app.db.charms.add({id: charmUrl, loaded: true});
+    var charm2 = app.db.charms.add({id: charmUrl, loaded: false});
     destroyMe.push(charm2);
     svc.set('charm', charmUrl);
     assert.equal(conn.messages.length, 1);
