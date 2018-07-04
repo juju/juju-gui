@@ -52,6 +52,9 @@ describe('Endpoints map handlers', function() {
     container.remove();
     destroyMe.forEach(destroy => destroy.destroy());
     destroyMe = null;
+    app.db.services = null;
+    app.db = null;
+    app = null;
   });
 
   it('should remove service from endpoints map when it is deleted', function() {
