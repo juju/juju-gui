@@ -78,19 +78,5 @@ describe('Endpoints map handlers', function() {
     app.db.services.remove(service);
     controller.endpointsMap.should.eql({});
   });
-
-  it('should reset the map when the services reset', function() {
-    var applicationName = 'wordpress';
-    var charmUrl = 'cs:precise/wordpress-2';
-    var charm = app.db.charms.add({id: charmUrl});
-    destroyMe.push(charm);
-    app.db.services.add({
-      id: applicationName,
-      loaded: true,
-      charm: charmUrl});
-    controller.endpointsMap = {wordpress: 'foo'};
-    app.db.services.reset();
-    controller.endpointsMap.should.eql({});
-  });
 });
 /* eslint-enable */
