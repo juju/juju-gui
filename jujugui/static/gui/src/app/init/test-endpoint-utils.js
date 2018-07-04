@@ -35,13 +35,13 @@ describe('Endpoints map handlers', function() {
       require('../yui-modules');
       window.yui.use(window.MODULES, function() {
         // The require needs to be after the yui modules have been loaded.
+        JujuGUI = require('../init');
         done();
       });
     });
   });
 
   beforeEach(() => {
-    JujuGUI = require('../init');
     destroyMe = [];
     container = utils.makeAppContainer();
     app = createApp(JujuGUI);
@@ -49,7 +49,6 @@ describe('Endpoints map handlers', function() {
   });
 
   afterEach(function() {
-    JujuGUI = null;
     app.destructor();
     container.remove();
     destroyMe.forEach(destroy => destroy.destroy());
@@ -62,10 +61,11 @@ describe('Endpoints map handlers', function() {
     var charmUrl = 'cs:precise/wordpress-2';
     var charm = app.db.charms.add({id: charmUrl});
     destroyMe.push(charm);
-    app.db.services.add({
+    const service = app.db.services.add({
       id: applicationName,
       loaded: true,
       charm: charmUrl
     });
+    destroyMe.push(service);
   });
 });
