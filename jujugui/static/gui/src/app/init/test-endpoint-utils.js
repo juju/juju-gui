@@ -1,6 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
-
+const utils = require('./testing-utils');
 const createApp = (JujuGUI, config = {}) => {
   const defaults = {
     apiAddress: 'http://api.example.com/',
@@ -22,7 +22,7 @@ const createApp = (JujuGUI, config = {}) => {
 
 
 describe('Endpoints map handlers', function() {
-  let app, destroyMe, JujuGUI;
+  let app, container, destroyMe, JujuGUI;
 
   beforeAll(done => {
     YUI(GlobalConfig).use([
@@ -43,11 +43,13 @@ describe('Endpoints map handlers', function() {
 
   beforeEach(() => {
     destroyMe = [];
+    container = utils.makeAppContainer();
     app = createApp(JujuGUI);
   });
 
   afterEach(function() {
     app.destructor();
+    container.remove();
     destroyMe.forEach(destroy => destroy.destroy());
     destroyMe = null;
   });
