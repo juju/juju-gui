@@ -59,11 +59,10 @@ describe('Endpoints map handlers', function() {
   it('should remove service from endpoints map when it is deleted', function() {
     var applicationName = 'wordpress';
     var charmUrl = 'cs:precise/wordpress-2';
-    const service = app.db.services.add({
+    app.db.services.add({
       id: applicationName,
-      loaded: true,
+      loaded: false,
       charm: charmUrl
     });
-    destroyMe.push(service);
   });
 });
