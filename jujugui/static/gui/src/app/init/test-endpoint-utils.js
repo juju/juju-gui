@@ -68,6 +68,11 @@ describe('Endpoints map handlers', function() {
     var charmUrl = 'cs:precise/wordpress-2';
     var charm = app.db.charms.add({id: charmUrl});
     destroyMe.push(charm);
+    app.db.services.add({
+      id: applicationName,
+      loaded: true,
+      charm: charmUrl
+    });
   });
 });
 /* eslint-enable */
