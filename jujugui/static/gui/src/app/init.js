@@ -101,10 +101,10 @@ class GUIApp {
       @type {Integer}
     */
     this._dbChangedTimer = null;
-    this._domEventHandlers['boundOnDatabaseChanged'] =
-      this.onDatabaseChanged.bind(this);
-    document.addEventListener(
-      'update', this._domEventHandlers['boundOnDatabaseChanged']);
+    // this._domEventHandlers['boundOnDatabaseChanged'] =
+    //   this.onDatabaseChanged.bind(this);
+    // document.addEventListener(
+    //   'update', this._domEventHandlers['boundOnDatabaseChanged']);
     /**
       Application instance of the user class.
       @type {Object}
@@ -1015,9 +1015,9 @@ class GUIApp {
     calls then this is called to handle the db updates.
   */
   _dbChangedHandler() {
-    // this.topology.topo.update();
-    // this.state.dispatch();
-    // this._renderComponents();
+    this.topology.topo.update();
+    this.state.dispatch();
+    this._renderComponents();
   }
 
   /**
