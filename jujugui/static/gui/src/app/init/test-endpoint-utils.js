@@ -45,6 +45,7 @@ describe('Endpoints map handlers', function() {
     destroyMe = [];
     container = utils.makeAppContainer();
     app = createApp(JujuGUI);
+    app.db.fireEvent = sinon.stub();
   });
 
   afterEach(function() {
