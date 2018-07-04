@@ -516,7 +516,7 @@ describe('Endpoints map handlers', function() {
 });
 
 
-describe('Application config handlers', () => {
+xdescribe('Application config handlers', () => {
   let JujuGUI, app, conn, container, destroyMe;
 
   beforeAll(done => {
