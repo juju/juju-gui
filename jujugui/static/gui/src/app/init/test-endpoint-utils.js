@@ -1,6 +1,5 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
-const utils = require('./testing-utils');
 
 const createApp = (JujuGUI, config = {}) => {
   const defaults = {
@@ -23,11 +22,11 @@ const createApp = (JujuGUI, config = {}) => {
 
 
 describe('Endpoints map handlers', function() {
-  let app, container, controller, destroyMe, JujuGUI;
+  let app, destroyMe, JujuGUI;
 
   beforeAll(done => {
     YUI(GlobalConfig).use([
-      'datasource-local'],
+    ],
     Y => {
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
@@ -44,15 +43,11 @@ describe('Endpoints map handlers', function() {
 
   beforeEach(() => {
     destroyMe = [];
-    container = utils.makeAppContainer();
     app = createApp(JujuGUI);
-    controller = app.endpointsController;
-    controller.endpointsMap = {};
   });
 
   afterEach(function() {
     app.destructor();
-    container.remove();
     destroyMe.forEach(destroy => destroy.destroy());
     destroyMe = null;
   });
