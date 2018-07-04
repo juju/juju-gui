@@ -491,7 +491,7 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(charm);
     app.db.services.add({
       id: applicationName,
-      pending: false,
+      pending: true,
       loaded: true,
       charm: charmUrl
     });
@@ -508,7 +508,8 @@ describe('Endpoints map handlers', function() {
     destroyMe.push(charm);
     app.db.services.add({
       id: applicationName,
-      loaded: false,
+      pending: false,
+      //loaded: false,
       charm: charmUrl});
     controller.endpointsMap = {wordpress: 'foo'};
     app.db.services.reset();
