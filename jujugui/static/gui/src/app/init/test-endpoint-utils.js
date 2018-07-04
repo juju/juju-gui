@@ -1,6 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
-
+/* eslint-disable */
 const endpointUtils = require('./endpoint-utils');
 const factory = require('./testing-factory');
 const User = require('../user/user');
@@ -90,3 +90,4 @@ describe('Endpoints map handlers', function() {
       });
     });
 });
+/* eslint-enable */
