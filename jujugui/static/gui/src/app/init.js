@@ -1015,9 +1015,9 @@ class GUIApp {
     calls then this is called to handle the db updates.
   */
   _dbChangedHandler() {
-    this.topology.topo.update();
-    this.state.dispatch();
-    this._renderComponents();
+    // this.topology.topo.update();
+    // this.state.dispatch();
+    // this._renderComponents();
   }
 
   /**
