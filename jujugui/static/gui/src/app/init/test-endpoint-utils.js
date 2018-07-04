@@ -63,60 +63,6 @@ describe('Endpoints map handlers', function() {
     destroyMe = null;
   });
 
-  it('should update endpoints map when pending services are added',
-    function(done) {
-      var applicationName = 'wordpress';
-      var charmUrl = 'cs:precise/wordpress-2';
-      app.db.charms.add({id: charmUrl});
-      var charm = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm);
-      charm.loaded = true;
-
-      const handler = () => {
-        controller.endpointsMap.should.eql({wordpress: {
-          requires: [],
-          provides: []}});
-        // This will hang forever if the endpoint map doesn't update.
-        document.removeEventListener('endpointMapAdded', handler);
-        done();
-      };
-      document.addEventListener('endpointMapAdded', handler);
-      app.db.services.add({
-        id: applicationName,
-        pending: true,
-        loaded: true,
-        charmstore: factory.makeFakeCharmstore(),
-        charm: charmUrl
-      });
-    });
-
-  it('should update endpoints map when non-pending services are added',
-    function(done) {
-      var applicationName = 'wordpress';
-      var charmUrl = 'cs:precise/wordpress-2';
-      app.db.charms.add({id: charmUrl});
-      var charm = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm);
-      charm.loaded = true;
-
-      const handler = () => {
-        controller.endpointsMap.should.eql({wordpress: {
-          requires: [],
-          provides: []}});
-        // This will hang forever if the endpoint map doesn't update.
-        document.removeEventListener('endpointMapAdded', handler);
-        done();
-      };
-      document.addEventListener('endpointMapAdded', handler);
-      app.db.services.add({
-        id: applicationName,
-        pending: false,
-        loaded: true,
-        charmstore: factory.makeFakeCharmstore(),
-        charm: charmUrl
-      });
-    });
-
   it('updates subordinate value when non-pending services are added',
     function(done) {
       var applicationName = 'puppet';
