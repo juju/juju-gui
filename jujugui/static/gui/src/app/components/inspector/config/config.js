@@ -2,7 +2,6 @@
 'use strict';
 
 const classNames = require('classnames');
-const clone = require('lodash.clone');
 const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
@@ -18,7 +17,7 @@ class Configuration extends React.Component {
     this.originalSeries = this.props.service.get('series');
     this.state = {
       // Have to clone the config so we don't update it via reference.
-      serviceConfig: clone(this.props.service.get('config')),
+      serviceConfig: this._clone(this.props.service.get('config')),
       series: this.props.service.get('series'),
       changed: false
     };
@@ -27,8 +26,19 @@ class Configuration extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       // Have to clone the config so we don't update it via reference.
-      serviceConfig: clone(nextProps.service.get('config'))
+      serviceConfig: this._clone(nextProps.service.get('config'))
     });
+  }
+
+  /**
+    Clone an object.
+
+    @method _clone
+    @param {Object} obj The object to clone.
+    @returns {Object} the cloned object.
+  */
+  _clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
   /**
@@ -226,7 +236,7 @@ class Configuration extends React.Component {
 
     Object.keys(charmOptions).forEach(key => {
       // Clone the options so that we're not updating the stored options.
-      const option = clone(charmOptions[key]);
+      const option = this._clone(charmOptions[key]);
       option.key = key;
       option.description = initUtils.linkify(option.description || '');
       const ref = 'Config-' + key;

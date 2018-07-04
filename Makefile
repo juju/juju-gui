@@ -275,7 +275,7 @@ lint-components:
 	 @./scripts/inspect-components validate --path jujugui/static/gui/src/ --short
 
 .PHONY: test
-test: test-python test-js
+test: test-python test-js test-js-old
 
 .PHONY: test-python
 test-python: $(JUJUGUI) $(PYTEST)
@@ -349,6 +349,7 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
+	- rm .last-transpile
 	- rm browserify-cache.json
 
 .PHONY: clean-all
