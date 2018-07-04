@@ -64,7 +64,10 @@ describe('Endpoints map handlers', function() {
   });
 
   it('should remove service from endpoints map when it is deleted', function() {
-    assert.equal(true, true);
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    var charm = app.db.charms.add({id: charmUrl});
+    destroyMe.push(charm);
   });
 });
 /* eslint-enable */
