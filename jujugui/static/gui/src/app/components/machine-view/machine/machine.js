@@ -13,9 +13,8 @@ const Constraints = require('../../constraints/constraints');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
-const MachineViewMachineGlobals = {};
 
-MachineViewMachineGlobals.dropTarget = {
+const dropTarget = {
   /**
     Called when something is dropped on the machine.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
@@ -49,7 +48,7 @@ MachineViewMachineGlobals.dropTarget = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-MachineViewMachineGlobals.collect = function(connect, monitor) {
+const collect = function(connect, monitor) {
   return {
     canDrop: monitor.canDrop(),
     connectDropTarget: connect.dropTarget(),
@@ -338,6 +337,4 @@ MachineViewMachine.propTypes = {
   type: PropTypes.string.isRequired
 };
 
-module.exports = ReactDnD.DropTarget(
-  'unit', MachineViewMachineGlobals.dropTarget,
-  MachineViewMachineGlobals.collect)(MachineViewMachine);
+module.exports = ReactDnD.DropTarget('unit', dropTarget, collect)(MachineViewMachine);

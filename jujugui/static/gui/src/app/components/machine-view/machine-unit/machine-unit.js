@@ -9,9 +9,7 @@ const shapeup = require('shapeup');
 
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 
-const MachineViewMachineUnitGlobals = {};
-
-MachineViewMachineUnitGlobals.dragSource = {
+const dragSource = {
   /**
     Called when the component starts the drag.
     See: http://gaearon.github.io/react-dnd/docs-drag-source.html
@@ -43,7 +41,7 @@ MachineViewMachineUnitGlobals.dragSource = {
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-MachineViewMachineUnitGlobals.collect = function(connect, monitor) {
+const collect = function(connect, monitor) {
   return {
     canDrag: monitor.canDrag(),
     connectDragSource: connect.dragSource(),
@@ -120,6 +118,4 @@ MachineViewMachineUnit.propTypes = {
   unit: PropTypes.object.isRequired
 };
 
-module.exports = ReactDnD.DragSource(
-  'unit', MachineViewMachineUnitGlobals.dragSource,
-  MachineViewMachineUnitGlobals.collect)(MachineViewMachineUnit);
+module.exports = ReactDnD.DragSource('unit', dragSource, collect)(MachineViewMachineUnit);
