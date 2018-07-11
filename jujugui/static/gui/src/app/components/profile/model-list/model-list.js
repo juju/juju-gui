@@ -90,7 +90,7 @@ class ProfileModelList extends React.Component {
             title: 'Error destroying model',
             message: `Could not destroy model: ${data[key]}`,
             level: 'error'
-          })
+          });
         }
       }
       this._fetchModels(this.props.facadesExist);

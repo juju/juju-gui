@@ -708,7 +708,7 @@ describe('Profile Model List', function() {
     assert.equal(wrapper.find('.profile__title-count').html().includes('(1)'), true);
   });
 
-  fit('displays an error when destroying a model fails', () => {
+  it('displays an error when destroying a model fails', () => {
     const addNotification = sinon.stub();
     const wrapper = renderComponent({
       addNotification: addNotification,
