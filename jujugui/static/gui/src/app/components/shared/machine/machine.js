@@ -7,7 +7,7 @@ const React = require('react');
 
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const GenericButton = require('../../generic-button/generic-button');
-const MachineUnit = require('./machine-unit/machine-unit');
+const MachineUnit = require('../machine-unit/machine-unit');
 
 class Machine extends React.Component {
   /**
@@ -43,7 +43,7 @@ class Machine extends React.Component {
   */
   _generateUnits() {
     const { isContainer, units } = this.props;
-    if (units.length === 0) {
+    if (!units || !units.length) {
       return null;
     }
     const menuItems = isContainer ? [{
@@ -149,10 +149,10 @@ Machine.propTypes = {
   })),
   isContainer: PropTypes.bool,
   machine: PropTypes.shape({
-    commitStatus: PropTypes.string,
-    deleted: PropTypes.bool,
     name: PropTypes.string.isRequired,
-    root: PropTypes.bool
+    root: PropTypes.bool,
+    region: PropTypes.string,
+    status: PropTypes.string.isRequired
   }).isRequired,
   menuItems: PropTypes.array,
   onClick: PropTypes.func,

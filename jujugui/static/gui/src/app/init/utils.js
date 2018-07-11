@@ -924,11 +924,9 @@ utils.parseConstraints = (genericConstraints, constraints='') => {
   @param machine {Object} A machine.
   @returns {String} The machine details.
 */
-utils.generateMachineDetails = (genericConstraints, units, machine) => {
+utils.parseMachineDetails = (genericConstraints, machine) => {
   const hardware = machine.hardware ||
     utils.parseConstraints(genericConstraints, machine.constraints) || {};
-  const unitCount = units.filterByMachine(machine.id, true).length;
-  let hardwareDetails;
   let details = [];
   Object.keys(hardware).forEach(name => {
     let value = hardware[name];
@@ -942,6 +940,18 @@ utils.generateMachineDetails = (genericConstraints, units, machine) => {
       details.push(`${name.replace('-', ' ')}: ${value}`);
     }
   });
+  return details;
+};
+
+/**
+  Generate the series/hardware/constraints details for a machine
+  @param machine {Object} A machine.
+  @returns {String} The machine details.
+*/
+utils.generateMachineDetails = (genericConstraints, units, machine) => {
+  const unitCount = units.filterByMachine(machine.id, true).length;
+  const details = utils.parseMachineDetails(genericConstraints, machine);
+  let hardwareDetails;
   const constraintsMessage = machine.constraints ?
     'requested constraints: ' : '';
   hardwareDetails = `${constraintsMessage}${details.join(', ')}`;

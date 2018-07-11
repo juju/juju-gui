@@ -1,20 +1,17 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const MachineUnit = require('../../shared/machine-unit/machine-unit');
 
 const dragSource = {
   /**
     Called when the component starts the drag.
     See: http://gaearon.github.io/react-dnd/docs-drag-source.html
-
-    @method beginDrag
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
@@ -25,8 +22,6 @@ const dragSource = {
   /**
     Called to check if the component is allowed to be dragged.
     See: http://gaearon.github.io/react-dnd/docs-drag-source.html
-
-    @method canDrag
     @param {Object} props The component props.
   */
   canDrag: function(props) {
@@ -36,8 +31,6 @@ const dragSource = {
 
 /**
   Provides props to be injected into the component.
-
-  @method collect
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
@@ -52,54 +45,38 @@ const collect = function(connect, monitor) {
 class MachineViewMachineUnit extends React.Component {
   /**
     Generate the classes for the unit.
-
-    @method _generateClasses
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    var unit = this.props.unit;
-    var agentState = unit.agent_state;
-    var status = unit.deleted || !agentState ? 'uncommitted' : agentState;
-    var classes = {
+    const classes = {
+      'machine-view__machine-unit': true,
       'machine-view__machine-unit--draggable': this.props.canDrag,
       'machine-view__machine-unit--dragged': this.props.isDragging
     };
-    classes['machine-view__machine-unit--' + status] = true;
-    return classNames(
-      'machine-view__machine-unit',
-      classes);
+    return Object.keys(classes).filter(className => classes[className]);
   }
 
   render() {
-    var menu;
-    var title;
-    var service = this.props.service;
-    var unit = this.props.unit;
+    let menuItems;
+    const unit = this.props.unit;
+    const agentState = unit.agent_state;
     if (this.props.machineType === 'container') {
-      var menuItems = [{
+      menuItems = [{
         label: 'Destroy',
         action: (!this.props.acl.isReadOnly() &&
           this.props.removeUnit.bind(null, unit.id)) || null
       }];
-      menu = (
-        <ButtonDropdown
-          classes={['machine-view__machine-dropdown']}
-          listItems={menuItems} />);
-      title = unit.displayName;
     }
     // Wrap the returned components in the drag source method.
     return this.props.connectDragSource(
-      <li className={this._generateClasses()}>
-        <span className="machine-view__machine-unit-icon">
-          <img
-            alt={unit.displayName}
-            className="machine-view__machine-unit-icon-img"
-            src={service.get('icon')}
-            title={unit.displayName} />
-        </span>
-        {title}
-        {menu}
-      </li>
+      <div>
+        <MachineUnit
+          classes={this._generateClasses()}
+          icon={this.props.icon}
+          menuItems={menuItems}
+          name={unit.displayName}
+          status={unit.deleted || !agentState ? 'uncommitted' : agentState} />
+      </div>
     );
   }
 };
@@ -110,11 +87,11 @@ MachineViewMachineUnit.propTypes = {
   }).frozen.isRequired,
   canDrag: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
+  icon: PropTypes.string.isRequired,
   isDragging: PropTypes.bool.isRequired,
   machineType: PropTypes.string.isRequired,
   removeUnit: PropTypes.func,
   sendAnalytics: PropTypes.func.isRequired,
-  service: PropTypes.object.isRequired,
   unit: PropTypes.object.isRequired
 };
 

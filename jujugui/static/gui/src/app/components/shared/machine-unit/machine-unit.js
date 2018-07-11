@@ -14,7 +14,7 @@ class MachineUnit extends React.Component {
   */
   _generateClasses() {
     const status = `machine-unit--${this.props.status}`;
-    return classNames('machine-unit', status);
+    return classNames('machine-unit', status, this.props.classes);
   }
 
   render() {
@@ -43,6 +43,7 @@ class MachineUnit extends React.Component {
 };
 
 MachineUnit.propTypes = {
+  classes: PropTypes.arrayOf(PropTypes.string),
   icon: PropTypes.string.isRequired,
   menuItems: PropTypes.array,
   name: PropTypes.string.isRequired,
