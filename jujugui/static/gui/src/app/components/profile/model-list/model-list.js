@@ -87,7 +87,23 @@ class ProfileModelList extends React.Component {
       title: 'Destroy',
       action: () => {
         this.setState({notification: null});
-        this.props.destroyModel(model.uuid, () => {
+        this.props.destroyModel(model.uuid, (error, data) => {
+          if (error) {
+            this.props.addNotification({
+              title: 'Error destroying model',
+              message: error,
+              level: 'error'
+            });
+          }
+          if (data != {}) {
+            for (let key in data) {
+              this.props.addNotification({
+                title: 'Error destroying model',
+                message: `Could not destroy model: ${data[key]}`,
+                level: 'error'
+              })
+            }
+          }
           this._fetchModels(this.props.facadesExist);
         }, false);
       },
