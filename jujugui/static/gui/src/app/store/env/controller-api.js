@@ -870,7 +870,7 @@ window.yui.add('juju-controller-api', function(Y) {
           }
           return prev;
         }, {});
-        callback(errors, results);
+        callback(!errors.length ? null : errors, results);
       };
 
       // Prepare the API request. The keys used in this API call changed from

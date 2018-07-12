@@ -627,7 +627,7 @@ describe('Controller API', function() {
     it('destroys models', done => {
       // Perform the request.
       controllerAPI.destroyModels(['default'], (err, results) => {
-        assert.deepEqual(err, []);
+        assert.strictEqual(err, null);
         assert.deepEqual(results, {default: null});
         assert.strictEqual(conn.messages.length, 1);
         const msg = conn.last_message();
@@ -653,7 +653,7 @@ describe('Controller API', function() {
       controllerAPI.set('facades', {ModelManager: [3]});
       // Perform the request.
       controllerAPI.destroyModels(['default'], (err, results) => {
-        assert.deepEqual(err, []);
+        assert.strictEqual(err, null);
         assert.deepEqual(results, {default: null});
         assert.strictEqual(conn.messages.length, 1);
         const msg = conn.last_message();
@@ -678,7 +678,7 @@ describe('Controller API', function() {
     it('destroys multiple models', done => {
       // Perform the request.
       controllerAPI.destroyModels(['test-1', 'test-2'], (err, results) => {
-        assert.deepEqual(err, []);
+        assert.strictEqual(err, null);
         assert.deepEqual(results, {'test-1': null, 'test-2': null});
         assert.strictEqual(conn.messages.length, 1);
         const msg = conn.last_message();

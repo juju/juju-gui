@@ -81,7 +81,7 @@ class ProfileModelList extends React.Component {
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
     this.props.destroyModel(modelUUID, (errors, data) => {
-      if (errors.length) {
+      if (errors) {
         errors.forEach(error => {
           this.props.addNotification({
             title: 'Error destroying model',
