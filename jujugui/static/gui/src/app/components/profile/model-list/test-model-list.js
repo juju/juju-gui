@@ -713,9 +713,7 @@ describe('Profile Model List', function() {
     const wrapper = renderComponent({
       addNotification: addNotification,
       destroyModel: (modelUUID, callback) => {
-        callback('Error 1', {
-          uuid1: 'Error 2'
-        });
+        callback(['Error 1', 'Error 2'], {});
       }
     });
     wrapper.instance()._confirmDestroy('test');

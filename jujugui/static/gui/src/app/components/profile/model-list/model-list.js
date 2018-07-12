@@ -80,27 +80,15 @@ class ProfileModelList extends React.Component {
   */
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
-    this.props.destroyModel(modelUUID, (error, data) => {
-      // There are two possible error states for this call:
-      // An error can be returned from the API call itself, in which case error
-      // is populated or there can be errors in destroying individual models,
-      // in which case data will have errors. Potentially, both will have errors
-      // as well. We will display all errors returned by the API call.
-      if (error) {
-        this.props.addNotification({
-          title: 'Error destroying model',
-          message: error,
-          level: 'error'
-        });
-      }
-      if (Object.keys(data).length) {
-        for (let key in data) {
+    this.props.destroyModel(modelUUID, (errors, data) => {
+      if (errors.length) {
+        errors.forEach(error => {
           this.props.addNotification({
             title: 'Error destroying model',
-            message: `Could not destroy model: ${data[key]}`,
+            message: error,
             level: 'error'
           });
-        }
+        });
       }
       this._fetchModels(this.props.facadesExist);
     }, false);
