@@ -154,10 +154,10 @@ describe('Profile Model List', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <ProfileModelList
       acl={{}}
-      addNotification={sinon.stub()}
+      addNotification={options.addNotification || sinon.stub()}
       baseURL="/gui/"
       changeState={options.changeState || sinon.stub()}
-      destroyModel={sinon.stub()}
+      destroyModel={options.destroyModel || sinon.stub()}
       facadesExist={true}
       listModelsWithInfo={
         options.listModelsWithInfo ||
@@ -706,6 +706,18 @@ describe('Profile Model List', function() {
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, models)
     });
     assert.equal(wrapper.find('.profile__title-count').html().includes('(1)'), true);
+  });
+
+  it('displays an error when destroying a model fails', () => {
+    const addNotification = sinon.stub();
+    const wrapper = renderComponent({
+      addNotification: addNotification,
+      destroyModel: (modelUUID, callback) => {
+        callback(['Error 1', 'Error 2'], {});
+      }
+    });
+    wrapper.instance()._confirmDestroy('test');
+    assert.equal(addNotification.callCount, 2);
   });
 
   it('displays a spinner when loading', () => {

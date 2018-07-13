@@ -288,7 +288,9 @@ utils.destroyModel = (
   if (modelAPI.get('modelUUID') === modelUUID) {
     switchModel(null, false, clearProfileState);
   }
-  destroyModels([modelUUID], () => callback && callback());
+  destroyModels([modelUUID], (error, data) => {
+    callback && callback(error, data);
+  });
 };
 
 /**

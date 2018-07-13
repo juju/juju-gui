@@ -856,15 +856,21 @@ window.yui.add('juju-controller-api', function(Y) {
           return;
         }
         if (data.error) {
-          callback(data.error, {});
+          callback([data.error], {});
           return;
         }
+        let errors = [];
         const results = data.response.results.reduce((prev, result, index) => {
           const id = ids[index];
-          prev[id] = result.error ? result.error.message : null;
+          if (result.error) {
+            prev[id] = result.error.message;
+            errors.push(result.error.message);
+          } else {
+            prev[id] = null;
+          }
           return prev;
         }, {});
-        callback(null, results);
+        callback(!errors.length ? null : errors, results);
       };
 
       // Prepare the API request. The keys used in this API call changed from

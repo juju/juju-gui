@@ -75,6 +75,26 @@ class ProfileModelList extends React.Component {
   }
 
   /**
+    Destroys a model once confirmed by the user.
+    @param {Object} string The UUID of the model to destroy.
+  */
+  _confirmDestroy(modelUUID) {
+    this.setState({notification: null});
+    this.props.destroyModel(modelUUID, (errors, data) => {
+      if (errors) {
+        errors.forEach(error => {
+          this.props.addNotification({
+            title: 'Error destroying model',
+            message: error,
+            level: 'error'
+          });
+        });
+      }
+      this._fetchModels(this.props.facadesExist);
+    }, false);
+  }
+
+  /**
     Shows the confirmation modal for destroying a model.
     @param {Object} model The model data.
   */
@@ -85,12 +105,7 @@ class ProfileModelList extends React.Component {
       type: 'inline-neutral'
     }, {
       title: 'Destroy',
-      action: () => {
-        this.setState({notification: null});
-        this.props.destroyModel(model.uuid, () => {
-          this._fetchModels(this.props.facadesExist);
-        }, false);
-      },
+      action: this._confirmDestroy.bind(this, model.uuid),
       type: 'destructive'
     }];
     const message = `Are you sure you want to destroy ${model.name}?`

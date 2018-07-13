@@ -704,7 +704,7 @@ describe('Controller API', function() {
     it('handles local failures while destroying models', done => {
       // Perform the request.
       controllerAPI.destroyModels(['m1', 'm2', 'm3'], (err, results) => {
-        assert.strictEqual(err, null);
+        assert.deepEqual(err, ['bad wolf', 'end of the universe']);
         assert.deepEqual(results, {
           m1: 'bad wolf',
           m2: null,
@@ -726,7 +726,7 @@ describe('Controller API', function() {
     it('handles global failures while destroying models', done => {
       // Perform the request.
       controllerAPI.destroyModels(['default'], (err, results) => {
-        assert.strictEqual(err, 'bad wolf');
+        assert.deepEqual(err, ['bad wolf']);
         assert.deepEqual(results, {});
         done();
       });
