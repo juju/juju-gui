@@ -4,9 +4,9 @@
 /**
   Helper functions for creating and working with the bakery.
 */
+const bakery = require('macaroon-bakery');
 const React = require('react');
 const ReactDOM = require('react-dom');
-const {bakery} = require('jaaslib');
 
 const Notification = require('../../components/notification/notification');
 
@@ -112,7 +112,7 @@ const newBakery = (config, user, stateGetter, cookieSetter, webHandler) => {
       error.Info.VisitURL, acceptHeaders, null, null, false, null, login);
   };
 
-  let params = {};
+  const params = {storage: storage};
 
   if (config.interactiveLogin) {
     params.visitPage = interactiveVisit;
@@ -126,7 +126,7 @@ const newBakery = (config, user, stateGetter, cookieSetter, webHandler) => {
     params.visitPage = nonInteractiveVisit;
   }
 
-  return new bakery.Bakery(webHandler, storage, params);
+  return new bakery.Bakery(params);
 };
 
 module.exports = newBakery;
