@@ -1,9 +1,8 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const jaaslib = require('jaaslib');
+const bakery = require('macaroon-bakery');
 
-const bakeryUtils = jaaslib.bakery;
 const newBakery = require('./bakery-utils');
 
 describe('bakery utils', () => {
@@ -23,25 +22,19 @@ describe('bakery utils', () => {
   }
 
   it('returns a new bakery instance', () => {
-    const bakery = createNewBakery();
-
-    assert.instanceOf(bakery, bakeryUtils.Bakery);
+    const bak = createNewBakery();
+    assert.instanceOf(bak, bakery.Bakery);
   });
 
   it('returns a non interactive visit instance', () => {
-    const bakery = createNewBakery();
-
-    assert.isDefined(bakery._visitPage.name);
-    assert.equal(bakery._visitPage.name, 'nonInteractiveVisit');
+    const bak = createNewBakery();
+    assert.isDefined(bak._visitPage.name);
+    assert.equal(bak._visitPage.name, 'nonInteractiveVisit');
   });
 
   it('returns an interactive visit instance', () => {
-    const bakery = createNewBakery(
-      {
-        interactiveLogin: true
-      });
-
-    assert.isDefined(bakery._visitPage.name);
-    assert.equal(bakery._visitPage.name, 'interactiveVisit');
+    const bak = createNewBakery({interactiveLogin: true});
+    assert.isDefined(bak._visitPage.name);
+    assert.equal(bak._visitPage.name, 'interactiveVisit');
   });
 });
