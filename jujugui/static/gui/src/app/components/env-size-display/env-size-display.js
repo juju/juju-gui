@@ -78,14 +78,14 @@ class EnvSizeDisplay extends React.Component {
               {initUtils.pluralize('application', serviceCount)}
             </a>
           </li>
-          <li className={this._genClasses('machines')}>
+          {props.providerType !== 'kubernetes' ? <li className={this._genClasses('machines')}>
             <a className="env-size-display__link"
               data-view="machines"
               onClick={this._changeEnvironmentView.bind(this)}>
               {machineCount}&nbsp;
               {initUtils.pluralize('machine', machineCount)}
             </a>
-          </li>
+          </li>: null}
           {this._generateStatus()}
         </ul>
       </div>
@@ -96,6 +96,7 @@ class EnvSizeDisplay extends React.Component {
 EnvSizeDisplay.propTypes = {
   appState: PropTypes.object.isRequired,
   machineCount: PropTypes.number.isRequired,
+  providerType: PropTypes.string,
   serviceCount: PropTypes.number.isRequired
 };
 
