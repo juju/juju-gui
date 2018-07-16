@@ -6,18 +6,19 @@ const enzyme = require('enzyme');
 
 const EnvSizeDisplay = require('./env-size-display');
 
-describe('EnvSizeDisplay', function() {
+describe('EnvSizeDisplay', () => {
   let appState;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EnvSizeDisplay
       appState={options.appState || appState}
       machineCount={options.machineCount || 4}
+      providerType={options.providerType || 'gce'}
       serviceCount={options.serviceCount || 3}
       showStatus={options.showStatus === undefined ? true : options.showStatus} />
   );
 
-  beforeEach(function() {
+  beforeEach(() => {
     appState = {
       current: {
         gui: {
@@ -28,7 +29,7 @@ describe('EnvSizeDisplay', function() {
     };
   });
 
-  it('shows applications and machines count', function() {
+  it('shows applications and machines count', () => {
     const wrapper = renderComponent();
     assert.equal(
       wrapper.find('a[data-view="application"]').text(),
@@ -38,14 +39,14 @@ describe('EnvSizeDisplay', function() {
       '4 machines');
   });
 
-  it('highlights active tab on initial render', function() {
+  it('highlights active tab on initial render', () => {
     const wrapper = renderComponent();
     const active = wrapper.find('.is-active a');
     assert.equal(active.length, 1);
     assert.equal(active.prop('data-view'), 'machines');
   });
 
-  it('calls to change state when list item is clicked', function() {
+  it('calls to change state when list item is clicked', () => {
     const wrapper = renderComponent();
     wrapper.find('a[data-view="machines"]').simulate('click', {
       currentTarget: {
@@ -74,5 +75,10 @@ describe('EnvSizeDisplay', function() {
         status: null
       }
     });
+  });
+
+  it('does not show machine button with kubernetes provider', () => {
+    const wrapper = renderComponent({providerType: 'kubernetes'});
+    assert.equal(wrapper.find('a[data-view="machines"]').length, 0);
   });
 });
