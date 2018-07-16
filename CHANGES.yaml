@@ -149,12 +149,8 @@
 
 - 2.7.3:
 
-   ->
-     (Fix) Deploying into a new model, then switching models no longer
-     intermittently connects to the incorrect model.
-   ->
-     (Fix) Hitting the browser back button from a search query will now
-     property return to search results.
+   - (Fix) Deploying into a new model, then switching models no longer intermittently connects to the incorrect model.
+   - (Fix) Hitting the browser back button from a search query will now property return to search results.
 
 - 2.7.2:
 
