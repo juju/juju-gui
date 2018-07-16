@@ -1,0 +1,9 @@
+dist: trusty
+language: node_js
+node_js:
+  - "8"
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq chromium-browser coreutils g++ git inotify-tools python-dev python-virtualenv xvfb realpath
+script:
+  - make check
