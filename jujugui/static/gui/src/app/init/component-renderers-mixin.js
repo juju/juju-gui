@@ -115,6 +115,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       <EnvSizeDisplay
         appState={this.state}
         machineCount={machineCount}
+        providerType={this.modelAPI.get('providerType') || ''}
         serviceCount={serviceCount} />,
       document.getElementById('env-size-display-container'));
   }
