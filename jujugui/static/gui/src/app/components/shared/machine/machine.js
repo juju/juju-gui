@@ -77,7 +77,7 @@ class Machine extends React.Component {
       'machine--root': machine.root
     };
     return classNames(
-      'machine-view__machine',
+      'machine',
       this.props.classes,
       classes,
       `machine--${isContainer ? 'container' : 'machine'}`
@@ -130,11 +130,6 @@ class Machine extends React.Component {
         {this._generateHardware()}
         {this._generateUnits()}
         {this.props.children}
-        <div className="machine__drop-target">
-          <div className="machine__drop-message">
-            Add to {machine.name}
-          </div>
-        </div>
       </div>
     );
   }

@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
@@ -48,12 +49,13 @@ class MachineViewMachineUnit extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    const classes = {
-      'machine-view__machine-unit': true,
-      'machine-view__machine-unit--draggable': this.props.canDrag,
-      'machine-view__machine-unit--dragged': this.props.isDragging
-    };
-    return Object.keys(classes).filter(className => classes[className]);
+    return classNames(
+      'machine-view__machine-unit',
+      {
+        'machine-view__machine-unit--draggable': this.props.canDrag,
+        'machine-view__machine-unit--dragged': this.props.isDragging
+      }
+    );
   }
 
   render() {
@@ -69,9 +71,8 @@ class MachineViewMachineUnit extends React.Component {
     }
     // Wrap the returned components in the drag source method.
     return this.props.connectDragSource(
-      <div>
+      <div className={this._generateClasses()}>
         <MachineUnit
-          classes={this._generateClasses()}
           icon={this.props.icon}
           menuItems={menuItems}
           name={unit.displayName}

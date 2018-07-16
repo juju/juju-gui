@@ -1,0 +1,67 @@
+.machine-view__machine {
+  position: relative;
+
+  &--selected.machine-view__machine--uncommitted,
+  &--selected {
+    &.machine {
+      border-style: dashed;
+
+      &--machine {
+        margin-right: -20px;
+        padding-right: 30px;
+        border-right: 1px solid $canvas-background;
+      }
+    }
+  }
+
+  &--uncommitted {
+    &.machine {
+      border-color: $uncommitted;
+    }
+  }
+
+  &-drop-message,
+  &-drop-target {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
+  &-drop-target {
+    display: none;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, .9);
+  }
+
+  &-drop-message {
+    top: calc(50% - (#{$base-line-height} / 2));
+    color: $ubuntu-orange;
+    text-align: center;
+  }
+
+  &--drop &-drop-target {
+    display: block;
+  }
+
+  .machine__dropdown {
+    display: none;
+
+    .button-dropdown__show-menu {
+      display: block;
+    }
+  }
+
+  &--selected:not(.machine--root),
+  &:focus:not(.machine--root),
+  &:active:not(.machine--root),
+  &:hover:not(.machine--root) {
+    > .machine__dropdown {
+      display: block;
+    }
+  }
+
+  &.machine--machine .machine-view__machine-unit {
+    float: left;
+  }
+}

@@ -25,6 +25,7 @@ class MachineUnit extends React.Component {
       title = name;
       menu = menuItems ? (
         <ButtonDropdown
+          classes={['machine-unit__dropdown']}
           listItems={menuItems} />) : null;
     }
     return (

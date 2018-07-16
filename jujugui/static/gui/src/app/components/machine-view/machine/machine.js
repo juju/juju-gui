@@ -181,7 +181,7 @@ class MachineViewMachine extends React.Component {
           unit={unit} />);
     });
     return (
-      <ul className="machine-view__machine-units">
+      <ul className="machine-view__machine-units machine-units">
         {components}
       </ul>);
   }
