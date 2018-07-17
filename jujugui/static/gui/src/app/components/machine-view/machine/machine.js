@@ -181,7 +181,7 @@ class MachineViewMachine extends React.Component {
           unit={unit} />);
     });
     return (
-      <ul className="machine-view__machine-units machine-units">
+      <ul className="machine-view__machine-units machine__units">
         {components}
       </ul>);
   }
@@ -228,7 +228,9 @@ class MachineViewMachine extends React.Component {
 
   _generateSSHAction() {
     const props = this.props;
-    if (props.type !== 'container' && props.showSSHButton) {
+    const machine = this.props.machineAPI.machine;
+    if (props.type !== 'container' && props.showSSHButton &&
+        machine.commitStatus !== 'uncommitted') {
       return this._sshToMachine.bind(this);
     }
   }
@@ -257,11 +259,13 @@ class MachineViewMachine extends React.Component {
             name: machine.displayName,
             root: machine.root,
             region: this.props.modelAPI.region,
-            status: machine.commitStatus
+            series: machine.series,
+            status: machine.commitStatus || machine.agent_state
           }}
           menuItems={menuItems}
           onClick={this._handleSelectMachine.bind(this)}
-          sshAction={this._generateSSHAction()}>
+          sshAction={this._generateSSHAction()}
+          sshLabel={machine.public_address}>
           {this._generateUnits()}
           {this._generateConstraintsForm()}
           <div className="machine-view__machine-drop-target">

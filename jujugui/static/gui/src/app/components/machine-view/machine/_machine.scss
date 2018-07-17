@@ -62,6 +62,6 @@
   }
 
   &.machine--machine .machine-view__machine-unit {
-    float: left;
+    display: inline-block;
   }
 }

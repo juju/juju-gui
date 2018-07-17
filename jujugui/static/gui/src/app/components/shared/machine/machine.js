@@ -8,6 +8,7 @@ const React = require('react');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const GenericButton = require('../../generic-button/generic-button');
 const MachineUnit = require('../machine-unit/machine-unit');
+const SvgIcon = require('../../svg-icon/svg-icon');
 
 class Machine extends React.Component {
   /**
@@ -21,10 +22,10 @@ class Machine extends React.Component {
     }
     const items = hardware.map((item, i) => {
       return (
-        <li className="machine__hardware-item six-col"
+        <li className="machine__hardware-item"
           key={item.label + item.value + i}>
           <span className="machine__hardware-item-label">
-            {item.label}
+            {item.label}:
           </span>
           <span className="machine__hardware-item-value">
             {item.value}
@@ -32,7 +33,7 @@ class Machine extends React.Component {
         </li>);
     });
     return (
-      <ul className="machine__hardware twelve-col">
+      <ul className="machine__hardware">
         {items}
       </ul>);
   }
@@ -88,16 +89,23 @@ class Machine extends React.Component {
     Generate a SSH button if the action is provided.
     @returns {Object} The button JSX.
   */
-  _generateTerminalButton() {
+  _generateTerminalAction() {
     const { sshAction } = this.props;
     if (!sshAction) {
       return null;
     }
     return (
-      <GenericButton
-        action={this.props.sshAction}>
-        SSH to machine
-      </GenericButton>);
+      <li className="machine__detail">
+        <SvgIcon
+          className="machine__ssh-icon"
+          name="code-snippet_24"
+          size="16" />
+        <GenericButton
+          action={sshAction}
+          type="inline-base link machine__ssh-action">
+          {this.props.sshLabel}
+        </GenericButton>
+      </li>);
   }
 
   /**
@@ -115,18 +123,43 @@ class Machine extends React.Component {
         listItems={menuItems} />);
   }
 
-  render() {
+  /**
+    Generate the machine details.
+    @returns {Object} The details JSX.
+  */
+  _generateDetails() {
     const { machine } = this.props;
+    const machineName = (
+      <span className="machine__name">
+        {machine.name}
+      </span>);
+    if (this.props.isContainer) {
+      return machineName;
+    }
+    return (
+      <ul className="machine__details">
+        <li className="machine__detail">
+          {machineName}
+          {machine.status}
+        </li>
+        {machine.region ? (<li className="machine__detail">
+          {machine.region}
+        </li>) : null}
+        {this._generateTerminalAction()}
+        {machine.series ? (<li className="machine__detail">
+          {machine.series}
+        </li>) : null}
+      </ul>);
+  }
+
+  render() {
     return (
       <div className={this._generateClasses()}
         onClick={this.props.onClick}
         role="button"
         tabIndex="0">
         {this._generateMenu()}
-        <div className="machine__name">
-          {machine.name}
-        </div>
-        {this._generateTerminalButton()}
+        {this._generateDetails()}
         {this._generateHardware()}
         {this._generateUnits()}
         {this.props.children}
@@ -140,18 +173,20 @@ Machine.propTypes = {
   classes: PropTypes.arrayOf(PropTypes.string),
   hardware: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string.isRequired,
-    value: PropTypes.number.isRequired
+    value: PropTypes.any.isRequired
   })),
   isContainer: PropTypes.bool,
   machine: PropTypes.shape({
     name: PropTypes.string.isRequired,
     root: PropTypes.bool,
     region: PropTypes.string,
-    status: PropTypes.string.isRequired
+    series: PropTypes.string,
+    status: PropTypes.string
   }).isRequired,
   menuItems: PropTypes.array,
   onClick: PropTypes.func,
   sshAction: PropTypes.func,
+  sshLabel: PropTypes.string,
   units: PropTypes.arrayOf(PropTypes.shape({
     icon: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
