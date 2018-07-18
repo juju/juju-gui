@@ -74,7 +74,6 @@ class Machine extends React.Component {
   _generateClasses() {
     const { isContainer, machine } = this.props;
     const classes = {
-      'machine--uncommitted': machine.deleted || machine.commitStatus === 'uncommitted',
       'machine--root': machine.root
     };
     return classNames(
@@ -95,7 +94,7 @@ class Machine extends React.Component {
       return null;
     }
     return (
-      <li className="machine__detail">
+      <li className="machine__detail machine__terminal-action">
         <SvgIcon
           className="machine__ssh-icon"
           name="code-snippet_24"
@@ -183,7 +182,10 @@ Machine.propTypes = {
     series: PropTypes.string,
     status: PropTypes.string
   }).isRequired,
-  menuItems: PropTypes.array,
+  menuItems: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    action: PropTypes.func
+  })),
   onClick: PropTypes.func,
   sshAction: PropTypes.func,
   sshLabel: PropTypes.string,

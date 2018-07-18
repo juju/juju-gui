@@ -22,7 +22,10 @@ class MachineUnit extends React.Component {
     let title;
     const { name, menuItems } = this.props;
     if (menuItems) {
-      title = name;
+      title = (
+        <span className="machine-unit__name">
+          {name}
+        </span>);
       menu = menuItems ? (
         <ButtonDropdown
           classes={['machine-unit__dropdown']}
@@ -46,7 +49,10 @@ class MachineUnit extends React.Component {
 MachineUnit.propTypes = {
   classes: PropTypes.arrayOf(PropTypes.string),
   icon: PropTypes.string.isRequired,
-  menuItems: PropTypes.array,
+  menuItems: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    action: PropTypes.func
+  })),
   name: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired
 };
