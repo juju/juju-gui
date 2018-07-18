@@ -121,6 +121,22 @@ class PostDeployment extends React.Component {
     }
   }
 
+  _getPostDeploymentScriptCallback(error, postDeploymentScript) {
+    if (error) {
+      console.error(error);
+    }
+    this.setState({
+      postDeploymentScript: postDeploymentScript
+    })
+  }
+
+  _renderPostDeploymentScriptButton() {
+    const script = this.state.postDeploymentScript;
+    if (this.script) {
+      //
+    }
+  }
+
   /**
     Callback for when the post-deployment script has been fetched.
 
