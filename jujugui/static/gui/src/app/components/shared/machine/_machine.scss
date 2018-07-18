@@ -76,8 +76,13 @@
       &-label {
         display: inline-block;
         min-width: 33%;
-        margin-right: 5px;
         color: $warm-grey;
+      }
+
+      &-value {
+        // The margin is applied to the value so that if the key is long the
+        // value will wrap to a new line and be indented.
+        margin-left: 10px;
       }
     }
   }
