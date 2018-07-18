@@ -33,7 +33,8 @@ class PostDeployment extends React.Component {
 
     this.state = {
       content: null,
-      metadata: {}
+      metadata: {},
+      postDeploymentScript: null
     };
   }
 
@@ -67,6 +68,19 @@ class PostDeployment extends React.Component {
         this.props.entityId,
         fileName,
         this._getGetStartedCallback.bind(this)
+      );
+    }
+    let fileName = 'post-deployment.sh';
+    if (files && files.some(file => {
+      if (file.toLowerCase() === fileName) {
+        fileName = file;
+        return true;
+      }
+    })) {
+      this.props.charmstore.getFile(
+        this.props.entityId,
+        fileName,
+        this._getPostDeploymentScriptCallback.bind(this)
       );
     }
   }
@@ -103,6 +117,22 @@ class PostDeployment extends React.Component {
       this.setState({
         content: markdown
       });
+    }
+  }
+
+  _getPostDeploymentScriptCallback(error, postDeploymentScript) {
+    if (error) {
+      console.error(error);
+    }
+    this.setState({
+      postDeploymentScript: postDeploymentScript
+    })
+  }
+
+  _renderPostDeploymentScriptButton() {
+    const script = this.state.postDeploymentScript;
+    if (this.script) {
+      //
     }
   }
 
@@ -229,6 +259,7 @@ class PostDeployment extends React.Component {
           </span>
           <div dangerouslySetInnerHTML={{__html: this.state.content}}
             onClick={this._handleContentClick.bind(this)} />
+          {this._renderPostDeploymentScriptButton()}
         </Panel>
       );
     }
