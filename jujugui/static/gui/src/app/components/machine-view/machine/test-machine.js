@@ -8,14 +8,14 @@ const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
 const Constraints = require('../../constraints/constraints');
+const Machine = require('../../shared/machine/machine');
 const MachineViewMachine = require('./machine');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewMachine', function() {
-  let acl, applications, dbAPI, generateMachineDetails, genericConstraints,
+  let acl, applications, dbAPI, parseMachineDetails, genericConstraints,
       machineAPI, machineUnitACL, modelAPI, parseConstraints;
 
   const renderComponent = (options = {}) => enzyme.shallow(
@@ -46,7 +46,10 @@ describe('MachineViewMachine', function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
     machineUnitACL = acl.reshape(
       MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
-    generateMachineDetails = sinon.stub().returns('2 units, zesty, mem: 2GB');
+    parseMachineDetails = sinon.stub().returns([{
+      label: 'mem',
+      value: '1.00GB'
+    }]);
     parseConstraints = sinon.stub().returns({mem: '2048'});
     genericConstraints = [
       'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
@@ -94,11 +97,12 @@ describe('MachineViewMachine', function() {
       units: units
     };
     machineAPI = {
-      generateMachineDetails: generateMachineDetails,
+      parseMachineDetails: parseMachineDetails,
       machine: machine,
       removeUnit: sinon.stub(),
       selectMachine: sinon.stub(),
-      selected: false
+      selected: false,
+      series: ['wily']
     };
     modelAPI = {
       destroyMachines: sinon.stub(),
@@ -111,51 +115,55 @@ describe('MachineViewMachine', function() {
   it('can render a machine', function() {
     const wrapper = renderComponent();
     const expected = (
-      <div className="machine-view__machine machine-view__machine--machine"
-        onClick={wrapper.prop('onClick')}
-        role="button"
-        tabIndex="0">
-        <ButtonDropdown
-          classes={['machine-view__machine-dropdown']}
-          listItems={[{
-            label: 'Destroy',
-            action: wrapper.find('ButtonDropdown').prop('listItems')[0].action
-          }]} />
-        <div className="machine-view__machine-name">
-          new0
-        </div>
-        <div className="machine-view__machine-hardware">
-          2 units, zesty, mem: 2GB
-        </div>
-        <ul className="machine-view__machine-units">
-          <MachineViewMachineUnit
-            acl={machineUnitACL}
-            key="wordpress/0"
-            machineType="machine"
-            removeUnit={sinon.stub()}
-            sendAnalytics={sinon.stub()}
-            service={applications.getById()}
-            unit={{
-              'agent_state': 'started',
-              'displayName': 'wordpress/0',
-              'id': 'wordpress/0'}} />
-          <MachineViewMachineUnit
-            acl={machineUnitACL}
-            key="wordpress/1"
-            machineType="machine"
-            removeUnit={sinon.stub()}
-            sendAnalytics={sinon.stub()}
-            service={applications.getById()}
-            unit={{
-              'agent_state': 'started',
-              'displayName': 'wordpress/1',
-              'id': 'wordpress/1'}} />
-        </ul>
-        <div className="machine-view__machine-drop-target">
-          <div className="machine-view__machine-drop-message">
-            Add to {'new0'}
+      <div>
+        <Machine
+          classes={['machine-view__machine', 'machine-view__machine--machine']}
+          hardware={[{
+            label: 'mem',
+            value: '1.00GB'
+          }]}
+          isContainer={false}
+          machine={{
+            name: 'new0',
+            root: false,
+            region: null,
+            series: 'wily',
+            status: null
+          }}
+          menuItems={null}
+          onClick={wrapper.find('Machine').prop('onClick')}
+          sshAction={undefined}
+          sshLabel={undefined}>
+          <ul className="machine-view__machine-units machine__units">
+            <MachineViewMachineUnit
+              acl={machineUnitACL}
+              icon="icon.svg"
+              key="wordpress/0"
+              machineType="machine"
+              removeUnit={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              unit={{
+                'agent_state': 'started',
+                'displayName': 'wordpress/0',
+                'id': 'wordpress/0'}} />
+            <MachineViewMachineUnit
+              acl={machineUnitACL}
+              icon="icon.svg"
+              key="wordpress/1"
+              machineType="machine"
+              removeUnit={sinon.stub()}
+              sendAnalytics={sinon.stub()}
+              unit={{
+                'agent_state': 'started',
+                'displayName': 'wordpress/1',
+                'id': 'wordpress/1'}} />
+          </ul>
+          <div className="machine-view__machine-drop-target">
+            <div className="machine-view__machine-drop-message">
+              Add to {'new0'}
+            </div>
           </div>
-        </div>
+        </Machine>
       </div>);
     assert.compareJSX(wrapper, expected);
   });
@@ -166,7 +174,7 @@ describe('MachineViewMachine', function() {
       isOver: true
     });
     assert.equal(
-      wrapper.prop('className').includes('machine-view__machine--drop'),
+      wrapper.find('Machine').prop('classes').includes('machine-view__machine--drop'),
       true);
   });
 
@@ -174,7 +182,7 @@ describe('MachineViewMachine', function() {
     machineAPI.machine.commitStatus = 'uncommitted';
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.prop('className').includes('machine-view__machine--uncommitted'),
+      wrapper.find('Machine').prop('classes').includes('machine-view__machine--uncommitted'),
       true);
   });
 
@@ -182,21 +190,18 @@ describe('MachineViewMachine', function() {
     machineAPI.machine.deleted = true;
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.prop('className').includes('machine-view__machine--uncommitted'),
+      wrapper.find('Machine').prop('classes').includes('machine-view__machine--uncommitted'),
       true);
   });
 
-  it('can display an ssh button', function() {
-    const changeStateStub = sinon.stub();
+  it('can pass ssh action props', function() {
+    machineAPI.machine.public_address = '1.1.1.1';
     const wrapper = renderComponent({
-      showSSHButton: true,
-      changeState: changeStateStub
+      showSSHButton: true
     });
-    const buttons = wrapper.find('GenericButton');
-    assert.equal(buttons.length, 1);
-    buttons.at(0).props().action();
-    const expected = {'terminal': ['juju ssh new0']};
-    assert.equal(changeStateStub.calledWith(expected), true);
+    const machine = wrapper.find('Machine');
+    assert.isFunction(machine.prop('sshAction'));
+    assert.equal(machine.prop('sshLabel'), '1.1.1.1');
   });
 
   it('can hide units', function() {
@@ -256,15 +261,15 @@ describe('MachineViewMachine', function() {
     dbAPI.units = units;
     const wrapper = renderComponent();
     const expected = (
-      <ul className="machine-view__machine-units">
+      <ul className="machine-view__machine-units machine__units">
         {[
           <MachineViewMachineUnit
             acl={machineUnitACL}
+            icon="icon.svg"
             key="wordpress/1"
             machineType="machine"
             removeUnit={sinon.stub()}
             sendAnalytics={sinon.stub()}
-            service={wordpress}
             unit={{
               'deleted': false,
               'displayName': 'wordpress/1',
@@ -286,29 +291,27 @@ describe('MachineViewMachine', function() {
     };
     machineAPI.machine = machine;
     const wrapper = renderComponent({ type: 'container' });
-    assert.equal(
-      wrapper.find('.machine-view__machine-name').text(), 'new0/lxc/0');
     assert.equal(wrapper.find('.add-machine__constraints').length, 0);
     const expected = (
-      <ul className="machine-view__machine-units">
+      <ul className="machine-view__machine-units machine__units">
         <MachineViewMachineUnit
           acl={machineUnitACL}
+          icon="icon.svg"
           key="wordpress/0"
           machineType="container"
           removeUnit={sinon.stub()}
           sendAnalytics={sinon.stub()}
-          service={applications.getById()}
           unit={{
             'agent_state': 'started',
             'displayName': 'wordpress/0',
             'id': 'wordpress/0'}} />
         <MachineViewMachineUnit
           acl={machineUnitACL}
+          icon="icon.svg"
           key="wordpress/1"
           machineType="container"
           removeUnit={sinon.stub()}
           sendAnalytics={sinon.stub()}
-          service={applications.getById()}
           unit={{
             'agent_state': 'started',
             'displayName': 'wordpress/1',
@@ -319,7 +322,7 @@ describe('MachineViewMachine', function() {
 
   it('can destroy a machine', function() {
     const wrapper = renderComponent();
-    wrapper.find('ButtonDropdown').prop('listItems')[0].action();
+    wrapper.find('Machine').prop('menuItems')[0].action();
     const destroyMachines = modelAPI.destroyMachines;
     assert.equal(destroyMachines.callCount, 1);
     assert.deepEqual(destroyMachines.args[0][0], ['new0']);
@@ -339,13 +342,14 @@ describe('MachineViewMachine', function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => true}));
     const wrapper = renderComponent();
     assert.strictEqual(
-      wrapper.find('ButtonDropdown').prop('listItems')[0].action, null);
+      wrapper.find('Machine').prop('menuItems')[0].action, null);
   });
 
   it('can display a form to update constraints', function() {
     const machine = {
       commitStatus: 'uncommitted',
       constraints: 'cpu-power=10 cores=2 mem=1024 root-disk=2048',
+      displayName: 'new0',
       id: 'new0',
       series: 'wily'
     };
@@ -355,7 +359,7 @@ describe('MachineViewMachine', function() {
       parseConstraints,
       showConstraints: true
     });
-    wrapper.find('ButtonDropdown').prop('listItems')[1].action();
+    wrapper.find('Machine').prop('menuItems')[1].action();
     wrapper.update();
     const buttons = wrapper.find('ButtonRow').prop('buttons');
     const expected = (
@@ -391,6 +395,7 @@ describe('MachineViewMachine', function() {
     const machine = {
       commitStatus: 'uncommitted',
       constraints: 'cpu-power=10 cores=2 mem=1024 root-disk=2048',
+      displayName: 'new0',
       id: 'new0',
       series: 'wily'
     };
@@ -400,7 +405,7 @@ describe('MachineViewMachine', function() {
       parseConstraints,
       showConstraints: true
     });
-    wrapper.find('ButtonDropdown').prop('listItems')[1].action();
+    wrapper.find('Machine').prop('menuItems')[1].action();
     wrapper.update();
     const instance = wrapper.instance();
     instance._updateConstraints({

@@ -8,7 +8,6 @@ const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
 const Constraints = require('../../constraints/constraints');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const Machine = require('../../shared/machine/machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
@@ -297,9 +296,9 @@ MachineViewMachine.propTypes = {
     parseMachineDetails: PropTypes.func,
     machine: PropTypes.object.isRequired,
     removeUnit: PropTypes.func,
-    series: PropTypes.array,
     selectMachine: PropTypes.func,
-    selected: PropTypes.bool
+    selected: PropTypes.bool,
+    series: PropTypes.array
   }).isRequired,
   modelAPI: shapeup.shape({
     destroyMachines: PropTypes.func.isRequired,
