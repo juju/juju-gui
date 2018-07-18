@@ -920,7 +920,7 @@ utils.parseConstraints = (genericConstraints, constraints='') => {
 };
 
 /**
-  Generate the series/hardware/constraints details for a machine
+  Generate the hardware/constraints details for a machine
   @param machine {Object} A machine.
   @returns {String} The machine details.
 */
@@ -966,7 +966,8 @@ utils.parseMachineDetails = (genericConstraints, machine) => {
 utils.generateMachineDetails = (genericConstraints, units, machine) => {
   const unitCount = units.filterByMachine(machine.id, true).length;
   const details = utils.parseMachineDetails(genericConstraints, machine);
-  const detailsLine = details.map(detail => `${detail.label}: ${detail.value}`).join(', ');
+  const detailsLine = details ?
+    details.map(detail => `${detail.label}: ${detail.value}`).join(', ') : '';
   let hardwareDetails;
   const constraintsMessage = machine.constraints ?
     'requested constraints: ' : '';
