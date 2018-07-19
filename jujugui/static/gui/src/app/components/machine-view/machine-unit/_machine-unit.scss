@@ -1,41 +1,25 @@
 .machine-view__machine-unit {
-  position: relative;
-
-  &--uncommitted {
-    .machine-view__machine-unit-icon {
-      border: 1px solid $uncommitted;
-    }
-  }
-
-  &--error {
-    .machine-view__machine-unit-icon {
-      border: 1px solid $error;
-    }
-  }
-
-  &--pending {
-    .machine-view__machine-unit-icon {
-      border: 1px solid $pending;
-    }
-  }
-
-  &-icon {
-    display: inline-block;
-    margin-right: 10px;
-    padding: 2px;
-    border: 1px solid $canvas-background;
-    border-radius: 50%;
-
-    &-img {
-      @extend %icon--small;
-    }
-  }
-
   &--draggable {
     cursor: move;
   }
 
   &--dragged {
     opacity: 0;
+  }
+
+  .machine-unit__dropdown {
+    display: none;
+
+    .button-dropdown__show-menu {
+      display: block;
+    }
+  }
+
+  &:focus,
+  &:active,
+  &:hover {
+    .machine-unit__dropdown {
+      display: block;
+    }
   }
 }

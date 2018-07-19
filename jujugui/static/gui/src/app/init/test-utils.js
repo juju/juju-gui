@@ -827,6 +827,94 @@ describe('init utils', () => {
     });
   });
 
+  describe('parseMachineDetails', () => {
+    let genericConstraints;
+
+    beforeEach(() => {
+      genericConstraints = [
+        'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+    });
+
+    it('can handle no hardware or constraints', () => {
+      const machine = {};
+      assert.strictEqual(
+        utils.parseMachineDetails(genericConstraints, machine), null);
+    });
+
+    it('can generate hardware details', () => {
+      const machine = {
+        hardware: {
+          'cpu-cores': '2',
+          'cpu-power': '10',
+          mem: '1024',
+          'root-disk': '2048'
+        }
+      };
+      assert.deepEqual(
+        utils.parseMachineDetails(genericConstraints, machine),
+        [{
+          label: 'cores',
+          value: '2'
+        }, {
+          label: 'cpu',
+          value: '0.1GHz'
+        }, {
+          label: 'mem',
+          value: '1.00GB'
+        }, {
+          label: 'disk',
+          value: '2.00GB'
+        }]);
+    });
+
+    it('can generate constraints', () => {
+      const machine = {
+        constraints: 'cpu-cores=2 cpu-power=10 root-disk=2048 mem=1024'
+      };
+      assert.deepEqual(
+        utils.parseMachineDetails(genericConstraints, machine),
+        [{
+          label: 'cpu',
+          value: '0.1GHz'
+        }, {
+          label: 'cores',
+          value: '2'
+        }, {
+          label: 'mem',
+          value: '1.00GB'
+        }, {
+          label: 'disk',
+          value: '2.00GB'
+        }]);
+    });
+
+    it('can correctly parse with alternate keys', () => {
+      const machine = {
+        hardware: {
+          cpuCores: '2',
+          cpuPower: '10',
+          mem: '1024',
+          disk: '2048'
+        }
+      };
+      assert.deepEqual(
+        utils.parseMachineDetails(genericConstraints, machine),
+        [{
+          label: 'cores',
+          value: '2'
+        }, {
+          label: 'cpu',
+          value: '0.1GHz'
+        }, {
+          label: 'mem',
+          value: '1.00GB'
+        }, {
+          label: 'disk',
+          value: '2.00GB'
+        }]);
+    });
+  });
+
   describe('generateMachineDetails', () => {
     let genericConstraints, units;
 
@@ -850,8 +938,8 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, cpu cores: 2, cpu power: 0.1GHz, mem: 1.00GB, '+
-        'root disk: 2.00GB');
+        '3 units, wily, cores: 2, cpu: 0.1GHz, mem: 1.00GB, '+
+        'disk: 2.00GB');
     });
 
     it('can generate details with no hardware', () => {
@@ -870,8 +958,8 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, requested constraints: cpu power: 0.1GHz, cpu cores: 2'+
-        ', mem: 1.00GB, root disk: 2.00GB');
+        '3 units, wily, requested constraints: cpu: 0.1GHz, cores: 2'+
+        ', mem: 1.00GB, disk: 2.00GB');
     });
 
     it('can generate details with no constraints', () => {

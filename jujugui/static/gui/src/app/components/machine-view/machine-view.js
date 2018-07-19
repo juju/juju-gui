@@ -344,7 +344,7 @@ class MachineView extends React.Component {
           dropUnit={this._dropUnit.bind(this)}
           key={machine.id}
           machineAPI={{
-            generateMachineDetails: props.generateMachineDetails,
+            parseMachineDetails: props.parseMachineDetails,
             machine: machine,
             series: props.series,
             selectMachine: this.selectMachine.bind(this),
@@ -828,7 +828,6 @@ MachineView.propTypes = {
     reshape: shapeup.reshapeFunc,
     units: PropTypes.object.isRequired
   }).isRequired,
-  generateMachineDetails: PropTypes.func.isRequired,
   machine: PropTypes.string.isRequired,
   modelAPI: shapeup.shape({
     autoPlaceUnits: PropTypes.func.isRequired,
@@ -836,12 +835,14 @@ MachineView.propTypes = {
     destroyMachines: PropTypes.func.isRequired,
     placeUnit: PropTypes.func.isRequired,
     providerType: PropTypes.string,
+    region: PropTypes.string,
     removeUnits: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc,
     updateMachineConstraints: PropTypes.func.isRequired,
     updateMachineSeries: PropTypes.func.isRequired
   }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
+  parseMachineDetails: PropTypes.func.isRequired,
   parseMachineName: PropTypes.func.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.array,

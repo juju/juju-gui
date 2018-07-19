@@ -20,10 +20,10 @@ describe('MachineView', function() {
         acl={options.acl || acl}
         changeState={options.changeState || sinon.stub()}
         dbAPI={options.dbAPI || dbAPI}
-        generateMachineDetails={options.generateMachineDetails || sinon.stub()}
         machine={options.machine === undefined ? 'new0' : options.machine}
         modelAPI={options.modelAPI || modelAPI}
         parseConstraints={options.parseConstraints || sinon.stub()}
+        parseMachineDetails={options.parseMachineDetails || sinon.stub()}
         parseMachineName={options.parseMachineName || parseMachineName}
         sendAnalytics={options.sendAnalytics || sinon.stub()} />,
       { disableLifecycleMethods: true }

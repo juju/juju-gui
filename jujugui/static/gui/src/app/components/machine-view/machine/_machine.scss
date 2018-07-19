@@ -1,20 +1,23 @@
 .machine-view__machine {
   position: relative;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid $mid-grey;
-  border-radius: 2px;
 
   &--selected.machine-view__machine--uncommitted,
   &--selected {
-    margin-right: -20px;
-    padding-right: 30px;
-    border-style: dashed;
-    border-right: 1px solid $canvas-background;
+    &.machine {
+      border-style: dashed;
+
+      &--machine {
+        margin-right: -20px;
+        padding-right: 30px;
+        border-right: 1px solid $canvas-background;
+      }
+    }
   }
 
   &--uncommitted {
-    border-color: $uncommitted;
+    &.machine {
+      border-color: $uncommitted;
+    }
   }
 
   &-drop-message,
@@ -41,70 +44,24 @@
     display: block;
   }
 
-  &--machine {
-    cursor: pointer;
-
-    .machine-view__machine {
-      &-units {
-        display: inline-block;
-      }
-
-      &-unit {
-        margin-bottom: 0;
-        float: left;
-      }
-
-      &-unit-icon {
-        margin-right: 5px;
-      }
-    }
-  }
-
-  &--container {
-    .machine-view__machine {
-      &-unit {
-        margin: 1px 0;
-      }
-    }
-  }
-
-  &--machine,
-  &--container {
-    transition: background-color .3s;
-
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: $white;
-    }
-  }
-
-  &-hardware {
-    margin-top: 7px;
-  }
-
-  &-units {
-    margin-top: 7px;
-    list-style: none;
-    margin-left: 0;
-  }
-
-  &-dropdown {
+  .machine__dropdown {
     display: none;
-    float: right;
 
     .button-dropdown__show-menu {
       display: block;
     }
   }
 
-  &-unit:hover,
-  &--selected:not(.machine-view__machine--root),
-  &:focus:not(.machine-view__machine--root),
-  &:active:not(.machine-view__machine--root),
-  &:hover:not(.machine-view__machine--root) {
-    > .machine-view__machine-dropdown {
+  &--selected:not(.machine--root),
+  &:focus:not(.machine--root),
+  &:active:not(.machine--root),
+  &:hover:not(.machine--root) {
+    > .machine__dropdown {
       display: block;
     }
+  }
+
+  &.machine--machine .machine-view__machine-unit {
+    display: inline-block;
   }
 }

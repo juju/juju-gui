@@ -667,8 +667,6 @@ Browser: ${navigator.userAgent}`
           machines: db.machines,
           units: db.units
         })}
-        generateMachineDetails={initUtils.generateMachineDetails.bind(
-          initUtils, modelAPI.genericConstraints, db.units)}
         machine={this.state.current.gui.machines}
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autodeploy.autoPlaceUnits.bind(this, db, modelAPI),
@@ -676,11 +674,14 @@ Browser: ${navigator.userAgent}`
           destroyMachines: modelAPI.destroyMachines.bind(modelAPI),
           placeUnit: modelAPI.placeUnit.bind(modelAPI),
           providerType: modelAPI.get('providerType') || '',
+          region: modelAPI.get('region'),
           removeUnits: modelAPI.remove_units.bind(modelAPI),
           updateMachineConstraints: ecs.updateMachineConstraints.bind(ecs),
           updateMachineSeries: ecs.updateMachineSeries.bind(ecs)
         })}
         parseConstraints={initUtils.parseConstraints.bind(
+          initUtils, modelAPI.genericConstraints)}
+        parseMachineDetails={initUtils.parseMachineDetails.bind(
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.sendAnalytics}

@@ -1,0 +1,126 @@
+.machine {
+  $small-font-size: 15px;
+  position: relative;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid $mid-grey;
+  border-radius: 2px;
+
+  &--machine {
+    cursor: pointer;
+
+    .machine {
+      &-units {
+        display: inline-block;
+      }
+
+      &-unit {
+        margin-bottom: 0;
+        float: left;
+      }
+
+      &-unit__icon {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  &--container {
+    .machine {
+      &-unit {
+        margin: 1px 0;
+      }
+    }
+  }
+
+  &--machine,
+  &--container {
+    transition: background-color .3s;
+
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: $white;
+    }
+  }
+
+  &__details,
+  &__hardware {
+    @extend %list-style;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 5px;
+  }
+
+  &__details {
+    padding: 0 10px;
+  }
+
+  &__detail {
+    margin: 0;
+    font-size: $small-font-size;
+  }
+
+  &__hardware {
+    @extend %list-style;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 10px 30px 0 0;
+    padding: 5px 10px;
+    border-top: 1px solid $mid-grey;
+
+    &-item {
+      margin: 0;
+      font-size: $small-font-size;
+
+      &-label {
+        display: inline-block;
+        min-width: 33%;
+        color: $warm-grey;
+      }
+
+      &-value {
+        // The margin is applied to the value so that if the key is long the
+        // value will wrap to a new line and be indented.
+        margin-left: 10px;
+      }
+    }
+  }
+
+  &__name {
+    margin-right: 5px;
+    font-size: $base;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+
+  &__units {
+    @extend %list-style;
+    margin: 5px 0 0 0;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 0;
+    right: 10px;
+  }
+
+  &__ssh-icon {
+    margin-right: 3px;
+    vertical-align: text-top;
+  }
+
+  &__ssh-action {
+    padding: 0;
+
+    &,
+    &.button--inline-base,
+    &.button--inline-base:hover,
+    &.button--inline-base:active,
+    &.button--inline-base:focus {
+      background: transparent;
+      color: $link-blue;
+      font-size: $small-font-size;
+    }
+  }
+}

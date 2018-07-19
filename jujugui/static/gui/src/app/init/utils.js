@@ -920,31 +920,58 @@ utils.parseConstraints = (genericConstraints, constraints='') => {
 };
 
 /**
-  Generate the series/hardware/constraints details for a machine
+  Generate the hardware/constraints details for a machine
   @param machine {Object} A machine.
   @returns {String} The machine details.
 */
-utils.generateMachineDetails = (genericConstraints, units, machine) => {
+utils.parseMachineDetails = (genericConstraints, machine) => {
   const hardware = machine.hardware ||
     utils.parseConstraints(genericConstraints, machine.constraints) || {};
-  const unitCount = units.filterByMachine(machine.id, true).length;
-  let hardwareDetails;
   let details = [];
   Object.keys(hardware).forEach(name => {
     let value = hardware[name];
     // Some details will not be set, so don't display them.
     if (value) {
-      if (name === 'cpu-power') {
+      if (name === 'cpu-power' || name === 'cpuPower') {
         value = `${(value / 100)}GHz`;
-      } else if (name === 'mem' || name === 'root-disk') {
+      } else if (name === 'mem' || name === 'root-disk' || name === 'disk') {
         value = `${(value / 1024).toFixed(2)}GB`;
       }
-      details.push(`${name.replace('-', ' ')}: ${value}`);
+      let label = name.replace('-', ' ');
+      switch (label) {
+        case 'cpuCores':
+        case 'cpu cores':
+          label = 'cores';
+          break;
+        case 'cpuPower':
+        case 'cpu power':
+          label = 'cpu';
+          break;
+        case 'rootDisk':
+        case 'root disk':
+          label = 'disk';
+          break;
+      }
+      details.push({ label, value });
     }
   });
+  return details && details.length ? details : null;
+};
+
+/**
+  Generate the series/hardware/constraints details for a machine
+  @param machine {Object} A machine.
+  @returns {String} The machine details.
+*/
+utils.generateMachineDetails = (genericConstraints, units, machine) => {
+  const unitCount = units.filterByMachine(machine.id, true).length;
+  const details = utils.parseMachineDetails(genericConstraints, machine);
+  const detailsLine = details ?
+    details.map(detail => `${detail.label}: ${detail.value}`).join(', ') : '';
+  let hardwareDetails;
   const constraintsMessage = machine.constraints ?
     'requested constraints: ' : '';
-  hardwareDetails = `${constraintsMessage}${details.join(', ')}`;
+  hardwareDetails = `${constraintsMessage}${detailsLine}`;
   if (!hardwareDetails) {
     if (machine.commitStatus === 'uncommitted') {
       hardwareDetails = 'default constraints';
