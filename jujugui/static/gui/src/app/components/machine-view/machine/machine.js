@@ -1,26 +1,21 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const ButtonRow = require('../../button-row/button-row');
-const GenericButton = require('../../generic-button/generic-button');
 const Constraints = require('../../constraints/constraints');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const Machine = require('../../shared/machine/machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
-const MachineViewMachineGlobals = {};
 
-MachineViewMachineGlobals.dropTarget = {
+const dropTarget = {
   /**
     Called when something is dropped on the machine.
     See: http://gaearon.github.io/react-dnd/docs-drop-target.html
-
-    @method drop
     @param {Object} props The component props.
     @param {Object} monitor A DropTargetMonitor.
     @param {Object} component The component that is being dropped onto.
@@ -32,8 +27,6 @@ MachineViewMachineGlobals.dropTarget = {
 
   /**
     Called to check whether something can be dropped on the component.
-
-    @method drop
     @param {Object} props The component props.
     @param {Object} monitor A DropTargetMonitor.
   */
@@ -44,12 +37,10 @@ MachineViewMachineGlobals.dropTarget = {
 
 /**
   Provides props to be injected into the component.
-
-  @method collect
   @param {Object} connect The connector.
   @param {Object} monitor A DropTargetMonitor.
 */
-MachineViewMachineGlobals.collect = function(connect, monitor) {
+const collect = function(connect, monitor) {
   return {
     canDrop: monitor.canDrop(),
     connectDropTarget: connect.dropTarget(),
@@ -142,9 +133,7 @@ class MachineViewMachine extends React.Component {
 
   /**
     Generate the hardware for a machine.
-
-    @method _generateHardware
-    @returns {Object} the machine hardware elements.
+    @returns {Array} the machine hardware details.
   */
   _generateHardware() {
     const props = this.props;
@@ -153,16 +142,11 @@ class MachineViewMachine extends React.Component {
       return;
     }
     const machineAPI = props.machineAPI;
-    return (
-      <div className="machine-view__machine-hardware">
-        {machineAPI.generateMachineDetails(machineAPI.machine)}
-      </div>);
+    return machineAPI.parseMachineDetails(machineAPI.machine);
   }
 
   /**
     Generate the unit icons for the machine.
-
-    @method _generateUnits
     @returns {Object} the unit elements.
   */
   _generateUnits() {
@@ -188,23 +172,21 @@ class MachineViewMachine extends React.Component {
       components.push(
         <MachineViewMachineUnit
           acl={props.acl.reshape(propTypes.acl)}
+          icon={service.get('icon')}
           key={unit.id}
           machineType={props.type}
           removeUnit={props.machineAPI.removeUnit}
           sendAnalytics={props.sendAnalytics}
-          service={service}
           unit={unit} />);
     });
     return (
-      <ul className="machine-view__machine-units">
+      <ul className="machine-view__machine-units machine__units">
         {components}
       </ul>);
   }
 
   /**
     Handle destroying a machine.
-
-    @method _destroyMachine
   */
   _destroyMachine() {
     const props = this.props;
@@ -213,8 +195,6 @@ class MachineViewMachine extends React.Component {
 
   /**
     Handle selecting a machine.
-
-    @method _handleSelectMachine
   */
   _handleSelectMachine() {
     const selectMachine = this.props.machineAPI.selectMachine;
@@ -225,24 +205,18 @@ class MachineViewMachine extends React.Component {
 
   /**
     Generate the classes for the machine.
-
-    @method _generateClasses
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    var machine = this.props.machineAPI.machine;
-    var classes = {
+    const machine = this.props.machineAPI.machine;
+    const classes = {
+      'machine-view__machine': true,
       'machine-view__machine--drop': this.props.isOver && this.props.canDrop,
       'machine-view__machine--selected': this.props.machineAPI.selected,
       'machine-view__machine--uncommitted': machine.deleted ||
-        machine.commitStatus === 'uncommitted',
-      'machine-view__machine--root': machine.root
+        machine.commitStatus === 'uncommitted'
     };
-    classes['machine-view__machine--' + this.props.type] = true;
-    return classNames(
-      'machine-view__machine',
-      classes
-    );
+    return Object.keys(classes).filter(className => classes[className]);
   }
 
   _sshToMachine() {
@@ -251,22 +225,18 @@ class MachineViewMachine extends React.Component {
     this.props.changeState({terminal: commands});
   }
 
-  _generateTerminalButton() {
+  _generateSSHAction() {
     const props = this.props;
-    if (props.type !== 'container' && props.showSSHButton) {
-      return (
-        <GenericButton
-          action={this._sshToMachine.bind(this)}>
-          SSH to machine
-        </GenericButton>);
-    } else {
-      return null;
+    const machine = this.props.machineAPI.machine;
+    if (props.type !== 'container' && props.showSSHButton &&
+        machine.commitStatus !== 'uncommitted') {
+      return this._sshToMachine.bind(this);
     }
   }
 
   render() {
-    var machine = this.props.machineAPI.machine;
-    var menuItems = [{
+    const machine = this.props.machineAPI.machine;
+    let menuItems = [{
       label: 'Destroy',
       action: (!this.props.acl.isReadOnly() && this._destroyMachine.bind(this)) || null
     }];
@@ -279,25 +249,30 @@ class MachineViewMachine extends React.Component {
     }
     // Wrap the returned components in the drop target method.
     return this.props.connectDropTarget(
-      <div className={this._generateClasses()}
-        onClick={this._handleSelectMachine.bind(this)}
-        role="button"
-        tabIndex="0">
-        <ButtonDropdown
-          classes={['machine-view__machine-dropdown']}
-          listItems={menuItems} />
-        <div className="machine-view__machine-name">
-          {this.props.machineAPI.machine.displayName}
-        </div>
-        {this._generateTerminalButton()}
-        {this._generateHardware()}
-        {this._generateUnits()}
-        {this._generateConstraintsForm()}
-        <div className="machine-view__machine-drop-target">
-          <div className="machine-view__machine-drop-message">
-            Add to {this.props.machineAPI.machine.displayName}
+      <div>
+        <Machine
+          classes={this._generateClasses()}
+          hardware={this._generateHardware()}
+          isContainer={this.props.type === 'container'}
+          machine={{
+            name: machine.displayName,
+            root: machine.root,
+            region: this.props.modelAPI.region,
+            series: machine.series,
+            status: machine.commitStatus || machine.agent_state
+          }}
+          menuItems={menuItems}
+          onClick={this._handleSelectMachine.bind(this)}
+          sshAction={this._generateSSHAction()}
+          sshLabel={machine.public_address}>
+          {this._generateUnits()}
+          {this._generateConstraintsForm()}
+          <div className="machine-view__machine-drop-target">
+            <div className="machine-view__machine-drop-message">
+              Add to {machine.displayName}
+            </div>
           </div>
-        </div>
+        </Machine>
       </div>
     );
   }
@@ -318,16 +293,17 @@ MachineViewMachine.propTypes = {
   dropUnit: PropTypes.func.isRequired,
   isOver: PropTypes.bool.isRequired,
   machineAPI: shapeup.shape({
-    generateMachineDetails: PropTypes.func,
+    parseMachineDetails: PropTypes.func,
     machine: PropTypes.object.isRequired,
     removeUnit: PropTypes.func,
-    series: PropTypes.array,
     selectMachine: PropTypes.func,
-    selected: PropTypes.bool
+    selected: PropTypes.bool,
+    series: PropTypes.array
   }).isRequired,
   modelAPI: shapeup.shape({
     destroyMachines: PropTypes.func.isRequired,
     providerType: PropTypes.string,
+    region: PropTypes.string,
     updateMachineConstraints: PropTypes.func,
     updateMachineSeries: PropTypes.func
   }).isRequired,
@@ -338,6 +314,4 @@ MachineViewMachine.propTypes = {
   type: PropTypes.string.isRequired
 };
 
-module.exports = ReactDnD.DropTarget(
-  'unit', MachineViewMachineGlobals.dropTarget,
-  MachineViewMachineGlobals.collect)(MachineViewMachine);
+module.exports = ReactDnD.DropTarget('unit', dropTarget, collect)(MachineViewMachine);

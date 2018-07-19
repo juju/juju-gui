@@ -1,0 +1,40 @@
+.machine-unit {
+  position: relative;
+
+  &--uncommitted {
+    .machine-unit__icon {
+      border: 1px solid $uncommitted;
+    }
+  }
+
+  &--error {
+    .machine-unit__icon {
+      border: 1px solid $error;
+    }
+  }
+
+  &--pending {
+    .machine-unit__icon {
+      border: 1px solid $pending;
+    }
+  }
+
+  &__icon {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 2px;
+    border: 1px solid $canvas-background;
+    border-radius: 50%;
+    line-height: 20px;
+
+    &-img {
+      @extend %icon--small;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
