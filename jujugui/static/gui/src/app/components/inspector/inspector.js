@@ -152,6 +152,7 @@ class Inspector extends React.Component {
               acl={nextProps.acl}
               changeState={changeState}
               destroyUnits={nextProps.modelAPI.destroyUnits}
+              generatePath={this.props.appState.generatePath}
               previousComponent={previousComponent}
               service={service}
               showSSHButtons={nextProps.showSSHButtons && window.juju_config.flags.expert}
