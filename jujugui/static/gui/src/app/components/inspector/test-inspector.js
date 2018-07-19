@@ -58,6 +58,7 @@ describe('Inspector', function() {
         }
       },
       changeState: sinon.stub(),
+      generatePath: sinon.stub(),
       history: [{
         gui: {
           inspector: {}
@@ -216,6 +217,7 @@ describe('Inspector', function() {
           acl={acl}
           changeState={wrapper.find('UnitDetails').prop('changeState')}
           destroyUnits={sinon.stub()}
+          generatePath={sinon.stub()}
           previousComponent={undefined}
           service={service}
           showSSHButtons={false}
