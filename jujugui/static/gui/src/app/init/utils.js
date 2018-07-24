@@ -969,9 +969,11 @@ utils.generateMachineDetails = (genericConstraints, units, machine) => {
   const detailsLine = details ?
     details.map(detail => `${detail.label}: ${detail.value}`).join(', ') : '';
   let hardwareDetails;
-  const constraintsMessage = machine.constraints ?
-    'requested constraints: ' : '';
-  hardwareDetails = `${constraintsMessage}${detailsLine}`;
+  if (detailsLine) {
+    const constraintsMessage = machine.constraints ?
+      'requested constraints: ' : '';
+    hardwareDetails = `${constraintsMessage}${detailsLine}`;
+  }
   if (!hardwareDetails) {
     if (machine.commitStatus === 'uncommitted') {
       hardwareDetails = 'default constraints';
