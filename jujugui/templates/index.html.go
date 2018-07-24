@@ -299,7 +299,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js"></script>
     {{else}}
     <script src="{{.comboURL}}?app/init-pkg-min.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/version-min.js"></script>
+    <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js"></script>
     {{end}}
 
