@@ -972,6 +972,17 @@ describe('init utils', () => {
         '3 units, wily, default constraints');
     });
 
+    it('can generate details with blank constraints', () => {
+      const machine = {
+        constraints: 'cpu-cores=',
+        commitStatus: 'uncommitted',
+        series: 'wily'
+      };
+      assert.deepEqual(
+        utils.generateMachineDetails(genericConstraints, units, machine),
+        '3 units, wily, default constraints');
+    });
+
     it('can generate details with no series', () => {
       const machine = {};
       assert.deepEqual(
