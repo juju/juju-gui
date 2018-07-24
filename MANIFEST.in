@@ -20,3 +20,5 @@ recursive-exclude jujugui/static/gui/build *.js
 recursive-include jujugui/static/gui/build/app/assets/javascripts/yui *min.js
 # Add the main file that all components, utils etc. have been combined into.
 include jujugui/static/gui/build/app/init-pkg-min.js
+# Add the version file:
+include jujugui/static/gui/build/app/assets/javascripts/version.js
