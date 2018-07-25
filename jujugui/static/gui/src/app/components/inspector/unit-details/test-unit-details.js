@@ -19,7 +19,7 @@ describe('UnitDetails', function() {
       generatePath={options.generatePath || sinon.stub()}
       previousComponent={options.previousComponent || 'units'}
       service={options.service || service}
-      showSSHButtons={options.showSSHButtons || false}
+      showSSHButtons={options.showSSHButtons}
       unit={options.unit || unit}
       unitStatus={
         options.unitStatus === undefined ? 'error' : options.unitStatus} />
