@@ -1,28 +1,31 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const AddedServicesListItem = require('./item');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('AddedServicesListItem', function() {
-  let mockService;
+  let mockService, serviceModule;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <AddedServicesListItem
       changeState={options.changeState || sinon.stub()}
-      focusService={options.focusService || sinon.stub()}
-      hoverService={options.hoverService || sinon.stub()}
-      panToService={options.panToService || sinon.stub()}
       service={options.service || mockService}
-      unfocusService={options.unfocusService || sinon.stub()} />
+      serviceModule={options.serviceModule || serviceModule} />
   );
 
   beforeEach(function() {
     mockService = jsTestUtils.makeModel();
+    serviceModule = {
+      hoverService: sinon.stub(),
+      panToService: sinon.stub(),
+      reshape: shapeup.reshapeFunc
+    };
   });
 
   it('renders the icon, count, visibility toggles and display name', () => {
@@ -164,10 +167,8 @@ describe('AddedServicesListItem', function() {
         return false;
       }};
     const changeState = sinon.stub();
-    const panToService = sinon.stub();
     const wrapper = renderComponent({
       changeState,
-      panToService,
       service
     });
     wrapper.props().onClick({
@@ -175,7 +176,7 @@ describe('AddedServicesListItem', function() {
         getAttribute: () => 'serviceId'
       }
     });
-    assert.equal(panToService.callCount, 1);
+    assert.equal(serviceModule.panToService.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -197,15 +198,13 @@ describe('AddedServicesListItem', function() {
               return [];
             }}};
       }};
-    var hoverService = sinon.stub();
     const wrapper = renderComponent({
-      hoverService,
       service
     });
     wrapper.props().onMouseEnter();
-    assert.equal(hoverService.callCount, 1);
-    assert.equal(hoverService.args[0][0], 'apache2');
-    assert.isTrue(hoverService.args[0][1]);
+    assert.equal(serviceModule.hoverService.callCount, 1);
+    assert.equal(serviceModule.hoverService.args[0][0], 'apache2');
+    assert.isTrue(serviceModule.hoverService.args[0][1]);
   });
 
   it('calls the hoverService callable on mouse leave', function() {
@@ -219,14 +218,12 @@ describe('AddedServicesListItem', function() {
               return [];
             }}};
       }};
-    var hoverService = sinon.stub();
     const wrapper = renderComponent({
-      hoverService,
       service
     });
     wrapper.props().onMouseLeave();
-    assert.equal(hoverService.callCount, 1);
-    assert.equal(hoverService.args[0][0], 'apache2');
-    assert.isFalse(hoverService.args[0][1]);
+    assert.equal(serviceModule.hoverService.callCount, 1);
+    assert.equal(serviceModule.hoverService.args[0][0], 'apache2');
+    assert.isFalse(serviceModule.hoverService.args[0][1]);
   });
 });

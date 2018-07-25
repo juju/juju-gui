@@ -95,8 +95,10 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         <AddedServicesList
           changeState={this._bound.changeState}
           hoveredId={hoveredId}
-          hoverService={ServiceModule.hoverService.bind(ServiceModule)}
-          panToService={ServiceModule.panToService.bind(ServiceModule)}
+          serviceModule={shapeup.addReshape({
+            hoverService: ServiceModule.hoverService.bind(ServiceModule),
+            panToService: ServiceModule.panToService.bind(ServiceModule)
+          })}
           services={db.services} />
       </Panel>,
       document.getElementById('inspector-container'));

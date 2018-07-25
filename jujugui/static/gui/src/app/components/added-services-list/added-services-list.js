@@ -3,6 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const AddedServicesListItem = require('./item/item');
 
@@ -19,11 +20,10 @@ class AddedServicesList extends React.Component {
           // when they key changes.
           changeState={this.props.changeState}
           hovered={service.get('id') === this.props.hoveredId}
-          hoverService={this.props.hoverService}
           key={service.get('name')}
-          panToService={this.props.panToService}
           ref={'AddedServicesListItem-' + service.get('id')}
-          service={service} />);
+          service={service}
+          serviceModule={this.props.serviceModule} />);
     });
     return items;
   }
@@ -41,12 +41,15 @@ class AddedServicesList extends React.Component {
 
 AddedServicesList.propTypes = {
   changeState: PropTypes.func.isRequired,
-  hoverService: PropTypes.func.isRequired,
   hoveredId: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool
   ]),
-  panToService: PropTypes.func.isRequired,
+  serviceModule: shapeup.shape({
+    hoverService: PropTypes.func.isRequired,
+    panToService: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  }),
   services: PropTypes.object.isRequired
 };
 
