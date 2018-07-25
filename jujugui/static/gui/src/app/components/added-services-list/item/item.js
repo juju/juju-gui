@@ -4,6 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
+const shapeup = require('shapeup');
 
 const initUtils = require('../../../init/utils');
 
@@ -55,7 +56,7 @@ class AddedServicesListItem extends React.Component {
     @param {Object} e The click event.
   */
   _onClickHandler(e) {
-    this.props.panToService(this.props.service.get('id'));
+    this.props.serviceModule.panToService(this.props.service.get('id'));
     this.props.changeState({
       gui: {
         inspector: {
@@ -82,7 +83,7 @@ class AddedServicesListItem extends React.Component {
     @param {Object} e The mouse event.
   */
   _onMouseEnter(e) {
-    this.props.hoverService(this.props.service.get('id'), true);
+    this.props.serviceModule.hoverService(this.props.service.get('id'), true);
   }
 
   /**
@@ -90,7 +91,7 @@ class AddedServicesListItem extends React.Component {
     @param {Object} e The mouse event.
   */
   _onMouseLeave(e) {
-    this.props.hoverService(this.props.service.get('id'), false);
+    this.props.serviceModule.hoverService(this.props.service.get('id'), false);
   }
 
   render() {
@@ -123,13 +124,16 @@ class AddedServicesListItem extends React.Component {
 
 AddedServicesListItem.propTypes = {
   changeState: PropTypes.func.isRequired,
-  hoverService: PropTypes.func.isRequired,
   hovered: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool
   ]),
-  panToService: PropTypes.func.isRequired,
-  service: PropTypes.object.isRequired
+  service: PropTypes.object.isRequired,
+  serviceModule: shapeup.shape({
+    hoverService: PropTypes.func.isRequired,
+    panToService: PropTypes.func.isRequired,
+    reshape: shapeup.reshapeFunc
+  })
 };
 
 module.exports = AddedServicesListItem;

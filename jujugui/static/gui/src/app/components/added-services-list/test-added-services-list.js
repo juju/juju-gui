@@ -1,25 +1,31 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const React = require('react');
 const enzyme = require('enzyme');
+const React = require('react');
+const shapeup = require('shapeup');
 
 const AddedServicesList = require('./added-services-list');
 const AddedServicesListItem = require('./item/item');
 
 describe('AddedServicesList', () => {
+  let serviceModule;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <AddedServicesList
       changeState={options.changeState || sinon.stub()}
-      findRelatedServices={options.findRelatedServices || sinon.stub()}
-      findUnrelatedServices={options.findUnrelatedServices || sinon.stub()}
       hoveredId={options.hoveredId || 'mysql'}
-      hoverService={options.hoverService || sinon.stub()}
-      panToService={options.panToService || sinon.stub()}
-      services={options.services || sinon.stub()}
-      updateUnitFlags={options.updateUnitFlags || sinon.stub()} />
+      serviceModule={options.serviceModule || serviceModule}
+      services={options.services || sinon.stub()} />
   );
+
+  beforeEach(() => {
+    serviceModule = {
+      hoverService: sinon.stub(),
+      panToService: sinon.stub(),
+      reshape: shapeup.reshapeFunc
+    };
+  });
 
   it('generates a list of added services list items', () => {
     var allServices = [{get: () => 1}, {get: () => 2}, {get: () => 3}];
@@ -36,27 +42,24 @@ describe('AddedServicesList', () => {
           <AddedServicesListItem
             changeState={instance.props.changeState}
             hovered={false}
-            hoverService={instance.props.hoverService}
             key={allServices[0].get()}
-            panToService={instance.props.panToService}
             ref={'AddedServicesListItem-' + allServices[0].get()}
-            service={allServices[0]} />
+            service={allServices[0]}
+            serviceModule={serviceModule} />
           <AddedServicesListItem
             changeState={instance.props.changeState}
             hovered={false}
-            hoverService={instance.props.hoverService}
             key={allServices[1].get()}
-            panToService={instance.props.panToService}
             ref={'AddedServicesListItem-' + allServices[1].get()}
-            service={allServices[1]} />
+            service={allServices[1]}
+            serviceModule={serviceModule} />
           <AddedServicesListItem
             changeState={instance.props.changeState}
             hovered={false}
-            hoverService={instance.props.hoverService}
             key={allServices[2].get()}
-            panToService={instance.props.panToService}
             ref={'AddedServicesListItem-' + allServices[2].get()}
-            service={allServices[2]} />
+            service={allServices[2]}
+            serviceModule={serviceModule} />
         </ul>
       </div>);
     assert.compareJSX(wrapper, expected);
