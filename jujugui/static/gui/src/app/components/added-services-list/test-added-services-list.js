@@ -12,13 +12,10 @@ describe('AddedServicesList', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <AddedServicesList
       changeState={options.changeState || sinon.stub()}
-      findRelatedServices={options.findRelatedServices || sinon.stub()}
-      findUnrelatedServices={options.findUnrelatedServices || sinon.stub()}
       hoveredId={options.hoveredId || 'mysql'}
       hoverService={options.hoverService || sinon.stub()}
       panToService={options.panToService || sinon.stub()}
-      services={options.services || sinon.stub()}
-      updateUnitFlags={options.updateUnitFlags || sinon.stub()} />
+      services={options.services || sinon.stub()} />
   );
 
   it('generates a list of added services list items', () => {

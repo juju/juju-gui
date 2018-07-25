@@ -94,13 +94,10 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         visible={db.services.size() > 0}>
         <AddedServicesList
           changeState={this._bound.changeState}
-          findRelatedServices={db.findRelatedServices.bind(db)}
-          findUnrelatedServices={db.findUnrelatedServices.bind(db)}
           hoveredId={hoveredId}
           hoverService={ServiceModule.hoverService.bind(ServiceModule)}
           panToService={ServiceModule.panToService.bind(ServiceModule)}
-          services={db.services}
-          updateUnitFlags={db.updateUnitFlags.bind(db)} />
+          services={db.services} />
       </Panel>,
       document.getElementById('inspector-container'));
   }

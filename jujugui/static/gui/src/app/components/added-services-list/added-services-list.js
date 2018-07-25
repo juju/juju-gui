@@ -41,16 +41,13 @@ class AddedServicesList extends React.Component {
 
 AddedServicesList.propTypes = {
   changeState: PropTypes.func.isRequired,
-  findRelatedServices: PropTypes.func.isRequired,
-  findUnrelatedServices: PropTypes.func.isRequired,
   hoverService: PropTypes.func.isRequired,
   hoveredId: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool
   ]),
   panToService: PropTypes.func.isRequired,
-  services: PropTypes.object.isRequired,
-  updateUnitFlags: PropTypes.func.isRequired
+  services: PropTypes.object.isRequired
 };
 
 module.exports = AddedServicesList;
