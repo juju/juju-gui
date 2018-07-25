@@ -284,7 +284,7 @@ UnitDetails.propTypes = {
   generatePath: PropTypes.func.isRequired,
   previousComponent: PropTypes.string,
   service: PropTypes.object.isRequired,
-  showSSHButtons: PropTypes.bool.isRequired,
+  showSSHButtons: PropTypes.bool,
   unit: PropTypes.object.isRequired,
   unitStatus: PropTypes.string
 };
