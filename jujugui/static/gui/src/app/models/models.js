@@ -2120,15 +2120,6 @@ window.yui.add('juju-models', function(Y) {
   };
 
   var Database = Y.Base.create('database', Y.Base, [], {
-    /**
-      Stores the list of services which are hidden because of the added
-      services view.
-
-      @property _highlightedServices
-      @type {Array}
-      @default []
-    */
-    _highlightedServices: [],
 
     initializer: function(config) {
       models._getECS = config.getECS;
