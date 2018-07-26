@@ -2200,13 +2200,6 @@ window.yui.add('juju-models', function(Y) {
       return this.services.getById(entityName);
     },
 
-    getModelFromChange: function(change) {
-      var change_kind = change[1],
-          data = change[2],
-          model_id = change_kind === 'remove' && data || data.id;
-      return this.resolveModelByName(model_id);
-    },
-
     /**
       Reset all database collections.
 
