@@ -762,19 +762,7 @@ window.yui.add('juju-models', function(Y) {
   */
   var RemoteService = Y.Base.create('remoteService', Y.Model, [], {
     // The service URL uniquely represents a remote service.
-    idAttribute: 'url',
-
-    /**
-      Report whether this remote service is alive.
-      Return true if the service life is 'alive' or 'dying', false otherwise.
-
-      @method isAlive
-      @return {Boolean} Whether this remote service is alive.
-    */
-    isAlive: function() {
-      var life = this.get('life');
-      return (life === ALIVE || life === DYING);
-    }
+    idAttribute: 'url'
   }, {
     // Define remote service attributes.
     ATTRS: {

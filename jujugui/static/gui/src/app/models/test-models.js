@@ -1155,27 +1155,6 @@ describe('test_model.js', function() {
         assert.deepEqual(attrs.endpoints, []);
       });
 
-      it('instances know if they are alive', function() {
-        var alive = remoteServices.add({
-          id: 'local:/u/who/service-alive',
-          life: 'alive'
-        });
-        assert.strictEqual(alive.isAlive(), true);
-        var dying = remoteServices.add({
-          id: 'local:/u/who/service-dying',
-          life: 'dying'
-        });
-        assert.strictEqual(dying.isAlive(), true);
-      });
-
-      it('instances know if they are dead', function() {
-        var dead = remoteServices.add({
-          id: 'local:/u/who/service-dead',
-          life: 'dead'
-        });
-        assert.strictEqual(dead.isAlive(), false);
-      });
-
     });
 
     describe('machines model list', function() {
