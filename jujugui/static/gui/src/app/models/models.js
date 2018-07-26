@@ -774,36 +774,6 @@ window.yui.add('juju-models', function(Y) {
     isAlive: function() {
       var life = this.get('life');
       return (life === ALIVE || life === DYING);
-    },
-
-    /**
-      Store more details to this remote service.
-
-      Details are usually retrieved calling "env.getOffer()" where env is the
-      Go Juju environment implementation. The above results in a call to
-      "ServiceOffers" on the "CrossModelRelations" Juju API facade.
-      The invariant here is that data provided to the env.getOffer() callback,
-      if data.err is not defined, can be passed as is to this function as the
-      details parameter. This way is easy to immediately enrich the database
-      with information taken from the Juju API.
-
-      @method addDetails
-      @param {Object} details A data object with the following attributes:
-        - description: the human friendly description for the remote service;
-        - sourceName: the label assigned to the source Juju model;
-        - endpoints: the list of offered endpoints.
-          Each endpoint must have the following attributes:
-          - name: the endpoint name (e.g. "db" or "website");
-          - interface: the endpoint interface (e.g. "http" or "mysql");
-          - role: the role for the endpoint ("requirer" or "provider").
-        Any other attribute in details is ignored.
-    */
-    addDetails: function(details) {
-      this.setAttrs({
-        description: details.description,
-        sourceName: details.sourceName,
-        endpoints: details.endpoints
-      });
     }
   }, {
     // Define remote service attributes.
@@ -859,8 +829,7 @@ window.yui.add('juju-models', function(Y) {
       },
       /**
         The description of the remote service features and capabilities.
-        This info is NOT included in the Juju mega-watcher and can be provided
-        directly or by calling addDetails on the model instance.
+        This info is NOT included in the Juju mega-watcher.
 
         @attribute description
         @type {String}
@@ -868,8 +837,7 @@ window.yui.add('juju-models', function(Y) {
       description: {},
       /**
         The name of the original Juju model from which this service is offered.
-        This info is NOT included in the Juju mega-watcher and can be provided
-        directly or by calling addDetails on the model instance.
+        This info is NOT included in the Juju mega-watcher.
 
         @attribute sourceName
         @type {String}
@@ -881,8 +849,7 @@ window.yui.add('juju-models', function(Y) {
         - name: the endpoint name (e.g. "db" or "website");
         - interface: the endpoint interface (e.g. "http" or "mysql");
         - role: the role for the endpoint ("requirer" or "provider").
-        This info is NOT included in the Juju mega-watcher and can be provided
-        directly or by calling addDetails on the model instance.
+        This info is NOT included in the Juju mega-watcher.
 
         @attribute endpoints
         @type {Array of objects}

@@ -1176,47 +1176,6 @@ describe('test_model.js', function() {
         assert.strictEqual(dead.isAlive(), false);
       });
 
-      it('instances can be upgraded with details', function() {
-        var url = 'local:/u/who/model/django';
-        // Add a remote service.
-        var remoteService = remoteServices.add({
-          id: url,
-          service: 'django',
-          sourceId: 'uuid',
-          life: 'alive'
-        });
-        var endpoints = [{
-          name: 'db',
-          inteface: 'postgres',
-          role: 'requirer'
-        }];
-        var details = {
-          // Valid details.
-          description: 'django description',
-          sourceName: 'ec2',
-          endpoints: endpoints,
-          // Data already provided by the mega-watcher is not overridden.
-          url: 'not valid',
-          service: 'rails',
-          // Extraneous data is ignored.
-          bad: 'wolf'
-        };
-        // Update the remote service with new info.
-        remoteService.addDetails(details);
-        var attrs = remoteService.getAttrs();
-        // Original mega-watcher info is still there.
-        assert.strictEqual(attrs.url, url);
-        assert.strictEqual(attrs.service, 'django');
-        assert.strictEqual(attrs.sourceId, 'uuid');
-        assert.strictEqual(attrs.life, 'alive');
-        // New info has been added.
-        assert.strictEqual(attrs.description, 'django description');
-        assert.strictEqual(attrs.sourceName, 'ec2');
-        assert.deepEqual(attrs.endpoints, endpoints);
-        // Extraneous info is ignored.
-        assert.strictEqual(attrs.bad, undefined);
-      });
-
     });
 
     describe('machines model list', function() {
