@@ -248,41 +248,6 @@ describe('test_model.js', function() {
       assert.equal(related.item(1).get('name'), 'wordpress');
     });
 
-    it('finds unrelated services', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-          service = new models.Service({name: 'mysql'});
-      db.services.add([
-        {id: 'mysql', name: 'mysql'},
-        {id: 'wordpress', name: 'wordpress'},
-        {id: 'haproxy', name: 'haproxy'}
-      ]);
-      var relations = [
-        {far: {service: 'wordpress'}}
-      ];
-      var stub = sinon.stub(
-        relationUtils, 'getRelationDataForService').returns(relations);
-      cleanups.push(stub.restore);
-      var unrelated = db.findUnrelatedServices(service);
-      assert.equal(unrelated.size(), 1);
-      assert.equal(unrelated.item(0).get('name'), 'haproxy');
-    });
-
-    it('handles undefined endpoints in unrelated services', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-          service = new models.Service({name: 'mysql'});
-      db.services.add([
-        {id: 'mysql', name: 'mysql'},
-        {id: 'wordpress', name: 'wordpress'},
-        {id: 'haproxy', name: 'haproxy'}
-      ]);
-      var relations = [{}];
-      var stub = sinon.stub(
-        relationUtils, 'getRelationDataForService').returns(relations);
-      cleanups.push(stub.restore);
-      var unrelated = db.findUnrelatedServices(service);
-      assert.equal(unrelated.size(), 2);
-    });
-
     describe('setMVVisibility', function() {
       var db;
 

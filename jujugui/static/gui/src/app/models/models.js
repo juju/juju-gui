@@ -2728,23 +2728,6 @@ window.yui.add('juju-models', function(Y) {
     },
 
     /**
-      Returns a list of the deployed (both uncommitted and committed) services
-      that are not related to the provided service.
-
-      @method findUnrelatedServices
-      @param {Object} service The origin service.
-      @return {Y.ModelList} A ModelList of the unrelated services.
-    */
-    findUnrelatedServices: function(service) {
-      var related = this.findRelatedServices(service, true);
-      // Find the unrelated by filtering out the related.
-      var unrelated = this.services.filter({asList: true}, function(s) {
-        return related.indexOf(s.get('name')) === -1;
-      });
-      return unrelated;
-    },
-
-    /**
       Percolates a service flag into the units under that service, which are
       stored in two locations: within the service itself, and in db.units.
 
