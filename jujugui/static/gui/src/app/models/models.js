@@ -2698,36 +2698,6 @@ window.yui.add('juju-models', function(Y) {
     },
 
     /**
-      Returns a list of the deployed (both uncommitted and committed) services
-      that are related to the provided service.
-
-      @method findRelatedServices
-      @param {Object} service The origin service.
-      @param {Boolean} asArray If you want the results returned as an array of
-        service names or a model list.
-      @return {Y.ModelList|Array} A ModelList of related services or an array
-        of service names.
-    */
-    findRelatedServices: function(service, asArray) {
-      var relationData = relationUtils.getRelationDataForService(this, service);
-      var related = [service.get('name')]; // Add own name to related list.
-      // Compile the list of related services.
-      relationData.forEach(function(relation) {
-        // Some relations (e.g., peer relations) may not have the far endpoint
-        // defined.
-        if (relation.far && relation.far.service) {
-          related.push(relation.far.service);
-        }
-      });
-      if (asArray) {
-        return related;
-      }
-      return this.services.filter({asList: true}, function(s) {
-        return related.indexOf(s.get('name')) > -1;
-      });
-    },
-
-    /**
       Percolates a service flag into the units under that service, which are
       stored in two locations: within the service itself, and in db.units.
 
