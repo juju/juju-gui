@@ -2698,44 +2698,6 @@ window.yui.add('juju-models', function(Y) {
     },
 
     /**
-      Percolates a service flag into the units under that service, which are
-      stored in two locations: within the service itself, and in db.units.
-
-      @method updateUnitFlags
-      @param {Object|Y.ModelList} serviceOrServiceList The service(s) which has
-          the flag.
-      @param {String} flag The flag that needs updating.
-    */
-    updateUnitFlags: function(serviceOrServiceList, flag) {
-      var dbUnits = this.units;
-      /**
-        Helper function to deal with a single service.
-
-        @method updateOneService
-        @param {Object} service The service being updated.
-      */
-      function updateOneService(service) {
-        var value = service.get(flag),
-            units = service.get('units');
-        units.each(function(unit) {
-          var dbUnit = dbUnits.getById(unit.id);
-          // Revive so that this update triggers change events.
-          unit = units.revive(unit);
-          dbUnit = dbUnits.revive(dbUnit);
-          // Need to update the unit in both locations - in the service itself
-          // and in the DB.
-          unit.set(flag, value);
-          dbUnit.set(flag, value);
-        });
-      }
-      if (serviceOrServiceList instanceof models.ServiceList) {
-        serviceOrServiceList.each(updateOneService.bind(this));
-      } else {
-        updateOneService.call(this, serviceOrServiceList);
-      }
-    },
-
-    /**
       Sets the visibility of a machine based on the service name and
       visibility modifier passed in. This is used by the machine view to
       determine if it should show the token or not when a user clicks on
