@@ -604,23 +604,6 @@ window.yui.add('juju-models', function(Y) {
     },
 
     /**
-      Filter units based on a predicate.
-
-      @method filterUnits
-      @param {Function} predicate The function used to filter units.
-      @return {Array} A list of matching units.
-    */
-    filterUnits: function(predicate) {
-      var units = [];
-      this.each(function(service) {
-        service.get('units').filter(predicate).forEach(function(unit) {
-          units.push(unit);
-        });
-      });
-      return units;
-    },
-
-    /**
       Filter the service model list to only include principals.
       In essence, the resulting list does not include services deployed from
       a subordinate charm.
