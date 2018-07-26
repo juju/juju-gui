@@ -18,7 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const relationUtils = require('../init/relation-utils');
 const utils = require('../init/utils');
 
 /**
@@ -604,37 +603,6 @@ window.yui.add('juju-models', function(Y) {
     },
 
     /**
-      Filter units based on a predicate.
-
-      @method filterUnits
-      @param {Function} predicate The function used to filter units.
-      @return {Array} A list of matching units.
-    */
-    filterUnits: function(predicate) {
-      var units = [];
-      this.each(function(service) {
-        service.get('units').filter(predicate).forEach(function(unit) {
-          units.push(unit);
-        });
-      });
-      return units;
-    },
-
-    /**
-      Filter the service model list to only include principals.
-      In essence, the resulting list does not include services deployed from
-      a subordinate charm.
-
-      @method principals
-      @return {ModelList} A list of non-subordinate services.
-    */
-    principals: function() {
-      return this.filter({asList: true}, function(service) {
-        return !service.get('subordinate');
-      });
-    },
-
-    /**
       Fetches the services which were deployed with a charm matching
       a supplied charm name.
 
@@ -793,49 +761,7 @@ window.yui.add('juju-models', function(Y) {
   */
   var RemoteService = Y.Base.create('remoteService', Y.Model, [], {
     // The service URL uniquely represents a remote service.
-    idAttribute: 'url',
-
-    /**
-      Report whether this remote service is alive.
-      Return true if the service life is 'alive' or 'dying', false otherwise.
-
-      @method isAlive
-      @return {Boolean} Whether this remote service is alive.
-    */
-    isAlive: function() {
-      var life = this.get('life');
-      return (life === ALIVE || life === DYING);
-    },
-
-    /**
-      Store more details to this remote service.
-
-      Details are usually retrieved calling "env.getOffer()" where env is the
-      Go Juju environment implementation. The above results in a call to
-      "ServiceOffers" on the "CrossModelRelations" Juju API facade.
-      The invariant here is that data provided to the env.getOffer() callback,
-      if data.err is not defined, can be passed as is to this function as the
-      details parameter. This way is easy to immediately enrich the database
-      with information taken from the Juju API.
-
-      @method addDetails
-      @param {Object} details A data object with the following attributes:
-        - description: the human friendly description for the remote service;
-        - sourceName: the label assigned to the source Juju model;
-        - endpoints: the list of offered endpoints.
-          Each endpoint must have the following attributes:
-          - name: the endpoint name (e.g. "db" or "website");
-          - interface: the endpoint interface (e.g. "http" or "mysql");
-          - role: the role for the endpoint ("requirer" or "provider").
-        Any other attribute in details is ignored.
-    */
-    addDetails: function(details) {
-      this.setAttrs({
-        description: details.description,
-        sourceName: details.sourceName,
-        endpoints: details.endpoints
-      });
-    }
+    idAttribute: 'url'
   }, {
     // Define remote service attributes.
     ATTRS: {
@@ -890,8 +816,7 @@ window.yui.add('juju-models', function(Y) {
       },
       /**
         The description of the remote service features and capabilities.
-        This info is NOT included in the Juju mega-watcher and can be provided
-        directly or by calling addDetails on the model instance.
+        This info is NOT included in the Juju mega-watcher.
 
         @attribute description
         @type {String}
@@ -899,8 +824,7 @@ window.yui.add('juju-models', function(Y) {
       description: {},
       /**
         The name of the original Juju model from which this service is offered.
-        This info is NOT included in the Juju mega-watcher and can be provided
-        directly or by calling addDetails on the model instance.
+        This info is NOT included in the Juju mega-watcher.
 
         @attribute sourceName
         @type {String}
@@ -912,8 +836,7 @@ window.yui.add('juju-models', function(Y) {
         - name: the endpoint name (e.g. "db" or "website");
         - interface: the endpoint interface (e.g. "http" or "mysql");
         - role: the role for the endpoint ("requirer" or "provider").
-        This info is NOT included in the Juju mega-watcher and can be provided
-        directly or by calling addDetails on the model instance.
+        This info is NOT included in the Juju mega-watcher.
 
         @attribute endpoints
         @type {Array of objects}
@@ -2137,28 +2060,6 @@ window.yui.add('juju-models', function(Y) {
       // The list is maintained in sorted order due to this.comparator
       // handle zero based index
       this.remove(this.size() - 1);
-    },
-
-    /*
-     * Get Notifications relative to a given model.
-     * Currently this depends on a mapping between the model
-     * class as encoded by its clientId (see Database.getByModelId)
-     *
-     * [model_list_name, id]
-     */
-    getNotificationsForModel: function(model) {
-      var modelKey = (model instanceof Y.Model) ? model.get('id') : model.id;
-      return this.filter(function(notification) {
-        var modelId = notification.get('modelId'),
-            modelList;
-        if (modelId) {
-          modelList = modelId[0];
-          modelId = modelId[1];
-          return (modelList === model.name) && (
-            modelId === modelKey);
-        }
-        return false;
-      });
     }
 
   }, {
@@ -2218,15 +2119,6 @@ window.yui.add('juju-models', function(Y) {
   };
 
   var Database = Y.Base.create('database', Y.Base, [], {
-    /**
-      Stores the list of services which are hidden because of the added
-      services view.
-
-      @property _highlightedServices
-      @type {Array}
-      @default []
-    */
-    _highlightedServices: [],
 
     initializer: function(config) {
       models._getECS = config.getECS;
@@ -2296,13 +2188,6 @@ window.yui.add('juju-models', function(Y) {
       }
       // Handle services.
       return this.services.getById(entityName);
-    },
-
-    getModelFromChange: function(change) {
-      var change_kind = change[1],
-          data = change[2],
-          model_id = change_kind === 'remove' && data || data.id;
-      return this.resolveModelByName(model_id);
     },
 
     /**
@@ -2800,144 +2685,6 @@ window.yui.add('juju-models', function(Y) {
       units.fire('change');
       serviceUnits.fire('change');
       return unit;
-    },
-
-    /**
-      Returns a list of the deployed (both uncommitted and committed) services
-      that are related to the provided service.
-
-      @method findRelatedServices
-      @param {Object} service The origin service.
-      @param {Boolean} asArray If you want the results returned as an array of
-        service names or a model list.
-      @return {Y.ModelList|Array} A ModelList of related services or an array
-        of service names.
-    */
-    findRelatedServices: function(service, asArray) {
-      var relationData = relationUtils.getRelationDataForService(this, service);
-      var related = [service.get('name')]; // Add own name to related list.
-      // Compile the list of related services.
-      relationData.forEach(function(relation) {
-        // Some relations (e.g., peer relations) may not have the far endpoint
-        // defined.
-        if (relation.far && relation.far.service) {
-          related.push(relation.far.service);
-        }
-      });
-      if (asArray) {
-        return related;
-      }
-      return this.services.filter({asList: true}, function(s) {
-        return related.indexOf(s.get('name')) > -1;
-      });
-    },
-
-    /**
-      Returns a list of the deployed (both uncommitted and committed) services
-      that are not related to the provided service.
-
-      @method findUnrelatedServices
-      @param {Object} service The origin service.
-      @return {Y.ModelList} A ModelList of the unrelated services.
-    */
-    findUnrelatedServices: function(service) {
-      var related = this.findRelatedServices(service, true);
-      // Find the unrelated by filtering out the related.
-      var unrelated = this.services.filter({asList: true}, function(s) {
-        return related.indexOf(s.get('name')) === -1;
-      });
-      return unrelated;
-    },
-
-    /**
-      Percolates a service flag into the units under that service, which are
-      stored in two locations: within the service itself, and in db.units.
-
-      @method updateUnitFlags
-      @param {Object|Y.ModelList} serviceOrServiceList The service(s) which has
-          the flag.
-      @param {String} flag The flag that needs updating.
-    */
-    updateUnitFlags: function(serviceOrServiceList, flag) {
-      var dbUnits = this.units;
-      /**
-        Helper function to deal with a single service.
-
-        @method updateOneService
-        @param {Object} service The service being updated.
-      */
-      function updateOneService(service) {
-        var value = service.get(flag),
-            units = service.get('units');
-        units.each(function(unit) {
-          var dbUnit = dbUnits.getById(unit.id);
-          // Revive so that this update triggers change events.
-          unit = units.revive(unit);
-          dbUnit = dbUnits.revive(dbUnit);
-          // Need to update the unit in both locations - in the service itself
-          // and in the DB.
-          unit.set(flag, value);
-          dbUnit.set(flag, value);
-        });
-      }
-      if (serviceOrServiceList instanceof models.ServiceList) {
-        serviceOrServiceList.each(updateOneService.bind(this));
-      } else {
-        updateOneService.call(this, serviceOrServiceList);
-      }
-    },
-
-    /**
-      Sets the visibility of a machine based on the service name and
-      visibility modifier passed in. This is used by the machine view to
-      determine if it should show the token or not when a user clicks on
-      highlight in the added services bar.
-
-      @method setMVVisibility
-      @param {String} serviceId The service id to compare to the units
-        services in the machine.
-      @param {Boolean} highlight If the machine with units matching the supplied
-        service should be highlighted or not.
-    */
-    setMVVisibility: function(serviceId, highlight) {
-      var highlightIndex = this._highlightedServices.indexOf(serviceId);
-      if (highlightIndex >= 0 && highlight === false) {
-        // If the service is stored as hidden but we no longer want it to be
-        // then remove it from the hidden list.
-        this._highlightedServices.splice(highlightIndex, 1);
-      } else if (highlightIndex < 0 && highlight === true) {
-        this._highlightedServices.push(serviceId);
-      }
-
-      var changedMachines = [];
-      this.machines.each(function(machine) {
-        var units = this.units.filterByMachine(machine.id, true);
-        var keepVisible = this._highlightedServices.some(
-          function(highlightedService) {
-            return units.some(function(unit) {
-              return unit.service === highlightedService;
-            });
-          });
-        // If we no longer have any services highlighted then we want to show
-        // all machine tokens.
-        if (this._highlightedServices.length < 1) {
-          keepVisible = true;
-        }
-        var oldHideValue = machine.hide;
-        machine.hide = keepVisible ? false : true;
-        // Batch up machines that actually changed in order to fire an
-        // aggregated change event outside the loop.
-        if (oldHideValue !== machine.hide) {
-          changedMachines.push(machine);
-        }
-      }, this);
-      // In order to have the machine view update the rendered tokens we need
-      // to fire an event to tell it that the machines have changed.
-      if (changedMachines.length) {
-        this.machines.fire('changes', {
-          instances: changedMachines
-        });
-      }
     }
 
   });
