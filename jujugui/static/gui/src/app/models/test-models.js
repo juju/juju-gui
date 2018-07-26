@@ -18,7 +18,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const relationUtils = require('../init/relation-utils');
 const User = require('../user/user');
 const utils = require('../init/testing-utils');
 
