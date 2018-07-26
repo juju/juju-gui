@@ -2695,59 +2695,6 @@ window.yui.add('juju-models', function(Y) {
       units.fire('change');
       serviceUnits.fire('change');
       return unit;
-    },
-
-    /**
-      Sets the visibility of a machine based on the service name and
-      visibility modifier passed in. This is used by the machine view to
-      determine if it should show the token or not when a user clicks on
-      highlight in the added services bar.
-
-      @method setMVVisibility
-      @param {String} serviceId The service id to compare to the units
-        services in the machine.
-      @param {Boolean} highlight If the machine with units matching the supplied
-        service should be highlighted or not.
-    */
-    setMVVisibility: function(serviceId, highlight) {
-      var highlightIndex = this._highlightedServices.indexOf(serviceId);
-      if (highlightIndex >= 0 && highlight === false) {
-        // If the service is stored as hidden but we no longer want it to be
-        // then remove it from the hidden list.
-        this._highlightedServices.splice(highlightIndex, 1);
-      } else if (highlightIndex < 0 && highlight === true) {
-        this._highlightedServices.push(serviceId);
-      }
-
-      var changedMachines = [];
-      this.machines.each(function(machine) {
-        var units = this.units.filterByMachine(machine.id, true);
-        var keepVisible = this._highlightedServices.some(
-          function(highlightedService) {
-            return units.some(function(unit) {
-              return unit.service === highlightedService;
-            });
-          });
-        // If we no longer have any services highlighted then we want to show
-        // all machine tokens.
-        if (this._highlightedServices.length < 1) {
-          keepVisible = true;
-        }
-        var oldHideValue = machine.hide;
-        machine.hide = keepVisible ? false : true;
-        // Batch up machines that actually changed in order to fire an
-        // aggregated change event outside the loop.
-        if (oldHideValue !== machine.hide) {
-          changedMachines.push(machine);
-        }
-      }, this);
-      // In order to have the machine view update the rendered tokens we need
-      // to fire an event to tell it that the machines have changed.
-      if (changedMachines.length) {
-        this.machines.fire('changes', {
-          instances: changedMachines
-        });
-      }
     }
 
   });
