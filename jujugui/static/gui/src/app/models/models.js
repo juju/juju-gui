@@ -604,20 +604,6 @@ window.yui.add('juju-models', function(Y) {
     },
 
     /**
-      Filter the service model list to only include principals.
-      In essence, the resulting list does not include services deployed from
-      a subordinate charm.
-
-      @method principals
-      @return {ModelList} A list of non-subordinate services.
-    */
-    principals: function() {
-      return this.filter({asList: true}, function(service) {
-        return !service.get('subordinate');
-      });
-    },
-
-    /**
       Fetches the services which were deployed with a charm matching
       a supplied charm name.
 
