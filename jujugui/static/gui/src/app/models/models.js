@@ -2061,28 +2061,6 @@ window.yui.add('juju-models', function(Y) {
       // The list is maintained in sorted order due to this.comparator
       // handle zero based index
       this.remove(this.size() - 1);
-    },
-
-    /*
-     * Get Notifications relative to a given model.
-     * Currently this depends on a mapping between the model
-     * class as encoded by its clientId (see Database.getByModelId)
-     *
-     * [model_list_name, id]
-     */
-    getNotificationsForModel: function(model) {
-      var modelKey = (model instanceof Y.Model) ? model.get('id') : model.id;
-      return this.filter(function(notification) {
-        var modelId = notification.get('modelId'),
-            modelList;
-        if (modelId) {
-          modelList = modelId[0];
-          modelId = modelId[1];
-          return (modelList === model.name) && (
-            modelId === modelKey);
-        }
-        return false;
-      });
     }
 
   }, {
