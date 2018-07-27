@@ -112,8 +112,8 @@ class PaymentDetails extends React.Component {
           addNotification={this.props.addNotification}
           address={address}
           close={
-            billing ? this._toggleBillingAddressEdit :
-              this._toggleAddressEdit}
+            billing ? this._toggleBillingAddressEdit.bind(this) :
+              this._toggleAddressEdit.bind(this)}
           getCountries={this.props.payment.getCountries}
           key={address.name}
           removeAddress={
