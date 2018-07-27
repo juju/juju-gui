@@ -107,6 +107,12 @@ dist/jujugui-2.10.1.tar.bz2 package as a binary.
 
 Congratulations! You've created a release of the Juju GUI.
 
+
+### Announce the new release on discourse
+
+Create a new topic at https://discourse.jujucharms.com, use the news category,
+include release notes and instructions on how to upgrade controllers.
+
 ### Roll out to production
 
 Now that the dist has been created JAAS and SimpleStreams will need to be updated
