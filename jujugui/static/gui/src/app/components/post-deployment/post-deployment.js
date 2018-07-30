@@ -7,6 +7,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
+const GenericButton = require('../generic-button/generic-button');
 const Panel = require('../panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
@@ -70,7 +71,7 @@ class PostDeployment extends React.Component {
         this._getGetStartedCallback.bind(this)
       );
     }
-    let fileName = 'post-deployment.sh';
+    fileName = 'post-deployment.sh';
     if (files && files.some(file => {
       if (file.toLowerCase() === fileName) {
         fileName = file;
@@ -120,20 +121,41 @@ class PostDeployment extends React.Component {
     }
   }
 
+  /**
+    Callback for when the post-deployment script has been fetched.
+
+    @param {String} error Error from the API.
+    @param {String} postDeploymentScript The content of the script.
+  */
   _getPostDeploymentScriptCallback(error, postDeploymentScript) {
     if (error) {
       console.error(error);
     }
     this.setState({
       postDeploymentScript: postDeploymentScript
-    })
+    });
   }
 
+  /**
+    Render a button for executing the post-deployment script if one exists.
+
+    @return {Object} The button if required, otherwise nothing.
+  */
   _renderPostDeploymentScriptButton() {
-    const script = this.state.postDeploymentScript;
-    if (this.script) {
-      //
+    const showPostDeploymentScript = this.props.showPostDeploymentScript;
+    if (showPostDeploymentScript && this.state.postDeploymentScript) {
+      return (<div>
+        <GenericButton
+          action={this._executePostDeploymentScript.bind(this)}>
+            Execute post-deployment script
+        </GenericButton>
+      </div>);
     }
+  }
+
+  _executePostDeploymentScript() {
+    const scriptLines = this.state.postDeploymentScript.split('\n');
+    this.props.changeState({terminal: scriptLines});
   }
 
   /**
@@ -162,7 +184,7 @@ class PostDeployment extends React.Component {
       lineByLine = markdown.split('\n');
       let metadata = [];
       lineByLine.shift();
-      while(lineByLine.length > 0 && lineByLine[0] !== '---') {
+      while (lineByLine.length > 0 && lineByLine[0] !== '---') {
         metadata.push(lineByLine.shift());
       }
       lineByLine.shift();
@@ -273,7 +295,8 @@ PostDeployment.propTypes = {
     getEntity: PropTypes.func.isRequired,
     getFile: PropTypes.func.isRequired
   }).isRequired,
-  entityId: PropTypes.string.isRequired
+  entityId: PropTypes.string.isRequired,
+  showPostDeploymentScript: PropTypes.bool.isRequired
 };
 
 module.exports = PostDeployment;
