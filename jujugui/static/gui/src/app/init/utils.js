@@ -7,6 +7,7 @@ const ReactDOM = require('react-dom');
 const FileSaver = require('file-saver');
 const {charmstore} = require('jaaslib');
 
+const BundleExporter = require('./bundle-exporter');
 const Popup = require('../components/popup/popup');
 const initUtils = require('./utils');
 
@@ -83,7 +84,8 @@ utils.exportEnvironmentFile = db => {
   apps.forEach(app => {
     idMap.set(app.get('id'), app.get('name'));
   });
-  const result = db.exportBundle();
+  const bundleExporter = new BundleExporter({ db });
+  const result = bundleExporter.exportBundle();
   let exportData = jsyaml.dump(result);
   // Replace the temporary app ids with the real ids.
   idMap.forEach((name, id) => {
@@ -105,6 +107,7 @@ utils.exportEnvironmentFile = db => {
   @param {Date} date object
 */
 utils._generateBundleExportFileName = (envName, date=new Date()) => {
+  envName = envName || 'untitled-model';
   const fileExtension = '.yaml';
   return [envName,
     date.getFullYear(),
