@@ -163,43 +163,6 @@ class PostDeployment extends React.Component {
   }
 
   /**
-    Callback for when the post-deployment script has been fetched.
-
-    @param {String} error Error from the API.
-    @param {String} postDeploymentScript The content of the script.
-  */
-  _getPostDeploymentScriptCallback(error, postDeploymentScript) {
-    if (error) {
-      console.error(error);
-    }
-    this.setState({
-      postDeploymentScript: postDeploymentScript
-    });
-  }
-
-  /**
-    Render a button for executing the post-deployment script if one exists.
-
-    @return {Object} The button if required, otherwise nothing.
-  */
-  _renderPostDeploymentScriptButton() {
-    const showPostDeploymentScript = this.props.showPostDeploymentScript;
-    if (showPostDeploymentScript && this.state.postDeploymentScript) {
-      return (<div>
-        <GenericButton
-          action={this._executePostDeploymentScript.bind(this)}>
-            Execute post-deployment script
-        </GenericButton>
-      </div>);
-    }
-  }
-
-  _executePostDeploymentScript() {
-    const scriptLines = this.state.postDeploymentScript.split('\n');
-    this.props.changeState({terminal: scriptLines});
-  }
-
-  /**
     Parse header information from markdown files.
     If the markdown passed in starts with:
     ---
