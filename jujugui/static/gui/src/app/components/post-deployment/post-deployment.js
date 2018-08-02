@@ -153,6 +153,10 @@ class PostDeployment extends React.Component {
     }
   }
 
+  /**
+    Execute the post-deployment script by opening the terminal with the script
+    as a payload.
+  */
   _executePostDeploymentScript() {
     const scriptLines = this.state.postDeploymentScript.split('\n');
     this.props.changeState({terminal: scriptLines});
