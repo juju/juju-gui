@@ -485,7 +485,7 @@ Browser: ${navigator.userAgent}`
           charmstore={shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
           entityId={entityId}
           showPostDeploymentScript={
-              this.applicationConfig.flags.postDeploymentScript || false} />,
+            this.applicationConfig.flags.postDeploymentScript || false} />,
         document.getElementById('post-deployment')
       );
     }
