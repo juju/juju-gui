@@ -77,6 +77,14 @@ describe('init utils', () => {
         utils._generateBundleExportFileName(envName, date);
       assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
     });
+
+    it('can generate a name when there is no model name', () => {
+      let envName = '';
+      let date = new Date('October 13, 2014 11:13:00');
+      let exportFilename =
+        utils._generateBundleExportFileName(envName, date);
+      assert.equal(exportFilename, 'untitled-model-2014-10-13.yaml');
+    });
   });
 
   describe('getName', () => {
