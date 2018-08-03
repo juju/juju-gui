@@ -35,7 +35,7 @@ describe('EntityFiles', function() {
     var archiveUrl = `${apiUrl}/django/archive`;
     var fileItems = [
       <li className="p-list-tree__item" key="foo.zip">
-        <a className="link"
+        <a className="link link--cold"
           href={archiveUrl + '/foo.zip'}
           target="_blank"
           title="foo.zip">
@@ -53,7 +53,7 @@ describe('EntityFiles', function() {
           className="p-list-tree" id="/bar" role="tabpanel">
           {[
             <li className="p-list-tree__item" key="foo.txt">
-              <a className="link"
+              <a className="link link--cold"
                 href={archiveUrl + '/bar/foo.txt'}
                 target="_blank"
                 title="foo.txt">
