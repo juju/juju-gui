@@ -123,7 +123,7 @@ class EntityFiles extends React.Component {
         const fileLink = `${url}/${path}`;
         return (
           <li className="p-list-tree__item" key={path}>
-            <a className="link"
+            <a className="link link--cold"
               href={fileLink}
               target="_blank"
               title={fileName}>

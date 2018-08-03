@@ -39,12 +39,8 @@
   }
 
   &__link {
-    text-decoration: none;
+    @extend %cold-link-no-hover;
     display: block;
-
-    &:hover {
-      text-decoration: none;
-    }
   }
 
   &__icon {

@@ -135,10 +135,6 @@
       }
     }
 
-    a {
-      color: $link-blue;
-    }
-
     ul {
       list-style-position: outside;
       margin-left: 2rem;
@@ -313,7 +309,7 @@
 
   &__configuration {
     margin-top: 1.6rem;
-    
+
     .entity-content__header {
       margin-bottom: 1rem;
     }

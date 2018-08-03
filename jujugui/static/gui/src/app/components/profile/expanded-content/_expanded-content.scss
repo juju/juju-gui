@@ -10,14 +10,9 @@
     }
 
     a {
-      color: $color-link;
       display: inline-block;
       font-weight: 400;
       margin-top: -.5rem;
-
-      &:hover {
-        text-decoration: underline;
-      }
     }
   }
 

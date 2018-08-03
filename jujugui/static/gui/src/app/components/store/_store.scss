@@ -42,7 +42,7 @@
     }
 
     &__link {
-      text-decoration: none;
+      @extend %cold-link;
       display: block;
       width: 100%;
       height: 100%;

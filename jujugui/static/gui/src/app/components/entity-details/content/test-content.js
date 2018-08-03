@@ -86,7 +86,7 @@ describe('EntityContent', function() {
                   <h4 className="entity-content__metadata-title">
                     Tags:
                   </h4>&nbsp;
-                  <a className="link"
+                  <a className="link link--cold"
                     data-id="database"
                     onClick={wrapper.find('.link').at(0).prop('onClick')}>
                     database
@@ -131,7 +131,7 @@ describe('EntityContent', function() {
                 </h3>
                 <ul className="section__list">
                   <li className="section__list-item">
-                    <a className="link"
+                    <a className="link link--cold"
                       href="https://bugs.launchpad.net/charms/+source/django"
                       target="_blank">
                       Submit a bug
@@ -205,12 +205,12 @@ describe('EntityContent', function() {
     const expected = (
       <div className="entity-content__metadata">
         <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
-        <a className="link"
+        <a className="link link--cold"
           key="terms1"
           onClick={links.at(0).prop('onClick')}>
             terms1
         </a>{', '}
-        <a className="link"
+        <a className="link link--cold"
           key="terms2"
           onClick={links.at(1).prop('onClick')}>
             terms2
@@ -296,14 +296,14 @@ describe('EntityContent', function() {
         </h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a className="link"
+            <a className="link link--cold"
               href="http://example.com/bugs"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a className="link"
+            <a className="link link--cold"
               href="http://example.com/"
               target="_blank">
               Project homepage
@@ -403,7 +403,7 @@ describe('EntityContent', function() {
                 <ul className="section__list">
                   {undefined}
                   <li className="section__list-item">
-                    <a className="link"
+                    <a className="link link--cold"
                       href={'https://code.launchpad.net/~charmers/charms/' +
                       'bundles/django-cluster/bundle'}
                       target="_blank">
@@ -455,14 +455,14 @@ describe('EntityContent', function() {
         </h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a className="link"
+            <a className="link link--cold"
               href="http://example.com/bugs"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a className="link"
+            <a className="link link--cold"
               href="http://example.com/"
               target="_blank">
               Project homepage

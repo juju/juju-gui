@@ -78,7 +78,7 @@ describe('Store', function() {
             scripts is straightforward. You can keep new charms
             private, or share them back with the community.</p>
             <p>
-              <a className="link"
+              <a className="link link--cold"
                 href={href}
                 target="_blank">
               Learn more about writing charms&nbsp;&rsaquo;

@@ -163,15 +163,11 @@ $asset-path: 'static/gui/build/app/assets/';
 // Mobile styles
 @import 'mobile';
 
-// XXX: The current version of Vanilla updates the link colour, but this breaks
-// the gui styling. This override should be removed and the link colours set at
-// some point in the future when someone has the powers.
 a {
-  color: $cool-grey;
   cursor: pointer;
 
-  &.cold-link {
-    color: $cool-grey;
+  &.link--cold {
+    @extend %cold-link;
   }
 }
 

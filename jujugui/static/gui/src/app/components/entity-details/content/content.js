@@ -212,7 +212,7 @@ class EntityContent extends React.Component {
   _generateList(list, handler) {
     return list.map(function(item, i) {
       return [i > 0 ? ', ' : ''].concat(
-        <a className="link" data-id={item} key={item + i} onClick={handler}>
+        <a className="link link--cold" data-id={item} key={item + i} onClick={handler}>
           {item}
         </a>
       );
@@ -277,7 +277,7 @@ class EntityContent extends React.Component {
     } else {
       content = terms.map((item, i) => {
         return [i > 0 ? ', ' : ''].concat(
-          <a className="link"
+          <a className="link link--cold"
             key={item.name}
             onClick={this._toggleTerms.bind(this, item)}>
             {item.name}
@@ -439,7 +439,7 @@ class EntityContent extends React.Component {
         <ul className="section__list">
           {bugLink ? (
             <li className="section__list-item">
-              <a className="link"
+              <a className="link link--cold"
                 href={bugLink}
                 target="_blank">
                 Submit a bug
@@ -447,7 +447,7 @@ class EntityContent extends React.Component {
             </li>) : undefined}
           {homepageLink ? (
             <li className="section__list-item">
-              <a className="link"
+              <a className="link link--cold"
                 href={homepageLink}
                 target="_blank">
                 Project homepage
