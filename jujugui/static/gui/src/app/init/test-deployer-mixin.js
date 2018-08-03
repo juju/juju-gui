@@ -343,6 +343,22 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(topo.annotateBoxPosition.calledOnce, true);
   });
 
+  it('does not update service box after deployment if not found', function() {
+    const ghostService = new Y.Model({
+      id: 'ghostid',
+      name: 'django',
+      config: {}
+    });
+    const topo = ghostDeployer.topology.topo;
+    topo.annotateBoxPosition = sinon.stub();
+    topo.service_boxes = {};
+    ghostDeployer._deployCallbackHandler(ghostService, null);
+    const attrs = ghostService.getAttrs();
+    assert.equal(attrs.id, 'django');
+    assert.equal(attrs.pending, false, 'pending');
+    assert.equal(topo.annotateBoxPosition.called, false);
+  });
+
   it('notifies add_unit success', function() {
     var ghostUnit = {displayName: 'django/42'};
     var evt = {err: 'bad wolf'};
