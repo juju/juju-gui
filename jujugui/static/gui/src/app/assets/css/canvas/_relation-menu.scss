@@ -66,9 +66,8 @@
       white-space: nowrap;
 
       a {
-        color: $cool-grey;
+        @extend %cold-link;
         font-size: 13px;
-        text-decoration: none;
       }
 
       &:last-child {

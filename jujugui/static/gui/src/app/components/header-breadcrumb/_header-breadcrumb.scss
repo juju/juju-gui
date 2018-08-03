@@ -10,6 +10,7 @@
   $breadcrumb-line-height: 40px;
 
   &--link {
+    @extend %cold-link;
     position: relative;
     border-bottom: 1px solid transparent;
     font-size: $breadcrumb-font-size;
@@ -20,14 +21,6 @@
     display: block;
     white-space: nowrap;
     max-width: 300px;
-
-    &:focus,
-    &:active,
-    &:hover {
-      color: $link-blue;
-      text-decoration: none;
-      border-bottom-color: currentColor;
-    }
 
     &.profile-disabled {
       cursor: default;
