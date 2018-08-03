@@ -144,7 +144,7 @@ class Store extends React.Component {
             scripts is straightforward. You can keep new charms
             private, or share them back with the community.</p>
             <p>
-              <a className="link"
+              <a className="link link--cold"
                 href={href}
                 target="_blank">
               Learn more about writing charms&nbsp;&rsaquo;
@@ -378,7 +378,7 @@ class Store extends React.Component {
       let key = `tagItem-${index}`;
       let comma = index === topics.length - 1 ? '' : ',';
       list.push(<li className="inline-list__item" key={key}>
-        <span className="link"
+        <span className="link link--cold"
           data-filterkey="tags"
           data-filtervalue={topic.name}
           onClick={this._handleSearchClick.bind(this)}>
@@ -465,7 +465,7 @@ class Store extends React.Component {
           <div className="six-col no-margin-bottom last-col">
             <h3>Nagios</h3>
             <p>
-                      By <a className="link"
+                      By <a className="link link--cold"
                 href={this._generateUserPath('charmers')}
                 target="_blank">
                           charmers
@@ -636,7 +636,7 @@ class Store extends React.Component {
           </li>
         </ul>
         <p className="intro">
-          <span className="link"
+          <span className="link link--cold"
             data-filterkey="tags"
             data-filtervalue="ops"
             onClick={this._handleSearchClick.bind(this)}>
@@ -698,7 +698,7 @@ class Store extends React.Component {
           </div>
           <div className="six-col no-margin-bottom last-col">
             <h3>Realtime Syslog Analytics</h3>
-            <p>By <a className="link"
+            <p>By <a className="link link--cold"
               href={this._generateUserPath('bigdata-charmers')}
               target="_blank">
                           bigdata-charmers
@@ -838,7 +838,7 @@ class Store extends React.Component {
           </li>
         </ul>
         <p className="intro">
-          <span className="link"
+          <span className="link link--cold"
             data-filterkey="tags"
             data-filtervalue="analytics"
             onClick={this._handleSearchClick.bind(this)}>
@@ -867,7 +867,7 @@ class Store extends React.Component {
           </div>
           <div className="six-col no-margin-bottom last-col">
             <h3>MySQL</h3>
-            <p>By <a className="link"
+            <p>By <a className="link link--cold"
               href={this._generateUserPath('mysql-charmers')}
               target="_blank">
                           mysql-charmers
@@ -977,7 +977,7 @@ class Store extends React.Component {
           </li>
         </ul>
         <p className="intro">
-          <span className="link"
+          <span className="link link--cold"
             data-filterkey="tags"
             data-filtervalue="databases"
             onClick={this._handleSearchClick.bind(this)}>
