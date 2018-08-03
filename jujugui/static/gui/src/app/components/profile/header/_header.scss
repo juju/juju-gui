@@ -103,12 +103,8 @@
     }
 
     a {
+      @extend %cold-link;
       color: $color-dark;
-
-      &:hover {
-        color: $link-blue;
-        text-decoration: underline;
-      }
     }
 
     li {
