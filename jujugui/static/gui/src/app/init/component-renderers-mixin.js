@@ -483,7 +483,9 @@ Browser: ${navigator.userAgent}`
         <PostDeployment
           changeState={this._bound.changeState}
           charmstore={shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
-          entityId={entityId} />,
+          entityId={entityId}
+          showPostDeploymentScript={
+            this.applicationConfig.flags.postDeploymentScript || false} />,
         document.getElementById('post-deployment')
       );
     }
