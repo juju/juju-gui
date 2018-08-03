@@ -185,7 +185,6 @@ const DeployerMixin = superclass => class extends superclass {
 
     // Transition the ghost viewModel to the new service. It's alive!
     const ghostId = ghostService.get('id');
-
     ghostService.setAttrs({
       id: serviceName,
       displayName: undefined,
@@ -195,15 +194,23 @@ const DeployerMixin = superclass => class extends superclass {
       constraints: {}
     });
 
-    var topo = this.topology.topo;
-    // Without this following code on a real environment the service icons
-    // would disappear and then re-appear when deploying services.
+    // Without this following code the service icons would disappear and then
+    // re-appear when deploying services.
+    const topo = this.topology.topo;
     const boxModel = topo.service_boxes[ghostId];
+    if (!boxModel) {
+      // The application box has been already replaced, probably as part of
+      // mega-watcher handling and consequent db changes.
+      // TODO(frankban): in general handling of this kind of races in the GUI is
+      // fragile due to too many assumptions about the order in which operations
+      // are executed. While waiting for a better solution, at least try not to
+      // break deployments in the attempt of making the canvas prettier.
+      return;
+    }
     boxModel.id = serviceName;
     boxModel.pending = false;
     delete topo.service_boxes[ghostId];
     topo.service_boxes[serviceName] = boxModel;
-
     topo.annotateBoxPosition(boxModel);
   }
 
