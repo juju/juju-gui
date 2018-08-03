@@ -7,6 +7,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
+const GenericButton = require('../generic-button/generic-button');
 const Panel = require('../panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
@@ -33,7 +34,8 @@ class PostDeployment extends React.Component {
 
     this.state = {
       content: null,
-      metadata: {}
+      metadata: {},
+      postDeploymentScript: null
     };
   }
 
@@ -67,6 +69,19 @@ class PostDeployment extends React.Component {
         this.props.entityId,
         fileName,
         this._getGetStartedCallback.bind(this)
+      );
+    }
+    fileName = 'post-deployment.sh';
+    if (files && files.some(file => {
+      if (file.toLowerCase() === fileName) {
+        fileName = file;
+        return true;
+      }
+    })) {
+      this.props.charmstore.getFile(
+        this.props.entityId,
+        fileName,
+        this._getPostDeploymentScriptCallback.bind(this)
       );
     }
   }
@@ -107,6 +122,48 @@ class PostDeployment extends React.Component {
   }
 
   /**
+    Callback for when the post-deployment script has been fetched.
+
+    @param {String} error Error from the API.
+    @param {String} postDeploymentScript The content of the script.
+  */
+  _getPostDeploymentScriptCallback(error, postDeploymentScript) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    this.setState({
+      postDeploymentScript: postDeploymentScript
+    });
+  }
+
+  /**
+    Render a button for executing the post-deployment script if one exists.
+
+    @return {Object} The button if required, otherwise nothing.
+  */
+  _renderPostDeploymentScriptButton() {
+    const showPostDeploymentScript = this.props.showPostDeploymentScript;
+    if (showPostDeploymentScript && this.state.postDeploymentScript) {
+      return (<div>
+        <GenericButton
+          action={this._executePostDeploymentScript.bind(this)}>
+            Execute post-deployment script
+        </GenericButton>
+      </div>);
+    }
+  }
+
+  /**
+    Execute the post-deployment script by opening the terminal with the script
+    as a payload.
+  */
+  _executePostDeploymentScript() {
+    const scriptLines = this.state.postDeploymentScript.split('\n');
+    this.props.changeState({terminal: scriptLines});
+  }
+
+  /**
     Parse header information from markdown files.
     If the markdown passed in starts with:
     ---
@@ -132,7 +189,7 @@ class PostDeployment extends React.Component {
       lineByLine = markdown.split('\n');
       let metadata = [];
       lineByLine.shift();
-      while(lineByLine.length > 0 && lineByLine[0] !== '---') {
+      while (lineByLine.length > 0 && lineByLine[0] !== '---') {
         metadata.push(lineByLine.shift());
       }
       lineByLine.shift();
@@ -229,6 +286,7 @@ class PostDeployment extends React.Component {
           </span>
           <div dangerouslySetInnerHTML={{__html: this.state.content}}
             onClick={this._handleContentClick.bind(this)} />
+          {this._renderPostDeploymentScriptButton()}
         </Panel>
       );
     }
@@ -242,7 +300,8 @@ PostDeployment.propTypes = {
     getEntity: PropTypes.func.isRequired,
     getFile: PropTypes.func.isRequired
   }).isRequired,
-  entityId: PropTypes.string.isRequired
+  entityId: PropTypes.string.isRequired,
+  showPostDeploymentScript: PropTypes.bool.isRequired
 };
 
 module.exports = PostDeployment;

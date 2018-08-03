@@ -15,7 +15,8 @@ describe('PostDeployment', () => {
       <PostDeployment
         changeState={options.changeState || sinon.stub()}
         charmstore={options.charmstore || charmstore}
-        entityId={options.entityId || 'test'} />
+        entityId={options.entityId || 'test'}
+        showPostDeploymentScript={options.script || false} />
     );
   };
 
@@ -62,6 +63,35 @@ describe('PostDeployment', () => {
     // When requesting the file it should request the actual name as
     // charmstore is case sensitive
     assert.equal(charmstore.getFile.args[0][1], 'gEtstArteD.md');
+  });
+
+  it('renders a post-deployment script button', () => {
+    const wrapper = renderComponent({script: true});
+    const instance = wrapper.instance();
+    instance._getEntityCallback(null, [{id: 'test', files: [
+      'getstarted.md',
+      'post-deployment.sh'
+    ]}]);
+    wrapper.update();
+    const expected = 'Execute post-deployment script';
+    assert.equal(wrapper.find('GenericButton').props().children, expected);
+  });
+
+  it('sends the post-deployment script to the terminal', () => {
+    const changeState = sinon.stub();
+    const wrapper = renderComponent({script: true, changeState: changeState});
+    const instance = wrapper.instance();
+    instance._getEntityCallback(null, [{id: 'test', files: [
+      'getstarted.md',
+      'post-deployment.sh'
+    ]}]);
+    wrapper.update();
+    wrapper.find('GenericButton').props().action();
+    // sinon.callsArgWith passes the same file each time it's called, so we
+    // expect the markdown content, here.
+    assert.deepEqual(changeState.args[0][0], {
+      terminal: ['# Test Name', '', '{details_link}{requires_cli_link}']
+    });
   });
 
   it('extracts metadata in markdown head', () => {

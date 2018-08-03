@@ -319,8 +319,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               'juju-env-api',
               'juju-models',
               'base',
-              'model',
-              'yui-patches'
+              'model'
           ], function () {
             window.JujuGUI = new JujuGUI(juju_config);
           });
