@@ -28,6 +28,5 @@ window.MODULES = [
   'juju-env-api',
   'juju-models',
   'base',
-  'model',
-  'yui-patches'
+  'model'
 ];

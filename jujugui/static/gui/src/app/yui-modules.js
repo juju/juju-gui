@@ -1,7 +1,6 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
-require('./extensions/yui-patches');
 require('./models/bundle');
 require('./models/charm');
 require('./models/entity-extension');
