@@ -107,3 +107,24 @@
   margin: 5px 10px 10px 10px;
   width: calc(100% - 20px);
 }
+
+%cold-link-no-hover {
+  color: $cool-grey;
+
+  &:focus,
+  &:active,
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+%cold-link {
+  color: $cool-grey;
+
+  &:focus,
+  &:active,
+  &:hover {
+    color: $link-blue;
+    text-decoration: underline;
+  }
+}
