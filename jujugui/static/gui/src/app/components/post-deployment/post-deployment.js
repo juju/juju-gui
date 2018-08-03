@@ -130,6 +130,7 @@ class PostDeployment extends React.Component {
   _getPostDeploymentScriptCallback(error, postDeploymentScript) {
     if (error) {
       console.error(error);
+      return;
     }
     this.setState({
       postDeploymentScript: postDeploymentScript
