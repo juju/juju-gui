@@ -1,3 +1,10 @@
+- 2.13.2:
+  - Update JAASLib to 0.4.1
+  - Update to use external bakery library (https://github.com/juju/bakeryjs).
+  - Removed syntax highlighting in readme files to save on size.
+  - (Fix) Errors experienced during destroying models are now surfaced to the user.
+  - (Fix) Modifying the Kubernetes bundles pre-deploy no longer prevent it from adding machines on deploy.
+
 - 2.13.1:
   - Remove test files from dist.
   - Update JAASlib.
