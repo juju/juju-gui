@@ -883,7 +883,12 @@ window.yui.add('juju-controller-api', function(Y) {
         tagKey = 'tag';
       }
       const entities = ids.map(function(id) {
-        return {[tagKey]: tags.build(tags.MODEL, id)};
+        return {
+          [tagKey]: tags.build(tags.MODEL, id),
+          // TODO(frankban): allow for selecting not to destroy storage.
+          // This will be available when switching to jujulib.
+          'destroy-storage': true
+        };
       });
       // Send the API request.
       this._send_rpc({

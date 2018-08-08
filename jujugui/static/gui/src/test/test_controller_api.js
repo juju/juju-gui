@@ -636,7 +636,7 @@ describe('Controller API', function() {
           version: 4,
           request: 'DestroyModels',
           params: {models: [
-            {'model-tag': 'model-default'}
+            {'model-tag': 'model-default', 'destroy-storage': true}
           ]},
           'request-id': 1
         });
@@ -662,7 +662,7 @@ describe('Controller API', function() {
           version: 3,
           request: 'DestroyModels',
           params: {entities: [
-            {tag: 'model-default'}
+            {tag: 'model-default', 'destroy-storage': true}
           ]},
           'request-id': 1
         });
@@ -687,8 +687,8 @@ describe('Controller API', function() {
           version: 4,
           request: 'DestroyModels',
           params: {models: [
-            {'model-tag': 'model-test-1'},
-            {'model-tag': 'model-test-2'}
+            {'model-tag': 'model-test-1', 'destroy-storage': true},
+            {'model-tag': 'model-test-2', 'destroy-storage': true}
           ]},
           'request-id': 1
         });
