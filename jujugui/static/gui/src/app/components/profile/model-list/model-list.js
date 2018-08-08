@@ -109,7 +109,7 @@ class ProfileModelList extends React.Component {
       type: 'destructive'
     }];
     const message = `Are you sure you want to destroy ${model.name}?`
-      + ' All the applications and units included in the model will be'
+      + ' All the applications, units and storage used by the model will be'
       + ' destroyed. This action cannot be undone.';
     this.setState({
       notification: (
