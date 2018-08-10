@@ -1,0 +1,57 @@
+////
+/// @author       Juju GUI team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-actions
+/// @since        0.0.21
+////
+
+/// Social list
+/// @group Lists
+/// @example
+/// <ul class="social-list">
+///   <li class="social-list__item">
+///			<a href="#" class="social-list__item--twitter">Share on Twitter</a>
+///		</li>
+///   <li class="social-list__item">
+///			<a href="#" class="social-list__item--google-plus">Share on Google plus</a>
+///		</li>
+///   <li class="social-list__item">
+///			<a href="#" class="social-list__item--facebook">Share on Facebook</a>
+///		</li>
+/// </ul>
+@mixin cloud-social-list {
+  .social-list {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+
+    &__item--twitter,
+    &__item--google-plus,
+    &__item--facebook {
+      margin-right: 20px;
+      float: left;
+      text-indent: -99999px;
+      background-image: url('#{$asset-server}ed986fc0-icon-social.svg');
+      background-repeat: no-repeat;
+      height: 44px;
+      width: 44px;
+      overflow: hidden;
+      display: inline-block;
+
+      &:hover {
+        background-position-y: -45px;
+      }
+    }
+
+    &__item--twitter {
+      background-position: 0 0;
+    }
+
+    &__item--google-plus {
+      background-position: -45px 0;
+    }
+
+    &__item--facebook {
+      background-position: -90px 0;
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "_args": [
+    [
+      "vanilla-framework@0.1.0",
+      "/home/ubuntu/code/juju-gui"
+    ]
+  ],
+  "_from": "vanilla-framework@0.1.0",
+  "_id": "vanilla-framework@0.1.0",
+  "_inBundle": false,
+  "_integrity": "sha1-TbhC6wlEsGiBxIFSd01RHvBr7zA=",
+  "_location": "/vanilla-framework",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "vanilla-framework@0.1.0",
+    "name": "vanilla-framework",
+    "escapedName": "vanilla-framework",
+    "rawSpec": "0.1.0",
+    "saveSpec": null,
+    "fetchSpec": "0.1.0"
+  },
+  "_requiredBy": [
+    "/cloud-vanilla-theme"
+  ],
+  "_resolved": "https://registry.npmjs.org/vanilla-framework/-/vanilla-framework-0.1.0.tgz",
+  "_spec": "0.1.0",
+  "_where": "/home/ubuntu/code/juju-gui",
+  "author": {
+    "name": "Canonical Webteam",
+    "email": "webteam@canonical.com",
+    "url": "http://design.canonical.com/team"
+  },
+  "bugs": {
+    "url": "http://github.com/ubuntudesign/vanilla-framework/issues",
+    "email": "webteam@canonical.com"
+  },
+  "contributors": [
+    {
+      "name": "Anthony Dillon",
+      "email": "anthony.dillon@canonical.com"
+    },
+    {
+      "name": "Graham Bancroft",
+      "email": "graham.bancroft@canonical.com"
+    },
+    {
+      "name": "Tristram Oaten",
+      "email": "tristram.oaten@canonical.com"
+    },
+    {
+      "name": "Robin Winslow",
+      "email": "robin.winslow@canonical.com"
+    },
+    {
+      "name": "Karl Williams",
+      "email": "karl.williams@canonical.com"
+    },
+    {
+      "name": "Richard McCartney",
+      "email": "richard.mccartney@canonical.com"
+    },
+    {
+      "name": "Peter Mahnke",
+      "email": "peter.mahnke@canonical.com"
+    }
+  ],
+  "description": "A simple, extendable CSS framework.",
+  "devDependencies": {
+    "gulp": "3.9",
+    "gulp-autoprefixer": "3.1.0",
+    "gulp-cache": "0.2.8",
+    "gulp-cssnano": "^2.1.0",
+    "gulp-notify": "2.2.0",
+    "gulp-rename": "1.2.0",
+    "gulp-sass": "2.1.1",
+    "gulp-scss-lint": "0.1.10",
+    "gulp-util": "3.0.4",
+    "sassdoc": "2.1.7"
+  },
+  "homepage": "http://ubuntudesign.github.io/vanilla-framework/",
+  "keywords": [
+    "ubuntu",
+    "vanilla",
+    "framework",
+    "CSS",
+    "SASS",
+    "SCSS",
+    "mixin",
+    "module"
+  ],
+  "license": "LGPL-3.0",
+  "name": "vanilla-framework",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ubuntudesign/vanilla-framework.git"
+  },
+  "scripts": {
+    "clean": "rm -r build; rm -r node_modules",
+    "prepublish": "./.install_dependencies.sh"
+  },
+  "version": "0.1.0"
+}

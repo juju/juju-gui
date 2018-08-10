@@ -1,126 +1,13 @@
 .profile-header {
-  background-color: $white;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  border-bottom: 1px solid $light-grey;
+  margin-bottom: 3rem; // Temporarily compensate for lack of following strip
 
-  &__inner {
-    display: flex;
+  .p-strip {
+    background-color: $color-x-light !important;
   }
 
   &__close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-  }
-
-  &__avatar {
-    $size: 96px;
-    float: left;
-    width: $size;
-    height: $size;
-    margin-top: 7px;
-    border-radius: 50%;
-
-    &--hidden {
-      visibility: hidden;
-    }
-
-    img {
-      border-radius: 50%;
-    }
-
-    &--default {
-      display: block;
-      overflow: hidden;
-      position: relative;
-      background-color: #28a3ea;
-
-      .profile-header__avatar {
-        &-overlay {
-          position: absolute;
-          left: -20px;
-          top: 20px;
-        }
-
-        &-overlay:after,
-        &-overlay:before {
-          content: '';
-          position: absolute;
-          width: 300px;
-          height: 300px;
-          background-color: $black;
-          opacity: .2;
-        }
-
-        &-overlay:before {
-          left: -210px;
-          transform: rotate(-45deg);
-        }
-
-        &-overlay:after {
-          left: 10px;
-          transform: rotate(45deg);
-        }
-      }
-    }
-  }
-
-  &__username {
-    color: $color-dark;
-    $size: 45px;
-    margin: 20px 0 12px;
-
-    h1 {
-      padding: 0;
-      font-size: $size;
-      line-height: 58.5px;
-    }
-  }
-
-  &__meta {
-    list-style: none;
-    margin-left: 16px;
-
-    li {
-      margin-bottom: 4px;
-    }
-
-    &,
-    li:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  &__menu {
-    list-style: none;
-    margin-left: auto;
-    padding-left: 16px;
-    border-left: 1px solid #ccc;
-
-    @media (max-width: 768px) {
-      display: none;
-    }
-
-    a {
-      @extend %cold-link;
-      color: $color-dark;
-    }
-
-    li {
-      margin-bottom: 4px;
-
-      &:last-child {
-        margin-bottom: 0
-      }
-    }
-  }
-
-  &__menutitle {
-    border-bottom: 1px solid #ccc;
-    color: $color-dark;
-    line-height: 42px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
+    top: 0;
+    right: 0;
   }
 }

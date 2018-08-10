@@ -1,0 +1,26 @@
+// scss-lint:disable QualifyingElement
+
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/vanilla-framework/docs/#mixin-vf-footer
+/// @since        0.0.3
+////
+
+/// Cloud footer styling
+/// @example
+/// <footer class="global" role="contentinfo">
+///   <div class="legal">
+///    <p>
+///       &copy; 2015 FooBar Ltd. FooBar is a registered trademark of FooBar Ltd.
+///       <a href="#">Report a bug on this site</a>
+///     </p>
+///   </div>
+/// </footer>
+@mixin cloud-footer {
+  footer.global {
+    @media only screen and (max-width : $breakpoint-medium) {
+      padding-top: 0;
+    }
+  }
+}
+// scss-lint:enable QualifyingElement

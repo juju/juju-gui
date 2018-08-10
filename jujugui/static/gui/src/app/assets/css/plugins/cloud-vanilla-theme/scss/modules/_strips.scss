@@ -1,0 +1,26 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-base
+/// @since        0.0.6
+////
+
+/// Strips classes
+/// @group Utils
+@mixin cloud-strips {
+  .strip-white {
+    background: $white;
+  }
+
+  .strip-dark {
+    background: $cool-grey;
+    color: $white;
+
+    a {
+      color: $white;
+    }
+  }
+
+  .strip-trans {
+    background: $transparent;
+  }
+}

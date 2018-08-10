@@ -1,0 +1,21 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-base
+/// @since        0.0.6
+////
+
+/// Cloud typographic element styles
+/// @group Typography
+@mixin cloud-typography {
+  pre {
+    padding: 10px 15px;
+    background-color: $cool-grey;
+    border: 0;
+    border-radius: 2px;
+    color: $mid-grey;
+  }
+
+  .note {
+    font-size: 1em;
+  }
+}

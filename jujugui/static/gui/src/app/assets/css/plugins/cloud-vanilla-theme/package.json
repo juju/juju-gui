@@ -1,0 +1,108 @@
+{
+  "_args": [
+    [
+      "cloud-vanilla-theme@0.1.2",
+      "/home/ubuntu/code/juju-gui"
+    ]
+  ],
+  "_from": "cloud-vanilla-theme@0.1.2",
+  "_id": "cloud-vanilla-theme@0.1.2",
+  "_inBundle": false,
+  "_integrity": "sha1-xPF4XvHu1/sAW24QjaHCfbG/nsQ=",
+  "_location": "/cloud-vanilla-theme",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "cloud-vanilla-theme@0.1.2",
+    "name": "cloud-vanilla-theme",
+    "escapedName": "cloud-vanilla-theme",
+    "rawSpec": "0.1.2",
+    "saveSpec": null,
+    "fetchSpec": "0.1.2"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cloud-vanilla-theme/-/cloud-vanilla-theme-0.1.2.tgz",
+  "_spec": "0.1.2",
+  "_where": "/home/ubuntu/code/juju-gui",
+  "author": {
+    "name": "Canonical Webteam",
+    "email": "webteam@canonical.com",
+    "url": "http://design.canonical.com/team"
+  },
+  "bugs": {
+    "url": "http://github.com/ubuntudesign/cloud-vanilla-theme/issues",
+    "email": "webteam@canonical.com"
+  },
+  "contributors": [
+    {
+      "name": "Anthony Dillon",
+      "email": "anthony.dillon@canonical.com"
+    },
+    {
+      "name": "Graham Bancroft",
+      "email": "graham.bancroft@canonical.com"
+    },
+    {
+      "name": "Tristram Oaten",
+      "email": "tristram.oaten@canonical.com"
+    },
+    {
+      "name": "Robin Winslow",
+      "email": "robin.winslow@canonical.com"
+    },
+    {
+      "name": "Karl Williams",
+      "email": "karl.williams@canonical.com"
+    },
+    {
+      "name": "Richard McCartney",
+      "email": "richard.mccartney@canonical.com"
+    },
+    {
+      "name": "Peter Mahnke",
+      "email": "peter.mahnke@canonical.com"
+    }
+  ],
+  "dependencies": {
+    "vanilla-framework": "^0.1.0"
+  },
+  "description": "A Cloud flavoured theme for the wonderfully simple, extendable CSS framework.",
+  "devDependencies": {
+    "gulp": "3.9",
+    "gulp-autoprefixer": "3.1.0",
+    "gulp-cache": "0.2.8",
+    "gulp-cssnano": "^2.1.0",
+    "gulp-notify": "2.2.0",
+    "gulp-rename": "1.2.0",
+    "gulp-sass": "2.1.1",
+    "gulp-scss-lint": "0.1.10",
+    "gulp-util": "3.0.4",
+    "sassdoc": "2.1.7"
+  },
+  "homepage": "https://github.com/ubuntudesign/cloud-vanilla-theme#readme",
+  "keywords": [
+    "cloud",
+    "ubuntu",
+    "vanilla",
+    "framework",
+    "CSS",
+    "SASS",
+    "SCSS",
+    "mixin",
+    "module"
+  ],
+  "license": "LGPL-3.0",
+  "name": "cloud-vanilla-theme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ubuntudesign/cloud-vanilla-theme.git"
+  },
+  "scripts": {
+    "clean": "rm -r build; rm -r node_modules",
+    "prepublish": "./.install_dependencies.sh"
+  },
+  "version": "0.1.2"
+}

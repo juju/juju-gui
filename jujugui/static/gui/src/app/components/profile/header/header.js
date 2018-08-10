@@ -1,4 +1,3 @@
-/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 const classNames = require('classnames');
@@ -61,35 +60,43 @@ class ProfileHeader extends React.Component {
   _generateAvatar() {
     const user = this.state.user;
     const isCurrent = this.props.userInfo.isCurrent;
-    let content = <span className="profile-header__avatar-overlay"></span>;
+    let content;
     if (user && user.gravatar_id) {
       content = (
-        <img alt="Gravatar" className="profile-header__avatar-gravatar"
-          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />);
+        <img
+          alt={`Gravatar for ${user.fullname}`}
+          className="p-media-object__image is-round"
+          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />
+      );
     }
-    const classes = classNames(
-      'profile-header__avatar', {
-        tooltip: isCurrent,
-        'profile-header__avatar--default': !user || !user.gravatar_id,
-        // If we haven't yet received a response about the user data, don't
-        // return an avatar so that we can avoid a flash of the 'fallback' icon.
-        'profile-header__avatar--hidden': !this.state.userRequested
-      });
+    const classes = classNames('profile-header__avatar', {
+      tooltip: isCurrent,
+      'profile-header__avatar--default': !user || !user.gravatar_id,
+      // If we haven't yet received a response about the user data, don't
+      // return an avatar so that we can avoid a flash of the 'fallback' icon.
+      'profile-header__avatar--hidden': !this.state.userRequested
+    });
     const tooltip = isCurrent ? (
-      <span className="tooltip__tooltip">
-        <span className="tooltip__inner tooltip__inner--down">
-          Edit your <strong>Gravatar</strong>
-        </span>
-      </span>) : null;
+      <span className="p-tooltip__message" id="tp-cntr" role="tooltip">
+        Edit your Gravatar
+      </span>
+    ) : null;
     return (
       <span className={classes}>
         {isCurrent ? (
-          <a href="http://gravatar.com/"
+          <a
+            aria-describedby="tp-cntr"
+            className="p-tooltip p-tooltip--top-center"
+            href="http://gravatar.com/"
             target="_blank">
             {content}
-          </a>) : content}
-        {tooltip}
-      </span>);
+            {tooltip}
+          </a>
+        ) : (
+          content
+        )}
+      </span>
+    );
   }
 
   /**
@@ -104,57 +111,67 @@ class ProfileHeader extends React.Component {
     let items;
     if (this.props.gisf) {
       items = [
-        <li key="controller">
-          <h2 className="profile-header__menutitle">
+        <li className="p-list__item" key="controller">
+          <h2>
             <a href="/">jaas</a>
           </h2>
+          <hr />
         </li>,
-        <li key="home"><a href="https://jujucharms.com/home">Home</a></li>,
-        <li key="aboutjaas"><a href="https://jujucharms.com/jaas">About JAAS</a></li>];
+        <li className="p-list__item" key="home">
+          <a href="https://jujucharms.com/home">Home</a>
+        </li>,
+        <li className="p-list__item" key="aboutjaas">
+          <a href="https://jujucharms.com/jaas">About JAAS</a>
+        </li>
+      ];
     } else {
       items = [
-        <li key="controller">
-          <h2 className="profile-header__menutitle">
-            {this.props.controllerIP}
-          </h2>
+        <li className="p-list__item" key="controller">
+          <h2>{this.props.controllerIP}</h2>
+          <hr />
         </li>,
-        <li key="home"><a href="https://jujucharms.com/about">Juju Home</a></li>];
+        <li className="p-list__item" key="home">
+          <a href="https://jujucharms.com/about">Juju Home</a>
+        </li>
+      ];
     }
-    return (
-      <ul className="profile-header__menu">
-        {items}
-      </ul>);
+    return <ul className="p-list ts-profile-header__menu">{items}</ul>;
   }
 
   render() {
     const user = this.state.user || {};
     return (
-      <div className="profile-header twelve-col">
-        <div className="inner-wrapper profile-header__inner">
-          <div className="profile-header__close link"
-            onClick={this._handleClose.bind(this)}
-            role="button"
-            tabIndex="0">
-            <SvgIcon
-              name="close_16"
-              size="20" />
+      <div className="profile-header v1">
+        <div className="p-strip is-shallow">
+          <div className="row p-divider u-no-padding--top u-no-padding--bottom">
+            <div className="col-10 p-divider__block">
+              <div className="p-media-object--large u-no-margin--bottom">
+                {this._generateAvatar()}
+                <div className="p-media-object__details">
+                  <h1>{this.props.userInfo.profile}</h1>
+                  <p className="p-media-object__content">
+                    <strong>{user.fullname}</strong>
+                  </p>
+                  <p className="p-media-object__content">{user.email}</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-2 p-divider__block">
+              {this._generateControllerDetails()}
+              <div
+                className="profile-header__close"
+                onClick={this._handleClose.bind(this)}
+                role="button"
+                tabIndex="0">
+                <SvgIcon name="close_16" size="20" />
+              </div>
+            </div>
           </div>
-          {this._generateAvatar()}
-          <ul className="profile-header__meta">
-            <li className="profile-header__username">
-              <h1>
-                {this.props.userInfo.profile}
-              </h1>
-            </li>
-            <li><strong>{user.fullname}</strong></li>
-            <li>{user.email}</li>
-          </ul>
-          {this._generateControllerDetails()}
         </div>
-      </div>);
+      </div>
+    );
   }
-
-};
+}
 
 ProfileHeader.propTypes = {
   changeState: PropTypes.func.isRequired,
