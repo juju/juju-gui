@@ -67,104 +67,63 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // the config file which is not yet available.
     </script>
   </head>
-
   <body>
-
-      <div style="display: none;">
-        {{/* Include the svg sprite image inside the body. */}}
-        {{.spriteContent}}
+    <div style="display: none;">
+      {{/* Include the svg sprite image inside the body. */}}
+      {{.spriteContent}}
+    </div>
+    <div id="app"></div>
+    <div id="full-screen-mask">
+      <div className="centered-column"
+        id="browser-warning"
+        style="display:none">
+        <svg class="svg-icon"
+          viewBox="0 0 90 35"
+          style="width:90px; height:35px;">
+          <use xlink:href="#juju-logo" />
+        </svg>
+        <div className="panel">
+          <div className="header">
+            Your browser is not supported
+          </div>
+          <p>
+            If you continue to use Juju with your current browser your
+            experience may not be as good as we would like it to be.
+          </p>
+          <p>
+            Please use the latest version of
+            <a href="http://www.google.com/chrome">Chrome</a> to be fully
+            supported.
+          </p>
+          <form onSubmit="return continueWithCurrentBrowser();">
+            <input className="button"
+              type="submit"
+              value="Continue" />
+          </form>
+        </div>
       </div>
-
-      <div class="header-banner header-banner--left">
-        <div id="header-logo" class="header-banner__logo"></div>
-        <div id="header-breadcrumb"></div>
-        <div id="model-actions-container"></div>
-        <div id="provider-logo-container" class="header-banner__provider"></div>
-      </div>
-
-      <div class="header-banner header-banner--right">
-        <ul class="header-banner__list--right">
-          <li id="maas-server" style="display:none" class="header-banner__list-item">
-            <a href="" target="_blank" class="header-banner__link">MAAS UI</a>
-          </li>
-          <li id="header-search-container"
-              class="header-banner__list-item header-banner__list-item--no-padding"></li>
-          <li id="header-help" class="header-banner__list-item header-banner__list-item--no-padding"></li>
-          <li id="profile-link-container"
-              class="header-banner__list-item header-banner__list-item--no-padding"></li>
-        </ul>
-      </div>
-
-      <div id="zoom-container"></div>
-
-      <div id="full-screen-mask">
-        <div id="browser-warning" class="centered-column"
-            style="display:none;">
-          <svg class="svg-icon"
-            viewBox="0 0 90 35"
-            style="width:90px; height:35px;">
-            <use xlink:href="#juju-logo" />
-          </svg>
-          <div class="panel">
-            <div class="header">
-                  Your browser is not supported
-            </div>
-            <p>
-              If you continue to use Juju with your current browser your
-              experience may not be as good as we would like it to be.
-            </p>
-            <p>
-              Please use the latest version of
-              <a href="http://www.google.com/chrome">Chrome</a> to be fully
-              supported.
-            </p>
-            <form onsubmit="return continueWithCurrentBrowser();">
-              <input type="submit" class="button" value="Continue"/>
-            </form>
+      <div className="centered-column"
+        id="loading-message">
+        <svg class="svg-icon"
+          viewBox="0 0 90 35"
+          style="width:90px; height:35px;">
+          <use xlink:href="#juju-logo" />
+        </svg>
+        <div className="panel">
+          <div id="loading-indicator"></div>
+          <div className="header"
+            id="loading-message-text">
+            Hello, world.
           </div>
         </div>
-        <div id="loading-message" class="centered-column">
-          <svg class="svg-icon"
-            viewBox="0 0 90 35"
-            style="width:90px; height:35px;">
-            <use xlink:href="#juju-logo" />
-          </svg>
-          <div class="panel">
-            <div id="loading-indicator"></div>
-            <div id="loading-message-text" class="header">
-              Hello, world.
-            </div>
-          </div>
-        </div>
-        <div id="login-container"></div>
       </div>
-      <div id="top-page-container"></div>
-      <div id="popup-container"></div>
-      <div id="sharing-container"></div>
-      <div id="charmbrowser-container"></div>
-      <div id="deployment-container"></div>
-      <div id="env-size-display-container"></div>
-      <div id="inspector-container"></div>
-      <div id="white-box-container"></div>
-      <div id="machine-view"></div>
-      <div id="post-deployment"></div>
-      <div id="status-container"></div>
-      <div id="login-notification"></div>
-      <div id="cookie-container"></div>
-      <div id="help"></div>
-      <div id="app-footer">
-        <div id="deployment-bar-container"></div>
-        <div id="terminal-container"></div>
+    </div>
+    <div id="viewport">
+      <div id="content">
+        <div id="main"></div>
+        <div id="drag-over-notification-container"></div>
       </div>
-      <div id="viewport">
-        <div id="content">
-          <div id="modal-shortcuts"></div>
-          <div id="modal-gui-settings"></div>
-          <div id="lightbox"></div>
-          <div id="main"></div>
-          <div id="drag-over-notification-container"></div>
-        </div>
-        <div id="notifications-container"></div>
+      <div id="notifications-container"></div>
     </div>
     <script id="app-startup">
       // Global to store all of the shared application data.

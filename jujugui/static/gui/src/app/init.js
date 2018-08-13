@@ -1,11 +1,13 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
 const analytics = require('./init/analytics');
+const App = require('./app');
 const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
@@ -22,7 +24,6 @@ const WebHandler = require('./store/env/web-handler');
 const newBakery = require('./init/utils/bakery-utils');
 const EnvironmentView = require('./init/topology/environment');
 
-const ComponentRenderersMixin = require('./init/component-renderers-mixin');
 const DeployerMixin = require('./init/deployer-mixin');
 
 const yui = window.yui;
@@ -174,7 +175,6 @@ class GUIApp {
     // When the connection resets, reset the db, re-login (a delta will
     // arrive with successful authentication), and redispatch.
     this.modelAPI.after('connectedChange', evt => {
-      this._renderProviderLogo();
       if (!evt.newVal) {
         // The model is not connected, do nothing waiting for a reconnection.
         console.log('model disconnected');
@@ -258,7 +258,8 @@ class GUIApp {
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI),
       charmstore: this.charmstore,
-      hideDragOverNotification: this._hideDragOverNotification.bind(this)
+      // TODO: add a method to update the state
+      hideDragOverNotification: () => {}
     });
 
     if (config.gisf) {
@@ -316,15 +317,11 @@ class GUIApp {
         eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
 
-    this._bindRenderUtilities();
-
     /**
       Reference to the rendered topology.
       @type {Object}
     */
     this.topology = this._renderTopology();
-    this._renderComponents();
-    this._renderUserMenu();
     const result = this.state.bootstrap();
     if (result.error) {
       console.error(result.error);
@@ -347,29 +344,6 @@ class GUIApp {
       config.bakeryEnabled = true;
     }
     return config;
-  }
-
-  /**
-    As a minor performance boost and to avoid potential rerenderings
-    because of rebinding functions in the render methods. Any method that
-    requires binding and is passed into components should be bound here
-    and then used across components.
-  */
-  _bindRenderUtilities() {
-    /**
-      A collection of pre-bound methods to pass to render methods.
-      @type {Object}
-    */
-    this._bound = {
-      addNotification: this.db.notifications.add.bind(this.db.notifications),
-      changeState: this.state.changeState.bind(this.state),
-      destroyModels: this.controllerAPI.destroyModels.bind(this.controllerAPI), // eslint-disable-line max-len
-      listModelsWithInfo: this.controllerAPI.listModelsWithInfo.bind(this.controllerAPI) // eslint-disable-line max-len
-    };
-    // Bind switchModel separately to include the already bound
-    // addNotifications.
-    this._bound.switchModel = utils.switchModel.bind(
-      this, this.modelAPI, this._bound.addNotification);
   }
 
   /**
@@ -438,8 +412,9 @@ class GUIApp {
   */
   _setupEnvironmentChangeSet() {
     if (this.ecs === undefined) {
+      // TODO: update this via a dispatch.
       this._domEventHandlers['renderDeploymentBarListener'] =
-        this._renderDeploymentBar.bind(this);
+        () => {};
       const listener = this._domEventHandlers['renderDeploymentBarListener'];
       document.addEventListener('ecs.changeSetModified', listener);
       document.addEventListener('ecs.currentCommitFinished', listener);
@@ -509,6 +484,52 @@ class GUIApp {
     }
     next();
   }
+
+  /**
+    Handles rendering the app.
+    @param {Object} state - The app state.
+    @param {Function} next - Call to continue dispatching.
+  */
+  _renderApp(state, next) {
+    const switchModel = utils.switchModel.bind(
+      this, this.modelAPI, this.db.notifications.add.bind(this.db.notifications));
+    ReactDOM.render(
+      <App
+        acl={this.acl}
+        addToModel={this.addToModel}
+        applicationConfig={this.applicationConfig}
+        appState={this.state}
+        bakery={this.bakery}
+        bundleImporter={this.bundleImporter}
+        charmstore={this.charmstore}
+        controllerAPI={this.controllerAPI}
+        db={this.db}
+        deployService={this.deployService.bind(this)}
+        endpointsController={this.endpointsController}
+        getUser={this.getUser.bind(this)}
+        getUserInfo={this._getUserInfo.bind(this)}
+        gisf={this.gisf}
+        identity={this.identity}
+        loginToAPIs={this.loginToAPIs.bind(this)}
+        modelAPI={this.modelAPI}
+        modelUUID={this.modelUUID}
+        payment={this.payment}
+        plans={this.plans}
+        rates={this.rates}
+        sendAnalytics={this.sendAnalytics}
+        setPageTitle={this.setPageTitle}
+        stats={this.stats}
+        storeUser={this.storeUser.bind(this)}
+        stripe={this.stripe}
+        switchModel={switchModel}
+        terms={this.terms}
+        topology={this.topology}
+        user={this.user} />,
+      document.getElementById('app')
+    );
+    next();
+  }
+
   /**
     Creates a new instance of the State and registers the necessary dispatchers.
     This method is idempotent.
@@ -528,54 +549,24 @@ class GUIApp {
       ['*', this._ensureControllerConnection.bind(this)],
       ['*', this.authorizeCookieUse.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
-      ['*', this._renderComponents.bind(this)],
+      ['*', this._renderApp.bind(this)],
       ['root',
-        this._rootDispatcher.bind(this),
-        this._clearRoot.bind(this)],
-      ['profile',
-        this._renderUserProfile.bind(this),
-        this._clearUserProfile.bind(this)],
+        this._rootDispatcher.bind(this)],
       ['user',
-        this._handleUserEntity.bind(this),
-        this._clearUserEntity.bind(this)],
+        this._handleUserEntity.bind(this)],
       ['model',
         this._handleModelState.bind(this)],
-      ['store',
-        this._renderCharmbrowser.bind(this),
-        this._clearCharmbrowser.bind(this)],
-      ['search',
-        this._renderCharmbrowser.bind(this),
-        this._clearCharmbrowser.bind(this)],
-      ['help',
-        this._renderHelp.bind(this),
-        this._clearHelp.bind(this)],
       ['special.deployTarget', this._deployTarget.bind(this)],
-      ['gui', null, this._clearAllGUIComponents.bind(this)],
-      ['gui.machines',
-        this._renderMachineView.bind(this),
-        this._clearMachineView.bind(this)],
-      ['gui.status',
-        this._renderStatusView.bind(this),
-        this._clearStatusView.bind(this)],
-      ['gui.inspector',
-        this._renderInspector.bind(this)
-        // the this._clearInspector method is not called here because the
-        // added services component is also rendered into the inspector so
-        // calling it here causes React to throw an error.
-      ],
-      ['gui.deploy',
-        this._renderDeployment.bind(this),
-        this._clearDeployment.bind(this)],
-      ['postDeploymentPanel',
-        this._displayPostDeployment.bind(this),
-        this._clearPostDeployment.bind(this)],
-      ['terminal',
-        this._displayTerminal.bind(this),
-        this._clearTerminal.bind(this)],
-      // Nothing needs to be done at the top level when the hash changes.
+      // The follow states are handled by app.js and do not need to do anything
+      // special. These are only here to suppress warnings about dispatchers not found.
+      ['profile'],
+      ['store'],
+      ['search'],
+      ['help'],
+      ['gui'],
+      ['postDeploymentPanel'],
+      ['terminal'],
       ['hash'],
-      // special dd is handled by the root dispatcher as it requires /new
-      // for now.
       ['special.dd']
     ]);
     return state;
@@ -588,12 +579,6 @@ class GUIApp {
   */
   _rootDispatcher(state, next) {
     switch (state.root) {
-      case 'login':
-        // _renderLogin is called from various places with a different call
-        // signature so we have to call next manually after.
-        this._renderLogin();
-        next();
-        break;
       case 'logout':
         // If we're in gisf _handleLogout will navigate away from the GUI
         this._handleLogout();
@@ -662,16 +647,6 @@ class GUIApp {
   }
 
   /**
-    The cleanup dispatcher for the root state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearRoot(state, next) {
-    this._clearLogin(state, next);
-    next();
-  }
-
-  /**
     Handle the request to display the user entity state.
     @param {Object} state - The application state.
     @param {Function} next - Run the next route handler, if any.
@@ -679,23 +654,6 @@ class GUIApp {
   _handleUserEntity(state, next) {
     this._disambiguateUserState(
       this._fetchEntityFromUserState(state.user));
-  }
-
-  /**
-    The cleanup dispatcher for the user entity state path. The store will be
-    mounted if the path was for a bundle or charm. If the entity was a model
-    we don't need to do anything.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearUserEntity(state, next) {
-    const container = document.getElementById('charmbrowser-container');
-    // The charmbrowser will only be mounted if the entity is a charm or
-    // bundle.
-    if (container.childNodes.length > 0) {
-      ReactDOM.unmountComponentAtNode(container);
-    }
-    next();
   }
 
   /**
@@ -838,7 +796,8 @@ class GUIApp {
       this._renderLogin(evt.detail.err);
       return;
     }
-    this._renderUserMenu();
+    // Dispatch to so the component gets rendered.
+    this.state.dispatch();
     console.log('successfully logged into controller');
 
     // If the GUI is embedded in storefront, we need to share login
@@ -985,8 +944,8 @@ class GUIApp {
     // Update the name on the current model. This is what the components use
     // to display the model name.
     this.db.environment.set('name', modelName);
-    // Update the breadcrumb with the new model name.
-    this._renderBreadcrumb();
+    // Dispatch to update the breadcrumb with the new model name.
+    this.state.dispatch();
     // Update the page title.
     this.defaultPageTitle = `${modelName} - Juju GUI`;
     this.setPageTitle();
@@ -1017,7 +976,6 @@ class GUIApp {
   _dbChangedHandler() {
     this.topology.topo.update();
     this.state.dispatch();
-    this._renderComponents();
   }
 
   /**
@@ -1053,7 +1011,8 @@ class GUIApp {
     }
     if (action === 'start') {
       this._dragLeaveTimer = setTimeout(() => {
-        this._hideDragOverNotification();
+        // TODO: use state show/hide this
+        // this._hideDragOverNotification();
       }, 100);
     }
   }
@@ -1446,14 +1405,6 @@ class GUIApp {
   }
 
   /**
-    Get the current model name.
-    @returns {String} The current model name.
-  */
-  _getModelName() {
-    return this.modelAPI.get('environmentName');
-  }
-
-  /**
     Auto log the user into the charm store as part of the login process
     when the GUI operates in a GISF context.
   */
@@ -1730,7 +1681,6 @@ class GUIApp {
 
 class JujuGUI extends mixwith.mix(GUIApp).with(
   csUser.CharmstoreUserMixin,
-  ComponentRenderersMixin,
   DeployerMixin
 ) {}
 

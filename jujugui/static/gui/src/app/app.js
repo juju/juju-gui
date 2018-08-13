@@ -2,6 +2,7 @@
 'use strict';
 
 const classNames = require('classnames');
+const PropTypes = require('prop-types');
 const queryString = require('query-string');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -12,58 +13,117 @@ const urls = jaaslib.urls;
 
 const yui = window.yui;
 
-const autodeploy = require('./autodeploy');
-const initUtils = require('./utils');
-const localCharmHelpers = require('../components/local-inspector/local-charm-import-helpers');
-const changesUtils = require('./changes-utils');
-const relationUtils = require('./relation-utils');
-const endpointUtils = require('./endpoint-utils');
-const WebHandler = require('../store/env/web-handler');
+const autodeploy = require('./init/autodeploy');
+const initUtils = require('./init/utils');
+const localCharmHelpers = require('./components/local-inspector/local-charm-import-helpers');
+const changesUtils = require('./init/changes-utils');
+const relationUtils = require('./init/relation-utils');
+const endpointUtils = require('./init/endpoint-utils');
+const WebHandler = require('./store/env/web-handler');
 
-const AddedServicesList = require('../components/added-services-list/added-services-list');
-const Charmbrowser = require('../components/charmbrowser/charmbrowser');
-const DeploymentBar = require('../components/deployment-bar/deployment-bar');
-const DeploymentFlow = require('../components/deployment-flow/deployment-flow');
-const EnvSizeDisplay = require('../components/env-size-display/env-size-display');
-const ExpandingProgress = require('../components/expanding-progress/expanding-progress');
-const HeaderBreadcrumb = require('../components/header-breadcrumb/header-breadcrumb');
-const HeaderLogo = require('../components/header-logo/header-logo');
-const HeaderSearch = require('../components/header-search/header-search');
-const Help = require('../components/help/help');
-const Inspector = require('../components/inspector/inspector');
-const ISVProfile = require('../components/isv-profile/isv-profile');
-const Lightbox = require('../components/lightbox/lightbox');
-const LocalInspector = require('../components/local-inspector/local-inspector');
-const Login = require('../components/login/login');
-const Logout = require('../components/logout/logout');
-const MachineView = require('../components/machine-view/machine-view');
-const ModelActions = require('../components/model-actions/model-actions');
-const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-settings');
-const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
-const NotificationList = require('../components/notification-list/notification-list');
-const Panel = require('../components/panel/panel');
-const PostDeployment = require('../components/post-deployment/post-deployment');
-const Profile = require('../components/profile/profile');
-const Sharing = require('../components/sharing/sharing');
-const Status = require('../components/status/status');
-const SvgIcon = require('../components/svg-icon/svg-icon');
-const Terminal = require('../components/terminal/terminal');
-const UserMenu = require('../components/user-menu/user-menu');
-const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
-const Zoom = require('../components/zoom/zoom');
+const AddedServicesList = require('./components/added-services-list/added-services-list');
+const Charmbrowser = require('./components/charmbrowser/charmbrowser');
+const DeploymentBar = require('./components/deployment-bar/deployment-bar');
+const DeploymentFlow = require('./components/deployment-flow/deployment-flow');
+const EnvSizeDisplay = require('./components/env-size-display/env-size-display');
+const ExpandingProgress = require('./components/expanding-progress/expanding-progress');
+const HeaderBreadcrumb = require('./components/header-breadcrumb/header-breadcrumb');
+const HeaderLogo = require('./components/header-logo/header-logo');
+const HeaderSearch = require('./components/header-search/header-search');
+const Help = require('./components/help/help');
+const Inspector = require('./components/inspector/inspector');
+const ISVProfile = require('./components/isv-profile/isv-profile');
+const Lightbox = require('./components/lightbox/lightbox');
+const LocalInspector = require('./components/local-inspector/local-inspector');
+const Login = require('./components/login/login');
+const Logout = require('./components/logout/logout');
+const MachineView = require('./components/machine-view/machine-view');
+const ModelActions = require('./components/model-actions/model-actions');
+const ModalGUISettings = require('./components/modal-gui-settings/modal-gui-settings');
+const ModalShortcuts = require('./components/modal-shortcuts/modal-shortcuts');
+const NotificationList = require('./components/notification-list/notification-list');
+const Panel = require('./components/panel/panel');
+const PostDeployment = require('./components/post-deployment/post-deployment');
+const Profile = require('./components/profile/profile');
+const Sharing = require('./components/sharing/sharing');
+const Status = require('./components/status/status');
+const SvgIcon = require('./components/svg-icon/svg-icon');
+const Terminal = require('./components/terminal/terminal');
+const UserMenu = require('./components/user-menu/user-menu');
+const USSOLoginLink = require('./components/usso-login-link/usso-login-link');
+const Zoom = require('./components/zoom/zoom');
 
 /**
-    A mixin for the JujuGUI class.
-    Stores all of the component renderer and cleanup methods.
+    A component to render the app.
 */
-const ComponentRenderersMixin = superclass => class extends superclass {
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      lightbox: false,
+      hoveredService: null,
+      settingsModalVisible: false,
+      shortcutsModalVisible: false
+    };
+    this._bindRenderUtilities();
+    this._domEventHandlers = {};
+  }
+
+  componentDidMount() {
+    // Trigger the resized method so that the topology fills the viewport.
+    this.props.topology.topo.modules.ViewportModule.resized();
+  }
+
+  /**
+   Check that a state parameter is not set.
+   @param key {Any} A state key.
+   @returns {Bool} Whether the parameter is set.
+   */
+  _isSet(key) {
+    // Some state keys are set to empty strings which JavaScript treats as falsey
+    // but we want them to be truthy.
+    return key !== undefined && key !== null && key !== false;
+  }
+
+  /**
+    As a minor performance boost and to avoid potential rerenderings
+    because of rebinding functions in the render methods. Any method that
+    requires binding and is passed into components should be bound here
+    and then used across components.
+  */
+  _bindRenderUtilities() {
+    /**
+      A collection of pre-bound methods to pass to render methods.
+      @type {Object}
+    */
+    this._bound = {
+      addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
+      changeState: this.props.appState.changeState.bind(this.props.appState),
+      destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
+      listModelsWithInfo: this.props.controllerAPI.listModelsWithInfo.bind(
+        this.props.controllerAPI)
+    };
+  }
+
+  /**
+    Get the current model name.
+    @returns {String} The current model name.
+  */
+  _getModelName() {
+    return this.props.modelAPI.get('environmentName');
+  }
+
   /**
     Renders the Added Services component to the page in the appropriate
     element.
-    @param {String} hoveredId An id for a service.
   */
-  _renderAddedServices(hoveredId) {
-    const instance = this.topology;
+  _generateAddedServices() {
+    const gui = this.props.appState.current.gui;
+    // Don't display the added services component when the inspector is visible.
+    if (gui && gui.inspector) {
+      return null;
+    }
+    const instance = this.props.topology;
     if (!instance) {
       // TODO frankban: investigate in what cases instance is undefined on
       // the environment object. Is this some kind of race?
@@ -80,65 +140,63 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       document.removeEventListener('topo.hoverService', hoverHandler);
     }
     this._domEventHandlers['topo.hoverService'] = evt => {
-      this._renderAddedServices(evt.detail.id);
+      this.setState({ hoveredService: evt.detail.id });
     };
     document.addEventListener(
       'topo.hoverService', this._domEventHandlers['topo.hoverService']);
     // Deselect the active service token. This needs to happen so that when a
     // user closes the service details the service token deactivates.
     ServiceModule.deselectNodes();
-    const db = this.db;
-    ReactDOM.render(
+    const db = this.props.db;
+    return (
       <Panel
         instanceName="inspector-panel"
         visible={db.services.size() > 0}>
         <AddedServicesList
           changeState={this._bound.changeState}
-          hoveredId={hoveredId}
+          hoveredId={this.state.hoveredService}
           serviceModule={
             shapeup.fromShape(ServiceModule, AddedServicesList.propTypes.serviceModule)}
           services={db.services} />
-      </Panel>,
-      document.getElementById('inspector-container'));
+      </Panel>);
   }
   /**
     Renders the Environment Size Display component to the page in the
     designated element.
-    @param {Integer} serviceCount The serviceCount to display.
-    @param {Integer} machineCount The machineCount to display.
   */
-  _renderEnvSizeDisplay(serviceCount=0, machineCount=0) {
-    ReactDOM.render(
+  _generateEnvSizeDisplay() {
+    const { db } = this.props;
+    return (
       <EnvSizeDisplay
-        appState={this.state}
-        machineCount={machineCount}
-        providerType={this.modelAPI.get('providerType') || ''}
-        serviceCount={serviceCount} />,
-      document.getElementById('env-size-display-container'));
+        appState={this.props.appState}
+        machineCount={db.machines.filterByParent().length}
+        providerType={this.props.modelAPI.get('providerType') || ''}
+        serviceCount={db.services.size()} />);
   }
   /**
     Renders the model action components to the page in the designated
     element.
   */
-  _renderModelActions() {
-    const modelAPI = this.modelAPI;
-    ReactDOM.render(
-      <ModelActions
-        acl={this.acl}
-        appState={this.state}
-        changeState={this._bound.changeState}
-        displayTerminalButton={this._enableTerminal()}
-        exportEnvironmentFile={
-          initUtils.exportEnvironmentFile.bind(initUtils, this.db, this.sendAnalytics)}
-        hideDragOverNotification={this._hideDragOverNotification.bind(this)}
-        importBundleFile={this.bundleImporter.importBundleFile.bind(
-          this.bundleImporter)}
-        loadingModel={modelAPI.loading}
-        renderDragOverNotification={
-          this._renderDragOverNotification.bind(this)}
-        sharingVisibility={this._sharingVisibility.bind(this)}
-        userIsAuthenticated={modelAPI.userIsAuthenticated} />,
-      document.getElementById('model-actions-container'));
+  _generateModelActions() {
+    const modelAPI = this.props.modelAPI;
+    return (
+      <div id="model-actions-container">
+        <ModelActions
+          acl={this.props.acl}
+          appState={this.props.appState}
+          changeState={this._bound.changeState}
+          displayTerminalButton={this._enableTerminal()}
+          exportEnvironmentFile={
+            initUtils.exportEnvironmentFile.bind(initUtils, this.db, this.sendAnalytics)}
+          hideDragOverNotification={this._hideDragOverNotification.bind(this)}
+          importBundleFile={this.props.bundleImporter.importBundleFile.bind(
+            this.props.bundleImporter)}
+          loadingModel={modelAPI.loading}
+          renderDragOverNotification={
+            this._generateDragOverNotification.bind(this)}
+          sharingVisibility={this._sharingVisibility.bind(this)}
+          userIsAuthenticated={modelAPI.userIsAuthenticated} />
+      </div>);
   }
   /**
     Display or hide the sharing modal.
@@ -146,36 +204,34 @@ const ComponentRenderersMixin = superclass => class extends superclass {
                      (false); defaults to true.
   */
   _sharingVisibility(visibility = true) {
-    const sharing = document.getElementById('sharing-container');
     if (!visibility) {
-      ReactDOM.unmountComponentAtNode(sharing);
-      return;
+      return null;
     }
-    const modelAPI = this.modelAPI;
+    const modelAPI = this.props.modelAPI;
     const grantRevoke = (action, username, access, callback) => {
-      if (this.applicationConfig.gisf && username.indexOf('@') === -1) {
+      if (this.props.applicationConfig.gisf && username.indexOf('@') === -1) {
         username += '@external';
       }
       action(modelAPI.get('modelUUID'), [username], access, callback);
     };
-    const controllerAPI = this.controllerAPI;
+    const controllerAPI = this.props.controllerAPI;
     const grantAccess = controllerAPI.grantModelAccess.bind(controllerAPI);
     const revokeAccess = controllerAPI.revokeModelAccess.bind(controllerAPI);
-    ReactDOM.render(
+    return (
       <Sharing
         addNotification={this._bound.addNotification}
-        canShareModel={this.acl.canShareModel()}
+        canShareModel={this.props.acl.canShareModel()}
         closeHandler={this._sharingVisibility.bind(this, false)}
         getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
-        revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />, sharing);
+        revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />);
   }
 
-  _renderTerminal(address, payload) {
-    const config = this.applicationConfig;
-    const user = this.user;
+  _generateTerminal(address, payload) {
+    const config = this.props.applicationConfig;
+    const user = this.props.user;
     const identityURL = user.identityURL();
-    const modelAPI = this.modelAPI;
+    const modelAPI = this.props.modelAPI;
     const commands = [];
     const modelName = modelAPI.get('environmentName');
     if (modelName) {
@@ -200,7 +256,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
       creds.user = user.controller.user;
       creds.password = user.controller.password;
     }
-    ReactDOM.render(
+    return (
       <Terminal
         addNotification={this._bound.addNotification}
         // If a URL has been provided for the jujuShellURL then use it over any
@@ -209,13 +265,16 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         changeState={this._bound.changeState}
         commands={commands}
         creds={creds}
-        WebSocket={WebSocket} />,
-      document.getElementById('terminal-container'));
+        WebSocket={WebSocket} />);
   }
 
-  _displayTerminal(state, next) {
-    const config = this.applicationConfig;
-    const db = this.db;
+  _displayTerminal() {
+    const state = this.props.appState.current;
+    if (!state.terminal) {
+      return null;
+    }
+    const config = this.props.applicationConfig;
+    const db = this.props.db;
     const githubIssueHref = 'https://github.com/juju/juju-gui/issues/new';
     const githubIssueValues = {
       title: 'Juju shell unavailable',
@@ -250,33 +309,30 @@ Browser: ${navigator.userAgent}`
           link],
         level: 'error'
       });
-      this.state.changeState({terminal: null});
+      this.props.appState.changeState({terminal: null});
       return;
     }
     const payload = state.terminal;
-    this._renderTerminal(address, payload);
-    next();
-  }
-
-  _clearTerminal(state, next) {
-    ReactDOM.unmountComponentAtNode(document.getElementById('terminal-container'));
-    next();
+    return this._generateTerminal(address, payload);
   }
   /**
     Renders the ISV profile component.
   */
-  _renderISVProfile() {
-    ReactDOM.render(
+  _generateISVProfile() {
+    return (
       <ISVProfile
-        d3={yui.d3} />,
-      document.getElementById('top-page-container'));
+        d3={yui.d3} />);
   }
   /**
     Renders the user profile component.
     @param {Object} state - The app state.
     @param {Function} next - Call to continue dispatching.
   */
-  _renderUserProfile(state, next) {
+  _generateUserProfile() {
+    const state = this.props.appState.current;
+    if (!this._isSet(state.profile)) {
+      return null;
+    }
     // XXX Jeff - 1-2-2016 - Because of a bug in the state system the profile
     // view renders itself and then makes requests to identity before the
     // controller is setup and the user has successfully logged in. As a
@@ -288,21 +344,21 @@ Browser: ${navigator.userAgent}`
     if (
       guiState.deploy !== undefined ||
       !state.profile ||
-      !this.controllerAPI.get('connected') ||
-      !this.controllerAPI.userIsAuthenticated
+      !this.props.controllerAPI.get('connected') ||
+      !this.props.controllerAPI.userIsAuthenticated
     ) {
-      return;
+      return null;
     }
     // XXX Jeff - 18-11-2016 - This profile gets rendered before the
     // controller has completed connecting and logging in when in gisf. The
     // proper fix is to queue up the RPC calls but due to time constraints
     // we're setting up this handler to simply re-render the profile when
     // the controller is properly connected.
-    const facadesExist = !!this.controllerAPI.get('facades');
+    const facadesExist = !!this.props.controllerAPI.get('facades');
     if (!facadesExist) {
-      const handler = this.controllerAPI.after('facadesChange', e => {
+      const handler = this.props.controllerAPI.after('facadesChange', e => {
         if (e.newVal) {
-          this._renderUserProfile(state, next);
+          this.appState.dispatch();
           handler.detach();
         }
       });
@@ -310,150 +366,179 @@ Browser: ${navigator.userAgent}`
     // NOTE: we need to clone this.get('users') below; passing in without
     // cloning breaks React's ability to distinguish between this.props and
     // nextProps on the lifecycle methods.
-    const charmstore = this.charmstore;
-    const payment = this.payment;
-    const stripe = this.stripe;
-    const userInfo = this._getUserInfo(state);
-    ReactDOM.render(
+    const charmstore = this.props.charmstore;
+    const payment = this.props.payment;
+    const stripe = this.props.stripe;
+    const userInfo = this.props.getUserInfo(state);
+    return (
       <Profile
-        acl={shapeup.fromShape(this.acl, Profile.propTypes.acl)}
+        acl={shapeup.fromShape(this.props.acl, Profile.propTypes.acl)}
         activeSection={state.hash}
         addNotification={this._bound.addNotification}
-        addToModel={this.addToModel.bind(this, charmstore)}
-        bakery={this.bakery}
-        baseURL={this.applicationConfig.baseUrl}
+        addToModel={this.props.addToModel.bind(this, charmstore)}
+        bakery={this.props.bakery}
+        baseURL={this.props.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
         charmstore={charmstore}
         controllerAPI={
-          shapeup.fromShape(this.controllerAPI, Profile.propTypes.controllerAPI)}
+          shapeup.fromShape(this.props.controllerAPI, Profile.propTypes.controllerAPI)}
         controllerIP={
-          this.controllerAPI.get('socket_url')
+          this.props.controllerAPI.get('socket_url')
             .replace('wss://', '').replace('ws://', '').split(':')[0]}
         controllerIsReady={this._controllerIsReady.bind(this)}
-        controllerUser={this.user.controller.user}
+        controllerUser={this.props.user.controller.user}
         destroyModel={
           initUtils.destroyModel.bind(
-            initUtils, this._bound.destroyModels, this.modelAPI, this._bound.switchModel)}
+            initUtils, this._bound.destroyModels, this.props.modelAPI,
+            this.props.switchModel)}
         facadesExist={facadesExist}
-        generatePath={this.state.generatePath.bind(this.state)}
+        generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getModelName={this._getModelName.bind(this)}
-        getUser={this.identity.getUser.bind(this.identity)}
-        gisf={this.applicationConfig.gisf}
+        getUser={this.props.identity.getUser.bind(this.props.identity)}
+        gisf={this.props.applicationConfig.gisf}
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
-        sendAnalytics={this.sendAnalytics}
-        showPay={this.applicationConfig.flags.pay || false}
-        storeUser={this.storeUser.bind(this)}
+        sendAnalytics={this.props.sendAnalytics}
+        showPay={this.props.applicationConfig.flags.pay || false}
+        storeUser={this.props.storeUser.bind(this)}
         stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
-        switchModel={this._bound.switchModel}
-        userInfo={shapeup.fromShape(userInfo, Profile.propTypes.userInfo)} />,
-      document.getElementById('top-page-container'));
+        switchModel={this.props.switchModel}
+        userInfo={shapeup.fromShape(userInfo, Profile.propTypes.userInfo)} />);
   }
-  /**
-    The cleanup dispatcher for the user profile path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearUserProfile(state, next) {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('top-page-container'));
-    next();
-  }
+
   /**
     Renders the Header Search component to the page in the
     designated element.
   */
-  _renderHeaderSearch() {
-    ReactDOM.render(
-      <HeaderSearch appState={this.state} />,
-      document.getElementById('header-search-container'));
+  _generateHeaderSearch() {
+    return (
+      <li className="header-banner__list-item header-banner__list-item--no-padding">
+        <HeaderSearch appState={this.props.appState} />
+      </li>);
   }
 
   /**
     Renders the Header Help component to the page.
   */
-  _renderHeaderHelp() {
+  _generateHeaderHelp() {
     const openHelp = () => {
-      this.state.changeState({
+      this.props.appState.changeState({
         help: true
       });
     };
-    ReactDOM.render(
-      <span className="header__button"
-        onClick={openHelp.bind(this)}
-        role="button"
-        tabIndex="0">
-        <SvgIcon className="header__button-icon"
-          name="help_16"
-          size="16" />
-        <span className="tooltip__tooltip--below">
-          <span className="tooltip__inner tooltip__inner--up">
-            Help
+    return (
+      <li className="header-banner__list-item header-banner__list-item--no-padding"
+        id="header-help">
+        <span className="header__button"
+          onClick={openHelp.bind(this)}
+          role="button"
+          tabIndex="0">
+          <SvgIcon className="header__button-icon"
+            name="help_16"
+            size="16" />
+          <span className="tooltip__tooltip--below">
+            <span className="tooltip__inner tooltip__inner--up">
+              Help
+            </span>
           </span>
         </span>
-      </span>,
-      document.getElementById('header-help'));
+      </li>);
   }
 
   /**
-    Renders the shortcuts modal.
+    Display the shortcuts modal.
+    @param visible {Boolean} Whether the modal should be shown.
   */
-  _displayShortcutsModal() {
-    ReactDOM.render(
-      <ModalShortcuts
-        closeModal={this._clearShortcutsModal.bind(this)}
-        guiVersion={window.GUI_VERSION.version} />,
-      document.getElementById('modal-shortcuts'));
-  }
-
-  _displaySettingsModal() {
-    ReactDOM.render(
-      <ModalGUISettings
-        closeModal={this._clearSettingsModal.bind(this)}
-        localStorage={localStorage} />,
-      document.getElementById('modal-gui-settings'));
+  _displayShortcutsModal(visible=true) {
+    this.setState({ shortcutsModalVisible: visible });
   }
 
   /**
-    Opents the lightbox with provided content.
+    Generates the shortcuts modal.
+  */
+  _generateShortcutsModal() {
+    if (!this.state.shortcutsModalVisible) {
+      return null;
+    }
+    return (
+      <ModalShortcuts
+        closeModal={this._displayShortcutsModal.bind(this, false)}
+        guiVersion={window.GUI_VERSION.version} />);
+  }
 
+  /**
+    Display the settings modal.
+    @param visible {Boolean} Whether the modal should be shown.
+  */
+  _displaySettingsModal(visible=true) {
+    this.setState({ settingsModalVisible: visible });
+  }
+
+  /**
+    Generates the settings modal.
+  */
+  _generateSettingsModal() {
+    if (!this.state.settingsModalVisible) {
+      return null;
+    }
+    return (
+      <ModalGUISettings
+        closeModal={this._displaySettingsModal.bind(this, false)}
+        localStorage={localStorage} />);
+  }
+
+  /**
+    Opens the lightbox with provided content.
     @param {Object} content React Element.
     @param {String} caption A string to display under the content.
   */
   _displayLightbox(content, caption) {
-    ReactDOM.render(
+    this.setState({
+      lightbox: {
+        content,
+        caption
+      }
+    });
+  }
+
+  /**
+    Hides the lightbox.
+  */
+  _hideLightbox() {
+    this.setState({ lightbox: null });
+  }
+
+  /**
+    Displays a lightbox with provided content.
+  */
+  _generateLightbox() {
+    const { lightbox } = this.state;
+    if (!lightbox) {
+      return null;
+    }
+    return (
       <Lightbox
-        caption={caption}
-        close={this._clearLightbox.bind(this)}>
-        {content}
-      </Lightbox>,
-      document.getElementById('lightbox'));
+        caption={lightbox.caption}
+        close={this._hideLightbox.bind(this)}>
+        {lightbox.content}
+      </Lightbox>);
   }
 
   /**
     Opens the help overlay.
   */
-  _renderHelp(state, next) {
+  _generateHelp() {
+    if (!this._isSet(this.props.appState.current.help)) {
+      return null;
+    }
     const handler = new WebHandler();
-    ReactDOM.render(<Help
+    return (<Help
       changeState={this._bound.changeState}
-      displayShortcutsModal={this._displayShortcutsModal.bind(this)}
-      gisf={this.applicationConfig.gisf}
+      displayShortcutsModal={this._displayShortcutsModal.bind(this, true)}
+      gisf={this.props.applicationConfig.gisf}
       sendGetRequest={handler.sendGetRequest.bind(handler)}
-      staticURL={this.applicationConfig.staticURL || ''}
-      user={this.user}
-      youtubeAPIKey={this.applicationConfig.youtubeAPIKey} />,
-    document.getElementById('help')
-    );
-    next();
-  }
-
-  /**
-    Remove the help overlay.
-  */
-  _clearHelp(state, next) {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('help')
-    );
+      staticURL={this.props.applicationConfig.staticURL || ''}
+      user={this.props.user}
+      youtubeAPIKey={this.props.applicationConfig.youtubeAPIKey} />);
   }
 
   /**
@@ -483,34 +568,8 @@ Browser: ${navigator.userAgent}`
           changeState={this._bound.changeState}
           charmstore={
             shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
-          entityURLs={entityURLs} />,
-        document.getElementById('post-deployment')
-      );
+          entityURLs={entityURLs} />);
     }
-    next();
-  }
-
-  /**
-    The cleanup dispatcher keyboard shortcuts modal.
-  */
-  _clearShortcutsModal() {
-    ReactDOM.unmountComponentAtNode(document.getElementById('modal-shortcuts'));
-  }
-  /**
-    The cleanup dispatcher global settings modal.
-  */
-  _clearSettingsModal() {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('modal-gui-settings'));
-  }
-
-  /**
-    Remove the lightbox.
-  */
-  _clearLightbox() {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('lightbox')
-    );
   }
 
   /**
@@ -519,24 +578,51 @@ Browser: ${navigator.userAgent}`
     @param {Object} state The current state.
     @param {Function} next Run the next handler.
   */
-  _clearPostDeployment(state, next) {
+  _clearPostDeployment() {
+    // TODO: Use state for showing this?
+    const closeTime = new Date().getTime();
+
+    if (this.postDeploymentPanel
+      && this.postDeploymentPanel.openTime
+      && this.postDeploymentPanel.entityId) {
+      const entityId = this.postDeploymentPanel.entityId;
+      const openTime = this.postDeploymentPanel.openTime;
+      const action = 'Close post deployment panel';
+
+      // Round it to the nearest second.
+      let timeOpen = Math.round(
+        (closeTime - openTime) / 1000
+      );
+      let args = [
+        `${timeOpen}s`,
+        entityId
+      ];
+
+      this.props.sendAnalytics(
+        'Deployment Flow',
+        action,
+        args.join(' - ')
+      );
+    }
+
     ReactDOM.unmountComponentAtNode(
       document.getElementById('post-deployment')
     );
-    next();
   }
 
-  _renderHeaderLogo() {
-    const userName = this.user.displayName;
-    const gisf = this.applicationConfig.gisf;
+  _generateHeaderLogo() {
+    const userName = this.props.user.displayName;
+    const gisf = this.props.applicationConfig.gisf;
     const homePath = gisf ? '/' :
-      this.state.generatePath({profile: userName});
-    ReactDOM.render(
-      <HeaderLogo
-        gisf={gisf}
-        homePath={homePath}
-        showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)} />,
-      document.getElementById('header-logo'));
+      this.props.appState.generatePath({profile: userName});
+    return (
+      <div className="header-banner__logo"
+        id="header-logo" >
+        <HeaderLogo
+          gisf={gisf}
+          homePath={homePath}
+          showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)} />
+      </div>);
   }
 
   /**
@@ -544,58 +630,35 @@ Browser: ${navigator.userAgent}`
     @param {Object} state - The app state.
     @param {Function} next - Call to continue dispatching.
   */
-  _renderCharmbrowser(state, next) {
-    const charmstore = this.charmstore;
+  _generateCharmbrowser() {
+    const state = this.props.appState.current;
+    if (!this._isSet(state.store) && !this._isSet(state.search)) {
+      return null;
+    }
+    const charmstore = this.props.charmstore;
     const propTypes = Charmbrowser.propTypes;
-    ReactDOM.render(
+    return (
       <Charmbrowser
-        acl={this.acl}
+        acl={this.props.acl}
         addNotification={this._bound.addNotification}
-        addToModel={this.addToModel.bind(this, charmstore)}
-        appState={this.state}
-        charmstore={shapeup.fromShape(this.charmstore, propTypes.charmstore)}
+        addToModel={this.props.addToModel.bind(this, charmstore)}
+        appState={this.props.appState}
+        charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
         charmstoreURL={
           initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
-        clearLightbox={this._clearLightbox.bind(this)}
-        deployService={this.deployService.bind(this)}
+        clearLightbox={this._hideLightbox.bind(this)}
+        deployService={this.props.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
         flags={window.juju_config.flags}
         getModelName={this._getModelName.bind(this)}
-        gisf={this.applicationConfig.gisf}
-        importBundleYAML={this.bundleImporter.importBundleYAML.bind(
-          this.bundleImporter)}
-        listPlansForCharm={this.plans.listPlansForCharm.bind(this.plans)}
-        sendAnalytics={this.sendAnalytics}
-        setPageTitle={this.setPageTitle.bind(this)}
-        showTerms={this.terms.showTerms.bind(this.terms)}
-        staticURL={this.applicationConfig.staticURL || ''} />,
-      document.getElementById('charmbrowser-container'));
-    next();
-  }
-  /**
-    The cleanup dispatcher for the store state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearCharmbrowser(state, next) {
-    if (state.search || state.store) {
-      // State calls the cleanup methods on every dispatch even if the state
-      // object exists between calls. Maybe this should be updated in state
-      // but for now if we know that the new state still contains the
-      // charmbrowser then just let the subsequent render method update
-      // the rendered component.
-      return;
-    }
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('charmbrowser-container'));
-    next();
-  }
-
-  _clearAllGUIComponents(state, next) {
-    const noop = () => {};
-    this._clearMachineView(state, noop);
-    this._clearDeployment(state, noop);
-    this._clearInspector(state, noop);
+        gisf={this.props.applicationConfig.gisf}
+        importBundleYAML={this.props.bundleImporter.importBundleYAML.bind(
+          this.props.bundleImporter)}
+        listPlansForCharm={this.props.plans.listPlansForCharm.bind(this.props.plans)}
+        sendAnalytics={this.props.sendAnalytics}
+        setPageTitle={this.props.setPageTitle.bind(this)}
+        showTerms={this.props.terms.showTerms.bind(this.props.terms)}
+        staticURL={this.props.applicationConfig.staticURL || ''} />);
   }
 
   /**
@@ -605,13 +668,13 @@ Browser: ${navigator.userAgent}`
    */
   _enableTerminal() {
     return (
-      this.applicationConfig.flags.terminal ||
+      this.props.applicationConfig.flags.terminal ||
       // Always allow for opening the terminal if the user specified a
       // jujushell URL in the GUI settings.
       !!localStorage.getItem('jujushell-url') ||
       // Also allow for opening the terminal if the user deployed the juju
       // shell charm.
-      !!this.db.environment.get('jujushellURL')
+      !!this.props.db.environment.get('jujushellURL')
     );
   }
 
@@ -620,15 +683,19 @@ Browser: ${navigator.userAgent}`
     @param {Object} state - The app state.
     @param {Function} next - Call to continue dispatching.
   */
-  _renderMachineView(state, next) {
-    const db = this.db;
-    const modelAPI = this.modelAPI;
+  _generateMachineView() {
+    const state = this.props.appState.current;
+    if (!this._isSet(state.gui) || !this._isSet(state.gui.machines)) {
+      return null;
+    }
+    const db = this.props.db;
+    const modelAPI = this.props.modelAPI;
     const ecs = modelAPI.get('ecs');
     const decorated = MachineView.DecoratedComponent;
     const propTypes = decorated.propTypes;
-    ReactDOM.render(
+    return (
       <MachineView
-        acl={shapeup.fromShape(this.acl, propTypes.acl)}
+        acl={shapeup.fromShape(this.props.acl, propTypes.acl)}
         changeState={this._bound.changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
@@ -638,7 +705,7 @@ Browser: ${navigator.userAgent}`
           machines: db.machines,
           units: db.units
         })}
-        machine={this.state.current.gui.machines}
+        machine={this.props.appState.current.gui.machines}
         modelAPI={shapeup.addReshape({
           autoPlaceUnits: autodeploy.autoPlaceUnits.bind(this, db, modelAPI),
           createMachine: autodeploy.createMachine.bind(this, db, modelAPI),
@@ -655,21 +722,9 @@ Browser: ${navigator.userAgent}`
         parseMachineDetails={initUtils.parseMachineDetails.bind(
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
-        sendAnalytics={this.sendAnalytics}
+        sendAnalytics={this.props.sendAnalytics}
         series={urls.CHARM_SERIES}
-        showSSHButtons={this._enableTerminal()} />,
-      document.getElementById('machine-view'));
-    next();
-  }
-
-  /**
-    The cleanup dispatcher for the machines state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearMachineView(state, next) {
-    ReactDOM.unmountComponentAtNode(document.getElementById('machine-view'));
-    next();
+        showSSHButtons={this._enableTerminal()} />);
   }
 
   /**
@@ -677,28 +732,18 @@ Browser: ${navigator.userAgent}`
     @param {Object} state - The app state.
     @param {Function} next - Call to continue dispatching.
   */
-  _renderStatusView(state, next) {
+  _generateStatusView() {
+    const state = this.props.appState.current;
+    if (!this._isSet(state.gui) || !this._isSet(state.gui.status)) {
+      return null;
+    }
     const propTypes = Status.propTypes;
-    ReactDOM.render(
+    return (
       <Status
         changeState={this._bound.changeState}
-        db={shapeup.fromShape(this.db, propTypes.db)}
-        generatePath={this.state.generatePath.bind(this.state)}
-        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)} />,
-      document.getElementById('status-container')
-    );
-    next();
-  }
-
-  /**
-    The cleanup dispatcher for the status state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearStatusView(state, next) {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('status-container'));
-    next();
+        db={shapeup.fromShape(this.props.db, propTypes.db)}
+        generatePath={this.props.appState.generatePath.bind(this.props.appState)}
+        model={shapeup.fromShape(this.props.modelAPI.getAttrs(), propTypes.model)} />);
   }
 
   /**
@@ -706,16 +751,20 @@ Browser: ${navigator.userAgent}`
     @param {Object} state - The app state.
     @param {Function} next - Call to continue dispatching.
   */
-  _renderInspector(state, next) {
-    const instance = this.topology;
+  _generateInspector() {
+    const state = this.props.appState.current;
+    if (!this._isSet(state.gui) || !this._isSet(state.gui.inspector)) {
+      return null;
+    }
+    const instance = this.props.topology;
     if (!instance) {
       return;
     }
     const topo = instance.topo;
-    const charmstore = this.charmstore;
+    const charmstore = this.props.charmstore;
     let inspector = {};
     const inspectorState = state.gui.inspector;
-    const service = this.db.services.getById(inspectorState.id);
+    const service = this.props.db.services.getById(inspectorState.id);
     const localType = inspectorState.localType;
     // If there is a hoverService event listener then we need to detach it
     // when rendering the inspector.
@@ -723,8 +772,8 @@ Browser: ${navigator.userAgent}`
     if (hoverHandler) {
       document.removeEventListener('topo.hoverService', hoverHandler);
     }
-    const modelAPI = this.modelAPI;
-    const db = this.db;
+    const modelAPI = this.props.modelAPI;
+    const db = this.props.db;
     // If the url was provided with a service id which isn't in the localType
     // db then change state back to the added services list. This usually
     // happens if the user tries to visit the inspector of a ghost service
@@ -734,7 +783,7 @@ Browser: ${navigator.userAgent}`
       topo.modules.ServiceModule.selectService(service.get('id'));
       const charm = db.charms.getById(service.get('charm'));
       const relatableApplications = relationUtils.getRelatableApplications(
-        db, endpointUtils.getEndpoints(service, this.endpointsController));
+        db, endpointUtils.getEndpoints(service, this.props.endpointsController));
       const ecs = modelAPI.get('ecs');
       const addCharm = (url, callback, options) => {
         modelAPI.addCharm(url, charmstore, callback, options);
@@ -742,10 +791,10 @@ Browser: ${navigator.userAgent}`
       const propTypes = Inspector.propTypes;
       inspector = (
         <Inspector
-          acl={this.acl}
+          acl={this.props.acl}
           addCharm={addCharm}
           addNotification={this._bound.addNotification}
-          appState={this.state}
+          appState={this.props.appState}
           charm={charm}
           getAvailableVersions={charmstore.getAvailableVersions.bind(charmstore)}
           initUtils={shapeup.addReshape({
@@ -765,7 +814,7 @@ Browser: ${navigator.userAgent}`
             setConfig: modelAPI.set_config.bind(modelAPI),
             unexposeService: modelAPI.unexpose.bind(modelAPI)
           })}
-          modelUUID={this.modelUUID || ''}
+          modelUUID={this.props.modelUUID || ''}
           providerType={modelAPI.get('providerType') || ''}
           relatableApplications={relatableApplications}
           relationUtils={shapeup.addReshape({
@@ -773,13 +822,13 @@ Browser: ${navigator.userAgent}`
             destroyRelations: relationUtils.destroyRelations.bind(
               this, db, modelAPI),
             getAvailableEndpoints: relationUtils.getAvailableEndpoints.bind(
-              this, this.endpointsController, db, endpointUtils.getEndpoints)
+              this, this.props.endpointsController, db, endpointUtils.getEndpoints)
           })}
           service={service}
           serviceRelations={
             relationUtils.getRelationDataForService(db, service)}
           services={shapeup.fromShape(db.services, propTypes.services)}
-          showActivePlan={this.plans.showActivePlan.bind(this.plans)}
+          showActivePlan={this.props.plans.showActivePlan.bind(this.props.plans)}
           showPlans={window.juju_config.flags.plans || false}
           showSSHButtons={this._enableTerminal()}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
@@ -793,7 +842,7 @@ Browser: ${navigator.userAgent}`
       this._hideDragOverNotification();
       inspector = (
         <LocalInspector
-          acl={this.acl}
+          acl={this.props.acl}
           changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
@@ -807,38 +856,31 @@ Browser: ${navigator.userAgent}`
               this, modelAPI, db)} />
       );
     } else {
-      this.state.changeState({gui: {inspector: null}});
+      this.props.appState.changeState({gui: {inspector: null}});
       return;
     }
-    ReactDOM.render(
+    return (
       <Panel
         instanceName="inspector-panel"
         visible={true}>
         {inspector}
-      </Panel>,
-      document.getElementById('inspector-container'));
-    next();
+      </Panel>);
   }
-  /**
-    The cleanup dispatcher for the inspector state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearInspector(state, next) {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('inspector-container'));
-    next();
-  }
+
   /**
     Renders the Deployment component to the page in the
     designated element.
     @param {Object} state - The application state.
     @param {Function} next - Run the next route handler, if any.
   */
-  _renderDeployment(state, next) {
-    const modelAPI = this.modelAPI;
-    const db = this.db;
-    const connected = this.modelAPI.get('connected');
+  _generateDeployment() {
+    const state = this.props.appState.current;
+    if (!this._isSet(state.gui) || !this._isSet(state.gui.deploy)) {
+      return null;
+    }
+    const modelAPI = this.props.modelAPI;
+    const db = this.props.db;
+    const connected = this.props.modelAPI.get('connected');
     const modelName = modelAPI.get('environmentName') || 'mymodel';
     const ecs = modelAPI.get('ecs');
     const currentChangeSet = ecs.getCurrentChangeSet();
@@ -850,14 +892,14 @@ Browser: ${navigator.userAgent}`
       // browser or navigates directly to the url. This changeState needs to
       // happen in app.js, not the component otherwise it will have to try and
       // interrupt the mount to unmount the component.
-      this.state.changeState({
+      this.props.appState.changeState({
         gui: {
           deploy: null
         }
       });
       return;
     }
-    const controllerAPI = this.controllerAPI;
+    const controllerAPI = this.props.controllerAPI;
     const services = db.services;
     // Auto place the units. This is probably not the best UX, but is required
     // to display the machines in the deployment flow.
@@ -870,17 +912,17 @@ Browser: ${navigator.userAgent}`
       };
     }
     const getUserName = () => {
-      return this.user.username;
+      return this.props.user.username;
     };
     const loginToController = controllerAPI.loginWithMacaroon.bind(
-      controllerAPI, this.bakery);
-    const charmstore = this.charmstore;
-    const isLoggedIn = () => this.controllerAPI.userIsAuthenticated;
+      controllerAPI, this.props.bakery);
+    const charmstore = this.props.charmstore;
+    const isLoggedIn = () => this.props.controllerAPI.userIsAuthenticated;
     const autoPlaceUnits = autodeploy.autoPlaceUnits.bind(null, db, modelAPI);
     const propTypes = DeploymentFlow.propTypes;
-    ReactDOM.render(
+    return (
       <DeploymentFlow
-        acl={this.acl}
+        acl={this.props.acl}
         addNotification={this._bound.addNotification}
         applications={services.toArray()}
         changes={currentChangeSet}
@@ -904,13 +946,14 @@ Browser: ${navigator.userAgent}`
         controllerIsReady={this._controllerIsReady.bind(this)}
         credential={modelAPI.get('credential')}
         ddData={ddData}
-        generatePath={this.state.generatePath.bind(this.state)}
+        generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getServiceByName={services.getServiceByName.bind(services)}
-        getSLAMachineRates={this.rates.getSLAMachineRates.bind(this.rates)}
+        getSLAMachineRates={
+          this.props.rates.getSLAMachineRates.bind(this.props.rates)}
         getUserName={getUserName}
-        gisf={this.gisf}
-        gtmEnabled={this.applicationConfig.GTM_enabled}
+        gisf={this.props.gisf}
+        gtmEnabled={this.props.applicationConfig.GTM_enabled}
         hash={state.hash}
         initUtils={shapeup.addReshape({
           deploy: initUtils.deploy.bind(initUtils, this, autoPlaceUnits),
@@ -923,21 +966,21 @@ Browser: ${navigator.userAgent}`
         modelAPI={shapeup.fromShape(modelAPI, propTypes.modelAPI)}
         modelCommitted={connected}
         modelName={modelName}
-        payment={this.payment && shapeup.fromShape(this.payment, propTypes.payment)}
-        plans={this.plans && shapeup.fromShape(this.plans, propTypes.plans)}
-        profileUsername={this._getUserInfo(state).profile}
+        payment={
+          this.props.payment && shapeup.fromShape(this.props.payment, propTypes.payment)}
+        plans={this.props.plans && shapeup.fromShape(this.props.plans, propTypes.plans)}
+        profileUsername={this.props.getUserInfo(state).profile}
         region={modelAPI.get('region')}
-        sendAnalytics={this.sendAnalytics}
+        sendAnalytics={this.props.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
-        showPay={this.applicationConfig.flags.pay || false}
-        staticURL={this.applicationConfig.staticURL || ''}
-        stats={this.stats}
-        stripe={this.stripe && shapeup.fromShape(this.stripe, propTypes.stripe)}
-        terms={shapeup.fromShape(this.terms, propTypes.terms)}
-        username={this.user ? this.user.displayName : undefined}
+        showPay={this.props.applicationConfig.flags.pay || false}
+        staticURL={this.props.applicationConfig.staticURL || ''}
+        stats={this.props.stats}
+        stripe={this.props.stripe && shapeup.fromShape(this.props.stripe, propTypes.stripe)}
+        terms={shapeup.fromShape(this.props.terms, propTypes.terms)}
+        username={this.props.user ? this.props.user.displayName : undefined}
         WebHandler={WebHandler}
-        withPlans={false} />,
-      document.getElementById('deployment-container'));
+        withPlans={false} />);
   }
   /**
     Report whether the controller API connection is ready, connected and
@@ -946,100 +989,78 @@ Browser: ${navigator.userAgent}`
   */
   _controllerIsReady() {
     return !!(
-      this.controllerAPI &&
-      this.controllerAPI.get('connected') &&
-      this.controllerAPI.userIsAuthenticated
+      this.props.controllerAPI &&
+      this.props.controllerAPI.get('connected') &&
+      this.props.controllerAPI.userIsAuthenticated
     );
   }
-  /**
-    The cleanup dispatcher for the deployment flow state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearDeployment(state, next) {
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('deployment-container'));
-    next();
-  }
+
   /**
     Renders the Deployment component to the page in the
     designated element.
   */
-  _renderDeploymentBar() {
-    var modelAPI = this.modelAPI;
+  _generateDeploymentBar() {
+    var modelAPI = this.props.modelAPI;
     var ecs = modelAPI.get('ecs');
-    var db = this.db;
+    var db = this.props.db;
     var services = db.services;
     var servicesArray = services.toArray();
     var machines = db.machines.toArray();
     var units = db.units;
-    ReactDOM.render(
-      <DeploymentBar
-        acl={this.acl}
-        changeState={this._bound.changeState}
-        currentChangeSet={ecs.getCurrentChangeSet()}
-        generateChangeDescription={
-          changesUtils.generateChangeDescription.bind(
-            changesUtils, services, units)}
-        hasEntities={servicesArray.length > 0 || machines.length > 0}
-        modelCommitted={this.modelAPI.get('connected')}
-        sendAnalytics={this.sendAnalytics} />,
-      document.getElementById('deployment-bar-container'));
+    return (
+      <div id="deployment-bar-container">
+        <DeploymentBar
+          acl={this.props.acl}
+          changeState={this._bound.changeState}
+          currentChangeSet={ecs.getCurrentChangeSet()}
+          generateChangeDescription={
+            changesUtils.generateChangeDescription.bind(
+              changesUtils, services, units)}
+          hasEntities={servicesArray.length > 0 || machines.length > 0}
+          modelCommitted={this.props.modelAPI.get('connected')}
+          sendAnalytics={this.props.sendAnalytics} />
+      </div>);
   }
 
   /**
     Renders the login component.
 
-    @method _renderLogin
+    @method _generateLogin
     @param {String} err Possible authentication error, or null if no error
       message must be displayed.
   */
-  _renderLogin(err) {
+  _generateLogin(err) {
+    if (this.props.appState.current.root !== 'login') {
+      return null;
+    }
     document.getElementById('loading-message').style.display = 'none';
     const loginToController = () => {
-      this.loginToAPIs(null, true, [this.controllerAPI]);
+      this.props.loginToAPIs(null, true, [this.props.controllerAPI]);
     };
     const controllerIsConnected = () => {
-      return this.controllerAPI && this.controllerAPI.get('connected');
+      return this.props.controllerAPI && this.props.controllerAPI.get('connected');
     };
-    ReactDOM.render(
-      <Login
-        addNotification={this._bound.addNotification}
-        bakeryEnabled={this.applicationConfig.bakeryEnabled}
-        controllerIsConnected={controllerIsConnected}
-        errorMessage={err}
-        gisf={this.applicationConfig.gisf}
-        loginToAPIs={this.loginToAPIs.bind(this)}
-        loginToController={loginToController} />,
-      document.getElementById('login-container'));
-  }
-
-  /**
-    The cleanup dispatcher for the root state path.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _clearLogin(state, next) {
-    ReactDOM.unmountComponentAtNode(document.getElementById('login-container'));
-    if (next) {
-      next();
-    }
+    return (
+      <div className="full-screen-mask">
+        <Login
+          addNotification={this._bound.addNotification}
+          bakeryEnabled={this.props.applicationConfig.bakeryEnabled}
+          controllerIsConnected={controllerIsConnected}
+          errorMessage={err}
+          gisf={this.props.applicationConfig.gisf}
+          loginToAPIs={this.props.loginToAPIs}
+          loginToController={loginToController} />
+      </div>);
   }
 
   /**
     Renders the Log out component or log in link depending on the
     modelAPIironment the GUI is executing in.
   */
-  _renderUserMenu() {
-    const controllerAPI = this.controllerAPI;
-    const linkContainerId = 'profile-link-container';
-    const linkContainer = document.getElementById(linkContainerId);
-    if (!linkContainer) {
-      console.error(`no linkContainerId: ${linkContainerId}`);
-      return;
-    }
-    const charmstore = this.charmstore;
-    const bakery = this.bakery;
+  _generateUserMenu() {
+    const controllerAPI = this.props.controllerAPI;
+    const charmstore = this.props.charmstore;
+    const bakery = this.props.bakery;
     const _USSOLoginLink = (
       <USSOLoginLink
         addNotification={this._bound.addNotification}
@@ -1047,12 +1068,12 @@ Browser: ${navigator.userAgent}`
         loginToController={
           controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
     let logoutUrl = '/logout';
-    const applicationConfig = this.applicationConfig;
+    const applicationConfig = this.props.applicationConfig;
     if (applicationConfig.baseUrl) {
       logoutUrl = applicationConfig.baseUrl.replace(/\/?$/, logoutUrl);
     }
     const doCharmstoreLogout = () => {
-      return this.getUser('charmstore') && !applicationConfig.gisf;
+      return this.props.getUser('charmstore') && !applicationConfig.gisf;
     };
     const LogoutLink = (<Logout
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
@@ -1060,10 +1081,10 @@ Browser: ${navigator.userAgent}`
       locationAssign={window.location.assign.bind(window.location)}
       logoutUrl={logoutUrl}
       // If the charmbrowser is open then don't show the logout link.
-      visible={!this.state.current.store} />);
+      visible={!this.props.appState.current.store} />);
 
     const navigateUserProfile = () => {
-      const username = this.user.displayName;
+      const username = this.props.user.displayName;
       if (!username) {
         return;
       }
@@ -1071,25 +1092,29 @@ Browser: ${navigator.userAgent}`
     };
 
     const showHelp = () => {
-      this.state.changeState({
+      this.props.appState.changeState({
         help: true
       });
     };
 
-    ReactDOM.render(<UserMenu
-      controllerAPI={controllerAPI}
-      LogoutLink={LogoutLink}
-      navigateUserProfile={navigateUserProfile}
-      showHelp={showHelp}
-      USSOLoginLink={_USSOLoginLink} />, linkContainer);
+    return (
+      <li className="header-banner__list-item header-banner__list-item--no-padding"
+        id="profile-link-container">
+        <UserMenu
+          controllerAPI={controllerAPI}
+          LogoutLink={LogoutLink}
+          navigateUserProfile={navigateUserProfile}
+          showHelp={showHelp}
+          USSOLoginLink={_USSOLoginLink} />
+      </li>);
   }
 
   /**
     Renders the breadcrumb component to the DOM.
   */
-  _renderBreadcrumb() {
-    const modelAPI = this.modelAPI;
-    const controllerAPI = this.controllerAPI;
+  _generateBreadcrumb() {
+    const modelAPI = this.props.modelAPI;
+    const controllerAPI = this.props.controllerAPI;
     let showEnvSwitcher = true;
     let listModelsWithInfo = controllerAPI && this._bound.listModelsWithInfo;
     // If controller is undefined then do not render the switcher because
@@ -1110,32 +1135,32 @@ Browser: ${navigator.userAgent}`
       controllerAPI.findFacadeVersion('ModelManager') === null) {
       showEnvSwitcher = false;
     }
-    ReactDOM.render(
-      <HeaderBreadcrumb
-        acl={this.acl}
-        addNotification={this._bound.addNotification}
-        appState={this.state}
-        changeState={this._bound.changeState}
-        listModelsWithInfo={listModelsWithInfo}
-        loadingModel={modelAPI.loading}
-        modelCommitted={!!modelAPI.get('modelUUID')}
-        modelName={this.db.environment.get('name')}
-        modelOwner={modelAPI.get('modelOwner')}
-        setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
-        showEnvSwitcher={showEnvSwitcher}
-        showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
-        switchModel={this._bound.switchModel}
-        user={this.user} />,
-      document.getElementById('header-breadcrumb'));
+    return (
+      <div id="header-breadcrumb">
+        <HeaderBreadcrumb
+          acl={this.props.acl}
+          addNotification={this._bound.addNotification}
+          appState={this.props.appState}
+          changeState={this._bound.changeState}
+          listModelsWithInfo={listModelsWithInfo}
+          loadingModel={modelAPI.loading}
+          modelCommitted={!!modelAPI.get('modelUUID')}
+          modelName={this.props.db.environment.get('name')}
+          modelOwner={modelAPI.get('modelOwner')}
+          setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
+          showEnvSwitcher={showEnvSwitcher}
+          showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
+          switchModel={this.props.switchModel}
+          user={this.props.user} />
+      </div>);
   }
   /**
     Renders the logo for the current cloud provider.
   */
-  _renderProviderLogo() {
-    const container = document.getElementById('provider-logo-container');
-    const cloudProvider = this.modelAPI.get('providerType');
+  _generateProviderLogo() {
+    const cloudProvider = this.props.modelAPI.get('providerType');
     let providerDetails = initUtils.getCloudProviderDetails(cloudProvider);
-    const currentState = this.state.current || {};
+    const currentState = this.props.appState.current || {};
     const isDisabled = (
       // There is no provider.
       !cloudProvider ||
@@ -1159,78 +1184,144 @@ Browser: ${navigator.userAgent}`
       // not yet setup in the cloud provider details.
       providerDetails = {};
     }
-    ReactDOM.render(
-      <div className={classes}>
-        <SvgIcon
-          height={providerDetails.svgHeight * scale}
-          name={providerDetails.id || ''}
-          width={providerDetails.svgWidth * scale} />
-      </div>,
-      container);
+    return (
+      <div className="header-banner__provider">
+        <div className={classes}>
+          <SvgIcon
+            height={providerDetails.svgHeight * scale}
+            name={providerDetails.id || ''}
+            width={providerDetails.svgWidth * scale} />
+        </div>
+      </div>);
   }
   /**
     Renders the notification component to the page in the designated element.
   */
-  _renderNotifications(e) {
+  _generateNotifications(e) {
     let notification = null;
     if (e && e.details) {
       notification = e.details[0].model.getAttrs();
     }
-    ReactDOM.render(
+    return (
       <NotificationList
-        notification={notification} />,
-      document.getElementById('notifications-container'));
+        notification={notification} />);
   }
   /**
     Renders the mask and animations for the drag over notification for when
     a user drags a yaml file or zip file over the canvas.
     @param {Boolean} showIndicator
   */
-  _renderDragOverNotification(showIndicator = true) {
-    this.topology.fadeHelpIndicator(showIndicator);
-    ReactDOM.render(
-      <ExpandingProgress />,
-      document.getElementById('drag-over-notification-container'));
+  _generateDragOverNotification(showIndicator = true) {
+    this.props.topology.fadeHelpIndicator(showIndicator);
+    return (
+      <ExpandingProgress />);
   }
+
   /**
     Hide the drag notifications.
   */
   _hideDragOverNotification() {
-    this.topology.fadeHelpIndicator(false);
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('drag-over-notification-container'));
+    this.props.topology.fadeHelpIndicator(false);
+    // TODO: use state to handle hiding this
+    // ReactDOM.unmountComponentAtNode(
+    //   document.getElementById('drag-over-notification-container'));
   }
+
   /**
     Renders the zoom component to the page in the designated element.
   */
-  _renderZoom() {
-    ReactDOM.render(
-      <Zoom
-        topo={this.topology.topo} />,
-      document.getElementById('zoom-container'));
+  _generateZoom() {
+    return (
+      <div id="zoom-container">
+        <Zoom
+          topo={this.props.topology.topo} />
+      </div>);
   }
-  /**
-    Render the react components.
-  */
-  _renderComponents() {
-    // Update the react views on database change
-    this._renderEnvSizeDisplay(
-      this.db.services.size(),
-      this.db.machines.filterByParent().length
+
+  render() {
+    return (
+      <div>
+        <div className="header-banner header-banner--left">
+          {this._generateHeaderLogo()}
+          {this._generateBreadcrumb()}
+          {this._generateModelActions()}
+          {this._generateProviderLogo()}
+        </div>
+        <div className="header-banner header-banner--right">
+          <ul className="header-banner__list--right">
+            <li className="header-banner__list-item"
+              id="maas-server"
+              style={{ display: 'none' }} >
+              <a className="header-banner__link"
+                href=""
+                target="_blank">
+                MAAS UI
+              </a>
+            </li>
+            {this._generateHeaderSearch()}
+            {this._generateHeaderHelp()}
+            {this._generateUserMenu()}
+          </ul>
+        </div>
+        {this._generateZoom()}
+        {this._generateLogin()}
+        {this._generateUserProfile()}
+        <div id="popup-container"></div>
+        <div id="sharing-container"></div>
+        {this._generateCharmbrowser()}
+        {this._generateDeployment()}
+        {this._generateEnvSizeDisplay()}
+        {this._generateAddedServices()}
+        {this._generateInspector()}
+        {this._generateMachineView()}
+        {this._displayPostDeployment()}
+        {this._generateStatusView()}
+        <div id="login-notification"></div>
+        <div id="cookie-container"></div>
+        {this._generateHelp()}
+        {this._generateShortcutsModal()}
+        {this._generateSettingsModal()}
+        {this._generateLightbox()}
+        <div id="app-footer">
+          {this._generateDeploymentBar()}
+          {this._displayTerminal()}
+        </div>
+      </div>
     );
-    this._renderDeploymentBar();
-    this._renderModelActions();
-    this._renderProviderLogo();
-    this._renderZoom();
-    this._renderBreadcrumb();
-    this._renderHeaderSearch();
-    this._renderHeaderHelp();
-    this._renderHeaderLogo();
-    const gui = this.state.current.gui;
-    if (!gui || (gui && !gui.inspector)) {
-      this._renderAddedServices();
-    }
   }
 };
 
-module.exports = ComponentRenderersMixin;
+App.propTypes = {
+  acl: PropTypes.object.isRequired,
+  addToModel: PropTypes.func.isRequired,
+  appState: PropTypes.object.isRequired,
+  applicationConfig: PropTypes.object.isRequired,
+  bakery: PropTypes.object.isRequired,
+  bundleImporter: PropTypes.object.isRequired,
+  charmstore: PropTypes.object.isRequired,
+  controllerAPI: PropTypes.object.isRequired,
+  db: PropTypes.object.isRequired,
+  deployService: PropTypes.func.isRequired,
+  endpointsController: PropTypes.object.isRequired,
+  getUser: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.func.isRequired,
+  gisf: PropTypes.object,
+  identity: PropTypes.object.isRequired,
+  loginToAPIs: PropTypes.func.isRequired,
+  modelAPI: PropTypes.object.isRequired,
+  modelUUID: PropTypes.string,
+  payment: PropTypes.object,
+  plans: PropTypes.object,
+  rates: PropTypes.object,
+  sendAnalytics: PropTypes.func.isRequired,
+  setPageTitle: PropTypes.func.isRequired,
+  stats: PropTypes.object,
+  storeUser: PropTypes.func.isRequired,
+  stripe: PropTypes.object,
+  switchModel: PropTypes.func.isRequired,
+  terms: PropTypes.object,
+  topology: PropTypes.object.isRequired,
+  user: PropTypes.object
+};
+
+module.exports = App;

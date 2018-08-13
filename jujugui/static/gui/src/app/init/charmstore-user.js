@@ -36,7 +36,8 @@ const CharmstoreUserMixin = superclass => class extends superclass {
         }
       }
       if (rerenderBreadcrumb) {
-        this._renderBreadcrumb();
+        //  Dispatch to force a state update.
+        this.state.dispatch();
       }
     };
     if (service === 'charmstore') {
