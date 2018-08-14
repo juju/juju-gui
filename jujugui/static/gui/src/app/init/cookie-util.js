@@ -2,7 +2,6 @@
 'use strict';
 
 const React = require('react');
-const ReactDOM = require('react-dom');
 
 const Notification = require('../components/notification/notification');
 
@@ -10,12 +9,13 @@ const Notification = require('../components/notification/notification');
   Check that the user accepted cookie usage, and if not display a cookie
   usage warning.
   @param {Object} doc Reference to the window.document.
+  @param {Object} state Reference to the app state.
 */
-function check(doc) {
+function check(doc, state) {
   if (shouldShowNotification(doc)) {
-    _renderNotification(doc);
+    return _renderNotification(doc, state);
   } else {
-    _removeNotification(doc);
+    return null;
   }
 }
 
@@ -32,10 +32,12 @@ function shouldShowNotification(doc) {
 /**
   Close the cookie usage warning and set a cookie to denote user agreement.
   @param {Object} doc Reference to the window.document.
+  @param {Object} state Reference to the app state.
 */
-function close(doc) {
-  _removeNotification(doc);
+function close(doc, state) {
   _setCookie(doc, '_cookies_accepted', 'true', new Date('January 12, 2025'));
+  // Dispatch the state so that the check is done again and the notice no longer displayed.
+  state.dispatch();
 }
 
 /**
@@ -75,8 +77,9 @@ function _setCookie(doc, cookie, value, expiry) {
 /**
   Render the notification.
   @param {Object} doc Reference to the window.document.
+  @param {Object} state Reference to the app state.
 */
-function _renderNotification(doc) {
+function _renderNotification(doc, state) {
   const content = (
     <span>
       We use cookies to improve your experience. By your continued use
@@ -87,21 +90,11 @@ function _renderNotification(doc) {
         see our policy
       </a>
     </span>);
-  ReactDOM.render(
+  return (
     <Notification
       content={content}
-      dismiss={close.bind(this, doc)}
-      extraClasses="p-notification--center-bottom" />,
-    doc.getElementById('cookie-container'));
-}
-
-/**
-  Unmount the notification.
-  @param {Object} doc Reference to the window.document.
-*/
-function _removeNotification(doc) {
-  ReactDOM.unmountComponentAtNode(
-    doc.getElementById('cookie-container'));
+      dismiss={close.bind(this, doc, state)}
+      extraClasses="p-notification--center-bottom" />);
 }
 
 module.exports = {check, close, shouldShowNotification};

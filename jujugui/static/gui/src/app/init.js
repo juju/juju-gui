@@ -12,7 +12,6 @@ const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
-const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const ModelController = require('./models/model-controller');
@@ -437,17 +436,7 @@ class GUIApp {
     }
     next();
   }
-  /**
-    Make sure the user agrees to cookie usage.
-    @param {Object} state - The application state.
-    @param {Function} next - The next route handler.
-  */
-  authorizeCookieUse(state, next) {
-    if (this.applicationConfig.GTM_enabled) {
-      cookieUtil.check(document);
-    }
-    next();
-  }
+
   /**
     Ensure that the current user has authenticated.
     @param {Object} state The application state.
@@ -547,7 +536,6 @@ class GUIApp {
     });
     state.register([
       ['*', this._ensureControllerConnection.bind(this)],
-      ['*', this.authorizeCookieUse.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
       ['*', this._renderApp.bind(this)],
       ['root',

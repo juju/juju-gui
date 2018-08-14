@@ -14,6 +14,7 @@ const urls = jaaslib.urls;
 const yui = window.yui;
 
 const autodeploy = require('./init/autodeploy');
+const cookieUtil = require('./init/cookie-util');
 const initUtils = require('./init/utils');
 const localCharmHelpers = require('./components/local-inspector/local-charm-import-helpers');
 const changesUtils = require('./init/changes-utils');
@@ -63,6 +64,7 @@ class App extends React.Component {
       lightbox: false,
       hoveredService: null,
       settingsModalVisible: false,
+      sharingVisible: false,
       shortcutsModalVisible: false
     };
     this._bindRenderUtilities();
@@ -204,7 +206,14 @@ class App extends React.Component {
                      (false); defaults to true.
   */
   _sharingVisibility(visibility = true) {
-    if (!visibility) {
+    this.setState({ sharingVisible: visibility });
+  }
+
+  /**
+    Generate the sharing modal.
+  */
+  _generateSharing() {
+    if (!this.state.sharingVisible) {
       return null;
     }
     const modelAPI = this.props.modelAPI;
@@ -1080,7 +1089,7 @@ Browser: ${navigator.userAgent}`
       doCharmstoreLogout={doCharmstoreLogout}
       locationAssign={window.location.assign.bind(window.location)}
       logoutUrl={logoutUrl}
-      // If the charmbrowser is open then don't show the logout link.
+      // If the charmbrowser is open then do not show the logout link.
       visible={!this.props.appState.current.store} />);
 
     const navigateUserProfile = () => {
@@ -1238,6 +1247,15 @@ Browser: ${navigator.userAgent}`
       </div>);
   }
 
+  /**
+    Generate the cookie notice.
+  */
+  _generateCookieNotice() {
+    if (this.props.applicationConfig.GTM_enabled) {
+      return cookieUtil.check(document, this.props.appState);
+    }
+  }
+
   render() {
     return (
       <div>
@@ -1267,7 +1285,7 @@ Browser: ${navigator.userAgent}`
         {this._generateLogin()}
         {this._generateUserProfile()}
         <div id="popup-container"></div>
-        <div id="sharing-container"></div>
+        {this._generateSharing()}
         {this._generateCharmbrowser()}
         {this._generateDeployment()}
         {this._generateEnvSizeDisplay()}
@@ -1277,7 +1295,7 @@ Browser: ${navigator.userAgent}`
         {this._displayPostDeployment()}
         {this._generateStatusView()}
         <div id="login-notification"></div>
-        <div id="cookie-container"></div>
+        {this._generateCookieNotice()}
         {this._generateHelp()}
         {this._generateShortcutsModal()}
         {this._generateSettingsModal()}
