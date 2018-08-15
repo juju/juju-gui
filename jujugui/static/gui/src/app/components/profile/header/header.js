@@ -142,7 +142,7 @@ class ProfileHeader extends React.Component {
     const user = this.state.user || {};
     return (
       <div className="profile-header v1">
-        <div className="p-strip is-shallow">
+        <div className="p-strip">
           <div className="row p-divider u-no-padding--top u-no-padding--bottom">
             <div className="col-10 p-divider__block">
               <div className="p-media-object--large u-no-margin--bottom">
