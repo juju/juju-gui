@@ -637,7 +637,7 @@ Browser: ${navigator.userAgent}`
     @param {Object} state The current state.
     @param {Function} next Run the next handler.
   */
-  _displayPostDeployment(state, next) {
+  _generatePostDeployment(state, next) {
     let entityURLs = [];
     if (typeof state.postDeploymentPanel === 'string') {
       // A specific URL was provided so pass that through
@@ -660,44 +660,6 @@ Browser: ${navigator.userAgent}`
             shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
           entityURLs={entityURLs} />);
     }
-  }
-
-  /**
-    Remove post deployment.
-
-    @param {Object} state The current state.
-    @param {Function} next Run the next handler.
-  */
-  _clearPostDeployment() {
-    // TODO: Use state for showing this?
-    const closeTime = new Date().getTime();
-
-    if (this.postDeploymentPanel
-      && this.postDeploymentPanel.openTime
-      && this.postDeploymentPanel.entityId) {
-      const entityId = this.postDeploymentPanel.entityId;
-      const openTime = this.postDeploymentPanel.openTime;
-      const action = 'Close post deployment panel';
-
-      // Round it to the nearest second.
-      let timeOpen = Math.round(
-        (closeTime - openTime) / 1000
-      );
-      let args = [
-        `${timeOpen}s`,
-        entityId
-      ];
-
-      this.props.sendAnalytics(
-        'Deployment Flow',
-        action,
-        args.join(' - ')
-      );
-    }
-
-    ReactDOM.unmountComponentAtNode(
-      document.getElementById('post-deployment')
-    );
   }
 
   _generateHeaderLogo() {
@@ -1437,7 +1399,7 @@ Browser: ${navigator.userAgent}`
         {this._generateAddedServices()}
         {this._generateInspector()}
         {this._generateMachineView()}
-        {this._displayPostDeployment()}
+        {this._generatePostDeployment()}
         {this._generateStatusView()}
         {this._generateLoginNotification()}
         {this._generateCookieNotice()}
