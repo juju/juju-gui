@@ -1301,7 +1301,7 @@ Browser: ${navigator.userAgent}`
   }
 
   /**
-    Generate the cookie notice.
+    Generate the login notification.
   */
   _generateLoginNotification() {
     const { loginNotificiationURL } = this.state;
@@ -1327,6 +1327,24 @@ Browser: ${navigator.userAgent}`
       </div>);
   }
 
+  /**
+    Generate the MAAS link.
+  */
+  _generateMAASLink() {
+    const { maasServer } = this.props;
+    if (!maasServer) {
+      return null;
+    }
+    return (
+      <li className="header-banner__list-item">
+        <a className="header-banner__link"
+          href={maasServer}
+          target="_blank">
+          MAAS UI
+        </a>
+      </li>);
+  }
+
   render() {
     return (
       <div>
@@ -1338,15 +1356,7 @@ Browser: ${navigator.userAgent}`
         </div>
         <div className="header-banner header-banner--right">
           <ul className="header-banner__list--right">
-            <li className="header-banner__list-item"
-              id="maas-server"
-              style={{ display: 'none' }} >
-              <a className="header-banner__link"
-                href=""
-                target="_blank">
-                MAAS UI
-              </a>
-            </li>
+            {this._generateMAASLink()}
             {this._generateHeaderSearch()}
             {this._generateHeaderHelp()}
             {this._generateUserMenu()}
@@ -1397,6 +1407,7 @@ App.propTypes = {
   gisf: PropTypes.object,
   identity: PropTypes.object.isRequired,
   loginToAPIs: PropTypes.func.isRequired,
+  maasServer: PropTypes.string,
   modelAPI: PropTypes.object.isRequired,
   modelUUID: PropTypes.string,
   payment: PropTypes.object,

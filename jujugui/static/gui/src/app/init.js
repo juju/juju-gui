@@ -499,6 +499,7 @@ class GUIApp {
         gisf={this.gisf}
         identity={this.identity}
         loginToAPIs={this.loginToAPIs.bind(this)}
+        maasServer={this._getMaasServer()}
         modelAPI={this.modelAPI}
         modelUUID={this.modelUUID}
         payment={this.payment}
@@ -689,14 +690,24 @@ class GUIApp {
       config.ratesURL, new WebHandler());
   }
 
-  _handleMaasServer() {
+  /**
+    Get the URL to the MAAS server.
+    @returns {String} the MAAS server URL.
+  */
+  _getMaasServer() {
     // Once we know about MAAS server, update the header accordingly.
     let maasServer = this.modelAPI.get('maasServer');
     if (!maasServer && this.controllerAPI) {
       maasServer = this.controllerAPI.get('maasServer');
     }
+    return maasServer;
+  }
+
+  _handleMaasServer() {
+    // Once we know about MAAS server, update the header accordingly.
+    const maasServer = this._getMaasServer();
     if (maasServer) {
-      this._displayMaasLink(maasServer);
+      this._displayMaasLink();
     } else {
       if (this.controllerAPI) {
         this.controllerAPI.once('maasServerChange', this._onMaasServer, this);
@@ -1424,22 +1435,16 @@ class GUIApp {
       // This can happen if the attr is set blithely. Ignore if so.
       return;
     }
-    this._displayMaasLink(evt.newVal);
+    this._displayMaasLink();
   }
 
   /**
     If the given maasServer is not null, create a link to the MAAS server
     in the GUI header.
-    @param {String} maasServer The MAAS server URL (or null if not in MAAS).
   */
-  _displayMaasLink(maasServer) {
-    if (maasServer === null) {
-      // The current environment is not MAAS.
-      return;
-    }
-    const maasContainer = document.querySelector('#maas-server');
-    maasContainer.querySelector('a').setAttribute('href', maasServer);
-    maasContainer.classList.remove('hidden');
+  _displayMaasLink() {
+    // Now that the maasServer is available, dispatch the state so the link appears.
+    this.state.dispatch();
   }
 
   maskVisibility(visibility = true) {
