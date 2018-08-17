@@ -19,26 +19,14 @@ const keyBindings = {
   },
   'S-1': {
     callback: function() {
-      this._clearShortcutsModal();
-      if (document.getElementById('modal-gui-settings').
-        children.length > 0) {
-        this._clearSettingsModal();
-      } else {
-        this._displaySettingsModal();
-      }
+      document.dispatchEvent(new Event('displaySettingsModal'));
     },
     help: 'GUI Settings',
     label: 'Shift + !'
   },
   'S-/': {
     callback: function() {
-      this._clearSettingsModal();
-      if (document.getElementById('modal-shortcuts').
-        children.length > 0) {
-        this._clearShortcutsModal();
-      } else {
-        this._displayShortcutsModal();
-      }
+      document.dispatchEvent(new Event('displayShortcutsModal'));
     },
     help: 'Display this help',
     label: 'Shift + ?'

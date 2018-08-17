@@ -79,10 +79,14 @@ class App extends React.Component {
     // Subscribe to events for code outside the React components that need to
     // control App state.
     document.addEventListener('loginNotification', this._bound._loginNotificationListener);
+    document.addEventListener('displaySettingsModal', this._bound._settingsModalListener);
+    document.addEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
   }
 
   componentWillUnmount() {
     document.removeEventListener('loginNotification', this._bound._loginNotificationListener);
+    document.removeEventListener('displaySettingsModal', this._bound._settingsModalListener);
+    document.removeEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
   }
 
   /**
@@ -109,6 +113,8 @@ class App extends React.Component {
     */
     this._bound = {
       _loginNotificationListener: this._loginNotificationListener.bind(this),
+      _settingsModalListener: this._settingsModalListener.bind(this),
+      _shortcutsModalListener: this._shortcutsModalListener.bind(this),
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
       changeState: this.props.appState.changeState.bind(this.props.appState),
       destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
@@ -123,6 +129,26 @@ class App extends React.Component {
   */
   _loginNotificationListener(evt) {
     this.setState({ loginNotificiationURL: evt.detail });
+  }
+
+  /**
+    The method to call for displaySettingsModal event changes.
+  */
+  _settingsModalListener() {
+    this.setState({
+      settingsModalVisible: !this.state.settingsModalVisible,
+      shortcutsModalVisible: false
+    });
+  }
+
+  /**
+    The method to call for displayShortcutsModal event changes.
+  */
+  _shortcutsModalListener() {
+    this.setState({
+      settingsModalVisible: false,
+      shortcutsModalVisible: !this.state.shortcutsModalVisible
+    });
   }
 
   /**
