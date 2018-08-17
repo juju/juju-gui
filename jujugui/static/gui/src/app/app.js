@@ -1245,14 +1245,12 @@ Browser: ${navigator.userAgent}`
   /**
     Renders the notification component to the page in the designated element.
   */
-  _generateNotifications(e) {
-    let notification = null;
-    if (e && e.details) {
-      notification = e.details[0].model.getAttrs();
-    }
+  _generateNotifications() {
+    const notifications = this.props.db.notifications.toArray().map(
+      notification => notification.getAttrs());
     return (
       <NotificationList
-        notification={notification} />);
+        notifications={notifications} />);
   }
 
   /**
@@ -1408,6 +1406,7 @@ Browser: ${navigator.userAgent}`
         {this._generateSettingsModal()}
         {this._generateLightbox()}
         {this._generateDragOverNotification()}
+        {this._generateNotifications()}
         <div id="app-footer">
           {this._generateDeploymentBar()}
           {this._displayTerminal()}

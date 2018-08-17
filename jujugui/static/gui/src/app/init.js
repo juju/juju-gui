@@ -300,7 +300,9 @@ class GUIApp {
     this.db.units.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
-    this.db.notifications.after('add', this._renderNotifications, this);
+    this.db.notifications.after('add', () => {
+      this.state.dispatch();
+    }, this);
 
     // When someone wants a charm to be deployed they fire an event and we
     // show the charm panel to configure/deploy the service.
