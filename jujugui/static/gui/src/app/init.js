@@ -256,8 +256,11 @@ class GUIApp {
       getBundleChanges: this.controllerAPI.getBundleChanges.bind(
         this.controllerAPI),
       charmstore: this.charmstore,
-      // TODO: add a method to update the state
-      hideDragOverNotification: () => {}
+      hideDragOverNotification: () => {
+        document.dispatchEvent(new CustomEvent('showDragOverNotification', {
+          detail: false
+        }));
+      }
     });
 
     if (config.gisf) {
@@ -990,7 +993,9 @@ class GUIApp {
       return; // Ignore if it's not a supported type
     }
     if (e.type === 'dragenter') {
-      this._renderDragOverNotification();
+      document.dispatchEvent(new CustomEvent('showDragOverNotification', {
+        detail: true
+      }));
     }
     // Possible values for type are 'dragover' and 'dragleave'.
     this._dragleaveTimerControl(e.type === 'dragover' ? 'stop' : 'start');
@@ -1009,8 +1014,9 @@ class GUIApp {
     }
     if (action === 'start') {
       this._dragLeaveTimer = setTimeout(() => {
-        // TODO: use state show/hide this
-        // this._hideDragOverNotification();
+        document.dispatchEvent(new CustomEvent('showDragOverNotification', {
+          detail: false
+        }));
       }, 100);
     }
   }

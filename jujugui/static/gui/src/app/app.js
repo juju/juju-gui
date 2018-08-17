@@ -62,6 +62,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      dragOverNotificationVisible: false,
       lightbox: false,
       loginNotificiationURL: null,
       hoveredService: null,
@@ -81,12 +82,26 @@ class App extends React.Component {
     document.addEventListener('loginNotification', this._bound._loginNotificationListener);
     document.addEventListener('displaySettingsModal', this._bound._settingsModalListener);
     document.addEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
+    document.addEventListener(
+      'showDragOverNotification', this._bound._dragOverNotificationListener);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const currentGUI = this.props.appState.current.gui;
+    const currrentLocalType = currentGUI && currentGUI.inspector &&
+      currentGUI.inspector.localType;
+    // If the local inspector has just been shown then hide the drag over message.
+    if (currrentLocalType && this.state.dragOverNotificationVisible) {
+      this._showDragOverNotification(false);
+    }
   }
 
   componentWillUnmount() {
     document.removeEventListener('loginNotification', this._bound._loginNotificationListener);
     document.removeEventListener('displaySettingsModal', this._bound._settingsModalListener);
     document.removeEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
+    document.removeEventListener(
+      'showDragOverNotification', this._bound._dragOverNotificationListener);
   }
 
   /**
@@ -115,6 +130,7 @@ class App extends React.Component {
       _loginNotificationListener: this._loginNotificationListener.bind(this),
       _settingsModalListener: this._settingsModalListener.bind(this),
       _shortcutsModalListener: this._shortcutsModalListener.bind(this),
+      _dragOverNotificationListener: this._dragOverNotificationListener.bind(this),
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
       changeState: this.props.appState.changeState.bind(this.props.appState),
       destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
@@ -149,6 +165,14 @@ class App extends React.Component {
       settingsModalVisible: false,
       shortcutsModalVisible: !this.state.shortcutsModalVisible
     });
+  }
+
+  /**
+    The method to call for showDragOverNotification event changes.
+    @param evt {String} The event details.
+  */
+  _dragOverNotificationListener(evt) {
+    this._showDragOverNotification(evt.detail);
   }
 
   /**
@@ -234,12 +258,12 @@ class App extends React.Component {
           displayTerminalButton={this._enableTerminal()}
           exportEnvironmentFile={
             initUtils.exportEnvironmentFile.bind(initUtils, this.db, this.sendAnalytics)}
-          hideDragOverNotification={this._hideDragOverNotification.bind(this)}
+          hideDragOverNotification={this._showDragOverNotification.bind(this, false)}
           importBundleFile={this.props.bundleImporter.importBundleFile.bind(
             this.props.bundleImporter)}
           loadingModel={modelAPI.loading}
           renderDragOverNotification={
-            this._generateDragOverNotification.bind(this)}
+            this._showDragOverNotification.bind(this)}
           sharingVisibility={this._sharingVisibility.bind(this)}
           userIsAuthenticated={modelAPI.userIsAuthenticated} />
       </div>);
@@ -889,10 +913,6 @@ Browser: ${navigator.userAgent}`
             db.updateServiceUnitsDisplayname.bind(db)} />
       );
     } else if (localType && window.localCharmFile) {
-      // When dragging a local charm zip over the canvas it animates the
-      // drag over notification which needs to be closed when the inspector
-      // is opened.
-      this._hideDragOverNotification();
       inspector = (
         <LocalInspector
           acl={this.props.acl}
@@ -1259,25 +1279,28 @@ Browser: ${navigator.userAgent}`
       <NotificationList
         notification={notification} />);
   }
+
   /**
     Renders the mask and animations for the drag over notification for when
     a user drags a yaml file or zip file over the canvas.
     @param {Boolean} showIndicator
   */
   _generateDragOverNotification(showIndicator = true) {
-    this.props.topology.fadeHelpIndicator(showIndicator);
+    if (!this.state.dragOverNotificationVisible) {
+      return null;
+    }
     return (
       <ExpandingProgress />);
   }
 
   /**
-    Hide the drag notifications.
+    Show or hide the drag over notification for when a user drags a yaml file or zip
+    file over the canvas.
+    @param {Boolean} showIndicator Whether to show the notification.
   */
-  _hideDragOverNotification() {
-    this.props.topology.fadeHelpIndicator(false);
-    // TODO: use state to handle hiding this
-    // ReactDOM.unmountComponentAtNode(
-    //   document.getElementById('drag-over-notification-container'));
+  _showDragOverNotification(showIndicator = true) {
+    this.props.topology.fadeHelpIndicator(showIndicator);
+    this.setState({ dragOverNotificationVisible: showIndicator });
   }
 
   /**
@@ -1381,6 +1404,7 @@ Browser: ${navigator.userAgent}`
         {this._generateShortcutsModal()}
         {this._generateSettingsModal()}
         {this._generateLightbox()}
+        {this._generateDragOverNotification()}
         <div id="app-footer">
           {this._generateDeploymentBar()}
           {this._displayTerminal()}
