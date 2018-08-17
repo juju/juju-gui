@@ -3,12 +3,10 @@
 
 const jsyaml = require('js-yaml');
 const React = require('react');
-const ReactDOM = require('react-dom');
 const FileSaver = require('file-saver');
 const {charmstore} = require('jaaslib');
 
 const BundleExporter = require('./bundle-exporter');
-const Popup = require('../components/popup/popup');
 const initUtils = require('./utils');
 
 let utils = {};
@@ -398,33 +396,18 @@ utils.switchModel = function(
   @param {Function} action The method to call if the user continues.
 */
 utils._showUncommittedConfirm = action => {
-  const buttons = [{
-    title: 'Cancel',
-    action: utils._hidePopup.bind(this),
-    type: 'inline-neutral'
-  }, {
-    title: 'Continue',
-    action: action,
-    type: 'destructive'
-  }];
-  ReactDOM.render(
-    <Popup
-      buttons={buttons}
-      title="Uncommitted changes">
-      <p>
-        You have uncommitted changes to your model. You will
-        lose these changes if you continue.
-      </p>
-    </Popup>,
-    document.getElementById('popup-container'));
+  document.dispatchEvent(new CustomEvent('popupAction', {
+    detail: action
+  }));
 };
 
 /**
   Hide the confirmation popup.
 */
 utils._hidePopup = () => {
-  ReactDOM.unmountComponentAtNode(
-    document.getElementById('popup-container'));
+  document.dispatchEvent(new CustomEvent('popupAction', {
+    detail: null
+  }));
 };
 
 /**

@@ -45,6 +45,7 @@ const ModalShortcuts = require('./components/modal-shortcuts/modal-shortcuts');
 const Notification = require('./components/notification/notification');
 const NotificationList = require('./components/notification-list/notification-list');
 const Panel = require('./components/panel/panel');
+const Popup = require('./components/popup/popup');
 const PostDeployment = require('./components/post-deployment/post-deployment');
 const Profile = require('./components/profile/profile');
 const Sharing = require('./components/sharing/sharing');
@@ -63,9 +64,10 @@ class App extends React.Component {
     super(props);
     this.state = {
       dragOverNotificationVisible: false,
+      hoveredService: null,
       lightbox: false,
       loginNotificiationURL: null,
-      hoveredService: null,
+      popupAction: null,
       settingsModalVisible: false,
       sharingVisible: false,
       shortcutsModalVisible: false
@@ -82,6 +84,7 @@ class App extends React.Component {
     document.addEventListener('loginNotification', this._bound._loginNotificationListener);
     document.addEventListener('displaySettingsModal', this._bound._settingsModalListener);
     document.addEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
+    document.addEventListener('popupAction', this._bound._popupActionListener);
     document.addEventListener(
       'showDragOverNotification', this._bound._dragOverNotificationListener);
   }
@@ -100,6 +103,7 @@ class App extends React.Component {
     document.removeEventListener('loginNotification', this._bound._loginNotificationListener);
     document.removeEventListener('displaySettingsModal', this._bound._settingsModalListener);
     document.removeEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
+    document.removeEventListener('popupAction', this._bound._popupActionListener);
     document.removeEventListener(
       'showDragOverNotification', this._bound._dragOverNotificationListener);
   }
@@ -131,6 +135,7 @@ class App extends React.Component {
       _settingsModalListener: this._settingsModalListener.bind(this),
       _shortcutsModalListener: this._shortcutsModalListener.bind(this),
       _dragOverNotificationListener: this._dragOverNotificationListener.bind(this),
+      _popupActionListener: this._popupActionListener.bind(this),
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
       changeState: this.props.appState.changeState.bind(this.props.appState),
       destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
@@ -173,6 +178,14 @@ class App extends React.Component {
   */
   _dragOverNotificationListener(evt) {
     this._showDragOverNotification(evt.detail);
+  }
+
+  /**
+    The method to call for popupAction event changes.
+    @param evt {String} The event details.
+  */
+  _popupActionListener(evt) {
+    this.setState({ popupAction: evt.detail });
   }
 
   /**
@@ -1368,6 +1381,34 @@ Browser: ${navigator.userAgent}`
       </li>);
   }
 
+  /**
+    Generate the confirmation for losing uncommitted changes.
+  */
+  _generateUncommittedConfirm() {
+    const { popupAction } = this.state;
+    if (!popupAction) {
+      return null;
+    }
+    const buttons = [{
+      title: 'Cancel',
+      action: this.setState.bind(this, { popupAction: null }),
+      type: 'inline-neutral'
+    }, {
+      title: 'Continue',
+      action: popupAction,
+      type: 'destructive'
+    }];
+    return (
+      <Popup
+        buttons={buttons}
+        title="Uncommitted changes">
+        <p>
+          You have uncommitted changes to your model. You will
+          lose these changes if you continue.
+        </p>
+      </Popup>);
+  }
+
   render() {
     return (
       <div>
@@ -1388,7 +1429,7 @@ Browser: ${navigator.userAgent}`
         {this._generateZoom()}
         {this._generateLogin()}
         {this._generateUserProfile()}
-        <div id="popup-container"></div>
+        {this._generateUncommittedConfirm()}
         {this._generateSharing()}
         {this._generateCharmbrowser()}
         {this._generateDeployment()}
