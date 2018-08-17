@@ -295,8 +295,9 @@ class GUIApp {
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
     this.db.environment.after(
-      ['add', 'remove', '*:change'],
-      this._renderModelActions, this);
+      ['add', 'remove', '*:change'], () => {
+        this.state.dispatch();
+      }, this);
     this.db.units.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
