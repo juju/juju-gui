@@ -96,7 +96,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             supported.
           </p>
           <form onsubmit="return continueWithCurrentBrowser();">
-            <input class="button"
+            <input class="button--neutral"
               type="submit"
               value="Continue" />
           </form>
