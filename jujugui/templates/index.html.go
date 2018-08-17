@@ -74,7 +74,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <div id="app"></div>
     <div id="full-screen-mask">
-      <div className="centered-column"
+      <div class="centered-column"
         id="browser-warning"
         style="display:none">
         <svg class="svg-icon"
@@ -82,8 +82,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           style="width:90px; height:35px;">
           <use xlink:href="#juju-logo" />
         </svg>
-        <div className="panel">
-          <div className="header">
+        <div class="panel">
+          <div class="header">
             Your browser is not supported
           </div>
           <p>
@@ -95,23 +95,23 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             <a href="http://www.google.com/chrome">Chrome</a> to be fully
             supported.
           </p>
-          <form onSubmit="return continueWithCurrentBrowser();">
-            <input className="button"
+          <form onsubmit="return continueWithCurrentBrowser();">
+            <input class="button"
               type="submit"
               value="Continue" />
           </form>
         </div>
       </div>
-      <div className="centered-column"
+      <div class="centered-column"
         id="loading-message">
         <svg class="svg-icon"
           viewBox="0 0 90 35"
           style="width:90px; height:35px;">
           <use xlink:href="#juju-logo" />
         </svg>
-        <div className="panel">
+        <div class="panel">
           <div id="loading-indicator"></div>
-          <div className="header"
+          <div class="header"
             id="loading-message-text">
             Hello, world.
           </div>

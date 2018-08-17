@@ -42,6 +42,7 @@ const MachineView = require('./components/machine-view/machine-view');
 const ModelActions = require('./components/model-actions/model-actions');
 const ModalGUISettings = require('./components/modal-gui-settings/modal-gui-settings');
 const ModalShortcuts = require('./components/modal-shortcuts/modal-shortcuts');
+const Notification = require('./components/notification/notification');
 const NotificationList = require('./components/notification-list/notification-list');
 const Panel = require('./components/panel/panel');
 const PostDeployment = require('./components/post-deployment/post-deployment');
@@ -62,6 +63,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       lightbox: false,
+      loginNotificiationURL: null,
       hoveredService: null,
       settingsModalVisible: false,
       sharingVisible: false,
@@ -74,6 +76,13 @@ class App extends React.Component {
   componentDidMount() {
     // Trigger the resized method so that the topology fills the viewport.
     this.props.topology.topo.modules.ViewportModule.resized();
+    // Subscribe to events for code outside the React components that need to
+    // control App state.
+    document.addEventListener('loginNotification', this._bound._loginNotificationListener);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('loginNotification', this._bound._loginNotificationListener);
   }
 
   /**
@@ -99,12 +108,21 @@ class App extends React.Component {
       @type {Object}
     */
     this._bound = {
+      _loginNotificationListener: this._loginNotificationListener.bind(this),
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
       changeState: this.props.appState.changeState.bind(this.props.appState),
       destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
       listModelsWithInfo: this.props.controllerAPI.listModelsWithInfo.bind(
         this.props.controllerAPI)
     };
+  }
+
+  /**
+    The method to call for loginNotification event changes.
+    @param evt {String} The event details.
+  */
+  _loginNotificationListener(evt) {
+    this.setState({ loginNotificiationURL: evt.detail });
   }
 
   /**
@@ -1256,6 +1274,33 @@ Browser: ${navigator.userAgent}`
     }
   }
 
+  /**
+    Generate the cookie notice.
+  */
+  _generateLoginNotification() {
+    const { loginNotificiationURL } = this.state;
+    if (!loginNotificiationURL) {
+      return null;
+    }
+    let dismiss = null;
+    if (this.props.appState.current.root !== 'login') {
+      dismiss = this.setState.bind(this, { loginNotificiationURL: null });
+    }
+    const content = (
+      <span>
+        To proceed with the authentication, please accept the pop up window or&nbsp;
+        <a href={loginNotificiationURL} target="_blank">click here</a>.
+      </span>);
+    return (
+      <div id="login-notification">
+        <Notification
+          content={content}
+          dismiss={dismiss}
+          extraClasses="four-col"
+          isBlocking={true} />
+      </div>);
+  }
+
   render() {
     return (
       <div>
@@ -1294,7 +1339,7 @@ Browser: ${navigator.userAgent}`
         {this._generateMachineView()}
         {this._displayPostDeployment()}
         {this._generateStatusView()}
-        <div id="login-notification"></div>
+        {this._generateLoginNotification()}
         {this._generateCookieNotice()}
         {this._generateHelp()}
         {this._generateShortcutsModal()}

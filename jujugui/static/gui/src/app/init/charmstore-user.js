@@ -11,11 +11,8 @@ const CharmstoreUserMixin = superclass => class extends superclass {
   /**
     Takes a macaroon and stores the user info (if any) in the app.
     @param {String} service The service the macaroon comes from.
-    @param {String} macaroon The base64 encoded macaroon.
-    @param {Boolean} rerenderProfile Rerender the user profile.
-    @param {Boolean} rerenderBreadcrumb Rerender the breadcrumb.
    */
-  storeUser(service, rerenderProfile, rerenderBreadcrumb) {
+  storeUser(service) {
     const callback = (error, auth) => {
       if (error) {
         const message = 'Unable to query user information';
@@ -29,16 +26,9 @@ const CharmstoreUserMixin = superclass => class extends superclass {
       }
       if (auth) {
         this.users[service] = auth;
-        // If the profile is visible then we want to rerender it with the
-        // updated username.
-        if (rerenderProfile) {
-          this._renderUserProfile(this.state.current, ()=>{});
-        }
       }
-      if (rerenderBreadcrumb) {
-        //  Dispatch to force a state update.
-        this.state.dispatch();
-      }
+      //  Dispatch to force a state update so the breadcrumbs/profile get updated.
+      this.state.dispatch();
     };
     if (service === 'charmstore') {
       this.charmstore.whoami(callback);

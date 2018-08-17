@@ -5,7 +5,7 @@
 <!--[if !IE]><!--><script>
 if (/*@cc_on!@*/false) {
   // Only IE10 has cc_on as false.
-  document.documentElement.class+=' ie10';
+  document.documentElement.className+=' ie10';
 }
 </script><!--<![endif]-->
 <head>

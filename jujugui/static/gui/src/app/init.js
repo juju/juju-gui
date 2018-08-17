@@ -120,7 +120,6 @@ class GUIApp {
     this.users = csUser.create();
 
     const webHandler = new WebHandler();
-    const stateGetter = () => this.state.current;
     const cookieSetter = (value, callback) => {
       this.charmstore.setAuthCookie(value, callback);
     };
@@ -130,7 +129,7 @@ class GUIApp {
       @type {Object}
     */
     this.bakery = newBakery(
-      config, this.user, stateGetter, cookieSetter, webHandler);
+      config, this.user, cookieSetter, webHandler);
     /**
       An identity instance.
       Used to retrieve information about the currently logged in user.
@@ -371,7 +370,7 @@ class GUIApp {
       // Store away the charmstore auth info.
       if (this.bakery.storage.get(config.charmstoreURL)) {
         this.users['charmstore'] = {loading: true};
-        this.storeUser('charmstore', false, true);
+        this.storeUser('charmstore');
       }
     }
     return this.charmstore;
@@ -1409,7 +1408,7 @@ class GUIApp {
           });
           return;
         }
-        this.storeUser('charmstore', true);
+        this.storeUser('charmstore');
         console.log('logged into charmstore');
       });
     }
