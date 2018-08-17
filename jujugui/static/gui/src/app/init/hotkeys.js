@@ -49,8 +49,7 @@ const keyBindings = {
   'esc': {
     fire: 'topo.clearState',
     callback: function() {
-      this._clearSettingsModal();
-      this._clearShortcutsModal();
+      document.dispatchEvent(new Event('hideModals'));
     },
     help: 'Cancel current action',
     label: 'Esc'

@@ -5,7 +5,6 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const queryString = require('query-string');
 const React = require('react');
-const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 const jaaslib = require('jaaslib');
 
@@ -84,6 +83,7 @@ class App extends React.Component {
     document.addEventListener('loginNotification', this._bound._loginNotificationListener);
     document.addEventListener('displaySettingsModal', this._bound._settingsModalListener);
     document.addEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
+    document.addEventListener('hideModals', this._bound._hideModalsListener);
     document.addEventListener('popupAction', this._bound._popupActionListener);
     document.addEventListener(
       'showDragOverNotification', this._bound._dragOverNotificationListener);
@@ -103,6 +103,7 @@ class App extends React.Component {
     document.removeEventListener('loginNotification', this._bound._loginNotificationListener);
     document.removeEventListener('displaySettingsModal', this._bound._settingsModalListener);
     document.removeEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
+    document.removeEventListener('hideModals', this._bound._hideModalsListener);
     document.removeEventListener('popupAction', this._bound._popupActionListener);
     document.removeEventListener(
       'showDragOverNotification', this._bound._dragOverNotificationListener);
@@ -134,6 +135,7 @@ class App extends React.Component {
       _loginNotificationListener: this._loginNotificationListener.bind(this),
       _settingsModalListener: this._settingsModalListener.bind(this),
       _shortcutsModalListener: this._shortcutsModalListener.bind(this),
+      _hideModalsListener: this._hideModalsListener.bind(this),
       _dragOverNotificationListener: this._dragOverNotificationListener.bind(this),
       _popupActionListener: this._popupActionListener.bind(this),
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
@@ -169,6 +171,16 @@ class App extends React.Component {
     this.setState({
       settingsModalVisible: false,
       shortcutsModalVisible: !this.state.shortcutsModalVisible
+    });
+  }
+
+  /**
+    The method to call for hideModals event changes.
+  */
+  _hideModalsListener() {
+    this.setState({
+      settingsModalVisible: false,
+      shortcutsModalVisible: false
     });
   }
 
