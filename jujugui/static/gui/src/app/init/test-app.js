@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const App = require('../app');
+const App = require('./app');
 
 describe('App', () => {
   let applicationConfig, appState, bundleImporter, charmstore, controllerAPI,
