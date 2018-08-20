@@ -90,7 +90,7 @@ class GUIApp {
       The keydown event listener from the hotkey activation.
       @type {Object}
     */
-    this._hotkeyListener = hotkeys.activate(this);
+    this._hotkeyListener = hotkeys.activate();
     /**
       The application database.
       @type {Object}
