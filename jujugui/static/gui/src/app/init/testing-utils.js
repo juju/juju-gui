@@ -51,35 +51,10 @@ const testUtils = {
   */
   makeAppContainer: () => {
     const elements = [
-      'ambiguous-relation-menu-content',
-      'charmbrowser-container',
-      'deployment-bar-container',
-      'deployment-container',
-      'drag-over-notification-container',
-      'env-size-display-container',
+      'app',
       'full-screen-mask',
-      'header-breadcrumb',
-      'header-help',
-      'header-logo',
-      'header-search-container',
-      'inspector-container',
-      'lightbox',
       'loading-message',
-      'login-container',
-      'machine-view',
-      'main',
-      'modal-gui-settings',
-      'modal-shortcuts',
-      'model-actions-container',
-      'notifications-container',
-      'popup-container',
-      'profile-link-container',
-      'provider-logo-container',
-      'relation-menu',
-      'sharing-container',
-      'status-container',
-      'top-page-container',
-      'zoom-container'
+      'main'
     ];
     const container = document.createElement('div');
     container.setAttribute('id', 'test-container');

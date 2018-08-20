@@ -1118,6 +1118,9 @@ Browser: ${navigator.userAgent}`
     modelAPIironment the GUI is executing in.
   */
   _generateUserMenu() {
+    if (!this._controllerIsReady()) {
+      return null;
+    }
     const controllerAPI = this.props.controllerAPI;
     const charmstore = this.props.charmstore;
     const bakery = this.props.bakery;
@@ -1436,7 +1439,7 @@ App.propTypes = {
   bakery: PropTypes.object.isRequired,
   bundleImporter: PropTypes.object.isRequired,
   charmstore: PropTypes.object.isRequired,
-  controllerAPI: PropTypes.object.isRequired,
+  controllerAPI: PropTypes.object,
   db: PropTypes.object.isRequired,
   deployService: PropTypes.func.isRequired,
   endpointsController: PropTypes.object.isRequired,

@@ -1,8 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const ReactDOM = require('react-dom');
-
 const User = require('./user/user');
 const utils = require('./init/testing-utils');
 
@@ -86,63 +84,21 @@ describe('init', () => {
     });
 
     describe('MAAS support', () => {
-      let maasNode;
+      let dispatch;
 
       beforeEach(() => {
-        // Set up the MAAS link node.
-        maasNode = document.createElement('div');
-        maasNode.setAttribute('id', 'maas-server');
-        maasNode.classList.add('hidden');
-        const link = document.createElement('a');
-        const content = document.createTextNode('MAAS UI');
-        link.appendChild(content);
-        maasNode.appendChild(link);
-        container.appendChild(maasNode);
+        dispatch = sinon.stub(app.state, 'dispatch');
       });
-
-      afterEach(() => {
-        container.querySelector('#maas-server').remove(true);
-      });
-
-      // Ensure the given MAAS node is shown and includes a link to the given
-      // address.
-      const assertMaasLinkExists = function(node, address) {
-        assert.strictEqual(node.classList.contains('hidden'), false);
-        assert.strictEqual(node.querySelector('a').href, address);
-      };
 
       it('shows a link to the MAAS server if provider is MAAS', () => {
-        // The MAAS node is initially hidden.
-        assert.strictEqual(maasNode.classList.contains('hidden'), true);
         app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
         // Once the MAAS server becomes available, the node is activated and
         // includes a link to the server.
-        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        assert.equal(dispatch.callCount, 1);
         // Further changes to the maasServer attribute don't change the link.
         app.modelAPI.set('maasServer', 'http://example.com/MAAS');
-        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
+        assert.equal(dispatch.callCount, 1);
       });
-
-      it('shows a link to the MAAS server if already in the env', () => {
-        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
-        // The link to the MAAS server should be already activated.
-        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
-        // Further changes to the maasServer attribute don't change the link.
-        app.modelAPI.set('maasServer', 'http://example.com/MAAS');
-        assertMaasLinkExists(maasNode, 'http://1.2.3.4/MAAS');
-      });
-
-      it('does not show the MAAS link if provider is not MAAS', () => {
-        // The MAAS node is initially hidden.
-        assert.strictEqual(maasNode.classList.contains('hidden'), true);
-        app.modelAPI.set('maasServer', null);
-        // The MAAS node is still hidden.
-        assert.strictEqual(maasNode.classList.contains('hidden'), true);
-        // Further changes to the maasServer attribute don't activate the link.
-        app.modelAPI.set('maasServer', 'http://1.2.3.4/MAAS');
-        assert.strictEqual(maasNode.classList.contains('hidden'), true);
-      });
-
     });
 
     describe('_setupCharmstore', () => {
@@ -279,42 +235,18 @@ describe('init', () => {
       });
     });
 
-    describe('UI notifications', () => {
-      it('_renderDragOverNotification renders drop UI', () => {
-        const fade = sinon.stub();
-        const reactdom = sinon.stub(ReactDOM, 'render');
-        cleanups.push(reactdom.restore);
-        app.topology.fadeHelpIndicator = fade;
-        app._renderDragOverNotification();
-        assert.equal(fade.callCount, 1);
-        assert.equal(fade.lastCall.args[0], true);
-        assert.equal(reactdom.callCount, 1);
-      });
-
-      it('_hideDragOverNotification hides drop UI', () => {
-        const fade = sinon.stub();
-        const reactdom = sinon.stub(
-          ReactDOM, 'unmountComponentAtNode');
-        cleanups.push(reactdom.restore);
-        app.topology.fadeHelpIndicator = fade;
-        app._hideDragOverNotification();
-        assert.equal(fade.callCount, 1);
-        assert.equal(fade.lastCall.args[0], false);
-        assert.equal(reactdom.callCount, 1);
-      });
-    });
-
     it('dispatches drag events properly: _appDragOverHandler', () => {
       const determineFileTypeStub = sinon.stub(
         app, '_determineFileType').returns('zip');
-      const renderDragOverStub = sinon.stub(
-        app, '_renderDragOverNotification');
       const dragTimerControlStub = sinon.stub(
         app, '_dragleaveTimerControl');
+      const dragOverListener = sinon.stub();
+      document.addEventListener('showDragOverNotification', dragOverListener);
       cleanups = cleanups.concat([
         determineFileTypeStub.restore,
-        renderDragOverStub.restore,
-        dragTimerControlStub
+        dragTimerControlStub,
+        document.removeEventListener.bind(
+          document, 'showDragOverNotification', dragOverListener)
       ]);
 
       const noop = () => {};
@@ -328,7 +260,7 @@ describe('init', () => {
       app._appDragOverHandler(ev3);
 
       assert.equal(determineFileTypeStub.callCount, 3);
-      assert.equal(renderDragOverStub.calledOnce, true);
+      assert.equal(dragOverListener.calledOnce, true);
       assert.equal(dragTimerControlStub.callCount, 3);
       const args = dragTimerControlStub.args;
       assert.equal(args[0][0], 'start');
@@ -422,6 +354,8 @@ describe('init', () => {
     });
 
     it('should allow closing the connection', done => {
+      // Set this to be gisf so it doesn't try and log in again.
+      app.applicationConfig.gisf = true;
       app.modelAPI.connect();
       app.modelAPI.close(() => {
         assert.strictEqual(app.modelAPI.userIsAuthenticated, false);
@@ -653,13 +587,11 @@ describe('init', () => {
       const user = {user: 'test'};
       const state = {test: 'state'};
       app.state._appStateHistory.push(state);
-      app._renderBreadcrumb = sinon.stub();
-      app._renderUserProfile = sinon.stub();
+      sinon.stub(app.state, 'dispatch');
       app.storeUser('charmstore', true, true);
       assert.equal(app.charmstore.whoami.callCount, 1);
       app.charmstore.whoami.lastCall.args[0](null, user);
-      assert.equal(app._renderBreadcrumb.callCount, 1);
-      assert.equal(app._renderUserProfile.callCount, 1);
+      assert.equal(app.state.dispatch.callCount, 1);
       assert.deepEqual(app.users['charmstore'], user);
     });
   });
@@ -929,33 +861,6 @@ describe('init', () => {
     });
   });
 
-  describe('_controllerIsReady', () => {
-    beforeEach(() => {
-      app._displayLogin = sinon.stub();
-    });
-
-    it('reports true when the controller API is ready', () => {
-      app.controllerAPI.set('connected', true);
-      app.controllerAPI.userIsAuthenticated = true;
-      assert.strictEqual(app._controllerIsReady(), true);
-    });
-
-    it('reports false when the controller API is not ready', () => {
-      const controllerAPI = app.controllerAPI;
-      controllerAPI.set('connected', false);
-      controllerAPI.userIsAuthenticated = false;
-      // Without a controller API object the controller is not ready.
-      app.controllerAPI = null;
-      assert.strictEqual(app._controllerIsReady(), false, 'no controller');
-      // Before the API is connected the controller is not ready.
-      app.controllerAPI = controllerAPI;
-      assert.strictEqual(app._controllerIsReady(), false, 'not connected');
-      // Before the API is properly logged in the controller is not ready.
-      app.controllerAPI.set('connected', true);
-      assert.strictEqual(app._controllerIsReady(), false, 'not authenticated');
-    });
-  });
-
   describe('_listAndSwitchModel', () => {
     let modelList;
 
@@ -1120,8 +1025,6 @@ describe('init', () => {
       app.destructor();
       app = createApp(config);
       app._displayLogin = sinon.stub();
-      app._renderLogin = sinon.stub();
-      app._renderUserMenu = sinon.stub();
       app.maskVisibility = sinon.stub();
       app.loginToAPIs = sinon.stub();
       app.reloadConfigFile = sinon.stub();
@@ -1258,8 +1161,7 @@ describe('init', () => {
       const listener = evt => {
         document.removeEventListener('login', listener);
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
-        assert.strictEqual(
-          app._renderUserMenu.called, true, '_renderUserMenu');
+        assert.strictEqual(app.state.dispatch.called, true);
         assert.equal(app.state.changeState.called, true, 'changeState');
         const args = app.state.changeState.args[0];
         assert.equal(args.length, 1, 'changeState num args');
@@ -1274,7 +1176,11 @@ describe('init', () => {
       app.controllerAPI.after('connectedChange', evt => {
         document.addEventListener('login', listener);
         app.anonymousMode = true;
-        app.state = {current: {root: 'login'}, changeState: sinon.stub()};
+        app.state = {
+          current: {root: 'login'},
+          changeState: sinon.stub(),
+          dispatch: sinon.stub()
+        };
         document.dispatchEvent(new CustomEvent('login', {
           detail: {err: null}
         }));
@@ -1284,10 +1190,13 @@ describe('init', () => {
 
     it('is disabled after failed login', done => {
       app.anonymousMode = true;
-      app.state = {current: {root: null}};
+      app.state = {
+        current: {root: null},
+        dispatch: sinon.stub()
+      };
       const listener = evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
-        assert.strictEqual(app._renderLogin.called, true, '_renderLogin');
+        assert.strictEqual(app.state.dispatch.called, true);
         document.removeEventListener('login', listener);
         done();
       };

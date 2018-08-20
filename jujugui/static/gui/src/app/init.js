@@ -796,12 +796,11 @@ class GUIApp {
   _controllerLoginHandler(entityPromise, evt) {
     const state = this.state;
     this.anonymousMode = false;
-    if (evt.detail && evt.detail.err) {
-      this._renderLogin(evt.detail.err);
-      return;
-    }
     // Dispatch to so the component gets rendered.
     this.state.dispatch();
+    if (evt.detail && evt.detail.err) {
+      return;
+    }
     console.log('successfully logged into controller');
 
     // If the GUI is embedded in storefront, we need to share login
