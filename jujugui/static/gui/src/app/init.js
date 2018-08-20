@@ -7,7 +7,7 @@ const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
 const analytics = require('./init/analytics');
-const App = require('./app');
+const App = require('./init/app');
 const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
 const hotkeys = require('./init/hotkeys');
