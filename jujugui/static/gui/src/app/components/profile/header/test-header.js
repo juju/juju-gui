@@ -21,7 +21,8 @@ describe('Profile Header', function() {
             isCurrent: true,
             profile: 'spinach'
           }
-        } />
+        }
+      />
     );
 
   beforeEach(() => {
@@ -36,21 +37,25 @@ describe('Profile Header', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="profile-header v1">
-        <div className="p-strip">
+        <div className="p-strip is-shallow">
           <div className="row p-divider u-no-padding--top u-no-padding--bottom">
             <div className="col-10 p-divider__block">
               <div className="p-media-object--large u-no-margin--bottom">
                 <span className="profile-header__avatar tooltip">
                   <a
                     aria-describedby="tp-cntr"
-                    className="p-tooltip p-tooltip--top-center"
+                    className="p-tooltip p-tooltip--btm-center"
                     href="http://gravatar.com/"
                     target="_blank">
                     <img
                       alt="Gravatar for Geoffrey Spinach"
                       className="p-media-object__image is-round"
-                      src="https://www.gravatar.com/avatar/id123" />
-                    <span className="p-tooltip__message" id="tp-cntr" role="tooltip">
+                      src="https://www.gravatar.com/avatar/id123"
+                    />
+                    <span
+                      className="p-tooltip__message"
+                      id="tp-cntr"
+                      role="tooltip">
                       Edit your Gravatar
                     </span>
                   </a>

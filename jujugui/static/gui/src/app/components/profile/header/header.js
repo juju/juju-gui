@@ -25,7 +25,10 @@ class ProfileHeader extends React.Component {
     Get the identity user.
   */
   _getUser() {
-    this.props.getUser(this.props.userInfo.profile, this._getUserCallback.bind(this));
+    this.props.getUser(
+      this.props.userInfo.profile,
+      this._getUserCallback.bind(this)
+    );
   }
 
   /**
@@ -34,12 +37,12 @@ class ProfileHeader extends React.Component {
     @param {Array} modelList The list of models.
   */
   _getUserCallback(err, user) {
-    this.setState({userRequested: true}, () => {
+    this.setState({ userRequested: true }, () => {
       if (err) {
         console.log('unable to load user:', err);
         return;
       }
-      this.setState({user: user});
+      this.setState({ user: user });
     });
   }
 
@@ -66,7 +69,8 @@ class ProfileHeader extends React.Component {
         <img
           alt={`Gravatar for ${user.fullname}`}
           className="p-media-object__image is-round"
-          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />
+          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`}
+        />
       );
     }
     const classes = classNames('profile-header__avatar', {
@@ -86,7 +90,7 @@ class ProfileHeader extends React.Component {
         {isCurrent ? (
           <a
             aria-describedby="tp-cntr"
-            className="p-tooltip p-tooltip--top-center"
+            className="p-tooltip p-tooltip--btm-center"
             href="http://gravatar.com/"
             target="_blank">
             {content}
@@ -142,7 +146,7 @@ class ProfileHeader extends React.Component {
     const user = this.state.user || {};
     return (
       <div className="profile-header v1">
-        <div className="p-strip">
+        <div className="p-strip is-shallow">
           <div className="row p-divider u-no-padding--top u-no-padding--bottom">
             <div className="col-10 p-divider__block">
               <div className="p-media-object--large u-no-margin--bottom">
