@@ -5,7 +5,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 const JsDiff = require('diff');
 
-var assert = chai.assert;
 assert.compareJSX = function(actual, expected) {
   const actualOutput = actual.debug();
   // If the very first child of a component is another component then this

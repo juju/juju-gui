@@ -64,6 +64,7 @@ help:
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
 	@echo "test-js - run newer js tests in terminal; primarily for CI build"
+	@echo "test-jest - run Jest tests in the terminal"
 	@echo "test-js-old - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
 	@echo "uitest - run functional tests;"
@@ -275,7 +276,7 @@ lint-components:
 	 @./scripts/inspect-components validate --path jujugui/static/gui/src/ --short
 
 .PHONY: test
-test: test-python test-js test-js-old
+test: test-python test-js test-jest test-js-old
 
 .PHONY: test-python
 test-python: $(JUJUGUI) $(PYTEST)
@@ -285,6 +286,10 @@ test-python: $(JUJUGUI) $(PYTEST)
 test-js: gui
 	./scripts/test-js.sh
 
+.PHONY: test-jest
+test-jest: gui
+	$(NODE_MODULES)/.bin/jest
+
 .PHONY: test-js-old
 test-js-old: gui
 	./scripts/test-js-old.sh
@@ -292,6 +297,10 @@ test-js-old: gui
 .PHONY: start-karma
 start-karma:
 	MULTI_RUN=true ./scripts/test-js.sh
+
+.PHONY: watch-jest
+watch-jest: gui
+	$(NODE_MODULES)/.bin/jest --watchAll
 
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything
