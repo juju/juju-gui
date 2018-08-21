@@ -21,8 +21,7 @@ describe('Profile Header', function() {
             isCurrent: true,
             profile: 'spinach'
           }
-        }
-      />
+        } />
     );
 
   beforeEach(() => {
@@ -50,12 +49,8 @@ describe('Profile Header', function() {
                     <img
                       alt="Gravatar for Geoffrey Spinach"
                       className="p-media-object__image is-round"
-                      src="https://www.gravatar.com/avatar/id123"
-                    />
-                    <span
-                      className="p-tooltip__message"
-                      id="tp-cntr"
-                      role="tooltip">
+                      src="https://www.gravatar.com/avatar/id123" />
+                    <span className="p-tooltip__message" id="tp-cntr" role="tooltip">
                       Edit your Gravatar
                     </span>
                   </a>

@@ -25,10 +25,7 @@ class ProfileHeader extends React.Component {
     Get the identity user.
   */
   _getUser() {
-    this.props.getUser(
-      this.props.userInfo.profile,
-      this._getUserCallback.bind(this)
-    );
+    this.props.getUser(this.props.userInfo.profile, this._getUserCallback.bind(this));
   }
 
   /**
@@ -69,8 +66,7 @@ class ProfileHeader extends React.Component {
         <img
           alt={`Gravatar for ${user.fullname}`}
           className="p-media-object__image is-round"
-          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`}
-        />
+          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />
       );
     }
     const classes = classNames('profile-header__avatar', {
