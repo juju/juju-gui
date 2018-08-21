@@ -18,4 +18,6 @@
 
 .profile-header__avatar .p-tooltip:hover .p-tooltip__message {
   top: 2.75rem;
+  left: 40% !important;
+  min-width: 0;
 }
