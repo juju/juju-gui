@@ -20,6 +20,7 @@ SVG_SPRITE_MODULE := $(NODE_MODULES)/svg-sprite/
 YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
+JEST := $(NODE_MODULES)/.bin/jest
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_FILES := $(CACHE)/python
@@ -286,10 +287,6 @@ test-python: $(JUJUGUI) $(PYTEST)
 test-js: gui
 	./scripts/test-js.sh
 
-.PHONY: test-jest
-test-jest: gui
-	$(NODE_MODULES)/.bin/jest
-
 .PHONY: test-js-old
 test-js-old: gui
 	./scripts/test-js-old.sh
@@ -298,9 +295,17 @@ test-js-old: gui
 start-karma:
 	MULTI_RUN=true ./scripts/test-js.sh
 
+.PHONY: test-jest
+test-jest: gui
+	$(JEST)
+
 .PHONY: watch-jest
 watch-jest: gui
-	$(NODE_MODULES)/.bin/jest --watchAll
+	$(JEST) --watchAll
+
+.PHONY: watch-jest
+update-jest-snapshots: gui
+	$(JEST) -u
 
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything
