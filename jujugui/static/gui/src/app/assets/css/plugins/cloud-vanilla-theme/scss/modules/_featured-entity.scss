@@ -1,0 +1,74 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-featured-entity
+/// @since        0.0.25
+////
+
+/// Cloud featured entity element styles
+/// @group Featured entity
+@mixin cloud-featured-entity {
+  .featured-entity {
+    background-color: $white;
+    padding: 20px;
+    transition: background-color .3s;
+
+    // Sets the columns to six-col on small screens
+    @media only screen and (max-width: $breakpoint-medium - 1) {
+      width: 48.94737%;
+      text-align: center;
+      padding: 0;
+    }
+
+    &:hover {
+      background: $light-grey;
+    }
+
+    &__link {
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    &__title {
+      font-size: 1.25em;
+      margin-bottom: 0;
+      text-decoration: none;
+    }
+
+    &__image-list {
+      list-style: none;
+      margin-left: 0;
+    }
+
+    &__image-list-item {
+      box-sizing: border-box;
+      width: 20px;
+      height: 20px;
+      float: left;
+      margin: 2px;
+
+      @media only screen and (max-width: $breakpoint-medium - 1) {
+        width: 20%;
+        height: 20%;
+      }
+    }
+
+    &__image {
+      border-radius: 50%;
+      float: left;
+
+      @media only screen and (max-width: $breakpoint-medium - 1) {
+        float: none;
+
+        &.control-size {
+          max-width: 96px;
+        }
+      }
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+}

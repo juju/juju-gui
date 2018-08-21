@@ -1,0 +1,42 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/vanilla-framework/docs/#mixin-vf-header
+/// @since        0.0.3
+////
+
+/// Cloud header styling
+/// @group header
+@mixin cloud-header {
+  .banner {
+    background: $black;
+    box-shadow: none;
+
+    @media only screen and (min-width: $navigation-threshold) {
+      .nav-primary {
+        width: auto;
+      }
+
+      ul {
+        border-top: 0;
+        border-right: 0;
+        box-shadow: none;
+      }
+
+      li {
+        width: auto;
+        border-right: 0;
+        border-bottom: 0;
+
+        &:last-child a {
+          border-right: 0;
+        }
+      }
+
+      a,
+      a:link,
+      a:visited {
+        border-left: 0;
+      }
+    }
+  }
+} // @mixin vf-header

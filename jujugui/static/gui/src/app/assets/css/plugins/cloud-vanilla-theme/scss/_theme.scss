@@ -1,0 +1,44 @@
+
+// Theme variables
+@import 'global-settings';
+
+// import required files
+@import '../../vanilla-framework/scss/vanilla';
+
+/// cloud element styles
+@import 'modules/base';
+@import 'modules/buttons';
+@import 'modules/cookie-policy';
+@import 'modules/deep-link';
+@import 'modules/featured-entity';
+@import 'modules/footer';
+@import 'modules/forms';
+@import 'modules/header';
+@import 'modules/instructions';
+@import 'modules/links';
+@import 'modules/lists';
+@import 'modules/rows';
+@import 'modules/strips';
+@import 'modules/social-list';
+@import 'modules/tooltip';
+@import 'modules/typography';
+
+@mixin cloud-vanilla-theme {
+  @include vanilla;
+  @include cloud-base;
+  @include cloud-buttons;
+  @include cloud-cookie-policy;
+  @include cloud-deep-link;
+  @include cloud-featured-entity;
+  @include cloud-header;
+  @include cloud-footer;
+  @include cloud-forms;
+  @include cloud-instructions;
+  @include cloud-links;
+  @include cloud-lists;
+  @include cloud-rows;
+  @include cloud-strips;
+  @include cloud-social-list;
+  @include cloud-tooltip;
+  @include cloud-typography;
+}

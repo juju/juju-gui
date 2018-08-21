@@ -1,0 +1,53 @@
+////
+/// @author       Juju GUI team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cookie-policy
+/// @since        0.0.21
+////
+
+/// cookie policy
+/// @group Utils
+@mixin cloud-cookie-policy {
+
+  .cookie-policy {
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, .2);
+    background-color: $cookie-background;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+
+    p {
+      font-size: .8125em;
+      margin-bottom: 0;
+      margin-left: 0;
+      padding: 8px 10px;
+      width: 100%;
+
+      @media only screen and (min-width: $breakpoint-medium) {
+        padding: 8px 0;
+      }
+    }
+
+    .link-cta {
+      background-image: url('#{$asset-server}3f057022-close-orange.svg');
+      background-repeat: no-repeat;
+      color: $white;
+      float: right;
+      font-size: 1em;
+      height: 15px;
+      margin: 12px 0;
+      margin-top: 12px;
+      padding: 0;
+      text-decoration: none;
+      text-indent: -9999px;
+      width: 16px;
+    }
+  }
+
+  .no-svg,
+  .opera-mini {
+    .cookie-policy .link-cta {
+      background-image: url('#{$asset-server}898777ac-close-orange.png');
+    }
+  }
+}

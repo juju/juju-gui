@@ -1,0 +1,180 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-button-classes
+/// @since        0.0.13
+////
+
+/// Button classes
+/// @group Buttons
+@mixin cloud-buttons {
+  @include cloud-neutral-button;
+  @include cloud-positive-button;
+  @include cloud-destructive-button;
+  @include cloud-base-button;
+}
+
+/// Neutral button styling
+/// @group Buttons
+/// @example
+/// <a class="button--neutral">
+///   ...
+/// </a>
+@mixin cloud-neutral-button {
+  .button--neutral,
+  .button--inline-neutral {
+    @extend %button-pattern;
+    color: $cool-grey;
+    background-color: transparent;
+    border: 1px solid $mid-grey;
+
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: rgba(0, 0, 0, .1);
+    }
+
+    &:disabled,
+    &.button--disabled {
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .button--inline-neutral {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+/// Positive button styling
+/// @group Buttons
+/// @example
+/// <a class="button--positive">
+///   ...
+/// </a>
+@mixin cloud-positive-button {
+  .button--positive,
+  .button--inline-positive {
+    @extend %button-pattern;
+    color: $white;
+    background-color: $success;
+
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: darken($success, 10%);
+    }
+
+    &:disabled,
+    &.button--disabled {
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: $success;
+      }
+    }
+  }
+
+  .button--inline-positive {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+
+/// Destructive button styling
+/// @group Buttons
+/// @example
+/// <a class="button--destructive">
+///   ...
+/// </a>
+@mixin cloud-destructive-button {
+  .button--destructive,
+  .button--inline-destructive {
+    @extend %button-pattern;
+    color: $white;
+    background-color: $error;
+
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: darken($error, 10%);
+    }
+
+    &:disabled,
+    &.button--disabled {
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: $error;
+      }
+    }
+  }
+
+  .button--inline-destructive {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+/// Base button styling
+/// @group Buttons
+/// @example
+/// <a class="button--base">
+///   ...
+/// </a>
+@mixin cloud-base-button {
+  .button--base,
+  .button--inline-base {
+    @extend %button-pattern;
+    color: $cool-grey;
+    background-color: transparent;
+
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: rgba(0, 0, 0, .1);
+    }
+
+    &:disabled,
+    &.button--disabled {
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .button--inline-base {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+/// Default button pattern styles
+/// @group Buttons
+%button-pattern {
+  font-size: 1em;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 11px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .2s;
+  border-radius: 2px;
+  outline: none;
+  font-weight: 300;
+  cursor: pointer;
+  line-height: 1em;
+
+  &:disabled,
+  &.button--disabled {
+    opacity: .5;
+    cursor: default;
+  }
+}
