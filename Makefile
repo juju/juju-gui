@@ -303,7 +303,7 @@ test-jest: gui
 watch-jest: gui
 	$(JEST) --watchAll
 
-.PHONY: watch-jest
+.PHONY: update-jest-snapshots
 update-jest-snapshots: gui
 	$(JEST) -u
 
