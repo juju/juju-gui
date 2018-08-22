@@ -13,6 +13,15 @@
       "plugins": [
         "rewire"
       ]
+  },
+    "test": {
+      "plugins": [
+        "rewire"
+      ],
+      "presets": [
+        "env",
+        "react"
+      ],
     }
   }
 }

@@ -1,0 +1,2554 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Help renders 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Help
+    changeState={[Function]}
+    displayShortcutsModal={[Function]}
+    gisf={true}
+    sendGetRequest={[Function]}
+    staticURL=""
+    user={
+      Object {
+        "user": true,
+      }
+    }
+  />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "children": <div
+        className="help__body"
+      >
+        <header
+          className="help__header clearfix"
+        >
+          <h3
+            className="help__header-title"
+          >
+            Help
+          </h3>
+          <div
+            className="help__header-search header-search"
+          >
+            <form
+              action="https://jujucharms.com/docs/search/"
+              className="header-search__form"
+              target="_blank"
+            >
+              <button
+                className="header-search__submit"
+                type="submit"
+              >
+                <SvgIcon
+                  name="search_16"
+                  size="16"
+                />
+              </button>
+              <input
+                className="header-search__input"
+                name="text"
+                placeholder="Search the docs"
+                type="search"
+              />
+            </form>
+          </div>
+        </header>
+        <div
+          className="help__content clearfix"
+        >
+          <VanillaCard
+            title="Getting started"
+          >
+            <p>
+              <a
+                className="link"
+                href="https://jujucharms.com/docs/stable/getting-started"
+                target="_blank"
+              >
+                Read the 
+                JAAS
+                 docs
+              </a>
+              .
+            </p>
+          </VanillaCard>
+          <VanillaCard
+            title="Tutorials"
+          >
+            <p>
+              Learn how to operate production-ready clusters.
+            </p>
+            <p>
+              <a
+                className="link charm-row"
+                href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                target="_blank"
+              >
+                <img
+                  alt="Kubernetes logo"
+                  src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                  width="24"
+                />
+                Kubernetes tutorial
+              </a>
+            </p>
+            <p>
+              <a
+                className="link charm-row"
+                href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                target="_blank"
+              >
+                <img
+                  alt="Hadoop Spark logo"
+                  src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                  width="24"
+                />
+                Hadoop Spark tutorial
+              </a>
+            </p>
+          </VanillaCard>
+          <VanillaCard
+            title="Take a tour"
+          >
+            <p>
+              <img
+                className="help__tour-image"
+                src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                width="201"
+              />
+              <span
+                className="link"
+                onClick={[Function]}
+                role="button"
+              >
+                Learn how to use the canvas.
+              </span>
+            </p>
+          </VanillaCard>
+        </div>
+        <footer
+          className="help__footer clearfix"
+        >
+          <div
+            className="four-col"
+          >
+            <p>
+              <span
+                className="link"
+                onClick={[Function]}
+                role="button"
+              >
+                Keyboard shortcuts
+              </span>
+            </p>
+            <p>
+              <a
+                className="link"
+                href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                target="_blank"
+              >
+                FAQs
+              </a>
+            </p>
+            <p>
+              <a
+                className="link"
+                href="https://jujucharms.com/support"
+                target="_blank"
+              >
+                Get support
+              </a>
+            </p>
+          </div>
+          <div
+            className="four-col last-col"
+          >
+            <p>
+              IRC channels on Freenode
+            </p>
+            <p>
+              <a
+                className="link external"
+                href="http://webchat.freenode.net/?channels=%23juju"
+                target="_blank"
+              >
+                #juju
+              </a>
+            </p>
+            <p>
+              Mailing lists
+            </p>
+            <p>
+              <a
+                className="link external"
+                href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                target="_blank"
+              >
+                The Juju project
+              </a>
+            </p>
+          </div>
+        </footer>
+      </div>,
+      "close": [Function],
+      "extraClasses": Array [
+        "help",
+      ],
+    },
+    "ref": null,
+    "rendered": Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "host",
+      "props": Object {
+        "children": Array [
+          <header
+            className="help__header clearfix"
+          >
+            <h3
+              className="help__header-title"
+            >
+              Help
+            </h3>
+            <div
+              className="help__header-search header-search"
+            >
+              <form
+                action="https://jujucharms.com/docs/search/"
+                className="header-search__form"
+                target="_blank"
+              >
+                <button
+                  className="header-search__submit"
+                  type="submit"
+                >
+                  <SvgIcon
+                    name="search_16"
+                    size="16"
+                  />
+                </button>
+                <input
+                  className="header-search__input"
+                  name="text"
+                  placeholder="Search the docs"
+                  type="search"
+                />
+              </form>
+            </div>
+          </header>,
+          <div
+            className="help__content clearfix"
+          >
+            <VanillaCard
+              title="Getting started"
+            >
+              <p>
+                <a
+                  className="link"
+                  href="https://jujucharms.com/docs/stable/getting-started"
+                  target="_blank"
+                >
+                  Read the 
+                  JAAS
+                   docs
+                </a>
+                .
+              </p>
+            </VanillaCard>
+            <VanillaCard
+              title="Tutorials"
+            >
+              <p>
+                Learn how to operate production-ready clusters.
+              </p>
+              <p>
+                <a
+                  className="link charm-row"
+                  href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                  target="_blank"
+                >
+                  <img
+                    alt="Kubernetes logo"
+                    src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                    width="24"
+                  />
+                  Kubernetes tutorial
+                </a>
+              </p>
+              <p>
+                <a
+                  className="link charm-row"
+                  href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                  target="_blank"
+                >
+                  <img
+                    alt="Hadoop Spark logo"
+                    src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                    width="24"
+                  />
+                  Hadoop Spark tutorial
+                </a>
+              </p>
+            </VanillaCard>
+            <VanillaCard
+              title="Take a tour"
+            >
+              <p>
+                <img
+                  className="help__tour-image"
+                  src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                  srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                  width="201"
+                />
+                <span
+                  className="link"
+                  onClick={[Function]}
+                  role="button"
+                >
+                  Learn how to use the canvas.
+                </span>
+              </p>
+            </VanillaCard>
+          </div>,
+          <footer
+            className="help__footer clearfix"
+          >
+            <div
+              className="four-col"
+            >
+              <p>
+                <span
+                  className="link"
+                  onClick={[Function]}
+                  role="button"
+                >
+                  Keyboard shortcuts
+                </span>
+              </p>
+              <p>
+                <a
+                  className="link"
+                  href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                  target="_blank"
+                >
+                  FAQs
+                </a>
+              </p>
+              <p>
+                <a
+                  className="link"
+                  href="https://jujucharms.com/support"
+                  target="_blank"
+                >
+                  Get support
+                </a>
+              </p>
+            </div>
+            <div
+              className="four-col last-col"
+            >
+              <p>
+                IRC channels on Freenode
+              </p>
+              <p>
+                <a
+                  className="link external"
+                  href="http://webchat.freenode.net/?channels=%23juju"
+                  target="_blank"
+                >
+                  #juju
+                </a>
+              </p>
+              <p>
+                Mailing lists
+              </p>
+              <p>
+                <a
+                  className="link external"
+                  href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                  target="_blank"
+                >
+                  The Juju project
+                </a>
+              </p>
+            </div>
+          </footer>,
+        ],
+        "className": "help__body",
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <h3
+                className="help__header-title"
+              >
+                Help
+              </h3>,
+              <div
+                className="help__header-search header-search"
+              >
+                <form
+                  action="https://jujucharms.com/docs/search/"
+                  className="header-search__form"
+                  target="_blank"
+                >
+                  <button
+                    className="header-search__submit"
+                    type="submit"
+                  >
+                    <SvgIcon
+                      name="search_16"
+                      size="16"
+                    />
+                  </button>
+                  <input
+                    className="header-search__input"
+                    name="text"
+                    placeholder="Search the docs"
+                    type="search"
+                  />
+                </form>
+              </div>,
+            ],
+            "className": "help__header clearfix",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "Help",
+                "className": "help__header-title",
+              },
+              "ref": null,
+              "rendered": "Help",
+              "type": "h3",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": <form
+                  action="https://jujucharms.com/docs/search/"
+                  className="header-search__form"
+                  target="_blank"
+                >
+                  <button
+                    className="header-search__submit"
+                    type="submit"
+                  >
+                    <SvgIcon
+                      name="search_16"
+                      size="16"
+                    />
+                  </button>
+                  <input
+                    className="header-search__input"
+                    name="text"
+                    placeholder="Search the docs"
+                    type="search"
+                  />
+                </form>,
+                "className": "help__header-search header-search",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "action": "https://jujucharms.com/docs/search/",
+                  "children": Array [
+                    <button
+                      className="header-search__submit"
+                      type="submit"
+                    >
+                      <SvgIcon
+                        name="search_16"
+                        size="16"
+                      />
+                    </button>,
+                    <input
+                      className="header-search__input"
+                      name="text"
+                      placeholder="Search the docs"
+                      type="search"
+                    />,
+                  ],
+                  "className": "header-search__form",
+                  "target": "_blank",
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <SvgIcon
+                        name="search_16"
+                        size="16"
+                      />,
+                      "className": "header-search__submit",
+                      "type": "submit",
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "class",
+                      "props": Object {
+                        "name": "search_16",
+                        "size": "16",
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": [Function],
+                    },
+                    "type": "button",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "className": "header-search__input",
+                      "name": "text",
+                      "placeholder": "Search the docs",
+                      "type": "search",
+                    },
+                    "ref": [Function],
+                    "rendered": null,
+                    "type": "input",
+                  },
+                ],
+                "type": "form",
+              },
+              "type": "div",
+            },
+          ],
+          "type": "header",
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <VanillaCard
+                title="Getting started"
+              >
+                <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/docs/stable/getting-started"
+                    target="_blank"
+                  >
+                    Read the 
+                    JAAS
+                     docs
+                  </a>
+                  .
+                </p>
+              </VanillaCard>,
+              <VanillaCard
+                title="Tutorials"
+              >
+                <p>
+                  Learn how to operate production-ready clusters.
+                </p>
+                <p>
+                  <a
+                    className="link charm-row"
+                    href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                    target="_blank"
+                  >
+                    <img
+                      alt="Kubernetes logo"
+                      src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                      width="24"
+                    />
+                    Kubernetes tutorial
+                  </a>
+                </p>
+                <p>
+                  <a
+                    className="link charm-row"
+                    href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                    target="_blank"
+                  >
+                    <img
+                      alt="Hadoop Spark logo"
+                      src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                      width="24"
+                    />
+                    Hadoop Spark tutorial
+                  </a>
+                </p>
+              </VanillaCard>,
+              <VanillaCard
+                title="Take a tour"
+              >
+                <p>
+                  <img
+                    className="help__tour-image"
+                    src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                    srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                    width="201"
+                  />
+                  <span
+                    className="link"
+                    onClick={[Function]}
+                    role="button"
+                  >
+                    Learn how to use the canvas.
+                  </span>
+                </p>
+              </VanillaCard>,
+            ],
+            "className": "help__content clearfix",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {
+                "children": <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/docs/stable/getting-started"
+                    target="_blank"
+                  >
+                    Read the 
+                    JAAS
+                     docs
+                  </a>
+                  .
+                </p>,
+                "title": "Getting started",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/docs/stable/getting-started"
+                      target="_blank"
+                    >
+                      Read the 
+                      JAAS
+                       docs
+                    </a>,
+                    ".",
+                  ],
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": Array [
+                        "Read the ",
+                        "JAAS",
+                        " docs",
+                      ],
+                      "className": "link",
+                      "href": "https://jujucharms.com/docs/stable/getting-started",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": Array [
+                      "Read the ",
+                      "JAAS",
+                      " docs",
+                    ],
+                    "type": "a",
+                  },
+                  ".",
+                ],
+                "type": "p",
+              },
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {
+                "children": Array [
+                  <p>
+                    Learn how to operate production-ready clusters.
+                  </p>,
+                  <p>
+                    <a
+                      className="link charm-row"
+                      href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                      target="_blank"
+                    >
+                      <img
+                        alt="Kubernetes logo"
+                        src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                        width="24"
+                      />
+                      Kubernetes tutorial
+                    </a>
+                  </p>,
+                  <p>
+                    <a
+                      className="link charm-row"
+                      href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                      target="_blank"
+                    >
+                      <img
+                        alt="Hadoop Spark logo"
+                        src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                        width="24"
+                      />
+                      Hadoop Spark tutorial
+                    </a>
+                  </p>,
+                ],
+                "title": "Tutorials",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "Learn how to operate production-ready clusters.",
+                  },
+                  "ref": null,
+                  "rendered": "Learn how to operate production-ready clusters.",
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <a
+                      className="link charm-row"
+                      href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                      target="_blank"
+                    >
+                      <img
+                        alt="Kubernetes logo"
+                        src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                        width="24"
+                      />
+                      Kubernetes tutorial
+                    </a>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": Array [
+                        <img
+                          alt="Kubernetes logo"
+                          src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                          width="24"
+                        />,
+                        "Kubernetes tutorial",
+                      ],
+                      "className": "link charm-row",
+                      "href": "https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": Array [
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "host",
+                        "props": Object {
+                          "alt": "Kubernetes logo",
+                          "src": "https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg",
+                          "width": "24",
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": "img",
+                      },
+                      "Kubernetes tutorial",
+                    ],
+                    "type": "a",
+                  },
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <a
+                      className="link charm-row"
+                      href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                      target="_blank"
+                    >
+                      <img
+                        alt="Hadoop Spark logo"
+                        src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                        width="24"
+                      />
+                      Hadoop Spark tutorial
+                    </a>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": Array [
+                        <img
+                          alt="Hadoop Spark logo"
+                          src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                          width="24"
+                        />,
+                        "Hadoop Spark tutorial",
+                      ],
+                      "className": "link charm-row",
+                      "href": "https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": Array [
+                      Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "host",
+                        "props": Object {
+                          "alt": "Hadoop Spark logo",
+                          "src": "https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg",
+                          "width": "24",
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": "img",
+                      },
+                      "Hadoop Spark tutorial",
+                    ],
+                    "type": "a",
+                  },
+                  "type": "p",
+                },
+              ],
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {
+                "children": <p>
+                  <img
+                    className="help__tour-image"
+                    src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                    srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                    width="201"
+                  />
+                  <span
+                    className="link"
+                    onClick={[Function]}
+                    role="button"
+                  >
+                    Learn how to use the canvas.
+                  </span>
+                </p>,
+                "title": "Take a tour",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <img
+                      className="help__tour-image"
+                      src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                      srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                      width="201"
+                    />,
+                    <span
+                      className="link"
+                      onClick={[Function]}
+                      role="button"
+                    >
+                      Learn how to use the canvas.
+                    </span>,
+                  ],
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "className": "help__tour-image",
+                      "src": "/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png",
+                      "srcSet": "/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x",
+                      "width": "201",
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": "img",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Learn how to use the canvas.",
+                      "className": "link",
+                      "onClick": [Function],
+                      "role": "button",
+                    },
+                    "ref": null,
+                    "rendered": "Learn how to use the canvas.",
+                    "type": "span",
+                  },
+                ],
+                "type": "p",
+              },
+              "type": [Function],
+            },
+          ],
+          "type": "div",
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "host",
+          "props": Object {
+            "children": Array [
+              <div
+                className="four-col"
+              >
+                <p>
+                  <span
+                    className="link"
+                    onClick={[Function]}
+                    role="button"
+                  >
+                    Keyboard shortcuts
+                  </span>
+                </p>
+                <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                    target="_blank"
+                  >
+                    FAQs
+                  </a>
+                </p>
+                <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/support"
+                    target="_blank"
+                  >
+                    Get support
+                  </a>
+                </p>
+              </div>,
+              null,
+              <div
+                className="four-col last-col"
+              >
+                <p>
+                  IRC channels on Freenode
+                </p>
+                <p>
+                  <a
+                    className="link external"
+                    href="http://webchat.freenode.net/?channels=%23juju"
+                    target="_blank"
+                  >
+                    #juju
+                  </a>
+                </p>
+                <p>
+                  Mailing lists
+                </p>
+                <p>
+                  <a
+                    className="link external"
+                    href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                    target="_blank"
+                  >
+                    The Juju project
+                  </a>
+                </p>
+              </div>,
+            ],
+            "className": "help__footer clearfix",
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <p>
+                    <span
+                      className="link"
+                      onClick={[Function]}
+                      role="button"
+                    >
+                      Keyboard shortcuts
+                    </span>
+                  </p>,
+                  <p>
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                      target="_blank"
+                    >
+                      FAQs
+                    </a>
+                  </p>,
+                  <p>
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/support"
+                      target="_blank"
+                    >
+                      Get support
+                    </a>
+                  </p>,
+                ],
+                "className": "four-col",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <span
+                      className="link"
+                      onClick={[Function]}
+                      role="button"
+                    >
+                      Keyboard shortcuts
+                    </span>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Keyboard shortcuts",
+                      "className": "link",
+                      "onClick": [Function],
+                      "role": "button",
+                    },
+                    "ref": null,
+                    "rendered": "Keyboard shortcuts",
+                    "type": "span",
+                  },
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <a
+                      className="link"
+                      href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                      target="_blank"
+                    >
+                      FAQs
+                    </a>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "FAQs",
+                      "className": "link",
+                      "href": "https://jujucharms.com/how-it-works#frequently-asked-questions",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": "FAQs",
+                    "type": "a",
+                  },
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <a
+                      className="link"
+                      href="https://jujucharms.com/support"
+                      target="_blank"
+                    >
+                      Get support
+                    </a>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Get support",
+                      "className": "link",
+                      "href": "https://jujucharms.com/support",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": "Get support",
+                    "type": "a",
+                  },
+                  "type": "p",
+                },
+              ],
+              "type": "div",
+            },
+            null,
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": Array [
+                  <p>
+                    IRC channels on Freenode
+                  </p>,
+                  <p>
+                    <a
+                      className="link external"
+                      href="http://webchat.freenode.net/?channels=%23juju"
+                      target="_blank"
+                    >
+                      #juju
+                    </a>
+                  </p>,
+                  <p>
+                    Mailing lists
+                  </p>,
+                  <p>
+                    <a
+                      className="link external"
+                      href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                      target="_blank"
+                    >
+                      The Juju project
+                    </a>
+                  </p>,
+                ],
+                "className": "four-col last-col",
+              },
+              "ref": null,
+              "rendered": Array [
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "IRC channels on Freenode",
+                  },
+                  "ref": null,
+                  "rendered": "IRC channels on Freenode",
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <a
+                      className="link external"
+                      href="http://webchat.freenode.net/?channels=%23juju"
+                      target="_blank"
+                    >
+                      #juju
+                    </a>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "#juju",
+                      "className": "link external",
+                      "href": "http://webchat.freenode.net/?channels=%23juju",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": "#juju",
+                    "type": "a",
+                  },
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "Mailing lists",
+                  },
+                  "ref": null,
+                  "rendered": "Mailing lists",
+                  "type": "p",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <a
+                      className="link external"
+                      href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                      target="_blank"
+                    >
+                      The Juju project
+                    </a>,
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "The Juju project",
+                      "className": "link external",
+                      "href": "https://lists.ubuntu.com/mailman/listinfo/juju",
+                      "target": "_blank",
+                    },
+                    "ref": null,
+                    "rendered": "The Juju project",
+                    "type": "a",
+                  },
+                  "type": "p",
+                },
+              ],
+              "type": "div",
+            },
+          ],
+          "type": "footer",
+        },
+      ],
+      "type": "div",
+    },
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "children": <div
+          className="help__body"
+        >
+          <header
+            className="help__header clearfix"
+          >
+            <h3
+              className="help__header-title"
+            >
+              Help
+            </h3>
+            <div
+              className="help__header-search header-search"
+            >
+              <form
+                action="https://jujucharms.com/docs/search/"
+                className="header-search__form"
+                target="_blank"
+              >
+                <button
+                  className="header-search__submit"
+                  type="submit"
+                >
+                  <SvgIcon
+                    name="search_16"
+                    size="16"
+                  />
+                </button>
+                <input
+                  className="header-search__input"
+                  name="text"
+                  placeholder="Search the docs"
+                  type="search"
+                />
+              </form>
+            </div>
+          </header>
+          <div
+            className="help__content clearfix"
+          >
+            <VanillaCard
+              title="Getting started"
+            >
+              <p>
+                <a
+                  className="link"
+                  href="https://jujucharms.com/docs/stable/getting-started"
+                  target="_blank"
+                >
+                  Read the 
+                  JAAS
+                   docs
+                </a>
+                .
+              </p>
+            </VanillaCard>
+            <VanillaCard
+              title="Tutorials"
+            >
+              <p>
+                Learn how to operate production-ready clusters.
+              </p>
+              <p>
+                <a
+                  className="link charm-row"
+                  href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                  target="_blank"
+                >
+                  <img
+                    alt="Kubernetes logo"
+                    src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                    width="24"
+                  />
+                  Kubernetes tutorial
+                </a>
+              </p>
+              <p>
+                <a
+                  className="link charm-row"
+                  href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                  target="_blank"
+                >
+                  <img
+                    alt="Hadoop Spark logo"
+                    src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                    width="24"
+                  />
+                  Hadoop Spark tutorial
+                </a>
+              </p>
+            </VanillaCard>
+            <VanillaCard
+              title="Take a tour"
+            >
+              <p>
+                <img
+                  className="help__tour-image"
+                  src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                  srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                  width="201"
+                />
+                <span
+                  className="link"
+                  onClick={[Function]}
+                  role="button"
+                >
+                  Learn how to use the canvas.
+                </span>
+              </p>
+            </VanillaCard>
+          </div>
+          <footer
+            className="help__footer clearfix"
+          >
+            <div
+              className="four-col"
+            >
+              <p>
+                <span
+                  className="link"
+                  onClick={[Function]}
+                  role="button"
+                >
+                  Keyboard shortcuts
+                </span>
+              </p>
+              <p>
+                <a
+                  className="link"
+                  href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                  target="_blank"
+                >
+                  FAQs
+                </a>
+              </p>
+              <p>
+                <a
+                  className="link"
+                  href="https://jujucharms.com/support"
+                  target="_blank"
+                >
+                  Get support
+                </a>
+              </p>
+            </div>
+            <div
+              className="four-col last-col"
+            >
+              <p>
+                IRC channels on Freenode
+              </p>
+              <p>
+                <a
+                  className="link external"
+                  href="http://webchat.freenode.net/?channels=%23juju"
+                  target="_blank"
+                >
+                  #juju
+                </a>
+              </p>
+              <p>
+                Mailing lists
+              </p>
+              <p>
+                <a
+                  className="link external"
+                  href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                  target="_blank"
+                >
+                  The Juju project
+                </a>
+              </p>
+            </div>
+          </footer>
+        </div>,
+        "close": [Function],
+        "extraClasses": Array [
+          "help",
+        ],
+      },
+      "ref": null,
+      "rendered": Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "host",
+        "props": Object {
+          "children": Array [
+            <header
+              className="help__header clearfix"
+            >
+              <h3
+                className="help__header-title"
+              >
+                Help
+              </h3>
+              <div
+                className="help__header-search header-search"
+              >
+                <form
+                  action="https://jujucharms.com/docs/search/"
+                  className="header-search__form"
+                  target="_blank"
+                >
+                  <button
+                    className="header-search__submit"
+                    type="submit"
+                  >
+                    <SvgIcon
+                      name="search_16"
+                      size="16"
+                    />
+                  </button>
+                  <input
+                    className="header-search__input"
+                    name="text"
+                    placeholder="Search the docs"
+                    type="search"
+                  />
+                </form>
+              </div>
+            </header>,
+            <div
+              className="help__content clearfix"
+            >
+              <VanillaCard
+                title="Getting started"
+              >
+                <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/docs/stable/getting-started"
+                    target="_blank"
+                  >
+                    Read the 
+                    JAAS
+                     docs
+                  </a>
+                  .
+                </p>
+              </VanillaCard>
+              <VanillaCard
+                title="Tutorials"
+              >
+                <p>
+                  Learn how to operate production-ready clusters.
+                </p>
+                <p>
+                  <a
+                    className="link charm-row"
+                    href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                    target="_blank"
+                  >
+                    <img
+                      alt="Kubernetes logo"
+                      src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                      width="24"
+                    />
+                    Kubernetes tutorial
+                  </a>
+                </p>
+                <p>
+                  <a
+                    className="link charm-row"
+                    href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                    target="_blank"
+                  >
+                    <img
+                      alt="Hadoop Spark logo"
+                      src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                      width="24"
+                    />
+                    Hadoop Spark tutorial
+                  </a>
+                </p>
+              </VanillaCard>
+              <VanillaCard
+                title="Take a tour"
+              >
+                <p>
+                  <img
+                    className="help__tour-image"
+                    src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                    srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                    width="201"
+                  />
+                  <span
+                    className="link"
+                    onClick={[Function]}
+                    role="button"
+                  >
+                    Learn how to use the canvas.
+                  </span>
+                </p>
+              </VanillaCard>
+            </div>,
+            <footer
+              className="help__footer clearfix"
+            >
+              <div
+                className="four-col"
+              >
+                <p>
+                  <span
+                    className="link"
+                    onClick={[Function]}
+                    role="button"
+                  >
+                    Keyboard shortcuts
+                  </span>
+                </p>
+                <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                    target="_blank"
+                  >
+                    FAQs
+                  </a>
+                </p>
+                <p>
+                  <a
+                    className="link"
+                    href="https://jujucharms.com/support"
+                    target="_blank"
+                  >
+                    Get support
+                  </a>
+                </p>
+              </div>
+              <div
+                className="four-col last-col"
+              >
+                <p>
+                  IRC channels on Freenode
+                </p>
+                <p>
+                  <a
+                    className="link external"
+                    href="http://webchat.freenode.net/?channels=%23juju"
+                    target="_blank"
+                  >
+                    #juju
+                  </a>
+                </p>
+                <p>
+                  Mailing lists
+                </p>
+                <p>
+                  <a
+                    className="link external"
+                    href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                    target="_blank"
+                  >
+                    The Juju project
+                  </a>
+                </p>
+              </div>
+            </footer>,
+          ],
+          "className": "help__body",
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <h3
+                  className="help__header-title"
+                >
+                  Help
+                </h3>,
+                <div
+                  className="help__header-search header-search"
+                >
+                  <form
+                    action="https://jujucharms.com/docs/search/"
+                    className="header-search__form"
+                    target="_blank"
+                  >
+                    <button
+                      className="header-search__submit"
+                      type="submit"
+                    >
+                      <SvgIcon
+                        name="search_16"
+                        size="16"
+                      />
+                    </button>
+                    <input
+                      className="header-search__input"
+                      name="text"
+                      placeholder="Search the docs"
+                      type="search"
+                    />
+                  </form>
+                </div>,
+              ],
+              "className": "help__header clearfix",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": "Help",
+                  "className": "help__header-title",
+                },
+                "ref": null,
+                "rendered": "Help",
+                "type": "h3",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": <form
+                    action="https://jujucharms.com/docs/search/"
+                    className="header-search__form"
+                    target="_blank"
+                  >
+                    <button
+                      className="header-search__submit"
+                      type="submit"
+                    >
+                      <SvgIcon
+                        name="search_16"
+                        size="16"
+                      />
+                    </button>
+                    <input
+                      className="header-search__input"
+                      name="text"
+                      placeholder="Search the docs"
+                      type="search"
+                    />
+                  </form>,
+                  "className": "help__header-search header-search",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "action": "https://jujucharms.com/docs/search/",
+                    "children": Array [
+                      <button
+                        className="header-search__submit"
+                        type="submit"
+                      >
+                        <SvgIcon
+                          name="search_16"
+                          size="16"
+                        />
+                      </button>,
+                      <input
+                        className="header-search__input"
+                        name="text"
+                        placeholder="Search the docs"
+                        type="search"
+                      />,
+                    ],
+                    "className": "header-search__form",
+                    "target": "_blank",
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": <SvgIcon
+                          name="search_16"
+                          size="16"
+                        />,
+                        "className": "header-search__submit",
+                        "type": "submit",
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "name": "search_16",
+                          "size": "16",
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": [Function],
+                      },
+                      "type": "button",
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "className": "header-search__input",
+                        "name": "text",
+                        "placeholder": "Search the docs",
+                        "type": "search",
+                      },
+                      "ref": [Function],
+                      "rendered": null,
+                      "type": "input",
+                    },
+                  ],
+                  "type": "form",
+                },
+                "type": "div",
+              },
+            ],
+            "type": "header",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <VanillaCard
+                  title="Getting started"
+                >
+                  <p>
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/docs/stable/getting-started"
+                      target="_blank"
+                    >
+                      Read the 
+                      JAAS
+                       docs
+                    </a>
+                    .
+                  </p>
+                </VanillaCard>,
+                <VanillaCard
+                  title="Tutorials"
+                >
+                  <p>
+                    Learn how to operate production-ready clusters.
+                  </p>
+                  <p>
+                    <a
+                      className="link charm-row"
+                      href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                      target="_blank"
+                    >
+                      <img
+                        alt="Kubernetes logo"
+                        src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                        width="24"
+                      />
+                      Kubernetes tutorial
+                    </a>
+                  </p>
+                  <p>
+                    <a
+                      className="link charm-row"
+                      href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                      target="_blank"
+                    >
+                      <img
+                        alt="Hadoop Spark logo"
+                        src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                        width="24"
+                      />
+                      Hadoop Spark tutorial
+                    </a>
+                  </p>
+                </VanillaCard>,
+                <VanillaCard
+                  title="Take a tour"
+                >
+                  <p>
+                    <img
+                      className="help__tour-image"
+                      src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                      srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                      width="201"
+                    />
+                    <span
+                      className="link"
+                      onClick={[Function]}
+                      role="button"
+                    >
+                      Learn how to use the canvas.
+                    </span>
+                  </p>
+                </VanillaCard>,
+              ],
+              "className": "help__content clearfix",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "class",
+                "props": Object {
+                  "children": <p>
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/docs/stable/getting-started"
+                      target="_blank"
+                    >
+                      Read the 
+                      JAAS
+                       docs
+                    </a>
+                    .
+                  </p>,
+                  "title": "Getting started",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      <a
+                        className="link"
+                        href="https://jujucharms.com/docs/stable/getting-started"
+                        target="_blank"
+                      >
+                        Read the 
+                        JAAS
+                         docs
+                      </a>,
+                      ".",
+                    ],
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": Array [
+                          "Read the ",
+                          "JAAS",
+                          " docs",
+                        ],
+                        "className": "link",
+                        "href": "https://jujucharms.com/docs/stable/getting-started",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": Array [
+                        "Read the ",
+                        "JAAS",
+                        " docs",
+                      ],
+                      "type": "a",
+                    },
+                    ".",
+                  ],
+                  "type": "p",
+                },
+                "type": [Function],
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "class",
+                "props": Object {
+                  "children": Array [
+                    <p>
+                      Learn how to operate production-ready clusters.
+                    </p>,
+                    <p>
+                      <a
+                        className="link charm-row"
+                        href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                        target="_blank"
+                      >
+                        <img
+                          alt="Kubernetes logo"
+                          src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                          width="24"
+                        />
+                        Kubernetes tutorial
+                      </a>
+                    </p>,
+                    <p>
+                      <a
+                        className="link charm-row"
+                        href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                        target="_blank"
+                      >
+                        <img
+                          alt="Hadoop Spark logo"
+                          src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                          width="24"
+                        />
+                        Hadoop Spark tutorial
+                      </a>
+                    </p>,
+                  ],
+                  "title": "Tutorials",
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Learn how to operate production-ready clusters.",
+                    },
+                    "ref": null,
+                    "rendered": "Learn how to operate production-ready clusters.",
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <a
+                        className="link charm-row"
+                        href="https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes"
+                        target="_blank"
+                      >
+                        <img
+                          alt="Kubernetes logo"
+                          src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                          width="24"
+                        />
+                        Kubernetes tutorial
+                      </a>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": Array [
+                          <img
+                            alt="Kubernetes logo"
+                            src="https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg"
+                            width="24"
+                          />,
+                          "Kubernetes tutorial",
+                        ],
+                        "className": "link charm-row",
+                        "href": "https://tutorials.ubuntu.com/tutorial/get-started-canonical-kubernetes",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": Array [
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "alt": "Kubernetes logo",
+                            "src": "https://api.jujucharms.com/charmstore/v5/~containers/kubernetes-master-55/icon.svg",
+                            "width": "24",
+                          },
+                          "ref": null,
+                          "rendered": null,
+                          "type": "img",
+                        },
+                        "Kubernetes tutorial",
+                      ],
+                      "type": "a",
+                    },
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <a
+                        className="link charm-row"
+                        href="https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark"
+                        target="_blank"
+                      >
+                        <img
+                          alt="Hadoop Spark logo"
+                          src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                          width="24"
+                        />
+                        Hadoop Spark tutorial
+                      </a>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": Array [
+                          <img
+                            alt="Hadoop Spark logo"
+                            src="https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg"
+                            width="24"
+                          />,
+                          "Hadoop Spark tutorial",
+                        ],
+                        "className": "link charm-row",
+                        "href": "https://tutorials.ubuntu.com/tutorial/get-started-hadoop-spark",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": Array [
+                        Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "host",
+                          "props": Object {
+                            "alt": "Hadoop Spark logo",
+                            "src": "https://api.jujucharms.com/charmstore/v5/xenial/hadoop-client-8/icon.svg",
+                            "width": "24",
+                          },
+                          "ref": null,
+                          "rendered": null,
+                          "type": "img",
+                        },
+                        "Hadoop Spark tutorial",
+                      ],
+                      "type": "a",
+                    },
+                    "type": "p",
+                  },
+                ],
+                "type": [Function],
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "class",
+                "props": Object {
+                  "children": <p>
+                    <img
+                      className="help__tour-image"
+                      src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                      srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                      width="201"
+                    />
+                    <span
+                      className="link"
+                      onClick={[Function]}
+                      role="button"
+                    >
+                      Learn how to use the canvas.
+                    </span>
+                  </p>,
+                  "title": "Take a tour",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      <img
+                        className="help__tour-image"
+                        src="/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png"
+                        srcSet="/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x"
+                        width="201"
+                      />,
+                      <span
+                        className="link"
+                        onClick={[Function]}
+                        role="button"
+                      >
+                        Learn how to use the canvas.
+                      </span>,
+                    ],
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "className": "help__tour-image",
+                        "src": "/static/gui/build/app/assets/images/non-sprites/tour/help@1x.png",
+                        "srcSet": "/static/gui/build/app/assets/images/non-sprites/tour/help@2x.png 2x",
+                        "width": "201",
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": "img",
+                    },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "Learn how to use the canvas.",
+                        "className": "link",
+                        "onClick": [Function],
+                        "role": "button",
+                      },
+                      "ref": null,
+                      "rendered": "Learn how to use the canvas.",
+                      "type": "span",
+                    },
+                  ],
+                  "type": "p",
+                },
+                "type": [Function],
+              },
+            ],
+            "type": "div",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": Array [
+                <div
+                  className="four-col"
+                >
+                  <p>
+                    <span
+                      className="link"
+                      onClick={[Function]}
+                      role="button"
+                    >
+                      Keyboard shortcuts
+                    </span>
+                  </p>
+                  <p>
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                      target="_blank"
+                    >
+                      FAQs
+                    </a>
+                  </p>
+                  <p>
+                    <a
+                      className="link"
+                      href="https://jujucharms.com/support"
+                      target="_blank"
+                    >
+                      Get support
+                    </a>
+                  </p>
+                </div>,
+                null,
+                <div
+                  className="four-col last-col"
+                >
+                  <p>
+                    IRC channels on Freenode
+                  </p>
+                  <p>
+                    <a
+                      className="link external"
+                      href="http://webchat.freenode.net/?channels=%23juju"
+                      target="_blank"
+                    >
+                      #juju
+                    </a>
+                  </p>
+                  <p>
+                    Mailing lists
+                  </p>
+                  <p>
+                    <a
+                      className="link external"
+                      href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                      target="_blank"
+                    >
+                      The Juju project
+                    </a>
+                  </p>
+                </div>,
+              ],
+              "className": "help__footer clearfix",
+            },
+            "ref": null,
+            "rendered": Array [
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <p>
+                      <span
+                        className="link"
+                        onClick={[Function]}
+                        role="button"
+                      >
+                        Keyboard shortcuts
+                      </span>
+                    </p>,
+                    <p>
+                      <a
+                        className="link"
+                        href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                        target="_blank"
+                      >
+                        FAQs
+                      </a>
+                    </p>,
+                    <p>
+                      <a
+                        className="link"
+                        href="https://jujucharms.com/support"
+                        target="_blank"
+                      >
+                        Get support
+                      </a>
+                    </p>,
+                  ],
+                  "className": "four-col",
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <span
+                        className="link"
+                        onClick={[Function]}
+                        role="button"
+                      >
+                        Keyboard shortcuts
+                      </span>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "Keyboard shortcuts",
+                        "className": "link",
+                        "onClick": [Function],
+                        "role": "button",
+                      },
+                      "ref": null,
+                      "rendered": "Keyboard shortcuts",
+                      "type": "span",
+                    },
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <a
+                        className="link"
+                        href="https://jujucharms.com/how-it-works#frequently-asked-questions"
+                        target="_blank"
+                      >
+                        FAQs
+                      </a>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "FAQs",
+                        "className": "link",
+                        "href": "https://jujucharms.com/how-it-works#frequently-asked-questions",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": "FAQs",
+                      "type": "a",
+                    },
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <a
+                        className="link"
+                        href="https://jujucharms.com/support"
+                        target="_blank"
+                      >
+                        Get support
+                      </a>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "Get support",
+                        "className": "link",
+                        "href": "https://jujucharms.com/support",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": "Get support",
+                      "type": "a",
+                    },
+                    "type": "p",
+                  },
+                ],
+                "type": "div",
+              },
+              null,
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    <p>
+                      IRC channels on Freenode
+                    </p>,
+                    <p>
+                      <a
+                        className="link external"
+                        href="http://webchat.freenode.net/?channels=%23juju"
+                        target="_blank"
+                      >
+                        #juju
+                      </a>
+                    </p>,
+                    <p>
+                      Mailing lists
+                    </p>,
+                    <p>
+                      <a
+                        className="link external"
+                        href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                        target="_blank"
+                      >
+                        The Juju project
+                      </a>
+                    </p>,
+                  ],
+                  "className": "four-col last-col",
+                },
+                "ref": null,
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "IRC channels on Freenode",
+                    },
+                    "ref": null,
+                    "rendered": "IRC channels on Freenode",
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <a
+                        className="link external"
+                        href="http://webchat.freenode.net/?channels=%23juju"
+                        target="_blank"
+                      >
+                        #juju
+                      </a>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "#juju",
+                        "className": "link external",
+                        "href": "http://webchat.freenode.net/?channels=%23juju",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": "#juju",
+                      "type": "a",
+                    },
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Mailing lists",
+                    },
+                    "ref": null,
+                    "rendered": "Mailing lists",
+                    "type": "p",
+                  },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <a
+                        className="link external"
+                        href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                        target="_blank"
+                      >
+                        The Juju project
+                      </a>,
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "The Juju project",
+                        "className": "link external",
+                        "href": "https://lists.ubuntu.com/mailman/listinfo/juju",
+                        "target": "_blank",
+                      },
+                      "ref": null,
+                      "rendered": "The Juju project",
+                      "type": "a",
+                    },
+                    "type": "p",
+                  },
+                ],
+                "type": "div",
+              },
+            ],
+            "type": "footer",
+          },
+        ],
+        "type": "div",
+      },
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+  },
+}
+`;
