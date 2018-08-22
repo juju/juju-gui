@@ -1,7 +1,7 @@
 'use strict';
 
 const config = {
-  roots: ['<rootDir>/jujugui/static/gui/src/app/components'],
+  roots: ['<rootDir>/jujugui/static/gui/src/app'],
   setupFiles: [
     '<rootDir>/jujugui/static/gui/src/test/jest-setup.js',
     '<rootDir>/jujugui/static/gui/src/test/chai-setup.js',
@@ -10,7 +10,9 @@ const config = {
   ],
   snapshotSerializers: ['enzyme-to-json/serializer'],
   testMatch: [
-    '**/test-*.js'
+    '**/components/**/test-*.js',
+    '**/init/test-app.js',
+    '**/init/test-cookie-util.js'
   ]
 };
 
