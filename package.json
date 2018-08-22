@@ -73,7 +73,6 @@
     "proxyquire-universal": "1.0.8",
     "proxyquireify": "3.2.1",
     "react-test-renderer": "^16.3.2",
-    "request": "^2.83.0",
     "sass-lint": "1.12.1",
     "should": "13.2.1",
     "sinon": "5.0.1",
