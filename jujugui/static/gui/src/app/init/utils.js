@@ -518,9 +518,7 @@ utils.deploy = function(
   if (modelAPI.get('connected')) {
     modelAPI.get('ecs').commit(modelAPI);
     app.state.changeState({
-      postDeploymentPanel: {
-        show: true
-      }
+      postDeploymentPanel: true
     });
     callback(null);
     return;
@@ -581,13 +579,11 @@ utils.deploy = function(
         protocol: config.socket_protocol,
         uuid: model.uuid
       });
-      app.state.changeState({
-        postDeploymentPanel: {
-          show: true
-        }
-      });
       app.switchEnv(
         socketUrl, null, null, setSLAOnController.bind(this, slaData), true, false);
+      app.state.changeState({
+        postDeploymentPanel: true
+      });
     };
     // If the user has set a budget and an SLA then authorize that after the
     // model has been created and the entities have been deployed.
