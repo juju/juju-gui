@@ -50,10 +50,7 @@ class InspectorHeader extends React.Component {
       return;
     }
     this.props.changeState({
-      postDeploymentPanel: {
-        show: true,
-        entityId: this.props.charmId
-      }
+      postDeploymentPanel: this.props.charmId
     });
   }
 
