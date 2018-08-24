@@ -65,10 +65,7 @@ class EntityHeader extends React.Component {
   _closeEntityDetails() {
     this.props.changeState({
       hash: null,
-      store: null,
-      postDeploymentPanel: {
-        entityId: this.props.entityModel.toEntity().id
-      }
+      store: null
     });
   }
 

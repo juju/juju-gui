@@ -1531,9 +1531,7 @@ class GUIApp {
       gui: {
         deploy: JSON.stringify(ddData)
       },
-      postDeploymentPanel: {
-        entityId: ddData.id
-      }
+      postDeploymentPanel: true
     });
   }
 
