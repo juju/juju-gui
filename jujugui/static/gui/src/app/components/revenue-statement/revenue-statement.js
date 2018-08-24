@@ -1,10 +1,10 @@
-/* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
 const BasicTable = require('../basic-table/basic-table');
+const RsDetailsItem = require('./rs_details-item');
 
 /**
   React component used to display a list of the users revenue-statements in their profile.
@@ -14,7 +14,8 @@ class RevenueStatement extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: [ // Dummy data
+      data: [
+        // Dummy data
         {
           id: 1
         },
@@ -133,6 +134,74 @@ class RevenueStatement extends React.Component {
                 </div>
               </div>
             </div>
+
+            <hr />
+
+            <div className="rs__details v1">
+              <h2 className="rs__details-heading">Details - March 2018</h2>
+              <div className="rs__details-header">
+                <div className="details-header__item">Model, UUid</div>
+                <div className="details-header__item">Item</div>
+                <div className="details-header__item">Plan</div>
+                <div className="details-header__item">Share</div>
+                <div className="details-header__item u-align-text--center">Amount</div>
+              </div>
+
+              {/* This block should be repeated for each group of items */}
+              <div className="rs__details-item">
+                <div className="rs__details-item-summary">
+                  <strong>equities-prod-lon-2</strong>
+                  <span className="rs__details-item-id">
+                    4f9aafcc-b213-46eb-822d-10d4a4f52b46
+                  </span>
+                </div>
+                {/* First example item - passing props for each value is only for illustrative purposes */}
+                <RsDetailsItem
+                  entityAmount="76.33"
+                  entityName="Ubuntu Advantage"
+                  entityPlan=""
+                  entityShare="20" />
+                {/* Second example item */}
+                <RsDetailsItem
+                  entityAmount="91.42"
+                  entityName="Kubernetes Master"
+                  entityPlan="Pilot Whale burst"
+                  entityShare="40" />
+                <div className="rs__details-item-total">
+                  <div className="rs__details-total-value u-align-text--center">$142.38</div>
+                </div>
+              </div>
+
+              {/* This block should be repeated for each group of items */}
+              <div className="rs__details-item">
+                <div className="rs__details-item-summary">
+                  <strong>equities-prod-lon-1</strong>
+                  <span className="rs__details-item-id">
+                    4f9aafcc-b213-46eb-822d-10d4a4f52b46
+                  </span>
+                </div>
+                {/* First example item - passing props for each value is only for illustrative purposes */}
+                <RsDetailsItem
+                  entityAmount="76.33"
+                  entityName="Ubuntu Advantage"
+                  entityPlan=""
+                  entityShare="20" />
+                {/* Second example item */}
+                <RsDetailsItem
+                  entityAmount="91.42"
+                  entityName="Kubernetes Master"
+                  entityPlan="Pilot Whale burst"
+                  entityShare="40" />
+                <div className="rs__details-item-total">
+                  <div className="rs__details-total-value u-align-text--center">$142.38</div>
+                </div>
+                <div className="rs__details-total-revenue">
+                  <div className="rs__details-total-heading">Total revenue</div>
+                  <div className="rs__details-overall-value">$1895.54</div>
+                </div>
+              </div>
+            </div>
+
             <hr />
             <h3 className="u-btn-mar revenue-statement-details__title">
               Details - March 2018

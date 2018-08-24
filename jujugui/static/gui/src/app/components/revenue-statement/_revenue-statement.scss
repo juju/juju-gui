@@ -3,18 +3,18 @@ $revenue-statement-bp: 600px;
 .revenue-statement {
   @extend %floating-panel;
   min-height: 500vh;
-  width: 100vw;
-  z-index: index($z-indexed-elements, revenue-statement);
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
-  top: 0;
   right: 0;
+  top: 0;
+  width: 100vw;
+  z-index: index($z-indexed-elements, revenue-statement);
 
   &__inner {
-    padding: 1.5rem;
-    overflow-y: auto;
     height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding: 1.5rem;
 
     @media (min-width: $revenue-statement-bp) {
       margin: 2rem auto;
@@ -32,9 +32,9 @@ $revenue-statement-bp: 600px;
 
     @media (min-width: $revenue-statement-bp) {
       .revenue-statement__meta {
+        min-height: 4rem;
         position: relative;
         top: 3rem;
-        min-height: 4rem;
       }
 
       .u-emphasis-value {
@@ -45,10 +45,10 @@ $revenue-statement-bp: 600px;
   }
 
   &__heading {
-    border-top: 1px solid $light-mid-grey;
+    border-top: 1px solid $color-mid-dark;
     font-size: 2rem;
     margin-top: 1.5rem;
-    padding-top: .5rem;
+    padding-top: 0.5rem;
 
     @media (min-width: $revenue-statement-bp) {
       position: absolute;
@@ -160,24 +160,6 @@ $revenue-statement-bp: 600px;
     }
   }
 
-  &__billing-package {
-    border: 1px solid $light-mid-grey;
-    margin-bottom: 1rem;
-    padding: 1rem;
-
-    .revenue-statement__meta {
-      min-height: 0;
-    }
-
-    p {
-      font-size: 1rem;
-    }
-
-    &__model-name {
-      margin-bottom: 0.25rem;
-    }
-  }
-
   &__rel-wrap {
     position: relative;
 
@@ -220,14 +202,6 @@ $revenue-statement-bp: 600px;
   display: none;
 }
 
-.revenue-statement-details__title {
-  font-size: 20px;
-
-  @media (min-width: $revenue-statement-bp) {
-    font-size: 23px;
-  }
-}
-
 @media (min-width: 768px) {
   .revenue-statement-details-sm-screen {
     display: none;
@@ -236,15 +210,87 @@ $revenue-statement-bp: 600px;
   .revenue-statement-details-lrg-screen {
     display: block;
   }
+}
 
-  .revenue-statement__footer {
-    display: flex;
-    width: 100%;
+// Use CSS grid
 
-    &__col {
-      flex: 1;
-    }
+@mixin rs__details-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 3fr 1fr 1fr;
+}
 
+.rs__details {
+  margin: 5rem 0;
 
+  &-heading {
+    margin-bottom: 3rem;
+  }
+
+  &-header {
+    @include rs__details-grid-row;
+    border-bottom: 1px solid $color-mid-light;
+    padding-bottom: 0.5rem;
+  }
+
+  .details-header__item {
+    color: $color-mid-dark;
+  }
+
+  &-item-summary {
+    @include rs__details-grid-row;
+    border-bottom: 1px solid $color-dark;
+    padding: 1rem 0;
+  }
+
+  &-item-id {
+    grid-column-start: 3;
+  }
+
+  &-item-entry {
+    @include rs__details-grid-row;
+    border-bottom: 1px solid $color-mid-light;
+    padding: 1rem 0;
+  }
+  &-item-total {
+    @include rs__details-grid-row;
+    border-bottom: 1px solid $color-mid-light;
+  }
+
+  &-total-value {
+    grid-column-start: 5;
+  }
+
+  .rs__entity-name {
+    grid-column-start: 2;
+  }
+
+  .rs__details-total-value {
+    border-bottom: 1px solid $color-dark;
+    font-weight: bold;
+    padding: 1rem 0;
+  }
+
+  &-total-revenue {
+    @include rs__details-grid-row;
+    border-bottom: 1px solid $color-dark;
+    padding: 3rem 0 1rem;
+    font-size: 1.5rem;
+  }
+
+  &-total-heading {
+    grid-column: span 2;
+  }
+
+  &-overall-value {
+    grid-column-start: 5;
+  }
+}
+
+.revenue-statement__footer {
+  display: flex;
+  width: 100%;
+
+  &__col {
+    flex: 1;
   }
 }
