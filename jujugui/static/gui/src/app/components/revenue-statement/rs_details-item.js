@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const PropTypes = require('prop-types');
 
 /**
   React component used to display Items in itemised list in Revenue Statement
@@ -21,5 +22,12 @@ class RsDetailsItem extends React.Component {
     );
   }
 }
+
+RsDetailsItem.propTypes = {
+  entityAmount: PropTypes.string,
+  entityName: PropTypes.string,
+  entityPlan: PropTypes.string,
+  entityShare: PropTypes.string
+};
 
 module.exports = RsDetailsItem;
