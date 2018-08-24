@@ -44,7 +44,7 @@ class MegaWatcher {
         delete modelGroup[key];
       }
     });
-    this.ON_CHANGE(this.models);
+    this.ON_CHANGE(JSON.parse(JSON.stringify(this.models)));
   }
 
   _getModelGroup(modelType) {

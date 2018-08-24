@@ -262,6 +262,16 @@ class GUIApp {
       hideDragOverNotification: this._hideDragOverNotification.bind(this)
     });
 
+    this.megaWatcherModels = null;
+    this.megaWatcher = new MegaWatcher({
+      changeEvent: '_rpc_response',
+      onChange: models => {
+        this.megaWatcherModels = models;
+        this.state.dispatch();
+      }
+    });
+    this.megaWatcher.connect();
+
     if (config.gisf) {
       document.body.classList.add('u-is-beta');
     }
@@ -330,15 +340,6 @@ class GUIApp {
     if (result.error) {
       console.error(result.error);
     }
-    this.megaWatcherModels = null;
-    this.megaWatcher = new MegaWatcher({
-      changeEvent: '_rpc_response',
-      onChange: models => {
-        this.megaWatcherModels = models;
-        this.state.dispatch();
-      }
-    });
-    this.megaWatcher.connect();
   }
 
   /**

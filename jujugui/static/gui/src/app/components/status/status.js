@@ -8,6 +8,8 @@ const { urls } = require('jaaslib');
 
 const BasicTable = require('../basic-table/basic-table');
 const Panel = require('../panel/panel');
+const utils = require('../../init/utils');
+const { listForApplication, listUnits } = require('../../selectors/units');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
@@ -184,52 +186,6 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the current model status.
-    @returns {Object} The resulting element.
-  */
-  _generateStatus() {
-    const elements = [];
-    const db = this.props.db;
-    const applications = db.services.filter(app => !app.get('pending'));
-    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
-    const relations = db.relations.filter(rel => !rel.get('pending'));
-    const counts = {
-      applications: applications.length,
-      machines: machines.length,
-      relations: relations.length,
-      remoteApplications: db.remoteServices && db.remoteServices.size() || 0,
-      units: db.units && db.units.size() || 0
-    };
-    // Model section.
-    const model = this.props.model;
-    if (!model.modelUUID) {
-      // No need to go further: we are not connected to a model.
-      return 'Cannot show the status: the GUI is not connected to a model.';
-    }
-    elements.push(this._generateModel(model, counts));
-    // SAAS section.
-    if (counts.remoteApplications) {
-      elements.push(this._generateRemoteApplications(db.remoteServices));
-    }
-    // Applications and units sections.
-    if (counts.applications) {
-      elements.push(
-        this._generateApplications(applications),
-        this._generateUnits(applications)
-      );
-    }
-    // Machines section.
-    if (counts.machines) {
-      elements.push(this._generateMachines(machines));
-    }
-    // Relations section.
-    if (counts.relations) {
-      elements.push(this._generateRelations(relations));
-    }
-    return elements;
-  }
-
-  /**
     Handle filter changes and store the new status in state.
     @param evt {Object} The change event
   */
@@ -272,11 +228,17 @@ class Status extends React.Component {
 
   /**
     Generate the model fragment of the status.
-    @param {Object} model The model attributes.
-    @param {Object} counts The counts of applications, units, machines etc.
     @returns {Object} The resulting element.
   */
-  _generateModel(model, counts) {
+  _generateModel() {
+    const { model, models } = this.props;
+    const counts = {
+      applications: Object.keys(models.applications || {}).length,
+      machines: Object.keys(models.machines || {}).length,
+      relations: Object.keys(models.relations || {}).length,
+      remoteApplications: Object.keys(models['remote-applications'] || {}).length,
+      units: listUnits(models.units || {}).length
+    };
     const highestStatus = this.state.highestStatus;
     let title = 'Everything is OK';
     switch (highestStatus) {
@@ -467,13 +429,15 @@ class Status extends React.Component {
 
   /**
     Generate the remote applications fragment of the status.
-    @param {Object} remoteApplications The remote applications as included in
-      the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateRemoteApplications(remoteApplications) {
-    const rows = remoteApplications.map(application => {
-      const app = application.getAttrs();
+  _generateRemoteApplications() {
+    const remoteApplications = this.props.models['remote-applications'] || {};
+    if (!Object.keys(remoteApplications).length) {
+      return null;
+    }
+    const rows = Object.keys(remoteApplications).map(key => {
+      const app = remoteApplications[key];
       const urlParts = app.url.split(':');
       return {
         columns: [{
@@ -520,30 +484,22 @@ class Status extends React.Component {
   }
 
   /**
-    A predicate function that can be used to filter units so that uncommitted
-    and unplaced units are excluded.
-    @param {Object} unit A unit as included in the database.
-    @returns {Boolean} Whether the unit is real or not.
-  */
-  _realUnitsPredicate(unit) {
-    // Unplaced units have no machine defined. Subordinate units have an empty
-    // string machine.
-    return unit.machine !== undefined && unit.machine.indexOf('new') !== 0;
-  }
-
-  /**
     Generate the applications fragment of the status.
-    @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateApplications(applications) {
-    const rows = applications.map(application => {
-      const app = application.getAttrs();
-      const charm = urls.URL.fromLegacyString(app.charm);
+  _generateApplications() {
+    const { models } = this.props;
+    const applications = models.applications || {};
+    if (!Object.keys(applications).length) {
+      return null;
+    }
+    const rows = Object.keys(applications).map(key => {
+      const app = applications[key];
+      const charm = urls.URL.fromLegacyString(app['charm-url']);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
       const charmId = charm.path();
-      const units = app.units.filter(this._realUnitsPredicate);
+      const units = listForApplication(models.units || {}, app.name);
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
@@ -557,12 +513,12 @@ class Status extends React.Component {
           content: (
             <span>
               <img className="status-view__icon"
-                src={app.icon} />
+                src={utils.getIconPath(app['charm-url'], false)} />
               {app.name}
             </span>)
         }, {
           columnSize: 2,
-          content: app.workloadVersion
+          content: app['workload-version']
         }, {
           columnSize: 2,
           content: this._generateStatusDisplay(app.status.current)
@@ -628,88 +584,87 @@ class Status extends React.Component {
 
   /**
     Generate the units fragment of the status.
-    @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateUnits(applications) {
+  _generateUnits() {
+    const { models } = this.props;
+    const units = models.units || {};
+    const applications = models.applications || {};
+    if (!listUnits(units || {}).length) {
+      return null;
+    }
     const formatPorts = ranges => {
       if (!ranges) {
         return '';
       }
       return ranges.map(range => {
-        if (range.from === range.to) {
-          return `${range.from}/${range.protocol}`;
+        if (range['from-port'] === range['to-port']) {
+          return `${range['from-port']}/${range.protocol}`;
         }
-        return `${range.from}-${range.to}/${range.protocol}`;
+        return `${range['from-port']}-${range['to-port']}/${range.protocol}`;
       }).join(', ');
     };
-    const rows = [];
-    applications.forEach(application => {
-      const appExposed = application.get('exposed');
-      const units = application.get('units').filter(this._realUnitsPredicate);
-      units.forEach(unit => {
-        this._setHighestStatus(this._getHighestStatus(
-          [unit.agentStatus, unit.workloadStatus]));
-        let publicAddress = unit.public_address;
-        if (appExposed && unit.portRanges.length) {
-          const port = unit.portRanges[0].from;
-          const label = `${unit.public_address}:${port}`;
-          const protocol = port === 443 ? 'https' : 'http';
-          const href = `${protocol}://${label}`;
-          publicAddress = (
+    const rows = listUnits(units).map(unit => {
+      const application = applications[unit.application];
+      const appExposed = application.exposed;
+      this._setHighestStatus(this._getHighestStatus(
+        [unit['agent-status'].current, unit['workload-status'].current]));
+      let publicAddress = unit['public-address'];
+      if (appExposed && unit['port-ranges'].length) {
+        const port = unit['port-ranges'][0].from;
+        const label = `${unit['public-address']}:${port}`;
+        const protocol = port === 443 ? 'https' : 'http';
+        const href = `${protocol}://${label}`;
+        publicAddress = (
+          <a className="status-view__link"
+            href={href}
+            target="_blank">
+            {unit['public-address']}
+          </a>);
+      }
+      return {
+        classes: [this._getStatusClass(
+          'status-view__table-row--',
+          [unit['agent-status'].current, unit['workload-status'].current])],
+        clickState: this._generateUnitClickState(unit.name),
+        columns: [{
+          columnSize: 2,
+          content: (
+            <span>
+              <img className="status-view__icon"
+                src={utils.getIconPath(application['charm-url'], false)} />
+              {unit.displayName}
+            </span>)
+        }, {
+          columnSize: 2,
+          content: this._generateStatusDisplay(unit['workload-status'].current)
+        }, {
+          columnSize: 2,
+          content: this._generateStatusDisplay(unit['agent-status'].current)
+        }, {
+          columnSize: 1,
+          content: (
             <a className="status-view__link"
-              href={href}
-              target="_blank">
-              {unit.public_address}
-            </a>);
-        }
-        rows.push({
-          classes: [this._getStatusClass(
-            'status-view__table-row--',
-            [unit.agentStatus, unit.workloadStatus])],
-          clickState: this._generateUnitClickState(unit.id),
-          columns: [{
-            columnSize: 2,
-            content: (
-              <span>
-                <img className="status-view__icon"
-                  src={application.get('icon')} />
-                {unit.displayName}
-              </span>)
-          }, {
-            columnSize: 2,
-            content: this._generateStatusDisplay(unit.workloadStatus)
-          }, {
-            columnSize: 2,
-            content: this._generateStatusDisplay(unit.agentStatus)
-          }, {
-            columnSize: 1,
-            content: (
-              <a className="status-view__link"
-                href={this.props.generatePath(
-                  this._generateMachineClickState(unit.machine))}
-                onClick={this._navigateToMachine.bind(this, unit.machine)}>
-                {unit.machine}
-              </a>)
-          }, {
-            columnSize: 2,
-            content: publicAddress
-          }, {
-            columnSize: 1,
-            content: formatPorts(unit.portRanges)
-          }, {
-            columnSize: 2,
-            content: unit.workloadStatusMessage
-          }],
-          extraData: this._getHighestStatus(
-            [unit.agentStatus, unit.workloadStatus]),
-          key: unit.id
-        });
-      });
+              href={this.props.generatePath(
+                this._generateMachineClickState(unit['machine-id']))}
+              onClick={this._navigateToMachine.bind(this, unit['machine-id'])}>
+              {unit['machine-id']}
+            </a>)
+        }, {
+          columnSize: 2,
+          content: publicAddress
+        }, {
+          columnSize: 1,
+          content: formatPorts(unit['port-ranges'])
+        }, {
+          columnSize: 2,
+          content: unit['workload-status'].message
+        }],
+        extraData: this._getHighestStatus(
+          [unit['agent-status'].current, unit['workload-status'].current]),
+        key: unit.name
+      };
     });
-    if (!rows.length) {
-      return null;
-    }
     return (
       <BasicTable
         changeState={this.props.changeState}
@@ -749,36 +704,46 @@ class Status extends React.Component {
 
   /**
     Generate the machines fragment of the status.
-    @param {Array} machines The machines as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateMachines(machines) {
-    const rows = machines.map(machine => {
-      this._setHighestStatus(machine.agent_state);
+  _generateMachines() {
+    const machines = this.props.models.machines || {};
+    if (!Object.keys(machines).length) {
+      return null;
+    }
+    const rows = Object.keys(machines).map(key => {
+      const machine = machines[key];
+      this._setHighestStatus(machine['agent-status'].current);
+      let publicAddress;
+      machine.addresses.forEach(address => {
+        if (address.scope === 'public') {
+          publicAddress = address.scope;
+        }
+      });
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--', machine.agent_state)],
+          'status-view__table-row--', machine['agent-status'].current)],
         clickState: this._generateMachineClickState(machine.id),
         columns: [{
           columnSize: 1,
-          content: machine.displayName
+          content: machine.id
         }, {
           columnSize: 2,
-          content: this._generateStatusDisplay(machine.agent_state)
+          content: this._generateStatusDisplay(machine['agent-status'].current)
         }, {
           columnSize: 2,
-          content: machine.public_address
+          content: publicAddress
         }, {
           columnSize: 3,
-          content: machine.instance_id
+          content: machine['instance-id']
         }, {
           columnSize: 1,
           content: machine.series
         }, {
           columnSize: 3,
-          content: machine.agent_state_info
+          content: machine['agent-status'].message
         }],
-        extraData: this._normaliseStatus(machine.agent_state),
+        extraData: this._normaliseStatus(machine['agent-status'].current),
         key: machine.id
       };
     });
@@ -822,7 +787,8 @@ class Status extends React.Component {
     @returns {Object} The link element.
   */
   _generateRelationAppLink(name) {
-    const app = this.props.db.services.getById(name);
+    const applications = this.props.models.applications || {};
+    const app = applications[name];
     if (!app) {
       // If the application is not in the DB it must be remote app so don't
       // link to it.
@@ -834,35 +800,37 @@ class Status extends React.Component {
           this._generateApplicationClickState(name))}
         onClick={this._navigateToApplication.bind(this, name)}>
         <img className="status-view__icon"
-          src={app.get('icon')} />
+          src={utils.getIconPath(app['charm-url'], false)} />
         {name}
       </a>);
   }
 
   /**
     Generate the relations fragment of the status.
-    @param {Array} relations The relations as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateRelations(relations) {
-    const rows = relations.map(relation => {
-      const rel = relation.getAttrs();
+  _generateRelations() {
+    const relations = this.props.models.relations || {};
+    if (!Object.keys(relations).length) {
+      return null;
+    }
+    const rows = Object.keys(relations).map(key => {
+      const rel = relations[key];
       let name = '';
       let provides = '';
       let consumes = '';
       let scope = '';
       rel.endpoints.forEach(endpoint => {
-        const application = endpoint[0];
-        const ep = endpoint[1];
-        switch (ep.role) {
+        const application = endpoint['application-name'];
+        switch (endpoint.relation.role) {
           case 'peer':
-            name = ep.name;
+            name = endpoint.relation.name;
             provides = application;
             consumes = application;
             scope = 'peer';
             return;
           case 'provider':
-            name = ep.name;
+            name = endpoint.relation.name;
             consumes = application;
             scope = 'regular';
             break;
@@ -885,7 +853,7 @@ class Status extends React.Component {
           columnSize: 3,
           content: scope
         }],
-        key: rel.id
+        key: rel.id.toString()
       };
     });
     return (
@@ -915,12 +883,28 @@ class Status extends React.Component {
   }
 
   render() {
+    const { model } = this.props;
+    let content;
+    if (!model.modelUUID) {
+      // No need to go further: we are not connected to a model.
+      content = 'Cannot show the status: the GUI is not connected to a model.';
+    } else {
+      content = (
+        <React.Fragment>
+          {this._generateModel()}
+          {this._generateRemoteApplications()}
+          {this._generateApplications()}
+          {this._generateUnits()}
+          {this._generateMachines()}
+          {this._generateRelations()}
+        </React.Fragment>);
+    }
     return (
       <Panel
         instanceName="status-view"
         visible={true}>
         <div className="status-view__content">
-          {this._generateStatus()}
+          {content}
         </div>
       </Panel>
     );
@@ -929,22 +913,6 @@ class Status extends React.Component {
 
 Status.propTypes = {
   changeState: PropTypes.func.isRequired,
-  db: shapeup.shape({
-    machines: shapeup.shape({
-      filter: PropTypes.func.isRequired
-    }).isRequired,
-    relations: shapeup.shape({
-      filter: PropTypes.func.isRequired
-    }).isRequired,
-    remoteServices: shapeup.shape({
-      map: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
-    }).isRequired,
-    services: shapeup.shape({
-      filter: PropTypes.func.isRequired,
-      getById: PropTypes.func.isRequired
-    }).isRequired
-  }).frozen.isRequired,
   generatePath: PropTypes.func.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
@@ -954,7 +922,13 @@ Status.propTypes = {
     sla: PropTypes.string,
     version: PropTypes.string
   }).frozen.isRequired,
-  models: PropTypes.object
+  models: shapeup.shape({
+    applications: PropTypes.object,
+    machines: PropTypes.object,
+    relations: PropTypes.object,
+    'remote-applications': PropTypes.object,
+    units: PropTypes.object
+  })
 };
 
 module.exports = Status;
