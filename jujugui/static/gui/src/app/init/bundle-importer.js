@@ -117,7 +117,7 @@ class BundleImporter {
   }
 
   /**
-    Adds the bundle-url annotation to the changeset.
+    Adds the bundleURL annotation to the changeset.
     @param {String} bundleURL The bundle URL to save to the annotations.
     @param {Array} changes The bundle changeset.
   */
@@ -130,13 +130,13 @@ class BundleImporter {
         // the new setAnnotations.
         const length = changes.length;
         // Look for an annotation that is already for this command, if one exists
-        // then add the bundle-url annotation to it.
+        // then add the bundleURL annotation to it.
         const found = changes.some(innerRecord => {
           if (innerRecord.method === 'setAnnotations') {
             if (innerRecord.args[0] === `$${record.id}`) {
               // If this setAnnotations is for the outer record then add the
-              // bundle-url key to it.
-              innerRecord.args[2]['bundle-url'] = bundleURL;
+              // bundleURL key to it.
+              innerRecord.args[2]['bundleURL'] = bundleURL;
               return true;
             }
           }
@@ -146,7 +146,7 @@ class BundleImporter {
           changes.push({
             id: `setAnnotations-${length}`,
             method: 'setAnnotations',
-            args: [`$${record.id}`, 'application', {'bundle-url': bundleURL}],
+            args: [`$${record.id}`, 'application', {bundleURL}],
             requires: [record.id]
           });
         }
