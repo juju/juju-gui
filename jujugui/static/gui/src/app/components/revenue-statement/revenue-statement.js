@@ -3,7 +3,6 @@
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
-const BasicTable = require('../basic-table/basic-table');
 const RsDetailsItem = require('./rs_details-item');
 
 /**
@@ -32,33 +31,6 @@ class RevenueStatement extends React.Component {
     if (this.state.loading) {
       return <Spinner />;
     } else {
-      const rows = this.state.data.map((revenueStatement, index) => {
-        return {
-          key: `${index}`,
-          columns: [
-            {
-              content: 'equities-prod-lon-1',
-              columnSize: 4
-            },
-            {
-              content: '$0.028',
-              columnSize: 2
-            },
-            {
-              content: 'Hours',
-              columnSize: 2
-            },
-            {
-              content: '20%',
-              columnSize: 2
-            },
-            {
-              content: '$50.96',
-              columnSize: 2
-            }
-          ]
-        };
-      });
       content = (
         <div className="revenue-statement__inner">
           <header className="revenue-statement__header">
@@ -155,7 +127,7 @@ class RevenueStatement extends React.Component {
                     4f9aafcc-b213-46eb-822d-10d4a4f52b46
                   </span>
                 </div>
-                {/* First example item - passing props for each value is only for illustrative purposes */}
+                {/* First example item - passing props for illustrative purposes */}
                 <RsDetailsItem
                   entityAmount="76.33"
                   entityName="Ubuntu Advantage"
@@ -180,7 +152,7 @@ class RevenueStatement extends React.Component {
                     4f9aafcc-b213-46eb-822d-10d4a4f52b46
                   </span>
                 </div>
-                {/* First example item - passing props for each value is only for illustrative purposes */}
+                {/* First example item - passing props for illustrative purposes */}
                 <RsDetailsItem
                   entityAmount="76.33"
                   entityName="Ubuntu Advantage"
@@ -202,104 +174,6 @@ class RevenueStatement extends React.Component {
               </div>
             </div>
 
-            <hr />
-            <h3 className="u-btn-mar revenue-statement-details__title">
-              Details - March 2018
-            </h3>
-            <div className="revenue-statement-details-sm-screen">
-              <div className="revenue-statement__billing-package">
-                <p>
-                  <strong>Ubuntu Advantage Essential</strong>
-                </p>
-                <p>$0.09 per machine hour</p>
-                <p className="revenue-statement__billing-package__model-name">
-                  Model: fx-staging-ldn
-                </p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
-                </div>
-                <p className="revenue-statement__billing-package__model-name">
-                  Model: version neo
-                </p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
-                </div>
-              </div>
-              <div className="revenue-statement__billing-package">
-                <p>
-                  <strong>Ubuntu Advantage Advanced</strong>
-                </p>
-                <p>$0.09 per machine hour</p>
-                <p>Model: fx-staging-ldn</p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
-                </div>
-
-                <p>Model: version neo</p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="revenue-statement-details-lrg-screen clearfix">
-              <BasicTable
-                headerClasses={['profile__entity-table-header-row']}
-                headerColumnClasses={['profile__entity-table-header-column']}
-                headers={[
-                  {
-                    content: 'Model / Item',
-                    columnSize: 4
-                  },
-                  {
-                    content: 'Price',
-                    columnSize: 2
-                  },
-                  {
-                    content: 'Metered',
-                    columnSize: 2
-                  },
-                  {
-                    content: 'Share',
-                    columnSize: 2
-                  },
-                  {
-                    content: 'Amount',
-                    columnSize: 2
-                  }
-                ]}
-                rowClasses={['profile__entity-table-row']}
-                rowColumnClasses={['profile__entity-table-column']}
-                rows={rows} />
-            </div>
             <hr />
 
             <div className="u-btn-mar">
