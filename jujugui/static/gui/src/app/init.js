@@ -13,6 +13,7 @@ const csUser = require('./init/charmstore-user');
 const cookieUtil = require('./init/cookie-util');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
+const MegaWatcher = require('./mega-watcher/mega-watcher');
 const ModelController = require('./models/model-controller');
 const State = require('./state/state');
 const StatsClient = require('./utils/statsd');
@@ -329,6 +330,15 @@ class GUIApp {
     if (result.error) {
       console.error(result.error);
     }
+    this.megaWatcherModels = null;
+    this.megaWatcher = new MegaWatcher({
+      changeEvent: '_rpc_response',
+      onChange: models => {
+        this.megaWatcherModels = models;
+        this.state.dispatch();
+      }
+    });
+    this.megaWatcher.connect();
   }
 
   /**
@@ -1712,6 +1722,7 @@ class GUIApp {
     this.endpointsController.destructor();
     this.topology.destructor();
     this._hotkeyListener.deactivate();
+    this.megaWatcher.disconnect();
     // Detach event listeners.
     const remove = document.removeEventListener.bind(document);
     const handlers = this._domEventHandlers;

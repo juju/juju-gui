@@ -953,7 +953,8 @@ Status.propTypes = {
     region: PropTypes.string,
     sla: PropTypes.string,
     version: PropTypes.string
-  }).frozen.isRequired
+  }).frozen.isRequired,
+  models: PropTypes.object
 };
 
 module.exports = Status;

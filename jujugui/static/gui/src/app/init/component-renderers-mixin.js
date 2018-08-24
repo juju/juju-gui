@@ -684,7 +684,8 @@ Browser: ${navigator.userAgent}`
         changeState={this._bound.changeState}
         db={shapeup.fromShape(this.db, propTypes.db)}
         generatePath={this.state.generatePath.bind(this.state)}
-        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)} />,
+        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
+        models={this.megaWatcherModels} />,
       document.getElementById('status-container')
     );
     next();
