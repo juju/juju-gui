@@ -682,9 +682,9 @@ Browser: ${navigator.userAgent}`
     ReactDOM.render(
       <Status
         changeState={this._bound.changeState}
+        entities={shapeup.fromShape(this.megaWatcherEntities || {}, propTypes.entities)}
         generatePath={this.state.generatePath.bind(this.state)}
-        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)}
-        models={shapeup.fromShape(this.megaWatcherModels || {}, propTypes.models)} />,
+        model={shapeup.fromShape(this.modelAPI.getAttrs(), propTypes.model)} />,
       document.getElementById('status-container')
     );
     next();

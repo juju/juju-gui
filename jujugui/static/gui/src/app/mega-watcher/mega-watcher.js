@@ -13,8 +13,13 @@ class MegaWatcher {
       applications: {},
       machines: {},
       relations: {},
+      'remote-applications': {},
       units: {}
     };
+  }
+
+  getEntities() {
+    return JSON.parse(JSON.stringify(this.entities));
   }
 
   connect() {
@@ -55,6 +60,7 @@ class MegaWatcher {
 
   _getEntityKey(entityType, entity) {
     switch (entityType) {
+      case 'remote-application':
       case 'application':
       case 'unit':
         return entity.name;

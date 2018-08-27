@@ -231,13 +231,13 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateModel() {
-    const { model, models } = this.props;
+    const { model, entities } = this.props;
     const counts = {
-      applications: Object.keys(models.applications || {}).length,
-      machines: Object.keys(models.machines || {}).length,
-      relations: Object.keys(models.relations || {}).length,
-      remoteApplications: Object.keys(models['remote-applications'] || {}).length,
-      units: listUnits(models.units || {}).length
+      applications: Object.keys(entities.applications).length,
+      machines: Object.keys(entities.machines).length,
+      relations: Object.keys(entities.relations).length,
+      remoteApplications: Object.keys(entities['remote-applications']).length,
+      units: listUnits(entities.units).length
     };
     const highestStatus = this.state.highestStatus;
     let title = 'Everything is OK';
@@ -432,7 +432,7 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRemoteApplications() {
-    const remoteApplications = this.props.models['remote-applications'] || {};
+    const remoteApplications = this.props.entities['remote-applications'];
     if (!Object.keys(remoteApplications).length) {
       return null;
     }
@@ -488,8 +488,8 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateApplications() {
-    const { models } = this.props;
-    const applications = models.applications || {};
+    const { entities } = this.props;
+    const applications = entities.applications;
     if (!Object.keys(applications).length) {
       return null;
     }
@@ -499,7 +499,7 @@ class Status extends React.Component {
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
       const charmId = charm.path();
-      const units = listForApplication(models.units || {}, app.name);
+      const units = listForApplication(entities.units, app.name);
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
@@ -587,10 +587,10 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateUnits() {
-    const { models } = this.props;
-    const units = models.units || {};
-    const applications = models.applications || {};
-    if (!listUnits(units || {}).length) {
+    const { entities } = this.props;
+    const units = entities.units;
+    const applications = entities.applications;
+    if (!listUnits(units).length) {
       return null;
     }
     const formatPorts = ranges => {
@@ -707,7 +707,7 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateMachines() {
-    const machines = this.props.models.machines || {};
+    const machines = this.props.entities.machines;
     if (!Object.keys(machines).length) {
       return null;
     }
@@ -787,7 +787,7 @@ class Status extends React.Component {
     @returns {Object} The link element.
   */
   _generateRelationAppLink(name) {
-    const applications = this.props.models.applications || {};
+    const applications = this.props.entities.applications;
     const app = applications[name];
     if (!app) {
       // If the application is not in the DB it must be remote app so don't
@@ -810,7 +810,7 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRelations() {
-    const relations = this.props.models.relations || {};
+    const relations = this.props.entities.relations;
     if (!Object.keys(relations).length) {
       return null;
     }
@@ -913,6 +913,13 @@ class Status extends React.Component {
 
 Status.propTypes = {
   changeState: PropTypes.func.isRequired,
+  entities: shapeup.shape({
+    applications: PropTypes.object.isRequired,
+    machines: PropTypes.object.isRequired,
+    relations: PropTypes.object.isRequired,
+    'remote-applications': PropTypes.object.isRequired,
+    units: PropTypes.object.isRequired
+  }),
   generatePath: PropTypes.func.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
@@ -921,14 +928,7 @@ Status.propTypes = {
     region: PropTypes.string,
     sla: PropTypes.string,
     version: PropTypes.string
-  }).frozen.isRequired,
-  models: shapeup.shape({
-    applications: PropTypes.object,
-    machines: PropTypes.object,
-    relations: PropTypes.object,
-    'remote-applications': PropTypes.object,
-    units: PropTypes.object
-  })
+  }).frozen.isRequired
 };
 
 module.exports = Status;

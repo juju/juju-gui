@@ -262,14 +262,15 @@ class GUIApp {
       hideDragOverNotification: this._hideDragOverNotification.bind(this)
     });
 
-    this.megaWatcherModels = null;
     this.megaWatcher = new MegaWatcher({
       changeEvent: '_rpc_response',
-      onChange: models => {
-        this.megaWatcherModels = models;
+      onChange: entities => {
+        this.megaWatcherEntities = entities;
         this.state.dispatch();
       }
     });
+    // Set up the initial object.
+    this.megaWatcherEntities = this.megaWatcher.getEntities();
     this.megaWatcher.connect();
 
     if (config.gisf) {
