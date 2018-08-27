@@ -57,6 +57,7 @@ class PostDeployment extends React.Component {
     });
   }
 
+<<<<<<< HEAD
   componentDidMount() {
     this._fetchFiles();
   }
@@ -67,6 +68,8 @@ class PostDeployment extends React.Component {
     }
   }
 
+=======
+>>>>>>> Remove post deployment changes.
   /**
     Handles the response from the various getFile requests by processing and
     storing in the necessary state.
@@ -84,9 +87,31 @@ class PostDeployment extends React.Component {
     }
     // Rather then parsing the JSON to read the error we check if the returned
     // body starts with a '{'. If it does, it's not a markdown file so ignore.
+<<<<<<< HEAD
     if (fileContents.substring(0, 1) === '{') {
       this.setState({[file]: null});
       return;
+=======
+    if (usageContents && usageContents.substring(0, 1) !== '{') {
+      const frontmatterAndMarkdown = this.extractFrontmatter(usageContents);
+      this.setState({
+        metadata: frontmatterAndMarkdown.metadata
+      });
+      let renderer = new marked.Renderer();
+      renderer.link = (href, title, text) => {
+        return `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
+      };
+      const markdown = marked(
+        this.replaceTemplateTags(
+          frontmatterAndMarkdown.markdown
+        ),
+        {renderer: renderer}
+      );
+
+      this.setState({
+        content: markdown
+      });
+>>>>>>> Remove post deployment changes.
     }
     if (file === GET_STARTED) {
       fileContents = this._processGetStarted(fileContents);
