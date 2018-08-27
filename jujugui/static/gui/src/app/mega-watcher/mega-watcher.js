@@ -8,7 +8,13 @@ class MegaWatcher {
     this.ALL_WATCHER_EVENT = config.changeEvent;
     this.ON_CHANGE = config.onChange;
     this._boundWatcherListener = this._watcherListener.bind(this);
-    this.models = {};
+    this.entities = {
+      annotations: {},
+      applications: {},
+      machines: {},
+      relations: {},
+      units: {}
+    };
   }
 
   connect() {
@@ -26,47 +32,40 @@ class MegaWatcher {
     }
     const deltas = data.response.deltas;
     deltas.forEach(delta => {
-      const modelType = delta[0];
+      const entityType = delta[0];
       const changeType = delta[1];
-      const model = delta[2];
-      const key = this._getModelKey(modelType, model);
+      const entity = delta[2];
+      const key = this._getEntityKey(entityType, entity);
       if (!key) {
-        // We don't know how to manage this model, so ignore it.
+        // We don't know how to manage this entity, so ignore it.
         return;
       }
-      const modelGroup = this._getModelGroup(modelType);
+      const entityGroup = this.entities[entityType + 's'];
       if (changeType === 'change') {
-        if (!modelGroup[key]) {
-          modelGroup[key] = {};
+        if (!entityGroup[key]) {
+          entityGroup[key] = {};
         }
-        modelGroup[key] = deepmerge(modelGroup[key], model);
+        entityGroup[key] = deepmerge(entityGroup[key], entity);
       } else if (changeType === 'remove') {
-        delete modelGroup[key];
+        delete entityGroup[key];
       }
     });
-    this.ON_CHANGE(JSON.parse(JSON.stringify(this.models)));
+    this.ON_CHANGE(JSON.parse(JSON.stringify(this.entities)));
   }
 
-  _getModelGroup(modelType) {
-    modelType = modelType + 's';
-    if (!this.models[modelType]) {
-      this.models[modelType] = {};
-    }
-    return this.models[modelType];
-  }
-
-  _getModelKey(modelType, model) {
-    switch (modelType) {
+  _getEntityKey(entityType, entity) {
+    switch (entityType) {
       case 'application':
       case 'unit':
-        return model.name;
+        return entity.name;
       case 'machine':
       case 'relation':
-        return model.id;
+        return entity.id;
       case 'annotation':
-        return model.tag;
+        return entity.tag;
       default:
-        console.error('Unknown model type', modelType);
+        // This is an unknown entity type so ignore it as we don't know how to
+        // handle it.
         return null;
     }
   }
