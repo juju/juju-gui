@@ -656,7 +656,7 @@ Browser: ${navigator.userAgent}`
         }, []));
     }
     if (entityURLs.length > 0) {
-      ReactDOM.render(
+      return (
         <PostDeployment
           changeState={this._bound.changeState}
           charmstore={

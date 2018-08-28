@@ -53,7 +53,8 @@ describe('App', () => {
     appState = {
       changeState: sinon.stub(),
       current: {},
-      generatePath: sinon.stub()
+      generatePath: sinon.stub(),
+      isSet: sinon.stub()
     };
     bundleImporter = {
       importBundleFile: sinon.stub()
