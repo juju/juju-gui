@@ -278,7 +278,7 @@ class App extends React.Component {
           acl={this.props.acl}
           appState={this.props.appState}
           changeState={this._bound.changeState}
-          displayTerminalButton={this._enableTerminal()}
+          displayTerminalButton={this._shouldEnableTerminal()}
           exportEnvironmentFile={
             initUtils.exportEnvironmentFile.bind(initUtils, this.db, this.sendAnalytics)}
           hideDragOverNotification={this._showDragOverNotification.bind(this, false)}
@@ -433,13 +433,9 @@ Browser: ${navigator.userAgent}`
     if (!this.props.appState.isSet('profile')) {
       return null;
     }
-    // XXX Jeff - 1-2-2016 - Because of a bug in the state system the profile
-    // view renders itself and then makes requests to identity before the
-    // controller is setup and the user has successfully logged in. As a
-    // temporary workaround we will just prevent rendering the profile until
-    // the controller is connected.
-    // XXX frankban: it seems that the profile is rendered even when the
-    // profile is not included in the state.
+    // The profile view renders itself and then makes requests to identity before the
+    // controller is setup and the user has successfully logged in. So we need to
+    // prevent rendering the profile until the controller is connected.
     const guiState = state.gui || {};
     if (
       guiState.deploy !== undefined ||
@@ -463,9 +459,6 @@ Browser: ${navigator.userAgent}`
         }
       });
     }
-    // NOTE: we need to clone this.get('users') below; passing in without
-    // cloning breaks React's ability to distinguish between this.props and
-    // nextProps on the lifecycle methods.
     const charmstore = this.props.charmstore;
     const payment = this.props.payment;
     const stripe = this.props.stripe;
@@ -727,7 +720,7 @@ Browser: ${navigator.userAgent}`
 
     @returns {Bool} Inidication of whether jujushell is enabled
    */
-  _enableTerminal() {
+  _shouldEnableTerminal() {
     return (
       this.props.applicationConfig.flags.terminal ||
       // Always allow for opening the terminal if the user specified a
@@ -784,7 +777,7 @@ Browser: ${navigator.userAgent}`
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.props.sendAnalytics}
         series={urls.CHARM_SERIES}
-        showSSHButtons={this._enableTerminal()} />);
+        showSSHButtons={this._shouldEnableTerminal()} />);
   }
 
   /**
@@ -889,7 +882,7 @@ Browser: ${navigator.userAgent}`
           services={shapeup.fromShape(db.services, propTypes.services)}
           showActivePlan={this.props.plans.showActivePlan.bind(this.props.plans)}
           showPlans={window.juju_config.flags.plans || false}
-          showSSHButtons={this._enableTerminal()}
+          showSSHButtons={this._shouldEnableTerminal()}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
           updateServiceUnitsDisplayname={
             db.updateServiceUnitsDisplayname.bind(db)} />
@@ -1055,13 +1048,13 @@ Browser: ${navigator.userAgent}`
     designated element.
   */
   _generateDeploymentBar() {
-    var modelAPI = this.props.modelAPI;
-    var ecs = modelAPI.get('ecs');
-    var db = this.props.db;
-    var services = db.services;
-    var servicesArray = services.toArray();
-    var machines = db.machines.toArray();
-    var units = db.units;
+    const modelAPI = this.props.modelAPI;
+    const ecs = modelAPI.get('ecs');
+    const db = this.props.db;
+    const services = db.services;
+    const servicesArray = services.toArray();
+    const machines = db.machines.toArray();
+    const units = db.units;
     return (
       <div id="deployment-bar-container">
         <DeploymentBar
@@ -1079,8 +1072,6 @@ Browser: ${navigator.userAgent}`
 
   /**
     Renders the login component.
-
-    @method _generateLogin
     @param {String} err Possible authentication error, or null if no error
       message must be displayed.
   */

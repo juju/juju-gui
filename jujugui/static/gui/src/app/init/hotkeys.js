@@ -114,7 +114,7 @@ const activate = () => {
     const trigger = symbolic.join('-');
     const spec = keyBindings[trigger];
     if (spec) {
-      if (spec.condition && !spec.condition.call()) {
+      if (spec.condition && !spec.condition()) {
         // Note that when a condition check fails,
         // the event still propagates.
         return;
@@ -130,7 +130,7 @@ const activate = () => {
         }
         if (spec.focus) { target.focus(); }
       }
-      if (spec.callback) { spec.callback.call(this, evt, target); }
+      if (spec.callback) { spec.callback(evt, target); }
       // HACK w/o context/view restriction but right direction
       if (spec.fire) {
         document.dispatchEvent(new Event(spec.fire));

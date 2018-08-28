@@ -182,57 +182,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       messageRotator = new MessageRotator();
       messageRotator.start();
 
-      getDocument = function() {
-        return document;
-      };
-
-      isBrowserSupported = function(agent) {
-        // Latest Chrome, Firefox, IE10 are supported
-        return (/Chrome|Firefox|Safari|MSIE\ 10/.test(agent));
-      };
-
-      displayBrowserWarning = function() {
-        getDocument()
-          .getElementById('browser-warning').style.display = 'block';
-      };
-
-      hideBrowserWarning = function() {
-        getDocument()
-          .getElementById('browser-warning').style.display = 'none';
-      };
-
-      displayLoadingMessage = function() {
-        getDocument()
-          .getElementById('loading-message').style.display = 'block';
-      };
-
-      hideLoadingMessage = function() {
-        getDocument()
-          .getElementById('loading-message').style.display = 'none';
-      };
-
-      continueWithCurrentBrowser = function() {
-        hideBrowserWarning();
-        displayLoadingMessage();
-        startTheApp();
-        // Signal that we want to stop event propagation.
-        return false;
-      };
-
       startTheApp = function() {
         // This function will be redefined when all the app's JavaScript is
         // loaded.  We want to keep trying until that happens.
         window.setTimeout('startTheApp()', 100);
       };
 
-      go = function(agent) {
-        if (isBrowserSupported(agent)) {
-          startTheApp();
-        } else {
-          hideLoadingMessage();
-          displayBrowserWarning();
-        }
-      };
       // The browser driver does not accept anything but `true` as a value
       // to indicate that it's available so we use this as a flag to indicate
       // that the scripts are loaded and that the above methods are available.
@@ -242,7 +197,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // This code is here instead of in the "app-startup" script tag above
       // because we extract that JS in order to test it.  This bit here is just
       // to bootstrap the app when actually loaded into a browser.
-      go(navigator.userAgent);
+      startTheApp();
     </script>
     <!--
       Load the (potentially slow to download) core of the app.  We do this here
