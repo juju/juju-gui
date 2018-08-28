@@ -35,106 +35,63 @@ class PostDeployment extends React.Component {
     this.state = {
       content: null,
       metadata: {},
-      postDeploymentScript: null
+      script: null
     };
   }
 
   componentWillMount() {
-    this.props.charmstore.getEntity(this.props.entityId,
-      this._getEntityCallback.bind(this));
+    const props = this.props;
+    const getFile = props.charmstore.getFile;
+    props.entityURLs.forEach(entityURL => {
+      const url = urls.URL.fromAnyString(entityURL).toLegacyString();
+      getFile(url, 'getstarted.md', this._handleFileResponse.bind(this, 'content'));
+      getFile(url, 'post-deployment.sh', this._handleFileResponse.bind(this, 'script'));
+    });
   }
 
   /**
-    Callback handler for getting the entity details.
+    Handles the response from the various getFile requests by processing and
+    storing in the necessary state.
 
-    @param {Object} error Error from the API.
-    @param {Array} entityData The returned data.
-  */
-  _getEntityCallback(error, entityData) {
+    @param {String} type The type of the file request. This is also the key used
+      when storing the value in the component state.
+    @param {Object} error The error object from the file request
+    @param {String} fileContents the contents of the file from the request.
+   */
+  _handleFileResponse(type, error, fileContents) {
     if (error) {
-      console.error(error);
-      console.error(`Entity not found with id: ${this.props.entityId}`);
+      console.log(error);
       return;
-    }
-
-    const files = entityData[0].files;
-    let fileName = 'getstarted.md';
-    if (files && files.some(file => {
-      if (file.toLowerCase() === fileName) {
-        fileName = file;
-        return true;
-      }
-    })) {
-      this.props.charmstore.getFile(
-        this.props.entityId,
-        fileName,
-        this._getGetStartedCallback.bind(this)
-      );
-    }
-    fileName = 'post-deployment.sh';
-    if (files && files.some(file => {
-      if (file.toLowerCase() === fileName) {
-        fileName = file;
-        return true;
-      }
-    })) {
-      this.props.charmstore.getFile(
-        this.props.entityId,
-        fileName,
-        this._getPostDeploymentScriptCallback.bind(this)
-      );
-    }
-  }
-
-  /**
-    Callback when getstarted.md is retrieved.
-    Even if there is an error we still want to display the basic box.
-
-    @param {Object} error Error from the API.
-    @param {String} usageContents The contents of the file.
-  */
-  _getGetStartedCallback(error, usageContents) {
-    if (error) {
-      console.error(error);
     }
     // Rather then parsing the JSON to read the error we check if the returned
     // body starts with a '{'. If it does, it's not a markdown file so ignore.
-    if (usageContents && usageContents.substring(0, 1) !== '{') {
-      const frontmatterAndMarkdown = this.extractFrontmatter(usageContents);
-      this.setState({
-        metadata: frontmatterAndMarkdown.metadata
-      });
-      let renderer = new marked.Renderer();
-      renderer.link = (href, title, text) => {
-        return `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
-      };
-      const markdown = marked(
-        this.replaceTemplateTags(
-          frontmatterAndMarkdown.markdown
-        ),
-        {renderer: renderer}
-      );
-
-      this.setState({
-        content: markdown
-      });
+    if (fileContents.substring(0, 1) === '{') {
+      return;
     }
+    if (type === 'content') {
+      fileContents = this._processGetStarted(fileContents);
+    }
+    this.setState({[type]: fileContents});
   }
 
   /**
-    Callback for when the post-deployment script has been fetched.
-
-    @param {String} error Error from the API.
-    @param {String} postDeploymentScript The content of the script.
-  */
-  _getPostDeploymentScriptCallback(error, postDeploymentScript) {
-    if (error) {
-      console.error(error);
-      return;
-    }
+    Processes the get started markdown file contents into html and adding links
+    where tags were added
+    @param {String} fileContents The markdown content from the files.
+    @returns {String} The rendered markdown content.
+   */
+  _processGetStarted(fileContents) {
+    const frontmatterAndMarkdown = this.extractFrontmatter(fileContents);
     this.setState({
-      postDeploymentScript: postDeploymentScript
+      metadata: frontmatterAndMarkdown.metadata
     });
+    let renderer = new marked.Renderer();
+    renderer.link = (href, title, text) =>
+      `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
+    const markdown = marked(
+      this.replaceTemplateTags(frontmatterAndMarkdown.markdown),
+      {renderer: renderer});
+    return markdown;
   }
 
   /**
@@ -143,8 +100,7 @@ class PostDeployment extends React.Component {
     @return {Object} The button if required, otherwise nothing.
   */
   _renderPostDeploymentScriptButton() {
-    const showPostDeploymentScript = this.props.showPostDeploymentScript;
-    if (showPostDeploymentScript && this.state.postDeploymentScript) {
+    if (this.state.script) {
       return (<div>
         <GenericButton
           action={this._executePostDeploymentScript.bind(this)}>
@@ -159,8 +115,7 @@ class PostDeployment extends React.Component {
     as a payload.
   */
   _executePostDeploymentScript() {
-    const scriptLines = this.state.postDeploymentScript.split('\n');
-    this.props.changeState({terminal: scriptLines});
+    this.props.changeState({terminal: this.state.script.split('\n')});
   }
 
   /**
@@ -249,7 +204,7 @@ class PostDeployment extends React.Component {
     Show the details page of a charm or bundle based on the click.
   */
   _handleViewDetails() {
-    const url = urls.URL.fromAnyString(this.props.entityId);
+    const url = urls.URL.fromAnyString(this.props.entityURLs[0]);
     this.props.changeState({
       profile: null,
       search: null,
@@ -300,8 +255,7 @@ PostDeployment.propTypes = {
     getEntity: PropTypes.func.isRequired,
     getFile: PropTypes.func.isRequired
   }).isRequired,
-  entityId: PropTypes.string.isRequired,
-  showPostDeploymentScript: PropTypes.bool.isRequired
+  entityURLs: PropTypes.array.isRequired
 };
 
 module.exports = PostDeployment;

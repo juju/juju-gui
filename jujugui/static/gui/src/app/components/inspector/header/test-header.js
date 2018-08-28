@@ -100,10 +100,7 @@ describe('InspectorHeader', () => {
       stopPropagation: sinon.stub()
     });
     assert.deepEqual(changeState.args[0], [{
-      postDeploymentPanel: {
-        show: true,
-        entityId: charmId
-      }
+      postDeploymentPanel: charmId
     }]);
   });
 

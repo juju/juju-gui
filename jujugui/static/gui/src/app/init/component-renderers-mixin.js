@@ -463,33 +463,30 @@ Browser: ${navigator.userAgent}`
     @param {Function} next Run the next handler.
   */
   _displayPostDeployment(state, next) {
-    if (!state.postDeploymentPanel.show) {
-      next();
-      return;
+    let entityURLs = [];
+    if (typeof state.postDeploymentPanel === 'string') {
+      // A specific URL was provided so pass that through
+      entityURLs.push(state.postDeploymentPanel);
     }
+    entityURLs = entityURLs.concat(this.db.services.toArray().reduce(
+      (accumulator, app) => {
+        const url = app.get('annotations').bundleURL;
+        if (url) {
+          accumulator.push(url);
+        }
+        return accumulator;
+      }, []));
 
-    const entityId = state.postDeploymentPanel.entityId;
-    // If no new applications have been deployed then there's no need to
-    // display the panel.
-    if (entityId) {
-      const nowMillis = new Date().getTime();
-
-      this.postDeploymentPanel = {
-        openTime: nowMillis,
-        entityId: entityId
-      };
-
+    if (entityURLs.length > 0) {
       ReactDOM.render(
         <PostDeployment
           changeState={this._bound.changeState}
-          charmstore={shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
-          entityId={entityId}
-          showPostDeploymentScript={
-            this.applicationConfig.flags.postDeploymentScript || false} />,
+          charmstore={
+            shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
+          entityURLs={entityURLs} />,
         document.getElementById('post-deployment')
       );
     }
-
     next();
   }
 
@@ -523,31 +520,6 @@ Browser: ${navigator.userAgent}`
     @param {Function} next Run the next handler.
   */
   _clearPostDeployment(state, next) {
-    const closeTime = new Date().getTime();
-
-    if (this.postDeploymentPanel
-      && this.postDeploymentPanel.openTime
-      && this.postDeploymentPanel.entityId) {
-      const entityId = this.postDeploymentPanel.entityId;
-      const openTime = this.postDeploymentPanel.openTime;
-      const action = 'Close post deployment panel';
-
-      // Round it to the nearest second.
-      let timeOpen = Math.round(
-        (closeTime - openTime) / 1000
-      );
-      let args = [
-        `${timeOpen}s`,
-        entityId
-      ];
-
-      this.sendAnalytics(
-        'Deployment Flow',
-        action,
-        args.join(' - ')
-      );
-    }
-
     ReactDOM.unmountComponentAtNode(
       document.getElementById('post-deployment')
     );

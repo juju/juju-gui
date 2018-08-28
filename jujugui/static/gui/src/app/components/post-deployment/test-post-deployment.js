@@ -8,32 +8,29 @@ const enzyme = require('enzyme');
 const PostDeployment = require('./post-deployment');
 
 describe('PostDeployment', () => {
-  let charmstore, file;
+  let charmstore;
 
   const renderComponent = (options = {}) => {
     return enzyme.shallow(
       <PostDeployment
         changeState={options.changeState || sinon.stub()}
         charmstore={options.charmstore || charmstore}
-        entityId={options.entityId || 'test'}
-        showPostDeploymentScript={options.script || false} />
+        entityURLs={options.entityURLs || ['test']} />
     );
   };
 
   beforeEach(() => {
-    file = `# Test Name
-
-{details_link}{requires_cli_link}`;
     charmstore = {
       getEntity: sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}]),
-      getFile: sinon.stub().callsArgWith(2, null, file)
+      getFile: sinon.stub()
     };
   });
 
   it('renders with getstarted.md', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance._getEntityCallback(null, [{id: 'test', files: ['getstarted.md']}]);
+    instance._handleFileResponse(
+      'content', null, '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>');
     wrapper.update();
     const expected = (
       <div dangerouslySetInnerHTML={
@@ -44,34 +41,13 @@ describe('PostDeployment', () => {
       onClick={wrapper.find('div').prop('onClick')} />
     );
     assert.compareJSX(wrapper.find('div'), expected);
-  });
-
-  it('is not case sensitive on getstarted.md', () => {
-    const wrapper = renderComponent();
-    const instance = wrapper.instance();
-    instance._getEntityCallback(null, [{id: 'test', files: ['gEtstArteD.md']}]);
-    wrapper.update();
-    const expected = (
-      <div dangerouslySetInnerHTML={
-        {
-          __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
-        }
-      }
-      onClick={wrapper.find('div').prop('onClick')} />
-    );
-    assert.compareJSX(wrapper.find('div'), expected);
-    // When requesting the file it should request the actual name as
-    // charmstore is case sensitive
-    assert.equal(charmstore.getFile.args[0][1], 'gEtstArteD.md');
   });
 
   it('renders a post-deployment script button', () => {
-    const wrapper = renderComponent({script: true});
+    const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance._getEntityCallback(null, [{id: 'test', files: [
-      'getstarted.md',
-      'post-deployment.sh'
-    ]}]);
+    instance._handleFileResponse('content', null, 'markdown');
+    instance._handleFileResponse('script', null, 'markdown');
     wrapper.update();
     const expected = 'Execute post-deployment script';
     assert.equal(wrapper.find('GenericButton').props().children, expected);
@@ -81,16 +57,16 @@ describe('PostDeployment', () => {
     const changeState = sinon.stub();
     const wrapper = renderComponent({script: true, changeState: changeState});
     const instance = wrapper.instance();
-    instance._getEntityCallback(null, [{id: 'test', files: [
-      'getstarted.md',
-      'post-deployment.sh'
-    ]}]);
+    instance._handleFileResponse('content', null, 'markdown');
+    instance._handleFileResponse('script', null, `commands
+    on multiple
+    lines`);
     wrapper.update();
     wrapper.find('GenericButton').props().action();
     // sinon.callsArgWith passes the same file each time it's called, so we
     // expect the markdown content, here.
     assert.deepEqual(changeState.args[0][0], {
-      terminal: ['# Test Name', '', '{details_link}{requires_cli_link}']
+      terminal: [ 'commands', '    on multiple', '    lines']
     });
   });
 

@@ -641,9 +641,7 @@ describe('init utils', () => {
       // Sets the post deployment panel state to show.
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
-        postDeploymentPanel: {
-          show: true
-        }
+        postDeploymentPanel: true
       }]);
     });
 
@@ -708,7 +706,7 @@ describe('init utils', () => {
       // Check to make sure that the state was changed.
       assert.equal(app.state.changeState.callCount, 2);
       assert.deepEqual(app.state.changeState.args[0], [{
-        postDeploymentPanel: {show: true}
+        postDeploymentPanel: true
       }]);
     });
 
@@ -737,9 +735,7 @@ describe('init utils', () => {
       assert.deepEqual(app.state.changeState.args, [
         [{root: null}],
         [{special: {dd: null}}],
-        [{postDeploymentPanel: {
-          show: true
-        }}]
+        [{postDeploymentPanel: true}]
       ]);
     });
 
