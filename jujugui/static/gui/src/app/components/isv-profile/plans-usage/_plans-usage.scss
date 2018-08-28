@@ -10,7 +10,7 @@
       stroke-width: 1px;
       shape-rendering: crispEdges;
     }
-    
+
     text {
       font-family: unquote($base-font-family);
       font-size: 1em;
@@ -26,7 +26,7 @@
   }
 
   .line {
-    opacity: .5;
+    opacity: 0.5;
     stroke-width: 1;
     fill: none;
 

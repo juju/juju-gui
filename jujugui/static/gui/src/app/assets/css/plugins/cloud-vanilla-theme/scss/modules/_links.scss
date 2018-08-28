@@ -1,0 +1,67 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-base
+/// @since        0.0.22
+////
+
+/// Cloud link element styles
+/// @group Links
+@mixin cloud-links {
+  table,
+  ul,
+  ol,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    a,
+    %link,
+    .link {
+      color: $cool-grey;
+      font-weight: normal;
+
+      &:hover {
+        color: $link-color;
+      }
+    }
+  }
+
+  nav {
+    a,
+    %link,
+    .link {
+      color: $cool-grey;
+      font-weight: 300;
+
+      &:hover {
+        color: $link-color;
+        text-decoration: underline;
+      }
+
+      &.is-active {
+        font-weight: normal;
+      }
+    }
+  }
+
+  a,
+  %link,
+  .link,
+  p a,
+  p .link {
+    cursor: pointer;
+    color: $link-color;
+    font-weight: 300;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &.is-inverted {
+      color: $white;
+      font-weight: normal;
+    }
+  }
+}

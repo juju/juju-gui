@@ -1,0 +1,14 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-base
+/// @since        0.0.3
+////
+
+/// Base classes
+/// @group Utils
+@mixin cloud-base {
+  body {
+    background: url('#{$asset-path}img/image-background-paper.png') repeat-y center top $light-grey;
+    background-size: cover;
+  }
+}

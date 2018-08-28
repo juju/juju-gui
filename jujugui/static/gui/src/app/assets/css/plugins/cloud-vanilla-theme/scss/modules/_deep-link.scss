@@ -1,0 +1,41 @@
+////
+/// @author       Juju GUI team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-deep-link
+/// @since        0.0.21
+////
+
+/// Deep link
+/// @group Links
+/// @example
+/// <a href="#" class="deep-link">
+///   ...
+/// </a>
+@mixin cloud-deep-link {
+  .deep-link {
+    text-decoration: none;
+
+    &:after {
+      content: '';
+      display: inline-block;
+      margin-left: 3px;
+      opacity: 0;
+      position: relative;
+      top: 1px;
+      width: 1em;
+      height: 1em;
+      background-image: url(#{$asset-server}128877a5-anchor_16.svg);
+      background-position: 0 80%;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      transition: opacity .1s;
+    }
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:hover:after {
+      opacity: 1;
+    }
+  }
+}

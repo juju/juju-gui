@@ -20,6 +20,7 @@ SVG_SPRITE_MODULE := $(NODE_MODULES)/svg-sprite/
 YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
+JEST := $(NODE_MODULES)/.bin/jest
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_FILES := $(CACHE)/python
@@ -64,6 +65,7 @@ help:
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
 	@echo "test-js - run newer js tests in terminal; primarily for CI build"
+	@echo "test-jest - run Jest tests in the terminal"
 	@echo "test-js-old - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
 	@echo "uitest - run functional tests;"
@@ -275,7 +277,7 @@ lint-components:
 	 @./scripts/inspect-components validate --path jujugui/static/gui/src/ --short
 
 .PHONY: test
-test: test-python test-js test-js-old
+test: test-python test-js test-jest test-js-old
 
 .PHONY: test-python
 test-python: $(JUJUGUI) $(PYTEST)
@@ -292,6 +294,18 @@ test-js-old: gui
 .PHONY: start-karma
 start-karma:
 	MULTI_RUN=true ./scripts/test-js.sh
+
+.PHONY: test-jest
+test-jest: gui
+	$(JEST)
+
+.PHONY: watch-jest
+watch-jest: gui
+	$(JEST) --watchAll
+
+.PHONY: update-jest-snapshots
+update-jest-snapshots: gui
+	$(JEST) -u
 
 .PHONY: test-selenium
 # This fails with a spurious error and because we don't actually test anything

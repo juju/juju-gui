@@ -1,0 +1,63 @@
+////
+/// @author       Juju GUI team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-deep-link
+/// @since        0.0.21
+////
+
+/// Tooltips
+/// @group Utils
+/// @example
+/// <span class="tooltip">
+///   <img src="icon.svg" alt="icon">
+///   <span class="tooltip__content" data-tooltip="Tooltip content"></span>
+/// </span>
+@mixin cloud-tooltip {
+  @media only screen and (min-width : $breakpoint-medium) {
+    .tooltip {
+      position: relative;
+      display: inline-block;
+
+      &__content {
+        position: absolute;
+        z-index: 98;
+        left: -1000px;
+        right: -1000px;
+        top: -40px;
+        font-weight: 300;
+        margin: auto;
+        display: block;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      &:hover .tooltip__content {
+        &:after {
+          display: table;
+          z-index: 98;
+          margin: auto;
+          color: $white;
+          border-radius: 3px;
+          background: $black;
+          box-shadow: none;
+          font-size: 14px;
+          line-height: 1.3125em;
+          content: attr(data-tooltip);
+          padding: 11px 21px;
+          white-space: nowrap;
+          text-align: center;
+        }
+
+        &:before {
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          content: '';
+          border: solid transparent;
+          border-width: 5px;
+          border-top-color: $black;
+        }
+      }
+    }
+  }
+}

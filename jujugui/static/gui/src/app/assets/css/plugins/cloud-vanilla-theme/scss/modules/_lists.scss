@@ -1,0 +1,22 @@
+////
+/// @author       Web Team at Canonical Ltd
+/// @link         http://ubuntudesign.github.io/cloud-vanilla-theme/docs/#cloud-lists
+/// @since        0.0.25
+////
+@mixin cloud-lists {
+  @include vf-lists-inline-list();
+}
+
+/// Displays a list inline with spacing
+/// @group Lists
+/// @example
+///   <ul class='inline-list'>
+///     <li class="inline-list__item">...</li>
+///   </ul>
+@mixin vf-lists-inline-list {
+  .inline-list {
+    &__item {
+      display: inline-block;
+    }
+  }
+}

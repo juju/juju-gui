@@ -95,8 +95,8 @@ $asset-path: 'static/gui/build/app/assets/';
 // Import normalize.css from node_modules
 @import 'normalize.css/normalize';
 
-// Imports cloud vanilla theme from node_modules
-@import 'cloud-vanilla-theme/scss/theme';
+// Imports legacy cloud vanilla theme from local plugins folder
+@import 'plugins/cloud-vanilla-theme/scss/theme';
 
 // Imports need to be after vars.
 @import 'variables';
@@ -182,4 +182,23 @@ a {
 
 .u-align--right {
   text-align: right;
+}
+
+// Import Vanilla framework v1 under a namespace while all components
+// are converted.
+@import 'vanilla-framework/scss/vanilla';
+
+// Include Vanilla Framework under .v1 namespace
+.v1 {
+  // Include base Vanilla styles
+  @include vf-base;
+  // Include components as they are used
+  @include vf-p-grid;
+  @include vf-p-strip;
+  @include vf-p-lists;
+  @include vf-p-media-object;
+  @include vf-p-divider;
+  @include vf-p-tooltips;
+  // Include utilities as they are used
+  @include vf-u-padding-collapse;
 }
