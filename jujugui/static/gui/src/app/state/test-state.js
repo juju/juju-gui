@@ -1514,4 +1514,69 @@ describe('State', () => {
     });
   });
 
+  describe('State.isSet()', () => {
+    let state;
+
+    beforeEach(() => {
+      state = new State({
+        baseURL: 'http://abc.com:123',
+        seriesList: ['trusty']
+      });
+      sinon.stub(state, '_pushState');
+      state.bootstrap();
+    });
+
+    it('can check that existing state is set', () => {
+      state.changeState({
+        gui: {
+          inspector: {
+            units: ''
+          }
+        }
+      });
+      assert.strictEqual(state.isSet('gui.inspector.units'), true);
+    });
+
+    it('can check that top level state is set', () => {
+      state.changeState({});
+      assert.strictEqual(state.isSet('gui'), false);
+    });
+
+    it('can check that first level state is set', () => {
+      state.changeState({
+        gui: ''
+      });
+      assert.strictEqual(state.isSet('gui'), true);
+    });
+
+    it('can check that existing state is not set', () => {
+      state.changeState({
+        gui: {
+          inspector: {
+            units: false
+          }
+        }
+      });
+      assert.strictEqual(state.isSet('gui.inspector.units'), false);
+    });
+
+    it('can check that non-existing state is not set', () => {
+      state.changeState({
+        gui: {}
+      });
+      assert.strictEqual(state.isSet('gui.inspector.units'), false);
+    });
+
+    it('can check that state is set from a provided object', () => {
+      const otherState = {
+        gui: {
+          inspector: {
+            units: ''
+          }
+        }
+      };
+      assert.strictEqual(state.isSet('gui.inspector.units', otherState), true);
+    });
+  });
+
 });

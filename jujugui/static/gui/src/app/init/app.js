@@ -111,17 +111,6 @@ class App extends React.Component {
   }
 
   /**
-   Check that a state parameter is not set.
-   @param key {Any} A state key.
-   @returns {Bool} Whether the parameter is set.
-   */
-  _isSet(key) {
-    // Some state keys are set to empty strings which JavaScript treats as falsey
-    // but we want them to be truthy.
-    return key !== undefined && key !== null && key !== false;
-  }
-
-  /**
    Add an event listener and store the bound method.
    @param eventType {String} The type of event.
    @param method {Function} The function to call when the event is fired.
@@ -441,7 +430,7 @@ Browser: ${navigator.userAgent}`
   */
   _generateUserProfile() {
     const state = this.props.appState.current;
-    if (!this._isSet(state.profile)) {
+    if (!this.props.appState.isSet('profile')) {
       return null;
     }
     // XXX Jeff - 1-2-2016 - Because of a bug in the state system the profile
@@ -638,7 +627,7 @@ Browser: ${navigator.userAgent}`
     Opens the help overlay.
   */
   _generateHelp() {
-    if (!this._isSet(this.props.appState.current.help)) {
+    if (!this.props.appState.isSet('help')) {
       return null;
     }
     const handler = new WebHandler();
@@ -704,8 +693,7 @@ Browser: ${navigator.userAgent}`
     @param {Function} next - Call to continue dispatching.
   */
   _generateCharmbrowser() {
-    const state = this.props.appState.current;
-    if (!this._isSet(state.store) && !this._isSet(state.search)) {
+    if (!this.props.appState.isSet('store') && !this.props.appState.isSet('search')) {
       return null;
     }
     const charmstore = this.props.charmstore;
@@ -757,8 +745,7 @@ Browser: ${navigator.userAgent}`
     @param {Function} next - Call to continue dispatching.
   */
   _generateMachineView() {
-    const state = this.props.appState.current;
-    if (!this._isSet(state.gui) || !this._isSet(state.gui.machines)) {
+    if (!this.props.appState.isSet('gui.machines')) {
       return null;
     }
     const db = this.props.db;
@@ -806,8 +793,7 @@ Browser: ${navigator.userAgent}`
     @param {Function} next - Call to continue dispatching.
   */
   _generateStatusView() {
-    const state = this.props.appState.current;
-    if (!this._isSet(state.gui) || !this._isSet(state.gui.status)) {
+    if (!this.props.appState.isSet('gui.status')) {
       return null;
     }
     const propTypes = Status.propTypes;
@@ -826,7 +812,7 @@ Browser: ${navigator.userAgent}`
   */
   _generateInspector() {
     const state = this.props.appState.current;
-    if (!this._isSet(state.gui) || !this._isSet(state.gui.inspector)) {
+    if (!this.props.appState.isSet('gui.inspector')) {
       return null;
     }
     const instance = this.props.topology;
@@ -944,7 +930,7 @@ Browser: ${navigator.userAgent}`
   */
   _generateDeployment() {
     const state = this.props.appState.current;
-    if (!this._isSet(state.gui) || !this._isSet(state.gui.deploy)) {
+    if (!this.props.appState.isSet('gui.deploy')) {
       return null;
     }
     const modelAPI = this.props.modelAPI;

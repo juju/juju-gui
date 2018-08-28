@@ -976,6 +976,36 @@ class State {
 
     return {state, parts: urlParts, error};
   }
+
+  /**
+    Check that a state parameter is not set.
+    @param stateKey {String} A state key.
+    @param stateObject {Object} A state object to check.
+    @return {Object} The parsed state.
+  */
+  isSet(stateKey, stateObject) {
+    if (!stateObject) {
+      stateObject = this.current;
+    }
+    const parts = stateKey.split('.');
+    let state = stateObject;
+    let incomplete = false;
+    parts.some(part => {
+      if (!state.hasOwnProperty(part)) {
+        // Exit the loop, this section does not exist and we don't need to check for children.
+        incomplete = true;
+        return true;
+      }
+      state = state[part];
+    });
+    if (incomplete) {
+      // If the state object does not contain the key we requested then we know it's not set.
+      return false;
+    }
+    // Some state keys are set to empty strings which JavaScript treats as falsey
+    // but we want them to be truthy.
+    return state !== undefined && state !== null && state !== false;
+  }
 };
 
 module.exports = State;
