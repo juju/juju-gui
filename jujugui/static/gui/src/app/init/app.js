@@ -71,7 +71,15 @@ class App extends React.Component {
       sharingVisible: false,
       shortcutsModalVisible: false
     };
-    this._bindRenderUtilities();
+    /**
+      A collection of pre-bound methods to pass to render methods.
+      @type {Object}
+    */
+    this._bound = this._bindRenderUtilities();
+    /**
+      A mapping of bound methods to events.
+      @type {Object}
+    */
     this._domEventHandlers = {};
   }
 
@@ -80,13 +88,12 @@ class App extends React.Component {
     this.props.topology.topo.modules.ViewportModule.resized();
     // Subscribe to events for code outside the React components that need to
     // control App state.
-    document.addEventListener('loginNotification', this._bound._loginNotificationListener);
-    document.addEventListener('displaySettingsModal', this._bound._settingsModalListener);
-    document.addEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
-    document.addEventListener('hideModals', this._bound._hideModalsListener);
-    document.addEventListener('popupAction', this._bound._popupActionListener);
-    document.addEventListener(
-      'showDragOverNotification', this._bound._dragOverNotificationListener);
+    this._addEvent('loginNotification', this._loginNotificationListener.bind(this));
+    this._addEvent('displaySettingsModal', this._settingsModalListener.bind(this));
+    this._addEvent('displayShortcutsModal', this._shortcutsModalListener.bind(this));
+    this._addEvent('hideModals', this._hideModalsListener.bind(this));
+    this._addEvent('popupAction', this._popupActionListener.bind(this));
+    this._addEvent('showDragOverNotification', this._dragOverNotificationListener.bind(this));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -100,13 +107,7 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('loginNotification', this._bound._loginNotificationListener);
-    document.removeEventListener('displaySettingsModal', this._bound._settingsModalListener);
-    document.removeEventListener('displayShortcutsModal', this._bound._shortcutsModalListener);
-    document.removeEventListener('hideModals', this._bound._hideModalsListener);
-    document.removeEventListener('popupAction', this._bound._popupActionListener);
-    document.removeEventListener(
-      'showDragOverNotification', this._bound._dragOverNotificationListener);
+    Object.keys(this._domEventHandlers).forEach(eventType => this._removeEvent(eventType));
   }
 
   /**
@@ -121,23 +122,32 @@ class App extends React.Component {
   }
 
   /**
+   Add an event listener and store the bound method.
+   @param eventType {String} The type of event.
+   @param method {Function} The function to call when the event is fired.
+   */
+  _addEvent(eventType, method) {
+    this._domEventHandlers[eventType] = method;
+    document.addEventListener(eventType, method);
+  }
+
+  /**
+   Remove an event listener.
+   @param eventType {String} The type of event.
+   */
+  _removeEvent(eventType) {
+    document.removeEventListener(eventType, this._domEventHandlers[eventType]);
+  }
+
+  /**
     As a minor performance boost and to avoid potential rerenderings
     because of rebinding functions in the render methods. Any method that
     requires binding and is passed into components should be bound here
     and then used across components.
+    @returns {Object} The bound methods.
   */
   _bindRenderUtilities() {
-    /**
-      A collection of pre-bound methods to pass to render methods.
-      @type {Object}
-    */
-    this._bound = {
-      _loginNotificationListener: this._loginNotificationListener.bind(this),
-      _settingsModalListener: this._settingsModalListener.bind(this),
-      _shortcutsModalListener: this._shortcutsModalListener.bind(this),
-      _hideModalsListener: this._hideModalsListener.bind(this),
-      _dragOverNotificationListener: this._dragOverNotificationListener.bind(this),
-      _popupActionListener: this._popupActionListener.bind(this),
+    return {
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
       changeState: this.props.appState.changeState.bind(this.props.appState),
       destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
@@ -232,13 +242,12 @@ class App extends React.Component {
     // when they have the service details open.
     const hoverHandler = this._domEventHandlers['topo.hoverService'];
     if (hoverHandler) {
-      document.removeEventListener('topo.hoverService', hoverHandler);
+      this._removeEvent('topo.hoverService');
     }
-    this._domEventHandlers['topo.hoverService'] = evt => {
+    const onHover = evt => {
       this.setState({ hoveredService: evt.detail.id });
     };
-    document.addEventListener(
-      'topo.hoverService', this._domEventHandlers['topo.hoverService']);
+    this._addEvent('topo.hoverService', onHover);
     // Deselect the active service token. This needs to happen so that when a
     // user closes the service details the service token deactivates.
     ServiceModule.deselectNodes();
@@ -834,7 +843,7 @@ Browser: ${navigator.userAgent}`
     // when rendering the inspector.
     const hoverHandler = this._domEventHandlers['topo.hoverService'];
     if (hoverHandler) {
-      document.removeEventListener('topo.hoverService', hoverHandler);
+      this._removeEvent('topo.hoverService');
     }
     const modelAPI = this.props.modelAPI;
     const db = this.props.db;

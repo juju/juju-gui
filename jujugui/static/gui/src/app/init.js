@@ -416,9 +416,11 @@ class GUIApp {
   */
   _setupEnvironmentChangeSet() {
     if (this.ecs === undefined) {
-      // TODO: update this via a dispatch.
-      this._domEventHandlers['renderDeploymentBarListener'] =
-        () => {};
+      this._domEventHandlers['renderDeploymentBarListener'] = () => {
+        // This is provided inside a wrappingn function instead of binding it
+        // directly as the state object is not available at the time of binding.
+        this.state.dispatch();
+      };
       const listener = this._domEventHandlers['renderDeploymentBarListener'];
       document.addEventListener('ecs.changeSetModified', listener);
       document.addEventListener('ecs.currentCommitFinished', listener);
