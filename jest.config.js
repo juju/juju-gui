@@ -8,6 +8,7 @@ const config = {
     '<rootDir>/jujugui/static/gui/src/test/enzyme-setup.js',
     '<rootDir>/jujugui/static/gui/src/test/globalconfig.js'
   ],
+  snapshotSerializers: ['enzyme-to-json/serializer'],
   testMatch: [
     '**/test-*.js'
   ]
