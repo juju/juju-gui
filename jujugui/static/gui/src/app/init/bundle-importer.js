@@ -136,7 +136,7 @@ class BundleImporter {
             if (innerRecord.args[0] === `$${record.id}`) {
               // If this setAnnotations is for the outer record then add the
               // bundleURL key to it.
-              innerRecord.args[2]['bundleURL'] = bundleURL;
+              innerRecord.args[2].bundleURL = bundleURL;
               return true;
             }
           }

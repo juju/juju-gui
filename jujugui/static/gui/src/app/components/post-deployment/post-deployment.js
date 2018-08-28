@@ -49,6 +49,15 @@ class PostDeployment extends React.Component {
     });
   }
 
+  /**
+    Handles the response from the various getFile requests by processing and
+    storing in the necessary state.
+
+    @param {String} type The type of the file request. This is also the key used
+      when storing the value in the component state.
+    @param {Object} error The error object from the file request
+    @param {String} fileContents the contents of the file from the request.
+   */
   _handleFileResponse(type, error, fileContents) {
     if (error) {
       console.log(error);
@@ -65,6 +74,12 @@ class PostDeployment extends React.Component {
     this.setState({[type]: fileContents});
   }
 
+  /**
+    Processes the get started markdown file contents into html and adding links
+    where tags were added
+    @param {String} fileContents The markdown content from the files.
+    @returns {String} The rendered markdown content.
+   */
   _processGetStarted(fileContents) {
     const frontmatterAndMarkdown = this.extractFrontmatter(fileContents);
     this.setState({
