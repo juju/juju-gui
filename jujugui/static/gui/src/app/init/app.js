@@ -655,14 +655,15 @@ Browser: ${navigator.userAgent}`
           return accumulator;
         }, []));
     }
-    if (entityURLs.length > 0) {
-      return (
-        <PostDeployment
-          changeState={this._bound.changeState}
-          charmstore={
-            shapeup.fromShape(this.charmstore, PostDeployment.propTypes.charmstore)}
-          entityURLs={entityURLs} />);
+    if (entityURLs.length === 0) {
+      return null;
     }
+    return (
+      <PostDeployment
+        changeState={this._bound.changeState}
+        charmstore={
+          shapeup.fromShape(this.props.charmstore, PostDeployment.propTypes.charmstore)}
+        entityURLs={entityURLs} />);
   }
 
   _generateHeaderLogo() {
