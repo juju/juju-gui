@@ -611,7 +611,7 @@ class Status extends React.Component {
         [unit['agent-status'].current, unit['workload-status'].current]));
       let publicAddress = unit['public-address'];
       if (appExposed && unit['port-ranges'].length) {
-        const port = unit['port-ranges'][0].from;
+        const port = unit['port-ranges'][0]['from-port'];
         const label = `${unit['public-address']}:${port}`;
         const protocol = port === 443 ? 'https' : 'http';
         const href = `${protocol}://${label}`;
@@ -633,7 +633,7 @@ class Status extends React.Component {
             <span>
               <img className="status-view__icon"
                 src={utils.getIconPath(application['charm-url'], false)} />
-              {unit.displayName}
+              {unit.name}
             </span>)
         }, {
           columnSize: 2,
@@ -717,7 +717,7 @@ class Status extends React.Component {
       let publicAddress;
       machine.addresses.forEach(address => {
         if (address.scope === 'public') {
-          publicAddress = address.scope;
+          publicAddress = address.value;
         }
       });
       return {
@@ -914,6 +914,7 @@ class Status extends React.Component {
 Status.propTypes = {
   changeState: PropTypes.func.isRequired,
   entities: shapeup.shape({
+    annotations: PropTypes.object.isRequired,
     applications: PropTypes.object.isRequired,
     machines: PropTypes.object.isRequired,
     relations: PropTypes.object.isRequired,
