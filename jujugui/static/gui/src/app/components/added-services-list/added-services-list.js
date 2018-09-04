@@ -63,10 +63,8 @@ class AddedServicesList extends React.Component {
         // We will deal with the solo ones separately at the end.
         continue;
       }
-      // A bundleURL is in the format elasticsearch-cluster/bundle/17 so just
-      // create a label using the bundle name itself.
-      const name = key.split('/')[0].replace('-', ' ');
-      items.push(<AddedServicesLabel key={name} name={name} />);
+      items.push(
+        <AddedServicesLabel bundleURL={key} changeState={this.props.changeState} key={key} />);
       // Now that the label has been added, loop through the applications in that
       // bundle.
       const length = grouped[key].length - 1;

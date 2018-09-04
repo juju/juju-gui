@@ -34,11 +34,27 @@
     }
   }
 
-  &__label-item {
-    font-size: 15px;
-    font-weight: bold;
-    padding: 10px 20px;
-    position: relative;
+  &__label {
+    &-item {
+      padding: 10px 20px;
+      position: relative;
+    }
+
+    &-name {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    &-link-list li {
+      display: inline-block;
+      margin-right: 10px;
+      cursor: pointer;
+
+      &:hover {
+        color: $link-blue;
+      }
+    }
+
   }
 
   &__item-icon {
