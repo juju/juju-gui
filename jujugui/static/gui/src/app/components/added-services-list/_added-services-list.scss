@@ -28,6 +28,17 @@
     &:hover {
       background-color: $hover-background;
     }
+
+    &__last {
+      border-bottom: 1px solid $light-mid-grey;
+    }
+  }
+
+  &__label-item {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 20px;
+    position: relative;
   }
 
   &__item-icon {
