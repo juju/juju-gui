@@ -3,7 +3,7 @@
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
-const RsDetailsItem = require('./rs_details-item');
+const RsDetailsItem = require('./rs-details-item/rs-details-item');
 
 /**
   React component used to display a list of the users revenue-statements in their profile.
