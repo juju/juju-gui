@@ -20,9 +20,10 @@ class AddedServicesList extends React.Component {
   /**
     Generate a new AddedServicesListItem component and return it.
     @param {Object} service The service instance to fetch data from.
+    @param {Boolean} lastInList Indicator if it's the last item in a list.
     @returns {Function} The AddedServicesListItem.
   */
-  _newListItem(service) {
+  _newListItem(service, lastInList) {
     return (
       <AddedServicesListItem
         // We use the 'name' instead of the 'id' here because when a
@@ -33,6 +34,7 @@ class AddedServicesList extends React.Component {
         changeState={this.props.changeState}
         hovered={service.get('id') === this.props.hoveredId}
         key={service.get('name')}
+        lastInList={lastInList}
         ref={'AddedServicesListItem-' + service.get('id')}
         service={service}
         serviceModule={this.props.serviceModule} />);
@@ -55,22 +57,28 @@ class AddedServicesList extends React.Component {
       addToObj(grouped, 'solo', service);
     });
     const items = [];
-    // We'll put the solo ones at the top for now, this can be moved later.
+
+    for (let key in grouped) {
+      if (key === 'solo') {
+        // We will deal with the solo ones separately at the end.
+        continue;
+      }
+      // A bundleURL is in the format elasticsearch-cluster/bundle/17 so just
+      // create a label using the bundle name itself.
+      const name = key.split('/')[0].replace('-', ' ');
+      items.push(<AddedServicesLabel key={name} name={name} />);
+      // Now that the label has been added, loop through the applications in that
+      // bundle.
+      const length = grouped[key].length - 1;
+      grouped[key].forEach((app, idx) => {
+        items.push(this._newListItem(app, idx === length));
+      });
+    }
     if (grouped.solo) {
       grouped.solo.forEach(app => {
         items.push(this._newListItem(app));
       });
       delete grouped.solo;
-    }
-    for (let key in grouped) {
-      // A bundleURL is in the format elasticsearch-cluster/bundle/17 so just
-      // create a label using the bundle name itself.
-      items.push(<AddedServicesLabel name={key.split('/')[0]} />);
-      // Now that the label has been added, loop through the applications in that
-      // bundle.
-      grouped[key].forEach(app => {
-        items.push(this._newListItem(app));
-      });
     }
     return items;
   }
