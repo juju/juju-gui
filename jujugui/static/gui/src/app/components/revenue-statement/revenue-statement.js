@@ -128,17 +128,13 @@ class RevenueStatement extends React.Component {
                   </span>
                 </div>
                 {/* First example item - passing props for illustrative purposes */}
-                <RsDetailsItem
-                  entityAmount="76.33"
-                  entityName="Ubuntu Advantage"
-                  entityPlan=""
-                  entityShare="20" />
+                <RsDetailsItem amount="76.33" name="Ubuntu Advantage" plan="" share="20" />
                 {/* Second example item */}
                 <RsDetailsItem
-                  entityAmount="91.42"
-                  entityName="Kubernetes Master"
-                  entityPlan="Pilot Whale burst"
-                  entityShare="40" />
+                  amount="91.42"
+                  name="Kubernetes Master"
+                  plan="Pilot Whale burst"
+                  share="40" />
                 <div className="rs__details-item-total">
                   <div className="rs__details-total-value u-align-text--center">$142.38</div>
                 </div>
@@ -153,17 +149,13 @@ class RevenueStatement extends React.Component {
                   </span>
                 </div>
                 {/* First example item - passing props for illustrative purposes */}
-                <RsDetailsItem
-                  entityAmount="76.33"
-                  entityName="Ubuntu Advantage"
-                  entityPlan=""
-                  entityShare="20" />
+                <RsDetailsItem amount="76.33" name="Ubuntu Advantage" plan="" share="20" />
                 {/* Second example item */}
                 <RsDetailsItem
-                  entityAmount="91.42"
-                  entityName="Kubernetes Master"
-                  entityPlan="Pilot Whale burst"
-                  entityShare="40" />
+                  amount="91.42"
+                  name="Kubernetes Master"
+                  plan="Pilot Whale burst"
+                  share="40" />
                 <div className="rs__details-item-total">
                   <div className="rs__details-total-value u-align-text--center">$142.38</div>
                 </div>

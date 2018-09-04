@@ -9,18 +9,18 @@ const PropTypes = require('prop-types');
 
 const RsDetailsItem = props => (
   <div className="rs__details-item-entry">
-    <div className="rs__entity-name">{props.entityName}</div>
-    <div>{props.entityPlan}</div>
-    <div>{props.entityShare}%</div>
-    <div className="u-align-text--center">${props.entityAmount}</div>
+    <div className="rs__entity-name">{props.name}</div>
+    <div>{props.plan}</div>
+    <div>{props.share}%</div>
+    <div className="u-align-text--center">${props.amount}</div>
   </div>
 );
 
 RsDetailsItem.propTypes = {
-  entityAmount: PropTypes.string,
-  entityName: PropTypes.string,
-  entityPlan: PropTypes.string,
-  entityShare: PropTypes.string
+  amount: PropTypes.string,
+  name: PropTypes.string,
+  plan: PropTypes.string,
+  share: PropTypes.string
 };
 
 module.exports = RsDetailsItem;
