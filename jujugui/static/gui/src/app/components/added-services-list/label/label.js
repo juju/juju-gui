@@ -4,11 +4,39 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const AddedServicesLabel = props =>
-  <li className="inspector-view__label-item">{props.name}</li>;
+class AddedServicesLabel extends React.Component {
+
+  /**
+    Calls changeState to show the readme
+  */
+  _showReadme() {
+    this.props.changeState({store: this.props.bundleURL});
+  }
+
+  /**
+    Calls changeState to show the post deployment panel.
+  */
+  _showGetStarted() {
+    this.props.changeState({postDeploymentPanel: this.props.bundleURL});
+  }
+
+  render() {
+    // A bundleURL is in the format elasticsearch-cluster/bundle/17
+    const name = this.props.bundleURL.split('/')[0].replace('-', ' ');
+    return (
+      <li className="inspector-view__label-item">
+        <div className="inspector-view__label-name">{name}</div>
+        <ul className="inspector-view__label-link-list">
+          <li onClick={this._showReadme.bind(this)}>Readme</li>
+          <li onClick={this._showGetStarted.bind(this)}>Get Started</li>
+        </ul>
+      </li>);
+  }
+}
 
 AddedServicesLabel.propTypes = {
-  name: PropTypes.string.isRequired
+  bundleURL: PropTypes.string.isRequired,
+  changeState: PropTypes.func.isRequired
 };
 
 module.exports = AddedServicesLabel;
