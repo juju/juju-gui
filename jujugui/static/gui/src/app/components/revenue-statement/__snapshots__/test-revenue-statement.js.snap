@@ -237,16 +237,16 @@ exports[`Revenue statement can render 1`] = `
             </span>
           </div>
           <RsDetailsItem
-            entityAmount="76.33"
-            entityName="Ubuntu Advantage"
-            entityPlan=""
-            entityShare="20"
+            amount="76.33"
+            name="Ubuntu Advantage"
+            plan=""
+            share="20"
           />
           <RsDetailsItem
-            entityAmount="91.42"
-            entityName="Kubernetes Master"
-            entityPlan="Pilot Whale burst"
-            entityShare="40"
+            amount="91.42"
+            name="Kubernetes Master"
+            plan="Pilot Whale burst"
+            share="40"
           />
           <div
             className="rs__details-item-total"
@@ -274,16 +274,16 @@ exports[`Revenue statement can render 1`] = `
             </span>
           </div>
           <RsDetailsItem
-            entityAmount="76.33"
-            entityName="Ubuntu Advantage"
-            entityPlan=""
-            entityShare="20"
+            amount="76.33"
+            name="Ubuntu Advantage"
+            plan=""
+            share="20"
           />
           <RsDetailsItem
-            entityAmount="91.42"
-            entityName="Kubernetes Master"
-            entityPlan="Pilot Whale burst"
-            entityShare="40"
+            amount="91.42"
+            name="Kubernetes Master"
+            plan="Pilot Whale burst"
+            share="40"
           />
           <div
             className="rs__details-item-total"

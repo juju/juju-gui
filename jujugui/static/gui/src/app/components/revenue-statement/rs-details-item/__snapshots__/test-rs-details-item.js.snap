@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Revenue statement details item can render 1`] = `
+<div
+  className="rs__details-item-entry"
+>
+  <div
+    className="rs__entity-name"
+  >
+    EntityName
+  </div>
+  <div>
+    Plan A
+  </div>
+  <div>
+    99
+    %
+  </div>
+  <div
+    className="u-align-text--center"
+  >
+    $
+    99.99
+  </div>
+</div>
+`;
