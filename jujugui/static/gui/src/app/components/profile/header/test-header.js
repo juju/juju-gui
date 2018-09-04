@@ -4,7 +4,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ProfileHeader = require('./header');
-const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('Profile Header', function() {
   let getUser;
@@ -33,65 +32,8 @@ describe('Profile Header', function() {
   });
 
   it('can render', () => {
-    const wrapper = renderComponent();
-    const expected = (
-      <div className="profile-header v1">
-        <div className="p-strip is-shallow">
-          <div className="row p-divider u-no-padding--top u-no-padding--bottom">
-            <div className="col-10 p-divider__block">
-              <div className="p-media-object--large u-no-margin--bottom">
-                <span className="profile-header__avatar tooltip">
-                  <a
-                    aria-describedby="tp-cntr"
-                    className="p-tooltip p-tooltip--btm-center"
-                    href="http://gravatar.com/"
-                    target="_blank">
-                    <img
-                      alt="Gravatar for Geoffrey Spinach"
-                      className="p-media-object__image is-round"
-                      src="https://www.gravatar.com/avatar/id123" />
-                    <span className="p-tooltip__message" id="tp-cntr" role="tooltip">
-                      Edit your Gravatar
-                    </span>
-                  </a>
-                </span>
-                <div className="p-media-object__details">
-                  <h1>spinach</h1>
-                  <p className="p-media-object__content">
-                    <strong>Geoffrey Spinach</strong>
-                  </p>
-                  <p className="p-media-object__content">spinach@example.com</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-2 p-divider__block">
-              <ul className="p-list ts-profile-header__menu">
-                <li className="p-list__item">
-                  <h2>
-                    <a href="/">jaas</a>
-                  </h2>
-                  <hr />
-                </li>
-                <li className="p-list__item">
-                  <a href="https://jujucharms.com/home">Home</a>
-                </li>
-                <li className="p-list__item">
-                  <a href="https://jujucharms.com/jaas">About JAAS</a>
-                </li>
-              </ul>
-              <div
-                className="profile-header__close"
-                onClick={wrapper.find('.profile-header__close').prop('onClick')}
-                role="button"
-                tabIndex="0">
-                <SvgIcon name="close_16" size="20" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    const wrapper = renderComponent({ gisf: true });
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render correctly for the non-logged in user', () => {
