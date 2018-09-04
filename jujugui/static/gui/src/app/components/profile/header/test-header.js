@@ -4,7 +4,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ProfileHeader = require('./header');
-const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('Profile Header', function() {
   let getUser;
