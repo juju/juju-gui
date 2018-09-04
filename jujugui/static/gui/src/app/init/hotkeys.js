@@ -70,7 +70,7 @@ const keyBindings = {
 
   'S-d': {
     callback: function(evt) {
-      utils.exportEnvironmentFile(this.db);
+      utils.exportEnvironmentFile(this.db, this.sendAnalytics);
     },
     help: 'Export the model',
     label: 'Shift + d'
