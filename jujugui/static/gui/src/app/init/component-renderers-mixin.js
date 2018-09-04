@@ -129,7 +129,7 @@ const ComponentRenderersMixin = superclass => class extends superclass {
         changeState={this._bound.changeState}
         displayTerminalButton={this._enableTerminal()}
         exportEnvironmentFile={
-          initUtils.exportEnvironmentFile.bind(initUtils, this.db)}
+          initUtils.exportEnvironmentFile.bind(initUtils, this.db, this.sendAnalytics)}
         hideDragOverNotification={this._hideDragOverNotification.bind(this)}
         importBundleFile={this.bundleImporter.importBundleFile.bind(
           this.bundleImporter)}
