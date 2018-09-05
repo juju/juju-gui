@@ -76,7 +76,6 @@ class AddedServicesList extends React.Component {
       grouped.solo.forEach(app => {
         items.push(this._newListItem(app));
       });
-      delete grouped.solo;
     }
     return items;
   }
