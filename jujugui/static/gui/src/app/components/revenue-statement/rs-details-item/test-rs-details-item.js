@@ -5,7 +5,7 @@ const enzyme = require('enzyme');
 
 const RsDetailsItem = require('./rs-details-item');
 
-describe('Revenue statement details item', function() {
+describe('Revenue statement details item', () => {
   const renderComponent = (options = {}) =>
     enzyme.shallow(
       <RsDetailsItem amount="99.99" name="EntityName" plan="Plan A" share="99" />

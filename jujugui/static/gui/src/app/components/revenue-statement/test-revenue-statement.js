@@ -5,7 +5,7 @@ const enzyme = require('enzyme');
 
 const RevenueStatement = require('./revenue-statement');
 
-describe('Revenue statement', function() {
+describe('Revenue statement', () => {
   const renderComponent = (options = {}) => enzyme.shallow(<RevenueStatement />);
 
   it('can render', () => {
