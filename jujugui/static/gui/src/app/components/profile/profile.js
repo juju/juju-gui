@@ -19,7 +19,6 @@ const RevenueStatement = require('../revenue-statement/revenue-statement');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
-
   /**
     Send profile analytics.
     @param {String} action Some identifiable action.
@@ -82,7 +81,8 @@ class Profile extends React.Component {
               facadesExist={props.facadesExist}
               listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
               switchModel={props.switchModel}
-              userInfo={props.userInfo} />);
+              userInfo={props.userInfo} />
+          );
         }
       });
     }
@@ -103,7 +103,8 @@ class Profile extends React.Component {
             getModelName={props.getModelName}
             isActiveUsersProfile={isActiveUsersProfile}
             storeUser={props.storeUser}
-            user={props.userInfo.external} />);
+            user={props.userInfo.external} />
+        );
       }
     });
     sectionsMap.set('bundles', {
@@ -123,7 +124,8 @@ class Profile extends React.Component {
             getModelName={props.getModelName}
             isActiveUsersProfile={isActiveUsersProfile}
             storeUser={props.storeUser}
-            user={props.userInfo.external} />);
+            user={props.userInfo.external} />
+        );
       }
     });
     if (isActiveUsersProfile) {
@@ -140,7 +142,8 @@ class Profile extends React.Component {
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
               sendAnalytics={this._sendAnalytics.bind(this)}
-              username={props.controllerUser} />);
+              username={props.controllerUser} />
+          );
         }
       });
     }
@@ -154,7 +157,8 @@ class Profile extends React.Component {
               addNotification={props.addNotification}
               payment={props.payment}
               stripe={props.stripe}
-              username={props.userInfo.profile} />);
+              username={props.userInfo.profile} />
+          );
         }
       });
       sectionsMap.set('invoices', {
@@ -211,8 +215,7 @@ class Profile extends React.Component {
       </div>
     );
   }
-
-};
+}
 
 Profile.propTypes = {
   acl: shapeup.shape({
