@@ -87,17 +87,20 @@ const ComponentRenderersMixin = superclass => class extends superclass {
     // Deselect the active service token. This needs to happen so that when a
     // user closes the service details the service token deactivates.
     ServiceModule.deselectNodes();
-    const db = this.db;
+    const entities = this.entities;
+    if (!entities) {
+      return;
+    }
+    const propTypes = AddedServicesList.propTypes;
     ReactDOM.render(
       <Panel
         instanceName="inspector-panel"
-        visible={db.services.size() > 0}>
+        visible={Object.keys(entities.applications).length > 0}>
         <AddedServicesList
           changeState={this._bound.changeState}
+          entities={shapeup.fromShape(entities, propTypes.entities)}
           hoveredId={hoveredId}
-          serviceModule={
-            shapeup.fromShape(ServiceModule, AddedServicesList.propTypes.serviceModule)}
-          services={db.services} />
+          serviceModule={shapeup.fromShape(ServiceModule, propTypes.serviceModule)} />
       </Panel>,
       document.getElementById('inspector-container'));
   }

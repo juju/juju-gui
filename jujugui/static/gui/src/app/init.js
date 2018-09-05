@@ -1045,7 +1045,7 @@ class GUIApp {
     @param getAttrs {Bolean} Whether getAttrs is required.
     @returns {Object} A collection of models.
   */
-  _getEntities(entities, key, getAttrs) {
+  _getEntities(entities, key, getAttrs = true) {
     let collection = {};
     entities.each(entity => {
       const attrs = getAttrs ? entity.getAttrs() : entity;
