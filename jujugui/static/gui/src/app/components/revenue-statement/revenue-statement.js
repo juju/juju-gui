@@ -1,10 +1,9 @@
-/* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
-const BasicTable = require('../basic-table/basic-table');
+const RsDetailsItem = require('./rs-details-item/rs-details-item');
 
 /**
   React component used to display a list of the users revenue-statements in their profile.
@@ -14,7 +13,8 @@ class RevenueStatement extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: [ // Dummy data
+      data: [
+        // Dummy data
         {
           id: 1
         },
@@ -31,33 +31,6 @@ class RevenueStatement extends React.Component {
     if (this.state.loading) {
       return <Spinner />;
     } else {
-      const rows = this.state.data.map((revenueStatement, index) => {
-        return {
-          key: `${index}`,
-          columns: [
-            {
-              content: 'equities-prod-lon-1',
-              columnSize: 4
-            },
-            {
-              content: '$0.028',
-              columnSize: 2
-            },
-            {
-              content: 'Hours',
-              columnSize: 2
-            },
-            {
-              content: '20%',
-              columnSize: 2
-            },
-            {
-              content: '$50.96',
-              columnSize: 2
-            }
-          ]
-        };
-      });
       content = (
         <div className="revenue-statement__inner">
           <header className="revenue-statement__header">
@@ -133,104 +106,66 @@ class RevenueStatement extends React.Component {
                 </div>
               </div>
             </div>
+
             <hr />
-            <h3 className="u-btn-mar revenue-statement-details__title">
-              Details - March 2018
-            </h3>
-            <div className="revenue-statement-details-sm-screen">
-              <div className="revenue-statement__billing-package">
-                <p>
-                  <strong>Ubuntu Advantage Essential</strong>
-                </p>
-                <p>$0.09 per machine hour</p>
-                <p className="revenue-statement__billing-package__model-name">
-                  Model: fx-staging-ldn
-                </p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
+
+            <div className="rs__details v1">
+              <h2 className="rs__details-heading">Details - March 2018</h2>
+              <div className="rs__details-header">
+                <div className="details-header__item">Model, UUid</div>
+                <div className="details-header__item">Item</div>
+                <div className="details-header__item">Plan</div>
+                <div className="details-header__item">Share</div>
+                <div className="details-header__item u-align-text--center">Amount</div>
+              </div>
+
+              {/* This block should be repeated for each group of items */}
+              <div className="rs__details-item">
+                <div className="rs__details-item-summary">
+                  <strong>equities-prod-lon-2</strong>
+                  <span className="rs__details-item-id">
+                    4f9aafcc-b213-46eb-822d-10d4a4f52b46
+                  </span>
                 </div>
-                <p className="revenue-statement__billing-package__model-name">
-                  Model: version neo
-                </p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
+                {/* First example item - passing props for illustrative purposes */}
+                <RsDetailsItem amount="76.33" name="Ubuntu Advantage" plan="" share="20" />
+                {/* Second example item */}
+                <RsDetailsItem
+                  amount="91.42"
+                  name="Kubernetes Master"
+                  plan="Pilot Whale burst"
+                  share="40" />
+                <div className="rs__details-item-total">
+                  <div className="rs__details-total-value u-align-text--center">$142.38</div>
                 </div>
               </div>
-              <div className="revenue-statement__billing-package">
-                <p>
-                  <strong>Ubuntu Advantage Advanced</strong>
-                </p>
-                <p>$0.09 per machine hour</p>
-                <p>Model: fx-staging-ldn</p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
-                </div>
 
-                <p>Model: version neo</p>
-                <div className="revenue-statement__meta">
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__label u-text-align--left">
-                      28.999 hours
-                    </span>
-                  </div>
-                  <div className="revenue-statement__meta__col">
-                    <span className="revenue-statement__value">$2,567.94</span>
-                  </div>
+              {/* This block should be repeated for each group of items */}
+              <div className="rs__details-item">
+                <div className="rs__details-item-summary">
+                  <strong>equities-prod-lon-1</strong>
+                  <span className="rs__details-item-id">
+                    4f9aafcc-b213-46eb-822d-10d4a4f52b46
+                  </span>
+                </div>
+                {/* First example item - passing props for illustrative purposes */}
+                <RsDetailsItem amount="76.33" name="Ubuntu Advantage" plan="" share="20" />
+                {/* Second example item */}
+                <RsDetailsItem
+                  amount="91.42"
+                  name="Kubernetes Master"
+                  plan="Pilot Whale burst"
+                  share="40" />
+                <div className="rs__details-item-total">
+                  <div className="rs__details-total-value u-align-text--center">$142.38</div>
+                </div>
+                <div className="rs__details-total-revenue">
+                  <div className="rs__details-total-heading">Total revenue</div>
+                  <div className="rs__details-overall-value">$1895.54</div>
                 </div>
               </div>
             </div>
 
-            <div className="revenue-statement-details-lrg-screen clearfix">
-              <BasicTable
-                headerClasses={['profile__entity-table-header-row']}
-                headerColumnClasses={['profile__entity-table-header-column']}
-                headers={[
-                  {
-                    content: 'Model / Item',
-                    columnSize: 4
-                  },
-                  {
-                    content: 'Price',
-                    columnSize: 2
-                  },
-                  {
-                    content: 'Metered',
-                    columnSize: 2
-                  },
-                  {
-                    content: 'Share',
-                    columnSize: 2
-                  },
-                  {
-                    content: 'Amount',
-                    columnSize: 2
-                  }
-                ]}
-                rowClasses={['profile__entity-table-row']}
-                rowColumnClasses={['profile__entity-table-column']}
-                rows={rows} />
-            </div>
             <hr />
 
             <div className="u-btn-mar">

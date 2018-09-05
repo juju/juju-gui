@@ -1,4 +1,3 @@
-
 // Processed with SCSS from app/assets/css/base.scss
 $font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
 
@@ -200,5 +199,6 @@ a {
   @include vf-p-divider;
   @include vf-p-tooltips;
   // Include utilities as they are used
+  @include vf-u-align;
   @include vf-u-padding-collapse;
 }
