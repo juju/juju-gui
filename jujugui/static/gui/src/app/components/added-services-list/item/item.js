@@ -7,14 +7,15 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const initUtils = require('../../../init/utils');
+const { listForApplication } = require('../../../selectors/units');
 
 class AddedServicesListItem extends React.Component {
   /**
     Parses the supplied unit data to return the status color and number
     to display.
-    @param {Array} units An array of units.
   */
-  _getPriorityUnits(units) {
+  _getPriorityUnits() {
+    const units = listForApplication(this.props.units, this.props.application.id);
     var unitStatuses = initUtils.getUnitStatusCounts(units);
     var top = { priority: 99, key: '', size: 0 };
     var status;
@@ -56,7 +57,7 @@ class AddedServicesListItem extends React.Component {
     @param {Object} e The click event.
   */
   _onClickHandler(e) {
-    this.props.serviceModule.panToService(this.props.service.get('id'));
+    this.props.serviceModule.panToService(this.props.application.id);
     this.props.changeState({
       gui: {
         inspector: {
@@ -68,11 +69,11 @@ class AddedServicesListItem extends React.Component {
 
   _generateClassName() {
     var props = this.props;
-    var service = props.service;
+    const { application } = props;
     return classNames(
       'inspector-view__list-item',
       {
-        'visibility-toggled': service.get('highlight') || service.get('fade'),
+        'visibility-toggled': application.highlight || application.fade,
         hover: props.hovered
       }
     );
@@ -83,7 +84,7 @@ class AddedServicesListItem extends React.Component {
     @param {Object} e The mouse event.
   */
   _onMouseEnter(e) {
-    this.props.serviceModule.hoverService(this.props.service.get('id'), true);
+    this.props.serviceModule.hoverService(this.props.application.id, true);
   }
 
   /**
@@ -91,28 +92,28 @@ class AddedServicesListItem extends React.Component {
     @param {Object} e The mouse event.
   */
   _onMouseLeave(e) {
-    this.props.serviceModule.hoverService(this.props.service.get('id'), false);
+    this.props.serviceModule.hoverService(this.props.application.id, false);
   }
 
   render() {
-    var service = this.props.service.getAttrs();
-    var statusData = this._getPriorityUnits(service.units.toArray());
+    var { application } = this.props;
+    var statusData = this._getPriorityUnits();
     var statusIndicator = this._renderStatusIndicator(statusData);
     return (
       <li className={this._generateClassName()}
-        data-serviceid={service.id}
+        data-serviceid={application.id}
         onClick={this._onClickHandler.bind(this)}
         onMouseEnter={this._onMouseEnter.bind(this)}
         onMouseLeave={this._onMouseLeave.bind(this)}
         role="button"
         tabIndex="0">
-        <img className="inspector-view__item-icon" src={service.icon} />
+        <img className="inspector-view__item-icon" src={application.icon} />
         <span className="inspector-view__item-count">
-          {service.unit_count}
+          {application.unit_count}
         </span>
         {' '}
         <span className="inspector-view__item-name">
-          {service.name}
+          {application.name}
         </span>
         <span className="inspector-view__status-block">
           {statusIndicator}
@@ -123,17 +124,18 @@ class AddedServicesListItem extends React.Component {
 };
 
 AddedServicesListItem.propTypes = {
+  application: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   hovered: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool
   ]),
-  service: PropTypes.object.isRequired,
   serviceModule: shapeup.shape({
     hoverService: PropTypes.func.isRequired,
     panToService: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
-  })
+  }),
+  units: PropTypes.object.isRequired
 };
 
 module.exports = AddedServicesListItem;

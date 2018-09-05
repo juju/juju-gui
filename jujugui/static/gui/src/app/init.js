@@ -1018,6 +1018,40 @@ class GUIApp {
     this.topology.topo.update();
     this.state.dispatch();
     this._renderComponents();
+    this._makeEntityObject();
+  }
+
+  /**
+    Generate a pure object representation of the DB.
+  */
+  _makeEntityObject() {
+    const entities = {
+      applications: this._getEntities(this.db.services, 'id'),
+      charms: this._getEntities(this.db.charms, 'id'),
+      machines: this._getEntities(this.db.machines, 'id', false),
+      model: this.db.environment.getAttrs(),
+      notifications: this._getEntities(this.db.notifications, 'timestamp'),
+      relations: this._getEntities(this.db.relations, 'id'),
+      remoteApplications: this._getEntities(this.db.remoteServices, 'id'),
+      units: this._getEntities(this.db.units, 'id', false)
+    };
+    this.entities = entities;
+  }
+
+  /**
+    Get the objects for an entity type.
+    @param entities {Object} A list of YUI models.
+    @param key {String} The key to identify the entities.
+    @param getAttrs {Bolean} Whether getAttrs is required.
+    @returns {Object} A collection of models.
+  */
+  _getEntities(entities, key, getAttrs = true) {
+    let collection = {};
+    entities.each(entity => {
+      const attrs = getAttrs ? entity.getAttrs() : entity;
+      collection[attrs[key]] = attrs;
+    });
+    return collection;
   }
 
   /**
