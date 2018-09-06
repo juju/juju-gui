@@ -467,6 +467,30 @@ class Status extends React.Component {
 
   /**
     Generate the remote applications fragment of the status.
+    @param headers {Array} A list of header objects.
+    @param key {String} The identifing key.
+    @param rows {Array} A list of row objects.
+    @returns {Object} A BasicTable instance.
+  */
+  _generateTable(key, headers, rows) {
+    return (
+      <BasicTable
+        changeState={this.props.changeState}
+        filterPredicate={this._filterByStatus.bind(this)}
+        generatePath={this.props.generatePath}
+        headerClasses={['status-view__table-header']}
+        headerColumnClasses={['status-view__table-header-column']}
+        headers={headers}
+        key={key}
+        rowClasses={['status-view__table-row']}
+        rowColumnClasses={['status-view__table-column']}
+        rows={rows}
+        sort={this._byKey}
+        tableClasses={['status-view__table']} />);
+  }
+
+  /**
+    Generate the remote applications fragment of the status.
     @param {Object} remoteApplications The remote applications as included in
       the GUI db.
     @returns {Object} The resulting element.
@@ -493,30 +517,20 @@ class Status extends React.Component {
         key: app.url
       };
     });
-    return (
-      <BasicTable
-        filterPredicate={this._filterByStatus.bind(this)}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'SAAS',
-          columnSize: 3
-        }, {
-          content: 'Status',
-          columnSize: 3
-        }, {
-          content: 'Store',
-          columnSize: 3
-        }, {
-          content: 'URL',
-          columnSize: 3
-        }]}
-        key="remote-applications"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+    const headers = [{
+      content: 'SAAS',
+      columnSize: 3
+    }, {
+      content: 'Status',
+      columnSize: 3
+    }, {
+      content: 'Store',
+      columnSize: 3
+    }, {
+      content: 'URL',
+      columnSize: 3
+    }];
+    return this._generateTable('remote-applications', headers, rows);
   }
 
   /**
@@ -589,41 +603,29 @@ class Status extends React.Component {
         key: app.name
       };
     });
-    return (
-      <BasicTable
-        changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
-        generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Application',
-          columnSize: 2
-        }, {
-          content: 'Version',
-          columnSize: 2
-        }, {
-          content: 'Status',
-          columnSize: 2
-        }, {
-          content: 'Scale',
-          columnSize: 1
-        }, {
-          content: 'Charm',
-          columnSize: 2
-        }, {
-          content: 'Store',
-          columnSize: 2
-        }, {
-          content: 'Rev',
-          columnSize: 1
-        }]}
-        key="applications"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+    const headers = [{
+      content: 'Application',
+      columnSize: 2
+    }, {
+      content: 'Version',
+      columnSize: 2
+    }, {
+      content: 'Status',
+      columnSize: 2
+    }, {
+      content: 'Scale',
+      columnSize: 1
+    }, {
+      content: 'Charm',
+      columnSize: 2
+    }, {
+      content: 'Store',
+      columnSize: 2
+    }, {
+      content: 'Rev',
+      columnSize: 1
+    }];
+    return this._generateTable('applications', headers, rows);
   }
 
   /**
@@ -710,41 +712,29 @@ class Status extends React.Component {
     if (!rows.length) {
       return null;
     }
-    return (
-      <BasicTable
-        changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
-        generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Unit',
-          columnSize: 2
-        }, {
-          content: 'Workload',
-          columnSize: 2
-        }, {
-          content: 'Agent',
-          columnSize: 2
-        }, {
-          content: 'Machine',
-          columnSize: 1
-        }, {
-          content: 'Public address',
-          columnSize: 2
-        }, {
-          content: 'Ports',
-          columnSize: 1
-        }, {
-          content: 'Message',
-          columnSize: 2
-        }]}
-        key="units"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+    const headers = [{
+      content: 'Unit',
+      columnSize: 2
+    }, {
+      content: 'Workload',
+      columnSize: 2
+    }, {
+      content: 'Agent',
+      columnSize: 2
+    }, {
+      content: 'Machine',
+      columnSize: 1
+    }, {
+      content: 'Public address',
+      columnSize: 2
+    }, {
+      content: 'Ports',
+      columnSize: 1
+    }, {
+      content: 'Message',
+      columnSize: 2
+    }];
+    return this._generateTable('units', headers, rows.sort(this._byKey.bind(this, 0)));
   }
 
   /**
@@ -782,38 +772,26 @@ class Status extends React.Component {
         key: machine.id
       };
     });
-    return (
-      <BasicTable
-        changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
-        generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Machine',
-          columnSize: 1
-        }, {
-          content: 'State',
-          columnSize: 2
-        }, {
-          content: 'DNS',
-          columnSize: 2
-        }, {
-          content: 'Instance ID',
-          columnSize: 3
-        }, {
-          content: 'Series',
-          columnSize: 1
-        }, {
-          content: 'Message',
-          columnSize: 3
-        }]}
-        key="machines"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+    const headers = [{
+      content: 'Machine',
+      columnSize: 1
+    }, {
+      content: 'State',
+      columnSize: 2
+    }, {
+      content: 'DNS',
+      columnSize: 2
+    }, {
+      content: 'Instance ID',
+      columnSize: 3
+    }, {
+      content: 'Series',
+      columnSize: 1
+    }, {
+      content: 'Message',
+      columnSize: 3
+    }];
+    return this._generateTable('machines', headers, rows.sort(this._byKey.bind(this, 0)));
   }
 
   /**
@@ -888,30 +866,20 @@ class Status extends React.Component {
         key: rel.id
       };
     });
-    return (
-      <BasicTable
-        filterPredicate={this._filterByStatus.bind(this)}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Relation',
-          columnSize: 3
-        }, {
-          content: 'Provides',
-          columnSize: 3
-        }, {
-          content: 'Consumes',
-          columnSize: 3
-        }, {
-          content: 'Type',
-          columnSize: 3
-        }]}
-        key="relations"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+    const headers = [{
+      content: 'Relation',
+      columnSize: 3
+    }, {
+      content: 'Provides',
+      columnSize: 3
+    }, {
+      content: 'Consumes',
+      columnSize: 3
+    }, {
+      content: 'Type',
+      columnSize: 3
+    }];
+    return this._generateTable('relations', headers, rows.sort(this._byKey.bind(this, 0)));
   }
 
   render() {
