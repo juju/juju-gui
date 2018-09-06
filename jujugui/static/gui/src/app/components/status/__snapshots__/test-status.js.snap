@@ -1,0 +1,1002 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Status renders with entities 1`] = `
+<Panel
+  focus={true}
+  instanceName="status-view"
+  visible={true}
+>
+  <div
+    className="status-view__content"
+  >
+    <div
+      key="model"
+    >
+      <div
+        className="twelve-col no-margin-bottom"
+      >
+        <div
+          className="eight-col"
+        >
+          <h2>
+            my-model
+            <span
+              className="status-view__traffic-light status-view__traffic-light--ok"
+              onClick={[Function]}
+              role="button"
+              tabIndex="0"
+              title="Everything is OK"
+            />
+          </h2>
+        </div>
+        <div
+          className="status-view__filter-label two-col"
+        >
+          Filter status:
+        </div>
+        <div
+          className="status-view__filter two-col last-col"
+        >
+          <select
+            className="status-view__filter-select"
+            onChange={[Function]}
+            value="none"
+          >
+            <option
+              className="status-view__filter-option"
+              key="none"
+              value="none"
+            >
+              none
+            </option>
+            <option
+              className="status-view__filter-option"
+              key="error"
+              value="error"
+            >
+              error
+            </option>
+            <option
+              className="status-view__filter-option"
+              key="pending"
+              value="pending"
+            >
+              pending
+            </option>
+            <option
+              className="status-view__filter-option"
+              key="ok"
+              value="ok"
+            >
+              ok
+            </option>
+          </select>
+        </div>
+      </div>
+      <BasicTable
+        headers={
+          Array [
+            Object {
+              "columnSize": 2,
+              "content": "Cloud/Region",
+            },
+            Object {
+              "columnSize": 2,
+              "content": "Version",
+            },
+            Object {
+              "columnSize": 1,
+              "content": "SLA",
+            },
+            Object {
+              "columnSize": 2,
+              "content": "Applications",
+            },
+            Object {
+              "columnSize": 2,
+              "content": "Remote applications",
+            },
+            Object {
+              "columnSize": 1,
+              "content": "Units",
+            },
+            Object {
+              "columnSize": 1,
+              "content": "Machines",
+            },
+            Object {
+              "columnSize": 1,
+              "content": "Relations",
+            },
+          ]
+        }
+        rows={
+          Array [
+            Object {
+              "columns": Array [
+                Object {
+                  "columnSize": 2,
+                  "content": "aws/neutral zone",
+                },
+                Object {
+                  "columnSize": 2,
+                  "content": "2.42.47",
+                },
+                Object {
+                  "columnSize": 1,
+                  "content": "advanced",
+                },
+                Object {
+                  "columnSize": 2,
+                  "content": 2,
+                },
+                Object {
+                  "columnSize": 2,
+                  "content": 2,
+                },
+                Object {
+                  "columnSize": 1,
+                  "content": 0,
+                },
+                Object {
+                  "columnSize": 1,
+                  "content": 2,
+                },
+                Object {
+                  "columnSize": 1,
+                  "content": 2,
+                },
+              ],
+              "key": "model",
+            },
+          ]
+        }
+      />
+    </div>
+    <BasicTable
+      changeState={[Function]}
+      filterPredicate={[Function]}
+      generatePath={[Function]}
+      headerClasses={
+        Array [
+          "status-view__table-header",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "status-view__table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 3,
+            "content": "SAAS",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Status",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Store",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "URL",
+          },
+        ]
+      }
+      key="remote-applications"
+      rowClasses={
+        Array [
+          "status-view__table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "status-view__table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 3,
+                "content": "haproxy",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "unknown",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "local",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "admin/saas.haproxy",
+              },
+            ],
+            "extraData": "ok",
+            "key": "local:admin/saas.haproxy",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 3,
+                "content": "mongo",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "corrupting data",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "local",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "admin/my.mongo",
+              },
+            ],
+            "extraData": "ok",
+            "key": "local:admin/my.mongo",
+          },
+        ]
+      }
+      sort={[Function]}
+      tableClasses={
+        Array [
+          "status-view__table",
+        ]
+      }
+    />
+    <BasicTable
+      changeState={[Function]}
+      filterPredicate={[Function]}
+      generatePath={[Function]}
+      headerClasses={
+        Array [
+          "status-view__table-header",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "status-view__table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 2,
+            "content": "Application",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Version",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Status",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "Scale",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Charm",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Store",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "Rev",
+          },
+        ]
+      }
+      key="applications"
+      rowClasses={
+        Array [
+          "status-view__table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "status-view__table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "classes": Array [
+              "status-view__table-row--ok",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "inspector": Object {
+                  "activeComponent": undefined,
+                  "id": "django",
+                  "unit": null,
+                  "unitStatus": null,
+                },
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 2,
+                "content": <span>
+                  <img
+                    className="status-view__icon"
+                    src="django.svg"
+                  />
+                  django
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "1.10",
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--ok"
+                >
+                  active
+                </span>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": 3,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  u/who/django/xenial
+                </a>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "jujucharms",
+              },
+              Object {
+                "columnSize": 1,
+                "content": 42,
+              },
+            ],
+            "extraData": "ok",
+            "key": "django",
+          },
+          Object {
+            "classes": Array [
+              "status-view__table-row--error",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "inspector": Object {
+                  "activeComponent": undefined,
+                  "id": "ha",
+                  "unit": null,
+                  "unitStatus": null,
+                },
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 2,
+                "content": <span>
+                  <img
+                    className="status-view__icon"
+                    src="ha.svg"
+                  />
+                  ha
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "",
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--error"
+                >
+                  error
+                </span>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": 0,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  haproxy
+                </a>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "jujucharms",
+              },
+              Object {
+                "columnSize": 1,
+                "content": 47,
+              },
+            ],
+            "extraData": "error",
+            "key": "ha",
+          },
+        ]
+      }
+      sort={[Function]}
+      tableClasses={
+        Array [
+          "status-view__table",
+        ]
+      }
+    />
+    <BasicTable
+      changeState={[Function]}
+      filterPredicate={[Function]}
+      generatePath={[Function]}
+      headerClasses={
+        Array [
+          "status-view__table-header",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "status-view__table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 2,
+            "content": "Unit",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Workload",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Agent",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "Machine",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Public address",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "Ports",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "Message",
+          },
+        ]
+      }
+      key="units"
+      rowClasses={
+        Array [
+          "status-view__table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "status-view__table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "classes": Array [
+              "status-view__table-row--pending",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "inspector": Object {
+                  "activeComponent": "unit",
+                  "id": "django",
+                  "unit": "id0",
+                },
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 2,
+                "content": <span>
+                  <img
+                    className="status-view__icon"
+                    src="django.svg"
+                  />
+                  django/0
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--pending"
+                >
+                  installing
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--ok"
+                >
+                  idle
+                </span>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  1
+                </a>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <a
+                  className="status-view__link"
+                  href="http://1.2.3.4:80"
+                  target="_blank"
+                >
+                  1.2.3.4
+                </a>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": "80/tcp, 443/tcp",
+              },
+              Object {
+                "columnSize": 2,
+                "content": "these are the voyages",
+              },
+            ],
+            "extraData": "pending",
+            "key": "django/id0",
+          },
+          Object {
+            "classes": Array [
+              "status-view__table-row--error",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "inspector": Object {
+                  "activeComponent": "unit",
+                  "id": "django",
+                  "unit": "id1",
+                },
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 2,
+                "content": <span>
+                  <img
+                    className="status-view__icon"
+                    src="django.svg"
+                  />
+                  django/1
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--error"
+                >
+                  error
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--pending"
+                >
+                  executing
+                </span>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  2
+                </a>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <a
+                  className="status-view__link"
+                  href="http://1.2.3.5:80"
+                  target="_blank"
+                >
+                  1.2.3.5
+                </a>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": "80-88/udp",
+              },
+              Object {
+                "columnSize": 2,
+                "content": "exterminate!",
+              },
+            ],
+            "extraData": "error",
+            "key": "django/id1",
+          },
+          Object {
+            "classes": Array [
+              "status-view__table-row--pending",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "inspector": Object {
+                  "activeComponent": "unit",
+                  "id": "django",
+                  "unit": "id42",
+                },
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 2,
+                "content": <span>
+                  <img
+                    className="status-view__icon"
+                    src="django.svg"
+                  />
+                  django/42
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--pending"
+                >
+                  installing
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--ok"
+                >
+                  idle
+                </span>,
+              },
+              Object {
+                "columnSize": 1,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  2
+                </a>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "1.2.3.6",
+              },
+              Object {
+                "columnSize": 1,
+                "content": "",
+              },
+              Object {
+                "columnSize": 2,
+                "content": "",
+              },
+            ],
+            "extraData": "pending",
+            "key": "django/id42",
+          },
+        ]
+      }
+      sort={[Function]}
+      tableClasses={
+        Array [
+          "status-view__table",
+        ]
+      }
+    />
+    <BasicTable
+      changeState={[Function]}
+      filterPredicate={[Function]}
+      generatePath={[Function]}
+      headerClasses={
+        Array [
+          "status-view__table-header",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "status-view__table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 1,
+            "content": "Machine",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "State",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "DNS",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Instance ID",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "Series",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Message",
+          },
+        ]
+      }
+      key="machines"
+      rowClasses={
+        Array [
+          "status-view__table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "status-view__table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "classes": Array [
+              "status-view__table-row--pending",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "machines": "m1",
+                "status": null,
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 1,
+                "content": "1",
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--pending"
+                >
+                  pending
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "1.2.3.6",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "machine-1",
+              },
+              Object {
+                "columnSize": 1,
+                "content": "zesty",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "",
+              },
+            ],
+            "extraData": "pending",
+            "key": "m1",
+          },
+          Object {
+            "classes": Array [
+              "status-view__table-row--ok",
+            ],
+            "clickState": Object {
+              "gui": Object {
+                "machines": "m2",
+                "status": null,
+              },
+            },
+            "columns": Array [
+              Object {
+                "columnSize": 1,
+                "content": "2",
+              },
+              Object {
+                "columnSize": 2,
+                "content": <span
+                  className="status-view__status--ok"
+                >
+                  started
+                </span>,
+              },
+              Object {
+                "columnSize": 2,
+                "content": "1.2.3.7",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "machine-2",
+              },
+              Object {
+                "columnSize": 1,
+                "content": "trusty",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "yes, I am started",
+              },
+            ],
+            "extraData": "ok",
+            "key": "m2",
+          },
+        ]
+      }
+      sort={[Function]}
+      tableClasses={
+        Array [
+          "status-view__table",
+        ]
+      }
+    />
+    <BasicTable
+      changeState={[Function]}
+      filterPredicate={[Function]}
+      generatePath={[Function]}
+      headerClasses={
+        Array [
+          "status-view__table-header",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "status-view__table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 3,
+            "content": "Relation",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Provides",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Consumes",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Type",
+          },
+        ]
+      }
+      key="relations"
+      rowClasses={
+        Array [
+          "status-view__table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "status-view__table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 3,
+                "content": "cluster",
+              },
+              Object {
+                "columnSize": 3,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  <img
+                    className="status-view__icon"
+                    src="mysql.svg"
+                  />
+                  mysql
+                </a>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  <img
+                    className="status-view__icon"
+                    src="mysql.svg"
+                  />
+                  mysql
+                </a>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "peer",
+              },
+            ],
+            "key": "rel1",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 3,
+                "content": "website",
+              },
+              Object {
+                "columnSize": 3,
+                "content": <span>
+                  wordpress
+                </span>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": <a
+                  className="status-view__link"
+                  onClick={[Function]}
+                >
+                  <img
+                    className="status-view__icon"
+                    src="ha.svg"
+                  />
+                  haproxy
+                </a>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "regular",
+              },
+            ],
+            "key": "rel2",
+          },
+        ]
+      }
+      sort={[Function]}
+      tableClasses={
+        Array [
+          "status-view__table",
+        ]
+      }
+    />
+  </div>
+</Panel>
+`;
