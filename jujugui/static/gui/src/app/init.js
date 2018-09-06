@@ -613,7 +613,8 @@ class GUIApp {
   _handleModelState(state, next) {
     const modelAPI = this.modelAPI;
     if (this.modelUUID !== state.model.uuid ||
-        (!modelAPI.get('connected') && !modelAPI.get('connecting'))) {
+        (!modelAPI.get('connected') && !modelAPI.get('connecting') &&
+        !modelAPI.loading)) {
       this._switchModelToUUID(state.model.uuid);
     }
     next();
