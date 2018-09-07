@@ -1,4 +1,3 @@
-/* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
 const enzyme = require('enzyme');
