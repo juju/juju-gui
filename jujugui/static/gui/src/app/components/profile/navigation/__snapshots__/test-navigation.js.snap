@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Navigation can render 1`] = `
+<div
+  className="profile-navigation v1"
+>
+  <ul
+    className="p-list"
+  >
+    <li
+      className="p-list__item"
+      key="models"
+      onClick={[Function]}
+      role="button"
+    >
+      Models
+    </li>
+    <li
+      className="p-list__item"
+      key="charms"
+      onClick={[Function]}
+      role="button"
+    >
+      Charms
+    </li>
+  </ul>
+</div>
+`;

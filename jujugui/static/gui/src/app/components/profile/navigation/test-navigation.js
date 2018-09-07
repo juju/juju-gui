@@ -21,37 +21,8 @@ describe('Profile Navigation', function() {
     );
 
   it('can render', () => {
-    const changeState = sinon.stub();
-    const wrapper = renderComponent({
-      changeState
-    });
-    const expected = (
-      <div className="profile-navigation">
-        <ul>
-          <li
-            className="profile-navigation__list-item"
-            key="models"
-            onClick={wrapper
-              .find('.profile-navigation__list-item')
-              .at(0)
-              .prop('onClick')}
-            role="button">
-            Models
-          </li>
-          <li
-            className="profile-navigation__list-item"
-            key="charms"
-            onClick={wrapper
-              .find('.profile-navigation__list-item')
-              .at(1)
-              .prop('onClick')}
-            role="button">
-            Charms
-          </li>
-        </ul>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    const wrapper = renderComponent({ gisf: true });
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('calls changeState when nav item clicked', () => {
@@ -60,7 +31,7 @@ describe('Profile Navigation', function() {
       changeState
     });
     wrapper
-      .find('.profile-navigation__list-item')
+      .find('.p-list__item')
       .at(1)
       .props()
       .onClick();

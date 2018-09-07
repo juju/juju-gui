@@ -1,14 +1,15 @@
 .profile-navigation {
   color: $color-dark;
+  padding: 0 1rem;
 
-  &__list-item {
-    list-style: none;
+  .p-list__item {
     cursor: pointer;
+    list-style: none;
 
     &:nth-child(4) {
-      border-top: 1px solid #cdcdcd;
-      padding-top: 12px;
-      margin-right: 24px;
+      border-top: 1px solid $color-mid-light;
+      margin-top: 1rem;
+      padding-top: 1rem !important;
     }
 
     &.is-active {
@@ -16,15 +17,14 @@
 
       &:hover {
         color: $color-dark;
-        text-decoration: none;
         cursor: default;
+        text-decoration: none;
       }
     }
 
     &:hover {
-      color: $link-blue;
+      color: $color-link;
       text-decoration: underline;
     }
   }
-
 }
