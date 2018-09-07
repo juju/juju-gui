@@ -1,15 +1,10 @@
-/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const ProfileNavigation = require('./navigation/navigation');
-const ProfileHeader = require('./header/header');
-const ProfileModelList = require('./model-list/model-list');
 const Profile = require('./profile');
-const Panel = require('../panel/panel');
 
 describe('Profile', function() {
   const renderComponent = (options = {}) =>
