@@ -26,9 +26,10 @@ class ProfileNavigation extends React.Component {
       const classes = classNames('p-list__item', {
         'is-active': this.props.activeSection === key
       });
+      const itemId = val.label.replace(/\s+/g, '-').toLowerCase();
       links.push(
         <li
-          className={classes}
+          className={`${classes} ${itemId}`}
           key={key}
           onClick={this._changeState.bind(this, key)}
           role="button">

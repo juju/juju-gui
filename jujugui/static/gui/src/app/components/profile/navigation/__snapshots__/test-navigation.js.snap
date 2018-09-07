@@ -8,7 +8,7 @@ exports[`Profile Navigation can render 1`] = `
     className="p-list"
   >
     <li
-      className="p-list__item"
+      className="p-list__item models"
       key="models"
       onClick={[Function]}
       role="button"
@@ -16,7 +16,7 @@ exports[`Profile Navigation can render 1`] = `
       Models
     </li>
     <li
-      className="p-list__item"
+      className="p-list__item charms"
       key="charms"
       onClick={[Function]}
       role="button"

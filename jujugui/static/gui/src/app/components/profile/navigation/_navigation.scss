@@ -3,10 +3,12 @@
   padding: 0 1rem;
 
   .p-list__item {
-    &:nth-child(4) {
+    cursor: pointer;
+
+    .profile__content &.cloud-credentials {
       border-top: 1px solid $color-mid-light;
       margin-top: 1rem;
-      padding-top: 1rem !important;
+      padding-top: 1rem;
     }
 
     &.is-active {
