@@ -20,7 +20,7 @@ exports[`AddedServicesLabel renders 1`] = `
     <li
       onClick={[Function]}
     >
-      Get Started
+      Get started
     </li>
   </ul>
 </li>
