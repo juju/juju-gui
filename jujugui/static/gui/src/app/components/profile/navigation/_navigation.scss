@@ -3,9 +3,6 @@
   padding: 0 1rem;
 
   .p-list__item {
-    cursor: pointer;
-    list-style: none;
-
     &:nth-child(4) {
       border-top: 1px solid $color-mid-light;
       margin-top: 1rem;
