@@ -23,16 +23,16 @@ class AddedServicesList extends React.Component {
     @param {Boolean} lastInList Indicator if it's the last item in a list.
     @returns {Function} The AddedServicesListItem.
   */
-  _newListItem(service, lastInList) {
+  _generateListItem(service, lastInList) {
     return (
       <AddedServicesListItem
+        changeState={this.props.changeState}
+        hovered={service.get('id') === this.props.hoveredId}
         // We use the 'name' instead of the 'id' here because when a
         // ghost service is added it uses the ghost id structure instead
         // of the final deployed service id structure and we want react
         // to treat them as the same record instead of re-rendering
         // when they key changes.
-        changeState={this.props.changeState}
-        hovered={service.get('id') === this.props.hoveredId}
         key={service.get('name')}
         lastInList={lastInList}
         ref={'AddedServicesListItem-' + service.get('id')}
@@ -46,6 +46,7 @@ class AddedServicesList extends React.Component {
     @returns {Array} A list of applications and label components to render.
   */
   generateItemList(services) {
+    const SOLO = Symbol('solo');
     const grouped = {};
     // Group all of the applications by the bundleURL if one exists.
     services.each(service => {
@@ -54,12 +55,12 @@ class AddedServicesList extends React.Component {
         addToObj(grouped, bundleURL, service);
         return;
       }
-      addToObj(grouped, 'solo', service);
+      addToObj(grouped, SOLO, service);
     });
     const items = [];
 
     for (let key in grouped) {
-      if (key === 'solo') {
+      if (key === SOLO) {
         // We will deal with the solo ones separately at the end.
         continue;
       }
@@ -69,12 +70,12 @@ class AddedServicesList extends React.Component {
       // bundle.
       const length = grouped[key].length - 1;
       grouped[key].forEach((app, idx) => {
-        items.push(this._newListItem(app, idx === length));
+        items.push(this._generateListItem(app, idx === length));
       });
     }
-    if (grouped.solo) {
-      grouped.solo.forEach(app => {
-        items.push(this._newListItem(app));
+    if (grouped[SOLO]) {
+      grouped[SOLO].forEach(app => {
+        items.push(this._generateListItem(app));
       });
     }
     return items;
