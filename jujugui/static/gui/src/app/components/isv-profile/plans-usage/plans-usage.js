@@ -1,4 +1,3 @@
-/* Copyright (C) 2017 Canonical Ltd. */
 
 /*
 The ISV profile component renders a venders profile with stats based on there

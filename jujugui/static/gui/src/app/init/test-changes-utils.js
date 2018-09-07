@@ -1,4 +1,3 @@
-/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 const changesUtils = require('./changes-utils');

@@ -1,4 +1,3 @@
-/* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
 const d3 = require('d3');
