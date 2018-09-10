@@ -14,7 +14,6 @@ const {
   normaliseStatus
 } = require('../../utils');
 
-/** Status React component used to display Juju status. */
 class StatusApplicationList extends React.Component {
 
   /**

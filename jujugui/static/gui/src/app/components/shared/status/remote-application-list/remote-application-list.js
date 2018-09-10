@@ -8,7 +8,6 @@ const StatusTable = require('../table/table');
 
 const { normaliseStatus } = require('../../utils');
 
-/** Status React component used to display Juju status. */
 class StatusRemoteApplicationList extends React.Component {
 
   /**

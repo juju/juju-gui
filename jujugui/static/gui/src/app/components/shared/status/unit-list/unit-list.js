@@ -9,7 +9,6 @@ const StatusTable = require('../table/table');
 
 const utils = require('../../utils');
 
-/** Status React component used to display Juju status. */
 class StatusUnitList extends React.Component {
 
   /**
@@ -30,7 +29,7 @@ class StatusUnitList extends React.Component {
   }
 
   /**
-    Generate the application rows.
+    Generate the unit rows.
     @returns {Array} The list of rows.
   */
   _generateRows() {

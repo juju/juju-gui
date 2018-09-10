@@ -7,7 +7,9 @@ const shapeup = require('shapeup');
 
 const BasicTable = require('../basic-table/basic-table');
 const StatusApplicationList = require('../shared/status/application-list/application-list');
-const StatusLabel = require('../shared/status/label/label');
+const StatusMachineList = require('../shared/status/machine-list/machine-list');
+const StatusRemoteApplicationList = require(
+  '../shared/status/remote-application-list/remote-application-list');
 const StatusTable = require('../shared/status/table/table');
 const StatusUnitList = require('../shared/status/unit-list/unit-list');
 const Panel = require('../panel/panel');
@@ -353,7 +355,7 @@ class Status extends React.Component {
   */
   _generateRemoteApplications(remoteApplications) {
     return (
-      <StatusApplicationList
+      <StatusRemoteApplicationList
         changeState={this.props.changeState}
         generatePath={this.props.generatePath}
         key="remote-applications"
@@ -425,61 +427,13 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateMachines(machines) {
-    const rows = machines.map(machine => {
-      return {
-        classes: [utils.getStatusClass(
-          'status-table__row--', machine.agent_state)],
-        clickState: this._generateMachineClickState(machine.id),
-        columns: [{
-          columnSize: 1,
-          content: machine.displayName
-        }, {
-          columnSize: 2,
-          content: machine.agent_state ? (
-            <StatusLabel status={machine.agent_state} />) : null
-        }, {
-          columnSize: 2,
-          content: machine.public_address
-        }, {
-          columnSize: 3,
-          content: machine.instance_id
-        }, {
-          columnSize: 1,
-          content: machine.series
-        }, {
-          columnSize: 3,
-          content: machine.agent_state_info
-        }],
-        extraData: utils.normaliseStatus(machine.agent_state),
-        key: machine.id
-      };
-    });
-    const headers = [{
-      content: 'Machine',
-      columnSize: 1
-    }, {
-      content: 'State',
-      columnSize: 2
-    }, {
-      content: 'DNS',
-      columnSize: 2
-    }, {
-      content: 'Instance ID',
-      columnSize: 3
-    }, {
-      content: 'Series',
-      columnSize: 1
-    }, {
-      content: 'Message',
-      columnSize: 3
-    }];
     return (
-      <StatusTable
+      <StatusMachineList
         changeState={this.props.changeState}
+        generateMachineClickState={this._generateMachineClickState.bind(this)}
         generatePath={this.props.generatePath}
-        headers={headers}
         key="machines"
-        rows={rows}
+        machines={machines}
         statusFilter={this.state.statusFilter} />);
   }
 
