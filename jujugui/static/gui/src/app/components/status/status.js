@@ -484,7 +484,7 @@ class Status extends React.Component {
         key={key}
         rowClasses={['status-view__table-row']}
         rowColumnClasses={['status-view__table-column']}
-        rows={rows}
+        rows={rows.sort(this._byKey.bind(this, 0))}
         sort={this._byKey}
         tableClasses={['status-view__table']} />);
   }
@@ -734,7 +734,7 @@ class Status extends React.Component {
       content: 'Message',
       columnSize: 2
     }];
-    return this._generateTable('units', headers, rows.sort(this._byKey.bind(this, 0)));
+    return this._generateTable('units', headers, rows);
   }
 
   /**
@@ -791,7 +791,7 @@ class Status extends React.Component {
       content: 'Message',
       columnSize: 3
     }];
-    return this._generateTable('machines', headers, rows.sort(this._byKey.bind(this, 0)));
+    return this._generateTable('machines', headers, rows);
   }
 
   /**
@@ -879,7 +879,7 @@ class Status extends React.Component {
       content: 'Type',
       columnSize: 3
     }];
-    return this._generateTable('relations', headers, rows.sort(this._byKey.bind(this, 0)));
+    return this._generateTable('relations', headers, rows);
   }
 
   render() {
