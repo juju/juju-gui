@@ -352,47 +352,12 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRemoteApplications(remoteApplications) {
-    const rows = remoteApplications.map(application => {
-      const app = application.getAttrs();
-      const urlParts = app.url.split(':');
-      return {
-        columns: [{
-          columnSize: 3,
-          content: app.service
-        }, {
-          columnSize: 3,
-          content: app.status.current
-        }, {
-          columnSize: 3,
-          content: urlParts[0]
-        }, {
-          columnSize: 3,
-          content: urlParts[1]
-        }],
-        extraData: utils.normaliseStatus(app.status.current),
-        key: app.url
-      };
-    });
-    const headers = [{
-      content: 'SAAS',
-      columnSize: 3
-    }, {
-      content: 'Status',
-      columnSize: 3
-    }, {
-      content: 'Store',
-      columnSize: 3
-    }, {
-      content: 'URL',
-      columnSize: 3
-    }];
     return (
-      <StatusTable
+      <StatusApplicationList
         changeState={this.props.changeState}
         generatePath={this.props.generatePath}
-        headers={headers}
         key="remote-applications"
-        rows={rows}
+        remoteApplications={remoteApplications}
         statusFilter={this.state.statusFilter} />);
   }
 
