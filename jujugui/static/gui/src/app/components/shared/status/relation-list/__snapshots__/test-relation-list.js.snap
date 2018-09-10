@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusRelationList renders 1`] = `
+<StatusTable
+  changeState={[Function]}
+  generatePath={[Function]}
+  headers={
+    Array [
+      Object {
+        "columnSize": 3,
+        "content": "Relation",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Provides",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Consumes",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Type",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "columns": Array [
+          Object {
+            "columnSize": 3,
+            "content": "cluster",
+          },
+          Object {
+            "columnSize": 3,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              <img
+                className="status-view__icon"
+              />
+              mysql
+            </a>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              <img
+                className="status-view__icon"
+              />
+              mysql
+            </a>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "peer",
+          },
+        ],
+        "key": "rel1",
+      },
+      Object {
+        "columns": Array [
+          Object {
+            "columnSize": 3,
+            "content": "website",
+          },
+          Object {
+            "columnSize": 3,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              <img
+                className="status-view__icon"
+              />
+              wordpress
+            </a>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              <img
+                className="status-view__icon"
+              />
+              haproxy
+            </a>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "regular",
+          },
+        ],
+        "key": "rel2",
+      },
+      Object {
+        "columns": Array [
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+          Object {
+            "columnSize": 3,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              <img
+                className="status-view__icon"
+              />
+              
+            </a>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              <img
+                className="status-view__icon"
+              />
+              
+            </a>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+        ],
+        "key": "rel3",
+      },
+    ]
+  }
+/>
+`;
