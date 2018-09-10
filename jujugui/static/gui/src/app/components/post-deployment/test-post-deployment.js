@@ -21,7 +21,6 @@ describe('PostDeployment', () => {
 
   beforeEach(() => {
     charmstore = {
-      getEntity: sinon.stub().callsArgWith(1, null, [{id: 'test', files: []}]),
       getFile: sinon.stub()
     };
   });
@@ -43,11 +42,34 @@ describe('PostDeployment', () => {
     assert.compareJSX(wrapper.find('div'), expected);
   });
 
+  it('gracefully handles no getstarted.md available', () => {
+    const wrapper = renderComponent();
+    const instance = wrapper.instance();
+    instance._handleFileResponse('getstarted.md', null, '{}');
+    wrapper.update();
+    const content = wrapper.find('div').prop('dangerouslySetInnerHTML').__html;
+    assert.equal(content, 'The bundle author has not provided a getstarted.md file.');
+  });
+
+  it('correctly updates when the entityURLs prop changes', () => {
+    const getFileStub = sinon.stub();
+    const wrapper = renderComponent({
+      charmstore: {
+        getFile: getFileStub
+      }});
+    wrapper.setProps({entityURLs: ['elasticsearch-cluster/bundle/17']});
+    assert.equal(getFileStub.callCount, 4);
+    assert.equal(getFileStub.args[2][0], 'cs:bundle/elasticsearch-cluster-17');
+    assert.equal(getFileStub.args[2][1], 'getstarted.md');
+    assert.equal(getFileStub.args[3][0], 'cs:bundle/elasticsearch-cluster-17');
+    assert.equal(getFileStub.args[3][1], 'post-deployment.sh');
+  });
+
   it('renders a post-deployment script button', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance._handleFileResponse('content', null, 'markdown');
-    instance._handleFileResponse('script', null, 'markdown');
+    instance._handleFileResponse('getstarted.md', null, 'markdown');
+    instance._handleFileResponse('post-deployment.sh', null, 'markdown');
     wrapper.update();
     const expected = 'Execute post-deployment script';
     assert.equal(wrapper.find('GenericButton').props().children, expected);
@@ -57,8 +79,8 @@ describe('PostDeployment', () => {
     const changeState = sinon.stub();
     const wrapper = renderComponent({script: true, changeState: changeState});
     const instance = wrapper.instance();
-    instance._handleFileResponse('content', null, 'markdown');
-    instance._handleFileResponse('script', null, `commands
+    instance._handleFileResponse('getstarted.md', null, 'markdown');
+    instance._handleFileResponse('post-deployment.sh', null, `commands
     on multiple
     lines`);
     wrapper.update();
