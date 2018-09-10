@@ -73,7 +73,8 @@ class AddedServicesListItem extends React.Component {
       'inspector-view__list-item',
       {
         'visibility-toggled': service.get('highlight') || service.get('fade'),
-        hover: props.hovered
+        hover: props.hovered,
+        'inspector-view__list-item__last': this.props.lastInList
       }
     );
   }
@@ -128,6 +129,7 @@ AddedServicesListItem.propTypes = {
     PropTypes.string,
     PropTypes.bool
   ]),
+  lastInList: PropTypes.bool,
   service: PropTypes.object.isRequired,
   serviceModule: shapeup.shape({
     hoverService: PropTypes.func.isRequired,

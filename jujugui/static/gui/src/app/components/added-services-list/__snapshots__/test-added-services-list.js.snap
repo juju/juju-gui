@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddedServicesList adds a label to services with bundleURL annotations 1`] = `
+<div
+  className="inspector-view"
+>
+  <ul
+    className="added-services-list inspector-view__list"
+  >
+    <AddedServicesLabel
+      bundleURL="elasticsearch-cluster/bundle/17"
+      changeState={[Function]}
+      key="elasticsearch-cluster/bundle/17"
+    />
+    <AddedServicesListItem
+      changeState={[Function]}
+      hovered={false}
+      key="elasticsearch-cluser/bundle/17"
+      lastInList={true}
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceModule={
+        Object {
+          "hoverService": [Function],
+          "panToService": [Function],
+          "reshape": [Function],
+        }
+      }
+    />
+    <AddedServicesListItem
+      changeState={[Function]}
+      hovered={false}
+      key="1"
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceModule={
+        Object {
+          "hoverService": [Function],
+          "panToService": [Function],
+          "reshape": [Function],
+        }
+      }
+    />
+    <AddedServicesListItem
+      changeState={[Function]}
+      hovered={false}
+      key="3"
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceModule={
+        Object {
+          "hoverService": [Function],
+          "panToService": [Function],
+          "reshape": [Function],
+        }
+      }
+    />
+  </ul>
+</div>
+`;
+
+exports[`AddedServicesList generates a list of added services list items 1`] = `
+<div
+  className="inspector-view"
+>
+  <ul
+    className="added-services-list inspector-view__list"
+  >
+    <AddedServicesListItem
+      changeState={[Function]}
+      hovered={false}
+      key="1"
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceModule={
+        Object {
+          "hoverService": [Function],
+          "panToService": [Function],
+          "reshape": [Function],
+        }
+      }
+    />
+    <AddedServicesListItem
+      changeState={[Function]}
+      hovered={false}
+      key="2"
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceModule={
+        Object {
+          "hoverService": [Function],
+          "panToService": [Function],
+          "reshape": [Function],
+        }
+      }
+    />
+    <AddedServicesListItem
+      changeState={[Function]}
+      hovered={false}
+      key="3"
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceModule={
+        Object {
+          "hoverService": [Function],
+          "panToService": [Function],
+          "reshape": [Function],
+        }
+      }
+    />
+  </ul>
+</div>
+`;

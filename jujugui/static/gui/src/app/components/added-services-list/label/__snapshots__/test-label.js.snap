@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddedServicesLabel renders 1`] = `
+<li
+  className="inspector-view__label-item"
+>
+  <div
+    className="inspector-view__label-name"
+  >
+    elasticsearch cluster
+  </div>
+  <ul
+    className="inspector-view__label-link-list"
+  >
+    <li
+      onClick={[Function]}
+    >
+      Bundle details
+    </li>
+    <li
+      onClick={[Function]}
+    >
+      Get started
+    </li>
+  </ul>
+</li>
+`;
