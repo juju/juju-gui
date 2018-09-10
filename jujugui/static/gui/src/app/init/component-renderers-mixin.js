@@ -467,16 +467,16 @@ Browser: ${navigator.userAgent}`
     if (typeof state.postDeploymentPanel === 'string') {
       // A specific URL was provided so pass that through
       entityURLs.push(state.postDeploymentPanel);
+    } else {
+      entityURLs = entityURLs.concat(this.db.services.toArray().reduce(
+        (accumulator, app) => {
+          const url = app.get('annotations').bundleURL;
+          if (url) {
+            accumulator.push(url);
+          }
+          return accumulator;
+        }, []));
     }
-    entityURLs = entityURLs.concat(this.db.services.toArray().reduce(
-      (accumulator, app) => {
-        const url = app.get('annotations').bundleURL;
-        if (url) {
-          accumulator.push(url);
-        }
-        return accumulator;
-      }, []));
-
     if (entityURLs.length > 0) {
       ReactDOM.render(
         <PostDeployment
