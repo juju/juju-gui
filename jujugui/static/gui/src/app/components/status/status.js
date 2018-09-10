@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
 const BasicTable = require('../basic-table/basic-table');
+const StatusTable = require('../shared/status/table/table');
 const Panel = require('../panel/panel');
 
 /** Status React component used to display Juju status. */
@@ -153,34 +154,6 @@ class Status extends React.Component {
       <span className={this._getStatusClass('status-view__status--', status)}>
         {status}
       </span>);
-  }
-
-  /**
-    Sort by the key attribute.
-    @param {Object} a The first value.
-    @param {Object} b The second value.
-    @returns {Array} The sorted array.
-  */
-  _byKey(a, b) {
-    if (a.key < b.key) {
-      return -1;
-    }
-    if (a.key > b.key) {
-      return 1;
-    }
-    return 0;
-  }
-
-  /**
-    Filter a row by the status.
-    @param row {Object} The row values.
-    @returns {Boolean} Whether the row matches the status.
-  */
-  _filterByStatus(row) {
-    if (!this.state.statusFilter) {
-      return true;
-    }
-    return row.extraData === this.state.statusFilter;
   }
 
   /**
@@ -467,30 +440,6 @@ class Status extends React.Component {
 
   /**
     Generate the remote applications fragment of the status.
-    @param headers {Array} A list of header objects.
-    @param key {String} The identifing key.
-    @param rows {Array} A list of row objects.
-    @returns {Object} A BasicTable instance.
-  */
-  _generateTable(key, headers, rows) {
-    return (
-      <BasicTable
-        changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
-        generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={headers}
-        key={key}
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
-  }
-
-  /**
-    Generate the remote applications fragment of the status.
     @param {Object} remoteApplications The remote applications as included in
       the GUI db.
     @returns {Object} The resulting element.
@@ -530,7 +479,14 @@ class Status extends React.Component {
       content: 'URL',
       columnSize: 3
     }];
-    return this._generateTable('remote-applications', headers, rows);
+    return (
+      <StatusTable
+        changeState={this.props.changeState}
+        generatePath={this.props.generatePath}
+        headers={headers}
+        key="remote-applications"
+        rows={rows}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
@@ -564,7 +520,7 @@ class Status extends React.Component {
       this._setHighestStatus(app.status.current);
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--', app.status.current)],
+          'status-table__row--', app.status.current)],
         clickState: this._generateApplicationClickState(app.id),
         columns: [{
           columnSize: 2,
@@ -625,7 +581,14 @@ class Status extends React.Component {
       content: 'Rev',
       columnSize: 1
     }];
-    return this._generateTable('applications', headers, rows);
+    return (
+      <StatusTable
+        changeState={this.props.changeState}
+        generatePath={this.props.generatePath}
+        headers={headers}
+        key="applications"
+        rows={rows}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
@@ -667,7 +630,7 @@ class Status extends React.Component {
         }
         rows.push({
           classes: [this._getStatusClass(
-            'status-view__table-row--',
+            'status-table__row--',
             [unit.agentStatus, unit.workloadStatus])],
           clickState: this._generateUnitClickState(unit.id),
           columns: [{
@@ -734,7 +697,14 @@ class Status extends React.Component {
       content: 'Message',
       columnSize: 2
     }];
-    return this._generateTable('units', headers, rows);
+    return (
+      <StatusTable
+        changeState={this.props.changeState}
+        generatePath={this.props.generatePath}
+        headers={headers}
+        key="units"
+        rows={rows}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
@@ -747,7 +717,7 @@ class Status extends React.Component {
       this._setHighestStatus(machine.agent_state);
       return {
         classes: [this._getStatusClass(
-          'status-view__table-row--', machine.agent_state)],
+          'status-table__row--', machine.agent_state)],
         clickState: this._generateMachineClickState(machine.id),
         columns: [{
           columnSize: 1,
@@ -791,7 +761,14 @@ class Status extends React.Component {
       content: 'Message',
       columnSize: 3
     }];
-    return this._generateTable('machines', headers, rows);
+    return (
+      <StatusTable
+        changeState={this.props.changeState}
+        generatePath={this.props.generatePath}
+        headers={headers}
+        key="machines"
+        rows={rows}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
@@ -879,7 +856,14 @@ class Status extends React.Component {
       content: 'Type',
       columnSize: 3
     }];
-    return this._generateTable('relations', headers, rows);
+    return (
+      <StatusTable
+        changeState={this.props.changeState}
+        generatePath={this.props.generatePath}
+        headers={headers}
+        key="relations"
+        rows={rows}
+        statusFilter={this.state.statusFilter} />);
   }
 
   render() {
