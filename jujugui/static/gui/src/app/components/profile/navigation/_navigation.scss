@@ -13,12 +13,12 @@
 
     &.is-active {
       font-weight: 400;
+    }
 
-      &:hover {
-        color: $color-dark;
-        cursor: default;
-        text-decoration: none;
-      }
+    &.is-active:hover {
+      color: $color-dark;
+      cursor: default;
+      text-decoration: none;
     }
 
     &:hover {
