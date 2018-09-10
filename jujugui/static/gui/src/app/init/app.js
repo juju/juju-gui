@@ -640,13 +640,14 @@ Browser: ${navigator.userAgent}`
     @param {Object} state The current state.
     @param {Function} next Run the next handler.
   */
-  _generatePostDeployment(state, next) {
+  _generatePostDeployment() {
+    const state = this.props.appState.current;
     let entityURLs = [];
     if (typeof state.postDeploymentPanel === 'string') {
       // A specific URL was provided so pass that through
       entityURLs.push(state.postDeploymentPanel);
     } else {
-      entityURLs = entityURLs.concat(this.db.services.toArray().reduce(
+      entityURLs = entityURLs.concat(this.props.db.services.toArray().reduce(
         (accumulator, app) => {
           const url = app.get('annotations').bundleURL;
           if (url) {
