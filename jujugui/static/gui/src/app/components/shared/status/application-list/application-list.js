@@ -74,6 +74,7 @@ class StatusApplicationList extends React.Component {
       };
     });
   }
+
   render() {
     const headers = [{
       content: 'Application',

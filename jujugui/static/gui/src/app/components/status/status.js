@@ -9,6 +9,7 @@ const BasicTable = require('../basic-table/basic-table');
 const StatusApplicationList = require('../shared/status/application-list/application-list');
 const StatusLabel = require('../shared/status/label/label');
 const StatusTable = require('../shared/status/table/table');
+const StatusUnitList = require('../shared/status/unit-list/unit-list');
 const Panel = require('../panel/panel');
 const utils = require('../shared/utils');
 
@@ -71,12 +72,13 @@ class Status extends React.Component {
     const applications = db.services.filter(app => !app.get('pending'));
     const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
     const relations = db.relations.filter(rel => !rel.get('pending'));
+    const units = utils.getRealUnits(db.units);
     const counts = {
       applications: applications.length,
       machines: machines.length,
       relations: relations.length,
       remoteApplications: db.remoteServices && db.remoteServices.size() || 0,
-      units: db.units && db.units.size() || 0
+      units: units.length
     };
     // Model section.
     const model = this.props.model;
@@ -91,10 +93,10 @@ class Status extends React.Component {
     }
     // Applications and units sections.
     if (counts.applications) {
-      elements.push(
-        this._generateApplications(applications),
-        this._generateUnits(applications)
-      );
+      elements.push(this._generateApplications(applications));
+      if (counts.units) {
+        elements.push(this._generateUnits(units));
+      }
     }
     // Machines section.
     if (counts.machines) {
@@ -395,13 +397,23 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the URL for clicking on charm.
+    Generate the URL for clicking on a charm.
     @param charmId {String} A charm id.
     @returns {String} The charm url.
   */
   _generateCharmURL(charmId) {
     return this.props.generatePath(
       this._generateCharmClickState(charmId));
+  }
+
+  /**
+    Generate the URL for clicking on a machine.
+    @param machineId {String} A machine id.
+    @returns {String} The machine url.
+  */
+  _generateMachineURL(machineId) {
+    return this.props.generatePath(
+      this._generateMachineClickState(machineId));
   }
 
   /**
@@ -424,118 +436,22 @@ class Status extends React.Component {
 
   /**
     Generate the units fragment of the status.
+    @param {Array} units The units as included in the GUI db.
     @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateUnits(applications) {
-    const formatPorts = ranges => {
-      if (!ranges) {
-        return '';
-      }
-      return ranges.map(range => {
-        if (range.from === range.to) {
-          return `${range.from}/${range.protocol}`;
-        }
-        return `${range.from}-${range.to}/${range.protocol}`;
-      }).join(', ');
-    };
-    const rows = [];
-    applications.forEach(application => {
-      const appExposed = application.get('exposed');
-      const units = utils.getRealUnits(application.get('units'));
-      units.forEach(unit => {
-        let publicAddress = unit.public_address;
-        if (appExposed && unit.portRanges.length) {
-          const port = unit.portRanges[0].from;
-          const label = `${unit.public_address}:${port}`;
-          const protocol = port === 443 ? 'https' : 'http';
-          const href = `${protocol}://${label}`;
-          publicAddress = (
-            <a className="status-view__link"
-              href={href}
-              target="_blank">
-              {unit.public_address}
-            </a>);
-        }
-        rows.push({
-          classes: [utils.getStatusClass(
-            'status-table__row--',
-            [unit.agentStatus, unit.workloadStatus])],
-          clickState: this._generateUnitClickState(unit.id),
-          columns: [{
-            columnSize: 2,
-            content: (
-              <span>
-                <img className="status-view__icon"
-                  src={application.get('icon')} />
-                {unit.displayName}
-              </span>)
-          }, {
-            columnSize: 2,
-            content: unit.workloadStatus ? (
-              <StatusLabel status={unit.workloadStatus} />) : null
-          }, {
-            columnSize: 2,
-            content: unit.agentStatus ? (
-              <StatusLabel status={unit.agentStatus} />) : null
-          }, {
-            columnSize: 1,
-            content: (
-              <a className="status-view__link"
-                href={this.props.generatePath(
-                  this._generateMachineClickState(unit.machine))}
-                onClick={this._navigateToMachine.bind(this, unit.machine)}>
-                {unit.machine}
-              </a>)
-          }, {
-            columnSize: 2,
-            content: publicAddress
-          }, {
-            columnSize: 1,
-            content: formatPorts(unit.portRanges)
-          }, {
-            columnSize: 2,
-            content: unit.workloadStatusMessage
-          }],
-          extraData: utils.getHighestStatus(
-            [unit.agentStatus, unit.workloadStatus]),
-          key: unit.id
-        });
-      });
-    });
-    if (!rows.length) {
-      return null;
-    }
-    const headers = [{
-      content: 'Unit',
-      columnSize: 2
-    }, {
-      content: 'Workload',
-      columnSize: 2
-    }, {
-      content: 'Agent',
-      columnSize: 2
-    }, {
-      content: 'Machine',
-      columnSize: 1
-    }, {
-      content: 'Public address',
-      columnSize: 2
-    }, {
-      content: 'Ports',
-      columnSize: 1
-    }, {
-      content: 'Message',
-      columnSize: 2
-    }];
+  _generateUnits(units) {
     return (
-      <StatusTable
+      <StatusUnitList
+        applications={this.props.db.services}
         changeState={this.props.changeState}
+        generateMachineURL={this._generateMachineURL.bind(this)}
         generatePath={this.props.generatePath}
-        headers={headers}
+        generateUnitClickState={this._generateUnitClickState.bind(this)}
         key="units"
-        rows={rows}
-        statusFilter={this.state.statusFilter} />);
+        onMachineClick={this._navigateToMachine.bind(this)}
+        statusFilter={this.state.statusFilter}
+        units={units} />);
   }
 
   /**
@@ -730,6 +646,7 @@ Status.propTypes = {
       toArray: PropTypes.func.isRequired
     }).isRequired,
     units: shapeup.shape({
+      filter: PropTypes.func.isRequired,
       size: PropTypes.func.isRequired,
       toArray: PropTypes.func.isRequired
     }).isRequired

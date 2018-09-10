@@ -14,7 +14,7 @@ describe('StatusApplicationList', () => {
       applications={options.applications || applications}
       changeState={options.changeState || sinon.stub()}
       generateApplicationClickState={
-        options.generateApplicationClickState || sinon.stub().returns('http://example.com')}
+        options.generateApplicationClickState || sinon.stub().returns({ app: 'state' })}
       generateCharmURL={options.generateCharmURL || sinon.stub()}
       generatePath={options.generatePath || sinon.stub()}
       onCharmClick={options.onCharmClick || sinon.stub()}

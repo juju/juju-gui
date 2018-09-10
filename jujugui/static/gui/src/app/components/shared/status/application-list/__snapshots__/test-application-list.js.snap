@@ -42,7 +42,9 @@ exports[`StatusApplicationList renders 1`] = `
         "classes": Array [
           "status-table__row--ok",
         ],
-        "clickState": "http://example.com",
+        "clickState": Object {
+          "app": "state",
+        },
         "columns": Array [
           Object {
             "columnSize": 2,
