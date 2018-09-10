@@ -49,4 +49,31 @@ describe('Shared utils', () => {
       assert.strictEqual(utils.getStatusClass('status--', null), '');
     });
   });
+
+  describe('getRealUnits', () => {
+    it('includes units with machines', () => {
+      assert.deepEqual(utils.getRealUnits([{
+        id: 1,
+        machine: '0'
+      }, {
+        id: 2
+      }]), [{
+        id: 1,
+        machine: '0'
+      }]);
+    });
+
+    it('does not units on uncommitted machines', () => {
+      assert.deepEqual(utils.getRealUnits([{
+        id: 1,
+        machine: 'new0'
+      }, {
+        id: 2,
+        machine: '1'
+      }]), [{
+        id: 2,
+        machine: '1'
+      }]);
+    });
+  });
 });

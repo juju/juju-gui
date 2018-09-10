@@ -4,9 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const { urls } = require('jaaslib');
 
 const BasicTable = require('../basic-table/basic-table');
+const StatusApplicationList = require('../shared/status/application-list/application-list');
 const StatusLabel = require('../shared/status/label/label');
 const StatusTable = require('../shared/status/table/table');
 const Panel = require('../panel/panel');
@@ -16,9 +16,6 @@ const utils = require('../shared/utils');
 class Status extends React.Component {
   constructor(props) {
     super(props);
-    // This property is used to store the new highest status during a render or
-    // state change and the value is then stored in state in componentDidUpdate.
-    this.newHighest = null;
     this.state = {
       highestStatus: utils.STATUSES.OK,
       statusFilter: null
@@ -46,24 +43,21 @@ class Status extends React.Component {
   componentDidUpdate() {
     // Update the state with the new status now that all status changes/renders
     // are complete.
-    if (this.newHighest && (this.state.highestStatus !== this.newHighest)) {
-      this.setState({highestStatus: this.newHighest});
-      this.newHighest = null;
-    }
-  }
-
-  /**
-    Set the highest status if the passed status is higher than the current.
-    @param status {String} A status.
-  */
-  _setHighestStatus(status) {
-    const normalised = utils.normaliseStatus(status);
-    if (utils.STATUS_ORDER.indexOf(normalised) <
-      utils.STATUS_ORDER.indexOf(this.state.highestStatus)) {
-      // Store the new state instead of updating state directly as this change
-      // may have been triggered by a state update or render and you can't
-      // update state during a state update or render.
-      this.newHighest = normalised;
+    const db = this.props.db;
+    let statuses = [];
+    db.services.toArray().forEach(application => {
+      const app = application.getAttrs();
+      statuses.push(app.status.current);
+    });
+    db.units.toArray().forEach(unit => {
+      statuses.push(utils.getHighestStatus([unit.agentStatus, unit.workloadStatus]));
+    });
+    db.machines.toArray().map(machine => {
+      statuses.push(machine.agent_state);
+    });
+    const highest = utils.getHighestStatus(statuses);
+    if (highest && (this.state.highestStatus !== highest)) {
+      this.setState({highestStatus: highest});
     }
   }
 
@@ -401,15 +395,13 @@ class Status extends React.Component {
   }
 
   /**
-    A predicate function that can be used to filter units so that uncommitted
-    and unplaced units are excluded.
-    @param {Object} unit A unit as included in the database.
-    @returns {Boolean} Whether the unit is real or not.
+    Generate the URL for clicking on charm.
+    @param charmId {String} A charm id.
+    @returns {String} The charm url.
   */
-  _realUnitsPredicate(unit) {
-    // Unplaced units have no machine defined. Subordinate units have an empty
-    // string machine.
-    return unit.machine !== undefined && unit.machine.indexOf('new') !== 0;
+  _generateCharmURL(charmId) {
+    return this.props.generatePath(
+      this._generateCharmClickState(charmId));
   }
 
   /**
@@ -418,88 +410,15 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateApplications(applications) {
-    const rows = applications.map(application => {
-      const app = application.getAttrs();
-      const charm = urls.URL.fromLegacyString(app.charm);
-      const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
-      const revision = charm.revision;
-      const charmId = charm.path();
-      const units = app.units.filter(this._realUnitsPredicate);
-      // Set the revision to null so that it's not included when calling
-      // charm.path() below.
-      charm.revision = null;
-      this._setHighestStatus(app.status.current);
-      return {
-        classes: [utils.getStatusClass(
-          'status-table__row--', app.status.current)],
-        clickState: this._generateApplicationClickState(app.id),
-        columns: [{
-          columnSize: 2,
-          content: (
-            <span>
-              <img className="status-view__icon"
-                src={app.icon} />
-              {app.name}
-            </span>)
-        }, {
-          columnSize: 2,
-          content: app.workloadVersion
-        }, {
-          columnSize: 2,
-          content: app.status.current ? (
-            <StatusLabel status={app.status.current} />) : null
-        }, {
-          columnSize: 1,
-          content: units.length
-        }, {
-          columnSize: 2,
-          content: (
-            <a className="status-view__link"
-              href={this.props.generatePath(
-                this._generateCharmClickState(charmId))}
-              onClick={this._navigateToCharm.bind(this, charmId)}>
-              {charm.path()}
-            </a>)
-        }, {
-          columnSize: 2,
-          content: store
-        }, {
-          columnSize: 1,
-          content: revision
-        }],
-        extraData: utils.normaliseStatus(app.status.current),
-        key: app.name
-      };
-    });
-    const headers = [{
-      content: 'Application',
-      columnSize: 2
-    }, {
-      content: 'Version',
-      columnSize: 2
-    }, {
-      content: 'Status',
-      columnSize: 2
-    }, {
-      content: 'Scale',
-      columnSize: 1
-    }, {
-      content: 'Charm',
-      columnSize: 2
-    }, {
-      content: 'Store',
-      columnSize: 2
-    }, {
-      content: 'Rev',
-      columnSize: 1
-    }];
     return (
-      <StatusTable
+      <StatusApplicationList
+        applications={applications}
         changeState={this.props.changeState}
+        generateApplicationClickState={this._generateApplicationClickState.bind(this)}
+        generateCharmURL={this._generateCharmURL.bind(this)}
         generatePath={this.props.generatePath}
-        headers={headers}
         key="applications"
-        rows={rows}
+        onCharmClick={this._navigateToCharm.bind(this)}
         statusFilter={this.state.statusFilter} />);
   }
 
@@ -523,10 +442,8 @@ class Status extends React.Component {
     const rows = [];
     applications.forEach(application => {
       const appExposed = application.get('exposed');
-      const units = application.get('units').filter(this._realUnitsPredicate);
+      const units = utils.getRealUnits(application.get('units'));
       units.forEach(unit => {
-        this._setHighestStatus(utils.getHighestStatus(
-          [unit.agentStatus, unit.workloadStatus]));
         let publicAddress = unit.public_address;
         if (appExposed && unit.portRanges.length) {
           const port = unit.portRanges[0].from;
@@ -628,7 +545,6 @@ class Status extends React.Component {
   */
   _generateMachines(machines) {
     const rows = machines.map(machine => {
-      this._setHighestStatus(machine.agent_state);
       return {
         classes: [utils.getStatusClass(
           'status-table__row--', machine.agent_state)],
@@ -798,7 +714,8 @@ Status.propTypes = {
   changeState: PropTypes.func.isRequired,
   db: shapeup.shape({
     machines: shapeup.shape({
-      filter: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired,
+      toArray: PropTypes.func.isRequired
     }).isRequired,
     relations: shapeup.shape({
       filter: PropTypes.func.isRequired
@@ -809,7 +726,12 @@ Status.propTypes = {
     }).isRequired,
     services: shapeup.shape({
       filter: PropTypes.func.isRequired,
-      getById: PropTypes.func.isRequired
+      getById: PropTypes.func.isRequired,
+      toArray: PropTypes.func.isRequired
+    }).isRequired,
+    units: shapeup.shape({
+      size: PropTypes.func.isRequired,
+      toArray: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
   generatePath: PropTypes.func.isRequired,

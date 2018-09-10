@@ -85,4 +85,15 @@ utils.getStatusClass = (prefix, value) => {
   return prefix + utils.getHighestStatus(normalised);
 };
 
+/**
+  Filter units by those that have been committed.
+  @param units {Array} The list of units.
+  @returns {Array} The list of filtered units..
+*/
+utils.getRealUnits = units => {
+  // Unplaced units have no machine defined. Subordinate units have an empty
+  // string machine.
+  return units.filter(unit => unit.machine !== undefined && unit.machine.indexOf('new') !== 0);
+};
+
 module.exports = utils;
