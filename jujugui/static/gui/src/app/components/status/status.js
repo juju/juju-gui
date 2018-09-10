@@ -43,9 +43,21 @@ class Status extends React.Component {
     this.setState({highestStatus: utils.STATUSES.OK});
   }
 
+  componentDidMount() {
+    this._setTrafficLight();
+  }
+
   componentDidUpdate() {
     // Update the state with the new status now that all status changes/renders
     // are complete.
+    this._setTrafficLight();
+  }
+
+  /**
+    Generate the current model status.
+    @returns {Object} The resulting element.
+  */
+  _setTrafficLight() {
     const db = this.props.db;
     let statuses = [];
     db.services.toArray().forEach(application => {
@@ -75,11 +87,12 @@ class Status extends React.Component {
     const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
     const relations = db.relations.filter(rel => !rel.get('pending'));
     const units = utils.getRealUnits(db.units);
+    const remoteApplications = db.remoteServices.toArray();
     const counts = {
       applications: applications.length,
       machines: machines.length,
       relations: relations.length,
-      remoteApplications: db.remoteServices && db.remoteServices.size() || 0,
+      remoteApplications: remoteApplications.length,
       units: units.length
     };
     // Model section.
@@ -160,10 +173,10 @@ class Status extends React.Component {
   */
   _generateModel(model, counts) {
     const highestStatus = this.state.highestStatus;
-    let title = 'Everything is utils.STATUSES.OK';
+    let title = `Everything is ${utils.STATUSES.OK}`;
     switch (highestStatus) {
       case utils.STATUSES.OK:
-        title = 'Everything is utils.STATUSES.OK';
+        title = `Everything is ${utils.STATUSES.OK}`;
         break;
       case utils.STATUSES.PENDING:
         title = 'Items are pending';
@@ -490,7 +503,7 @@ Status.propTypes = {
     }).isRequired,
     remoteServices: shapeup.shape({
       map: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      toArray: PropTypes.func.isRequired
     }).isRequired,
     services: shapeup.shape({
       filter: PropTypes.func.isRequired,
@@ -499,7 +512,6 @@ Status.propTypes = {
     }).isRequired,
     units: shapeup.shape({
       filter: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired,
       toArray: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
