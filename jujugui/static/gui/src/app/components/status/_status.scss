@@ -71,24 +71,4 @@
     border-radius: $size / 2;
     vertical-align: middle;
   }
-
-  &__status {
-    &--pending,
-    &--error,
-    &--ok {
-      transition: color .3s;
-    }
-
-    &--ok {
-      color: $success;
-    }
-
-    &--error {
-      color: $error;
-    }
-
-    &--pending {
-      color: $pending;
-    }
-  }
 }

@@ -7,26 +7,20 @@ const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
 const BasicTable = require('../basic-table/basic-table');
+const StatusLabel = require('../shared/status/label/label');
 const StatusTable = require('../shared/status/table/table');
 const Panel = require('../panel/panel');
+const utils = require('../shared/utils');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
   constructor(props) {
     super(props);
-    this.STATUS_ERROR = 'error';
-    this.STATUS_PENDING = 'pending';
-    this.STATUS_OK = 'ok';
-    this.STATUS_ORDER = [
-      this.STATUS_ERROR,
-      this.STATUS_PENDING,
-      this.STATUS_OK
-    ];
     // This property is used to store the new highest status during a render or
     // state change and the value is then stored in state in componentDidUpdate.
     this.newHighest = null;
     this.state = {
-      highestStatus: this.STATUS_OK,
+      highestStatus: utils.STATUSES.OK,
       statusFilter: null
     };
   }
@@ -46,7 +40,7 @@ class Status extends React.Component {
   componentWillReceiveProps() {
     // Reset to the lowest status so that when the apps, units etc. are looped
     // through the highest status can be stored.
-    this.setState({highestStatus: this.STATUS_OK});
+    this.setState({highestStatus: utils.STATUSES.OK});
   }
 
   componentDidUpdate() {
@@ -63,97 +57,14 @@ class Status extends React.Component {
     @param status {String} A status.
   */
   _setHighestStatus(status) {
-    const normalised = this._normaliseStatus(status);
-    if (this.STATUS_ORDER.indexOf(normalised) <
-      this.STATUS_ORDER.indexOf(this.state.highestStatus)) {
+    const normalised = utils.normaliseStatus(status);
+    if (utils.STATUS_ORDER.indexOf(normalised) <
+      utils.STATUS_ORDER.indexOf(this.state.highestStatus)) {
       // Store the new state instead of updating state directly as this change
       // may have been triggered by a state update or render and you can't
       // update state during a state update or render.
       this.newHighest = normalised;
     }
-  }
-
-  /**
-    Get the highest status from a list of statuses.
-    @param statuses {Ȧrray} A list of statuses.
-    @returns {String} The status.
-  */
-  _getHighestStatus(statuses) {
-    const normalised = statuses.map(status => this._normaliseStatus(status));
-    let status;
-    // Loop through the order of priority until there is a matching status.
-    this.STATUS_ORDER.some(val => {
-      if (normalised.indexOf(val) > -1) {
-        status = val;
-        return true;
-      }
-    });
-    return status;
-  }
-
-  /**
-    Return an element class name suitable for the given value.
-    @param {String} prefix The class prefix.
-    @param {String} value The provided value.
-    @returns {String} The class name ('ok', 'error' or '').
-  */
-  _getStatusClass(prefix, value) {
-    if (!value) {
-      // If there is no value then ignore it. This might be the case when an
-      // entity's state property only has a value for pending/error states.
-      return '';
-    }
-    if (!Array.isArray(value)) {
-      value = [value];
-    }
-    const normalised = value.map(val => this._normaliseStatus(val));
-    return prefix + this._getHighestStatus(normalised);
-  }
-
-  /**
-    Normalise the status value.
-    @param status {String} The raw value.
-    @returns {String} The normalised status ('ok', 'error' or 'pending').
-  */
-  _normaliseStatus(value) {
-    let status = this.STATUS_OK;
-    switch(value) {
-      case 'active':
-      case 'idle':
-      case 'started':
-      case 'waiting':
-        status = this.STATUS_OK;
-        break;
-      case 'blocked':
-      case 'down':
-      case 'error':
-        status = this.STATUS_ERROR;
-        break;
-      case 'pending':
-      case 'installing':
-      case 'executing':
-      case 'allocating':
-      case 'maintenance':
-        status = this.STATUS_PENDING;
-        break;
-    }
-    return status;
-  }
-
-  /**
-    Generate a status for display.
-    @param status {String} The status to display.
-    @returns {Object} The status markup.
-  */
-  _generateStatusDisplay(status) {
-    // If the status provided from a model property it might have no value.
-    if (!status) {
-      return null;
-    }
-    return (
-      <span className={this._getStatusClass('status-view__status--', status)}>
-        {status}
-      </span>);
   }
 
   /**
@@ -227,7 +138,7 @@ class Status extends React.Component {
     @returns {Object} The select box element to render.
   */
   _generateFilters() {
-    const options = ['none'].concat(this.STATUS_ORDER).map(status => {
+    const options = ['none'].concat(utils.STATUS_ORDER).map(status => {
       return (
         <option className="status-view__filter-option"
           key={status}
@@ -251,15 +162,15 @@ class Status extends React.Component {
   */
   _generateModel(model, counts) {
     const highestStatus = this.state.highestStatus;
-    let title = 'Everything is OK';
+    let title = 'Everything is utils.STATUSES.OK';
     switch (highestStatus) {
-      case this.STATUS_OK:
-        title = 'Everything is OK';
+      case utils.STATUSES.OK:
+        title = 'Everything is utils.STATUSES.OK';
         break;
-      case this.STATUS_PENDING:
+      case utils.STATUSES.PENDING:
         title = 'Items are pending';
         break;
-      case this.STATUS_ERROR:
+      case utils.STATUSES.ERROR:
         title = 'Items are in error';
         break;
     }
@@ -462,7 +373,7 @@ class Status extends React.Component {
           columnSize: 3,
           content: urlParts[1]
         }],
-        extraData: this._normaliseStatus(app.status.current),
+        extraData: utils.normaliseStatus(app.status.current),
         key: app.url
       };
     });
@@ -519,7 +430,7 @@ class Status extends React.Component {
       charm.revision = null;
       this._setHighestStatus(app.status.current);
       return {
-        classes: [this._getStatusClass(
+        classes: [utils.getStatusClass(
           'status-table__row--', app.status.current)],
         clickState: this._generateApplicationClickState(app.id),
         columns: [{
@@ -535,7 +446,8 @@ class Status extends React.Component {
           content: app.workloadVersion
         }, {
           columnSize: 2,
-          content: this._generateStatusDisplay(app.status.current)
+          content: app.status.current ? (
+            <StatusLabel status={app.status.current} />) : null
         }, {
           columnSize: 1,
           content: units.length
@@ -555,7 +467,7 @@ class Status extends React.Component {
           columnSize: 1,
           content: revision
         }],
-        extraData: this._normaliseStatus(app.status.current),
+        extraData: utils.normaliseStatus(app.status.current),
         key: app.name
       };
     });
@@ -613,7 +525,7 @@ class Status extends React.Component {
       const appExposed = application.get('exposed');
       const units = application.get('units').filter(this._realUnitsPredicate);
       units.forEach(unit => {
-        this._setHighestStatus(this._getHighestStatus(
+        this._setHighestStatus(utils.getHighestStatus(
           [unit.agentStatus, unit.workloadStatus]));
         let publicAddress = unit.public_address;
         if (appExposed && unit.portRanges.length) {
@@ -629,7 +541,7 @@ class Status extends React.Component {
             </a>);
         }
         rows.push({
-          classes: [this._getStatusClass(
+          classes: [utils.getStatusClass(
             'status-table__row--',
             [unit.agentStatus, unit.workloadStatus])],
           clickState: this._generateUnitClickState(unit.id),
@@ -643,10 +555,12 @@ class Status extends React.Component {
               </span>)
           }, {
             columnSize: 2,
-            content: this._generateStatusDisplay(unit.workloadStatus)
+            content: unit.workloadStatus ? (
+              <StatusLabel status={unit.workloadStatus} />) : null
           }, {
             columnSize: 2,
-            content: this._generateStatusDisplay(unit.agentStatus)
+            content: unit.agentStatus ? (
+              <StatusLabel status={unit.agentStatus} />) : null
           }, {
             columnSize: 1,
             content: (
@@ -666,7 +580,7 @@ class Status extends React.Component {
             columnSize: 2,
             content: unit.workloadStatusMessage
           }],
-          extraData: this._getHighestStatus(
+          extraData: utils.getHighestStatus(
             [unit.agentStatus, unit.workloadStatus]),
           key: unit.id
         });
@@ -716,7 +630,7 @@ class Status extends React.Component {
     const rows = machines.map(machine => {
       this._setHighestStatus(machine.agent_state);
       return {
-        classes: [this._getStatusClass(
+        classes: [utils.getStatusClass(
           'status-table__row--', machine.agent_state)],
         clickState: this._generateMachineClickState(machine.id),
         columns: [{
@@ -724,7 +638,8 @@ class Status extends React.Component {
           content: machine.displayName
         }, {
           columnSize: 2,
-          content: this._generateStatusDisplay(machine.agent_state)
+          content: machine.agent_state ? (
+            <StatusLabel status={machine.agent_state} />) : null
         }, {
           columnSize: 2,
           content: machine.public_address
@@ -738,7 +653,7 @@ class Status extends React.Component {
           columnSize: 3,
           content: machine.agent_state_info
         }],
-        extraData: this._normaliseStatus(machine.agent_state),
+        extraData: utils.normaliseStatus(machine.agent_state),
         key: machine.id
       };
     });
