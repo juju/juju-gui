@@ -15,7 +15,7 @@ exports[`AddedServicesLabel renders 1`] = `
     <li
       onClick={[Function]}
     >
-      Readme
+      Bundle details
     </li>
     <li
       onClick={[Function]}

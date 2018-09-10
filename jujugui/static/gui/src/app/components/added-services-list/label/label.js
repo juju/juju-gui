@@ -30,7 +30,7 @@ class AddedServicesLabel extends React.Component {
       <li className="inspector-view__label-item">
         <div className="inspector-view__label-name">{name}</div>
         <ul className="inspector-view__label-link-list">
-          <li onClick={this._showReadme.bind(this)}>Readme</li>
+          <li onClick={this._showReadme.bind(this)}>Bundle details</li>
           <li onClick={this._showGetStarted.bind(this)}>Get started</li>
         </ul>
       </li>);
