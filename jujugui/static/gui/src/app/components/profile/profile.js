@@ -53,7 +53,8 @@ class Profile extends React.Component {
 
     if (profileUrl.full === 'revenue-statement') {
       return (
-        <Panel instanceName="revenue-statement" visible={true}>
+        <Panel instanceName="revenue-statement"
+          visible={true}>
           <RevenueStatement />
         </Panel>
       );
@@ -61,7 +62,8 @@ class Profile extends React.Component {
 
     if (sectionInfo.active === 'invoices' && sectionInfo.sub !== null) {
       return (
-        <Panel instanceName="invoice" visible={true}>
+        <Panel instanceName="invoice"
+          visible={true}>
           <Invoice />
         </Panel>
       );
@@ -137,8 +139,7 @@ class Profile extends React.Component {
             <ProfileCredentialList
               acl={props.acl}
               addNotification={props.addNotification}
-              controllerAPI={
-                shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
+              controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
               sendAnalytics={this._sendAnalytics.bind(this)}
@@ -164,19 +165,15 @@ class Profile extends React.Component {
       sectionsMap.set('invoices', {
         label: 'Invoices',
         getComponent: () => {
-          return (
-            <ProfileInvoiceList
-              baseURL={props.baseURL}
-              user={props.userInfo.external} />);
+          return (<ProfileInvoiceList baseURL={props.baseURL}
+            user={props.userInfo.external} />);
         }
       });
       sectionsMap.set('revenue-statement', {
         label: 'Revenue Statements',
         getComponent: () => {
-          return (
-            <ProfileInvoiceList
-              baseURL={props.baseURL}
-              user={props.userInfo.external} />);
+          return (<ProfileInvoiceList baseURL={props.baseURL}
+            user={props.userInfo.external} />);
         }
       });
     }
@@ -191,28 +188,25 @@ class Profile extends React.Component {
     }
 
     return (
-      <div>
-        <Panel
-          instanceName="profile"
-          visible={true}>
-          <ProfileHeader
-            changeState={props.changeState}
-            controllerIP={props.controllerIP}
-            getUser={props.getUser}
-            gisf={props.gisf}
-            userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
-          <div className="twelve-col">
-            <div className="profile__content inner-wrapper">
-              <ProfileNavigation
-                // Use supplied activeSection or the key from the first map entry.
-                activeSection={this._getSectionInfo().active || mapEntry[0]}
-                changeState={props.changeState}
-                sectionsMap={sectionsMap} />
-              {section.getComponent()}
-            </div>
+      <Panel instanceName="profile"
+        visible={true}>
+        <ProfileHeader
+          changeState={props.changeState}
+          controllerIP={props.controllerIP}
+          getUser={props.getUser}
+          gisf={props.gisf}
+          userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
+        <div className="twelve-col">
+          <div className="profile__content inner-wrapper">
+            <ProfileNavigation
+              // Use supplied activeSection or the key from the first map entry.
+              activeSection={this._getSectionInfo().active || mapEntry[0]}
+              changeState={props.changeState}
+              sectionsMap={sectionsMap} />
+            {section.getComponent()}
           </div>
-        </Panel>
-      </div>
+        </div>
+      </Panel>
     );
   }
 }

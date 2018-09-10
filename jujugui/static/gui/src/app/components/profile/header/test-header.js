@@ -51,11 +51,13 @@ describe('Profile Header', function() {
     const wrapper = renderComponent({ gisf: false });
     const expected = (
       <ul className="p-list ts-profile-header__menu">
-        <li className="p-list__item" key="controller">
+        <li className="p-list__item"
+          key="controller">
           <h2>1.2.3.4</h2>
           <hr />
         </li>
-        <li className="p-list__item" key="home">
+        <li className="p-list__item"
+          key="home">
           <a href="https://jujucharms.com/about">Juju Home</a>
         </li>
       </ul>
