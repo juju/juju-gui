@@ -77,7 +77,9 @@ class ProfileHeader extends React.Component {
       'profile-header__avatar--hidden': !this.state.userRequested
     });
     const tooltip = isCurrent ? (
-      <span className="p-tooltip__message" id="tp-cntr" role="tooltip">
+      <span className="p-tooltip__message"
+        id="tp-cntr"
+        role="tooltip">
         Edit your Gravatar
       </span>
     ) : null;
@@ -111,26 +113,31 @@ class ProfileHeader extends React.Component {
     let items;
     if (this.props.gisf) {
       items = [
-        <li className="p-list__item" key="controller">
+        <li className="p-list__item"
+          key="controller">
           <h2>
             <a href="/">jaas</a>
           </h2>
           <hr />
         </li>,
-        <li className="p-list__item" key="home">
+        <li className="p-list__item"
+          key="home">
           <a href="https://jujucharms.com/home">Home</a>
         </li>,
-        <li className="p-list__item" key="aboutjaas">
+        <li className="p-list__item"
+          key="aboutjaas">
           <a href="https://jujucharms.com/jaas">About JAAS</a>
         </li>
       ];
     } else {
       items = [
-        <li className="p-list__item" key="controller">
+        <li className="p-list__item"
+          key="controller">
           <h2>{this.props.controllerIP}</h2>
           <hr />
         </li>,
-        <li className="p-list__item" key="home">
+        <li className="p-list__item"
+          key="home">
           <a href="https://jujucharms.com/about">Juju Home</a>
         </li>
       ];
@@ -163,7 +170,8 @@ class ProfileHeader extends React.Component {
                 onClick={this._handleClose.bind(this)}
                 role="button"
                 tabIndex="0">
-                <SvgIcon name="close_16" size="20" />
+                <SvgIcon name="close_16"
+                  size="20" />
               </div>
             </div>
           </div>

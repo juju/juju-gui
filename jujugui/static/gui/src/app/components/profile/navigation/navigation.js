@@ -7,7 +7,6 @@ const React = require('react');
 
 /** Navigation React component for use in the Profile component. */
 class ProfileNavigation extends React.Component {
-
   constructor(props) {
     super(props);
   }
@@ -25,9 +24,12 @@ class ProfileNavigation extends React.Component {
     const links = [];
     this.props.sectionsMap.forEach((val, key) => {
       const classes = classNames(
-        'profile-navigation__list-item', {
+        'p-list__item',
+        {
           'is-active': this.props.activeSection === key
-        });
+        },
+        val.label.replace(/\s+/g, '-').toLowerCase()
+      );
       links.push(
         <li
           className={classes}
@@ -35,18 +37,17 @@ class ProfileNavigation extends React.Component {
           onClick={this._changeState.bind(this, key)}
           role="button">
           {val.label}
-        </li>);
+        </li>
+      );
     });
 
     return (
-      <div className="profile-navigation">
-        <ul>
-          {links}
-        </ul>
-      </div>);
+      <div className="profile-navigation v1">
+        <ul className="p-list">{links}</ul>
+      </div>
+    );
   }
-
-};
+}
 
 ProfileNavigation.propTypes = {
   activeSection: PropTypes.string.isRequired,
