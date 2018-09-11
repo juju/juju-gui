@@ -16,6 +16,7 @@ class StatusRemoteApplicationList extends React.Component {
   */
   _generateRows() {
     return this.props.remoteApplications.map(application => {
+      // TODO: the passed in applications should be plain objects instead of YUI models.
       const app = application.getAttrs();
       const urlParts = app.url.split(':');
       return {

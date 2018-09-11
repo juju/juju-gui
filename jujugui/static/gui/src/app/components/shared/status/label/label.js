@@ -7,7 +7,6 @@ const classNames = require('classnames');
 
 const { getStatusClass } = require('../../utils');
 
-/** Status React component used to display Juju status. */
 const StatusLabel = props => {
   const status = props.status;
   const classes = classNames(
@@ -21,6 +20,8 @@ const StatusLabel = props => {
 };
 
 StatusLabel.propTypes = {
+  // If the status supplied is "ok", "pending", or "error" it will get
+  // highlighted otherwise it'll just show the text.
   status: PropTypes.string.isRequired
 };
 

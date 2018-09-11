@@ -22,6 +22,7 @@ class StatusApplicationList extends React.Component {
   */
   _generateRows() {
     return this.props.applications.map(application => {
+      // TODO: the passed in applications should be plain objects instead of YUI models.
       const app = application.getAttrs();
       const charm = urls.URL.fromLegacyString(app.charm);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';

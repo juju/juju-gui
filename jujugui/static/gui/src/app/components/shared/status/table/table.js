@@ -6,13 +6,12 @@ const React = require('react');
 
 const BasicTable = require('../../../basic-table/basic-table');
 
-/** Status React component used to display Juju status. */
 class StatusTable extends React.Component {
   /**
-    Sort by the key attribute.
-    @param {Object} a The first value.
-    @param {Object} b The second value.
-    @returns {Array} The sorted array.
+    A function to be supplied to sort methods to sort by key.
+    @param {String} a The first value.
+    @param {String} b The second value.
+    @returns {Int} The position change.
   */
   _byKey(a, b) {
     if (a.key < b.key) {

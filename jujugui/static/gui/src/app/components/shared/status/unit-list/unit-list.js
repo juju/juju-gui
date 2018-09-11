@@ -30,7 +30,8 @@ class StatusUnitList extends React.Component {
 
   /**
     Generate the unit rows.
-    @returns {Array} The list of rows.
+    @returns {Array} The list of rows. The returned array and containing objects
+      should match the row format required by the BasicTable component.
   */
   _generateRows() {
     const units = utils.getRealUnits(this.props.units);
