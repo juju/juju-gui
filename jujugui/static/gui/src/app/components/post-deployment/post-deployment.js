@@ -11,6 +11,9 @@ const GenericButton = require('../generic-button/generic-button');
 const Panel = require('../panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
+const GET_STARTED = 'getstarted.md';
+const POST_DEPLOYMENT = 'post-deployment.sh';
+
 /**
   Displays information for usage and quickstart.
   Shown when a charm or bundle is added to the canvas, and on deploy.
@@ -35,30 +38,46 @@ class PostDeployment extends React.Component {
     this.state = {
       content: null,
       metadata: {},
-      script: null
+      script: null,
+      loading: true
     };
   }
 
-  componentWillMount() {
+  /**
+    Calls to fetch both the getstarted.md and post-deployment.sh files.
+  */
+  _fetchFiles() {
+    this.setState({loading: true});
     const props = this.props;
     const getFile = props.charmstore.getFile;
     props.entityURLs.forEach(entityURL => {
       const url = urls.URL.fromAnyString(entityURL).toLegacyString();
-      getFile(url, 'getstarted.md', this._handleFileResponse.bind(this, 'content'));
-      getFile(url, 'post-deployment.sh', this._handleFileResponse.bind(this, 'script'));
+      getFile(url, GET_STARTED, this._handleFileResponse.bind(this, GET_STARTED));
+      getFile(url, POST_DEPLOYMENT, this._handleFileResponse.bind(this, POST_DEPLOYMENT));
     });
+  }
+
+  componentDidMount() {
+    this._fetchFiles();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.entityURLs[0] !== prevProps.entityURLs[0]) {
+      this._fetchFiles();
+    }
   }
 
   /**
     Handles the response from the various getFile requests by processing and
     storing in the necessary state.
 
-    @param {String} type The type of the file request. This is also the key used
-      when storing the value in the component state.
+    @param {String} file The name of the file requested. This is used as an
+      key of what to store where in the component state.
     @param {Object} error The error object from the file request
     @param {String} fileContents the contents of the file from the request.
    */
-  _handleFileResponse(type, error, fileContents) {
+  _handleFileResponse(file, error, fileContents) {
+    this.setState({loading: false});
     if (error) {
       console.log(error);
       return;
@@ -66,12 +85,13 @@ class PostDeployment extends React.Component {
     // Rather then parsing the JSON to read the error we check if the returned
     // body starts with a '{'. If it does, it's not a markdown file so ignore.
     if (fileContents.substring(0, 1) === '{') {
+      this.setState({[file]: null});
       return;
     }
-    if (type === 'content') {
+    if (file === GET_STARTED) {
       fileContents = this._processGetStarted(fileContents);
     }
-    this.setState({[type]: fileContents});
+    this.setState({[file]: fileContents});
   }
 
   /**
@@ -100,7 +120,7 @@ class PostDeployment extends React.Component {
     @return {Object} The button if required, otherwise nothing.
   */
   _renderPostDeploymentScriptButton() {
-    if (this.state.script) {
+    if (this.state[POST_DEPLOYMENT]) {
       return (<div>
         <GenericButton
           action={this._executePostDeploymentScript.bind(this)}>
@@ -115,7 +135,7 @@ class PostDeployment extends React.Component {
     as a payload.
   */
   _executePostDeploymentScript() {
-    this.props.changeState({terminal: this.state.script.split('\n')});
+    this.props.changeState({terminal: this.state[POST_DEPLOYMENT].split('\n')});
   }
 
   /**
@@ -228,23 +248,29 @@ class PostDeployment extends React.Component {
     let classes = [
       'post-deployment'
     ];
-    if (this.state.content) {
-      return (
-        <Panel
-          extraClasses={classes.join(' ')}
-          instanceName="post-deployment"
-          visible={true}>
-          <span className="close" onClick={this._closePostDeployment.bind(this)} role="button"
-            tabIndex="0">
-            <SvgIcon name="close_16"
-              size="16" />
-          </span>
-          <div dangerouslySetInnerHTML={{__html: this.state.content}}
-            onClick={this._handleContentClick.bind(this)} />
-          {this._renderPostDeploymentScriptButton()}
-        </Panel>
-      );
+    let content = this.state[GET_STARTED];
+    if (!content) {
+      if (this.state.loading) {
+        content = `Loading ${GET_STARTED} file.`;
+      } else {
+        content = `The bundle author has not provided a ${GET_STARTED} file.`;
+      }
     }
+    return (
+      <Panel
+        extraClasses={classes.join(' ')}
+        instanceName="post-deployment"
+        visible={true}>
+        <span className="close" onClick={this._closePostDeployment.bind(this)} role="button"
+          tabIndex="0">
+          <SvgIcon name="close_16"
+            size="16" />
+        </span>
+        <div dangerouslySetInnerHTML={{__html: content}}
+          onClick={this._handleContentClick.bind(this)} />
+        {this._renderPostDeploymentScriptButton()}
+      </Panel>
+    );
     return null;
   }
 }
@@ -252,7 +278,6 @@ class PostDeployment extends React.Component {
 PostDeployment.propTypes = {
   changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
-    getEntity: PropTypes.func.isRequired,
     getFile: PropTypes.func.isRequired
   }).isRequired,
   entityURLs: PropTypes.array.isRequired
