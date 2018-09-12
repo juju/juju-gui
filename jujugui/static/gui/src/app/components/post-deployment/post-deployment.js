@@ -57,7 +57,6 @@ class PostDeployment extends React.Component {
     });
   }
 
-<<<<<<< HEAD
   componentDidMount() {
     this._fetchFiles();
   }
@@ -68,8 +67,6 @@ class PostDeployment extends React.Component {
     }
   }
 
-=======
->>>>>>> Remove post deployment changes.
   /**
     Handles the response from the various getFile requests by processing and
     storing in the necessary state.
