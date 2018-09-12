@@ -2,6 +2,7 @@
 // e.g. connecting to Juju and browser not supported screens
 
 // scss-lint:disable IdSelector
+.full-screen-mask,
 #full-screen-mask { // sass-lint:disable-line no-ids, id-name-format
   // scss-lint:enable IdSelector
   display: block;

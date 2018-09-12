@@ -9,13 +9,11 @@ describe('bakery utils', () => {
   function createNewBakery(
     config,
     user,
-    stateGetter,
     cookieSetter,
     webHandler) {
     return newBakery(
       config || {},
       user || {},
-      stateGetter || {},
       cookieSetter || sinon.stub(),
       webHandler || {}
     );

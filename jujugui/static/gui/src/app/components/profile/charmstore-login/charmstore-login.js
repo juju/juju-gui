@@ -25,7 +25,7 @@ class ProfileCharmstoreLogin extends React.Component {
         });
         return;
       }
-      this.props.storeUser('charmstore', true);
+      this.props.storeUser('charmstore');
     };
     const macaroon = this.props.bakery.storage.get('charmstore');
     if (macaroon) {

@@ -1,11 +1,5 @@
 $expanding-progress-height: 10px;
 
-// scss-lint:disable IdSelector
-#drag-over-notification-container { // sass-lint:disable-line no-ids, id-name-format
-  margin-top: -$expanding-progress-height;
-}
-// scss-lint:enable IdSelector
-
 .expanding-progress {
   background-color: $uncommitted;
   height: $expanding-progress-height;

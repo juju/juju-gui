@@ -19,26 +19,14 @@ const keyBindings = {
   },
   'S-1': {
     callback: function() {
-      this._clearShortcutsModal();
-      if (document.getElementById('modal-gui-settings').
-        children.length > 0) {
-        this._clearSettingsModal();
-      } else {
-        this._displaySettingsModal();
-      }
+      document.dispatchEvent(new Event('displaySettingsModal'));
     },
     help: 'GUI Settings',
     label: 'Shift + !'
   },
   'S-/': {
     callback: function() {
-      this._clearSettingsModal();
-      if (document.getElementById('modal-shortcuts').
-        children.length > 0) {
-        this._clearShortcutsModal();
-      } else {
-        this._displayShortcutsModal();
-      }
+      document.dispatchEvent(new Event('displayShortcutsModal'));
     },
     help: 'Display this help',
     label: 'Shift + ?'
@@ -61,8 +49,7 @@ const keyBindings = {
   'esc': {
     fire: 'topo.clearState',
     callback: function() {
-      this._clearSettingsModal();
-      this._clearShortcutsModal();
+      document.dispatchEvent(new Event('hideModals'));
     },
     help: 'Cancel current action',
     label: 'Esc'
@@ -79,10 +66,9 @@ const keyBindings = {
 
 /**
   Activate the key listeners.
-  @param {Object} context The context to execute the hotkey callbacks under.
   @return {Object} A reference to deactivate the listeners.
 */
-const activate = context => {
+const activate = () => {
   const key_map = {
     '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
     enter: 13, esc: 27, backspace: 8,
@@ -128,7 +114,7 @@ const activate = context => {
     const trigger = symbolic.join('-');
     const spec = keyBindings[trigger];
     if (spec) {
-      if (spec.condition && !spec.condition.call(context)) {
+      if (spec.condition && !spec.condition()) {
         // Note that when a condition check fails,
         // the event still propagates.
         return;
@@ -144,7 +130,7 @@ const activate = context => {
         }
         if (spec.focus) { target.focus(); }
       }
-      if (spec.callback) { spec.callback.call(context, evt, target); }
+      if (spec.callback) { spec.callback(evt, target); }
       // HACK w/o context/view restriction but right direction
       if (spec.fire) {
         document.dispatchEvent(new Event(spec.fire));
@@ -162,7 +148,7 @@ const activate = context => {
 
 /**
   Deactivate the key listeners.
-  @param {Object} context The context to execute the hotkey callbacks under.
+  @param {Function} listener The listener function to unbind.
 */
 const deactivate = listener => {
   document.removeEventListener('keydown', listener);

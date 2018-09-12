@@ -33,7 +33,10 @@ module.exports = function(config) {
     ],
 
     // list of files to exclude
-    exclude: [],
+    exclude: [
+      'jujugui/static/gui/src/app/init/test-app.js',
+      'jujugui/static/gui/src/app/init/test-cookie-util.js'
+    ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor

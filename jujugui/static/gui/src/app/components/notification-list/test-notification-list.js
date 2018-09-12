@@ -8,23 +8,23 @@ const NotificationList = require('./notification-list');
 const NotificationListItem = require('./item/item');
 
 describe('NotificationList', function() {
-  let clock, notification;
+  let clock, notifications;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <NotificationList
-      notification={
-        options.notification === undefined ? notification : options.notification}
+      notifications={
+        options.notifications === undefined ? notifications : options.notifications}
       timeout={options.timeout} />
   );
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
-    notification = {
+    notifications = [{
       key: '12345',
       timestamp: '12345',
       message: 'notification message',
       level: 'info'
-    };
+    }];
   });
 
   afterEach(() => {
@@ -35,13 +35,13 @@ describe('NotificationList', function() {
     const wrapper = renderComponent();
     const items = [
       <NotificationListItem
-        key={notification.timestamp}
-        message={notification.message}
-        ref={'NotificationListItem' + notification.timestamp}
+        key={notifications[0].timestamp}
+        message={notifications[0].message}
+        ref={'NotificationListItem' + notifications[0].timestamp}
         removeNotification={wrapper.find('NotificationListItem').prop('removeNotification')}
         timeout={undefined}
-        timestamp={notification.timestamp}
-        type={notification.level} />];
+        timestamp={notifications[0].timestamp}
+        type={notifications[0].level} />];
     const expected = (
       <ul className="notification-list"
         onMouseOut={wrapper.prop('onMouseOut')}
@@ -53,14 +53,14 @@ describe('NotificationList', function() {
   });
 
   it('can render with no notifications', () => {
-    const wrapper = renderComponent({ notification: null });
+    const wrapper = renderComponent({ notifications: [] });
     assert.equal(wrapper.find('NotificationListItem').length, 0);
   });
 
   it('can render notifications after rendering none', () => {
-    const wrapper = renderComponent({ notification: null });
+    const wrapper = renderComponent({ notifications: [] });
     assert.equal(wrapper.find('NotificationListItem').length, 0);
-    wrapper.setProps({ notification });
+    wrapper.setProps({ notifications });
     wrapper.update();
     assert.equal(wrapper.find('NotificationListItem').length, 1);
   });
@@ -69,7 +69,7 @@ describe('NotificationList', function() {
     const timeout = 500;
     const wrapper = renderComponent({ timeout });
     const instance = wrapper.instance();
-    const key = 'NotificationListItem' + notification.timestamp;
+    const key = 'NotificationListItem' + notifications[0].timestamp;
     const refs = {};
     const hideStub = sinon.stub();
     refs[key] = { hide: hideStub };
@@ -80,11 +80,11 @@ describe('NotificationList', function() {
   });
 
   it('does not time out error messages', () => {
-    notification.level = 'error';
+    notifications[0].level = 'error';
     const timeout = 500;
     const wrapper = renderComponent({ timeout });
     const instance = wrapper.instance();
-    const key = 'NotificationListItem' + notification.timestamp;
+    const key = 'NotificationListItem' + notifications[0].timestamp;
     const refs = {};
     const hideStub = sinon.stub();
     refs[key] = { hide: hideStub };
@@ -108,5 +108,24 @@ describe('NotificationList', function() {
       'notification timeouts were not restarted');
     // Let everything clear out.
     clock.tick(timeout + 10);
+  });
+
+  it('does not reshow notifications', () => {
+    const wrapper = renderComponent();
+    let items = wrapper.find('NotificationListItem');
+    assert.equal(items.length, 1);
+    assert.equal(items.first().prop('timestamp'), '12345');
+    // Hide the notification.
+    items.first().props().removeNotification('12345');
+    notifications.push({
+      key: '222',
+      timestamp: '2468',
+      message: 'notification2 message',
+      level: 'error'
+    });
+    wrapper.setProps({ notifications });
+    items = wrapper.find('NotificationListItem');
+    assert.equal(items.length, 1);
+    assert.equal(items.first().prop('timestamp'), '2468');
   });
 });

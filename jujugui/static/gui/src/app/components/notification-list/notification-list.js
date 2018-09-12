@@ -10,12 +10,14 @@ class NotificationList extends React.Component {
   constructor(props) {
     super(props);
     const notifications = {};
-    const note = this.props.notification;
-    if (note) {
-      notifications[note.timestamp] = this._processNotification(note);
-    }
+    this.props.notifications.forEach(notification => {
+      if (notification) {
+        notifications[notification.timestamp] = this._processNotification(notification);
+      }
+    });
     this.timeouts = [];
     this.state = {
+      displayed: [],
       notifications: notifications
     };
   }
@@ -52,13 +54,14 @@ class NotificationList extends React.Component {
   componentWillReceiveProps(nextProps) {
     // This component will be re-rendered every time a notification is Added
     // so we only need to add the notification into state.
-    const notification = nextProps.notification;
-    if (!notification) {
-      return;
-    }
     const notifications = this.state.notifications;
-    notifications[notification.timestamp] =
-      this._processNotification(notification);
+    const displayed = this.state.displayed;
+    nextProps.notifications.forEach(notification => {
+      if (!displayed.includes(notification.timestamp.toString())) {
+        notifications[notification.timestamp] =
+          this._processNotification(notification);
+      }
+    });
     this.setState({notifications: notifications});
   }
 
@@ -96,7 +99,10 @@ class NotificationList extends React.Component {
   _removeNotification(timestamp) {
     const notifications = this.state.notifications;
     delete notifications[timestamp];
-    this.setState({notifications: notifications});
+    this.setState({
+      displayed: this.state.displayed.concat([timestamp]),
+      notifications: notifications
+    });
   }
 
   _clearTimeouts() {
@@ -128,10 +134,7 @@ class NotificationList extends React.Component {
 };
 
 NotificationList.propTypes = {
-  // This cannot be required because on initial render if you pass in
-  // undefined or null for a notification it throws an error
-  // https://github.com/facebook/react/issues/3163
-  notification: PropTypes.object,
+  notifications: PropTypes.array.isRequired,
   timeout: PropTypes.number
 };
 
