@@ -15,7 +15,7 @@ class InspectorChangeVersion extends React.Component {
     this.versionsXhr = null;
     this.state = {
       loading: false,
-      versionsList: null
+      versions: null
     };
   }
 
@@ -24,7 +24,9 @@ class InspectorChangeVersion extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this._getVersions(nextProps.charmId);
+    if (nextProps.charmId !== this.props.charmId) {
+      this._getVersions(nextProps.charmId);
+    }
   }
 
   componentWillUnmount() {
@@ -143,9 +145,27 @@ class InspectorChangeVersion extends React.Component {
         level: 'error'
       });
       console.error(message, error);
-      versions = null;
+      return;
+    }
+    this.setState({
+      loading: false,
+      versions
+    });
+  }
+
+  /**
+    Display the versions list or a spinner if it is loading.
+  */
+  _generateVersionsList() {
+    if (this.state.loading) {
+      return (
+        <div className="inspector-spinner">
+          <Spinner />
+        </div>
+      );
     }
     let components = [];
+    const { versions } = this.state;
     if (!versions || versions.length === 1) {
       components = (
         <li className="inspector-change-version__none">
@@ -171,29 +191,11 @@ class InspectorChangeVersion extends React.Component {
             url={versionURL} />);
       }, this);
     }
-    this.setState({loading: false});
-    this.setState({versionsList: components});
-  }
-
-  /**
-    Display the versions list or a spinner if it is loading.
-
-    @method _displayVersionsList
-  */
-  _displayVersionsList(loading, versionsList) {
-    if (loading) {
-      return(
-        <div className="inspector-spinner">
-          <Spinner />
-        </div>
-      );
-    } else {
-      return (
-        <ul className="inspector-change-version__versions">
-          {versionsList}
-        </ul>
-      );
-    }
+    return (
+      <ul className="inspector-change-version__versions">
+        {components}
+      </ul>
+    );
   }
 
   render() {
@@ -203,13 +205,13 @@ class InspectorChangeVersion extends React.Component {
         <div className="inspector-change-version__current">
           Current version:
           <div className="inspector-change-version__current-version"
-            onClick={this._viewCharmDetails.bind(this, url)} role="button"
+            onClick={this._viewCharmDetails.bind(this, url)}
+            role="button"
             tabIndex="0">
             {url.path()}
           </div>
         </div>
-        {this._displayVersionsList(this.state.loading,
-          this.state.versionsList)}
+        {this._generateVersionsList()}
       </div>
     );
   }

@@ -642,10 +642,14 @@ Browser: ${navigator.userAgent}`
   */
   _generatePostDeployment() {
     const state = this.props.appState.current;
+    const { postDeploymentPanel } = state;
+    if (!postDeploymentPanel) {
+      return null;
+    }
     let entityURLs = [];
-    if (typeof state.postDeploymentPanel === 'string') {
+    if (typeof postDeploymentPanel === 'string') {
       // A specific URL was provided so pass that through
-      entityURLs.push(state.postDeploymentPanel);
+      entityURLs.push(postDeploymentPanel);
     } else {
       entityURLs = entityURLs.concat(this.props.db.services.toArray().reduce(
         (accumulator, app) => {
