@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusTable renders 1`] = `
+<BasicTable
+  changeState={[Function]}
+  filterPredicate={[Function]}
+  generatePath={[Function]}
+  headerClasses={
+    Array [
+      "status-table__header",
+    ]
+  }
+  headerColumnClasses={
+    Array [
+      "status-table__header-column",
+    ]
+  }
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Application",
+      },
+    ]
+  }
+  rowClasses={
+    Array [
+      "status-table__row",
+    ]
+  }
+  rowColumnClasses={
+    Array [
+      "status-table__column",
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": "apache2",
+          },
+        ],
+        "key": "apache2",
+      },
+    ]
+  }
+  sort={[Function]}
+  tableClasses={
+    Array [
+      "status-table",
+    ]
+  }
+/>
+`;
