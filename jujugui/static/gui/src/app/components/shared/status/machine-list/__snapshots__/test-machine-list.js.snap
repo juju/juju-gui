@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusMachineList renders 1`] = `
+<StatusTable
+  changeState={[Function]}
+  generatePath={[Function]}
+  headers={
+    Array [
+      Object {
+        "columnSize": 1,
+        "content": "Machine",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "State",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "DNS",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Instance ID",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Series",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Message",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "classes": Array [
+          "status-table__row--pending",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 1,
+            "content": "1",
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="pending"
+            />,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "1.2.3.6",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "machine-1",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "zesty",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+        ],
+        "extraData": "pending",
+        "key": "m1",
+      },
+      Object {
+        "classes": Array [
+          "status-table__row--ok",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 1,
+            "content": "2",
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="started"
+            />,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "1.2.3.7",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "machine-2",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "trusty",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "yes, I am started",
+          },
+        ],
+        "extraData": "ok",
+        "key": "m2",
+      },
+      Object {
+        "classes": Array [
+          "",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 1,
+            "content": "3",
+          },
+          Object {
+            "columnSize": 2,
+            "content": null,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "trusty",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+        ],
+        "extraData": "ok",
+        "key": "new1",
+      },
+    ]
+  }
+/>
+`;

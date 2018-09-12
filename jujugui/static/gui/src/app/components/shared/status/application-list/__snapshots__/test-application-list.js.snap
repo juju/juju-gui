@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusApplicationList renders 1`] = `
+<StatusTable
+  changeState={[Function]}
+  generatePath={[Function]}
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Application",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Version",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Status",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Scale",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Charm",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Store",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Rev",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "classes": Array [
+          "status-table__row--ok",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": <span>
+              <img
+                className="status-view__icon"
+                src="django.svg"
+              />
+              django
+            </span>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "1.10",
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="active"
+            />,
+          },
+          Object {
+            "columnSize": 1,
+            "content": 0,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              u/who/django/xenial
+            </a>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "jujucharms",
+          },
+          Object {
+            "columnSize": 1,
+            "content": 42,
+          },
+        ],
+        "extraData": "ok",
+        "key": "django",
+      },
+    ]
+  }
+/>
+`;

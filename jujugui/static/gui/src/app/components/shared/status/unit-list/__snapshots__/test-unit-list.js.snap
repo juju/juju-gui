@@ -1,0 +1,209 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatusUnitList renders 1`] = `
+<StatusTable
+  changeState={[Function]}
+  generatePath={[Function]}
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Unit",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Workload",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Agent",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Machine",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Public address",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Ports",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Message",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "classes": Array [
+          "status-table__row--pending",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": <span>
+              <img
+                className="status-view__icon"
+                src={false}
+              />
+              django/0
+            </span>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="installing"
+            />,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="idle"
+            />,
+          },
+          Object {
+            "columnSize": 1,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              1
+            </a>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "1.2.3.4",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "80/tcp, 443/tcp",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "these are the voyages",
+          },
+        ],
+        "extraData": "pending",
+        "key": "django/id0",
+      },
+      Object {
+        "classes": Array [
+          "status-table__row--error",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": <span>
+              <img
+                className="status-view__icon"
+                src={false}
+              />
+              django/1
+            </span>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="error"
+            />,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="executing"
+            />,
+          },
+          Object {
+            "columnSize": 1,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              2
+            </a>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "1.2.3.5",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "80-88/udp",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "exterminate!",
+          },
+        ],
+        "extraData": "error",
+        "key": "django/id1",
+      },
+      Object {
+        "classes": Array [
+          "status-table__row--pending",
+        ],
+        "clickState": Object {
+          "app": "state",
+        },
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": <span>
+              <img
+                className="status-view__icon"
+                src={false}
+              />
+              django/42
+            </span>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="installing"
+            />,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <StatusLabel
+              status="idle"
+            />,
+          },
+          Object {
+            "columnSize": 1,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              2
+            </a>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "1.2.3.6",
+          },
+          Object {
+            "columnSize": 1,
+            "content": "",
+          },
+          Object {
+            "columnSize": 2,
+            "content": "",
+          },
+        ],
+        "extraData": "pending",
+        "key": "django/id42",
+      },
+    ]
+  }
+/>
+`;

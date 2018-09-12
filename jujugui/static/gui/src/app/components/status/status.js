@@ -4,28 +4,23 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const { urls } = require('jaaslib');
 
 const BasicTable = require('../basic-table/basic-table');
+const StatusApplicationList = require('../shared/status/application-list/application-list');
+const StatusMachineList = require('../shared/status/machine-list/machine-list');
+const StatusRemoteApplicationList = require(
+  '../shared/status/remote-application-list/remote-application-list');
+const StatusRelationList = require('../shared/status/relation-list/relation-list');
+const StatusUnitList = require('../shared/status/unit-list/unit-list');
 const Panel = require('../panel/panel');
+const utils = require('../shared/utils');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
   constructor(props) {
     super(props);
-    this.STATUS_ERROR = 'error';
-    this.STATUS_PENDING = 'pending';
-    this.STATUS_OK = 'ok';
-    this.STATUS_ORDER = [
-      this.STATUS_ERROR,
-      this.STATUS_PENDING,
-      this.STATUS_OK
-    ];
-    // This property is used to store the new highest status during a render or
-    // state change and the value is then stored in state in componentDidUpdate.
-    this.newHighest = null;
     this.state = {
-      highestStatus: this.STATUS_OK,
+      highestStatus: utils.STATUSES.OK,
       statusFilter: null
     };
   }
@@ -45,142 +40,40 @@ class Status extends React.Component {
   componentWillReceiveProps() {
     // Reset to the lowest status so that when the apps, units etc. are looped
     // through the highest status can be stored.
-    this.setState({highestStatus: this.STATUS_OK});
+    this.setState({highestStatus: utils.STATUSES.OK});
+  }
+
+  componentDidMount() {
+    this._setTrafficLight();
   }
 
   componentDidUpdate() {
     // Update the state with the new status now that all status changes/renders
     // are complete.
-    if (this.newHighest && (this.state.highestStatus !== this.newHighest)) {
-      this.setState({highestStatus: this.newHighest});
-      this.newHighest = null;
-    }
+    this._setTrafficLight();
   }
 
   /**
-    Set the highest status if the passed status is higher than the current.
-    @param status {String} A status.
+    Generate the current model status.
+    @returns {Object} The resulting element.
   */
-  _setHighestStatus(status) {
-    const normalised = this._normaliseStatus(status);
-    if (this.STATUS_ORDER.indexOf(normalised) <
-      this.STATUS_ORDER.indexOf(this.state.highestStatus)) {
-      // Store the new state instead of updating state directly as this change
-      // may have been triggered by a state update or render and you can't
-      // update state during a state update or render.
-      this.newHighest = normalised;
-    }
-  }
-
-  /**
-    Get the highest status from a list of statuses.
-    @param statuses {Ȧrray} A list of statuses.
-    @returns {String} The status.
-  */
-  _getHighestStatus(statuses) {
-    const normalised = statuses.map(status => this._normaliseStatus(status));
-    let status;
-    // Loop through the order of priority until there is a matching status.
-    this.STATUS_ORDER.some(val => {
-      if (normalised.indexOf(val) > -1) {
-        status = val;
-        return true;
-      }
+  _setTrafficLight() {
+    const db = this.props.db;
+    let statuses = [];
+    db.services.toArray().forEach(application => {
+      const app = application.getAttrs();
+      statuses.push(app.status.current);
     });
-    return status;
-  }
-
-  /**
-    Return an element class name suitable for the given value.
-    @param {String} prefix The class prefix.
-    @param {String} value The provided value.
-    @returns {String} The class name ('ok', 'error' or '').
-  */
-  _getStatusClass(prefix, value) {
-    if (!value) {
-      // If there is no value then ignore it. This might be the case when an
-      // entity's state property only has a value for pending/error states.
-      return '';
+    db.units.toArray().forEach(unit => {
+      statuses.push(utils.getHighestStatus([unit.agentStatus, unit.workloadStatus]));
+    });
+    db.machines.toArray().map(machine => {
+      statuses.push(machine.agent_state);
+    });
+    const highest = utils.getHighestStatus(statuses);
+    if (highest && (this.state.highestStatus !== highest)) {
+      this.setState({highestStatus: highest});
     }
-    if (!Array.isArray(value)) {
-      value = [value];
-    }
-    const normalised = value.map(val => this._normaliseStatus(val));
-    return prefix + this._getHighestStatus(normalised);
-  }
-
-  /**
-    Normalise the status value.
-    @param status {String} The raw value.
-    @returns {String} The normalised status ('ok', 'error' or 'pending').
-  */
-  _normaliseStatus(value) {
-    let status = this.STATUS_OK;
-    switch(value) {
-      case 'active':
-      case 'idle':
-      case 'started':
-      case 'waiting':
-        status = this.STATUS_OK;
-        break;
-      case 'blocked':
-      case 'down':
-      case 'error':
-        status = this.STATUS_ERROR;
-        break;
-      case 'pending':
-      case 'installing':
-      case 'executing':
-      case 'allocating':
-      case 'maintenance':
-        status = this.STATUS_PENDING;
-        break;
-    }
-    return status;
-  }
-
-  /**
-    Generate a status for display.
-    @param status {String} The status to display.
-    @returns {Object} The status markup.
-  */
-  _generateStatusDisplay(status) {
-    // If the status provided from a model property it might have no value.
-    if (!status) {
-      return null;
-    }
-    return (
-      <span className={this._getStatusClass('status-view__status--', status)}>
-        {status}
-      </span>);
-  }
-
-  /**
-    Sort by the key attribute.
-    @param {Object} a The first value.
-    @param {Object} b The second value.
-    @returns {Array} The sorted array.
-  */
-  _byKey(a, b) {
-    if (a.key < b.key) {
-      return -1;
-    }
-    if (a.key > b.key) {
-      return 1;
-    }
-    return 0;
-  }
-
-  /**
-    Filter a row by the status.
-    @param row {Object} The row values.
-    @returns {Boolean} Whether the row matches the status.
-  */
-  _filterByStatus(row) {
-    if (!this.state.statusFilter) {
-      return true;
-    }
-    return row.extraData === this.state.statusFilter;
   }
 
   /**
@@ -193,12 +86,14 @@ class Status extends React.Component {
     const applications = db.services.filter(app => !app.get('pending'));
     const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
     const relations = db.relations.filter(rel => !rel.get('pending'));
+    const units = utils.getRealUnits(db.units);
+    const remoteApplications = db.remoteServices.toArray();
     const counts = {
       applications: applications.length,
       machines: machines.length,
       relations: relations.length,
-      remoteApplications: db.remoteServices && db.remoteServices.size() || 0,
-      units: db.units && db.units.size() || 0
+      remoteApplications: remoteApplications.length,
+      units: units.length
     };
     // Model section.
     const model = this.props.model;
@@ -213,10 +108,10 @@ class Status extends React.Component {
     }
     // Applications and units sections.
     if (counts.applications) {
-      elements.push(
-        this._generateApplications(applications),
-        this._generateUnits(applications)
-      );
+      elements.push(this._generateApplications(applications));
+      if (counts.units) {
+        elements.push(this._generateUnits(units));
+      }
     }
     // Machines section.
     if (counts.machines) {
@@ -254,7 +149,7 @@ class Status extends React.Component {
     @returns {Object} The select box element to render.
   */
   _generateFilters() {
-    const options = ['none'].concat(this.STATUS_ORDER).map(status => {
+    const options = ['none'].concat(utils.STATUS_ORDER).map(status => {
       return (
         <option className="status-view__filter-option"
           key={status}
@@ -278,15 +173,15 @@ class Status extends React.Component {
   */
   _generateModel(model, counts) {
     const highestStatus = this.state.highestStatus;
-    let title = 'Everything is OK';
+    let title = `Everything is ${utils.STATUSES.OK}`;
     switch (highestStatus) {
-      case this.STATUS_OK:
-        title = 'Everything is OK';
+      case utils.STATUSES.OK:
+        title = `Everything is ${utils.STATUSES.OK}`;
         break;
-      case this.STATUS_PENDING:
+      case utils.STATUSES.PENDING:
         title = 'Items are pending';
         break;
-      case this.STATUS_ERROR:
+      case utils.STATUSES.ERROR:
         title = 'Items are in error';
         break;
     }
@@ -472,63 +367,43 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRemoteApplications(remoteApplications) {
-    const rows = remoteApplications.map(application => {
-      const app = application.getAttrs();
-      const urlParts = app.url.split(':');
-      return {
-        columns: [{
-          columnSize: 3,
-          content: app.service
-        }, {
-          columnSize: 3,
-          content: app.status.current
-        }, {
-          columnSize: 3,
-          content: urlParts[0]
-        }, {
-          columnSize: 3,
-          content: urlParts[1]
-        }],
-        extraData: this._normaliseStatus(app.status.current),
-        key: app.url
-      };
-    });
     return (
-      <BasicTable
-        filterPredicate={this._filterByStatus.bind(this)}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'SAAS',
-          columnSize: 3
-        }, {
-          content: 'Status',
-          columnSize: 3
-        }, {
-          content: 'Store',
-          columnSize: 3
-        }, {
-          content: 'URL',
-          columnSize: 3
-        }]}
+      <StatusRemoteApplicationList
+        changeState={this.props.changeState}
+        generatePath={this.props.generatePath}
         key="remote-applications"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+        remoteApplications={remoteApplications}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
-    A predicate function that can be used to filter units so that uncommitted
-    and unplaced units are excluded.
-    @param {Object} unit A unit as included in the database.
-    @returns {Boolean} Whether the unit is real or not.
+    Generate the URL for clicking on a charm.
+    @param charmId {String} A charm id.
+    @returns {String} The charm url.
   */
-  _realUnitsPredicate(unit) {
-    // Unplaced units have no machine defined. Subordinate units have an empty
-    // string machine.
-    return unit.machine !== undefined && unit.machine.indexOf('new') !== 0;
+  _generateCharmURL(charmId) {
+    return this.props.generatePath(
+      this._generateCharmClickState(charmId));
+  }
+
+  /**
+    Generate the URL for clicking on a machine.
+    @param machineId {String} A machine id.
+    @returns {String} The machine url.
+  */
+  _generateMachineURL(machineId) {
+    return this.props.generatePath(
+      this._generateMachineClickState(machineId));
+  }
+
+  /**
+    Generate the URL for clicking on an application.
+    @param applicationId {String} An application id.
+    @returns {String} The application url.
+  */
+  _generateApplicationURL(applicationName) {
+    return this.props.generatePath(
+      this._generateApplicationClickState(applicationName));
   }
 
   /**
@@ -537,214 +412,36 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateApplications(applications) {
-    const rows = applications.map(application => {
-      const app = application.getAttrs();
-      const charm = urls.URL.fromLegacyString(app.charm);
-      const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
-      const revision = charm.revision;
-      const charmId = charm.path();
-      const units = app.units.filter(this._realUnitsPredicate);
-      // Set the revision to null so that it's not included when calling
-      // charm.path() below.
-      charm.revision = null;
-      this._setHighestStatus(app.status.current);
-      return {
-        classes: [this._getStatusClass(
-          'status-view__table-row--', app.status.current)],
-        clickState: this._generateApplicationClickState(app.id),
-        columns: [{
-          columnSize: 2,
-          content: (
-            <span>
-              <img className="status-view__icon"
-                src={app.icon} />
-              {app.name}
-            </span>)
-        }, {
-          columnSize: 2,
-          content: app.workloadVersion
-        }, {
-          columnSize: 2,
-          content: this._generateStatusDisplay(app.status.current)
-        }, {
-          columnSize: 1,
-          content: units.length
-        }, {
-          columnSize: 2,
-          content: (
-            <a className="status-view__link"
-              href={this.props.generatePath(
-                this._generateCharmClickState(charmId))}
-              onClick={this._navigateToCharm.bind(this, charmId)}>
-              {charm.path()}
-            </a>)
-        }, {
-          columnSize: 2,
-          content: store
-        }, {
-          columnSize: 1,
-          content: revision
-        }],
-        extraData: this._normaliseStatus(app.status.current),
-        key: app.name
-      };
-    });
     return (
-      <BasicTable
+      <StatusApplicationList
+        applications={applications}
         changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
+        generateApplicationClickState={this._generateApplicationClickState.bind(this)}
+        generateCharmURL={this._generateCharmURL.bind(this)}
         generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Application',
-          columnSize: 2
-        }, {
-          content: 'Version',
-          columnSize: 2
-        }, {
-          content: 'Status',
-          columnSize: 2
-        }, {
-          content: 'Scale',
-          columnSize: 1
-        }, {
-          content: 'Charm',
-          columnSize: 2
-        }, {
-          content: 'Store',
-          columnSize: 2
-        }, {
-          content: 'Rev',
-          columnSize: 1
-        }]}
         key="applications"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+        onCharmClick={this._navigateToCharm.bind(this)}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
     Generate the units fragment of the status.
+    @param {Array} units The units as included in the GUI db.
     @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
   */
-  _generateUnits(applications) {
-    const formatPorts = ranges => {
-      if (!ranges) {
-        return '';
-      }
-      return ranges.map(range => {
-        if (range.from === range.to) {
-          return `${range.from}/${range.protocol}`;
-        }
-        return `${range.from}-${range.to}/${range.protocol}`;
-      }).join(', ');
-    };
-    const rows = [];
-    applications.forEach(application => {
-      const appExposed = application.get('exposed');
-      const units = application.get('units').filter(this._realUnitsPredicate);
-      units.forEach(unit => {
-        this._setHighestStatus(this._getHighestStatus(
-          [unit.agentStatus, unit.workloadStatus]));
-        let publicAddress = unit.public_address;
-        if (appExposed && unit.portRanges.length) {
-          const port = unit.portRanges[0].from;
-          const label = `${unit.public_address}:${port}`;
-          const protocol = port === 443 ? 'https' : 'http';
-          const href = `${protocol}://${label}`;
-          publicAddress = (
-            <a className="status-view__link"
-              href={href}
-              target="_blank">
-              {unit.public_address}
-            </a>);
-        }
-        rows.push({
-          classes: [this._getStatusClass(
-            'status-view__table-row--',
-            [unit.agentStatus, unit.workloadStatus])],
-          clickState: this._generateUnitClickState(unit.id),
-          columns: [{
-            columnSize: 2,
-            content: (
-              <span>
-                <img className="status-view__icon"
-                  src={application.get('icon')} />
-                {unit.displayName}
-              </span>)
-          }, {
-            columnSize: 2,
-            content: this._generateStatusDisplay(unit.workloadStatus)
-          }, {
-            columnSize: 2,
-            content: this._generateStatusDisplay(unit.agentStatus)
-          }, {
-            columnSize: 1,
-            content: (
-              <a className="status-view__link"
-                href={this.props.generatePath(
-                  this._generateMachineClickState(unit.machine))}
-                onClick={this._navigateToMachine.bind(this, unit.machine)}>
-                {unit.machine}
-              </a>)
-          }, {
-            columnSize: 2,
-            content: publicAddress
-          }, {
-            columnSize: 1,
-            content: formatPorts(unit.portRanges)
-          }, {
-            columnSize: 2,
-            content: unit.workloadStatusMessage
-          }],
-          extraData: this._getHighestStatus(
-            [unit.agentStatus, unit.workloadStatus]),
-          key: unit.id
-        });
-      });
-    });
-    if (!rows.length) {
-      return null;
-    }
+  _generateUnits(units) {
     return (
-      <BasicTable
+      <StatusUnitList
+        applications={this.props.db.services}
         changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
+        generateMachineURL={this._generateMachineURL.bind(this)}
         generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Unit',
-          columnSize: 2
-        }, {
-          content: 'Workload',
-          columnSize: 2
-        }, {
-          content: 'Agent',
-          columnSize: 2
-        }, {
-          content: 'Machine',
-          columnSize: 1
-        }, {
-          content: 'Public address',
-          columnSize: 2
-        }, {
-          content: 'Ports',
-          columnSize: 1
-        }, {
-          content: 'Message',
-          columnSize: 2
-        }]}
+        generateUnitClickState={this._generateUnitClickState.bind(this)}
         key="units"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+        onMachineClick={this._navigateToMachine.bind(this)}
+        statusFilter={this.state.statusFilter}
+        units={units} />);
   }
 
   /**
@@ -753,90 +450,14 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateMachines(machines) {
-    const rows = machines.map(machine => {
-      this._setHighestStatus(machine.agent_state);
-      return {
-        classes: [this._getStatusClass(
-          'status-view__table-row--', machine.agent_state)],
-        clickState: this._generateMachineClickState(machine.id),
-        columns: [{
-          columnSize: 1,
-          content: machine.displayName
-        }, {
-          columnSize: 2,
-          content: this._generateStatusDisplay(machine.agent_state)
-        }, {
-          columnSize: 2,
-          content: machine.public_address
-        }, {
-          columnSize: 3,
-          content: machine.instance_id
-        }, {
-          columnSize: 1,
-          content: machine.series
-        }, {
-          columnSize: 3,
-          content: machine.agent_state_info
-        }],
-        extraData: this._normaliseStatus(machine.agent_state),
-        key: machine.id
-      };
-    });
     return (
-      <BasicTable
+      <StatusMachineList
         changeState={this.props.changeState}
-        filterPredicate={this._filterByStatus.bind(this)}
+        generateMachineClickState={this._generateMachineClickState.bind(this)}
         generatePath={this.props.generatePath}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Machine',
-          columnSize: 1
-        }, {
-          content: 'State',
-          columnSize: 2
-        }, {
-          content: 'DNS',
-          columnSize: 2
-        }, {
-          content: 'Instance ID',
-          columnSize: 3
-        }, {
-          content: 'Series',
-          columnSize: 1
-        }, {
-          content: 'Message',
-          columnSize: 3
-        }]}
         key="machines"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
-  }
-
-  /**
-    Generate a link to an application from a relation.
-    @param name {String} An app name.
-    @returns {Object} The link element.
-  */
-  _generateRelationAppLink(name) {
-    const app = this.props.db.services.getById(name);
-    if (!app) {
-      // If the application is not in the DB it must be remote app so don't
-      // link to it.
-      return (<span>{name}</span>);
-    }
-    return (
-      <a className="status-view__link"
-        href={this.props.generatePath(
-          this._generateApplicationClickState(name))}
-        onClick={this._navigateToApplication.bind(this, name)}>
-        <img className="status-view__icon"
-          src={app.get('icon')} />
-        {name}
-      </a>);
+        machines={machines}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**
@@ -845,73 +466,16 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRelations(relations) {
-    const rows = relations.map(relation => {
-      const rel = relation.getAttrs();
-      let name = '';
-      let provides = '';
-      let consumes = '';
-      let scope = '';
-      rel.endpoints.forEach(endpoint => {
-        const application = endpoint[0];
-        const ep = endpoint[1];
-        switch (ep.role) {
-          case 'peer':
-            name = ep.name;
-            provides = application;
-            consumes = application;
-            scope = 'peer';
-            return;
-          case 'provider':
-            name = ep.name;
-            consumes = application;
-            scope = 'regular';
-            break;
-          case 'requirer':
-            provides = application;
-            break;
-        }
-      });
-      return {
-        columns: [{
-          columnSize: 3,
-          content: name
-        }, {
-          columnSize: 3,
-          content: this._generateRelationAppLink(provides)
-        }, {
-          columnSize: 3,
-          content: this._generateRelationAppLink(consumes)
-        }, {
-          columnSize: 3,
-          content: scope
-        }],
-        key: rel.id
-      };
-    });
     return (
-      <BasicTable
-        filterPredicate={this._filterByStatus.bind(this)}
-        headerClasses={['status-view__table-header']}
-        headerColumnClasses={['status-view__table-header-column']}
-        headers={[{
-          content: 'Relation',
-          columnSize: 3
-        }, {
-          content: 'Provides',
-          columnSize: 3
-        }, {
-          content: 'Consumes',
-          columnSize: 3
-        }, {
-          content: 'Type',
-          columnSize: 3
-        }]}
+      <StatusRelationList
+        applications={this.props.db.services}
+        changeState={this.props.changeState}
+        generateApplicationURL={this._generateApplicationURL.bind(this)}
+        generatePath={this.props.generatePath}
         key="relations"
-        rowClasses={['status-view__table-row']}
-        rowColumnClasses={['status-view__table-column']}
-        rows={rows.sort(this._byKey.bind(this, 0))}
-        sort={this._byKey}
-        tableClasses={['status-view__table']} />);
+        onApplicationClick={this._navigateToApplication.bind(this)}
+        relations={relations}
+        statusFilter={this.state.statusFilter} />);
   }
 
   render() {
@@ -931,18 +495,24 @@ Status.propTypes = {
   changeState: PropTypes.func.isRequired,
   db: shapeup.shape({
     machines: shapeup.shape({
-      filter: PropTypes.func.isRequired
+      filter: PropTypes.func.isRequired,
+      toArray: PropTypes.func.isRequired
     }).isRequired,
     relations: shapeup.shape({
       filter: PropTypes.func.isRequired
     }).isRequired,
     remoteServices: shapeup.shape({
       map: PropTypes.func.isRequired,
-      size: PropTypes.func.isRequired
+      toArray: PropTypes.func.isRequired
     }).isRequired,
     services: shapeup.shape({
       filter: PropTypes.func.isRequired,
-      getById: PropTypes.func.isRequired
+      getById: PropTypes.func.isRequired,
+      toArray: PropTypes.func.isRequired
+    }).isRequired,
+    units: shapeup.shape({
+      filter: PropTypes.func.isRequired,
+      toArray: PropTypes.func.isRequired
     }).isRequired
   }).frozen.isRequired,
   generatePath: PropTypes.func.isRequired,
