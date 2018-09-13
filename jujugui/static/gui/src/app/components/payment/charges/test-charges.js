@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 
 const PaymentCharges = require('./charges');
 const DateDisplay = require('../../date-display/date-display');
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 
 describe('PaymentCharges', function() {

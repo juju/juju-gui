@@ -2,8 +2,6 @@
 
 exports[`StatusMachineList renders 1`] = `
 <StatusTable
-  changeState={[Function]}
-  generatePath={[Function]}
   headers={
     Array [
       Object {
@@ -38,9 +36,7 @@ exports[`StatusMachineList renders 1`] = `
         "classes": Array [
           "status-table__row--pending",
         ],
-        "clickState": Object {
-          "app": "state",
-        },
+        "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 1,
@@ -71,14 +67,13 @@ exports[`StatusMachineList renders 1`] = `
         ],
         "extraData": "pending",
         "key": "m1",
+        "onClick": [Function],
       },
       Object {
         "classes": Array [
           "status-table__row--ok",
         ],
-        "clickState": Object {
-          "app": "state",
-        },
+        "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 1,
@@ -109,14 +104,13 @@ exports[`StatusMachineList renders 1`] = `
         ],
         "extraData": "ok",
         "key": "m2",
+        "onClick": [Function],
       },
       Object {
         "classes": Array [
           "",
         ],
-        "clickState": Object {
-          "app": "state",
-        },
+        "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 1,
@@ -145,6 +139,7 @@ exports[`StatusMachineList renders 1`] = `
         ],
         "extraData": "ok",
         "key": "new1",
+        "onClick": [Function],
       },
     ]
   }

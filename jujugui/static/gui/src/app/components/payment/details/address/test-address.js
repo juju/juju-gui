@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const PaymentDetailsAddress = require('./address');
 const AddressForm = require('../../../address-form/address-form');
-const ExpandingRow = require('../../../expanding-row/expanding-row');
+const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
 const GenericButton = require('../../../generic-button/generic-button');
 
 describe('PaymentDetailsAddress', () => {

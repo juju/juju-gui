@@ -35,7 +35,8 @@ class StatusApplicationList extends React.Component {
       return {
         classes: [getStatusClass(
           'status-table__row--', app.status.current)],
-        clickState: this.props.generateApplicationClickState(app.id),
+        onClick: this.props.generateApplicationOnClick(app.id),
+        clickURL: this.props.generateApplicationURL(app.id),
         columns: [{
           columnSize: 2,
           content: (
@@ -100,8 +101,6 @@ class StatusApplicationList extends React.Component {
     }];
     return (
       <StatusTable
-        changeState={this.props.changeState}
-        generatePath={this.props.generatePath}
         headers={headers}
         rows={this._generateRows()}
         statusFilter={this.props.statusFilter} />
@@ -111,10 +110,9 @@ class StatusApplicationList extends React.Component {
 
 StatusApplicationList.propTypes = {
   applications: PropTypes.array.isRequired,
-  changeState: PropTypes.func.isRequired,
-  generateApplicationClickState: PropTypes.func.isRequired,
+  generateApplicationOnClick: PropTypes.func.isRequired,
+  generateApplicationURL: PropTypes.func.isRequired,
   generateCharmURL: PropTypes.func.isRequired,
-  generatePath: PropTypes.func.isRequired,
   onCharmClick: PropTypes.func.isRequired,
   statusFilter: PropTypes.string
 };

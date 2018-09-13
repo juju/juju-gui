@@ -159,10 +159,9 @@ exports[`Status renders with entities 1`] = `
           Object {},
         ]
       }
-      changeState={[Function]}
-      generateApplicationClickState={[Function]}
+      generateApplicationOnClick={[Function]}
+      generateApplicationURL={[Function]}
       generateCharmURL={[Function]}
-      generatePath={[Function]}
       key="applications"
       onCharmClick={[Function]}
       statusFilter={null}
@@ -175,10 +174,9 @@ exports[`Status renders with entities 1`] = `
           "toArray": [Function],
         }
       }
-      changeState={[Function]}
       generateMachineURL={[Function]}
-      generatePath={[Function]}
-      generateUnitClickState={[Function]}
+      generateUnitOnClick={[Function]}
+      generateUnitURL={[Function]}
       key="units"
       onMachineClick={[Function]}
       statusFilter={null}
@@ -189,9 +187,8 @@ exports[`Status renders with entities 1`] = `
       }
     />
     <StatusMachineList
-      changeState={[Function]}
-      generateMachineClickState={[Function]}
-      generatePath={[Function]}
+      generateMachineOnClick={[Function]}
+      generateMachineURL={[Function]}
       key="machines"
       machines={
         Array [
@@ -208,9 +205,7 @@ exports[`Status renders with entities 1`] = `
           "toArray": [Function],
         }
       }
-      changeState={[Function]}
       generateApplicationURL={[Function]}
-      generatePath={[Function]}
       key="relations"
       onApplicationClick={[Function]}
       relations={

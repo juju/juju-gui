@@ -55,8 +55,6 @@ class StatusRemoteApplicationList extends React.Component {
     }];
     return (
       <StatusTable
-        changeState={this.props.changeState}
-        generatePath={this.props.generatePath}
         headers={headers}
         rows={this._generateRows()}
         statusFilter={this.props.statusFilter} />
@@ -65,8 +63,6 @@ class StatusRemoteApplicationList extends React.Component {
 };
 
 StatusRemoteApplicationList.propTypes = {
-  changeState: PropTypes.func.isRequired,
-  generatePath: PropTypes.func.isRequired,
   remoteApplications: PropTypes.array.isRequired,
   statusFilter: PropTypes.string
 };

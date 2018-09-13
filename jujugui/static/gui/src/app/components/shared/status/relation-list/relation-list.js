@@ -96,8 +96,6 @@ class StatusRelationList extends React.Component {
     }];
     return (
       <StatusTable
-        changeState={this.props.changeState}
-        generatePath={this.props.generatePath}
         headers={headers}
         rows={this._generateRows()}
         statusFilter={this.props.statusFilter} />
@@ -107,9 +105,7 @@ class StatusRelationList extends React.Component {
 
 StatusRelationList.propTypes = {
   applications: PropTypes.object.isRequired,
-  changeState: PropTypes.func.isRequired,
   generateApplicationURL: PropTypes.func.isRequired,
-  generatePath: PropTypes.func.isRequired,
   onApplicationClick: PropTypes.func.isRequired,
   relations: PropTypes.array.isRequired,
   statusFilter: PropTypes.string

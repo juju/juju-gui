@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../basic-table/basic-table');
+const BasicTable = require('../shared/basic-table/basic-table');
 const StatusApplicationList = require('../shared/status/application-list/application-list');
 const StatusMachineList = require('../shared/status/machine-list/machine-list');
 const StatusRemoteApplicationList = require(
@@ -369,8 +369,6 @@ class Status extends React.Component {
   _generateRemoteApplications(remoteApplications) {
     return (
       <StatusRemoteApplicationList
-        changeState={this.props.changeState}
-        generatePath={this.props.generatePath}
         key="remote-applications"
         remoteApplications={remoteApplications}
         statusFilter={this.state.statusFilter} />);
@@ -407,6 +405,46 @@ class Status extends React.Component {
   }
 
   /**
+    Generate the URL for clicking on a unit.
+    @param unitId {String} A unit id.
+    @returns {String} The unit url.
+  */
+  _generateUnitURL(unitId) {
+    return this.props.generatePath(
+      this._generateUnitClickState(unitId));
+  }
+
+  /**
+    Generate a function to be called when clicking on an application.
+    @param applicationName {String} An application id.
+    @returns {Function} A function to call on click.
+  */
+  _generateApplicationOnClick(applicationName) {
+    return this.props.changeState.bind(
+      this, this._generateApplicationClickState(applicationName));
+  }
+
+  /**
+    Generate a function to be called when clicking on a unit.
+    @param unitId {String} A unit id.
+    @returns {Function} A function to call on click.
+  */
+  _generateUnitOnClick(unitId) {
+    return this.props.changeState.bind(
+      this, this._generateUnitClickState(unitId));
+  }
+
+  /**
+    Generate a function to be called when clicking on a machine.
+    @param machineId {String} A machine id.
+    @returns {Function} A function to call on click.
+  */
+  _generateMachineOnClick(machineId) {
+    return this.props.changeState.bind(
+      this, this._generateMachineClickState(machineId));
+  }
+
+  /**
     Generate the applications fragment of the status.
     @param {Array} applications The applications as included in the GUI db.
     @returns {Object} The resulting element.
@@ -415,10 +453,9 @@ class Status extends React.Component {
     return (
       <StatusApplicationList
         applications={applications}
-        changeState={this.props.changeState}
-        generateApplicationClickState={this._generateApplicationClickState.bind(this)}
+        generateApplicationOnClick={this._generateApplicationOnClick.bind(this)}
+        generateApplicationURL={this._generateApplicationURL.bind(this)}
         generateCharmURL={this._generateCharmURL.bind(this)}
-        generatePath={this.props.generatePath}
         key="applications"
         onCharmClick={this._navigateToCharm.bind(this)}
         statusFilter={this.state.statusFilter} />);
@@ -434,10 +471,9 @@ class Status extends React.Component {
     return (
       <StatusUnitList
         applications={this.props.db.services}
-        changeState={this.props.changeState}
         generateMachineURL={this._generateMachineURL.bind(this)}
-        generatePath={this.props.generatePath}
-        generateUnitClickState={this._generateUnitClickState.bind(this)}
+        generateUnitOnClick={this._generateUnitOnClick.bind(this)}
+        generateUnitURL={this._generateUnitURL.bind(this)}
         key="units"
         onMachineClick={this._navigateToMachine.bind(this)}
         statusFilter={this.state.statusFilter}
@@ -452,9 +488,8 @@ class Status extends React.Component {
   _generateMachines(machines) {
     return (
       <StatusMachineList
-        changeState={this.props.changeState}
-        generateMachineClickState={this._generateMachineClickState.bind(this)}
-        generatePath={this.props.generatePath}
+        generateMachineOnClick={this._generateMachineOnClick.bind(this)}
+        generateMachineURL={this._generateMachineURL.bind(this)}
         key="machines"
         machines={machines}
         statusFilter={this.state.statusFilter} />);
@@ -469,9 +504,7 @@ class Status extends React.Component {
     return (
       <StatusRelationList
         applications={this.props.db.services}
-        changeState={this.props.changeState}
         generateApplicationURL={this._generateApplicationURL.bind(this)}
-        generatePath={this.props.generatePath}
         key="relations"
         onApplicationClick={this._navigateToApplication.bind(this)}
         relations={relations}
