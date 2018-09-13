@@ -483,7 +483,7 @@ class EnvironmentChangeSet {
     this.currentIndex += 1;
     this.currentCommit = [];
     this.committing = false;
-    // document.dispatchEvent(new Event('ecs.changeSetModified'));
+    document.dispatchEvent(new Event('ecs.changeSetModified'));
     this.db.fireEvent('update');
   }
 
