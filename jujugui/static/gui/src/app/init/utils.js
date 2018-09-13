@@ -379,7 +379,11 @@ utils.switchModel = function(
     });
     return;
   }
-  const switchModel = utils._switchModel.bind(this, modelAPI, model, clearProfileState);
+  const updateModelUUID = uuid => {
+    this.modelUUID = uuid;
+  };
+  const switchModel = utils._switchModel.bind(
+    null, this.state, modelAPI, model, clearProfileState, updateModelUUID);
   const currentChangeSet = modelAPI.get('ecs').getCurrentChangeSet();
   // If there are uncommitted changes then show a confirmation popup.
   if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -419,11 +423,12 @@ utils._hidePopup = () => {
     - owner: the user owning the model, like "admin" or "who@external".
   @param {Boolean} clearProfileState Whether to close the profile.
 */
-utils._switchModel = function(modelAPI, model, clearProfileState=true) {
+utils._switchModel = function(
+  state, modelAPI, model, clearProfileState=true, updateModelUUID=null) {
   // Remove the switch model confirmation popup if it has been displayed to
   // the user.
   utils._hidePopup();
-  const current = this.state.current;
+  const current = state.current;
   const newState = {
     gui: {
       status: null,
@@ -455,10 +460,13 @@ utils._switchModel = function(modelAPI, model, clearProfileState=true) {
       modelAPI.get('ecs').clear();
     }
   }
-  this.state.changeState(newState);
+  state.changeState(newState);
   modelAPI.set('environmentName', name);
   // It is the new init.
-  this.modelUUID = uuid;
+  if (updateModelUUID) {
+    updateModelUUID(uuid);
+  }
+  // this.modelUUID = uuid;
 };
 
 /**
@@ -531,7 +539,7 @@ utils.deploy = function(
       // after committing because changing state will change models and we
       // won't have visibility on when we're connected again and can
       // commit the changes.
-      utils._switchModel.call(app, modelAPI, {
+      utils._switchModel(appProps.appState, modelAPI, {
         id: model.uuid,
         name: model.name,
         owner: model.owner
