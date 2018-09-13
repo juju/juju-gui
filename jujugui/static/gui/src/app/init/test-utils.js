@@ -364,9 +364,10 @@ describe('init utils', () => {
 
     it('can switch directly if there are no uncommitted changes', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid'),
+        state: {current: '42'}
       };
-      const env = {
+      const modelAPI = {
         get: sinon.stub().returns({
           isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({})
@@ -374,10 +375,14 @@ describe('init utils', () => {
       };
       const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, sinon.stub(), model);
+      utils.switchModel.call(app, modelAPI, sinon.stub(), model);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
-      assert.deepEqual(switchArgs, [env, model, true]);
+      assert.equal(switchArgs.length, 5);
+      assert.deepEqual(switchArgs[0], app.state, 'state');
+      assert.deepEqual(switchArgs[1], modelAPI, 'modelAPI');
+      assert.deepEqual(switchArgs[2], model, 'model');
+      assert.deepEqual(switchArgs[3], true, 'clearProfileState');
     });
 
     it('does not switch to the current model', () => {
@@ -434,55 +439,60 @@ describe('init utils', () => {
 
     it('allows switching to disconnected state', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+        get: sinon.stub().withArgs('modelUUID').returns('model-uuid'),
+        state: {current: '42'}
       };
-      const env = {
+      const modelAPI = {
         get: sinon.stub().returns({
           isCommitting: sinon.stub().returns(false),
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
+      const model = null;
       utils._switchModel = sinon.stub();
-      utils.switchModel.call(app, env, sinon.stub(), null);
+      utils.switchModel.call(app, modelAPI, sinon.stub(), model);
       assert.deepEqual(utils._switchModel.callCount, 1);
       const switchArgs = utils._switchModel.lastCall.args;
-      assert.deepEqual(switchArgs, [env, null, true]);
+      assert.equal(switchArgs.length, 5);
+      assert.deepEqual(switchArgs[0], app.state, 'state');
+      assert.deepEqual(switchArgs[1], modelAPI, 'modelAPI');
+      assert.deepEqual(switchArgs[2], model, 'model');
+      assert.deepEqual(switchArgs[3], true, 'clearProfileState');
+      switchArgs[4]('my-uuid');
+      assert.equal(app.modelUUID, 'my-uuid');
     });
 
     it('can switch models', () => {
-      const app = {
-        modelUUID: 'uu-id',
-        state: {changeState: sinon.stub(), current: {}}
-      };
-      const env = {set: sinon.stub()};
+      const state = {changeState: sinon.stub(), current: {}};
+      const modelAPI = {set: sinon.stub()};
       const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
-      utils._switchModel.call(app, env, model);
+      const clearProfileState = true;
+      const updateModelUUID = sinon.stub();
+      utils._switchModel(
+        state, modelAPI, model, clearProfileState, updateModelUUID);
       assert.equal(utils._hidePopup.callCount, 1, '_hidePopup');
-      assert.equal(app.state.changeState.callCount, 1, 'changeState');
-      assert.deepEqual(app.state.changeState.args[0], [{
+      assert.equal(state.changeState.callCount, 1, 'changeState');
+      assert.deepEqual(state.changeState.args[0], [{
         profile: null,
         gui: {status: null, inspector: null},
         root: null,
         hash: null,
         model: {path: 'who/mymodel', uuid: 'my-uuid'}
       }]);
-      assert.equal(env.set.callCount, 1, 'env.set');
-      assert.deepEqual(env.set.args[0], ['environmentName', 'mymodel']);
-      assert.equal(app.modelUUID, 'my-uuid');
+      assert.equal(modelAPI.set.callCount, 1, 'env.set');
+      assert.deepEqual(modelAPI.set.args[0], ['environmentName', 'mymodel']);
+      assert.equal(updateModelUUID.args[0], 'my-uuid');
     });
 
     it('changes to disconnected mode if model is missing', () => {
-      const app = {
-        set: sinon.stub().withArgs('modelUUID'),
-        state: {changeState: sinon.stub(), current: {}}
-      };
+      const state = {changeState: sinon.stub(), current: {}};
       const clear = sinon.stub().withArgs();
       const modelAPI = {
         get: sinon.stub().withArgs('ecs').returns({clear: clear}),
         set: sinon.stub()
       };
-      utils._switchModel.call(app, modelAPI, null);
-      assert.deepEqual(app.state.changeState.args[0], [{
+      utils._switchModel(state, modelAPI, null);
+      assert.deepEqual(state.changeState.args[0], [{
         profile: null,
         gui: {status: null, inspector: null},
         root: 'new',
@@ -493,13 +503,10 @@ describe('init utils', () => {
     });
 
     it('does not set root state to new if profile state exists', () => {
-      const app = {
-        set: sinon.stub().withArgs('modelUUID'),
-        state: {current: {profile: 'animal'}, changeState: sinon.stub()}
-      };
-      const env = {set: sinon.stub()};
-      utils._switchModel.call(app, env, null);
-      assert.deepEqual(app.state.changeState.args[0], [{
+      const state = {current: {profile: 'animal'}, changeState: sinon.stub()};
+      const modelAPI = {set: sinon.stub()};
+      utils._switchModel(state, modelAPI, null);
+      assert.deepEqual(state.changeState.args[0], [{
         profile: null,
         gui: {status: null, inspector: null},
         hash: null,
@@ -509,14 +516,11 @@ describe('init utils', () => {
     });
 
     it('does not close the status pane when switching to a model', () => {
-      const app = {
-        set: sinon.stub().withArgs('modelUUID'),
-        state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
-      };
+      const state = {current: {gui: {status: ''}}, changeState: sinon.stub()};
       const env = {set: sinon.stub()};
       const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
-      utils._switchModel.call(app, env, model);
-      assert.deepEqual(app.state.changeState.args[0], [{
+      utils._switchModel(state, env, model);
+      assert.deepEqual(state.changeState.args[0], [{
         profile: null,
         gui: {status: '', inspector: null},
         hash: null,
@@ -526,17 +530,14 @@ describe('init utils', () => {
     });
 
     it('closes the status pane when switching to a new model', () => {
-      const app = {
-        set: sinon.stub().withArgs('modelUUID'),
-        state: {current: {gui: {status: ''}}, changeState: sinon.stub()}
-      };
+      const state = {current: {gui: {status: ''}}, changeState: sinon.stub()};
       const clear = sinon.stub().withArgs();
       const modelAPI = {
         get: sinon.stub().withArgs('ecs').returns({clear: clear}),
         set: sinon.stub()
       };
-      utils._switchModel.call(app, modelAPI, null);
-      assert.deepEqual(app.state.changeState.args[0], [{
+      utils._switchModel(state, modelAPI, null);
+      assert.deepEqual(state.changeState.args[0], [{
         profile: null,
         gui: {status: null, inspector: null},
         hash: null,
@@ -563,7 +564,7 @@ describe('init utils', () => {
   });
 
   describe('deploy util', () => {
-    let app, callback, commit, envGet, container;
+    let appProps, callback, commit, container, envGet;
 
     beforeEach(() => {
       container = testUtils.makeAppContainer();
@@ -583,7 +584,7 @@ describe('init utils', () => {
       envGet = sinon.stub();
       envGet.withArgs('ecs').returns({commit: commit});
       envGet.withArgs('connected').returns(true);
-      app = {
+      appProps = {
         applicationConfig: {
           apiAddress: 'apiAddress',
           socketTemplate: 'wss://$server/$uuid',
@@ -609,7 +610,7 @@ describe('init utils', () => {
         createSocketURL: sinon.stub().returns('wss://socket-url'),
         get: sinon.stub().returns('wss://socket-url'),
         switchEnv: sinon.stub(),
-        state: {
+        appState: {
           current: {},
           changeState: sinon.stub()
         },
@@ -623,24 +624,24 @@ describe('init utils', () => {
 
     it('can auto place when requested', () => {
       const autoPlaceUnits = sinon.stub();
-      utils.deploy(app, autoPlaceUnits, callback, true);
+      utils.deploy(appProps, autoPlaceUnits, callback, true);
       assert.equal(autoPlaceUnits.callCount, 1);
     });
 
     it('does not auto place when requested', () => {
       const autoPlaceUnits = sinon.stub();
-      utils.deploy(app, autoPlaceUnits, callback, false);
-      assert.equal(app._autoPlaceUnits.callCount, 0);
+      utils.deploy(appProps, autoPlaceUnits, callback, false);
+      assert.equal(appProps._autoPlaceUnits.callCount, 0);
     });
 
     it('can commit to an existing model', () => {
-      utils.deploy(app, sinon.stub(), callback);
+      utils.deploy(appProps, sinon.stub(), callback);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
-      assert.equal(app.controllerAPI.createModel.callCount, 0);
+      assert.equal(appProps.controllerAPI.createModel.callCount, 0);
       // Sets the post deployment panel state to show.
-      assert.equal(app.state.changeState.callCount, 1);
-      assert.deepEqual(app.state.changeState.args[0], [{
+      assert.equal(appProps.appState.changeState.callCount, 1);
+      assert.deepEqual(appProps.appState.changeState.args[0], [{
         postDeploymentPanel: true
       }]);
     });
@@ -648,15 +649,15 @@ describe('init utils', () => {
     it('can create a new model', () => {
       envGet.withArgs('connected').returns(false);
       utils.deploy(
-        app, sinon.stub(), callback, true, 'new-model', {
+        appProps, sinon.stub(), callback, true, 'new-model', {
           credential: 'the-credential',
           cloud: 'azure',
           region: 'north'
         });
       assert.equal(commit.callCount, 0);
       assert.equal(callback.callCount, 0);
-      assert.equal(app.controllerAPI.createModel.callCount, 1);
-      const args = app.controllerAPI.createModel.args[0];
+      assert.equal(appProps.controllerAPI.createModel.callCount, 1);
+      const args = appProps.controllerAPI.createModel.args[0];
       assert.strictEqual(args[0], 'new-model');
       assert.strictEqual(args[1], 'user@local');
       assert.deepEqual(args[2], {
@@ -680,20 +681,20 @@ describe('init utils', () => {
       envGet.withArgs('ecs').returns({commit});
       utils._hidePopup = sinon.stub();
       utils.deploy(
-        app, sinon.stub(), callback, false, 'my-model', args);
-      assert.equal(app.controllerAPI.createModel.callCount, 1);
+        appProps, sinon.stub(), callback, false, 'my-model', args);
+      assert.equal(appProps.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
-      app.controllerAPI.createModel.args[0][3](null, modelData);
-      assert.equal(app.modelUUID, modelData.uuid);
-      assert.equal(app.switchEnv.callCount, 1);
-      assert.equal(app.switchEnv.args[0][0], 'wss://apiAddress/the-uuid');
-      assert.strictEqual(app.switchEnv.args[0][1], null);
-      assert.strictEqual(app.switchEnv.args[0][2], null);
-      assert.equal(typeof app.switchEnv.args[0][3], 'function');
-      assert.strictEqual(app.switchEnv.args[0][4], true);
-      assert.strictEqual(app.switchEnv.args[0][5], false);
+      appProps.controllerAPI.createModel.args[0][3](null, modelData);
+      assert.equal(appProps.modelUUID, modelData.uuid);
+      assert.equal(appProps.switchEnv.callCount, 1);
+      assert.equal(appProps.switchEnv.args[0][0], 'wss://apiAddress/the-uuid');
+      assert.strictEqual(appProps.switchEnv.args[0][1], null);
+      assert.strictEqual(appProps.switchEnv.args[0][2], null);
+      assert.equal(typeof appProps.switchEnv.args[0][3], 'function');
+      assert.strictEqual(appProps.switchEnv.args[0][4], true);
+      assert.strictEqual(appProps.switchEnv.args[0][5], false);
       // Call the switchEnv callback handler.
-      app.switchEnv.args[0][3](args);
+      appProps.switchEnv.args[0][3](args);
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], [
@@ -704,8 +705,8 @@ describe('init utils', () => {
           uuid: 'the-uuid'
         }]);
       // Check to make sure that the state was changed.
-      assert.equal(app.state.changeState.callCount, 2);
-      assert.deepEqual(app.state.changeState.args[0], [{
+      assert.equal(appProps.appState.changeState.callCount, 2);
+      assert.deepEqual(appProps.appState.changeState.args[0], [{
         postDeploymentPanel: true
       }]);
     });
@@ -717,7 +718,7 @@ describe('init utils', () => {
         owner: 'foo@external',
         uuid: 'the-uuid'
       };
-      app.state.current = {
+      appProps.appState.current = {
         root: 'new',
         special: {dd: {id: 'cs:apache'}}
       };
@@ -727,12 +728,12 @@ describe('init utils', () => {
       envGet.withArgs('ecs').returns({commit});
       sinon.stub(utils, '_switchModel');
       utils.deploy(
-        app, sinon.stub(), callback, false, 'my-model', args);
+        appProps, sinon.stub(), callback, false, 'my-model', args);
       // Call the handler for the createModel callCount
-      app.controllerAPI.createModel.args[0][3](null, modelData);
+      appProps.controllerAPI.createModel.args[0][3](null, modelData);
       // Check to make sure that the state was changed.
-      assert.equal(app.state.changeState.callCount, 3);
-      assert.deepEqual(app.state.changeState.args, [
+      assert.equal(appProps.appState.changeState.callCount, 3);
+      assert.deepEqual(appProps.appState.changeState.args, [
         [{root: null}],
         [{special: {dd: null}}],
         [{postDeploymentPanel: true}]
@@ -744,13 +745,13 @@ describe('init utils', () => {
       const args = {model: 'args'};
       envGet.withArgs('connected').returns(false);
       utils.deploy(
-        app, sinon.stub(), callback, false, 'my-model', args);
-      assert.equal(app.controllerAPI.createModel.callCount, 1);
+        appProps, sinon.stub(), callback, false, 'my-model', args);
+      assert.equal(appProps.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
-      app.controllerAPI.createModel.args[0][3]('it broke', modelData);
-      assert.equal(app.db.notifications.add.callCount, 1);
+      appProps.controllerAPI.createModel.args[0][3]('it broke', modelData);
+      assert.equal(appProps.db.notifications.add.callCount, 1);
       const expectedError = 'cannot create model: it broke';
-      assert.deepEqual(app.db.notifications.add.args[0], [{
+      assert.deepEqual(appProps.db.notifications.add.args[0], [{
         title: expectedError,
         message: expectedError,
         level: 'error'

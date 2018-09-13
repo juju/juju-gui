@@ -379,7 +379,11 @@ utils.switchModel = function(
     });
     return;
   }
-  const switchModel = utils._switchModel.bind(this, modelAPI, model, clearProfileState);
+  const updateModelUUID = uuid => {
+    this.modelUUID = uuid;
+  };
+  const switchModel = utils._switchModel.bind(
+    null, this.state, modelAPI, model, clearProfileState, updateModelUUID);
   const currentChangeSet = modelAPI.get('ecs').getCurrentChangeSet();
   // If there are uncommitted changes then show a confirmation popup.
   if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -419,11 +423,12 @@ utils._hidePopup = () => {
     - owner: the user owning the model, like "admin" or "who@external".
   @param {Boolean} clearProfileState Whether to close the profile.
 */
-utils._switchModel = function(modelAPI, model, clearProfileState=true) {
+utils._switchModel = function(
+  state, modelAPI, model, clearProfileState=true, updateModelUUID=null) {
   // Remove the switch model confirmation popup if it has been displayed to
   // the user.
   utils._hidePopup();
-  const current = this.state.current;
+  const current = state.current;
   const newState = {
     gui: {
       status: null,
@@ -455,10 +460,13 @@ utils._switchModel = function(modelAPI, model, clearProfileState=true) {
       modelAPI.get('ecs').clear();
     }
   }
-  this.state.changeState(newState);
+  state.changeState(newState);
   modelAPI.set('environmentName', name);
   // It is the new init.
-  this.modelUUID = uuid;
+  if (updateModelUUID) {
+    updateModelUUID(uuid);
+  }
+  // this.modelUUID = uuid;
 };
 
 /**
@@ -493,17 +501,17 @@ utils.showProfile = (changeState, username) => {
       model's resources.
 */
 utils.deploy = function(
-  app, autoPlaceUnits, callback, autoplace=true, modelName, args, slaData) {
-  const modelAPI = app.modelAPI;
-  const controllerAPI = app.controllerAPI;
-  const user = app.user;
+  appProps, autoPlaceUnits, callback, autoplace=true, modelName, args, slaData) {
+  const modelAPI = appProps.modelAPI;
+  const controllerAPI = appProps.controllerAPI;
+  const user = appProps.user;
   if (autoplace) {
     autoPlaceUnits();
   }
   // If we're in a model which exists then just commit the ecs and return.
   if (modelAPI.get('connected')) {
     modelAPI.get('ecs').commit(modelAPI);
-    app.state.changeState({
+    appProps.appState.changeState({
       postDeploymentPanel: true
     });
     callback(null);
@@ -512,7 +520,7 @@ utils.deploy = function(
   const handler = (err, model) => {
     if (err) {
       const msg = 'cannot create model: ' + err;
-      app.db.notifications.add({title: msg, message: msg, level: 'error'});
+      appProps.db.notifications.add({title: msg, message: msg, level: 'error'});
       callback(msg, null);
       return;
     }
@@ -531,7 +539,7 @@ utils.deploy = function(
       // after committing because changing state will change models and we
       // won't have visibility on when we're connected again and can
       // commit the changes.
-      utils._switchModel.call(app, modelAPI, {
+      utils._switchModel(appProps.appState, modelAPI, {
         id: model.uuid,
         name: model.name,
         owner: model.owner
@@ -542,39 +550,38 @@ utils.deploy = function(
       if (err) {
         console.error(err);
         const msg = 'Unable to authorize SLA';
-        app.db.notifications.add({title: msg, message: msg, level: 'error'});
+        appProps.db.notifications.add({title: msg, message: msg, level: 'error'});
         return;
       }
-      const current = app.state.current;
+      const current = appProps.appState.current;
       const rootState = current.root;
       if (rootState && rootState === 'new') {
         // If root is set to new then set it to null otherwise when the app
         // dispatches again it'll disconnect the model being deployed to.
-        app.state.changeState({root: null});
+        appProps.appState.changeState({root: null});
       }
       const special = current.special;
       if (special && special.dd) {
         // Cleanup the direct deploy state so that we don't dispatch it again.
-        app.state.changeState({special: {dd: null}});
+        appProps.appState.changeState({special: {dd: null}});
       }
-      app.modelUUID = model.uuid;
-      const config = app.applicationConfig;
+      appProps.modelUUID = model.uuid;
+      const config = appProps.applicationConfig;
       const socketUrl = utils.createSocketURL({
         apiAddress: config.apiAddress,
         template: config.socketTemplate,
         protocol: config.socket_protocol,
         uuid: model.uuid
       });
-      app.switchEnv(
+      appProps.switchEnv(
         socketUrl, null, null, setSLAOnController.bind(this, slaData), true, false);
-      app.state.changeState({
-        postDeploymentPanel: true
-      });
+      appProps.appState.changeState({postDeploymentPanel: true});
     };
     // If the user has set a budget and an SLA then authorize that after the
     // model has been created and the entities have been deployed.
     if (slaData) {
-      app.plans.authorizeSLA(slaData.name, model.uuid, slaData.budget, switchToModel);
+      appProps.plans.authorizeSLA(
+        slaData.name, model.uuid, slaData.budget, switchToModel);
     } else {
       switchToModel();
     }
@@ -640,7 +647,8 @@ utils.getCloudProviderDetails = providerName => {
         <p>
           Need help? Read more about <a className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
-            target="_blank" title="Cloud credentials help">credentials in
+            target="_blank"
+            title="Cloud credentials help">credentials in
           general</a> or <a className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-google"
             target="_blank"
@@ -673,7 +681,8 @@ utils.getCloudProviderDetails = providerName => {
         <p>
           Need help? Read more about <a className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
-            target="_blank" title="Cloud credentials help">credentials in
+            target="_blank"
+            title="Cloud credentials help">credentials in
           general</a> or <a className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-azure"
             target="_blank"
@@ -704,9 +713,11 @@ utils.getCloudProviderDetails = providerName => {
         <p>
           Need help? Read more about <a className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
-            target="_blank" title="Cloud credentials help">credentials in
+            target="_blank"
+            title="Cloud credentials help">credentials in
           general</a> or <a className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/help-aws" target="_blank"
+            href="https://jujucharms.com/docs/stable/help-aws"
+            target="_blank"
             title="Help using the Amazon Web Service public cloud">setting up
           AWS credentials</a>.
         </p>

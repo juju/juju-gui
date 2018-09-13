@@ -1010,7 +1010,7 @@ Browser: ${navigator.userAgent}`
         gtmEnabled={this.props.applicationConfig.GTM_enabled}
         hash={state.hash}
         initUtils={shapeup.addReshape({
-          deploy: initUtils.deploy.bind(initUtils, this, autoPlaceUnits),
+          deploy: initUtils.deploy.bind(initUtils, this.props, autoPlaceUnits),
           formatConstraints: initUtils.formatConstraints.bind(initUtils),
           generateMachineDetails: initUtils.generateMachineDetails.bind(
             initUtils, modelAPI.genericConstraints, db.units)
