@@ -415,7 +415,7 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the URL for clicking on an application.
+    Generate a function to be called when clicking on an application.
     @param applicationName {String} An application id.
     @returns {Function} A function to call on click.
   */
@@ -425,7 +425,7 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the URL for clicking on a unit.
+    Generate a function to be called when clicking on a unit.
     @param unitId {String} A unit id.
     @returns {Function} A function to call on click.
   */
@@ -435,7 +435,7 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the URL for clicking on a machine.
+    Generate a function to be called when clicking on a machine.
     @param machineId {String} A machine id.
     @returns {Function} A function to call on click.
   */
