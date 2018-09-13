@@ -947,6 +947,7 @@ class GUIApp {
     @param {Object} evt The name change event.
   */
   onModelNameChange(evt) {
+    console.log('===================== ', evt.newVal);
     const modelName = evt.newVal || 'untitled-model';
     // Update the name on the current model. This is what the components use
     // to display the model name.

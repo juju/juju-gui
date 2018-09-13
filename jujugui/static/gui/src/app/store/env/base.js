@@ -330,7 +330,6 @@ window.yui.add('juju-env-base', function(Y) {
         closed and the API cleaned up.
     */
     close: function(callback) {
-      debugger;
       const socketURL = this.get('socket_url');
       if (socketURL) {
         console.log(`closing the ${this.name} connection: ${socketURL}`);
