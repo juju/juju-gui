@@ -1067,7 +1067,7 @@ describe('init', () => {
       app.state = {current: {root: 'new'}};
       app.controllerAPI.after('connectedChange', evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
-        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
         assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
         assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
         done();
@@ -1094,7 +1094,7 @@ describe('init', () => {
       app.state = {current: {root: 'store'}};
       app.controllerAPI.after('connectedChange', evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
-        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
         assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
         assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
         done();
@@ -1107,7 +1107,7 @@ describe('init', () => {
       app.state = {current: {root: null}};
       app.controllerAPI.after('connectedChange', evt => {
         assert.strictEqual(app.anonymousMode, false, 'anonymousMode');
-        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
         assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
         assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
         done();
@@ -1149,7 +1149,7 @@ describe('init', () => {
       app.state = {current: {root: 'login'}, changeState: () => {}};
       app.controllerAPI.after('connectedChange', evt => {
         assert.strictEqual(app.anonymousMode, true, 'anonymousMode');
-        assert.strictEqual(appIsVisible(), false, 'appIsVisible');
+        assert.strictEqual(appIsVisible(), true, 'appIsVisible');
         assert.strictEqual(app._displayLogin.called, true, '_displayLogin');
         assert.strictEqual(app.loginToAPIs.called, false, 'loginToAPIs');
         done();
