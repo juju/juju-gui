@@ -374,10 +374,15 @@ describe('service module events', function() {
       document.removeEventListener('initiateDeploy', listener);
       // After the translation and calculations the above x and y coords should
       // place the element at -245, -18
-      assert.deepEqual(e.detail.ghostAttributes, {
-        coordinates: [52.5, -49],
-        icon: src
-      });
+      const attributes = e.detail.ghostAttributes;
+      assert.equal(attributes.icon, src);
+
+      const closeTo = (value, original, delta) =>
+        value >= (original-delta) && value <= (original+delta);
+
+      assert(closeTo(attributes.coordinates[0], 52, 5));
+      assert(closeTo(attributes.coordinates[1], -52, 5));
+
       // Make sure that the drag and drop was properly prevented.
       assert.equal(fakeEventObject.preventDefault.callCount, 1);
       done();
