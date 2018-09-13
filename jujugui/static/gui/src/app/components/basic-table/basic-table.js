@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ExpandingRow = require('../expanding-row/expanding-row');
+const ExpandingRow = require('../shared/expanding-row/expanding-row');
 
 /** Basic table React component used to display data in a table structure. */
 class BasicTable extends React.Component {

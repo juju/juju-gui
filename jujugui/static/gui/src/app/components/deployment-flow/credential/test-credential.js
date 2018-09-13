@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const DeploymentCredential = require('./credential');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const DeploymentCredentialAdd = require('./add/add');
 
 describe('DeploymentCredential', function() {

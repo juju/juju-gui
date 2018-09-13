@@ -8,7 +8,7 @@ const enzyme = require('enzyme');
 
 const BasicTable = require('../../basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const ProfileCredentialList = require('./credential-list');

@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const Spinner = require('../../spinner/spinner');
 const initUtils = require('../../../init/utils');
 const InsetSelect = require('../../inset-select/inset-select');
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const DeploymentCredentialAdd = require('./add/add');
 
 class DeploymentCredential extends React.Component {

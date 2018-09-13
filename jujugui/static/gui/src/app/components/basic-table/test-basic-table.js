@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const BasicTable = require('./basic-table');
-const ExpandingRow = require('../expanding-row/expanding-row');
+const ExpandingRow = require('../shared/expanding-row/expanding-row');
 
 describe('BasicTable', function() {
   let headers, rows;
