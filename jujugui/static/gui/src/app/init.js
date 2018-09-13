@@ -492,7 +492,7 @@ class GUIApp {
     ReactDOM.render(
       <App
         acl={this.acl}
-        addToModel={this.addToModel}
+        addToModel={this.addToModel.bind(this)}
         applicationConfig={this.applicationConfig}
         appState={this.state}
         bakery={this.bakery}
@@ -514,7 +514,7 @@ class GUIApp {
         plans={this.plans}
         rates={this.rates}
         sendAnalytics={this.sendAnalytics}
-        setPageTitle={this.setPageTitle}
+        setPageTitle={this.setPageTitle.bind(this)}
         stats={this.stats}
         storeUser={this.storeUser.bind(this)}
         stripe={this.stripe}
