@@ -4,7 +4,7 @@
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
-const BasicTable = require('../basic-table/basic-table');
+const BasicTable = require('../shared/basic-table/basic-table');
 
 /**
   React component used to display a list of the users invoices in their profile.

@@ -6,7 +6,7 @@ const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
 const enzyme = require('enzyme');
 
-const BasicTable = require('../../basic-table/basic-table');
+const BasicTable = require('../../shared/basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');

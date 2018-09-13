@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const BasicTable = require('../../basic-table/basic-table');
+const BasicTable = require('../../shared/basic-table/basic-table');
 const ProfileInvoiceList = require('./invoice-list');
 
 describe('Invoice Bundle List', function() {

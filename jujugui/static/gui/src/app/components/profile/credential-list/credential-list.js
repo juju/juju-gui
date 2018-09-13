@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../../basic-table/basic-table');
+const BasicTable = require('../../shared/basic-table/basic-table');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');

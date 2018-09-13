@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../basic-table/basic-table');
+const BasicTable = require('../shared/basic-table/basic-table');
 const StatusApplicationList = require('../shared/status/application-list/application-list');
 const StatusMachineList = require('../shared/status/machine-list/machine-list');
 const StatusRemoteApplicationList = require(

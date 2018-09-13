@@ -11,7 +11,6 @@
 @import '../../components/payment/methods/card/card';
 @import '../../components/added-services-list/added-services-list';
 @import '../../components/address-form/address-form';
-@import '../../components/basic-table/basic-table';
 @import '../../components/boolean-config/boolean-config';
 @import '../../components/budget-chart/budget-chart';
 @import '../../components/budget-table/budget-table';
@@ -62,7 +61,6 @@
 @import '../../components/entity-details/entity-details';
 @import '../../components/entity-details/header/header';
 @import '../../components/expanding-progress/expanding-progress';
-@import '../../components/shared/expanding-row/expanding-row';
 @import '../../components/expert-block/expert-block';
 @import '../../components/expert-card/expert-card';
 @import '../../components/expert-contact-card/expert-contact-card';
@@ -144,8 +142,9 @@
 @import '../../components/vanilla/card/card';
 @import '../../components/zoom/zoom';
 
-
 // Shared Components
+@import '../../components/shared/basic-table/basic-table';
+@import '../../components/shared/expanding-row/expanding-row';
 @import '../../components/shared/machine/machine';
 @import '../../components/shared/machine-unit/machine-unit';
 @import '../../components/shared/status/label/label';

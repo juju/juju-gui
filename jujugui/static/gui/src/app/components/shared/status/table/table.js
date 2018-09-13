@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const BasicTable = require('../../../basic-table/basic-table');
+const BasicTable = require('../../basic-table/basic-table');
 
 class StatusTable extends React.Component {
   /**
