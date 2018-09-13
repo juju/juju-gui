@@ -2,8 +2,6 @@
 
 exports[`StatusUnitList renders 1`] = `
 <StatusTable
-  changeState={[Function]}
-  generatePath={[Function]}
   headers={
     Array [
       Object {
@@ -42,9 +40,7 @@ exports[`StatusUnitList renders 1`] = `
         "classes": Array [
           "status-table__row--pending",
         ],
-        "clickState": Object {
-          "app": "state",
-        },
+        "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 2,
@@ -92,14 +88,13 @@ exports[`StatusUnitList renders 1`] = `
         ],
         "extraData": "pending",
         "key": "django/id0",
+        "onClick": [Function],
       },
       Object {
         "classes": Array [
           "status-table__row--error",
         ],
-        "clickState": Object {
-          "app": "state",
-        },
+        "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 2,
@@ -147,14 +142,13 @@ exports[`StatusUnitList renders 1`] = `
         ],
         "extraData": "error",
         "key": "django/id1",
+        "onClick": [Function],
       },
       Object {
         "classes": Array [
           "status-table__row--pending",
         ],
-        "clickState": Object {
-          "app": "state",
-        },
+        "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 2,
@@ -202,6 +196,7 @@ exports[`StatusUnitList renders 1`] = `
         ],
         "extraData": "pending",
         "key": "django/id42",
+        "onClick": [Function],
       },
     ]
   }

@@ -2,8 +2,6 @@
 
 exports[`StatusRelationList renders 1`] = `
 <StatusTable
-  changeState={[Function]}
-  generatePath={[Function]}
   headers={
     Array [
       Object {

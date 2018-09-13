@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const TermsPopup = require('../../terms-popup/terms-popup');
 

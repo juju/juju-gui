@@ -9,7 +9,7 @@ const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
 const GenericInput = require('../../generic-input/generic-input');
 const GenericButton = require('../../generic-button/generic-button');
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
 describe('DeploymentBudget', function() {

@@ -55,7 +55,8 @@ class StatusUnitList extends React.Component {
         classes: [utils.getStatusClass(
           'status-table__row--',
           [unit.agentStatus, unit.workloadStatus])],
-        clickState: this.props.generateUnitClickState(unit.id),
+        onClick: this.props.generateUnitOnClick(unit.id),
+        clickURL: this.props.generateUnitURL(unit.id),
         columns: [{
           columnSize: 2,
           content: (
@@ -122,8 +123,6 @@ class StatusUnitList extends React.Component {
     }];
     return (
       <StatusTable
-        changeState={this.props.changeState}
-        generatePath={this.props.generatePath}
         headers={headers}
         rows={this._generateRows()}
         statusFilter={this.props.statusFilter} />);
@@ -132,10 +131,9 @@ class StatusUnitList extends React.Component {
 
 StatusUnitList.propTypes = {
   applications: PropTypes.object.isRequired,
-  changeState: PropTypes.func.isRequired,
   generateMachineURL: PropTypes.func.isRequired,
-  generatePath: PropTypes.func.isRequired,
-  generateUnitClickState: PropTypes.func.isRequired,
+  generateUnitOnClick: PropTypes.func.isRequired,
+  generateUnitURL: PropTypes.func.isRequired,
   onMachineClick: PropTypes.func.isRequired,
   statusFilter: PropTypes.string,
   units: PropTypes.array.isRequired

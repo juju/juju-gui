@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const BasicTable = require('../../basic-table/basic-table');
+const BasicTable = require('../../shared/basic-table/basic-table');
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
 const ProfileModelList = require('./model-list');

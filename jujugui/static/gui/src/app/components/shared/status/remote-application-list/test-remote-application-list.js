@@ -11,8 +11,6 @@ describe('StatusRemoteApplicationList', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <StatusRemoteApplicationList
-      changeState={options.changeState || sinon.stub()}
-      generatePath={options.generatePath || sinon.stub()}
       remoteApplications={options.remoteApplications || remoteApplications}
       statusFilter={options.statusFilter} />
   );

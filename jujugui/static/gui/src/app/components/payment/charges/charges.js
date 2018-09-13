@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
 const DateDisplay = require('../../date-display/date-display');
-const ExpandingRow = require('../../expanding-row/expanding-row');
+const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const GenericButton = require('../../generic-button/generic-button');
 const Spinner = require('../../spinner/spinner');
 

@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const GenericButton = require('../../../generic-button/generic-button');
 const GenericInput = require('../../../generic-input/generic-input');
 const initUtils = require('../../../../init/utils');
-const ExpandingRow = require('../../../expanding-row/expanding-row');
+const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
 const AddressForm = require('../../../address-form/address-form');
 const PaymentMethodCard = require('../card/card');
 

@@ -12,9 +12,7 @@ describe('BasicTable', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <BasicTable
-      changeState={options.changeState || sinon.stub()}
       filterPredicate={options.filterPredicate || null}
-      generatePath={options.generatePath || null}
       headerClasses={options.headerClasses || null}
       headerColumnClasses={options.headerColumnClasses || null}
       headers={options.headers || headers}
@@ -211,11 +209,9 @@ describe('BasicTable', function() {
   });
 
   it('displays row links', function() {
-    rows[0].clickState = {another: 'state'};
-    const generatePath = sinon.stub().returns('http://example.com');
+    rows[0].onClick = sinon.stub();
+    rows[0].clickURL = 'http://example.com';
     const wrapper = renderComponent({
-      changeState: sinon.stub(),
-      generatePath,
       rows
     });
     const rowItems = wrapper.find('.basic-table__row');
@@ -238,20 +234,14 @@ describe('BasicTable', function() {
   });
 
   it('can navigate when a row is clicked', function() {
-    rows[0].clickState = {another: 'state'};
-    const changeState = sinon.stub();
+    rows[0].onClick = sinon.stub();
+    rows[0].clickURL = 'http://example.com';
     const preventDefault = sinon.stub();
-    const generatePath = sinon.stub().returns('http://example.com');
-    const wrapper = renderComponent({
-      changeState,
-      generatePath,
-      rows
-    });
+    const wrapper = renderComponent({ rows });
     wrapper.find('.basic-table__row-link').simulate('click',
       {preventDefault: preventDefault});
     assert.equal(preventDefault.callCount, 1);
-    assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {another: 'state'});
+    assert.equal(rows[0].onClick.callCount, 1);
   });
 
   it('can display rows with expandable content', function() {

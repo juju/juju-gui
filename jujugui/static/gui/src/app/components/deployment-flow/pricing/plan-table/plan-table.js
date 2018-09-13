@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const BasicTable = require('../../../basic-table/basic-table');
+const BasicTable = require('../../../shared/basic-table/basic-table');
 
 class DeploymentPlanTable extends React.Component {
   constructor(props) {

@@ -15,8 +15,10 @@ describe('StatusUnitList', () => {
       changeState={options.changeState || sinon.stub()}
       generateMachineURL={options.generateCharmURL || sinon.stub()}
       generatePath={options.generatePath || sinon.stub()}
-      generateUnitClickState={
-        options.generateUnitClickState || sinon.stub().returns({ app: 'state' })}
+      generateUnitOnClick={
+        options.generateUnitOnClick || sinon.stub().returns(sinon.stub())}
+      generateUnitURL={
+        options.generateUnitURL || sinon.stub().returns('http://example.com')}
       onMachineClick={options.onCharmClick || sinon.stub()}
       statusFilter={options.statusFilter}
       units={options.units || units} />

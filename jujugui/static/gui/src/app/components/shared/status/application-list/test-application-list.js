@@ -12,11 +12,11 @@ describe('StatusApplicationList', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <StatusApplicationList
       applications={options.applications || applications}
-      changeState={options.changeState || sinon.stub()}
-      generateApplicationClickState={
-        options.generateApplicationClickState || sinon.stub().returns({ app: 'state' })}
+      generateApplicationOnClick={
+        options.generateApplicationOnClick || sinon.stub().returns(sinon.stub())}
+      generateApplicationURL={
+        options.generateApplicationURL || sinon.stub().returns('http://example.com')}
       generateCharmURL={options.generateCharmURL || sinon.stub()}
-      generatePath={options.generatePath || sinon.stub()}
       onCharmClick={options.onCharmClick || sinon.stub()}
       statusFilter={options.statusFilter} />
   );

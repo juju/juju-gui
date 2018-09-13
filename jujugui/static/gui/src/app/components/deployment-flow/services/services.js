@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../../basic-table/basic-table');
+const BasicTable = require('../../shared/basic-table/basic-table');
 const BudgetTable = require('../../budget-table/budget-table');
 const changesUtils = require('../../../init/changes-utils');
 const DeploymentChangeItem = require('../change-item/change-item');

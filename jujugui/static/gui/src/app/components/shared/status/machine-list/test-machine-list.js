@@ -11,10 +11,10 @@ describe('StatusMachineList', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <StatusMachineList
-      changeState={options.changeState || sinon.stub()}
-      generateMachineClickState={
-        options.generateMachineClickState || sinon.stub().returns({ app: 'state' })}
-      generatePath={options.generatePath || sinon.stub()}
+      generateMachineOnClick={
+        options.generateMachineOnClick || sinon.stub().returns(sinon.stub())}
+      generateMachineURL={
+        options.generateMachineURL || sinon.stub().returns('http://example.com')}
       machines={options.machines || machines}
       statusFilter={options.statusFilter} />
   );
