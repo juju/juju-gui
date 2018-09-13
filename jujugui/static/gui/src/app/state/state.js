@@ -242,7 +242,6 @@ class State {
   */
   dispatch(nullKeys = [], updateState = true,
     backDispatch = false, stateFromURL = false) {
-    console.log('>>>>>>>>>>>>>>>>>>>>> DISPATCH <<<<<<<<<<<<<<<<<<<<');
     let error, state;
     // We only want to dispatch the state from the URL on application load or
     // when explicitly requested by the developer.

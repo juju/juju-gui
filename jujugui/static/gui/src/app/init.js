@@ -585,7 +585,6 @@ class GUIApp {
         // When going to disconnected mode we need to be disconnected from
         // models.
         if (this.modelAPI.get('connected')) {
-          console.log('============ I AM CONNECTED!');
           this._switchModelToUUID();
         }
         // When dispatching, we only want to remove the mask if we're in
@@ -947,7 +946,6 @@ class GUIApp {
     @param {Object} evt The name change event.
   */
   onModelNameChange(evt) {
-    console.log('===================== ', evt.newVal);
     const modelName = evt.newVal || 'untitled-model';
     // Update the name on the current model. This is what the components use
     // to display the model name.
@@ -1207,7 +1205,6 @@ class GUIApp {
     clearDB=true) {
     console.log('switching model connection');
     this.modelAPI.loading = true;
-    console.log('================== FOR GREAT JUSTICE 1');
     if (username && password) {
       // We don't always get a new username and password when switching
       // environments; only set new credentials if we've actually gotten them.
@@ -1217,91 +1214,62 @@ class GUIApp {
         password: password
       };
     };
-    console.log('================== FOR GREAT JUSTICE 2');
     const credentials = this.user.model;
-    console.log('================== FOR GREAT JUSTICE 3');
     const onLogin = callback => {
-
-      console.log('================== onLogin 4');
       this.modelAPI.loading = false;
       if (callback) {
-        console.log('================== onLogin 5');
         callback(this.modelAPI);
       }
-      console.log('================== onLogin 6');
       const current = this.state.current;
-      console.log('================== onLogin 6.1');
       if (current.root === 'login') {
-        console.log('================== onLogin 7');
         this.state.changeState({root: null});
       }
 
     };
-    console.log('================== FOR GREAT JUSTICE 8');
     // Delay the callback until after the env login as everything should be
     // set up by then.
     document.addEventListener(
       'model.login', onLogin.bind(this, callback), {once: true});
     if (clearDB) {
       // Clear uncommitted state.
-      console.log('================== I AM IN clearDB');
       this.modelAPI.get('ecs').clear();
-      console.log('================== I AM OUTTA clearDB');
     }
-    console.log('================== I AM OVER HERE!');
     const setUpModel = model => {
       // Tell the model to use the new socket URL when reconnecting.
       model.set('socket_url', socketUrl);
-      console.log('============= WTF setUpModel 1');
       // We need to reset the credentials each time we set up a model,
       // b/c we remove the credentials when we close down a model
       // connection in the `close()` method of base.js
       this.user.model = credentials;
-      console.log('============= WTF setUpModel 2');
       // Reconnect the model if required.
       if (reconnect) {
-        console.log('============= WTF setUpModel 3');
         model.connect();
-        console.log('============= WTF setUpModel 4');
       }
     };
     // Disconnect and reconnect the model.
     const onclose = function() {
-      console.log('============= WTF 8');
       this.on_close();
-      console.log('============= WTF 9');
       setUpModel(this);
-      console.log('============= WTF 10');
     }.bind(this.modelAPI);
     if (this.modelAPI.ws) {
       this.modelAPI.ws.onclose = onclose;
-      console.log('============= API.CLOSE 1');
       this.modelAPI.close();
       // If we are already disconnected then connect if we're supposed to.
       if (!this.modelAPI.get('connected')) {
-        console.log('============= API CLOSE 1.1');
         setUpModel(this.modelAPI);
       }
     } else {
-      console.log('============= API.CLOSE 2');
       this.modelAPI.close(onclose);
     }
-    console.log('============= WTF 1');
     if (clearDB) {
-      console.log('============= WTF 2');
       this.db.reset();
-      console.log('============= WTF 3');
       this.db.fireEvent('update');
     }
-    console.log('============= WTF 4');
     if (this.topology) {
-      console.log('============= WTF 5');
       this.topology.topo.modules.ServiceModule.centerOnLoad = true;
     }
-    console.log('============= WTF 6');
     // If we're not reconnecting, then mark the switch as done.
     if (this.state.current.root === 'new') {
-      console.log('============= WTF 7');
       this.modelAPI.loading = false;
     }
   }
