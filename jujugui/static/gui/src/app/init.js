@@ -296,13 +296,13 @@ class GUIApp {
       this.onDatabaseChanged, this);
     this.db.environment.after(
       ['add', 'remove', '*:change'], () => {
-        this.state.dispatch();
+        this._renderApp(this.state.current, () => {});
       }, this);
     this.db.units.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
     this.db.notifications.after('add', () => {
-      this.state.dispatch();
+      this._renderApp(this.state.current, () => {});
     }, this);
 
     // When someone wants a charm to be deployed they fire an event and we
