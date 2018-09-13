@@ -11,8 +11,6 @@ describe('StatusTable', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <StatusTable
-      changeState={options.changeState || sinon.stub()}
-      generatePath={options.generatePath || sinon.stub()}
       headers={options.headers || headers}
       rows={options.rows || rows}
       statusFilter={options.statusFilter} />

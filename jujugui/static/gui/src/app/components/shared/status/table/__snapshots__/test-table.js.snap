@@ -2,9 +2,7 @@
 
 exports[`StatusTable renders 1`] = `
 <BasicTable
-  changeState={[Function]}
   filterPredicate={[Function]}
-  generatePath={[Function]}
   headerClasses={
     Array [
       "status-table__header",

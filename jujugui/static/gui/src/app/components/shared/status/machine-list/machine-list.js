@@ -23,7 +23,8 @@ class StatusMachineList extends React.Component {
       return {
         classes: [getStatusClass(
           'status-table__row--', machine.agent_state)],
-        clickState: this.props.generateMachineClickState(machine.id),
+        onClick: this.props.generateMachineOnClick(machine.id),
+        clickURL: this.props.generateMachineURL(machine.id),
         columns: [{
           columnSize: 1,
           content: machine.displayName
@@ -72,8 +73,6 @@ class StatusMachineList extends React.Component {
     }];
     return (
       <StatusTable
-        changeState={this.props.changeState}
-        generatePath={this.props.generatePath}
         headers={headers}
         rows={this._generateRows()}
         statusFilter={this.props.statusFilter} />
@@ -82,9 +81,8 @@ class StatusMachineList extends React.Component {
 };
 
 StatusMachineList.propTypes = {
-  changeState: PropTypes.func.isRequired,
-  generateMachineClickState: PropTypes.func.isRequired,
-  generatePath: PropTypes.func.isRequired,
+  generateMachineOnClick: PropTypes.func.isRequired,
+  generateMachineURL: PropTypes.func.isRequired,
   machines: PropTypes.array.isRequired,
   statusFilter: PropTypes.string
 };

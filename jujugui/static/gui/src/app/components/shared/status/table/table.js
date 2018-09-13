@@ -38,9 +38,7 @@ class StatusTable extends React.Component {
   render() {
     return (
       <BasicTable
-        changeState={this.props.changeState}
         filterPredicate={this._filterByStatus.bind(this)}
-        generatePath={this.props.generatePath}
         headerClasses={['status-table__header']}
         headerColumnClasses={['status-table__header-column']}
         headers={this.props.headers}
@@ -54,8 +52,6 @@ class StatusTable extends React.Component {
 };
 
 StatusTable.propTypes = {
-  changeState: PropTypes.func.isRequired,
-  generatePath: PropTypes.func.isRequired,
   headers: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
   statusFilter: PropTypes.string
