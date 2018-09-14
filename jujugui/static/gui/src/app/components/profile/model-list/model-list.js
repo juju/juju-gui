@@ -329,7 +329,7 @@ class ProfileModelList extends React.Component {
     const rowData = this._generateModels();
     return (
       <div className="profile-model-list">
-        <div className="profile-model-list__header twelve-col">
+        <div className="profile-model-list__header v1">
           <CreateModelButton
             changeState={this.props.changeState}
             switchModel={this.props.switchModel}
