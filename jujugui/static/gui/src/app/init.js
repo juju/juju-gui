@@ -927,6 +927,9 @@ class GUIApp {
     // When using direct deploy when a user is not logged in it will
     // navigate to show the login if we do not have this state check.
         (currentState.special && currentState.special.dd)) {
+      // Set the mask visibility to false as we need to actually be able to
+      // see the login.
+      this.maskVisibility(false);
       this._displayLogin();
       return;
     }
