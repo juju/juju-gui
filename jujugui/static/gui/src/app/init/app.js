@@ -272,18 +272,20 @@ class App extends React.Component {
   */
   _generateModelActions() {
     const modelAPI = this.props.modelAPI;
+    const props = this.props;
     return (
       <div id="model-actions-container">
         <ModelActions
-          acl={this.props.acl}
-          appState={this.props.appState}
+          acl={props.acl}
+          appState={props.appState}
           changeState={this._bound.changeState}
           displayTerminalButton={this._shouldEnableTerminal()}
-          exportEnvironmentFile={
-            initUtils.exportEnvironmentFile.bind(initUtils, this.db, this.sendAnalytics)}
-          hideDragOverNotification={this._showDragOverNotification.bind(this, false)}
-          importBundleFile={this.props.bundleImporter.importBundleFile.bind(
-            this.props.bundleImporter)}
+          exportEnvironmentFile={initUtils.exportEnvironmentFile.bind(
+            initUtils, props.db, props.sendAnalytics)}
+          hideDragOverNotification={this._showDragOverNotification.bind(
+            this, false)}
+          importBundleFile={props.bundleImporter.importBundleFile.bind(
+            props.bundleImporter)}
           loadingModel={modelAPI.loading}
           renderDragOverNotification={
             this._showDragOverNotification.bind(this)}

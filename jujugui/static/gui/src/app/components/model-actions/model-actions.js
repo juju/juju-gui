@@ -129,7 +129,7 @@ class ModelActions extends React.Component {
             </span>
           </span>
           <span className="model-actions__import model-actions__button"
-            onClick={!isReadOnly && this._handleImportClick.bind(this)}
+            onClick={isReadOnly ? undefined : this._handleImportClick.bind(this)}
             role="button"
             tabIndex="0">
             <SvgIcon className="model-actions__icon"
