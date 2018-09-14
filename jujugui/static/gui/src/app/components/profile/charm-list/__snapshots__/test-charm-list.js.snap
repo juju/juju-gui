@@ -1,0 +1,382 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Charm List can render 1`] = `
+<div
+  className="profile-charm-list"
+>
+  <div>
+    <div
+      className="v1"
+    >
+      <h2
+        className="profile__title"
+      >
+        My
+         charms
+        <span
+          className="profile__title-count"
+        >
+          (
+          3
+          )
+        </span>
+      </h2>
+    </div>
+    <BasicTable
+      headerClasses={
+        Array [
+          "profile__entity-table-header-row",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "profile__entity-table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 6,
+            "content": "Name",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Series",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Release",
+          },
+        ]
+      }
+      rowClasses={
+        Array [
+          "profile__entity-table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "profile__entity-table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 6,
+                "content": <div>
+                  <div
+                    className="profile-charm-list__item"
+                  >
+                    <div>
+                      <img
+                        className="profile-charm-list__icon"
+                        src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                        title="failtester"
+                      />
+                    </div>
+                    <div>
+                      <a
+                        href="/gui/u/hatch/failtester/precise/7"
+                        onClick={[Function]}
+                      >
+                        failtester
+                      </a>
+                    </div>
+                  </div>
+                </div>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "precise",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "#7",
+              },
+            ],
+            "expandedContent": <ProfileExpandedContent
+              acl={
+                Object {
+                  "isReadOnly": [Function],
+                }
+              }
+              addToModel={[Function]}
+              changeState={[Function]}
+              entity={
+                Object {
+                  "id": "cs:~hatch/precise/failtester-7",
+                  "name": "failtester",
+                  "perm": Object {
+                    "read": Array [
+                      "everyone",
+                      "hatch",
+                    ],
+                    "write": Array [
+                      "hatch",
+                    ],
+                  },
+                  "series": Array [
+                    "precise",
+                  ],
+                }
+              }
+              generatePath={[Function]}
+              getModelName={[Function]}
+              topRow={
+                <div>
+                  <div
+                    className="six-col profile-expanded-content__top-row"
+                  >
+                    <img
+                      className="profile-charm-list__icon"
+                      src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                      title="failtester"
+                    />
+                    <a
+                      href="/gui/u/hatch/failtester/precise/7"
+                      onClick={[Function]}
+                    >
+                      failtester
+                    </a>
+                  </div>
+                  <div
+                    className="three-col profile-expanded-content__top-row"
+                  >
+                    precise
+                  </div>
+                  <div
+                    className="three-col last-col profile-expanded-content__top-row"
+                  >
+                    #7
+                  </div>
+                </div>
+              }
+            />,
+            "extraData": "failtester",
+            "key": "cs:~hatch/precise/failtester-7",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 6,
+                "content": <div>
+                  <div
+                    className="profile-charm-list__item"
+                  >
+                    <div>
+                      <img
+                        className="profile-charm-list__icon"
+                        src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                        title="ghost"
+                      />
+                    </div>
+                    <div>
+                      <a
+                        href="/gui/u/hatch/ghost/xenial/3"
+                        onClick={[Function]}
+                      >
+                        ghost
+                      </a>
+                      <ul
+                        className="profile-charm-list__tags"
+                      >
+                        <li
+                          className="link profile-charm-list__tag"
+                          onClick={[Function]}
+                          role="button"
+                          tabIndex="0"
+                        >
+                          misc
+                        </li>
+                        <li
+                          className="link profile-charm-list__tag"
+                          onClick={[Function]}
+                          role="button"
+                          tabIndex="0"
+                        >
+                          ops
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "xenial",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "#3",
+              },
+            ],
+            "expandedContent": <ProfileExpandedContent
+              acl={
+                Object {
+                  "isReadOnly": [Function],
+                }
+              }
+              addToModel={[Function]}
+              changeState={[Function]}
+              entity={
+                Object {
+                  "id": "cs:~hatch/xenial/ghost-3",
+                  "name": "ghost",
+                  "perm": Object {
+                    "read": Array [
+                      "everyone",
+                      "hatch",
+                    ],
+                    "write": Array [
+                      "hatch",
+                    ],
+                  },
+                  "series": Array [
+                    "xenial",
+                  ],
+                  "tags": Array [
+                    "misc",
+                    "ops",
+                  ],
+                }
+              }
+              generatePath={[Function]}
+              getModelName={[Function]}
+              topRow={
+                <div>
+                  <div
+                    className="six-col profile-expanded-content__top-row"
+                  >
+                    <img
+                      className="profile-charm-list__icon"
+                      src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                      title="ghost"
+                    />
+                    <a
+                      href="/gui/u/hatch/ghost/xenial/3"
+                      onClick={[Function]}
+                    >
+                      ghost
+                    </a>
+                  </div>
+                  <div
+                    className="three-col profile-expanded-content__top-row"
+                  >
+                    xenial
+                  </div>
+                  <div
+                    className="three-col last-col profile-expanded-content__top-row"
+                  >
+                    #3
+                  </div>
+                </div>
+              }
+            />,
+            "extraData": "ghost",
+            "key": "cs:~hatch/xenial/ghost-3",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 6,
+                "content": <div>
+                  <div
+                    className="profile-charm-list__item"
+                  >
+                    <div>
+                      <img
+                        className="profile-charm-list__icon"
+                        src="/charmstore/~hatch/privghost-1/icon.svg"
+                        title="privghost"
+                      />
+                    </div>
+                    <div>
+                      <a
+                        href="/gui/u/hatch/privghost/1"
+                        onClick={[Function]}
+                      >
+                        privghost
+                      </a>
+                    </div>
+                  </div>
+                </div>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "xenial, trusty",
+              },
+              Object {
+                "columnSize": 3,
+                "content": "#1",
+              },
+            ],
+            "expandedContent": <ProfileExpandedContent
+              acl={
+                Object {
+                  "isReadOnly": [Function],
+                }
+              }
+              addToModel={[Function]}
+              changeState={[Function]}
+              entity={
+                Object {
+                  "id": "cs:~hatch/privghost-1",
+                  "name": "privghost",
+                  "perm": Object {
+                    "read": Array [
+                      "hatch",
+                    ],
+                    "write": Array [
+                      "hatch",
+                    ],
+                  },
+                  "series": Array [
+                    "xenial",
+                    "trusty",
+                  ],
+                }
+              }
+              generatePath={[Function]}
+              getModelName={[Function]}
+              topRow={
+                <div>
+                  <div
+                    className="six-col profile-expanded-content__top-row"
+                  >
+                    <img
+                      className="profile-charm-list__icon"
+                      src="/charmstore/~hatch/privghost-1/icon.svg"
+                      title="privghost"
+                    />
+                    <a
+                      href="/gui/u/hatch/privghost/1"
+                      onClick={[Function]}
+                    >
+                      privghost
+                    </a>
+                  </div>
+                  <div
+                    className="three-col profile-expanded-content__top-row"
+                  >
+                    xenial, trusty
+                  </div>
+                  <div
+                    className="three-col last-col profile-expanded-content__top-row"
+                  >
+                    #1
+                  </div>
+                </div>
+              }
+            />,
+            "extraData": "privghost",
+            "key": "cs:~hatch/privghost-1",
+          },
+        ]
+      }
+      sort={[Function]}
+    />
+  </div>
+</div>
+`;
