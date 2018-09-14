@@ -138,7 +138,8 @@ describe('ModelActions', function() {
   it('can disable importing when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const wrapper = renderComponent();
-    assert.equal(wrapper.find('.model-actions__import').prop('onClick'), false);
+    assert.equal(
+      wrapper.find('.model-actions__import').prop('onClick'), undefined);
   });
 
   it('disables sharing when not connected', function() {
