@@ -158,9 +158,7 @@ class Payment extends React.Component {
     return (
       <div className="payment__section">
         <div className="twelve-col">
-          <h2 className="payment__title twelve-col">
-            Enter your payment details
-          </h2>
+          <h2 className="payment__title">Enter your payment details</h2>
           <CreatePaymentUser
             acl={this.props.acl}
             addNotification={this.props.addNotification}
@@ -186,10 +184,8 @@ class Payment extends React.Component {
   */
   _generateNoUser() {
     return (
-      <div className="payment__section">
-        <h2 className="payment__title twelve-col">
-          Payment details
-        </h2>
+      <div className="payment__section v1">
+        <h2 className="profile__title">Payment details</h2>
         <div className="payment__no-user">
           <p>You are not set up to make payments.</p>
           <p>

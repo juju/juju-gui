@@ -1,7 +1,11 @@
 .payment {
   &__no-user {
-    .button--inline-neutral {
-      margin-left: 20px;
+    border-top: 1px solid #cdcdcd;
+    margin-top: 3.8rem;
+    padding-top: 2rem;
+
+    .inline-positive {
+      margin-top: 2rem;
     }
   }
 
@@ -11,14 +15,6 @@
     h4 {
       clear: both;
     }
-  }
-
-  &__title {
-    font-size: 1.375rem;
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
-    margin-top: 1rem;
-    border-bottom: 1px solid #ccc;
   }
 
   .create-payment-user__title {

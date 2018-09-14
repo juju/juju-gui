@@ -10,13 +10,12 @@
     font-weight: 200;
   }
 
-  &__title {
-    margin-bottom: 25px;
-    font-size: 1.25em;
+  .profile__title {
+    margin-bottom: 1.55rem;
 
     &-count {
-      margin-left: 0.25em;
       color: $warm-grey;
+      margin-left: 0.25em;
     }
   }
 
