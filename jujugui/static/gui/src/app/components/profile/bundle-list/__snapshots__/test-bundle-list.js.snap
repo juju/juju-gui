@@ -1,0 +1,341 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Bundle List can render 1`] = `
+<div
+  className="profile-bundle-list"
+>
+  <div>
+    <div
+      className="v1"
+    >
+      <h2
+        className="profile__title"
+      >
+        My
+         bundles
+        <span
+          className="profile__title-count"
+        >
+          (
+          2
+          )
+        </span>
+      </h2>
+    </div>
+    <BasicTable
+      headerClasses={
+        Array [
+          "profile__entity-table-header-row",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "profile__entity-table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "columnSize": 6,
+            "content": "Name",
+          },
+          Object {
+            "classes": Array [
+              "u-align--right",
+            ],
+            "columnSize": 2,
+            "content": "Machines",
+          },
+          Object {
+            "classes": Array [
+              "u-align--right",
+            ],
+            "columnSize": 1,
+            "content": "Units",
+          },
+          Object {
+            "columnSize": 3,
+            "content": "Release",
+          },
+        ]
+      }
+      rowClasses={
+        Array [
+          "profile__entity-table-row",
+        ]
+      }
+      rowColumnClasses={
+        Array [
+          "profile__entity-table-column",
+        ]
+      }
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 3,
+                "content": <a
+                  href="/gui/u/lazypower/logstash-core/bundle/1"
+                  onClick={[Function]}
+                >
+                  logstash-core
+                </a>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": <IconList
+                  applications={
+                    Array [
+                      Object {
+                        "displayName": "elasticsearch",
+                        "iconPath": "/charmstore/~lazypower/trusty/elasticsearch/icon.svg",
+                        "id": "cs:~lazypower/trusty/elasticsearch",
+                      },
+                      Object {
+                        "displayName": "kibana",
+                        "iconPath": "/charmstore/trusty/kibana-10/icon.svg",
+                        "id": "cs:trusty/kibana-10",
+                      },
+                      Object {
+                        "displayName": "logstash",
+                        "iconPath": "/charmstore/~lazypower/trusty/logstash-20/icon.svg",
+                        "id": "cs:~lazypower/trusty/logstash-20",
+                      },
+                      Object {
+                        "displayName": "openjdk",
+                        "iconPath": "/charmstore/~kwmonroe/trusty/openjdk/icon.svg",
+                        "id": "cs:~kwmonroe/trusty/openjdk",
+                      },
+                    ]
+                  }
+                  changeState={[Function]}
+                  generatePath={[Function]}
+                />,
+              },
+              Object {
+                "classes": Array [
+                  "u-align--right",
+                ],
+                "columnSize": 2,
+                "content": 2,
+              },
+              Object {
+                "classes": Array [
+                  "u-align--right",
+                ],
+                "columnSize": 1,
+                "content": 3,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "#1",
+              },
+            ],
+            "expandedContent": <ProfileExpandedContent
+              acl={
+                Object {
+                  "isReadOnly": [Function],
+                }
+              }
+              addToModel={[Function]}
+              changeState={[Function]}
+              entity={
+                Object {
+                  "applications": Object {
+                    "elasticsearch": Object {
+                      "charm": "cs:~lazypower/trusty/elasticsearch",
+                    },
+                    "kibana": Object {
+                      "charm": "cs:trusty/kibana-10",
+                    },
+                    "logstash": Object {
+                      "charm": "cs:~lazypower/trusty/logstash-20",
+                    },
+                    "openjdk": Object {
+                      "charm": "cs:~kwmonroe/trusty/openjdk",
+                    },
+                  },
+                  "bugUrl": "example.com/bugs",
+                  "description": "logstash-core description",
+                  "homepage": "example.com/",
+                  "id": "cs:~lazypower/bundle/logstash-core-1",
+                  "machineCount": 2,
+                  "name": "logstash-core",
+                  "perm": Object {
+                    "read": Array [
+                      "everyone",
+                    ],
+                    "write": Array [
+                      "lazypower",
+                    ],
+                  },
+                  "unitCount": 3,
+                }
+              }
+              generatePath={[Function]}
+              getDiagramURL={[Function]}
+              getModelName={[Function]}
+              topRow={
+                <div>
+                  <div
+                    className="six-col profile-expanded-content__top-row"
+                  >
+                    <a
+                      href="/gui/u/lazypower/logstash-core/bundle/1"
+                      onClick={[Function]}
+                    >
+                      logstash-core
+                    </a>
+                  </div>
+                  <div
+                    className="two-col profile-expanded-content__top-row u-align--right"
+                  >
+                    2
+                  </div>
+                  <div
+                    className="one-col profile-expanded-content__top-row u-align--right"
+                  >
+                    3
+                  </div>
+                  <div
+                    className="three-col last-col profile-expanded-content__top-row"
+                  >
+                    #1
+                  </div>
+                </div>
+              }
+            />,
+            "extraData": "logstash-core",
+            "key": "cs:~lazypower/bundle/logstash-core-1",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "columnSize": 3,
+                "content": <a
+                  href="/gui/u/lazypower/swarm-core/bundle/1"
+                  onClick={[Function]}
+                >
+                  swarm-core
+                </a>,
+              },
+              Object {
+                "columnSize": 3,
+                "content": <IconList
+                  applications={
+                    Array [
+                      Object {
+                        "displayName": "consul",
+                        "iconPath": "/charmstore/~containers/trusty/consul/icon.svg",
+                        "id": "cs:~containers/trusty/consul",
+                      },
+                      Object {
+                        "displayName": "swarm",
+                        "iconPath": "/charmstore/~lazypower/swarm/icon.svg",
+                        "id": "cs:~lazypower/swarm",
+                      },
+                    ]
+                  }
+                  changeState={[Function]}
+                  generatePath={[Function]}
+                />,
+              },
+              Object {
+                "classes": Array [
+                  "u-align--right",
+                ],
+                "columnSize": 2,
+                "content": 5,
+              },
+              Object {
+                "classes": Array [
+                  "u-align--right",
+                ],
+                "columnSize": 1,
+                "content": 5,
+              },
+              Object {
+                "columnSize": 3,
+                "content": "#1",
+              },
+            ],
+            "expandedContent": <ProfileExpandedContent
+              acl={
+                Object {
+                  "isReadOnly": [Function],
+                }
+              }
+              addToModel={[Function]}
+              changeState={[Function]}
+              entity={
+                Object {
+                  "applications": Object {
+                    "consul": Object {
+                      "charm": "cs:~containers/trusty/consul",
+                    },
+                    "swarm": Object {
+                      "charm": "cs:~lazypower/swarm",
+                    },
+                  },
+                  "bugUrl": "example.com/bugs",
+                  "description": "swarm-core description",
+                  "homepage": "example.com/",
+                  "id": "cs:~lazypower/bundle/swarm-core-1",
+                  "machineCount": 5,
+                  "name": "swarm-core",
+                  "perm": Object {
+                    "read": Array [
+                      "lazypower",
+                      "everyone",
+                    ],
+                    "write": Array [
+                      "lazypower",
+                    ],
+                  },
+                  "unitCount": 5,
+                }
+              }
+              generatePath={[Function]}
+              getDiagramURL={[Function]}
+              getModelName={[Function]}
+              topRow={
+                <div>
+                  <div
+                    className="six-col profile-expanded-content__top-row"
+                  >
+                    <a
+                      href="/gui/u/lazypower/swarm-core/bundle/1"
+                      onClick={[Function]}
+                    >
+                      swarm-core
+                    </a>
+                  </div>
+                  <div
+                    className="two-col profile-expanded-content__top-row u-align--right"
+                  >
+                    5
+                  </div>
+                  <div
+                    className="one-col profile-expanded-content__top-row u-align--right"
+                  >
+                    5
+                  </div>
+                  <div
+                    className="three-col last-col profile-expanded-content__top-row"
+                  >
+                    #1
+                  </div>
+                </div>
+              }
+            />,
+            "extraData": "swarm-core",
+            "key": "cs:~lazypower/bundle/swarm-core-1",
+          },
+        ]
+      }
+      sort={[Function]}
+    />
+  </div>
+</div>
+`;
