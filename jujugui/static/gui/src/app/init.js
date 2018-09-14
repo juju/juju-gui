@@ -296,13 +296,13 @@ class GUIApp {
       this.onDatabaseChanged, this);
     this.db.environment.after(
       ['add', 'remove', '*:change'], () => {
-        this.state.dispatch();
+        this._renderApp(this.state.current, () => {});
       }, this);
     this.db.units.after(
       ['add', 'remove', '*:change'],
       this.onDatabaseChanged, this);
     this.db.notifications.after('add', () => {
-      this.state.dispatch();
+      this._renderApp(this.state.current, () => {});
     }, this);
 
     // When someone wants a charm to be deployed they fire an event and we
@@ -417,9 +417,9 @@ class GUIApp {
   _setupEnvironmentChangeSet() {
     if (this.ecs === undefined) {
       this._domEventHandlers['renderDeploymentBarListener'] = () => {
-        // This is provided inside a wrappingn function instead of binding it
+        // This is provided inside a wrapper function instead of binding it
         // directly as the state object is not available at the time of binding.
-        this.state.dispatch();
+        this._renderApp(this.state.current, () => {});
       };
       const listener = this._domEventHandlers['renderDeploymentBarListener'];
       document.addEventListener('ecs.changeSetModified', listener);
@@ -492,7 +492,7 @@ class GUIApp {
     ReactDOM.render(
       <App
         acl={this.acl}
-        addToModel={this.addToModel}
+        addToModel={this.addToModel.bind(this)}
         applicationConfig={this.applicationConfig}
         appState={this.state}
         bakery={this.bakery}
@@ -514,10 +514,12 @@ class GUIApp {
         plans={this.plans}
         rates={this.rates}
         sendAnalytics={this.sendAnalytics}
-        setPageTitle={this.setPageTitle}
+        setModelUUID={this._setModelUUID.bind(this)}
+        setPageTitle={this.setPageTitle.bind(this)}
         stats={this.stats}
         storeUser={this.storeUser.bind(this)}
         stripe={this.stripe}
+        switchEnv={this.switchEnv.bind(this)}
         switchModel={switchModel}
         terms={this.terms}
         topology={this.topology}
@@ -641,6 +643,14 @@ class GUIApp {
       this.modelUUID = null;
     }
     this.switchEnv(socketURL);
+  }
+
+  /**
+    Set the current model UUID.
+    @param {String} uuid The uuid of the model to switch to, or none.
+  */
+  _setModelUUID(uuid) {
+    this.modelUUID = uuid;
   }
 
   /**
@@ -1227,6 +1237,7 @@ class GUIApp {
       if (current.root === 'login') {
         this.state.changeState({root: null});
       }
+
     };
     // Delay the callback until after the env login as everything should be
     // set up by then.

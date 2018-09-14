@@ -1010,7 +1010,7 @@ Browser: ${navigator.userAgent}`
         gtmEnabled={this.props.applicationConfig.GTM_enabled}
         hash={state.hash}
         initUtils={shapeup.addReshape({
-          deploy: initUtils.deploy.bind(initUtils, this, autoPlaceUnits),
+          deploy: initUtils.deploy.bind(initUtils, this.props, autoPlaceUnits),
           formatConstraints: initUtils.formatConstraints.bind(initUtils),
           generateMachineDetails: initUtils.generateMachineDetails.bind(
             initUtils, modelAPI.genericConstraints, db.units)
@@ -1447,10 +1447,12 @@ App.propTypes = {
   plans: PropTypes.object,
   rates: PropTypes.object,
   sendAnalytics: PropTypes.func.isRequired,
+  setModelUUID: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   stats: PropTypes.object,
   storeUser: PropTypes.func.isRequired,
   stripe: PropTypes.object,
+  switchEnv: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   terms: PropTypes.object,
   topology: PropTypes.object.isRequired,

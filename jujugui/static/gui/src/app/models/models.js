@@ -163,7 +163,9 @@ window.yui.add('juju-models', function(Y) {
     }
   }, {
     ATTRS: {
-      name: {},
+      name: {
+        value: 'untitled-model'
+      },
       provider: {},
       defaultSeries: {},
       jujushellURL: {},

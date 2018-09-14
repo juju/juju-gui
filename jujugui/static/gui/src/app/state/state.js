@@ -88,7 +88,6 @@ class State {
     */
     this._appStateHistory = [];
     /**
-      Internal storage for the dispatchers.
       @private
       @type {Array}
     */
