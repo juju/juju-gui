@@ -609,6 +609,7 @@ describe('init utils', () => {
         set: sinon.stub(),
         createSocketURL: sinon.stub().returns('wss://socket-url'),
         get: sinon.stub().returns('wss://socket-url'),
+        setModelUUID: sinon.stub(),
         switchEnv: sinon.stub(),
         appState: {
           current: {},
@@ -685,7 +686,8 @@ describe('init utils', () => {
       assert.equal(appProps.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
       appProps.controllerAPI.createModel.args[0][3](null, modelData);
-      assert.equal(appProps.modelUUID, modelData.uuid);
+      assert.equal(appProps.setModelUUID.callCount, 1);
+      assert.equal(appProps.setModelUUID.args[0][0], modelData.uuid);
       assert.equal(appProps.switchEnv.callCount, 1);
       assert.equal(appProps.switchEnv.args[0][0], 'wss://apiAddress/the-uuid');
       assert.strictEqual(appProps.switchEnv.args[0][1], null);

@@ -565,7 +565,7 @@ utils.deploy = function(
         // Cleanup the direct deploy state so that we don't dispatch it again.
         appProps.appState.changeState({special: {dd: null}});
       }
-      appProps.modelUUID = model.uuid;
+      appProps.setModelUUID(model.uuid);
       const config = appProps.applicationConfig;
       const socketUrl = utils.createSocketURL({
         apiAddress: config.apiAddress,

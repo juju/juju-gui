@@ -514,10 +514,12 @@ class GUIApp {
         plans={this.plans}
         rates={this.rates}
         sendAnalytics={this.sendAnalytics}
+        setModelUUID={this._setModelUUID.bind(this)}
         setPageTitle={this.setPageTitle.bind(this)}
         stats={this.stats}
         storeUser={this.storeUser.bind(this)}
         stripe={this.stripe}
+        switchEnv={this.switchEnv.bind(this)}
         switchModel={switchModel}
         terms={this.terms}
         topology={this.topology}
@@ -641,6 +643,14 @@ class GUIApp {
       this.modelUUID = null;
     }
     this.switchEnv(socketURL);
+  }
+
+  /**
+    Set the current model UUID.
+    @param {String} uuid The uuid of the model to switch to, or none.
+  */
+  _setModelUUID(uuid) {
+    this.modelUUID = uuid;
   }
 
   /**
