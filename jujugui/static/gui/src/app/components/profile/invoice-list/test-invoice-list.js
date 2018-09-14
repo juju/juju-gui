@@ -25,17 +25,18 @@ describe('Invoice Bundle List', function() {
   let acl;
 
   beforeEach(() => {
-    acl = shapeup.deepFreeze({isReadOnly: () => false});
+    acl = shapeup.deepFreeze({ isReadOnly: () => false });
     invoices = JSON.parse(rawInvoiceData);
   });
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ProfileInvoiceList
-      acl={options.acl || acl}
-      baseURL="/gui/"
-      data={options.invoices || invoices}
-      user="lazypower@external" />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ProfileInvoiceList
+        acl={options.acl || acl}
+        baseURL="/gui/"
+        data={options.invoices || invoices}
+        user="lazypower@external" />
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();

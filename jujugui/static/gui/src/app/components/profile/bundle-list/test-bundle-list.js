@@ -62,7 +62,7 @@ describe('Profile Bundle List', function() {
   let acl;
 
   beforeEach(() => {
-    acl = shapeup.deepFreeze({isReadOnly: () => false});
+    acl = shapeup.deepFreeze({ isReadOnly: () => false });
   });
 
   const renderComponent = (options = {}) => {
@@ -92,8 +92,8 @@ describe('Profile Bundle List', function() {
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         storeUser={options.storeUser || sinon.stub()}
-        user={
-          options.user !== undefined ? options.user : 'lazypower@external'} />);
+        user={options.user !== undefined ? options.user : 'lazypower@external'} />
+    );
   };
 
   it('can render', () => {
@@ -285,12 +285,21 @@ describe('Profile Bundle List', function() {
     const expected = (
       <p className="profile-bundle-list__onboarding">
         Learn about&nbsp;
-        <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
+        <a
+          href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
           target="_blank">
           writing your own bundle
-        </a>.
-      </p>);
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+        </a>
+        .
+      </p>
+    );
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(0)'),
+      true
+    );
     assert.compareJSX(wrapper.find('.profile-bundle-list__onboarding'), expected);
   });
 
@@ -303,9 +312,14 @@ describe('Profile Bundle List', function() {
   });
 
   it('updates the header if it is not your profile', () => {
-    const wrapper = renderComponent({isActiveUsersProfile: false});
+    const wrapper = renderComponent({ isActiveUsersProfile: false });
     assert.equal(
-      wrapper.find('.profile__title').html().includes('Their bundles'), true);
+      wrapper
+        .find('.profile__title')
+        .html()
+        .includes('Their bundles'),
+      true
+    );
   });
 
   it('can display a spinner when loading', () => {

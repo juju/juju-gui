@@ -22,35 +22,43 @@ describe('ProfileCredentialList', () => {
       isReadOnly: sinon.stub()
     };
     cloudData = {
-      aws: {cloudType: 'ec2'},
-      azure: {cloudType: 'azure'},
-      google: {cloudType: 'gce'}
+      aws: { cloudType: 'ec2' },
+      azure: { cloudType: 'azure' },
+      google: { cloudType: 'gce' }
     };
 
-    credentialData = [{
-      names: ['aws_foo@external_cred1', 'aws_foo@external_testcred'],
-      displayNames: ['cred1', 'testcred']
-    }, {
-      names: ['azure_foo@external_cred1'],
-      displayNames: ['cred1']
-    }, {
-      names: ['google_foo@external_admin'],
-      displayNames: ['admin']
-    }];
+    credentialData = [
+      {
+        names: ['aws_foo@external_cred1', 'aws_foo@external_testcred'],
+        displayNames: ['cred1', 'testcred']
+      },
+      {
+        names: ['azure_foo@external_cred1'],
+        displayNames: ['cred1']
+      },
+      {
+        names: ['google_foo@external_admin'],
+        displayNames: ['admin']
+      }
+    ];
 
-    modelData = [{
-      owner: 'foo@external',
-      credential: credentialData[0].names[0],
-      name: 'testmodel1'
-    }, {
-      owner: 'foo@external',
-      credential: credentialData[1].names[0],
-      name: 'testmodel2'
-    }, {
-      owner: 'bar@external',
-      credential: 'some other credential',
-      name: 'sharedmodel1'
-    }];
+    modelData = [
+      {
+        owner: 'foo@external',
+        credential: credentialData[0].names[0],
+        name: 'testmodel1'
+      },
+      {
+        owner: 'foo@external',
+        credential: credentialData[1].names[0],
+        name: 'testmodel2'
+      },
+      {
+        owner: 'bar@external',
+        credential: 'some other credential',
+        name: 'sharedmodel1'
+      }
+    ];
     controllerAPI = {
       listClouds: callback => callback(null, cloudData),
       getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
@@ -68,20 +76,22 @@ describe('ProfileCredentialList', () => {
         controllerAPI={options.controllerAPI || controllerAPI}
         controllerIsReady={options.controllerIsReady || sinon.stub()}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
-        username={options.username || 'foo@external'} />);
+        username={options.username || 'foo@external'} />
+    );
     return component;
   }
 
-  const shallowRenderComponent = (options = {}) => enzyme.shallow(
-    <ProfileCredentialList
-      acl={acl}
-      addNotification={options.addNotification || sinon.stub()}
-      controllerAPI={options.controllerAPI || controllerAPI}
-      controllerIsReady={options.controllerIsReady || sinon.stub()}
-      credential="azure_foo@external_cred1"
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      username={options.username || 'foo@external'} />
-  );
+  const shallowRenderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ProfileCredentialList
+        acl={acl}
+        addNotification={options.addNotification || sinon.stub()}
+        controllerAPI={options.controllerAPI || controllerAPI}
+        controllerIsReady={options.controllerIsReady || sinon.stub()}
+        credential="azure_foo@external_cred1"
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        username={options.username || 'foo@external'} />
+    );
 
   /**
     Some tasks are done async in the component. This method checks to see when
@@ -92,7 +102,7 @@ describe('ProfileCredentialList', () => {
       to loading: true.
     @param {Integer} duration How long to wait before each iteration. Default 10ms.
   */
-  function loopCheck(component, callback, duration=10) {
+  function loopCheck(component, callback, duration = 10) {
     let loopCount = 0;
     const timer = setInterval(() => {
       loopCount += 1;
@@ -120,18 +130,24 @@ describe('ProfileCredentialList', () => {
       assert.equal(component.state.loading, false);
       // Check that the map has the proper values.
       const map = component.state.credentialMap;
-      assert.deepEqual(
-        map.get('aws_foo@external_cred1'),
-        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
-      assert.deepEqual(
-        map.get('aws_foo@external_testcred'),
-        {cloud: 'aws', displayName: 'testcred'});
-      assert.deepEqual(
-        map.get('azure_foo@external_cred1'),
-        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
-      assert.deepEqual(
-        map.get('google_foo@external_admin'),
-        {cloud: 'google', displayName: 'admin'});
+      assert.deepEqual(map.get('aws_foo@external_cred1'), {
+        cloud: 'aws',
+        displayName: 'cred1',
+        models: ['testmodel1']
+      });
+      assert.deepEqual(map.get('aws_foo@external_testcred'), {
+        cloud: 'aws',
+        displayName: 'testcred'
+      });
+      assert.deepEqual(map.get('azure_foo@external_cred1'), {
+        cloud: 'azure',
+        displayName: 'cred1',
+        models: ['testmodel2']
+      });
+      assert.deepEqual(map.get('google_foo@external_admin'), {
+        cloud: 'google',
+        displayName: 'admin'
+      });
       removeComponent(component);
       done();
     });
@@ -150,18 +166,24 @@ describe('ProfileCredentialList', () => {
       assert.equal(component.state.loading, false);
       // Check that the map has the proper values.
       const map = component.state.credentialMap;
-      assert.deepEqual(
-        map.get('aws_foo@external_cred1'),
-        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
-      assert.deepEqual(
-        map.get('aws_foo@external_testcred'),
-        {cloud: 'aws', displayName: 'testcred'});
-      assert.deepEqual(
-        map.get('azure_foo@external_cred1'),
-        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
-      assert.deepEqual(
-        map.get('google_foo@external_admin'),
-        {cloud: 'google', displayName: 'admin'});
+      assert.deepEqual(map.get('aws_foo@external_cred1'), {
+        cloud: 'aws',
+        displayName: 'cred1',
+        models: ['testmodel1']
+      });
+      assert.deepEqual(map.get('aws_foo@external_testcred'), {
+        cloud: 'aws',
+        displayName: 'testcred'
+      });
+      assert.deepEqual(map.get('azure_foo@external_cred1'), {
+        cloud: 'azure',
+        displayName: 'cred1',
+        models: ['testmodel2']
+      });
+      assert.deepEqual(map.get('google_foo@external_admin'), {
+        cloud: 'google',
+        displayName: 'admin'
+      });
       removeComponent(component);
       done();
     });
@@ -169,7 +191,7 @@ describe('ProfileCredentialList', () => {
 
   function testRequestErrorNotification(controllerAPI, done) {
     const addNotification = sinon.stub();
-    const component = renderComponentToDOM({addNotification, controllerAPI});
+    const component = renderComponentToDOM({ addNotification, controllerAPI });
     loopCheck(component, () => {
       const errorMsg = 'Unable to fetch credential data';
       // As this is using renderIntoDocument then presumably child components
@@ -382,7 +404,10 @@ describe('ProfileCredentialList', () => {
     const wrapper = shallowRenderComponent();
     const instance = wrapper.instance();
     return instance._getClouds().then(() => {
-      wrapper.find('GenericButton').props().action();
+      wrapper
+        .find('GenericButton')
+        .props()
+        .action();
       wrapper.update();
       const expected = (
         <div className="twelve-col">
@@ -397,14 +422,18 @@ describe('ProfileCredentialList', () => {
             controllerIsReady={sinon.stub()}
             credential={undefined}
             credentials={[
-              'aws_foo@external_cred1', 'aws_foo@external_testcred',
-              'azure_foo@external_cred1', 'google_foo@external_admin']}
+              'aws_foo@external_cred1',
+              'aws_foo@external_testcred',
+              'azure_foo@external_cred1',
+              'google_foo@external_admin'
+            ]}
             key="deployment-credential-add"
             onCancel={wrapper.find('CredentialAddEdit').prop('onCancel')}
             onCredentialUpdated={wrapper.find('CredentialAddEdit').prop('onCredentialUpdated')}
             sendAnalytics={sinon.stub()}
             username="foo@external" />
-        </div>);
+        </div>
+      );
       assert.compareJSX(wrapper.find('.twelve-col'), expected);
     });
   });
@@ -420,154 +449,204 @@ describe('ProfileCredentialList', () => {
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Name',
-              columnSize: 6
-            }, {
-              content: 'Provider',
-              columnSize: 2
-            }, {
-              content: 'Used by',
-              columnSize: 3
-            }, {
-              content: 'Action',
-              columnSize: 1
-            }]}
+            headers={[
+              {
+                content: 'Name',
+                columnSize: 6
+              },
+              {
+                content: 'Provider',
+                columnSize: 2
+              },
+              {
+                content: 'Used by',
+                columnSize: 3
+              },
+              {
+                content: 'Action',
+                columnSize: 1
+              }
+            ]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
-            rows={[{
-              classes: null,
-              columns: [{
-                content: 'cred1',
-                columnSize: 6
-              }, {
-                content: 'aws',
-                columnSize: 2
-              }, {
-                content: 'testmodel1',
-                columnSize: 3
-              }, {
-                content: (
-                  <ButtonDropdown
-                    icon="contextual-menu-horizontal"
-                    listItems={[{
-                      label: 'Edit',
-                      action: sinon.stub()
-                    }, {
-                      label: 'Delete',
-                      action: sinon.stub()
-                    }]} />),
-                columnSize: 1
-              }],
-              expandedContent: (
-                <CredentialAddEdit
-                  acl={acl}
-                  addNotification={sinon.stub()}
-                  controllerAPI={{
-                    listClouds: sinon.stub(),
-                    reshape: sinon.stub(),
-                    updateCloudCredential: sinon.stub()
-                  }}
-                  controllerIsReady={sinon.stub()}
-                  credential={{cloud: 'aws', displayName: 'cred1', models: ['testmodel1']}}
-                  credentials={[
-                    'aws_foo@external_cred1', 'aws_foo@external_testcred',
-                    'azure_foo@external_cred1', 'google_foo@external_admin']}
-                  key="deployment-credential-add"
-                  onCancel={sinon.stub()}
-                  onCredentialUpdated={sinon.stub()}
-                  sendAnalytics={sinon.stub()}
-                  username="foo@external" />),
-              expandedContentExpanded: true,
-              key: 'aws_foo@external_cred1',
-              rowClickable: false
-            }, {
-              classes: null,
-              columns: [{
-                content: 'testcred',
-                columnSize: 6
-              }, {
-                content: 'aws',
-                columnSize: 2
-              }, {
-                content: '-',
-                columnSize: 3
-              }, {
-                content: (
-                  <ButtonDropdown
-                    icon="contextual-menu-horizontal"
-                    listItems={[{
-                      label: 'Edit',
-                      action: sinon.stub()
-                    }, {
-                      label: 'Delete',
-                      action: sinon.stub()
-                    }]} />),
-                columnSize: 1
-              }],
-              expandedContent: null,
-              expandedContentExpanded: false,
-              key: 'aws_foo@external_testcred',
-              rowClickable: false
-            }, {
-              classes: ['profile-credential-list--highlighted'],
-              columns: [{
-                content: 'cred1',
-                columnSize: 6
-              }, {
-                content: 'azure',
-                columnSize: 2
-              }, {
-                content: 'testmodel2',
-                columnSize: 3
-              }, {
-                content: (
-                  <ButtonDropdown
-                    icon="contextual-menu-horizontal"
-                    listItems={[{
-                      label: 'Edit',
-                      action: sinon.stub()
-                    }, {
-                      label: 'Delete',
-                      action: sinon.stub()
-                    }]} />),
-                columnSize: 1
-              }],
-              expandedContent: null,
-              expandedContentExpanded: false,
-              key: 'azure_foo@external_cred1',
-              rowClickable: false
-            }, {
-              classes: null,
-              columns: [{
-                content: 'admin',
-                columnSize: 6
-              }, {
-                content: 'google',
-                columnSize: 2
-              }, {
-                content: '-',
-                columnSize: 3
-              }, {
-                content: (
-                  <ButtonDropdown
-                    icon="contextual-menu-horizontal"
-                    listItems={[{
-                      label: 'Edit',
-                      action: sinon.stub()
-                    }, {
-                      label: 'Delete',
-                      action: sinon.stub()
-                    }]} />),
-                columnSize: 1
-              }],
-              expandedContent: null,
-              expandedContentExpanded: false,
-              key: 'google_foo@external_admin',
-              rowClickable: false
-            }
+            rows={[
+              {
+                classes: null,
+                columns: [
+                  {
+                    content: 'cred1',
+                    columnSize: 6
+                  },
+                  {
+                    content: 'aws',
+                    columnSize: 2
+                  },
+                  {
+                    content: 'testmodel1',
+                    columnSize: 3
+                  },
+                  {
+                    content: (
+                      <ButtonDropdown
+                        icon="contextual-menu-horizontal"
+                        listItems={[
+                          {
+                            label: 'Edit',
+                            action: sinon.stub()
+                          },
+                          {
+                            label: 'Delete',
+                            action: sinon.stub()
+                          }
+                        ]} />
+                    ),
+                    columnSize: 1
+                  }
+                ],
+                expandedContent: (
+                  <CredentialAddEdit
+                    acl={acl}
+                    addNotification={sinon.stub()}
+                    controllerAPI={{
+                      listClouds: sinon.stub(),
+                      reshape: sinon.stub(),
+                      updateCloudCredential: sinon.stub()
+                    }}
+                    controllerIsReady={sinon.stub()}
+                    credential={{ cloud: 'aws', displayName: 'cred1', models: ['testmodel1'] }}
+                    credentials={[
+                      'aws_foo@external_cred1',
+                      'aws_foo@external_testcred',
+                      'azure_foo@external_cred1',
+                      'google_foo@external_admin'
+                    ]}
+                    key="deployment-credential-add"
+                    onCancel={sinon.stub()}
+                    onCredentialUpdated={sinon.stub()}
+                    sendAnalytics={sinon.stub()}
+                    username="foo@external" />
+                ),
+                expandedContentExpanded: true,
+                key: 'aws_foo@external_cred1',
+                rowClickable: false
+              },
+              {
+                classes: null,
+                columns: [
+                  {
+                    content: 'testcred',
+                    columnSize: 6
+                  },
+                  {
+                    content: 'aws',
+                    columnSize: 2
+                  },
+                  {
+                    content: '-',
+                    columnSize: 3
+                  },
+                  {
+                    content: (
+                      <ButtonDropdown
+                        icon="contextual-menu-horizontal"
+                        listItems={[
+                          {
+                            label: 'Edit',
+                            action: sinon.stub()
+                          },
+                          {
+                            label: 'Delete',
+                            action: sinon.stub()
+                          }
+                        ]} />
+                    ),
+                    columnSize: 1
+                  }
+                ],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'aws_foo@external_testcred',
+                rowClickable: false
+              },
+              {
+                classes: ['profile-credential-list--highlighted'],
+                columns: [
+                  {
+                    content: 'cred1',
+                    columnSize: 6
+                  },
+                  {
+                    content: 'azure',
+                    columnSize: 2
+                  },
+                  {
+                    content: 'testmodel2',
+                    columnSize: 3
+                  },
+                  {
+                    content: (
+                      <ButtonDropdown
+                        icon="contextual-menu-horizontal"
+                        listItems={[
+                          {
+                            label: 'Edit',
+                            action: sinon.stub()
+                          },
+                          {
+                            label: 'Delete',
+                            action: sinon.stub()
+                          }
+                        ]} />
+                    ),
+                    columnSize: 1
+                  }
+                ],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'azure_foo@external_cred1',
+                rowClickable: false
+              },
+              {
+                classes: null,
+                columns: [
+                  {
+                    content: 'admin',
+                    columnSize: 6
+                  },
+                  {
+                    content: 'google',
+                    columnSize: 2
+                  },
+                  {
+                    content: '-',
+                    columnSize: 3
+                  },
+                  {
+                    content: (
+                      <ButtonDropdown
+                        icon="contextual-menu-horizontal"
+                        listItems={[
+                          {
+                            label: 'Edit',
+                            action: sinon.stub()
+                          },
+                          {
+                            label: 'Delete',
+                            action: sinon.stub()
+                          }
+                        ]} />
+                    ),
+                    columnSize: 1
+                  }
+                ],
+                expandedContent: null,
+                expandedContentExpanded: false,
+                key: 'google_foo@external_admin',
+                rowClickable: false
+              }
             ]} />
-        </div>);
+        </div>
+      );
       assert.compareJSX(wrapper.find('.profile-credential-list__list'), expected);
     });
   });
@@ -584,13 +663,13 @@ describe('ProfileCredentialList', () => {
             addNotification={sinon.stub()}
             credential="google_foo@external_admin"
             onCancel={wrapper.find('ProfileCredentialListDelete').prop('onCancel')}
-            onCredentialDeleted={
-              wrapper.find('ProfileCredentialListDelete').prop('onCredentialDeleted')}
+            onCredentialDeleted={wrapper
+              .find('ProfileCredentialListDelete')
+              .prop('onCredentialDeleted')}
             revokeCloudCredential={sinon.stub()} />
         </div>
       );
       assert.compareJSX(wrapper.find('.profile-credential-list__delete'), expected);
     });
   });
-
 });

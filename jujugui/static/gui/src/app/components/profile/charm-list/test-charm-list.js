@@ -66,13 +66,14 @@ describe('Profile Charm List', function() {
         getModelName={options.getModelName || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         storeUser={options.storeUser || sinon.stub()}
-        user={
-          options.user !== undefined ? options.user : 'hatch@external'} />, true);
+        user={options.user !== undefined ? options.user : 'hatch@external'} />,
+      true
+    );
   };
   let acl;
 
   beforeEach(() => {
-    acl = shapeup.deepFreeze({isReadOnly: () => false});
+    acl = shapeup.deepFreeze({ isReadOnly: () => false });
   });
 
   it('can render', () => {
@@ -294,9 +295,17 @@ describe('Profile Charm List', function() {
         <a href="https://jujucharms.com/docs/stable/developer-getting-started"
           target="_blank">
           writing your own charm
-        </a>.
-      </p>);
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+        </a>
+        .
+      </p>
+    );
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(0)'),
+      true
+    );
     assert.compareJSX(wrapper.find('.profile-charm-list__onboarding'), expected);
   });
 
@@ -309,9 +318,14 @@ describe('Profile Charm List', function() {
   });
 
   it('updates the header if it is not your profile', () => {
-    const wrapper = renderComponent({isActiveUsersProfile: false});
+    const wrapper = renderComponent({ isActiveUsersProfile: false });
     assert.equal(
-      wrapper.find('.profile__title').html().includes('Their charms'), true);
+      wrapper
+        .find('.profile__title')
+        .html()
+        .includes('Their charms'),
+      true
+    );
   });
 
   it('shows the spinner when loading', () => {

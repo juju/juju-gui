@@ -593,6 +593,21 @@ describe('Profile Model List', function() {
             key: 'website'
           }]} />
       </div>
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ProfileModelList
+        acl={{}}
+        addNotification={options.addNotification || sinon.stub()}
+        baseURL="/gui/"
+        changeState={options.changeState || sinon.stub()}
+        destroyModel={options.destroyModel || sinon.stub()}
+        facadesExist={true}
+        listModelsWithInfo={
+          options.listModelsWithInfo ||
+          sinon.stub().callsArgWith(0, null, JSON.parse(rawModelData))
+        }
+        switchModel={options.switchModel || sinon.stub()}
+        userInfo={options.userInfo || { profile: 'tester' }} />
     );
     assert.compareJSX(wrapper, expected);
   });
@@ -600,7 +615,8 @@ describe('Profile Model List', function() {
   it('does not break for superusers', () => {
     // Users with access to all models but no models of their own, or shared with them.
     const models = JSON.parse(rawModelData);
-    models.push(JSON.parse(`{
+    models.push(
+      JSON.parse(`{
       "id": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
       "name": "mymodel-foo",
       "series": "xenial",
@@ -629,20 +645,33 @@ describe('Profile Model List', function() {
       "isAlive": true,
       "isController": false,
       "lastConnection": "2017-07-06T14:47:03.000Z"
-    }`));
+    }`)
+    );
     const wrapper = renderComponent({
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, models),
-      userInfo: {profile: 'somesuperuser'}
+      userInfo: { profile: 'somesuperuser' }
     });
     // It should only show the single model that they explicitly own.
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(1)'), true);
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(1)'),
+      true
+    );
   });
 
   it('can render without any models', () => {
     const wrapper = renderComponent({
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, null)
     });
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(0)'),
+      true
+    );
     assert.equal(wrapper.find('BasicTable').length, 0);
   });
 
@@ -650,7 +679,13 @@ describe('Profile Model List', function() {
     const wrapper = renderComponent({
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, [''])
     });
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(0)'),
+      true
+    );
     assert.equal(wrapper.find('BasicTable').length, 0);
   });
 
@@ -660,13 +695,13 @@ describe('Profile Model List', function() {
     const wrapper = renderComponent({
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, models)
     });
-    assert.strictEqual(
-      wrapper.find('BasicTable').prop('rows')[0].columns[5].content, null);
+    assert.strictEqual(wrapper.find('BasicTable').prop('rows')[0].columns[5].content, null);
   });
 
   it('does not show models that are being destroyed', () => {
-    const models = [{isAlive: false}];
-    models.push(JSON.parse(`{
+    const models = [{ isAlive: false }];
+    models.push(
+      JSON.parse(`{
       "id": "2f929db7-08a1-4a75-8733-3a0352a6e9f5",
       "name": "mymodel",
       "series": "xenial",
@@ -701,11 +736,18 @@ describe('Profile Model List', function() {
       "isAlive": true,
       "isController": false,
       "lastConnection": "2017-07-06T14:47:03.000Z"
-    }`));
+    }`)
+    );
     const wrapper = renderComponent({
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, models)
     });
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(1)'), true);
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(1)'),
+      true
+    );
   });
 
   it('displays an error when destroying a model fails', () => {
@@ -750,12 +792,14 @@ describe('Profile Model List', function() {
     assert.equal(e.preventDefault.callCount, 1);
     assert.equal(e.stopPropagation.callCount, 1);
     assert.equal(changeState.callCount, 1, 'changeState not called');
-    assert.deepEqual(changeState.args[0], [{profile: null}]);
+    assert.deepEqual(changeState.args[0], [{ profile: null }]);
     assert.equal(switchModel.callCount, 1, 'switchModel not called');
-    assert.deepEqual(switchModel.args[0], [{
-      name: 'mymodel',
-      id: '2f929db7-08a1-4a75-8733-3a0352a6e9f5',
-      owner: 'tester'
-    }]);
+    assert.deepEqual(switchModel.args[0], [
+      {
+        name: 'mymodel',
+        id: '2f929db7-08a1-4a75-8733-3a0352a6e9f5',
+        owner: 'tester'
+      }
+    ]);
   });
 });

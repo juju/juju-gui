@@ -1,5 +1,4 @@
 .payment {
-
   &__no-user {
     .button--inline-neutral {
       margin-left: 20px;
@@ -34,14 +33,13 @@
   }
 
   .generic-input {
-
-    &__field[type=text] {
+    &__field[type='text'] {
       margin-bottom: 1.5rem;
-      width: calc(100% - 40px)!important;
+      width: calc(100% - 40px) !important;
     }
   }
 
-  [type="radio"]:checked:after {
+  [type='radio']:checked:after {
     position: relative !important;
     bottom: 3px;
   }
