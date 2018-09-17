@@ -5,56 +5,10 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ExpandingRow = require('../expanding-row/expanding-row');
+const BasicTableRow = require('./row/row');
 
 /** Basic table React component used to display data in a table structure. */
 class BasicTable extends React.Component {
-  constructor() {
-    super();
-    this.columnClasses = [
-      'one-col',
-      'two-col',
-      'three-col',
-      'four-col',
-      'five-col',
-      'six-col',
-      'seven-col',
-      'eight-col',
-      'nine-col',
-      'ten-col',
-      'eleven-col',
-      'twelve-col'
-    ];
-  }
-
-  /**
-    Show the entity details when clicked.
-
-    @method _handleRowClick
-    @param onClick {Function} The function to call when a row is clicked.
-    @param evt {Object} The click event.
-  */
-  _handleRowClick(onClick, evt) {
-    evt.preventDefault();
-    onClick && onClick();
-  }
-
-  /**
-    Generate a row anchor.
-    @param onClick {Function} The method to call when the row is clicked.
-    @param clickURL {String} A URL to use for the anchor href.
-    @returns {Object} The anchor element or null.
-  */
-  _generateAnchor(onClick, clickURL) {
-    if (!onClick && !clickURL) {
-      return null;
-    }
-    return (
-      <a className="basic-table__row-link"
-        href={clickURL}
-        onClick={onClick && this._handleRowClick.bind(this, onClick)}></a>);
-  }
-
   /**
     Generate a row.
     @param isHeader {Boolean} Whether this is a header row.
@@ -64,83 +18,26 @@ class BasicTable extends React.Component {
     @returns {Object} The row to render.
   */
   _generateRow(isHeader, row, index = 0, rowCount = 1) {
-    let columnList;
+    const key = isHeader ? 'basic-table-header' : row.key;
+    let classes = (row.classes || []).concat(this.props.rowClasses);
     if (isHeader) {
-      columnList = row;
-    } else {
-      columnList = row.columns;
+      classes = classes.concat(this.props.headerClasses);
     }
-    const columnsNumber = columnList.length;
-    const columns = columnList.map((column, i) => {
-      let conditionalClasses = {'last-col': i + 1 === columnsNumber};
-      // Map the column size to the appropriate CSS class.
-      conditionalClasses[this.columnClasses[column.columnSize - 1]] = true;
-      if (column.classes) {
-        column.classes.forEach(className => {
-          conditionalClasses[className] = true;
-        });
-      }
-      const classes = classNames(
-        conditionalClasses,
-        isHeader ? this.props.headerColumnClasses :
-          this.props.rowColumnClasses);
-      let content = column.content;
-      // if there is no content then add a space so that the column doesn't
-      // collapse.
-      if ((typeof(content) === 'string' && content.replace(/\s/g, '') === '') ||
-        content === undefined || content === null) {
-        content = (<span>&nbsp;</span>);
-      }
-      return (
-        <div className={classes}
-          key={i}>
-          {content}
-        </div>);
-    });
-    const defaultRowClasses = this.props.rowClasses || [];
-    const rowClasses = row.classes || [];
-    if (row.expandedContent) {
-      const rowClickable = (
-        row.rowClickable !== undefined ? row.rowClickable : !!row.expandedContent);
-      let classes = {
-        'basic-table__row': true,
-        'basic-table__row--expandable': true,
-        'basic-table__row--clickable': rowClickable,
-        'first-row-class': true,
-        'twelve-col': true
-      };
-      defaultRowClasses.concat(rowClasses).forEach(className => {
-        classes[className] = true;
-      });
-      return (
-        <ExpandingRow
-          classes={classes}
-          clickable={rowClickable}
-          expanded={row.expandedContentExpanded}
-          key={row.key}>
-          <div>
-            {columns}
-          </div>
-          <div>
-            {row.expandedContent}
-          </div>
-        </ExpandingRow>);
-    } else {
-      const classes = classNames(
-        'twelve-col',
-        isHeader ? this.props.headerClasses : defaultRowClasses,
-        rowClasses,
-        {
-          'basic-table__header': isHeader,
-          'basic-table__row': !isHeader
-        });
-      return (
-        <li className={classes}
-          key={isHeader ? 'basic-table-header' : row.key}>
-          {this._generateAnchor(row.onClick, row.clickURL)}
-          {columns}
-        </li>);
-    }
+    return (
+      <BasicTableRow
+        classes={classes}
+        clickURL={row.clickURL}
+        columns={row.columns}
+        expandedContent={row.expandedContent}
+        expandedContentExpanded={row.expandedContentExpanded}
+        extraData={row.extraData}
+        headerColumnClasses={this.props.headerColumnClasses}
+        isHeader={isHeader}
+        key={key}
+        onClick={row.onClick}
+        rowClickable={row.rowClickable}
+        rowColumnClasses={this.props.rowColumnClasses}
+        rowKey={key} />);
   }
 
   /**
@@ -165,11 +62,16 @@ class BasicTable extends React.Component {
       this.props.tableClasses);
     return (
       <ul className={classes}>
-        {this._generateRow(true, this.props.headers)}
+        {this._generateRow(true, { columns: this.props.headers })}
         {this._generateContent()}
       </ul>
     );
   }
+};
+
+BasicTable.defaultProps = {
+  headerClasses: [],
+  rowClasses: []
 };
 
 BasicTable.propTypes = {
