@@ -55,7 +55,6 @@ class BasicTableRow extends React.Component {
         classes={classes}
         columnSize={column.columnSize}
         content={column.content}
-        isHeader={isHeader}
         isLastCol={index + 1 === this.props.columns.length}
         key={index} />);
   }
