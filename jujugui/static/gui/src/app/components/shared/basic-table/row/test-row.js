@@ -5,7 +5,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const BasicTableRow = require('./row');
-const ExpandingRow = require('../../expanding-row/expanding-row');
 
 describe('BasicTableRow', () => {
   let columns;
