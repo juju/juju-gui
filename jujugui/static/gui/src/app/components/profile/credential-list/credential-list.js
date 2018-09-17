@@ -150,6 +150,7 @@ class ProfileCredentialList extends React.Component {
     @param {String} credentialId The credential ID to edit.
   */
   _setEditCredential(credentialId = null) {
+    console.log('credentialId', credentialId);
     this.setState({editCredential: credentialId});
   }
 

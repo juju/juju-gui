@@ -233,7 +233,7 @@ class DeploymentCredentialAdd extends React.Component {
     }];
     if (props.onCancel) {
       buttons.unshift({
-        action: props.onCancel.bind(this),
+        action: props.onCancel,
         title: 'Cancel',
         type: 'inline-neutral'
       });
