@@ -25,18 +25,6 @@ class Status extends React.Component {
     };
   }
 
-  /**
-    TODO: componentDidMount and componentDidUnmount should be removed
-    when the status beta is over, it adds a class to overwrite the 'beta'
-    pseudo element.
-  */
-  componentWillMount() {
-    document.body.classList.add('u-is-status');
-  }
-  componentWillUnmount() {
-    document.body.classList.remove('u-is-status');
-  }
-
   componentWillReceiveProps() {
     // Reset to the lowest status so that when the apps, units etc. are looped
     // through the highest status can be stored.
