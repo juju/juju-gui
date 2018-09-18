@@ -26,8 +26,12 @@ describe('Status', () => {
 
   beforeEach(() => {
     entities = {
-      applications: [],
-      machines: [],
+      applications: [{
+        getAttrs: sinon.stub().returns({
+          status: {}
+        })
+      }],
+      machines: [{}],
       model: {
         cloud: 'aws',
         environmentName: 'my-model',
@@ -36,10 +40,9 @@ describe('Status', () => {
         sla: 'advanced',
         version: '2.42.47'
       },
-      relations: [],
-      remoteApplications: [],
-      services: [],
-      units: []
+      relations: [{}],
+      remoteApplications: [{}],
+      units: [{}]
     };
   });
 
@@ -54,7 +57,17 @@ describe('Status', () => {
     assert.compareJSX(wrapper.find('.status-view__content'), expected);
   });
 
-  it('renders', () => {
+  it('renders without entities', () => {
+    entities.applications = [];
+    entities.machines = [];
+    entities.relations = [];
+    entities.remoteApplications = [];
+    entities.units = [];
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('renders with entities', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });

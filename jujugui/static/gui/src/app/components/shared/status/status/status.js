@@ -79,10 +79,6 @@ class Status extends React.Component {
   _generateModel() {
     const {entities} = this.props;
     const {model} = entities;
-    if (!model.modelUUID) {
-      // No need to go further: we are not connected to a model.
-      return 'Cannot show the status: the GUI is not connected to a model.';
-    }
     const counts = {
       applications: entities.applications.length,
       machines: entities.machines.length,
@@ -189,17 +185,28 @@ class Status extends React.Component {
   }
 
   render() {
-    return (
-      <Panel
-        instanceName="status-view"
-        visible={true}>
-        <div className="status-view__content">
+    let content;
+    if (!this.props.entities.model.modelUUID) {
+      // No need to go further: we are not connected to a model.
+      content = 'Cannot show the status: the GUI is not connected to a model.';
+    } else {
+      content = (
+        <React.Fragment>
           {this._generateModel()}
           {this._generateRemoteApplications()}
           {this._generateApplications()}
           {this._generateUnits()}
           {this._generateMachines()}
           {this._generateRelations()}
+        </React.Fragment>
+      );
+    }
+    return (
+      <Panel
+        instanceName="status-view"
+        visible={true}>
+        <div className="status-view__content">
+          {content}
         </div>
       </Panel>
     );
