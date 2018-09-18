@@ -258,7 +258,7 @@ $(SELENIUM): $(PY)
 # Tests
 #######
 .PHONY: lint
-lint: $(NODE_MODULES) lint-components lint-python lint-js lint-css
+lint: $(NODE_MODULES) lint-python lint-js lint-css
 
 .PHONY: lint-python
 lint-python: $(FLAKE8)
