@@ -5,8 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../shared/basic-table/basic-table');
 const StatusApplicationList = require('../shared/status/application-list/application-list');
+const StatusModel = require('../shared/status/model/model');
 const StatusMachineList = require('../shared/status/machine-list/machine-list');
 const StatusRemoteApplicationList = require(
   '../shared/status/remote-application-list/remote-application-list');
@@ -84,12 +84,11 @@ class Status extends React.Component {
       units: units.length
     };
     // Model section.
-    const model = this.props.model;
-    if (!model.modelUUID) {
+    if (!this.props.model.modelUUID) {
       // No need to go further: we are not connected to a model.
       return 'Cannot show the status: the GUI is not connected to a model.';
     }
-    elements.push(this._generateModel(model, counts));
+    elements.push(this._generateModel(counts));
     // SAAS section.
     if (counts.remoteApplications) {
       elements.push(this._generateRemoteApplications(db.remoteServices));
@@ -113,18 +112,6 @@ class Status extends React.Component {
   }
 
   /**
-    Handle filter changes and store the new status in state.
-    @param evt {Object} The change event
-  */
-  _handleFilterChange(evt) {
-    let filter = evt.currentTarget.value;
-    if (filter === 'none') {
-      filter = null;
-    }
-    this._changeFilterStatus(filter);
-  }
-
-  /**
     Set the filter status.
     @param status {String} A status.
   */
@@ -133,124 +120,19 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the filter select box.
-    @returns {Object} The select box element to render.
-  */
-  _generateFilters() {
-    const options = ['none'].concat(utils.STATUS_ORDER).map(status => {
-      return (
-        <option className="status-view__filter-option"
-          key={status}
-          value={status}>
-          {status}
-        </option>);
-    });
-    return (
-      <select className="status-view__filter-select"
-        onChange={this._handleFilterChange.bind(this)}
-        value={this.state.statusFilter || 'none'}>
-        {options}
-      </select>);
-  }
-
-  /**
     Generate the model fragment of the status.
-    @param {Object} model The model attributes.
     @param {Object} counts The counts of applications, units, machines etc.
     @returns {Object} The resulting element.
   */
-  _generateModel(model, counts) {
-    const highestStatus = this.state.highestStatus;
-    let title = `Everything is ${utils.STATUSES.OK}`;
-    switch (highestStatus) {
-      case utils.STATUSES.OK:
-        title = `Everything is ${utils.STATUSES.OK}`;
-        break;
-      case utils.STATUSES.PENDING:
-        title = 'Items are pending';
-        break;
-      case utils.STATUSES.ERROR:
-        title = 'Items are in error';
-        break;
-    }
+  _generateModel(counts) {
     return (
-      <div key="model">
-        <div className="twelve-col no-margin-bottom">
-          <div className="eight-col">
-            <h2>
-              {model.environmentName}
-              <span
-                className={'status-view__traffic-light ' +
-                  `status-view__traffic-light--${highestStatus}`}
-                onClick={this._changeFilterStatus.bind(this, highestStatus)}
-                role="button"
-                tabIndex="0"
-                title={title}>
-              </span>
-            </h2>
-          </div>
-          <div className="status-view__filter-label two-col">
-            Filter status:
-          </div>
-          <div className="status-view__filter two-col last-col">
-            {this._generateFilters()}
-          </div>
-        </div>
-        <BasicTable
-          headers={[{
-            content: 'Cloud/Region',
-            columnSize: 2
-          }, {
-            content: 'Version',
-            columnSize: 2
-          }, {
-            content: 'SLA',
-            columnSize: 1
-          }, {
-            content: 'Applications',
-            columnSize: 2
-          }, {
-            content: 'Remote applications',
-            columnSize: 2
-          }, {
-            content: 'Units',
-            columnSize: 1
-          }, {
-            content: 'Machines',
-            columnSize: 1
-          }, {
-            content: 'Relations',
-            columnSize: 1
-          }]}
-          rows={[{
-            columns: [{
-              columnSize: 2,
-              content: `${model.cloud}/${model.region}`
-            }, {
-              columnSize: 2,
-              content: model.version
-            }, {
-              columnSize: 1,
-              content: model.sla
-            }, {
-              columnSize: 2,
-              content: counts.applications
-            }, {
-              columnSize: 2,
-              content: counts.remoteApplications
-            }, {
-              columnSize: 1,
-              content: counts.units
-            }, {
-              columnSize: 1,
-              content: counts.machines
-            }, {
-              columnSize: 1,
-              content: counts.relations
-            }],
-            key: 'model'
-          }]} />
-      </div>);
+      <StatusModel
+        changeFilter={this._changeFilterStatus.bind(this)}
+        counts={counts}
+        highestStatus={this.state.highestStatus}
+        key="model"
+        model={this.props.model}
+        statusFilter={this.state.statusFilter} />);
   }
 
   /**

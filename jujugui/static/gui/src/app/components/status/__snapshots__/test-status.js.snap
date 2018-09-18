@@ -9,152 +9,31 @@ exports[`Status renders with entities 1`] = `
   <div
     className="status-view__content"
   >
-    <div
+    <StatusModel
+      changeFilter={[Function]}
+      counts={
+        Object {
+          "applications": 1,
+          "machines": 1,
+          "relations": 1,
+          "remoteApplications": 0,
+          "units": 1,
+        }
+      }
+      highestStatus="ok"
       key="model"
-    >
-      <div
-        className="twelve-col no-margin-bottom"
-      >
-        <div
-          className="eight-col"
-        >
-          <h2>
-            my-model
-            <span
-              className="status-view__traffic-light status-view__traffic-light--ok"
-              onClick={[Function]}
-              role="button"
-              tabIndex="0"
-              title="Everything is ok"
-            />
-          </h2>
-        </div>
-        <div
-          className="status-view__filter-label two-col"
-        >
-          Filter status:
-        </div>
-        <div
-          className="status-view__filter two-col last-col"
-        >
-          <select
-            className="status-view__filter-select"
-            onChange={[Function]}
-            value="none"
-          >
-            <option
-              className="status-view__filter-option"
-              key="none"
-              value="none"
-            >
-              none
-            </option>
-            <option
-              className="status-view__filter-option"
-              key="error"
-              value="error"
-            >
-              error
-            </option>
-            <option
-              className="status-view__filter-option"
-              key="pending"
-              value="pending"
-            >
-              pending
-            </option>
-            <option
-              className="status-view__filter-option"
-              key="ok"
-              value="ok"
-            >
-              ok
-            </option>
-          </select>
-        </div>
-      </div>
-      <BasicTable
-        headerClasses={Array []}
-        headers={
-          Array [
-            Object {
-              "columnSize": 2,
-              "content": "Cloud/Region",
-            },
-            Object {
-              "columnSize": 2,
-              "content": "Version",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "SLA",
-            },
-            Object {
-              "columnSize": 2,
-              "content": "Applications",
-            },
-            Object {
-              "columnSize": 2,
-              "content": "Remote applications",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "Units",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "Machines",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "Relations",
-            },
-          ]
+      model={
+        Object {
+          "cloud": "aws",
+          "environmentName": "my-model",
+          "modelUUID": "myuuid",
+          "region": "neutral zone",
+          "sla": "advanced",
+          "version": "2.42.47",
         }
-        rowClasses={Array []}
-        rows={
-          Array [
-            Object {
-              "columns": Array [
-                Object {
-                  "columnSize": 2,
-                  "content": "aws/neutral zone",
-                },
-                Object {
-                  "columnSize": 2,
-                  "content": "2.42.47",
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": "advanced",
-                },
-                Object {
-                  "columnSize": 2,
-                  "content": 1,
-                },
-                Object {
-                  "columnSize": 2,
-                  "content": 0,
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": 1,
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": 1,
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": 1,
-                },
-              ],
-              "key": "model",
-            },
-          ]
-        }
-      />
-    </div>
+      }
+      statusFilter={null}
+    />
     <StatusApplicationList
       applications={
         Array [
@@ -230,152 +109,31 @@ exports[`Status renders with no entities 1`] = `
   <div
     className="status-view__content"
   >
-    <div
+    <StatusModel
+      changeFilter={[Function]}
+      counts={
+        Object {
+          "applications": 0,
+          "machines": 0,
+          "relations": 0,
+          "remoteApplications": 0,
+          "units": 0,
+        }
+      }
+      highestStatus="ok"
       key="model"
-    >
-      <div
-        className="twelve-col no-margin-bottom"
-      >
-        <div
-          className="eight-col"
-        >
-          <h2>
-            my-model
-            <span
-              className="status-view__traffic-light status-view__traffic-light--ok"
-              onClick={[Function]}
-              role="button"
-              tabIndex="0"
-              title="Everything is ok"
-            />
-          </h2>
-        </div>
-        <div
-          className="status-view__filter-label two-col"
-        >
-          Filter status:
-        </div>
-        <div
-          className="status-view__filter two-col last-col"
-        >
-          <select
-            className="status-view__filter-select"
-            onChange={[Function]}
-            value="none"
-          >
-            <option
-              className="status-view__filter-option"
-              key="none"
-              value="none"
-            >
-              none
-            </option>
-            <option
-              className="status-view__filter-option"
-              key="error"
-              value="error"
-            >
-              error
-            </option>
-            <option
-              className="status-view__filter-option"
-              key="pending"
-              value="pending"
-            >
-              pending
-            </option>
-            <option
-              className="status-view__filter-option"
-              key="ok"
-              value="ok"
-            >
-              ok
-            </option>
-          </select>
-        </div>
-      </div>
-      <BasicTable
-        headerClasses={Array []}
-        headers={
-          Array [
-            Object {
-              "columnSize": 2,
-              "content": "Cloud/Region",
-            },
-            Object {
-              "columnSize": 2,
-              "content": "Version",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "SLA",
-            },
-            Object {
-              "columnSize": 2,
-              "content": "Applications",
-            },
-            Object {
-              "columnSize": 2,
-              "content": "Remote applications",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "Units",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "Machines",
-            },
-            Object {
-              "columnSize": 1,
-              "content": "Relations",
-            },
-          ]
+      model={
+        Object {
+          "cloud": "aws",
+          "environmentName": "my-model",
+          "modelUUID": "myuuid",
+          "region": "neutral zone",
+          "sla": "advanced",
+          "version": "2.42.47",
         }
-        rowClasses={Array []}
-        rows={
-          Array [
-            Object {
-              "columns": Array [
-                Object {
-                  "columnSize": 2,
-                  "content": "aws/neutral zone",
-                },
-                Object {
-                  "columnSize": 2,
-                  "content": "2.42.47",
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": "advanced",
-                },
-                Object {
-                  "columnSize": 2,
-                  "content": 0,
-                },
-                Object {
-                  "columnSize": 2,
-                  "content": 0,
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": 0,
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": 0,
-                },
-                Object {
-                  "columnSize": 1,
-                  "content": 0,
-                },
-              ],
-              "key": "model",
-            },
-          ]
-        }
-      />
-    </div>
+      }
+      statusFilter={null}
+    />
   </div>
 </Panel>
 `;
