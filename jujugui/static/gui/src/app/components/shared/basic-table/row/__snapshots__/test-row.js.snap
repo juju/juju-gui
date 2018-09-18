@@ -1,60 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`BasicTableRow can display rows with expandable content 1`] = `
-<ExpandingRow
-  classes={
-    Object {
-      "basic-table__row": true,
-      "basic-table__row--clickable": true,
-      "basic-table__row--expandable": true,
-      "first-row-class": true,
-      "twelve-col": true,
-    }
-  }
-  clickable={true}
-  expanded={true}
+<li
+  className="twelve-col  basic-table__row basic-table__row--expandable basic-table__row--clickable"
+  onClick={[Function]}
+  role="button"
+  tabIndex="0"
 >
   <div>
-    <BasicTableCell
-      classes={
-        Array [
-          "r1c1class1",
-          "r1c1class2",
-          undefined,
-        ]
-      }
-      columnSize={3}
-      content={
-        <span>
-          row 1 column 1
-        </span>
-      }
-      isLastCol={false}
-      key="0"
-    />
-    <BasicTableCell
-      classes={
-        Array [
-          undefined,
-        ]
-      }
-      columnSize={3}
-      content="row 1 column 2"
-      isLastCol={true}
-      key="1"
-    />
+    Expanded content!
   </div>
-  <div>
-    <div>
-      Expanded content!
-    </div>
-  </div>
-</ExpandingRow>
+</li>
 `;
 
 exports[`BasicTableRow can render 1`] = `
 <li
   className="twelve-col  basic-table__row"
+  onClick={null}
+  role="button"
+  tabIndex="0"
 >
   <BasicTableCell
     classes={
