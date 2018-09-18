@@ -113,26 +113,9 @@ describe('Status', function() {
     });
   });
 
-  it('can filter by status', () => {
-    const wrapper = renderComponent();
-    wrapper.find('select').simulate('change', {currentTarget: {value: 'error'}});
-    const instance = wrapper.instance();
-    assert.equal(instance.state.statusFilter, 'error');
-  });
-
-  it('can filter by nothing', () => {
-    const wrapper = renderComponent();
-    wrapper.find('select').simulate('change', {currentTarget: {value: 'none'}});
-    const instance = wrapper.instance();
-    assert.equal(instance.state.filter, null);
-  });
-
-  it('can show a highest status notification', () => {
+  it('can set the highest status', () => {
     db.units.toArray.returns([{ agentStatus: 'error' }]);
     const wrapper = renderComponent({ db });
-    assert.equal(
-      wrapper.find('.status-view__traffic-light').prop('className').includes(
-        'status-view__traffic-light--error'),
-      true);
+    assert.equal(wrapper.find('StatusModel').prop('highestStatus'), 'error');
   });
 });
