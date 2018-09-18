@@ -47,7 +47,6 @@ exports[`StatusUnitList renders 1`] = `
             "content": <span>
               <img
                 className="status-view__icon"
-                src={false}
               />
               django/0
             </span>,
@@ -101,7 +100,6 @@ exports[`StatusUnitList renders 1`] = `
             "content": <span>
               <img
                 className="status-view__icon"
-                src={false}
               />
               django/1
             </span>,
@@ -155,7 +153,6 @@ exports[`StatusUnitList renders 1`] = `
             "content": <span>
               <img
                 className="status-view__icon"
-                src={false}
               />
               django/42
             </span>,
