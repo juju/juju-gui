@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Status renders 1`] = `
+<Panel
+  focus={true}
+  instanceName="status-view"
+  visible={true}
+>
+  <div
+    className="status-view__content"
+  >
+    <StatusModel
+      changeFilter={[Function]}
+      counts={
+        Object {
+          "applications": 0,
+          "machines": 0,
+          "relations": 0,
+          "remoteApplications": 0,
+          "units": 0,
+        }
+      }
+      highestStatus="ok"
+      model={
+        Object {
+          "cloud": "aws",
+          "environmentName": "my-model",
+          "modelUUID": "myuuid",
+          "region": "neutral zone",
+          "sla": "advanced",
+          "version": "2.42.47",
+        }
+      }
+      statusFilter={null}
+    />
+  </div>
+</Panel>
+`;

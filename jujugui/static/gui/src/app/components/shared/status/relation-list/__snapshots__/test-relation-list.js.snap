@@ -38,6 +38,7 @@ exports[`StatusRelationList renders 1`] = `
             >
               <img
                 className="status-view__icon"
+                src="mysql"
               />
               mysql
             </a>,
@@ -50,6 +51,7 @@ exports[`StatusRelationList renders 1`] = `
             >
               <img
                 className="status-view__icon"
+                src="mysql"
               />
               mysql
             </a>,
@@ -75,6 +77,7 @@ exports[`StatusRelationList renders 1`] = `
             >
               <img
                 className="status-view__icon"
+                src="wordpress"
               />
               wordpress
             </a>,
@@ -87,6 +90,7 @@ exports[`StatusRelationList renders 1`] = `
             >
               <img
                 className="status-view__icon"
+                src="haproxy"
               />
               haproxy
             </a>,
@@ -97,43 +101,6 @@ exports[`StatusRelationList renders 1`] = `
           },
         ],
         "key": "rel2",
-      },
-      Object {
-        "columns": Array [
-          Object {
-            "columnSize": 3,
-            "content": "",
-          },
-          Object {
-            "columnSize": 3,
-            "content": <a
-              className="status-view__link"
-              onClick={[Function]}
-            >
-              <img
-                className="status-view__icon"
-              />
-              
-            </a>,
-          },
-          Object {
-            "columnSize": 3,
-            "content": <a
-              className="status-view__link"
-              onClick={[Function]}
-            >
-              <img
-                className="status-view__icon"
-              />
-              
-            </a>,
-          },
-          Object {
-            "columnSize": 3,
-            "content": "",
-          },
-        ],
-        "key": "rel3",
       },
     ]
   }

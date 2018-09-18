@@ -58,39 +58,15 @@ describe('Status', function() {
     generatePath = sinon.stub();
   });
 
-  it('renders with no data', () => {
-    const model = {};
-    const wrapper = renderComponent({
-      db: db,
-      model
-    });
-    const expected = (
-      <div className="status-view__content">
-        Cannot show the status: the GUI is not connected to a model.
-      </div>
-    );
-    assert.compareJSX(wrapper.find('.status-view__content'), expected);
-  });
-
-  it('renders with no entities', () => {
-    db.machines.filter.returns([]);
-    db.relations.filter.returns([]);
-    db.remoteServices.map.returns([]);
-    db.services.filter.returns([]);
-    db.units.filter.returns([]);
-    const wrapper = renderComponent();
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  it('renders with entities', () => {
+  it('renders', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
 
   it('can navigate to charms from the app list', () => {
     const wrapper = renderComponent();
-    const section = wrapper.find('StatusApplicationList');
-    section.props().onCharmClick('u/who/django/xenial/42', { preventDefault: sinon.stub() });
+    wrapper.props().navigateToCharm(
+      'u/who/django/xenial/42', { preventDefault: sinon.stub() });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {store: 'u/who/django/xenial/42'});
@@ -98,8 +74,7 @@ describe('Status', function() {
 
   it('can navigate to apps from the relation list', () => {
     const wrapper = renderComponent();
-    const section = wrapper.find('StatusRelationList');
-    section.props().onApplicationClick('mysql', { preventDefault: sinon.stub() });
+    wrapper.props().navigateToApplication('mysql', { preventDefault: sinon.stub() });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -111,11 +86,5 @@ describe('Status', function() {
         }
       }
     });
-  });
-
-  it('can set the highest status', () => {
-    db.units.toArray.returns([{ agentStatus: 'error' }]);
-    const wrapper = renderComponent({ db });
-    assert.equal(wrapper.find('StatusModel').prop('highestStatus'), 'error');
   });
 });

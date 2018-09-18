@@ -5,135 +5,11 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const StatusApplicationList = require('../shared/status/application-list/application-list');
-const StatusModel = require('../shared/status/model/model');
-const StatusMachineList = require('../shared/status/machine-list/machine-list');
-const StatusRemoteApplicationList = require(
-  '../shared/status/remote-application-list/remote-application-list');
-const StatusRelationList = require('../shared/status/relation-list/relation-list');
-const StatusUnitList = require('../shared/status/unit-list/unit-list');
-const Panel = require('../panel/panel');
+const SharedStatus = require('../shared/status/status/status');
 const utils = require('../shared/utils');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      highestStatus: utils.STATUSES.OK,
-      statusFilter: null
-    };
-  }
-
-  componentWillReceiveProps() {
-    // Reset to the lowest status so that when the apps, units etc. are looped
-    // through the highest status can be stored.
-    this.setState({highestStatus: utils.STATUSES.OK});
-  }
-
-  componentDidMount() {
-    this._setTrafficLight();
-  }
-
-  componentDidUpdate() {
-    // Update the state with the new status now that all status changes/renders
-    // are complete.
-    this._setTrafficLight();
-  }
-
-  /**
-    Generate the current model status.
-    @returns {Object} The resulting element.
-  */
-  _setTrafficLight() {
-    const db = this.props.db;
-    let statuses = [];
-    db.services.toArray().forEach(application => {
-      const app = application.getAttrs();
-      statuses.push(app.status.current);
-    });
-    db.units.toArray().forEach(unit => {
-      statuses.push(utils.getHighestStatus([unit.agentStatus, unit.workloadStatus]));
-    });
-    db.machines.toArray().map(machine => {
-      statuses.push(machine.agent_state);
-    });
-    const highest = utils.getHighestStatus(statuses);
-    if (highest && (this.state.highestStatus !== highest)) {
-      this.setState({highestStatus: highest});
-    }
-  }
-
-  /**
-    Generate the current model status.
-    @returns {Object} The resulting element.
-  */
-  _generateStatus() {
-    const elements = [];
-    const db = this.props.db;
-    const applications = db.services.filter(app => !app.get('pending'));
-    const machines = db.machines.filter(mach => mach.id.indexOf('new') !== 0);
-    const relations = db.relations.filter(rel => !rel.get('pending'));
-    const units = utils.getRealUnits(db.units);
-    const remoteApplications = db.remoteServices.toArray();
-    const counts = {
-      applications: applications.length,
-      machines: machines.length,
-      relations: relations.length,
-      remoteApplications: remoteApplications.length,
-      units: units.length
-    };
-    // Model section.
-    if (!this.props.model.modelUUID) {
-      // No need to go further: we are not connected to a model.
-      return 'Cannot show the status: the GUI is not connected to a model.';
-    }
-    elements.push(this._generateModel(counts));
-    // SAAS section.
-    if (counts.remoteApplications) {
-      elements.push(this._generateRemoteApplications(db.remoteServices));
-    }
-    // Applications and units sections.
-    if (counts.applications) {
-      elements.push(this._generateApplications(applications));
-      if (counts.units) {
-        elements.push(this._generateUnits(units));
-      }
-    }
-    // Machines section.
-    if (counts.machines) {
-      elements.push(this._generateMachines(machines));
-    }
-    // Relations section.
-    if (counts.relations) {
-      elements.push(this._generateRelations(relations));
-    }
-    return elements;
-  }
-
-  /**
-    Set the filter status.
-    @param status {String} A status.
-  */
-  _changeFilterStatus(status) {
-    this.setState({statusFilter: status});
-  }
-
-  /**
-    Generate the model fragment of the status.
-    @param {Object} counts The counts of applications, units, machines etc.
-    @returns {Object} The resulting element.
-  */
-  _generateModel(counts) {
-    return (
-      <StatusModel
-        changeFilter={this._changeFilterStatus.bind(this)}
-        counts={counts}
-        highestStatus={this.state.highestStatus}
-        key="model"
-        model={this.props.model}
-        statusFilter={this.state.statusFilter} />);
-  }
 
   /**
     Generate the state to navigate to an application.
@@ -231,20 +107,6 @@ class Status extends React.Component {
   }
 
   /**
-    Generate the remote applications fragment of the status.
-    @param {Object} remoteApplications The remote applications as included in
-      the GUI db.
-    @returns {Object} The resulting element.
-  */
-  _generateRemoteApplications(remoteApplications) {
-    return (
-      <StatusRemoteApplicationList
-        key="remote-applications"
-        remoteApplications={remoteApplications}
-        statusFilter={this.state.statusFilter} />);
-  }
-
-  /**
     Generate the URL for clicking on a charm.
     @param charmId {String} A charm id.
     @returns {String} The charm url.
@@ -314,82 +176,27 @@ class Status extends React.Component {
       this, this._generateMachineClickState(machineId));
   }
 
-  /**
-    Generate the applications fragment of the status.
-    @param {Array} applications The applications as included in the GUI db.
-    @returns {Object} The resulting element.
-  */
-  _generateApplications(applications) {
+  render() {
     return (
-      <StatusApplicationList
-        applications={applications}
+      <SharedStatus
+        entities={{
+          applications: this.props.db.services.filter(app => !app.get('pending')),
+          machines: this.props.db.machines.filter(mach => mach.id.indexOf('new') !== 0),
+          model: this.props.model,
+          relations: this.props.db.relations.filter(rel => !rel.get('pending')),
+          units: utils.getRealUnits(this.props.db.units),
+          remoteApplications: this.props.db.remoteServices.toArray()
+        }}
         generateApplicationOnClick={this._generateApplicationOnClick.bind(this)}
         generateApplicationURL={this._generateApplicationURL.bind(this)}
         generateCharmURL={this._generateCharmURL.bind(this)}
-        key="applications"
-        onCharmClick={this._navigateToCharm.bind(this)}
-        statusFilter={this.state.statusFilter} />);
-  }
-
-  /**
-    Generate the units fragment of the status.
-    @param {Array} units The units as included in the GUI db.
-    @param {Array} applications The applications as included in the GUI db.
-    @returns {Object} The resulting element.
-  */
-  _generateUnits(units) {
-    return (
-      <StatusUnitList
-        applications={this.props.db.services}
+        generateMachineOnClick={this._generateMachineOnClick.bind(this)}
         generateMachineURL={this._generateMachineURL.bind(this)}
         generateUnitOnClick={this._generateUnitOnClick.bind(this)}
         generateUnitURL={this._generateUnitURL.bind(this)}
-        key="units"
-        onMachineClick={this._navigateToMachine.bind(this)}
-        statusFilter={this.state.statusFilter}
-        units={units} />);
-  }
-
-  /**
-    Generate the machines fragment of the status.
-    @param {Array} machines The machines as included in the GUI db.
-    @returns {Object} The resulting element.
-  */
-  _generateMachines(machines) {
-    return (
-      <StatusMachineList
-        generateMachineOnClick={this._generateMachineOnClick.bind(this)}
-        generateMachineURL={this._generateMachineURL.bind(this)}
-        key="machines"
-        machines={machines}
-        statusFilter={this.state.statusFilter} />);
-  }
-
-  /**
-    Generate the relations fragment of the status.
-    @param {Array} relations The relations as included in the GUI db.
-    @returns {Object} The resulting element.
-  */
-  _generateRelations(relations) {
-    return (
-      <StatusRelationList
-        applications={this.props.db.services}
-        generateApplicationURL={this._generateApplicationURL.bind(this)}
-        key="relations"
-        onApplicationClick={this._navigateToApplication.bind(this)}
-        relations={relations}
-        statusFilter={this.state.statusFilter} />);
-  }
-
-  render() {
-    return (
-      <Panel
-        instanceName="status-view"
-        visible={true}>
-        <div className="status-view__content">
-          {this._generateStatus()}
-        </div>
-      </Panel>
+        navigateToApplication={this._navigateToApplication.bind(this)}
+        navigateToCharm={this._navigateToCharm.bind(this)}
+        navigateToMachine={this._navigateToMachine.bind(this)} />
     );
   }
 };

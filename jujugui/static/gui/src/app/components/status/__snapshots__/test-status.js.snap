@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Status renders 1`] = `
+<Status
+  entities={
+    Object {
+      "applications": Array [
+        Object {},
+      ],
+      "machines": Array [
+        Object {},
+      ],
+      "model": Object {
+        "cloud": "aws",
+        "environmentName": "my-model",
+        "modelUUID": "myuuid",
+        "region": "neutral zone",
+        "sla": "advanced",
+        "version": "2.42.47",
+      },
+      "relations": Array [
+        Object {},
+      ],
+      "remoteApplications": Array [],
+      "units": Array [
+        Object {},
+      ],
+    }
+  }
+  generateApplicationOnClick={[Function]}
+  generateApplicationURL={[Function]}
+  generateCharmURL={[Function]}
+  generateMachineOnClick={[Function]}
+  generateMachineURL={[Function]}
+  generateUnitOnClick={[Function]}
+  generateUnitURL={[Function]}
+  navigateToApplication={[Function]}
+  navigateToCharm={[Function]}
+  navigateToMachine={[Function]}
+/>
+`;
+
 exports[`Status renders with entities 1`] = `
 <Panel
   focus={true}
