@@ -6,10 +6,30 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const BasicTableCell = require('../cell/cell');
-const ExpandingRow = require('../../expanding-row/expanding-row');
 
 /** Basic table React component used to display data in a table structure. */
 class BasicTableRow extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      expanded: false
+    };
+  }
+
+  componentDidMount() {
+    const {expandedContentExpanded} = this.props;
+    if (expandedContentExpanded !== undefined) {
+      this.setState({expanded: expandedContentExpanded});
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const {expandedContentExpanded} = this.props;
+    if (expandedContentExpanded !== undefined &&
+      expandedContentExpanded !== this.state.expanded) {
+      this.setState({expanded: expandedContentExpanded});
+    }
+  }
 
   /**
     Show the entity details when clicked.
@@ -24,12 +44,21 @@ class BasicTableRow extends React.Component {
   }
 
   /**
+    Toggle the expanded state.
+  */
+  _toggleExpanded() {
+    this.setState({expanded: !this.state.expanded});
+  }
+
+  /**
     Generate a row anchor.
-    @param onClick {Function} The method to call when the row is clicked.
-    @param clickURL {String} A URL to use for the anchor href.
     @returns {Object} The anchor element or null.
   */
-  _generateAnchor(onClick, clickURL) {
+  _generateAnchor() {
+    if (this.props.expandedContent) {
+      return;
+    }
+    const {onClick, clickURL} = this.props;
     if (!onClick && !clickURL) {
       return null;
     }
@@ -59,48 +88,48 @@ class BasicTableRow extends React.Component {
         key={index} />);
   }
 
+  /**
+    Genrate the row content;
+    @returns {Object} The columns or expanded content.
+  */
+  _generateContent() {
+    const {expandedContent} = this.props;
+    if (this.state.expanded && expandedContent) {
+      return expandedContent;
+    }
+    return this.props.columns.map((column, i) => this._generateCell(column, i));
+  }
+
+  /**
+    Figure out if the row can be clicked upon.
+    @returns {Boolean} Whether the column can back clicked on.
+  */
+  _isRowClickable() {
+    const {rowClickable} = this.props;
+    return (
+      rowClickable !== undefined ? rowClickable : !!this.props.expandedContent);
+  }
+
   render() {
     const { expandedContent, isHeader } = this.props;
-    const columns = this.props.columns.map((column, i) => this._generateCell(column, i));
-    if (expandedContent) {
-      const rowClickable = (
-        this.props.rowClickable !== undefined ? this.props.rowClickable : !!expandedContent);
-      let classes = {
-        'basic-table__row': true,
-        'basic-table__row--expandable': true,
-        'basic-table__row--clickable': rowClickable,
-        'first-row-class': true,
-        'twelve-col': true
-      };
-      this.props.classes.forEach(className => {
-        classes[className] = true;
+    const classes = classNames(
+      'twelve-col',
+      this.props.classes,
+      {
+        'basic-table__header': isHeader,
+        'basic-table__row': !isHeader,
+        'basic-table__row--expandable': !!expandedContent,
+        'basic-table__row--clickable': this._isRowClickable()
       });
-      return (
-        <ExpandingRow
-          classes={classes}
-          clickable={rowClickable}
-          expanded={this.props.expandedContentExpanded}>
-          <div>
-            {columns}
-          </div>
-          <div>
-            {expandedContent}
-          </div>
-        </ExpandingRow>);
-    } else {
-      const classes = classNames(
-        'twelve-col',
-        this.props.classes,
-        {
-          'basic-table__header': isHeader,
-          'basic-table__row': !isHeader
-        });
-      return (
-        <li className={classes}>
-          {this._generateAnchor(this.props.onClick, this.props.clickURL)}
-          {columns}
-        </li>);
-    }
+    const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
+    return (
+      <li className={classes}
+        onClick={onClick}
+        role="button"
+        tabIndex="0">
+        {this._generateAnchor()}
+        {this._generateContent()}
+      </li>);
   }
 };
 

@@ -101,19 +101,11 @@ describe('BasicTableRow', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('can expand content using a prop', () => {
-    const wrapper = renderComponent({
-      expandedContent: (<div>Expanded content!</div>),
-      expandedContentExpanded: true
-    });
-    assert.equal(wrapper.find('ExpandingRow').at(0).prop('expanded'), true);
-  });
-
   it('can make a row not clickable', () => {
     const wrapper = renderComponent({
       expandedContent: (<div>Expanded content!</div>),
       rowClickable: false
     });
-    assert.equal(wrapper.find('ExpandingRow').at(0).prop('clickable'), false);
+    assert.equal(wrapper.prop('onClick'), null);
   });
 });
