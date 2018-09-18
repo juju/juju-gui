@@ -263,10 +263,6 @@ class GUIApp {
       }
     });
 
-    if (config.gisf) {
-      document.body.classList.add('u-is-beta');
-    }
-
     /**
       The ACL object including methods for checking whether the user has
       permission to perform specific actions, like deploying a charm or
