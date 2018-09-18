@@ -94,7 +94,7 @@ describe('StatusUnitList', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  fit('displays a link for exposed units', () => {
+  it('displays a link for exposed units', () => {
     applications[0].get.withArgs('exposed').returns(true);
     const wrapper = renderComponent();
     assert.equal(
