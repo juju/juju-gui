@@ -3144,4 +3144,8 @@ describe('parse entities', () => {
   it('parses units', () => {
     assert.deepEqual(parsers.parseUnits(response.units), parsed.units);
   });
+
+  it('parses the megawatcher response', () => {
+    assert.deepEqual(parsers.parseMegaWatcher(response), parsed);
+  });
 });
