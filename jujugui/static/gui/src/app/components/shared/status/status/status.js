@@ -25,12 +25,6 @@ class Status extends React.Component {
     };
   }
 
-  componentWillReceiveProps() {
-    // Reset to the lowest status so that when the apps, units etc. are looped
-    // through the highest status can be stored.
-    this.setState({highestStatus: utils.STATUSES.OK});
-  }
-
   componentDidMount() {
     this._setTrafficLight();
   }
@@ -186,7 +180,8 @@ class Status extends React.Component {
 
   render() {
     let content;
-    if (!this.props.entities.model.modelUUID) {
+    const {entities} = this.props;
+    if (!entities.model || !entities.model.modelUUID) {
       // No need to go further: we are not connected to a model.
       content = 'Cannot show the status: the GUI is not connected to a model.';
     } else {
@@ -224,7 +219,7 @@ Status.propTypes = {
       region: PropTypes.string,
       sla: PropTypes.string,
       version: PropTypes.string
-    }).isRequired,
+    }),
     relations: PropTypes.array.isRequired,
     remoteApplications: PropTypes.array.isRequired,
     units: PropTypes.array.isRequired

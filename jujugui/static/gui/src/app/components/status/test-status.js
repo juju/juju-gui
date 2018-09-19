@@ -58,11 +58,6 @@ describe('Status', function() {
     generatePath = sinon.stub();
   });
 
-  it('renders', () => {
-    const wrapper = renderComponent();
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it('can navigate to charms from the app list', () => {
     const wrapper = renderComponent();
     wrapper.props().navigateToCharm(
