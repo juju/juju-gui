@@ -36,7 +36,13 @@ class StatusUnitList extends React.Component {
   _generateRows() {
     const units = utils.getRealUnits(this.props.units);
     return units.map(unit => {
-      const application = this.props.applications.getById(unit.service);
+      let application;
+      this.props.applications.some(app => {
+        if (app.get('name') === unit.service) {
+          application = app;
+          return true;
+        }
+      });
       const appExposed = application.get('exposed');
       let publicAddress = unit.public_address;
       if (appExposed && unit.portRanges.length) {
@@ -130,7 +136,7 @@ class StatusUnitList extends React.Component {
 };
 
 StatusUnitList.propTypes = {
-  applications: PropTypes.object.isRequired,
+  applications: PropTypes.array.isRequired,
   generateMachineURL: PropTypes.func.isRequired,
   generateUnitOnClick: PropTypes.func.isRequired,
   generateUnitURL: PropTypes.func.isRequired,

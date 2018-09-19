@@ -21,11 +21,13 @@ describe('StatusRelationList', () => {
   );
 
   beforeEach(() => {
-    applications = {
-      getById: sinon.stub().returns({
-        get: sinon.stub()
-      })
-    };
+    applications = [{
+      get: sinon.stub().withArgs('name').returns('mysql')
+    }, {
+      get: sinon.stub().withArgs('name').returns('haproxy')
+    }, {
+      get: sinon.stub().withArgs('name').returns('wordpress')
+    }];
     relations = [{
       get: sinon.stub().withArgs('pending').returns(false),
       getAttrs: sinon.stub().withArgs().returns({
@@ -43,13 +45,6 @@ describe('StatusRelationList', () => {
           'wordpress', {name: 'proxy', role: 'requirer'}
         ]],
         id: 'rel2'
-      })
-    }, {
-      // Uncommitted relations are excluded.
-      get: sinon.stub().withArgs('pending').returns(true),
-      getAttrs: sinon.stub().withArgs().returns({
-        endpoints: [],
-        id: 'rel3'
       })
     }];
   });

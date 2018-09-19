@@ -25,11 +25,10 @@ describe('StatusUnitList', () => {
   );
 
   beforeEach(() => {
-    applications = {
-      getById: sinon.stub().returns({
-        get: sinon.stub().withArgs('exposed').returns(false)
-      })
-    };
+    const get = sinon.stub();
+    get.withArgs('exposed').returns(false);
+    get.withArgs('name').returns('django');
+    applications = [{get}];
     units = [{
       agentStatus: 'idle',
       displayName: 'django/0',
@@ -40,6 +39,7 @@ describe('StatusUnitList', () => {
         {from: 80, to: 80, protocol: 'tcp'},
         {from: 443, to: 443, protocol: 'tcp'}
       ],
+      service: 'django',
       workloadStatus: 'installing',
       workloadStatusMessage: 'these are the voyages'
     }, {
@@ -51,6 +51,7 @@ describe('StatusUnitList', () => {
       portRanges: [
         {from: 80, to: 88, protocol: 'udp'}
       ],
+      service: 'django',
       workloadStatus: 'error',
       workloadStatusMessage: 'exterminate!'
     }, {
@@ -61,6 +62,7 @@ describe('StatusUnitList', () => {
       public_address: '1.2.3.6',
       // Simulate that the unit didn't open ports yet.
       portRanges: [],
+      service: 'django',
       workloadStatus: 'installing',
       workloadStatusMessage: ''
     }, {
@@ -70,6 +72,7 @@ describe('StatusUnitList', () => {
       id: 'django/id2',
       public_address: '',
       portRanges: [],
+      service: 'django',
       workloadStatus: '',
       workloadStatusMessage: ''
     }, {
@@ -80,6 +83,7 @@ describe('StatusUnitList', () => {
       machine: 'new42',
       public_address: '',
       portRanges: [],
+      service: 'django',
       workloadStatus: '',
       workloadStatusMessage: ''
     }];
@@ -91,9 +95,7 @@ describe('StatusUnitList', () => {
   });
 
   it('displays a link for exposed units', () => {
-    applications.getById.returns({
-      get: sinon.stub().withArgs('exposed').returns(true)
-    });
+    applications[0].get.withArgs('exposed').returns(true);
     const wrapper = renderComponent();
     assert.equal(
       wrapper.prop('rows')[0].columns[4].content.props.className.includes('status-view__link'),

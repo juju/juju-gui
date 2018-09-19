@@ -14,7 +14,13 @@ class StatusRelationList extends React.Component {
     @returns {Object} The link element.
   */
   _generateRelationAppLink(name) {
-    const app = this.props.applications.getById(name);
+    let app;
+    this.props.applications.some(application => {
+      if (application.get('name') === name) {
+        app = application;
+        return true;
+      }
+    });
     if (!app) {
       // If the application is not in the DB it must be remote app so don't
       // link to it.
@@ -104,7 +110,7 @@ class StatusRelationList extends React.Component {
 };
 
 StatusRelationList.propTypes = {
-  applications: PropTypes.object.isRequired,
+  applications: PropTypes.array.isRequired,
   generateApplicationURL: PropTypes.func.isRequired,
   onApplicationClick: PropTypes.func.isRequired,
   relations: PropTypes.array.isRequired,
