@@ -997,7 +997,8 @@ class DeploymentFlow extends React.Component {
   */
   _generatePaymentSection() {
     const status = this._getSectionStatus('payment');
-    if (!this.props.showPay || !status.visible) {
+    const props = this.props;
+    if (!props.showPay || !status.visible || !props.payment) {
       return null;
     }
     return (
@@ -1008,15 +1009,15 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title="Payment details">
         <DeploymentPayment
-          acl={this.props.acl}
-          addNotification={this.props.addNotification}
-          changeState={this.props.changeState}
-          generatePath={this.props.generatePath}
-          payment={this.props.payment}
+          acl={props.acl}
+          addNotification={props.addNotification}
+          changeState={props.changeState}
+          generatePath={props.generatePath}
+          payment={props.payment}
           paymentUser={this.state.paymentUser}
           setPaymentUser={this._setPaymentUser.bind(this)}
-          stripe={this.props.stripe}
-          username={this.props.profileUsername} />
+          stripe={props.stripe}
+          username={props.profileUsername} />
       </DeploymentSection>);
   }
 
@@ -1189,7 +1190,7 @@ class DeploymentFlow extends React.Component {
       return false;
     }
     // Can't deploy if there is no user.
-    if (this.props.showPay && !this.state.paymentUser) {
+    if (this.props.payment && this.props.showPay && !this.state.paymentUser) {
       return false;
     }
     // That's all we need if the model already exists.
