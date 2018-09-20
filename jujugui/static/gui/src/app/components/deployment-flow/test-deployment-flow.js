@@ -922,6 +922,19 @@ describe('DeploymentFlow', function() {
       showPay: true,
       allowed: false
     }, {
+      about: 'payment required but not provided',
+      state: {
+        modelname: 'mymodel',
+        cloud: {cloudType: 'gce'},
+        credential: 'cred',
+        paymentUser: null,
+        sshKeys: ['mykey']
+      },
+      noTerms: true,
+      showPay: true,
+      allowed: true,
+      payment: null
+    }, {
       about: 'terms not agreed',
       state: {
         modelName: 'mymodel',
@@ -979,7 +992,8 @@ describe('DeploymentFlow', function() {
         applications: applications,
         charmsGetById: charmsGetById,
         modelCommitted: !!test.modelCommitted,
-        showPay: test.showPay || false
+        showPay: test.showPay || false,
+        payment: test.payment !== undefined ? test.payment : payment
       };
       if (!test.includeAgreements) {
         props.getAgreementsByTerms = sinon.stub();
