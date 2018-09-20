@@ -1189,7 +1189,8 @@ class DeploymentFlow extends React.Component {
     if (this.state.loadingTerms) {
       return false;
     }
-    // Can't deploy if there is no user.
+    // We only require the payment component to be completed if there is a
+    // payment instance, we toggle showPay and there is a payment user.
     if (this.props.payment && this.props.showPay && !this.state.paymentUser) {
       return false;
     }
