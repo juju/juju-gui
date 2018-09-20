@@ -2,7 +2,7 @@
 'use strict';
 
 
-const parsers = require('./parse-entities');
+const parsers = require('./parsers');
 
 describe('parse entities', () => {
   let parsed, response;
