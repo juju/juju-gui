@@ -1685,6 +1685,7 @@ class GUIApp {
     this.endpointsController.destructor();
     this.topology.destructor();
     this._hotkeyListener.deactivate();
+    this.maraca.disconnect();
     // Detach event listeners.
     const remove = document.removeEventListener.bind(document);
     const handlers = this._domEventHandlers;

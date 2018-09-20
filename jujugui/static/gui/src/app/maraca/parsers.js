@@ -489,10 +489,17 @@ function parseMegaWatcher(response) {
 };
 
 module.exports = {
+  parseAnnotation,
   parseAnnotations,
+  parseApplication,
+  parseApplications,
+  parseMachine,
   parseMachines,
   parseMegaWatcher,
+  parseRelation,
   parseRelations,
+  parseRemoteApplication,
   parseRemoteApplications,
+  parseUnit,
   parseUnits
 };

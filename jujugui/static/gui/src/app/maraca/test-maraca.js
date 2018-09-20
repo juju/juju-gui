@@ -18,7 +18,7 @@ describe('Maraca', () => {
   });
 
   it('inits correctly', () => {
-    assert.equal(maraca.ALL_WATCHER_EVENT, 'all_watcher_event');
+    assert.equal(maraca.CHANGE_EVENT, 'all_watcher_event');
     assert.equal(maraca.ON_CHANGE, onChange);
   });
 
