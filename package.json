@@ -19,7 +19,7 @@
     "graceful-fs": "4.1.11",
     "jaaslib": "0.5.0",
     "js-yaml": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.9.1.tgz",
-    "lodash.clone": "4.5.0",
+    "lodash.clonedeep": "^4.5.0",
     "macaroon-bakery": "0.2.0",
     "marked": "0.3.19",
     "mixwith": "0.1.1",

@@ -1,7 +1,7 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
-const clone = require('lodash.clone');
+const clonedeep = require('lodash.clonedeep');
 
 const Maraca = require('./maraca');
 const parsers = require('./parsers');
@@ -63,7 +63,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.units, {
+    assert.deepEqual(maraca.getValueStore().units, {
       'apache2/0': parsers.parseUnit({
         name: 'apache2/0'
       })
@@ -83,7 +83,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.units, {
+    assert.deepEqual(maraca.getValueStore().units, {
       'apache2/0': parsers.parseUnit({
         name: 'apache2/0',
         series: 'trusty'
@@ -101,7 +101,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.units, {
+    assert.deepEqual(maraca.getValueStore().units, {
       'apache2/0': parsers.parseUnit({
         name: 'apache2/0',
         series: 'wily'
@@ -121,7 +121,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.units, {
+    assert.deepEqual(maraca.getValueStore().units, {
       'apache2/0': parsers.parseUnit({
         name: 'apache2/0'
       })
@@ -137,7 +137,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.units, {});
+    assert.deepEqual(maraca.getValueStore().units, {});
   });
 
   it('can handle remote applications', () => {
@@ -152,7 +152,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.remoteApplications, {
+    assert.deepEqual(maraca.getValueStore().remoteApplications, {
       apache2: parsers.parseRemoteApplication({
         name: 'apache2'
       })
@@ -171,7 +171,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.applications, {
+    assert.deepEqual(maraca.getValueStore().applications, {
       apache2: parsers.parseApplication({
         name: 'apache2'
       })
@@ -190,7 +190,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.units, {
+    assert.deepEqual(maraca.getValueStore().units, {
       'apache2/0': parsers.parseUnit({
         name: 'apache2/0'
       })
@@ -209,7 +209,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.machines, {
+    assert.deepEqual(maraca.getValueStore().machines, {
       0: parsers.parseMachine({
         id: '0'
       })
@@ -228,7 +228,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.relations, {
+    assert.deepEqual(maraca.getValueStore().relations, {
       1: parsers.parseRelation({
         id: '1'
       })
@@ -247,7 +247,7 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values.annotations, {
+    assert.deepEqual(maraca.getValueStore().annotations, {
       'application-apache2': parsers.parseAnnotation({
         tag: 'application-apache2'
       })
@@ -256,7 +256,7 @@ describe('Maraca', () => {
 
   it('can handle unkown entities', () => {
     // Get a clone of the empty object shape.
-    const empty = clone(maraca.values);
+    const empty = clonedeep(maraca.getValueStore());
     maraca._watcherListener({
       detail: {
         response: {
@@ -268,6 +268,6 @@ describe('Maraca', () => {
         }
       }
     });
-    assert.deepEqual(maraca.values, empty);
+    assert.deepEqual(maraca.getValueStore(), empty);
   });
 });

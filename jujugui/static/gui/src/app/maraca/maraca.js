@@ -1,7 +1,7 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
-const clone = require('lodash.clone');
+const clonedeep = require('lodash.clonedeep');
 const deepmerge = require('deepmerge');
 
 const parsers = require('./parsers');
@@ -10,7 +10,7 @@ class Maraca {
   constructor(config) {
     this.ON_CHANGE = config.onChange;
     this._boundWatcherListener = this._watcherListener.bind(this);
-    this._values = {
+    this._valueStore = {
       annotations: {},
       applications: {},
       machines: {},
@@ -21,10 +21,10 @@ class Maraca {
   }
 
   /**
-    Getter for the full store of entities.
+    Get the frozen store of entities.
   */
-  get values() {
-    return clone(this._values);
+  getValueStore() {
+    return clonedeep(this._valueStore);
   }
 
   /**
@@ -69,7 +69,7 @@ class Maraca {
         // We don't know how to manage this entity, so ignore it.
         return;
       }
-      const entityGroup = this._values[this._getEntityGroup(entityType)];
+      const entityGroup = this._valueStore[this._getEntityGroup(entityType)];
       if (changeType === 'change') {
         if (!entityGroup[key]) {
           entityGroup[key] = {};
