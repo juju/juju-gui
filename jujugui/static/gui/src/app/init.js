@@ -683,7 +683,7 @@ class GUIApp {
       @type {Object}
     */
     this.terms = new terms.terms(config.termsURL, this.bakery);
-    if (config.flags.pay) {
+    if (config.flags.pay && config.stripeKey) {
       /**
         Application instance of the payment API.
         @type {Object}
