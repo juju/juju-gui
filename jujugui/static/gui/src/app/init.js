@@ -14,6 +14,7 @@ const hotkeys = require('./init/hotkeys');
 const csUser = require('./init/charmstore-user');
 const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
+const Maraca = require('./maraca/maraca');
 const ModelController = require('./models/model-controller');
 const State = require('./state/state');
 const StatsClient = require('./utils/statsd');
@@ -262,6 +263,14 @@ class GUIApp {
         }));
       }
     });
+
+    this.maraca = new Maraca({
+      changeEvent: '_rpc_response',
+      onChange: () => {
+        this._renderApp(this.state.current, () => {});
+      }
+    });
+    this.maraca.connect();
 
     /**
       The ACL object including methods for checking whether the user has
