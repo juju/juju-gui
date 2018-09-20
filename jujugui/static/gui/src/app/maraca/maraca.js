@@ -8,7 +8,6 @@ const parsers = require('./parsers');
 
 class Maraca {
   constructor(config) {
-    this.CHANGE_EVENT = config.changeEvent;
     this.ON_CHANGE = config.onChange;
     this._boundWatcherListener = this._watcherListener.bind(this);
     this._values = {
@@ -32,14 +31,14 @@ class Maraca {
     Start listening to the megawatcher event.
   */
   connect() {
-    document.addEventListener(this.CHANGE_EVENT, this._boundWatcherListener);
+    document.addEventListener('_rpc_response', this._boundWatcherListener);
   }
 
   /**
     Stop listening to the megawatcher event.
   */
   disconnect() {
-    document.removeEventListener(this.CHANGE_EVENT, this._boundWatcherListener);
+    document.removeEventListener('_rpc_response', this._boundWatcherListener);
   }
 
   /**

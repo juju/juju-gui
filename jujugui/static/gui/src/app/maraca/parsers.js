@@ -9,8 +9,8 @@
       @param {String} entity.annotations.gui-x - The x position for the gui.
       @param {String} entity.annotations.gui-y - The y position for the gui.
       @param {String} entity.model-uuid - The model uuid this entity belongs to.
-  @param {String} entity.tag - The tag for this entity.
-    @returns {Object} return The parsed entity.
+    @param {String} entity.tag - The tag for this entity.
+  @returns {Object} return The parsed entity.
     @returns {Object} return.annotations - The annotation details.
       @returns {String} return.annotations.bundeURL - The bundle url.
       @returns {String} return.annotations.guiX - The x position for the gui.

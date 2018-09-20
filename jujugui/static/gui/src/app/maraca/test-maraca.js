@@ -12,21 +12,19 @@ describe('Maraca', () => {
   beforeEach(() => {
     onChange = sinon.stub();
     maraca = new Maraca({
-      changeEvent: 'all_watcher_event',
       onChange: onChange
     });
   });
 
   it('inits correctly', () => {
-    assert.equal(maraca.CHANGE_EVENT, 'all_watcher_event');
     assert.equal(maraca.ON_CHANGE, onChange);
   });
 
   it('connects to events', () => {
     const listener = sinon.stub();
-    document.addEventListener('all_watcher_event', listener);
+    document.addEventListener('_rpc_response', listener);
     maraca.connect();
-    document.dispatchEvent(new CustomEvent('all_watcher_event', {
+    document.dispatchEvent(new CustomEvent('_rpc_response', {
       detail: {
         response: {
           deltas: []
@@ -34,15 +32,15 @@ describe('Maraca', () => {
       }
     }));
     assert.equal(onChange.calledOnce, true);
-    document.removeEventListener('all_watcher_event', listener);
+    document.removeEventListener('_rpc_response', listener);
   });
 
   it('disconnects from events', () => {
     const listener = sinon.stub();
-    document.addEventListener('all_watcher_event', listener);
+    document.addEventListener('_rpc_response', listener);
     maraca.connect();
     maraca.disconnect();
-    document.dispatchEvent(new CustomEvent('all_watcher_event', {
+    document.dispatchEvent(new CustomEvent('_rpc_response', {
       detail: {
         response: {
           deltas: []
@@ -50,7 +48,7 @@ describe('Maraca', () => {
       }
     }));
     assert.equal(onChange.calledOnce, false);
-    document.removeEventListener('all_watcher_event', listener);
+    document.removeEventListener('_rpc_response', listener);
   });
 
   it('adds entities', () => {

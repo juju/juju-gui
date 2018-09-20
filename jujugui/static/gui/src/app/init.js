@@ -265,7 +265,6 @@ class GUIApp {
     });
 
     this.maraca = new Maraca({
-      changeEvent: '_rpc_response',
       onChange: () => {
         this._renderApp(this.state.current, () => {});
       }
