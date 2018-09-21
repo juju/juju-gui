@@ -34,50 +34,13 @@ exports[`StatusMachineList renders 1`] = `
     Array [
       Object {
         "classes": Array [
-          "status-table__row--pending",
-        ],
-        "clickURL": "http://example.com",
-        "columns": Array [
-          Object {
-            "columnSize": 1,
-            "content": "1",
-          },
-          Object {
-            "columnSize": 2,
-            "content": <StatusLabel
-              status="pending"
-            />,
-          },
-          Object {
-            "columnSize": 2,
-            "content": "1.2.3.6",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "machine-1",
-          },
-          Object {
-            "columnSize": 1,
-            "content": "zesty",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "",
-          },
-        ],
-        "extraData": "pending",
-        "key": "m1",
-        "onClick": [Function],
-      },
-      Object {
-        "classes": Array [
           "status-table__row--ok",
         ],
         "clickURL": "http://example.com",
         "columns": Array [
           Object {
             "columnSize": 1,
-            "content": "2",
+            "content": "0",
           },
           Object {
             "columnSize": 2,
@@ -87,50 +50,15 @@ exports[`StatusMachineList renders 1`] = `
           },
           Object {
             "columnSize": 2,
-            "content": "1.2.3.7",
+            "content": "13.210.238.155",
           },
           Object {
             "columnSize": 3,
-            "content": "machine-2",
+            "content": "i-06d8e73e06dcddb38",
           },
           Object {
             "columnSize": 1,
-            "content": "trusty",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "yes, I am started",
-          },
-        ],
-        "extraData": "ok",
-        "key": "m2",
-        "onClick": [Function],
-      },
-      Object {
-        "classes": Array [
-          "",
-        ],
-        "clickURL": "http://example.com",
-        "columns": Array [
-          Object {
-            "columnSize": 1,
-            "content": "3",
-          },
-          Object {
-            "columnSize": 2,
-            "content": null,
-          },
-          Object {
-            "columnSize": 2,
-            "content": "",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "",
-          },
-          Object {
-            "columnSize": 1,
-            "content": "trusty",
+            "content": "xenial",
           },
           Object {
             "columnSize": 3,
@@ -138,7 +66,7 @@ exports[`StatusMachineList renders 1`] = `
           },
         ],
         "extraData": "ok",
-        "key": "new1",
+        "key": "0",
         "onClick": [Function],
       },
     ]
