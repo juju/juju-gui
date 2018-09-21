@@ -6,6 +6,7 @@ const React = require('react');
 
 const StatusTable = require('../table/table');
 
+const propTypes = require('../../../../maraca/prop-types');
 const { normaliseStatus } = require('../../utils');
 
 class StatusRemoteApplicationList extends React.Component {
@@ -15,14 +16,14 @@ class StatusRemoteApplicationList extends React.Component {
     @returns {Array} The list of rows.
   */
   _generateRows() {
-    return this.props.remoteApplications.map(application => {
-      // TODO: the passed in applications should be plain objects instead of YUI models.
-      const app = application.getAttrs();
-      const urlParts = app.url.split(':');
+    const {remoteApplications} = this.props;
+    return Object.keys(this.props.remoteApplications).map(key => {
+      const app = remoteApplications[key];
+      const urlParts = app.offerURL.split(':');
       return {
         columns: [{
           columnSize: 3,
-          content: app.service
+          content: app.name
         }, {
           columnSize: 3,
           content: app.status.current
@@ -34,7 +35,7 @@ class StatusRemoteApplicationList extends React.Component {
           content: urlParts[1]
         }],
         extraData: normaliseStatus(app.status.current),
-        key: app.url
+        key: app.offerURL
       };
     });
   }
@@ -63,7 +64,7 @@ class StatusRemoteApplicationList extends React.Component {
 };
 
 StatusRemoteApplicationList.propTypes = {
-  remoteApplications: PropTypes.array.isRequired,
+  remoteApplications: propTypes.remoteApplications,
   statusFilter: PropTypes.string
 };
 
