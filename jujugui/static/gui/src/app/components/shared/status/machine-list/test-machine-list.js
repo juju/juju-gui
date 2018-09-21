@@ -20,32 +20,49 @@ describe('StatusMachineList', () => {
   );
 
   beforeEach(() => {
-    machines = [{
-      agent_state: 'pending',
-      agent_state_info: '',
-      displayName: '1',
-      id: 'm1',
-      instance_id: 'machine-1',
-      public_address: '1.2.3.6',
-      series: 'zesty'
-    }, {
-      agent_state: 'started',
-      agent_state_info: 'yes, I am started',
-      displayName: '2',
-      id: 'm2',
-      instance_id: 'machine-2',
-      public_address: '1.2.3.7',
-      series: 'trusty'
-    }, {
-      // Uncommitted machines are excluded.
-      agent_state: '',
-      agent_state_info: '',
-      displayName: '3',
-      id: 'new1',
-      instance_id: '',
-      public_address: '',
-      series: 'trusty'
-    }];
+    machines = {
+      '0': {
+        modelUUID: '32c9c2db-0955-459a-8201-539657ef0da1',
+        id: '0',
+        instanceID: 'i-06d8e73e06dcddb38',
+        agentStatus: {
+          current: 'started',
+          message: '',
+          since: '2018-09-18T12:34:11.436151064Z',
+          version: '2.4.3'
+        },
+        instanceStatus: {
+          current: 'running',
+          message: 'running',
+          since: '2018-09-18T12:31:37.695183714Z',
+          version: ''
+        },
+        life: 'alive',
+        series: 'xenial',
+        supportedContainers: [
+          'lxd'
+        ],
+        supportedContainersKnown: true,
+        hardwareCharacteristics: {
+          arch: 'amd64',
+          mem: 3840,
+          'root-disk': 8192,
+          'cpu-cores': 1,
+          'cpu-power': 350,
+          'availability-zone': 'ap-southeast-2a'
+        },
+        jobs: [
+          'JobHostUnits'
+        ],
+        addresses: [{
+          value: '13.210.238.155',
+          type: 'ipv4',
+          scope: 'public'
+        }],
+        hasVote: false,
+        wantsVote: false
+      }
+    };
   });
 
   it('renders', () => {

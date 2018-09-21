@@ -28,45 +28,23 @@ exports[`StatusRemoteApplicationList renders 1`] = `
         "columns": Array [
           Object {
             "columnSize": 3,
-            "content": "haproxy",
+            "content": "mysql",
           },
           Object {
             "columnSize": 3,
-            "content": "unknown",
+            "content": "waiting",
           },
           Object {
             "columnSize": 3,
-            "content": "local",
+            "content": "localhost-localhost",
           },
           Object {
             "columnSize": 3,
-            "content": "admin/saas.haproxy",
+            "content": "admin/saas.mysql",
           },
         ],
         "extraData": "ok",
-        "key": "local:admin/saas.haproxy",
-      },
-      Object {
-        "columns": Array [
-          Object {
-            "columnSize": 3,
-            "content": "mongo",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "corrupting data",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "local",
-          },
-          Object {
-            "columnSize": 3,
-            "content": "admin/my.mongo",
-          },
-        ],
-        "extraData": "ok",
-        "key": "local:admin/my.mongo",
+        "key": "localhost-localhost:admin/saas.mysql",
       },
     ]
   }

@@ -140,7 +140,7 @@ describe('parse entities', () => {
           charmURL: 'cs:~containers/etcd-126',
           publicAddress: '13.211.141.188',
           privateAddress: '172.31.6.46',
-          machineId: '2',
+          machineID: '2',
           ports: [{
             protocol: 'tcp',
             number: 2379

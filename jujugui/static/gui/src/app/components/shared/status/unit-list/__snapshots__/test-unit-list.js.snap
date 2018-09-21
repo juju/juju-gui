@@ -38,7 +38,7 @@ exports[`StatusUnitList renders 1`] = `
     Array [
       Object {
         "classes": Array [
-          "status-table__row--pending",
+          "status-table__row--ok",
         ],
         "clickURL": "http://example.com",
         "columns": Array [
@@ -47,120 +47,15 @@ exports[`StatusUnitList renders 1`] = `
             "content": <span>
               <img
                 className="status-view__icon"
+                src="v5/~containers/etcd-126/icon.svg"
               />
-              django/0
+              etcd/0
             </span>,
           },
           Object {
             "columnSize": 2,
             "content": <StatusLabel
-              status="installing"
-            />,
-          },
-          Object {
-            "columnSize": 2,
-            "content": <StatusLabel
-              status="idle"
-            />,
-          },
-          Object {
-            "columnSize": 1,
-            "content": <a
-              className="status-view__link"
-              onClick={[Function]}
-            >
-              1
-            </a>,
-          },
-          Object {
-            "columnSize": 2,
-            "content": "1.2.3.4",
-          },
-          Object {
-            "columnSize": 1,
-            "content": "80/tcp, 443/tcp",
-          },
-          Object {
-            "columnSize": 2,
-            "content": "these are the voyages",
-          },
-        ],
-        "extraData": "pending",
-        "key": "django/id0",
-        "onClick": [Function],
-      },
-      Object {
-        "classes": Array [
-          "status-table__row--error",
-        ],
-        "clickURL": "http://example.com",
-        "columns": Array [
-          Object {
-            "columnSize": 2,
-            "content": <span>
-              <img
-                className="status-view__icon"
-              />
-              django/1
-            </span>,
-          },
-          Object {
-            "columnSize": 2,
-            "content": <StatusLabel
-              status="error"
-            />,
-          },
-          Object {
-            "columnSize": 2,
-            "content": <StatusLabel
-              status="executing"
-            />,
-          },
-          Object {
-            "columnSize": 1,
-            "content": <a
-              className="status-view__link"
-              onClick={[Function]}
-            >
-              2
-            </a>,
-          },
-          Object {
-            "columnSize": 2,
-            "content": "1.2.3.5",
-          },
-          Object {
-            "columnSize": 1,
-            "content": "80-88/udp",
-          },
-          Object {
-            "columnSize": 2,
-            "content": "exterminate!",
-          },
-        ],
-        "extraData": "error",
-        "key": "django/id1",
-        "onClick": [Function],
-      },
-      Object {
-        "classes": Array [
-          "status-table__row--pending",
-        ],
-        "clickURL": "http://example.com",
-        "columns": Array [
-          Object {
-            "columnSize": 2,
-            "content": <span>
-              <img
-                className="status-view__icon"
-              />
-              django/42
-            </span>,
-          },
-          Object {
-            "columnSize": 2,
-            "content": <StatusLabel
-              status="installing"
+              status="active"
             />,
           },
           Object {
@@ -180,19 +75,19 @@ exports[`StatusUnitList renders 1`] = `
           },
           Object {
             "columnSize": 2,
-            "content": "1.2.3.6",
+            "content": "13.211.141.188",
           },
           Object {
             "columnSize": 1,
-            "content": "",
+            "content": "2379/tcp",
           },
           Object {
             "columnSize": 2,
-            "content": "",
+            "content": "Healthy with 3 known peers",
           },
         ],
-        "extraData": "pending",
-        "key": "django/id42",
+        "extraData": "ok",
+        "key": "etcd/0",
         "onClick": [Function],
       },
     ]

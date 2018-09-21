@@ -28,7 +28,7 @@ exports[`StatusRelationList renders 1`] = `
         "columns": Array [
           Object {
             "columnSize": 3,
-            "content": "cluster",
+            "content": "db",
           },
           Object {
             "columnSize": 3,
@@ -38,9 +38,9 @@ exports[`StatusRelationList renders 1`] = `
             >
               <img
                 className="status-view__icon"
-                src="mysql"
+                src="v5/~containers/etcd-126/icon.svg"
               />
-              mysql
+              kubernetes-master
             </a>,
           },
           Object {
@@ -51,48 +51,9 @@ exports[`StatusRelationList renders 1`] = `
             >
               <img
                 className="status-view__icon"
-                src="mysql"
+                src="v5/~containers/etcd-126/icon.svg"
               />
-              mysql
-            </a>,
-          },
-          Object {
-            "columnSize": 3,
-            "content": "peer",
-          },
-        ],
-        "key": "rel1",
-      },
-      Object {
-        "columns": Array [
-          Object {
-            "columnSize": 3,
-            "content": "website",
-          },
-          Object {
-            "columnSize": 3,
-            "content": <a
-              className="status-view__link"
-              onClick={[Function]}
-            >
-              <img
-                className="status-view__icon"
-                src="wordpress"
-              />
-              wordpress
-            </a>,
-          },
-          Object {
-            "columnSize": 3,
-            "content": <a
-              className="status-view__link"
-              onClick={[Function]}
-            >
-              <img
-                className="status-view__icon"
-                src="haproxy"
-              />
-              haproxy
+              etcd
             </a>,
           },
           Object {
@@ -100,7 +61,7 @@ exports[`StatusRelationList renders 1`] = `
             "content": "regular",
           },
         ],
-        "key": "rel2",
+        "key": "1",
       },
     ]
   }

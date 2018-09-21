@@ -4,7 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusTable = require('../table/table');
+const utils = require('../../../../init/utils');
 
 class StatusRelationList extends React.Component {
 
@@ -14,13 +16,7 @@ class StatusRelationList extends React.Component {
     @returns {Object} The link element.
   */
   _generateRelationAppLink(name) {
-    let app;
-    this.props.applications.some(application => {
-      if (application.get('name') === name) {
-        app = application;
-        return true;
-      }
-    });
+    let app = this.props.applications[name];
     if (!app) {
       // If the application is not in the DB it must be remote app so don't
       // link to it.
@@ -31,7 +27,7 @@ class StatusRelationList extends React.Component {
         href={this.props.generateApplicationURL(name)}
         onClick={this.props.onApplicationClick.bind(this, name)}>
         <img className="status-view__icon"
-          src={app.get('icon')} />
+          src={utils.getIconPath(app.charmURL, false)} />
         {name}
       </a>);
   }
@@ -41,15 +37,16 @@ class StatusRelationList extends React.Component {
     @returns {Array} The list of rows.
   */
   _generateRows() {
-    return this.props.relations.map(relation => {
-      const rel = relation.getAttrs();
+    const {relations} = this.props;
+    return Object.keys(relations).map(key => {
+      const rel = relations[key];
       let name = '';
       let provides = '';
       let consumes = '';
       let scope = '';
       rel.endpoints.forEach(endpoint => {
-        const application = endpoint[0];
-        const ep = endpoint[1];
+        const application = endpoint.applicationName;
+        const ep = endpoint.relation;
         switch (ep.role) {
           case 'peer':
             name = ep.name;
@@ -81,7 +78,7 @@ class StatusRelationList extends React.Component {
           columnSize: 3,
           content: scope
         }],
-        key: rel.id
+        key: rel.id.toString()
       };
     });
   }
@@ -110,10 +107,10 @@ class StatusRelationList extends React.Component {
 };
 
 StatusRelationList.propTypes = {
-  applications: PropTypes.array.isRequired,
+  applications: maracaPropTypes.applications,
   generateApplicationURL: PropTypes.func.isRequired,
   onApplicationClick: PropTypes.func.isRequired,
-  relations: PropTypes.array.isRequired,
+  relations: maracaPropTypes.relations,
   statusFilter: PropTypes.string
 };
 
