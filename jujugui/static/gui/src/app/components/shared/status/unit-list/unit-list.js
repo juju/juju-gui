@@ -7,7 +7,7 @@ const React = require('react');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
-const propTypes = require('../../../../maraca/prop-types');
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const utils = require('../../utils');
 const initUtils = require('../../../../init/utils');
 
@@ -135,13 +135,13 @@ class StatusUnitList extends React.Component {
 };
 
 StatusUnitList.propTypes = {
-  applications: propTypes.applications,
+  applications: maracaPropTypes.applications,
   generateMachineURL: PropTypes.func.isRequired,
   generateUnitOnClick: PropTypes.func.isRequired,
   generateUnitURL: PropTypes.func.isRequired,
   onMachineClick: PropTypes.func.isRequired,
   statusFilter: PropTypes.string,
-  units: propTypes.units
+  units: maracaPropTypes.units
 };
 
 module.exports = StatusUnitList;

@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const propTypes = require('../../maraca/prop-types');
+const maracaPropTypes = require('../../maraca/prop-types');
 const SharedStatus = require('../shared/status/status/status');
 
 /** Status React component used to display Juju status. */
@@ -208,11 +208,11 @@ Status.propTypes = {
     version: PropTypes.string
   }).frozen.isRequired,
   valueStore: shapeup.shape({
-    applications: propTypes.applications,
-    machines: propTypes.machines,
-    relations: propTypes.relations,
-    remoteApplications: propTypes.remoteApplications,
-    units: propTypes.units
+    applications: maracaPropTypes.applications,
+    machines: maracaPropTypes.machines,
+    relations: maracaPropTypes.relations,
+    remoteApplications: maracaPropTypes.remoteApplications,
+    units: maracaPropTypes.units
   })
 };
 

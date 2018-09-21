@@ -6,7 +6,7 @@ const React = require('react');
 
 const StatusTable = require('../table/table');
 
-const propTypes = require('../../../../maraca/prop-types');
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const { normaliseStatus } = require('../../utils');
 
 class StatusRemoteApplicationList extends React.Component {
@@ -64,7 +64,7 @@ class StatusRemoteApplicationList extends React.Component {
 };
 
 StatusRemoteApplicationList.propTypes = {
-  remoteApplications: propTypes.remoteApplications,
+  remoteApplications: maracaPropTypes.remoteApplications,
   statusFilter: PropTypes.string
 };
 

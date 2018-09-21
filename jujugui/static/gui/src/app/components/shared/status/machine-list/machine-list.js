@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const propTypes = require('../../../../maraca/prop-types');
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
@@ -94,7 +94,7 @@ class StatusMachineList extends React.Component {
 StatusMachineList.propTypes = {
   generateMachineOnClick: PropTypes.func.isRequired,
   generateMachineURL: PropTypes.func.isRequired,
-  machines: propTypes.machines,
+  machines: maracaPropTypes.machines,
   statusFilter: PropTypes.string
 };
 

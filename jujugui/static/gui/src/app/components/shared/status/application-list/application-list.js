@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const { urls } = require('jaaslib');
 
-const propTypes = require('../../../../maraca/prop-types');
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
@@ -113,13 +113,13 @@ class StatusApplicationList extends React.Component {
 };
 
 StatusApplicationList.propTypes = {
-  applications: propTypes.applications,
+  applications: maracaPropTypes.applications,
   generateApplicationOnClick: PropTypes.func.isRequired,
   generateApplicationURL: PropTypes.func.isRequired,
   generateCharmURL: PropTypes.func.isRequired,
   onCharmClick: PropTypes.func.isRequired,
   statusFilter: PropTypes.string,
-  units: propTypes.units
+  units: maracaPropTypes.units
 };
 
 module.exports = StatusApplicationList;

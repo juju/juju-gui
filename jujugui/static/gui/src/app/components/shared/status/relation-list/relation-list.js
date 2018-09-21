@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const propTypes = require('../../../../maraca/prop-types');
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusTable = require('../table/table');
 const utils = require('../../../../init/utils');
 
@@ -107,10 +107,10 @@ class StatusRelationList extends React.Component {
 };
 
 StatusRelationList.propTypes = {
-  applications: propTypes.applications,
+  applications: maracaPropTypes.applications,
   generateApplicationURL: PropTypes.func.isRequired,
   onApplicationClick: PropTypes.func.isRequired,
-  relations: propTypes.relations,
+  relations: maracaPropTypes.relations,
   statusFilter: PropTypes.string
 };
 
