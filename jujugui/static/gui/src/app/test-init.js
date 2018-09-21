@@ -157,11 +157,11 @@ describe('init', () => {
         app = createApp();
         assert.equal(stub.callCount >= 3, true);
         const args = stub.args;
-        assert.equal(args[8][0], 'dragenter');
+        assert.equal(args[9][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[9][0], 'dragover');
+        assert.equal(args[10][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[10][0], 'dragleave');
+        assert.equal(args[11][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
 
@@ -178,11 +178,11 @@ describe('init', () => {
         newApp.destructor();
         assert.equal(stub.callCount >= 3, true);
         const args = stub.args;
-        assert.equal(args[51][0], 'dragenter');
+        assert.equal(args[52][0], 'dragenter');
         assert.isFunction(args[0][1]);
-        assert.equal(args[52][0], 'dragover');
+        assert.equal(args[53][0], 'dragover');
         assert.isFunction(args[1][1]);
-        assert.equal(args[53][0], 'dragleave');
+        assert.equal(args[54][0], 'dragleave');
         assert.isFunction(args[2][1]);
       });
     });

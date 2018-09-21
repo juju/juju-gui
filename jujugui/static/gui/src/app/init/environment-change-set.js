@@ -19,7 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const utils = require('./utils');
-const clone = require('lodash.clone');
+const clonedeep = require('lodash.clonedeep');
 
 class EnvironmentChangeSet {
   constructor(config) {
@@ -276,7 +276,7 @@ class EnvironmentChangeSet {
       command = this.changeSet[key];
       command.key = key;
       if (!command.parents || command.parents.length === 0) {
-        hierarchy[0].push(clone(command));
+        hierarchy[0].push(clonedeep(command));
         command.placed = true;
         keyToLevelMap[key] = 0;
         this.placedCount += 1;
@@ -332,7 +332,7 @@ class EnvironmentChangeSet {
     // If so, then the command belongs in the current level, so push it
     // there and increment the placed count.
     if (alreadyPlacedParents) {
-      hierarchy[currLevel].push(clone(command));
+      hierarchy[currLevel].push(clonedeep(command));
       command.placed = true;
       keyToLevelMap[key] = currLevel;
       this.placedCount += 1;
