@@ -7,7 +7,9 @@ const React = require('react');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
+const propTypes = require('../../../../maraca/prop-types');
 const utils = require('../../utils');
+const initUtils = require('../../../../init/utils');
 
 class StatusUnitList extends React.Component {
 
@@ -21,10 +23,10 @@ class StatusUnitList extends React.Component {
       return '';
     }
     return ranges.map(range => {
-      if (range.from === range.to) {
-        return `${range.from}/${range.protocol}`;
+      if (range.fromPort === range.toPort) {
+        return `${range.fromPort}/${range.protocol}`;
       }
-      return `${range.from}-${range.to}/${range.protocol}`;
+      return `${range.fromPort}-${range.toPort}/${range.protocol}`;
     }).join(', ');
   }
 
@@ -34,58 +36,55 @@ class StatusUnitList extends React.Component {
       should match the row format required by the BasicTable component.
   */
   _generateRows() {
-    const units = utils.getRealUnits(this.props.units);
-    return units.map(unit => {
-      let application;
-      this.props.applications.some(app => {
-        if (app.get('name') === unit.service) {
-          application = app;
-          return true;
-        }
-      });
-      const appExposed = application.get('exposed');
-      let publicAddress = unit.public_address;
+    const {units} = this.props;
+    return Object.keys(this.props.units).map(key => {
+      const unit = units[key];
+      let application = this.props.applications[unit.application];
+      const appExposed = application.exposed;
+      let publicAddress = unit.publicAddress;
       if (appExposed && unit.portRanges.length) {
-        const port = unit.portRanges[0].from;
-        const label = `${unit.public_address}:${port}`;
+        const port = unit.portRanges[0].fromPort;
+        const label = `${unit.publicAddress}:${port}`;
         const protocol = port === 443 ? 'https' : 'http';
         const href = `${protocol}://${label}`;
         publicAddress = (
           <a className="status-view__link"
             href={href}
             target="_blank">
-            {unit.public_address}
+            {unit.publicAddress}
           </a>);
       }
+      const agentStatus = unit.agentStatus.current;
+      const workloadStatus = unit.workloadStatus.current;
       return {
         classes: [utils.getStatusClass(
           'status-table__row--',
-          [unit.agentStatus, unit.workloadStatus])],
-        onClick: this.props.generateUnitOnClick(unit.id),
-        clickURL: this.props.generateUnitURL(unit.id),
+          [agentStatus, workloadStatus])],
+        onClick: this.props.generateUnitOnClick(unit.name),
+        clickURL: this.props.generateUnitURL(unit.name),
         columns: [{
           columnSize: 2,
           content: (
             <span>
               <img className="status-view__icon"
-                src={application.get('icon')} />
-              {unit.displayName}
+                src={initUtils.getIconPath(application.charmURL, false)} />
+              {unit.name}
             </span>)
         }, {
           columnSize: 2,
-          content: unit.workloadStatus ? (
-            <StatusLabel status={unit.workloadStatus} />) : null
+          content: workloadStatus ? (
+            <StatusLabel status={workloadStatus} />) : null
         }, {
           columnSize: 2,
-          content: unit.agentStatus ? (
-            <StatusLabel status={unit.agentStatus} />) : null
+          content: agentStatus ? (
+            <StatusLabel status={agentStatus} />) : null
         }, {
           columnSize: 1,
           content: (
             <a className="status-view__link"
-              href={this.props.generateMachineURL(unit.machine)}
-              onClick={this.props.onMachineClick.bind(this, unit.machine)}>
-              {unit.machine}
+              href={this.props.generateMachineURL(unit.machineID)}
+              onClick={this.props.onMachineClick.bind(this, unit.machineID)}>
+              {unit.machineID}
             </a>)
         }, {
           columnSize: 2,
@@ -95,11 +94,11 @@ class StatusUnitList extends React.Component {
           content: this._formatPorts(unit.portRanges)
         }, {
           columnSize: 2,
-          content: unit.workloadStatusMessage
+          content: unit.workloadStatus.message
         }],
         extraData: utils.getHighestStatus(
-          [unit.agentStatus, unit.workloadStatus]),
-        key: unit.id
+          [agentStatus, workloadStatus]),
+        key: unit.name
       };
     });
   }
@@ -136,13 +135,13 @@ class StatusUnitList extends React.Component {
 };
 
 StatusUnitList.propTypes = {
-  applications: PropTypes.array.isRequired,
+  applications: propTypes.applications,
   generateMachineURL: PropTypes.func.isRequired,
   generateUnitOnClick: PropTypes.func.isRequired,
   generateUnitURL: PropTypes.func.isRequired,
   onMachineClick: PropTypes.func.isRequired,
   statusFilter: PropTypes.string,
-  units: PropTypes.array.isRequired
+  units: propTypes.units
 };
 
 module.exports = StatusUnitList;
