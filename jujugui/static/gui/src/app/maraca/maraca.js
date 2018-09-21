@@ -4,7 +4,7 @@
 const clonedeep = require('lodash.clonedeep');
 const deepmerge = require('deepmerge');
 
-const {getDeltaUpdates} = require('./delta-handlers');
+const {processDeltas} = require('./delta-handlers');
 
 class Maraca {
   constructor(config) {
@@ -82,7 +82,7 @@ class Maraca {
     @param deltas {Array} The list of deltas.
   */
   _handleDeltas(deltas) {
-    const updates = getDeltaUpdates(deltas);
+    const updates = processDeltas(deltas);
     this._updateStore(updates.changed, 'changed');
     this._updateStore(updates.removed, 'removed');
   }

@@ -4,9 +4,9 @@
 const handlers = require('./delta-handlers');
 const parsers = require('./parsers');
 
-describe('Maraca', () => {
+describe('delta handlers', () => {
   it('adds/updates entities', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'unit', 'change', {
         name: 'apache2/0'
       }
@@ -19,7 +19,7 @@ describe('Maraca', () => {
   });
 
   it('removes entities', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'unit', 'remove', {
         name: 'apache2/0'
       }
@@ -32,7 +32,7 @@ describe('Maraca', () => {
   });
 
   it('can handle remote applications', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'remote-application', 'change', {
         name: 'apache2'
       }
@@ -45,7 +45,7 @@ describe('Maraca', () => {
   });
 
   it('can handle applications', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'application', 'change', {
         name: 'apache2'
       }
@@ -58,7 +58,7 @@ describe('Maraca', () => {
   });
 
   it('can handle units', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'unit', 'change', {
         name: 'apache2/0'
       }
@@ -71,7 +71,7 @@ describe('Maraca', () => {
   });
 
   it('can handle machines', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'machine', 'change', {
         id: '0'
       }
@@ -84,7 +84,7 @@ describe('Maraca', () => {
   });
 
   it('can handle relations', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'relation', 'change', {
         id: '1'
       }
@@ -97,7 +97,7 @@ describe('Maraca', () => {
   });
 
   it('can handle annotations', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'annotation', 'change', {
         tag: 'application-apache2'
       }
@@ -110,7 +110,7 @@ describe('Maraca', () => {
   });
 
   it('can handle unkown entities', () => {
-    const updates = handlers.getDeltaUpdates([[
+    const updates = handlers.processDeltas([[
       'nothing-here', 'change', {
         id: '1'
       }

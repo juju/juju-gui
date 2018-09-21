@@ -10,7 +10,7 @@ const parsers = require('./parsers');
   @returns {Object} return.changed - The entities to change.
   @returns {Object} return.removed - The entities to remove.
 */
-function getDeltaUpdates(deltas) {
+function processDeltas(deltas) {
   let updates = {
     changed: {},
     removed: {}
@@ -100,5 +100,5 @@ function _parseEntity(entityType, entity) {
 }
 
 module.exports = {
-  getDeltaUpdates
+  processDeltas
 };
