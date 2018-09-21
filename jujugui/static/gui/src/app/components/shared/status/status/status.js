@@ -13,6 +13,7 @@ const StatusRemoteApplicationList = require(
 const StatusRelationList = require('../relation-list/relation-list');
 const StatusUnitList = require('../unit-list/unit-list');
 const Panel = require('../../../panel/panel');
+const propTypes = require('../../../../maraca/prop-types');
 const utils = require('../../utils');
 
 /** Status React component used to display Juju status. */
@@ -40,17 +41,20 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _setTrafficLight() {
-    const {entities} = this.props;
+    const {applications, machines, units} = this.props.valueStore;
     let statuses = [];
-    entities.applications.forEach(application => {
-      const app = application.getAttrs();
+    Object.keys(applications).forEach(key => {
+      const app = applications[key];
       statuses.push(app.status.current);
     });
-    entities.units.forEach(unit => {
-      statuses.push(utils.getHighestStatus([unit.agentStatus, unit.workloadStatus]));
+    Object.keys(units).forEach(key => {
+      const unit = units[key];
+      statuses.push(utils.getHighestStatus(
+        [unit.agentStatus.current, unit.workloadStatus.current]));
     });
-    entities.machines.map(machine => {
-      statuses.push(machine.agent_state);
+    Object.keys(machines).map(key => {
+      const machine = machines[key];
+      statuses.push(machine.agentStatus.current);
     });
     const highest = utils.getHighestStatus(statuses);
     if (highest && (this.state.highestStatus !== highest)) {
@@ -71,14 +75,14 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateModel() {
-    const {entities} = this.props;
-    const {model} = entities;
+    const {valueStore} = this.props;
+    const {model} = this.props;
     const counts = {
-      applications: entities.applications.length,
-      machines: entities.machines.length,
-      relations: entities.relations.length,
-      remoteApplications: entities.remoteApplications.length,
-      units: entities.units.length
+      applications: Object.keys(valueStore.applications).length,
+      machines: Object.keys(valueStore.machines).length,
+      relations: Object.keys(valueStore.relations).length,
+      remoteApplications: Object.keys(valueStore.remoteApplications).length,
+      units: Object.keys(valueStore.units).length
     };
     return (
       <StatusModel
@@ -94,8 +98,8 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRemoteApplications() {
-    const {remoteApplications} = this.props.entities;
-    if (remoteApplications.length === 0) {
+    const {remoteApplications} = this.props.valueStore;
+    if (!Object.keys(remoteApplications).length) {
       return null;
     }
     return (
@@ -109,8 +113,8 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateApplications() {
-    const {applications} = this.props.entities;
-    if (applications.length === 0) {
+    const {applications} = this.props.valueStore;
+    if (!Object.keys(applications).length) {
       return null;
     }
     return (
@@ -120,7 +124,8 @@ class Status extends React.Component {
         generateApplicationURL={this.props.generateApplicationURL}
         generateCharmURL={this.props.generateCharmURL}
         onCharmClick={this.props.navigateToCharm}
-        statusFilter={this.state.statusFilter} />);
+        statusFilter={this.state.statusFilter}
+        units={this.props.valueStore.units} />);
   }
 
   /**
@@ -128,13 +133,13 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateUnits() {
-    const {units} = this.props.entities;
-    if (units.length === 0) {
+    const {units} = this.props.valueStore;
+    if (!Object.keys(units).length) {
       return null;
     }
     return (
       <StatusUnitList
-        applications={this.props.entities.applications}
+        applications={this.props.valueStore.applications}
         generateMachineURL={this.props.generateMachineURL}
         generateUnitOnClick={this.props.generateUnitOnClick}
         generateUnitURL={this.props.generateUnitURL}
@@ -148,8 +153,8 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateMachines() {
-    const {machines} = this.props.entities;
-    if (machines.length === 0) {
+    const {machines} = this.props.valueStore;
+    if (!Object.keys(machines).length) {
       return null;
     }
     return (
@@ -165,13 +170,13 @@ class Status extends React.Component {
     @returns {Object} The resulting element.
   */
   _generateRelations() {
-    const {relations} = this.props.entities;
-    if (relations.length === 0) {
+    const {relations} = this.props.valueStore;
+    if (!Object.keys(relations).length) {
       return null;
     }
     return (
       <StatusRelationList
-        applications={this.props.entities.applications}
+        applications={this.props.valueStore.applications}
         generateApplicationURL={this.props.generateApplicationURL}
         onApplicationClick={this.props.navigateToApplication}
         relations={relations}
@@ -180,8 +185,8 @@ class Status extends React.Component {
 
   render() {
     let content;
-    const {entities} = this.props;
-    if (!entities.model || !entities.model.modelUUID) {
+    const {model} = this.props;
+    if (!model || !model.modelUUID) {
       // No need to go further: we are not connected to a model.
       content = 'Cannot show the status: the GUI is not connected to a model.';
     } else {
@@ -209,21 +214,6 @@ class Status extends React.Component {
 };
 
 Status.propTypes = {
-  entities: PropTypes.shape({
-    applications: PropTypes.array.isRequired,
-    machines: PropTypes.array.isRequired,
-    model: shapeup.shape({
-      cloud: PropTypes.string,
-      environmentName: PropTypes.string,
-      modelUUID: PropTypes.string,
-      region: PropTypes.string,
-      sla: PropTypes.string,
-      version: PropTypes.string
-    }),
-    relations: PropTypes.array.isRequired,
-    remoteApplications: PropTypes.array.isRequired,
-    units: PropTypes.array.isRequired
-  }),
   generateApplicationOnClick: PropTypes.func.isRequired,
   generateApplicationURL: PropTypes.func.isRequired,
   generateCharmURL: PropTypes.func.isRequired,
@@ -231,9 +221,24 @@ Status.propTypes = {
   generateMachineURL: PropTypes.func.isRequired,
   generateUnitOnClick: PropTypes.func.isRequired,
   generateUnitURL: PropTypes.func.isRequired,
+  model: shapeup.shape({
+    cloud: PropTypes.string,
+    environmentName: PropTypes.string,
+    modelUUID: PropTypes.string,
+    region: PropTypes.string,
+    sla: PropTypes.string,
+    version: PropTypes.string
+  }),
   navigateToApplication: PropTypes.func.isRequired,
   navigateToCharm: PropTypes.func.isRequired,
-  navigateToMachine: PropTypes.func.isRequired
+  navigateToMachine: PropTypes.func.isRequired,
+  valueStore: PropTypes.shape({
+    applications: propTypes.applications,
+    machines: propTypes.machines,
+    relations: propTypes.relations,
+    remoteApplications: propTypes.remoteApplications,
+    units: propTypes.units
+  })
 };
 
 module.exports = Status;
