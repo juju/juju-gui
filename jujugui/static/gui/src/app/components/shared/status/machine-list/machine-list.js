@@ -21,7 +21,7 @@ class StatusMachineList extends React.Component {
   */
   _generateRows() {
     const {machines} = this.props;
-    return Object.keys(this.props.machines).map(key => {
+    return Object.keys(machines).map(key => {
       const machine = machines[key];
       let publicAddress;
       machine.addresses.some(address => {

@@ -37,7 +37,7 @@ class StatusUnitList extends React.Component {
   */
   _generateRows() {
     const {units} = this.props;
-    return Object.keys(this.props.units).map(key => {
+    return Object.keys(units).map(key => {
       const unit = units[key];
       let application = this.props.applications[unit.application];
       const appExposed = application.exposed;

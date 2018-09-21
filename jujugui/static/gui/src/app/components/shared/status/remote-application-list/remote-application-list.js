@@ -17,7 +17,7 @@ class StatusRemoteApplicationList extends React.Component {
   */
   _generateRows() {
     const {remoteApplications} = this.props;
-    return Object.keys(this.props.remoteApplications).map(key => {
+    return Object.keys(remoteApplications).map(key => {
       const app = remoteApplications[key];
       const urlParts = app.offerURL.split(':');
       return {

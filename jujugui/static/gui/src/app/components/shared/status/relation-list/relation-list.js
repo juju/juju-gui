@@ -38,7 +38,7 @@ class StatusRelationList extends React.Component {
   */
   _generateRows() {
     const {relations} = this.props;
-    return Object.keys(this.props.relations).map(key => {
+    return Object.keys(relations).map(key => {
       const rel = relations[key];
       let name = '';
       let provides = '';

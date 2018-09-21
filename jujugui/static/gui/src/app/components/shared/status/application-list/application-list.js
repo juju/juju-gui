@@ -29,10 +29,8 @@ class StatusApplicationList extends React.Component {
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
       const charmId = charm.path();
-      const units = Object.keys(this.props.units).filter(key => {
-        const unit = this.props.units[key];
-        return unit.application === app.name;
-      });
+      const units = Object.keys(this.props.units).filter(key =>
+        this.props.units[key].application === app.name);
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;

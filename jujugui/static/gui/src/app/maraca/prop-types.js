@@ -6,6 +6,9 @@ const shapeup = require('shapeup');
 
 let propTypes = {};
 
+/**
+  The shape of an annotation.
+*/
 propTypes.annotation = shapeup.shape({
   annotations: PropTypes.shape({
     bundleURL: PropTypes.string,
@@ -16,6 +19,9 @@ propTypes.annotation = shapeup.shape({
   tag: PropTypes.stringg
 });
 
+/**
+  The shape of an application.
+*/
 propTypes.application = shapeup.shape({
   charmURL: PropTypes.string,
   config: PropTypes.object,
@@ -36,6 +42,9 @@ propTypes.application = shapeup.shape({
   workloadVersion: PropTypes.string
 });
 
+/**
+  The shape of a machine.
+*/
 propTypes.machine = shapeup.shape({
   addresses: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string,
@@ -67,6 +76,9 @@ propTypes.machine = shapeup.shape({
   wantsVote: PropTypes.bool
 });
 
+/**
+  The shape of a relation.
+*/
 propTypes.relation = shapeup.shape({
   endpoints: PropTypes.arrayOf(PropTypes.shape({
     applicationName: PropTypes.string,
@@ -79,11 +91,14 @@ propTypes.relation = shapeup.shape({
       scope: PropTypes.stringe
     })
   })),
-  id: PropTypes.string,
+  id: PropTypes.number,
   key: PropTypes.string,
   modelUUID: PropTypes.string
 });
 
+/**
+  The shape of a remote application.
+*/
 propTypes.remoteApplication = shapeup.shape({
   life: PropTypes.string,
   modelUUID: PropTypes.string,
@@ -98,6 +113,9 @@ propTypes.remoteApplication = shapeup.shape({
   })
 });
 
+/**
+  The shape of a unit.
+*/
 propTypes.unit = shapeup.shape({
   agentStatus: PropTypes.shape({
     current: PropTypes.string,
@@ -131,13 +149,39 @@ propTypes.unit = shapeup.shape({
   })
 });
 
+/**
+  The shape of a collection of annotations.
+*/
 propTypes.annotations = PropTypes.objectOf(propTypes.annotations);
+
+/**
+  The shape of a collection of applications.
+*/
 propTypes.applications = PropTypes.objectOf(propTypes.application);
+
+/**
+  The shape of a collection of machines.
+*/
 propTypes.machines = PropTypes.objectOf(propTypes.machine);
+
+/**
+  The shape of a collection of relations.
+*/
 propTypes.relations = PropTypes.objectOf(propTypes.relation);
+
+/**
+  The shape of a collection of remote applications.
+*/
 propTypes.remoteApplications = PropTypes.objectOf(propTypes.remoteApplication);
+
+/**
+  The shape of a collection of units.
+*/
 propTypes.units = PropTypes.objectOf(propTypes.unit);
 
+/**
+  The shape of the complete value store.
+*/
 propTypes.valueStore = shapeup.shape({
   annotations: propTypes.annotations,
   applications: propTypes.applications,
