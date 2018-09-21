@@ -422,7 +422,7 @@ function parseUnit(entity) {
     } : undefined,
     application: entity.application,
     charmURL: entity['charm-url'],
-    machineId: entity['machine-id'],
+    machineID: entity['machine-id'],
     modelUUID: entity['model-uuid'],
     name: entity.name,
     portRanges: entity['port-ranges'] ? entity['port-ranges'].map(range => ({

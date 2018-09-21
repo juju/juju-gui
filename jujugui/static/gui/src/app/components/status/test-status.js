@@ -8,18 +8,15 @@ const shapeup = require('shapeup');
 const Status = require('./status');
 
 describe('Status', function() {
-  let changeState;
-  let model;
-  let db;
-  let generatePath;
+  let changeState, generatePath, model, valueStore;
   const propTypes = Status.propTypes;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Status
       changeState={options.changeState || changeState}
-      db={shapeup.fromShape(options.db || db, propTypes.db)}
       generatePath={options.generatePath || generatePath}
-      model={shapeup.fromShape(options.model || model, propTypes.model)} />
+      model={shapeup.fromShape(options.model || model, propTypes.model)}
+      valueStore={options.valueStore || valueStore} />
   );
 
   beforeEach(() => {
@@ -32,28 +29,12 @@ describe('Status', function() {
       sla: 'advanced',
       version: '2.42.47'
     };
-    db = {
-      machines: {
-        filter: sinon.stub().returns([{}]),
-        toArray: sinon.stub().withArgs().returns([])
-      },
-      relations: {
-        filter: sinon.stub().returns([{}]),
-        toArray: sinon.stub().withArgs().returns([])
-      },
-      remoteServices: {
-        map: sinon.stub().returns([{}]),
-        toArray: sinon.stub().withArgs().returns([])
-      },
-      services: {
-        filter: sinon.stub().returns([{}]),
-        getById: sinon.stub(),
-        toArray: sinon.stub().withArgs().returns([])
-      },
-      units: {
-        filter: sinon.stub().returns([{}]),
-        toArray: sinon.stub().withArgs().returns([])
-      }
+    valueStore = {
+      applications: {app: {}},
+      machines: {machine: {}},
+      relations: {relation: {}},
+      remoteApplications: {app: {}},
+      units: {unit: {}}
     };
     generatePath = sinon.stub();
   });

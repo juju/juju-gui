@@ -5,8 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const propTypes = require('../../maraca/prop-types');
 const SharedStatus = require('../shared/status/status/status');
-const utils = require('../shared/utils');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
@@ -177,16 +177,9 @@ class Status extends React.Component {
   }
 
   render() {
+
     return (
       <SharedStatus
-        entities={{
-          applications: this.props.db.services.filter(app => !app.get('pending')),
-          machines: this.props.db.machines.filter(mach => mach.id.indexOf('new') !== 0),
-          model: this.props.model,
-          relations: this.props.db.relations.filter(rel => !rel.get('pending')),
-          units: utils.getRealUnits(this.props.db.units),
-          remoteApplications: this.props.db.remoteServices.toArray()
-        }}
         generateApplicationOnClick={this._generateApplicationOnClick.bind(this)}
         generateApplicationURL={this._generateApplicationURL.bind(this)}
         generateCharmURL={this._generateCharmURL.bind(this)}
@@ -194,37 +187,17 @@ class Status extends React.Component {
         generateMachineURL={this._generateMachineURL.bind(this)}
         generateUnitOnClick={this._generateUnitOnClick.bind(this)}
         generateUnitURL={this._generateUnitURL.bind(this)}
+        model={this.props.model}
         navigateToApplication={this._navigateToApplication.bind(this)}
         navigateToCharm={this._navigateToCharm.bind(this)}
-        navigateToMachine={this._navigateToMachine.bind(this)} />
+        navigateToMachine={this._navigateToMachine.bind(this)}
+        valueStore={this.props.valueStore} />
     );
   }
 };
 
 Status.propTypes = {
   changeState: PropTypes.func.isRequired,
-  db: shapeup.shape({
-    machines: shapeup.shape({
-      filter: PropTypes.func.isRequired,
-      toArray: PropTypes.func.isRequired
-    }).isRequired,
-    relations: shapeup.shape({
-      filter: PropTypes.func.isRequired
-    }).isRequired,
-    remoteServices: shapeup.shape({
-      map: PropTypes.func.isRequired,
-      toArray: PropTypes.func.isRequired
-    }).isRequired,
-    services: shapeup.shape({
-      filter: PropTypes.func.isRequired,
-      getById: PropTypes.func.isRequired,
-      toArray: PropTypes.func.isRequired
-    }).isRequired,
-    units: shapeup.shape({
-      filter: PropTypes.func.isRequired,
-      toArray: PropTypes.func.isRequired
-    }).isRequired
-  }).frozen.isRequired,
   generatePath: PropTypes.func.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
@@ -233,7 +206,14 @@ Status.propTypes = {
     region: PropTypes.string,
     sla: PropTypes.string,
     version: PropTypes.string
-  }).frozen.isRequired
+  }).frozen.isRequired,
+  valueStore: shapeup.shape({
+    applications: propTypes.applications,
+    machines: propTypes.machines,
+    relations: propTypes.relations,
+    remoteApplications: propTypes.remoteApplications,
+    units: propTypes.units
+  })
 };
 
 module.exports = Status;
