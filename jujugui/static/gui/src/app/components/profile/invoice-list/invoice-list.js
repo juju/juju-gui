@@ -15,32 +15,38 @@ class ProfileInvoiceList extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: [{
-        number: 100001,
-        status: 'Paid',
-        chargedTo: 'card ending 1234',
-        date: '12/05/2017'
-      }, {
-        number: 100002,
-        status: 'Declined: will retry',
-        chargedTo: 'card ending 1231',
-        date: '12/05/2017'
-      }, {
-        number: 100003,
-        status: 'Paid',
-        chargedTo: 'card ending 1232',
-        date: '14/05/2017'
-      }, {
-        number: 100004,
-        status: 'Paid',
-        chargedTo: 'card ending 1233',
-        date: '13/05/2017'
-      }, {
-        number: 100005,
-        status: 'Paid',
-        chargedTo: 'card ending 1234',
-        date: '12/05/2017'
-      }],
+      data: [
+        {
+          number: 100001,
+          status: 'Paid',
+          chargedTo: 'card ending 1234',
+          date: '12/05/2017'
+        },
+        {
+          number: 100002,
+          status: 'Declined: will retry',
+          chargedTo: 'card ending 1231',
+          date: '12/05/2017'
+        },
+        {
+          number: 100003,
+          status: 'Paid',
+          chargedTo: 'card ending 1232',
+          date: '14/05/2017'
+        },
+        {
+          number: 100004,
+          status: 'Paid',
+          chargedTo: 'card ending 1233',
+          date: '13/05/2017'
+        },
+        {
+          number: 100005,
+          status: 'Paid',
+          chargedTo: 'card ending 1234',
+          date: '12/05/2017'
+        }
+      ],
       loading: false
     };
   }
@@ -87,62 +93,66 @@ class ProfileInvoiceList extends React.Component {
   render() {
     let content;
     if (this.state.loading) {
-      content = (<Spinner />);
+      content = <Spinner />;
     } else {
       const rows = (this.props.data || this.state.data).map(invoice => {
         return {
-          columns: [{
-            content: invoice.status,
-            columnSize: 3
-          }, {
-            content: (
-              <a
-                href='#invoices/42'>
-                {invoice.number}
-              </a>),
-            columnSize: 3
-          }, {
-            content: invoice.chargedTo,
-            columnSize: 3
-          }, {
-            content: invoice.date,
-            columnSize: 3
-          }],
+          columns: [
+            {
+              content: invoice.status,
+              columnSize: 3
+            },
+            {
+              content: <a href="#invoices/42">{invoice.number}</a>,
+              columnSize: 3
+            },
+            {
+              content: invoice.chargedTo,
+              columnSize: 3
+            },
+            {
+              content: invoice.date,
+              columnSize: 3
+            }
+          ],
           key: String(invoice.number)
         };
       });
       content = (
         <div>
-          <h2 className="profile__title">
-            Payment history
-          </h2>
+          <div className="v1">
+            <h2 className="profile__title">Payment history</h2>
+          </div>
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Status',
-              columnSize: 3
-            }, {
-              content: 'Invoice Number',
-              columnSize: 3
-            }, {
-              content: 'Charged to',
-              columnSize: 3
-            }, {
-              content: 'Date',
-              columnSize: 3
-            }]}
+            headers={[
+              {
+                content: 'Status',
+                columnSize: 3
+              },
+              {
+                content: 'Invoice Number',
+                columnSize: 3
+              },
+              {
+                content: 'Charged to',
+                columnSize: 3
+              },
+              {
+                content: 'Date',
+                columnSize: 3
+              }
+            ]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
             rows={rows} />
-        </div>);
+        </div>
+      );
     }
-    return (
-      <div className="profile-invoice-list">
-        {content}
-      </div>);
+    return <div className="profile-invoice-list">{content}</div>;
   }
-};
+}
 
 ProfileInvoiceList.propTypes = {
   baseURL: PropTypes.string.isRequired,

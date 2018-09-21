@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const {urls} = require('jaaslib');
+const { urls } = require('jaaslib');
 
 const BasicTable = require('../../shared/basic-table/basic-table');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
@@ -51,7 +51,7 @@ class ProfileCharmList extends React.Component {
   */
   _fetchCharms(user) {
     const props = this.props;
-    this.setState({loading: true}, () => {
+    this.setState({ loading: true }, () => {
       this.xhrs.push(
         props.charmstore.list(
           user,
@@ -66,9 +66,11 @@ class ProfileCharmList extends React.Component {
               });
               return;
             }
-            this.setState({loading: false, data});
+            this.setState({ loading: false, data });
           },
-          'charm'));
+          'charm'
+        )
+      );
     });
   }
 
@@ -81,7 +83,7 @@ class ProfileCharmList extends React.Component {
   _navigateToCharm(path, e) {
     e.preventDefault();
     e.stopPropagation();
-    this.props.changeState({profile: null, store: path, hash: null});
+    this.props.changeState({ profile: null, store: path, hash: null });
   }
 
   /**
@@ -103,7 +105,8 @@ class ProfileCharmList extends React.Component {
         text: '',
         type: null
       },
-      hash: null});
+      hash: null
+    });
   }
 
   /**
@@ -116,17 +119,16 @@ class ProfileCharmList extends React.Component {
       return null;
     }
     const tagList = tags.map((tag, i) => (
-      <li className="link profile-charm-list__tag"
+      <li
+        className="link profile-charm-list__tag"
         key={tag + i}
         onClick={this._handleTagClick.bind(this, tag)}
         role="button"
         tabIndex="0">
         {tag}
-      </li>));
-    return (
-      <ul className="profile-charm-list__tags">
-        {tagList}
-      </ul>);
+      </li>
+    ));
+    return <ul className="profile-charm-list__tags">{tagList}</ul>;
   }
 
   /**
@@ -135,12 +137,13 @@ class ProfileCharmList extends React.Component {
   */
   _generateTitle() {
     return (
-      <h2 className="profile__title">
-        {this.props.isActiveUsersProfile ? 'My' : 'Their'} charms
-        <span className="profile__title-count">
-          ({(this.state.data || []).length})
-        </span>
-      </h2>);
+      <div className="v1">
+        <h2 className="profile__title">
+          {this.props.isActiveUsersProfile ? 'My' : 'Their'} charms
+          <span className="profile__title-count">({(this.state.data || []).length})</span>
+        </h2>
+      </div>
+    );
   }
 
   /**
@@ -162,7 +165,7 @@ class ProfileCharmList extends React.Component {
   render() {
     let content;
     if (this.state.loading) {
-      content = (<Spinner />);
+      content = <Spinner />;
     } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
       if (!this.props.user) {
         content = (
@@ -170,22 +173,28 @@ class ProfileCharmList extends React.Component {
             addNotification={this.props.addNotification}
             bakery={this.props.bakery}
             changeState={this.props.changeState}
-            charmstore={shapeup.fromShape(this.props.charmstore,
-              ProfileCharmstoreLogin.propTypes.charmstore)}
+            charmstore={shapeup.fromShape(
+              this.props.charmstore,
+              ProfileCharmstoreLogin.propTypes.charmstore
+            )}
             storeUser={this.props.storeUser}
-            type="charms" />);
+            type="charms" />
+        );
       } else {
         content = (
-          <div>
+          <div class="v1">
             {this._generateTitle()}
             <p className="profile-charm-list__onboarding">
               Learn about&nbsp;
-              <a href="https://jujucharms.com/docs/stable/developer-getting-started"
+              <a
+                href="https://jujucharms.com/docs/stable/developer-getting-started"
                 target="_blank">
                 writing your own charm
-              </a>.
+              </a>
+              .
             </p>
-          </div>);
+          </div>
+        );
       }
     } else {
       const rows = this.state.data.map(charm => {
@@ -199,33 +208,38 @@ class ProfileCharmList extends React.Component {
           <img className="profile-charm-list__icon"
             key="img"
             src={src}
-            title={charm.name} />);
-        return ({
-          columns: [{
-            content: (
-              <div>
-                <div className="profile-charm-list__item">
-                  <div>
-                    {icon}
-                  </div>
-                  <div>
-                    <a href={`${this.props.baseURL}${path}`}
-                      key="link"
-                      onClick={this._navigateToCharm.bind(this, path)}>
-                      {charm.name}
-                    </a>
-                    {this._generateTags(charm.tags)}
+            title={charm.name} />
+        );
+        return {
+          columns: [
+            {
+              content: (
+                <div>
+                  <div className="profile-charm-list__item">
+                    <div>{icon}</div>
+                    <div>
+                      <a
+                        href={`${this.props.baseURL}${path}`}
+                        key="link"
+                        onClick={this._navigateToCharm.bind(this, path)}>
+                        {charm.name}
+                      </a>
+                      {this._generateTags(charm.tags)}
+                    </div>
                   </div>
                 </div>
-              </div>),
-            columnSize: 6
-          }, {
-            content: series,
-            columnSize: 3
-          }, {
-            content: version,
-            columnSize: 3
-          }],
+              ),
+              columnSize: 6
+            },
+            {
+              content: series,
+              columnSize: 3
+            },
+            {
+              content: version,
+              columnSize: 3
+            }
+          ],
           expandedContent: (
             <ProfileExpandedContent
               acl={this.props.acl}
@@ -234,26 +248,27 @@ class ProfileCharmList extends React.Component {
               entity={charm}
               generatePath={this.props.generatePath}
               getModelName={this.props.getModelName}
-              topRow={(
+              topRow={
                 <div>
                   <div className="six-col profile-expanded-content__top-row">
                     {icon}
-                    <a href={`${this.props.baseURL}${path}`}
+                    <a
+                      href={`${this.props.baseURL}${path}`}
                       key="link"
                       onClick={this._navigateToCharm.bind(this, path)}>
                       {charm.name}
                     </a>
                   </div>
-                  <div className="three-col profile-expanded-content__top-row">
-                    {series}
-                  </div>
+                  <div className="three-col profile-expanded-content__top-row">{series}</div>
                   <div className="three-col last-col profile-expanded-content__top-row">
                     {version}
                   </div>
-                </div>)} />),
+                </div>
+              } />
+          ),
           extraData: charm.name,
           key: charm.id
-        });
+        };
       });
       content = (
         <div>
@@ -261,28 +276,30 @@ class ProfileCharmList extends React.Component {
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Name',
-              columnSize: 6
-            }, {
-              content: 'Series',
-              columnSize: 3
-            }, {
-              content: 'Release',
-              columnSize: 3
-            }]}
+            headers={[
+              {
+                content: 'Name',
+                columnSize: 6
+              },
+              {
+                content: 'Series',
+                columnSize: 3
+              },
+              {
+                content: 'Release',
+                columnSize: 3
+              }
+            ]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
             rows={rows}
             sort={this._byName.bind(this)} />
-        </div>);
+        </div>
+      );
     }
-    return (
-      <div className="profile-charm-list">
-        {content}
-      </div>);
+    return <div className="profile-charm-list">{content}</div>;
   }
-};
+}
 
 ProfileCharmList.propTypes = {
   acl: shapeup.shape({

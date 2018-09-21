@@ -39,7 +39,7 @@ class Payment extends React.Component {
     @method _toggleAdd
   */
   _toggleAdd() {
-    this.setState({showAdd: !this.state.showAdd});
+    this.setState({ showAdd: !this.state.showAdd });
   }
 
   /**
@@ -49,7 +49,7 @@ class Payment extends React.Component {
     @param {String} user The user deetails.
   */
   _setUser(user) {
-    this.setState({paymentUser: user});
+    this.setState({ paymentUser: user });
   }
 
   /**
@@ -68,7 +68,7 @@ class Payment extends React.Component {
     @method _getUser
   */
   _getUser() {
-    this.setState({loading: true}, () => {
+    this.setState({ loading: true }, () => {
       const xhr = this.props.payment.getUser(this.props.username, (error, user) => {
         // If the user is not found we don't want to display the error, but
         // rather display a message about creating a user.
@@ -82,7 +82,7 @@ class Payment extends React.Component {
           console.error(message, error);
           return;
         }
-        this.setState({loading: false}, () => {
+        this.setState({ loading: false }, () => {
           this._setUser(user);
         });
       });
@@ -102,12 +102,15 @@ class Payment extends React.Component {
         <PaymentMethods
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          payment={payment && shapeup.addReshape({
-            createPaymentMethod: payment.createPaymentMethod.bind(payment),
-            getCountries: payment.getCountries.bind(payment),
-            removePaymentMethod: payment.removePaymentMethod.bind(payment),
-            updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
-          })}
+          payment={
+            payment &&
+            shapeup.addReshape({
+              createPaymentMethod: payment.createPaymentMethod.bind(payment),
+              getCountries: payment.getCountries.bind(payment),
+              removePaymentMethod: payment.removePaymentMethod.bind(payment),
+              updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
+            })
+          }
           paymentUser={this.state.paymentUser}
           stripe={this.props.stripe}
           updateUser={this._getUser.bind(this)}
@@ -115,27 +118,34 @@ class Payment extends React.Component {
         <PaymentDetails
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          payment={payment && shapeup.addReshape({
-            addAddress: payment.addAddress.bind(payment),
-            addBillingAddress: payment.addBillingAddress.bind(payment),
-            getCountries: payment.getCountries.bind(payment),
-            removeAddress: payment.removeAddress.bind(payment),
-            removeBillingAddress: payment.removeBillingAddress.bind(payment),
-            updateAddress: payment.updateAddress.bind(payment),
-            updateBillingAddress: payment.updateBillingAddress.bind(payment)
-          })}
+          payment={
+            payment &&
+            shapeup.addReshape({
+              addAddress: payment.addAddress.bind(payment),
+              addBillingAddress: payment.addBillingAddress.bind(payment),
+              getCountries: payment.getCountries.bind(payment),
+              removeAddress: payment.removeAddress.bind(payment),
+              removeBillingAddress: payment.removeBillingAddress.bind(payment),
+              updateAddress: payment.updateAddress.bind(payment),
+              updateBillingAddress: payment.updateBillingAddress.bind(payment)
+            })
+          }
           paymentUser={this.state.paymentUser}
           updateUser={this._getUser.bind(this)}
           username={this.props.username} />
         <PaymentCharges
           acl={this.props.acl}
           addNotification={this.props.addNotification}
-          payment={payment && shapeup.addReshape({
-            getCharges: payment.getCharges.bind(payment),
-            getReceipt: payment.getReceipt.bind(payment)
-          })}
+          payment={
+            payment &&
+            shapeup.addReshape({
+              getCharges: payment.getCharges.bind(payment),
+              getReceipt: payment.getReceipt.bind(payment)
+            })
+          }
           username={this.props.username} />
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -148,21 +158,23 @@ class Payment extends React.Component {
     return (
       <div className="payment__section">
         <div className="twelve-col">
-          <h2 className="payment__title twelve-col">
-            Enter your payment details
-          </h2>
+          <h2 className="payment__title">Enter your payment details</h2>
           <CreatePaymentUser
             acl={this.props.acl}
             addNotification={this.props.addNotification}
             onUserCreated={this._handleUserCreated.bind(this)}
-            payment={payment && shapeup.addReshape({
-              createUser: payment.createUser.bind(payment),
-              getCountries: payment.getCountries.bind(payment)
-            })}
+            payment={
+              payment &&
+              shapeup.addReshape({
+                createUser: payment.createUser.bind(payment),
+                getCountries: payment.getCountries.bind(payment)
+              })
+            }
             stripe={this.props.stripe}
             username={this.props.username} />
         </div>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -172,28 +184,25 @@ class Payment extends React.Component {
   */
   _generateNoUser() {
     return (
-      <div className="payment__section">
-        <h2 className="payment__title twelve-col">
-          Payment details
-        </h2>
+      <div className="payment__section v1">
+        <h2 className="profile__title">Payment details</h2>
         <div className="payment__no-user">
           <p>You are not set up to make payments.</p>
           <p>
-            <GenericButton
-              action={this._toggleAdd.bind(this)}
+            <GenericButton action={this._toggleAdd.bind(this)}
               type="inline-positive">
               Set up payments
             </GenericButton>
           </p>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   render() {
     let content;
     if (this.state.loading) {
-      content = (
-        <Spinner />);
+      content = <Spinner />;
     } else if (this.state.paymentUser) {
       content = this._generatePaymentDetails();
     } else if (this.state.showAdd) {
@@ -201,13 +210,9 @@ class Payment extends React.Component {
     } else {
       content = this._generateNoUser();
     }
-    return (
-      <div className="payment">
-        {content}
-      </div>
-    );
+    return <div className="payment">{content}</div>;
   }
-};
+}
 
 Payment.propTypes = {
   acl: PropTypes.object.isRequired,

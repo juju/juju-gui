@@ -1,0 +1,678 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Model List can render 1`] = `
+<div
+  className="profile-model-list"
+>
+  <div
+    className="profile-model-list__header v1"
+  >
+    <CreateModelButton
+      changeState={[Function]}
+      switchModel={[Function]}
+      title="Start a new model"
+      type="inline-neutral"
+    />
+    <h2
+      className="profile__title"
+    >
+      My models
+      <span
+        className="profile__title-count"
+      >
+        (
+        4
+        )
+      </span>
+    </h2>
+  </div>
+  <BasicTable
+    headerClasses={
+      Array [
+        "profile__entity-table-header-row",
+      ]
+    }
+    headerColumnClasses={
+      Array [
+        "profile__entity-table-header-column",
+      ]
+    }
+    headers={
+      Array [
+        Object {
+          "columnSize": 3,
+          "content": "Name",
+        },
+        Object {
+          "columnSize": 2,
+          "content": "Owner",
+        },
+        Object {
+          "columnSize": 3,
+          "content": "Machines, cloud/region",
+        },
+        Object {
+          "columnSize": 1,
+          "content": "",
+        },
+        Object {
+          "columnSize": 2,
+          "content": "Last accessed",
+        },
+        Object {
+          "columnSize": 1,
+          "content": "",
+        },
+      ]
+    }
+    rowClasses={
+      Array [
+        "profile__entity-table-row",
+      ]
+    }
+    rowColumnClasses={
+      Array [
+        "profile__entity-table-column",
+      ]
+    }
+    rows={
+      Array [
+        Object {
+          "columns": Array [
+            Object {
+              "columnSize": 3,
+              "content": <a
+                href="/gui/u/tester/mymodel"
+                onClick={[Function]}
+              >
+                mymodel
+              </a>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": "Me",
+            },
+            Object {
+              "columnSize": 3,
+              "content": <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  0
+                </span>
+                aws
+                /eu-west-1
+              </div>,
+            },
+            Object {
+              "columnSize": 1,
+              "content": <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </div>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": <DateDisplay
+                date="2017-07-06T14:47:03.000Z"
+                relative={true}
+              />,
+            },
+            Object {
+              "classes": Array [
+                "u-text-align--right",
+              ],
+              "columnSize": 1,
+              "content": <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>,
+            },
+          ],
+          "expandedContent": <div
+            className="profile-model-list__expanded-content"
+          >
+            <div
+              className="three-col"
+            >
+              <a
+                href="/gui/u/tester/mymodel"
+                onClick={[Function]}
+              >
+                mymodel
+              </a>
+            </div>
+            <div
+              className="two-col"
+            >
+              Me
+            </div>
+            <div
+              className="three-col"
+            >
+              <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  0
+                </span>
+                aws
+                /eu-west-1
+              </div>
+            </div>
+            <div
+              className="one-col"
+            >
+              <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </div>
+            </div>
+            <div
+              className="two-col"
+            >
+              <DateDisplay
+                date="2017-07-06T14:47:03.000Z"
+                relative={true}
+              />
+            </div>
+            <div
+              className="one-col last-col u-text-align--right"
+            >
+              <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>
+            </div>
+            <div
+              className="three-col prepend-five profile-model-list__credential-name"
+            >
+              <span
+                className="link"
+                onClick={[Function]}
+                role="button"
+                tabIndex="0"
+              >
+                base
+              </span>
+            </div>
+          </div>,
+          "key": "mymodel",
+        },
+        Object {
+          "columns": Array [
+            Object {
+              "columnSize": 3,
+              "content": <a
+                href="/gui/u/tester/mymodel2"
+                onClick={[Function]}
+              >
+                mymodel2
+              </a>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": "Me",
+            },
+            Object {
+              "columnSize": 3,
+              "content": <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  0
+                </span>
+                google
+                /us-central1
+              </div>,
+            },
+            Object {
+              "columnSize": 1,
+              "content": <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </div>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": <DateDisplay
+                date="2017-07-06T16:26:47.000Z"
+                relative={true}
+              />,
+            },
+            Object {
+              "classes": Array [
+                "u-text-align--right",
+              ],
+              "columnSize": 1,
+              "content": <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>,
+            },
+          ],
+          "expandedContent": <div
+            className="profile-model-list__expanded-content"
+          >
+            <div
+              className="three-col"
+            >
+              <a
+                href="/gui/u/tester/mymodel2"
+                onClick={[Function]}
+              >
+                mymodel2
+              </a>
+            </div>
+            <div
+              className="two-col"
+            >
+              Me
+            </div>
+            <div
+              className="three-col"
+            >
+              <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  0
+                </span>
+                google
+                /us-central1
+              </div>
+            </div>
+            <div
+              className="one-col"
+            >
+              <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </div>
+            </div>
+            <div
+              className="two-col"
+            >
+              <DateDisplay
+                date="2017-07-06T16:26:47.000Z"
+                relative={true}
+              />
+            </div>
+            <div
+              className="one-col last-col u-text-align--right"
+            >
+              <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>
+            </div>
+            <div
+              className="three-col prepend-five profile-model-list__credential-name"
+            >
+              <span
+                className="link"
+                onClick={[Function]}
+                role="button"
+                tabIndex="0"
+              >
+                admin
+              </span>
+            </div>
+          </div>,
+          "key": "mymodel2",
+        },
+        Object {
+          "columns": Array [
+            Object {
+              "columnSize": 3,
+              "content": <a
+                href="/gui/u/tester2/test-db"
+                onClick={[Function]}
+              >
+                test-db
+              </a>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": "tester2",
+            },
+            Object {
+              "columnSize": 3,
+              "content": <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  2
+                </span>
+                google
+                /us-east1
+              </div>,
+            },
+            Object {
+              "columnSize": 1,
+              "content": <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    read
+                  </span>
+                </span>
+                <SvgIcon
+                  name="show_16"
+                  size="16"
+                />
+              </div>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": <DateDisplay
+                date="--"
+                relative={true}
+              />,
+            },
+            Object {
+              "classes": Array [
+                "u-text-align--right",
+              ],
+              "columnSize": 1,
+              "content": null,
+            },
+          ],
+          "expandedContent": <div
+            className="profile-model-list__expanded-content"
+          >
+            <div
+              className="three-col"
+            >
+              <a
+                href="/gui/u/tester2/test-db"
+                onClick={[Function]}
+              >
+                test-db
+              </a>
+            </div>
+            <div
+              className="two-col"
+            >
+              tester2
+            </div>
+            <div
+              className="three-col"
+            >
+              <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  2
+                </span>
+                google
+                /us-east1
+              </div>
+            </div>
+            <div
+              className="one-col"
+            >
+              <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    read
+                  </span>
+                </span>
+                <SvgIcon
+                  name="show_16"
+                  size="16"
+                />
+              </div>
+            </div>
+            <div
+              className="two-col"
+            >
+              <DateDisplay
+                date="--"
+                relative={true}
+              />
+            </div>
+            <div
+              className="one-col last-col u-text-align--right"
+            />
+            <div
+              className="twelve-col"
+            >
+              No additional information available on shared model.
+            </div>
+          </div>,
+          "key": "test-db",
+        },
+        Object {
+          "columns": Array [
+            Object {
+              "columnSize": 3,
+              "content": <a
+                href="/gui/u/tester3/website"
+                onClick={[Function]}
+              >
+                website
+              </a>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": "tester3",
+            },
+            Object {
+              "columnSize": 3,
+              "content": <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  25
+                </span>
+                google
+                /us-east1
+              </div>,
+            },
+            Object {
+              "columnSize": 1,
+              "content": <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </div>,
+            },
+            Object {
+              "columnSize": 2,
+              "content": <DateDisplay
+                date="2017-07-05T01:42:05.000Z"
+                relative={true}
+              />,
+            },
+            Object {
+              "classes": Array [
+                "u-text-align--right",
+              ],
+              "columnSize": 1,
+              "content": <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>,
+            },
+          ],
+          "expandedContent": <div
+            className="profile-model-list__expanded-content"
+          >
+            <div
+              className="three-col"
+            >
+              <a
+                href="/gui/u/tester3/website"
+                onClick={[Function]}
+              >
+                website
+              </a>
+            </div>
+            <div
+              className="two-col"
+            >
+              tester3
+            </div>
+            <div
+              className="three-col"
+            >
+              <div>
+                <span
+                  className="profile-model-list__machine-number"
+                >
+                  25
+                </span>
+                google
+                /us-east1
+              </div>
+            </div>
+            <div
+              className="one-col"
+            >
+              <div
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </div>
+            </div>
+            <div
+              className="two-col"
+            >
+              <DateDisplay
+                date="2017-07-05T01:42:05.000Z"
+                relative={true}
+              />
+            </div>
+            <div
+              className="one-col last-col u-text-align--right"
+            >
+              <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>
+            </div>
+            <div
+              className="twelve-col"
+            >
+              No additional information available on shared model.
+            </div>
+          </div>,
+          "key": "website",
+        },
+      ]
+    }
+  />
+</div>
+`;

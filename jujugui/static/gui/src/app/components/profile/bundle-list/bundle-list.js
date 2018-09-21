@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const {urls} = require('jaaslib');
+const { urls } = require('jaaslib');
 
 const BasicTable = require('../../shared/basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
@@ -52,7 +52,7 @@ class ProfileBundleList extends React.Component {
   */
   _fetchBundles(user) {
     const props = this.props;
-    this.setState({loading: true}, () => {
+    this.setState({ loading: true }, () => {
       this.xhrs.push(
         props.charmstore.list(
           user,
@@ -72,7 +72,9 @@ class ProfileBundleList extends React.Component {
               loading: false
             });
           },
-          'bundle'));
+          'bundle'
+        )
+      );
     });
   }
 
@@ -85,7 +87,7 @@ class ProfileBundleList extends React.Component {
   _navigateToBundle(path, e) {
     e.preventDefault();
     e.stopPropagation();
-    this.props.changeState({profile: null, store: path, hash: null});
+    this.props.changeState({ profile: null, store: path, hash: null });
   }
 
   /**
@@ -94,12 +96,13 @@ class ProfileBundleList extends React.Component {
   */
   _generateTitle() {
     return (
-      <h2 className="profile__title">
-        {this.props.isActiveUsersProfile ? 'My' : 'Their'} bundles
-        <span className="profile__title-count">
-          ({(this.state.data || []).length})
-        </span>
-      </h2>);
+      <div className="v1">
+        <h2 className="profile__title">
+          {this.props.isActiveUsersProfile ? 'My' : 'Their'} bundles
+          <span className="profile__title-count">({(this.state.data || []).length})</span>
+        </h2>
+      </div>
+    );
   }
 
   /**
@@ -121,7 +124,7 @@ class ProfileBundleList extends React.Component {
   render() {
     let content;
     if (this.state.loading) {
-      content = (<Spinner />);
+      content = <Spinner />;
     } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
       if (!this.props.user) {
         content = (
@@ -129,22 +132,28 @@ class ProfileBundleList extends React.Component {
             addNotification={this.props.addNotification}
             bakery={this.props.bakery}
             changeState={this.props.changeState}
-            charmstore={shapeup.fromShape(this.props.charmstore,
-              ProfileCharmstoreLogin.propTypes.charmstore)}
+            charmstore={shapeup.fromShape(
+              this.props.charmstore,
+              ProfileCharmstoreLogin.propTypes.charmstore
+            )}
             storeUser={this.props.storeUser}
-            type="bundles" />);
+            type="bundles" />
+        );
       } else {
         content = (
           <div>
             {this._generateTitle()}
             <p className="profile-bundle-list__onboarding">
               Learn about&nbsp;
-              <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
+              <a
+                href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
                 target="_blank">
                 writing your own bundle
-              </a>.
+              </a>
+              .
             </p>
-          </div>);
+          </div>
+        );
       }
     } else {
       const rows = (this.state.data || []).map(bundle => {
@@ -162,33 +171,41 @@ class ProfileBundleList extends React.Component {
           };
         });
         return {
-          columns: [{
-            content: (
-              <a
-                href={`${this.props.baseURL}${path}`}
-                onClick={this._navigateToBundle.bind(this, path)}>
-                {bundle.name}
-              </a>),
-            columnSize: 3
-          }, {
-            content: (
-              <IconList
-                applications={applications}
-                changeState={this.props.changeState}
-                generatePath={this.props.generatePath} />),
-            columnSize: 3
-          }, {
-            content: bundle.machineCount,
-            columnSize: 2,
-            classes: ['u-align--right']
-          }, {
-            content: bundle.unitCount,
-            columnSize: 1,
-            classes: ['u-align--right']
-          }, {
-            content: version,
-            columnSize: 3
-          }],
+          columns: [
+            {
+              content: (
+                <a
+                  href={`${this.props.baseURL}${path}`}
+                  onClick={this._navigateToBundle.bind(this, path)}>
+                  {bundle.name}
+                </a>
+              ),
+              columnSize: 3
+            },
+            {
+              content: (
+                <IconList
+                  applications={applications}
+                  changeState={this.props.changeState}
+                  generatePath={this.props.generatePath} />
+              ),
+              columnSize: 3
+            },
+            {
+              content: bundle.machineCount,
+              columnSize: 2,
+              classes: ['u-align--right']
+            },
+            {
+              content: bundle.unitCount,
+              columnSize: 1,
+              classes: ['u-align--right']
+            },
+            {
+              content: version,
+              columnSize: 3
+            }
+          ],
           expandedContent: (
             <ProfileExpandedContent
               acl={this.props.acl}
@@ -198,7 +215,7 @@ class ProfileBundleList extends React.Component {
               generatePath={this.props.generatePath}
               getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
               getModelName={this.props.getModelName}
-              topRow={(
+              topRow={
                 <div>
                   <div className="six-col profile-expanded-content__top-row">
                     <a
@@ -216,7 +233,9 @@ class ProfileBundleList extends React.Component {
                   <div className="three-col last-col profile-expanded-content__top-row">
                     {version}
                   </div>
-                </div>)} />),
+                </div>
+              } />
+          ),
           extraData: bundle.name,
           key: bundle.id
         };
@@ -227,33 +246,36 @@ class ProfileBundleList extends React.Component {
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Name',
-              columnSize: 6
-            }, {
-              content: 'Machines',
-              columnSize: 2,
-              classes: ['u-align--right']
-            }, {
-              content: 'Units',
-              columnSize: 1,
-              classes: ['u-align--right']
-            }, {
-              content: 'Release',
-              columnSize: 3
-            }]}
+            headers={[
+              {
+                content: 'Name',
+                columnSize: 6
+              },
+              {
+                content: 'Machines',
+                columnSize: 2,
+                classes: ['u-align--right']
+              },
+              {
+                content: 'Units',
+                columnSize: 1,
+                classes: ['u-align--right']
+              },
+              {
+                content: 'Release',
+                columnSize: 3
+              }
+            ]}
             rowClasses={['profile__entity-table-row']}
             rowColumnClasses={['profile__entity-table-column']}
             rows={rows}
             sort={this._byName.bind(this)} />
-        </div>);
+        </div>
+      );
     }
-    return (
-      <div className="profile-bundle-list">
-        {content}
-      </div>);
+    return <div className="profile-bundle-list">{content}</div>;
   }
-};
+}
 
 ProfileBundleList.propTypes = {
   acl: shapeup.shape({
