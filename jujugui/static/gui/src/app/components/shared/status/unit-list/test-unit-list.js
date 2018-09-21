@@ -25,68 +25,65 @@ describe('StatusUnitList', () => {
   );
 
   beforeEach(() => {
-    const get = sinon.stub();
-    get.withArgs('exposed').returns(false);
-    get.withArgs('name').returns('django');
-    applications = [{get}];
-    units = [{
-      agentStatus: 'idle',
-      displayName: 'django/0',
-      id: 'django/id0',
-      machine: '1',
-      public_address: '1.2.3.4',
-      portRanges: [
-        {from: 80, to: 80, protocol: 'tcp'},
-        {from: 443, to: 443, protocol: 'tcp'}
-      ],
-      service: 'django',
-      workloadStatus: 'installing',
-      workloadStatusMessage: 'these are the voyages'
-    }, {
-      agentStatus: 'executing',
-      displayName: 'django/1',
-      id: 'django/id1',
-      machine: '2',
-      public_address: '1.2.3.5',
-      portRanges: [
-        {from: 80, to: 88, protocol: 'udp'}
-      ],
-      service: 'django',
-      workloadStatus: 'error',
-      workloadStatusMessage: 'exterminate!'
-    }, {
-      agentStatus: 'idle',
-      displayName: 'django/42',
-      id: 'django/id42',
-      machine: '2',
-      public_address: '1.2.3.6',
-      // Simulate that the unit didn't open ports yet.
-      portRanges: [],
-      service: 'django',
-      workloadStatus: 'installing',
-      workloadStatusMessage: ''
-    }, {
-      // Unplaced units are excluded.
-      agentStatus: '',
-      displayName: 'django/2',
-      id: 'django/id2',
-      public_address: '',
-      portRanges: [],
-      service: 'django',
-      workloadStatus: '',
-      workloadStatusMessage: ''
-    }, {
-      // Uncommitted units are excluded.
-      agentStatus: '',
-      displayName: 'django/3',
-      id: 'django/id3',
-      machine: 'new42',
-      public_address: '',
-      portRanges: [],
-      service: 'django',
-      workloadStatus: '',
-      workloadStatusMessage: ''
-    }];
+    applications = {
+      etcd: {
+        modelUUID: '32c9c2db-0955-459a-8201-539657ef0da1',
+        name: 'etcd',
+        exposed: false,
+        charmURL: 'cs:~containers/etcd-126',
+        ownerTag: '',
+        life: 'alive',
+        minUnits: 0,
+        constraints: {
+          'root-disk': 8192
+        },
+        config: {
+          channel: '3.2/stable'
+        },
+        subordinate: false,
+        status: {
+          current: 'waiting',
+          message: 'waiting for machine',
+          since: '2018-09-18T12:31:14.763574172Z',
+          version: ''
+        },
+        workloadVersion: ''
+      }
+    };
+    units = {
+      'etcd/0': {
+        modelUUID: '32c9c2db-0955-459a-8201-539657ef0da1',
+        name: 'etcd/0',
+        application: 'etcd',
+        series: 'xenial',
+        charmURL: 'cs:~containers/etcd-126',
+        publicAddress: '13.211.141.188',
+        privateAddress: '172.31.6.46',
+        machineID: '2',
+        ports: [{
+          protocol: 'tcp',
+          number: 2379
+        }],
+        portRanges: [{
+          fromPort: 2379,
+          toPort: 2379,
+          protocol: 'tcp'
+        }],
+        subordinate: false,
+        workloadStatus: {
+          current: 'active',
+          message: 'Healthy with 3 known peers',
+          since: '2018-09-18T12:37:52.738056612Z',
+          version: ''
+        },
+        agentStatus: {
+          current: 'idle',
+          message: '',
+          since: '2018-09-18T12:43:05.056981166Z',
+          version: '2.4.3'
+        }
+      }
+    };
   });
 
   it('renders', () => {
@@ -95,7 +92,7 @@ describe('StatusUnitList', () => {
   });
 
   it('displays a link for exposed units', () => {
-    applications[0].get.withArgs('exposed').returns(true);
+    applications.etcd.exposed = true;
     const wrapper = renderComponent();
     assert.equal(
       wrapper.prop('rows')[0].columns[4].content.props.className.includes('status-view__link'),

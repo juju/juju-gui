@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Status renders with entities 1`] = `
+exports[`Status renders with entites 1`] = `
 <Panel
   focus={true}
   instanceName="status-view"
@@ -36,33 +36,49 @@ exports[`Status renders with entities 1`] = `
       />
       <StatusRemoteApplicationList
         remoteApplications={
-          Array [
-            Object {},
-          ]
+          Object {
+            "app": Object {},
+          }
         }
         statusFilter={null}
       />
       <StatusApplicationList
         applications={
-          Array [
-            Object {
-              "getAttrs": [Function],
+          Object {
+            "app": Object {
+              "status": Object {
+                "current": "",
+              },
             },
-          ]
+          }
         }
         generateApplicationOnClick={[Function]}
         generateApplicationURL={[Function]}
         generateCharmURL={[Function]}
         onCharmClick={[Function]}
         statusFilter={null}
+        units={
+          Object {
+            "unit": Object {
+              "agentStatus": Object {
+                "current": "",
+              },
+              "workloadStatus": Object {
+                "current": "",
+              },
+            },
+          }
+        }
       />
       <StatusUnitList
         applications={
-          Array [
-            Object {
-              "getAttrs": [Function],
+          Object {
+            "app": Object {
+              "status": Object {
+                "current": "",
+              },
             },
-          ]
+          }
         }
         generateMachineURL={[Function]}
         generateUnitOnClick={[Function]}
@@ -70,35 +86,48 @@ exports[`Status renders with entities 1`] = `
         onMachineClick={[Function]}
         statusFilter={null}
         units={
-          Array [
-            Object {},
-          ]
+          Object {
+            "unit": Object {
+              "agentStatus": Object {
+                "current": "",
+              },
+              "workloadStatus": Object {
+                "current": "",
+              },
+            },
+          }
         }
       />
       <StatusMachineList
         generateMachineOnClick={[Function]}
         generateMachineURL={[Function]}
         machines={
-          Array [
-            Object {},
-          ]
+          Object {
+            "machine": Object {
+              "agentStatus": Object {
+                "current": "",
+              },
+            },
+          }
         }
         statusFilter={null}
       />
       <StatusRelationList
         applications={
-          Array [
-            Object {
-              "getAttrs": [Function],
+          Object {
+            "app": Object {
+              "status": Object {
+                "current": "",
+              },
             },
-          ]
+          }
         }
         generateApplicationURL={[Function]}
         onApplicationClick={[Function]}
         relations={
-          Array [
-            Object {},
-          ]
+          Object {
+            "relation": Object {},
+          }
         }
         statusFilter={null}
       />

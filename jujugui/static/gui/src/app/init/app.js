@@ -801,9 +801,9 @@ Browser: ${navigator.userAgent}`
     return (
       <Status
         changeState={this._bound.changeState}
-        db={shapeup.fromShape(this.props.db, propTypes.db)}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
-        model={shapeup.fromShape(this.props.modelAPI.getAttrs(), propTypes.model)} />);
+        model={shapeup.fromShape(this.props.modelAPI.getAttrs(), propTypes.model)}
+        valueStore={shapeup.fromShape(this.props.valueStore, propTypes.valueStore)} />);
   }
 
   /**
@@ -1458,7 +1458,8 @@ App.propTypes = {
   switchModel: PropTypes.func.isRequired,
   terms: PropTypes.object,
   topology: PropTypes.object.isRequired,
-  user: PropTypes.object
+  user: PropTypes.object,
+  valueStore: PropTypes.object.isRequired
 };
 
 module.exports = App;
