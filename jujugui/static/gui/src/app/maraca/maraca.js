@@ -4,7 +4,7 @@
 const clonedeep = require('lodash.clonedeep');
 const deepmerge = require('deepmerge');
 
-const parsers = require('./parsers');
+const {getDeltaUpdates} = require('./delta-handlers');
 
 class Maraca {
   constructor(config) {
@@ -56,95 +56,35 @@ class Maraca {
   }
 
   /**
-    Consolidate the deltas.
-    @param deltas {Array} The list of deltas.
+    Update the store with the changes from the deltas.
+    @param evt {Object} The megawatcher event.
   */
-  _handleDeltas(deltas) {
-    deltas.forEach(delta => {
-      const entityType = delta[0];
-      const changeType = delta[1];
-      const entity = delta[2];
-      const key = this._getEntityKey(entityType, entity);
-      if (!key) {
-        // We don't know how to manage this entity, so ignore it.
-        return;
-      }
-      const entityGroup = this._valueStore[this._getEntityGroup(entityType)];
-      if (changeType === 'change') {
-        if (!entityGroup[key]) {
-          entityGroup[key] = {};
+  _updateStore(updates, updateType) {
+    Object.keys(updates).forEach(collectionKey => {
+      const collection = updates[collectionKey];
+      Object.keys(collection).forEach(entityKey => {
+        const entity = collection[entityKey];
+        const storeCollection = this._valueStore[collectionKey];
+        if (updateType === 'changed') {
+          if (!storeCollection[entityKey]) {
+            storeCollection[entityKey] = {};
+          }
+          storeCollection[entityKey] = deepmerge(storeCollection[entityKey], entity);
+        } else {
+          delete storeCollection[entityKey];
         }
-        const parsedEntity = this._parseEntity(entityType, entity);
-        entityGroup[key] = deepmerge(entityGroup[key], parsedEntity);
-      } else if (changeType === 'remove') {
-        delete entityGroup[key];
-      }
+      });
     });
   }
 
   /**
-    Get the identifier for the entity based upon its type.
-    @param entityType {String} The type of entity.
-    @param entity {Object} The entity details.
-    @returns {String} The entity key.
+    Consolidate the deltas.
+    @param deltas {Array} The list of deltas.
   */
-  _getEntityKey(entityType, entity) {
-    switch (entityType) {
-      case 'remote-application':
-      case 'application':
-      case 'unit':
-        return entity.name;
-      case 'machine':
-      case 'relation':
-        return entity.id;
-      case 'annotation':
-        return entity.tag;
-      default:
-        // This is an unknown entity type so ignore it as we don't know how to
-        // handle it.
-        return null;
-    }
-  }
-
-  /**
-    Get the group entity belongs to.
-    @param entityType {String} The type of entity.
-    @returns {String} The entity group.
-  */
-  _getEntityGroup(entityType) {
-    switch (entityType) {
-      case 'remote-application':
-        return 'remoteApplications';
-      default:
-        return entityType + 's';
-    }
-  }
-
-  /**
-    Parse the entity response into a friendly format.
-    @param entityType {String} The type of entity.
-    @param entity {Object} The entity details.
-    @returns {Object} The parsed entity.
-  */
-  _parseEntity(entityType, entity) {
-    switch (entityType) {
-      case 'remote-application':
-        return parsers.parseRemoteApplication(entity);
-      case 'application':
-        return parsers.parseApplication(entity);
-      case 'unit':
-        return parsers.parseUnit(entity);
-      case 'machine':
-        return parsers.parseMachine(entity);
-      case 'relation':
-        return parsers.parseRelation(entity);
-      case 'annotation':
-        return parsers.parseAnnotation(entity);
-      default:
-        // This is an unknown entity type so ignore it as we don't know how to
-        // handle it.
-        return null;
-    }
+  _handleDeltas(deltas) {
+    const updates = getDeltaUpdates(deltas);
+    this._updateStore(updates.changed, 'changed');
+    this._updateStore(updates.removed, 'removed');
   }
 }
 
