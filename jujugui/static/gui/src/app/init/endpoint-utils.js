@@ -90,6 +90,15 @@ const getEndpoints = (application, controller) => {
     // application is deployed. The GUI only needs to concern itself with
     // client/server relations.
     if (targetId === appId) { return; }
+    // XXX hatch At the time of writing...When the inspector renders we generate
+    // a list of valid endpoints to create relations to. This uses the endpoints
+    // map controller which fetches information from the charmstore for the
+    // requires and provides. If it is a local charm however this fails so the
+    // charm is never added to the endpointsMap. This should instead use the
+    // jujuinfo call to get the requires/provides. In the mean time we can
+    // just check that if a target is not in the map then to not try and
+    // use it.
+    if (!endpointsMap[targetId]) { return; }
     // Process each of the application's required endpoints.
     endpointsMap[targetId].requires.forEach(rdata => {
       const endpoint = convert(targetId, rdata);

@@ -527,7 +527,8 @@ class GUIApp {
         switchModel={switchModel}
         terms={this.terms}
         topology={this.topology}
-        user={this.user} />,
+        user={this.user}
+        valueStore={this.maraca.getValueStore()} />,
       document.getElementById('app')
     );
     next();

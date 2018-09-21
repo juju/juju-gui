@@ -4,6 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
@@ -19,33 +20,43 @@ class StatusMachineList extends React.Component {
     @returns {Array} The list of rows.
   */
   _generateRows() {
-    return this.props.machines.map(machine => {
+    const {machines} = this.props;
+    return Object.keys(machines).map(key => {
+      const machine = machines[key];
+      let publicAddress;
+      machine.addresses.some(address => {
+        if (address.scope === 'public') {
+          publicAddress = address.value;
+          return true;
+        }
+      });
+      const agentStatus = machine.agentStatus.current;
       return {
         classes: [getStatusClass(
-          'status-table__row--', machine.agent_state)],
+          'status-table__row--', agentStatus)],
         onClick: this.props.generateMachineOnClick(machine.id),
         clickURL: this.props.generateMachineURL(machine.id),
         columns: [{
           columnSize: 1,
-          content: machine.displayName
+          content: machine.id
         }, {
           columnSize: 2,
-          content: machine.agent_state ? (
-            <StatusLabel status={machine.agent_state} />) : null
+          content: agentStatus ? (
+            <StatusLabel status={agentStatus} />) : null
         }, {
           columnSize: 2,
-          content: machine.public_address
+          content: publicAddress
         }, {
           columnSize: 3,
-          content: machine.instance_id
+          content: machine.instanceID
         }, {
           columnSize: 1,
           content: machine.series
         }, {
           columnSize: 3,
-          content: machine.agent_state_info
+          content: machine.agentStatus.message
         }],
-        extraData: normaliseStatus(machine.agent_state),
+        extraData: normaliseStatus(agentStatus),
         key: machine.id
       };
     });
@@ -83,7 +94,7 @@ class StatusMachineList extends React.Component {
 StatusMachineList.propTypes = {
   generateMachineOnClick: PropTypes.func.isRequired,
   generateMachineURL: PropTypes.func.isRequired,
-  machines: PropTypes.array.isRequired,
+  machines: maracaPropTypes.machines,
   statusFilter: PropTypes.string
 };
 

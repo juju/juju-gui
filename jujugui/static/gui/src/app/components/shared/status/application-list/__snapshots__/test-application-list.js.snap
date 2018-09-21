@@ -47,24 +47,24 @@ exports[`StatusApplicationList renders 1`] = `
             "content": <span>
               <img
                 className="status-view__icon"
-                src="django.svg"
+                src="v5/~containers/etcd-126/icon.svg"
               />
-              django
+              etcd
             </span>,
           },
           Object {
             "columnSize": 2,
-            "content": "1.10",
+            "content": "",
           },
           Object {
             "columnSize": 2,
             "content": <StatusLabel
-              status="active"
+              status="waiting"
             />,
           },
           Object {
             "columnSize": 1,
-            "content": 0,
+            "content": 1,
           },
           Object {
             "columnSize": 2,
@@ -72,7 +72,7 @@ exports[`StatusApplicationList renders 1`] = `
               className="status-view__link"
               onClick={[Function]}
             >
-              u/who/django/xenial
+              u/containers/etcd
             </a>,
           },
           Object {
@@ -81,11 +81,11 @@ exports[`StatusApplicationList renders 1`] = `
           },
           Object {
             "columnSize": 1,
-            "content": 42,
+            "content": 126,
           },
         ],
         "extraData": "ok",
-        "key": "django",
+        "key": "etcd",
         "onClick": [Function],
       },
     ]

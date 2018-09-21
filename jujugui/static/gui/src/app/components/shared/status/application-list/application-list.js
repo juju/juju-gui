@@ -5,11 +5,12 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const { urls } = require('jaaslib');
 
+const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
+const utils = require('../../../../init/utils');
 const {
-  getRealUnits,
   getStatusClass,
   normaliseStatus
 } = require('../../utils');
@@ -21,28 +22,29 @@ class StatusApplicationList extends React.Component {
     @returns {Array} The list of rows.
   */
   _generateRows() {
-    return this.props.applications.map(application => {
-      // TODO: the passed in applications should be plain objects instead of YUI models.
-      const app = application.getAttrs();
-      const charm = urls.URL.fromLegacyString(app.charm);
+    const {applications} = this.props;
+    return Object.keys(this.props.applications).map(key => {
+      const app = applications[key];
+      const charm = urls.URL.fromLegacyString(app.charmURL);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
       const charmId = charm.path();
-      const units = getRealUnits(app.units);
+      const units = Object.keys(this.props.units).filter(key =>
+        this.props.units[key].application === app.name);
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
       return {
         classes: [getStatusClass(
           'status-table__row--', app.status.current)],
-        onClick: this.props.generateApplicationOnClick(app.id),
-        clickURL: this.props.generateApplicationURL(app.id),
+        onClick: this.props.generateApplicationOnClick(app.name),
+        clickURL: this.props.generateApplicationURL(app.name),
         columns: [{
           columnSize: 2,
           content: (
             <span>
               <img className="status-view__icon"
-                src={app.icon} />
+                src={utils.getIconPath(app.charmURL, false)} />
               {app.name}
             </span>)
         }, {
@@ -109,12 +111,13 @@ class StatusApplicationList extends React.Component {
 };
 
 StatusApplicationList.propTypes = {
-  applications: PropTypes.array.isRequired,
+  applications: maracaPropTypes.applications,
   generateApplicationOnClick: PropTypes.func.isRequired,
   generateApplicationURL: PropTypes.func.isRequired,
   generateCharmURL: PropTypes.func.isRequired,
   onCharmClick: PropTypes.func.isRequired,
-  statusFilter: PropTypes.string
+  statusFilter: PropTypes.string,
+  units: maracaPropTypes.units
 };
 
 module.exports = StatusApplicationList;

@@ -7,11 +7,10 @@ const enzyme = require('enzyme');
 const Status = require('./status');
 
 describe('Status', () => {
-  let entities;
+  let model, valueStore;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Status
-      entities={options.entities || entities}
       generateApplicationOnClick={options._generateApplicationOnClick || sinon.stub()}
       generateApplicationURL={options._generateApplicationURL || sinon.stub()}
       generateCharmURL={options._generateCharmURL || sinon.stub()}
@@ -19,35 +18,48 @@ describe('Status', () => {
       generateMachineURL={options._generateMachineURL || sinon.stub()}
       generateUnitOnClick={options._generateUnitOnClick || sinon.stub()}
       generateUnitURL={options._generateUnitURL || sinon.stub()}
+      model={options.model || model}
       navigateToApplication={options._navigateToApplication || sinon.stub()}
       navigateToCharm={options._navigateToCharm || sinon.stub()}
-      navigateToMachine={options._navigateToMachine || sinon.stub()} />
+      navigateToMachine={options._navigateToMachine || sinon.stub()}
+      valueStore={options.valueStore || valueStore} />
   );
 
   beforeEach(() => {
-    entities = {
-      applications: [{
-        getAttrs: sinon.stub().returns({
-          status: {}
-        })
-      }],
-      machines: [{}],
-      model: {
-        cloud: 'aws',
-        environmentName: 'my-model',
-        modelUUID: 'myuuid',
-        region: 'neutral zone',
-        sla: 'advanced',
-        version: '2.42.47'
-      },
-      relations: [{}],
-      remoteApplications: [{}],
-      units: [{}]
+    model = {
+      cloud: 'aws',
+      environmentName: 'my-model',
+      modelUUID: 'myuuid',
+      region: 'neutral zone',
+      sla: 'advanced',
+      version: '2.42.47'
+    };
+    valueStore = {
+      applications: {app: {
+        status: {
+          current: ''
+        }
+      }},
+      machines: {machine: {
+        agentStatus: {
+          current: ''
+        }
+      }},
+      relations: {relation: {}},
+      remoteApplications: {app: {}},
+      units: {unit: {
+        agentStatus: {
+          current: ''
+        },
+        workloadStatus: {
+          current: ''
+        }
+      }}
     };
   });
 
   it('renders when not connected to a model', () => {
-    entities.model = {};
+    model = {};
     const wrapper = renderComponent();
     const expected = (
       <div className="status-view__content">
@@ -58,22 +70,31 @@ describe('Status', () => {
   });
 
   it('renders without entities', () => {
-    entities.applications = [];
-    entities.machines = [];
-    entities.relations = [];
-    entities.remoteApplications = [];
-    entities.units = [];
+    valueStore.applications = {};
+    valueStore.machines = {};
+    valueStore.relations = {};
+    valueStore.remoteApplications = {};
+    valueStore.units = {};
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('renders with entities', () => {
+  it('renders with entites', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
 
   it('can set the highest status', () => {
-    entities.units = [{ agentStatus: 'error' }];
+    valueStore.units = {
+      unit: {
+        agentStatus: {
+          current: 'error'
+        },
+        workloadStatus: {
+          current: ''
+        }
+      }
+    };
     const wrapper = renderComponent();
     assert.equal(wrapper.find('StatusModel').prop('highestStatus'), 'error');
   });
