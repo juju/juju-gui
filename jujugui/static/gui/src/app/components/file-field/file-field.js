@@ -110,7 +110,8 @@ class FileField extends React.Component {
         label = 'File stored.';
       }
       element = (
-        <label className="file-field__label"
+        <label
+          className="file-field__label"
           htmlFor={id}>
           {label}
         </label>);
@@ -135,7 +136,8 @@ class FileField extends React.Component {
     );
     return (
       <div className={classes}>
-        <input accept={this.props.accept}
+        <input
+          accept={this.props.accept}
           className="file-field__field"
           disabled={this.props.disabled}
           id={id}

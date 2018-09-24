@@ -23,12 +23,15 @@ class MachineViewScaleUp extends React.Component {
         return;
       }
       components.push(
-        <li className="machine-view__scale-up-unit"
+        <li
+          className="machine-view__scale-up-unit"
           key={service.get('id')}>
-          <img alt={service.get('name')}
+          <img
+            alt={service.get('name')}
             className="machine-view__scale-up-unit-icon"
             src={service.get('icon')} />
-          <div className="machine-view__scale-up-unit-name"
+          <div
+            className="machine-view__scale-up-unit-name"
             title={service.get('name')}>
             {service.get('name')}
           </div>
@@ -82,7 +85,8 @@ class MachineViewScaleUp extends React.Component {
       type: 'neutral'
     }];
     return (
-      <form className="machine-view__scale-up"
+      <form
+        className="machine-view__scale-up"
         onSubmit={this._handleAddUnits.bind(this)}>
         {this._generateServices()}
         <ButtonRow buttons={buttons} />

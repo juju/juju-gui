@@ -77,7 +77,8 @@ class StringConfig extends React.Component {
             ref="editableInput"
             setValue={this._setValue.bind(this)} />
         </div>
-        <span className="string-config--description"
+        <span
+          className="string-config--description"
           dangerouslySetInnerHTML={{__html: this.props.option.description}}>
         </span>
       </div>

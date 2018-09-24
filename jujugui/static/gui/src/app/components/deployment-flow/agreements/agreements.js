@@ -68,12 +68,14 @@ class DeploymentAgreements extends React.Component {
       });
     return (
       <div className={classes}>
-        <input className="deployment-flow__deploy-checkbox"
+        <input
+          className="deployment-flow__deploy-checkbox"
           disabled={disabled}
           id="terms"
           onChange={this.props.onCheckboxChange}
           type="checkbox" />
-        <label className="deployment-flow__deploy-label"
+        <label
+          className="deployment-flow__deploy-label"
           htmlFor="terms">
           I agree to all terms.
           {this._generateTermsLink()}

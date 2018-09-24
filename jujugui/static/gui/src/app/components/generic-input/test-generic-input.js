@@ -49,13 +49,15 @@ describe('GenericInput', function() {
     const input = wrapper.find('input');
     const expected = (
       <div className="generic-input">
-        <label className={
-          'generic-input__label generic-input__label--value-present ' +
-          'generic-input__label--placeholder-present'}
-        htmlFor="Region">
+        <label
+          className={
+            'generic-input__label generic-input__label--value-present ' +
+            'generic-input__label--placeholder-present'}
+          htmlFor="Region">
           Region
         </label>
-        <input aria-invalid={false}
+        <input
+          aria-invalid={false}
           autoComplete="off"
           className="generic-input__field"
           defaultValue="default"
@@ -82,7 +84,8 @@ describe('GenericInput', function() {
     });
     const input = wrapper.find('.generic-input__multiline-field');
     const expected = (
-      <div aria-invalid={false}
+      <div
+        aria-invalid={false}
         className="generic-input__multiline-field"
         contentEditable={true}
         dangerouslySetInnerHTML={{__html: 'default'}}
@@ -141,7 +144,8 @@ describe('GenericInput', function() {
     wrapper.update();
     const expected = (
       <ul className="generic-input__errors">
-        {[<li className="generic-input__error"
+        {[<li
+          className="generic-input__error"
           key="This field is required."
           role="alert">
           This field is required.

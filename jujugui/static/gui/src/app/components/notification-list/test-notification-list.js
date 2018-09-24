@@ -43,7 +43,8 @@ describe('NotificationList', function() {
         timestamp={notifications[0].timestamp}
         type={notifications[0].level} />];
     const expected = (
-      <ul className="notification-list"
+      <ul
+        className="notification-list"
         onMouseOut={wrapper.prop('onMouseOut')}
         onMouseOver={wrapper.prop('onMouseOver')}>
         {items}

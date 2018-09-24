@@ -44,7 +44,9 @@ class EntityContentDiagram extends React.PureComponent {
     );
     return (
       <div className={classes}>
-        <object className="entity-content__diagram-image" data={this.props.diagramUrl}
+        <object
+          className="entity-content__diagram-image"
+          data={this.props.diagramUrl}
           title={this.props.title}
           type="image/svg+xml" />
         {this._generateExpandButton()}

@@ -23,7 +23,8 @@ describe('EntityContentConfigOption', function() {
     const wrapper = renderComponent({ option });
     const expected = (
       <div className="entity-content__config-option">
-        <dt className="entity-content__config-name"
+        <dt
+          className="entity-content__config-name"
           id="charm-config-password">
             password
         </dt>

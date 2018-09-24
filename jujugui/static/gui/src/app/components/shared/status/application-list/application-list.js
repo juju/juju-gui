@@ -41,8 +41,7 @@ class StatusApplicationList extends React.Component {
           columnSize: 2,
           content: (
             <span>
-              <img className="status-view__icon"
-                src={this.props.getIconPath(app)} />
+              <img className="status-view__icon" src={this.props.getIconPath(app)} />
               {app.name}
             </span>)
         }, {
@@ -58,7 +57,8 @@ class StatusApplicationList extends React.Component {
         }, {
           columnSize: 2,
           content: (
-            <a className="status-view__link"
+            <a
+              className="status-view__link"
               href={this.props.generateCharmURL(charmId)}
               onClick={this.props.onCharmClick.bind(this, charmId)}>
               {charm.path()}

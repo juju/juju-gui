@@ -81,7 +81,8 @@ class ButtonDropdown extends React.Component {
         content = item.element;
       } else if (item.action) {
         content = (
-          <a className="dropdown-menu__list-item-link"
+          <a
+            className="dropdown-menu__list-item-link"
             onClick={this._handleItemClick.bind(this, item.action)}
             role="button">
             {item.label}
@@ -90,7 +91,8 @@ class ButtonDropdown extends React.Component {
         content = item.label;
       }
       return (
-        <li className={this._generateItemClasses(item)}
+        <li
+          className={this._generateItemClasses(item)}
           key={item.id || item.label || ('item-' + i)}
           role="menuitem"
           tabIndex="0">
@@ -123,7 +125,8 @@ class ButtonDropdown extends React.Component {
     const icon = this.props.icon;
     if (typeof icon === 'string') {
       return (
-        <SvgIcon className="button-dropdown__icon"
+        <SvgIcon
+          className="button-dropdown__icon"
           name={icon}
           size="16" />);
     }
@@ -169,7 +172,8 @@ class ButtonDropdown extends React.Component {
     );
     return (
       <div className={classes}>
-        <span aria-controls="headerDropdownMenu"
+        <span
+          aria-controls="headerDropdownMenu"
           aria-expanded="false"
           aria-haspopup="true"
           aria-owns="headerDropdownMenu"

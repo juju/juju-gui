@@ -26,7 +26,8 @@ class Link extends React.Component {
     // both changing the internal state (without refreshing the gui) and
     // right-click-open-in-new-tab cases.
     return (
-      <a className={classes}
+      <a
+        className={classes}
         href={this.props.generatePath(clickState)}
         onClick={this._handleClick.bind(this, clickState)}>
         {this.props.children}

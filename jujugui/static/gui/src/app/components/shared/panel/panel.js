@@ -60,11 +60,13 @@ class Panel extends React.Component {
 
   render() {
     return (
-      <div className={this._genClasses()}
+      <div
+        className={this._genClasses()}
         onClick={this._handleClick.bind(this)}
         ref="content"
         tabIndex="0">
-        <div className="panel-component__inner"
+        <div
+          className="panel-component__inner"
           onClick={this._stopBubble.bind(this)}>
           {this.props.children}
         </div>

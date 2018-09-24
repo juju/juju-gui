@@ -33,7 +33,8 @@ describe('CardForm', function() {
             regex: /\S+/,
             error: 'This field is required.'
           }]} />
-        <div className="card-form__card"
+        <div
+          className="card-form__card"
           ref="cardNode"></div>
       </div>);
     assert.compareJSX(wrapper, expected);

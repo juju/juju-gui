@@ -36,19 +36,23 @@ class Zoom extends React.Component {
   render() {
     return (
       <ul className="zoom">
-        <li className="zoom__in link"
+        <li
+          className="zoom__in link"
           onClick={this._zoomIn.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon className="zoom-in__icon"
+          <SvgIcon
+            className="zoom-in__icon"
             name="add_16"
             size="12" />
         </li>
-        <li className="zoom__out link"
+        <li
+          className="zoom__out link"
           onClick={this._zoomOut.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon className="zoom-out__icon"
+          <SvgIcon
+            className="zoom-out__icon"
             name="minus_16"
             size="12" />
         </li>

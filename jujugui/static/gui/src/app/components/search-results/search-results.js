@@ -399,7 +399,8 @@ class SearchResults extends React.Component {
                   http://jujucharms.com
                 </a>
                 {' '}or go{' '}
-                <span className="link"
+                <span
+                  className="link"
                   onClick={this._handleBack.bind(this)}>
                   back
                 </span>.

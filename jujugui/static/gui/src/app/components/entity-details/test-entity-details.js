@@ -80,7 +80,8 @@ describe('EntityDetails', function() {
     assert.equal(charmstore.getEntity.args[0][0], 'django',
       'getEntity not called with the entity ID');
     const expected = (
-      <div className="entity-details charm"
+      <div
+        className="entity-details charm"
         ref="content"
         tabIndex="0">
         <div>
@@ -127,13 +128,15 @@ describe('EntityDetails', function() {
     charmstore.getEntity.callsArgWith(1, 'bad wolf', [mockEntity]);
     const wrapper = renderComponent();
     const expected = (
-      <div className="entity-details"
+      <div
+        className="entity-details"
         ref="content"
         tabIndex="0">
         <p className="error">
           There was a problem while loading the entity details.
           You could try searching for another charm or bundle or go{' '}
-          <span className="link"
+          <span
+            className="link"
             onClick={wrapper.find('.link').prop('onClick')}>
             back
           </span>.

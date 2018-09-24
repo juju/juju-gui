@@ -133,7 +133,8 @@ describe('PaymentMethods', () => {
             createCardElement={sinon.stub()}
             ref="cardForm" />
           <label htmlFor="cardAddressSame">
-            <input checked={true}
+            <input
+              checked={true}
               className="payment-methods__form-checkbox"
               id="cardAddressSame"
               name="cardAddressSame"

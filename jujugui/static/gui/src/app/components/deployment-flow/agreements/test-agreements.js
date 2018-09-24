@@ -28,12 +28,14 @@ describe('DeploymentAgreements', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="deployment-flow-agreements deployment-flow__deploy-option">
-        <input className="deployment-flow__deploy-checkbox"
+        <input
+          className="deployment-flow__deploy-checkbox"
           disabled={false}
           id="terms"
           onChange={sinon.stub()}
           type="checkbox" />
-        <label className="deployment-flow__deploy-label"
+        <label
+          className="deployment-flow__deploy-label"
           htmlFor="terms">
           I agree to all terms.
         </label>

@@ -84,7 +84,8 @@ class DeploymentCloud extends React.Component {
         'four-col',
         {'last-col': i % 3 === 2});
       clouds.push(
-        <li className={classes}
+        <li
+          className={classes}
           key={cloud.name}
           onClick={this.props.setCloud.bind(null, cloud)}
           role="button"

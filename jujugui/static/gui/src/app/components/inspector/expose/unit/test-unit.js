@@ -29,7 +29,8 @@ describe('InspectorExposeUnit', function() {
     };
     const wrapper = renderComponent({ unit });
     var expected = (
-      <li className="inspector-expose__unit"
+      <li
+        className="inspector-expose__unit"
         data-id="django/1"
         onClick={sinon.stub()}
         role="button"
@@ -38,21 +39,26 @@ describe('InspectorExposeUnit', function() {
               django/1
         </div>
         <ul className="inspector-expose__unit-list">
-          <li className="inspector-expose__item"
+          <li
+            className="inspector-expose__item"
             key="20.20.20.199:9000-10000/udp">
             <span>{'20.20.20.199:9000-10000/udp'}</span>
           </li>
-          <li className="inspector-expose__item"
+          <li
+            className="inspector-expose__item"
             key="https://20.20.20.199:443">
-            <a href="https://20.20.20.199:443"
+            <a
+              href="https://20.20.20.199:443"
               onClick={wrapper.find('a').at(0).prop('onClick')}
               target="_blank">
               {'20.20.20.199:443'}
             </a>
           </li>
-          <li className="inspector-expose__item"
+          <li
+            className="inspector-expose__item"
             key="http://20.20.20.199:8080">
-            <a href="http://20.20.20.199:8080"
+            <a
+              href="http://20.20.20.199:8080"
               onClick={wrapper.find('a').at(1).prop('onClick')}
               target="_blank">
               {'20.20.20.199:8080'}

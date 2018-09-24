@@ -133,7 +133,8 @@ class EntityDetails extends React.Component {
           <p className="error">
               There was a problem while loading the entity details.
               You could try searching for another charm or bundle or go{' '}
-            <span className="link"
+            <span
+              className="link"
               onClick={this._handleBack.bind(this)}>
                 back
             </span>.
@@ -258,7 +259,8 @@ class EntityDetails extends React.Component {
 
   render() {
     return (
-      <div className={this._generateClasses()}
+      <div
+        className={this._generateClasses()}
         ref="content"
         tabIndex="0">
         {this._generateContent()}

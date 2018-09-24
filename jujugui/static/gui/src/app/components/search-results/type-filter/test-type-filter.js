@@ -19,22 +19,28 @@ describe('SearchResultsTypeFilter', function() {
     const expected = (
       <nav className="six-col list-block__type">
         <ul>
-          <li className="selected"
+          <li
+            className="selected"
             key="All"
             onClick={wrapper.find('li').at(0).prop('onClick')}
-            role="button" tabIndex="0">
+            role="button"
+            tabIndex="0">
             All
           </li>
-          <li className=""
+          <li
+            className=""
             key="Charms"
             onClick={wrapper.find('li').at(1).prop('onClick')}
-            role="button" tabIndex="0">
+            role="button"
+            tabIndex="0">
             Charms
           </li>
-          <li className=""
+          <li
+            className=""
             key="Bundles"
             onClick={wrapper.find('li').at(2).prop('onClick')}
-            role="button" tabIndex="0">
+            role="button"
+            tabIndex="0">
             Bundles
           </li>
         </ul>

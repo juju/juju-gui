@@ -645,11 +645,13 @@ utils.getCloudProviderDetails = providerName => {
       },
       message: (
         <p>
-          Need help? Read more about <a className="deployment-panel__link"
+          Need help? Read more about <a
+            className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
             target="_blank"
             title="Cloud credentials help">credentials in
-          general</a> or <a className="deployment-panel__link"
+          general</a> or <a
+            className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-google"
             target="_blank"
             title="Help using the Google Compute Engine public cloud">
@@ -679,11 +681,13 @@ utils.getCloudProviderDetails = providerName => {
       },
       message: (
         <p>
-          Need help? Read more about <a className="deployment-panel__link"
+          Need help? Read more about <a
+            className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
             target="_blank"
             title="Cloud credentials help">credentials in
-          general</a> or <a className="deployment-panel__link"
+          general</a> or <a
+            className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-azure"
             target="_blank"
             title="Help using the Microsoft Azure public cloud">setting up
@@ -711,11 +715,13 @@ utils.getCloudProviderDetails = providerName => {
       },
       message: (
         <p>
-          Need help? Read more about <a className="deployment-panel__link"
+          Need help? Read more about <a
+            className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
             target="_blank"
             title="Cloud credentials help">credentials in
-          general</a> or <a className="deployment-panel__link"
+          general</a> or <a
+            className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-aws"
             target="_blank"
             title="Help using the Amazon Web Service public cloud">setting up

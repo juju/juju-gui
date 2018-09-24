@@ -131,7 +131,8 @@ describe('DeploymentLogin', function() {
               a fully managed Juju infrastructure.
             </p>
             <p>
-              <a className="deployment-login-features__link"
+              <a
+                className="deployment-login-features__link"
                 href="http://jujucharms.com/jaas"
                 target="_blank">
                 Learn more about JAAS &rsaquo;

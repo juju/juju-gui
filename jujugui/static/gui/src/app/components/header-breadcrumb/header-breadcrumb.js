@@ -122,7 +122,8 @@ class HeaderBreadcrumb extends React.Component {
     const profileUrl = props.appState.generatePath({profile: username});
     return (
       <li className="header-breadcrumb__list-item">
-        <a className={linkClasses}
+        <a
+          className={linkClasses}
           href={profileUrl}
           onClick={onClick}
           title={username}>
@@ -139,7 +140,8 @@ class HeaderBreadcrumb extends React.Component {
     return (
       <div className={this._generateClasses()}>
         <div className="header-breadcrumb__loading">Loading model</div>
-        <ul className="header-breadcrumb__list"
+        <ul
+          className="header-breadcrumb__list"
           // This attribute is required by uitests.
           data-username={user && user.displayName}>
           {userItem}

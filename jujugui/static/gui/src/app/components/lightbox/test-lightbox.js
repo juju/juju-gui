@@ -21,12 +21,14 @@ describe('Lightbox', function() {
   it('renders', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="lightbox"
+      <div
+        className="lightbox"
         onClick={wrapper.prop('onClick')}>
         <button className="lightbox__close">
           <SvgIcon name="close_16_white" width="16" />
         </button>
-        <div className="lightbox__wrapper"
+        <div
+          className="lightbox__wrapper"
           onClick={wrapper.find('.lightbox__wrapper').prop('onClick')}>
           <div className="lightbox__content">
             Hi
@@ -72,26 +74,31 @@ describe('Lightbox', function() {
       const expected = (
         <div className="lightbox__content">
           <div className="lightbox__navigation">
-            <button className="lightbox__navigation-previous"
+            <button
+              className="lightbox__navigation-previous"
               disabled={true}
               onClick={wrapper.find('.lightbox__navigation-previous').prop('onClick')}>
               <SvgIcon name="chevron_down_16" width="16" />
             </button>
-            <button className="lightbox__navigation-next"
+            <button
+              className="lightbox__navigation-next"
               disabled={false}
               onClick={wrapper.find('.lightbox__navigation-next').prop('onClick')}>
               <SvgIcon name="chevron_down_16" width="16" />
             </button>
             <ul className="lightbox__navigation-bullets">
-              <li className="lightbox__navigation-bullet is-active"
+              <li
+                className="lightbox__navigation-bullet is-active"
                 onClick={wrapper.find('.lightbox__navigation-bullet').at(0).prop('onClick')}>
                 &bull;
               </li>
-              <li className="lightbox__navigation-bullet"
+              <li
+                className="lightbox__navigation-bullet"
                 onClick={wrapper.find('.lightbox__navigation-bullet').at(1).prop('onClick')}>
                 &bull;
               </li>
-              <li className="lightbox__navigation-bullet"
+              <li
+                className="lightbox__navigation-bullet"
                 onClick={wrapper.find('.lightbox__navigation-bullet').at(2).prop('onClick')}>
                 &bull;
               </li>

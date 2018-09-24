@@ -32,12 +32,13 @@ describe('PostDeployment', () => {
       'content', null, '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>');
     wrapper.update();
     const expected = (
-      <div dangerouslySetInnerHTML={
-        {
-          __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+      <div
+        dangerouslySetInnerHTML={
+          {
+            __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+          }
         }
-      }
-      onClick={wrapper.find('div').prop('onClick')} />
+        onClick={wrapper.find('div').prop('onClick')} />
     );
     assert.compareJSX(wrapper.find('div'), expected);
   });

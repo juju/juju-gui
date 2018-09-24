@@ -35,12 +35,14 @@ describe('InspectorResourcesList', function() {
     const expected = (
       <div className="inspector-resources-list">
         <ul className="inspector-resources-list__list">
-          <li className="inspector-resources-list__resource"
+          <li
+            className="inspector-resources-list__resource"
             key="file10">
             <p>file1</p>
             <p>file1 desc</p>
           </li>
-          <li className="inspector-resources-list__resource"
+          <li
+            className="inspector-resources-list__resource"
             key="file21">
             <p>file2</p>
             <p>file2 desc</p>

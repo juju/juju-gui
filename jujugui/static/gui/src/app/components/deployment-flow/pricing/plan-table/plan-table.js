@@ -81,7 +81,8 @@ class DeploymentPlanTable extends React.Component {
         columns: [{
           content: (
             <div>
-              <img alt={app.name}
+              <img
+                alt={app.name}
                 className="deployment-plan-table__charm-icon"
                 src={app.icon} />
               <span className="deployment-plan-table__charm-name">

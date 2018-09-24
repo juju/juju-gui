@@ -63,7 +63,8 @@ class BasicTableRow extends React.Component {
       return null;
     }
     return (
-      <a className="basic-table__row-link"
+      <a
+        className="basic-table__row-link"
         href={clickURL}
         onClick={onClick && this._handleRowClick.bind(this, onClick)}></a>);
   }
@@ -123,7 +124,8 @@ class BasicTableRow extends React.Component {
       });
     const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
     return (
-      <li className={classes}
+      <li
+        className={classes}
         onClick={onClick}
         role="button"
         tabIndex="0">

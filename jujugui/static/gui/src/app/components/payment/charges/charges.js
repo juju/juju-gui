@@ -81,7 +81,8 @@ class PaymentCharges extends React.Component {
     }
     const items = lineItems.map((item, i) => {
       return (
-        <li className="user-profile__list-row twelve-col"
+        <li
+          className="user-profile__list-row twelve-col"
           key={item.name + i}>
           <div className="three-col no-margin-bottom">
             {item.name}

@@ -30,11 +30,15 @@ describe('CheckListItem', () => {
       id: 'apache/2'
     });
     const expected = (
-      <li className="check-list-item check-list-item--select-all"
+      <li
+        className="check-list-item check-list-item--select-all"
         data-id="apache/2"
-        onClick={undefined} role="button" tabIndex="0">
+        onClick={undefined}
+        role="button"
+        tabIndex="0">
         <label htmlFor="a-label-item">
-          <div className="check-list-item__hit-area"
+          <div
+            className="check-list-item__hit-area"
             onClick={wrapper.find('.check-list-item__hit-area').prop('onClick')}>
             <input
               checked={false}
@@ -61,7 +65,8 @@ describe('CheckListItem', () => {
       extraInfo: 'Current workload status'
     });
     const expected = (
-      <span className="check-list-item__extra-info"
+      <span
+        className="check-list-item__extra-info"
         title="Current workload status">
           Current workload status
       </span>);

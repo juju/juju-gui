@@ -21,7 +21,8 @@ describe('Link', function() {
   it('can generate a link', () => {
     const wrapper = renderComponent();
     const expected = (
-      <a className="link"
+      <a
+        className="link"
         href="/new/state"
         onClick={wrapper.prop('onClick')}>
         Link content

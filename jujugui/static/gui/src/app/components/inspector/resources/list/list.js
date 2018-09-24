@@ -14,7 +14,8 @@ class InspectorResourcesList extends React.Component {
     const resources = this.props.resources;
     const resourceList = resources.map((resource, i) => {
       return (
-        <li className="inspector-resources-list__resource"
+        <li
+          className="inspector-resources-list__resource"
           key={resource.Name + i}>
           <p>{resource.Name}</p>
           <p>{resource.Description}</p>

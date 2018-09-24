@@ -71,7 +71,8 @@ describe('CreatePaymentUser', function() {
             <ul className="create-payment-user__form-type">
               <li className="create-payment-user__form-type-option">
                 <label htmlFor="business">
-                  <input checked={false}
+                  <input
+                    checked={false}
                     id="business"
                     name="formType"
                     onChange={options.at(1).prop('onChange')}
@@ -81,7 +82,8 @@ describe('CreatePaymentUser', function() {
               </li>
               <li className="create-payment-user__form-type-option">
                 <label htmlFor="personal">
-                  <input checked={true}
+                  <input
+                    checked={true}
                     id="personal"
                     name="formType"
                     onChange={options.at(0).prop('onChange')}
@@ -117,7 +119,8 @@ describe('CreatePaymentUser', function() {
               createCardElement={sinon.stub()}
               ref="cardForm" />
             <label htmlFor="cardAddressSame">
-              <input checked={true}
+              <input
+                checked={true}
                 id="cardAddressSame"
                 name="cardAddressSame"
                 onChange={options.at(2).prop('onChange')}
@@ -126,7 +129,8 @@ describe('CreatePaymentUser', function() {
               Credit or debit card address is the same as above
             </label>
             <label htmlFor="billingAddressSame">
-              <input checked={true}
+              <input
+                checked={true}
                 id="billingAddressSame"
                 name="billingAddressSame"
                 onChange={options.at(3).prop('onChange')}

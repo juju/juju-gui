@@ -77,7 +77,8 @@ describe('DeploymentPlanTable', () => {
             columns: [{
               content: (
                 <div>
-                  <img alt="Apache Drill"
+                  <img
+                    alt="Apache Drill"
                     className="deployment-plan-table__charm-icon"
                     src="apache2.svg" />
                   <span className="deployment-plan-table__charm-name">

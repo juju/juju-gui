@@ -33,7 +33,8 @@ describe('AddedServicesListItem', function() {
     mockService.set('fade', false);
     const wrapper = renderComponent();
     const expected = (
-      <li className="inspector-view__list-item"
+      <li
+        className="inspector-view__list-item"
         data-serviceid="wordpress"
         onClick={wrapper.prop('onClick')}
         onMouseEnter={wrapper.prop('onMouseEnter')}

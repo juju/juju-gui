@@ -25,11 +25,13 @@ describe('InsetSelect', function() {
     const wrapper = renderComponent();
     var expected = (
       <div className='inset-select inset-select--spork'>
-        <label className="inset-select__label"
+        <label
+          className="inset-select__label"
           htmlFor="Spork!">
           Spork!
         </label>
-        <select className="inset-select__field"
+        <select
+          className="inset-select__field"
           defaultValue={undefined}
           disabled={undefined}
           id="Spork!"

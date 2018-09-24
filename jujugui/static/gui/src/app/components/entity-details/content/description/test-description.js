@@ -44,7 +44,8 @@ describe('EntityContentDescription', function() {
       const wrapper = renderComponent();
       const expected = (
         <div className="entity-content__description">
-          <div className="entity-content__description-content"
+          <div
+            className="entity-content__description-content"
             dangerouslySetInnerHTML={{__html: 'HA Django cluster.'}} />
         </div>
       );
@@ -70,7 +71,8 @@ describe('EntityContentDescription', function() {
       const wrapper = renderComponent();
       const expected = (
         <div className="entity-content__description">
-          <div className="entity-content__description-content"
+          <div
+            className="entity-content__description-content"
             dangerouslySetInnerHTML={{__html: 'Django framework.'}} />
         </div>
       );

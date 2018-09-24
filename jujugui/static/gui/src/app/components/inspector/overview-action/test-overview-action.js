@@ -36,7 +36,8 @@ describe('OverviewAction', function() {
     const wrapper = renderComponent({ icon: 'action-icon' });
     const expected = (
       <span className="overview-action__icon">
-        <SvgIcon name="action-icon"
+        <SvgIcon
+          name="action-icon"
           size="16" />
       </span>);
     assert.compareJSX(wrapper.find('.overview-action__icon'), expected);
@@ -49,7 +50,8 @@ describe('OverviewAction', function() {
       linkTitle: 'Juju Charms'
     });
     const expected = (
-      <span className="overview-action__link"
+      <span
+        className="overview-action__link"
         onClick={wrapper.find('.overview-action__link').prop('onClick')}>
           Juju Charms
       </span>);

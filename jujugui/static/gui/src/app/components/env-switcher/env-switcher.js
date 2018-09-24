@@ -188,7 +188,8 @@ class EnvSwitcher extends React.Component {
   _generateName() {
     if (this.props.modelCommitted) {
       return (
-        <span className="env-switcher__name"
+        <span
+          className="env-switcher__name"
           ref="name">
           {this.props.environmentName}
         </span>);
@@ -196,7 +197,8 @@ class EnvSwitcher extends React.Component {
     // If the model is not committed then allow the name to be changed.
     return (
       <div>
-        <span className="env-switcher__name"
+        <span
+          className="env-switcher__name"
           contentEditable={true}
           dangerouslySetInnerHTML={{__html: this.props.environmentName}}
           onBlur={this._handleInputBlur.bind(this)}
@@ -216,14 +218,16 @@ class EnvSwitcher extends React.Component {
       {'env-switcher--error': !this.state.validName}
     );
     return (
-      <div aria-label="Model switcher"
+      <div
+        aria-label="Model switcher"
         className={classes}
         onClick={this.props.modelCommitted ? toggleEnvList : null}
         role="navigation"
         tabIndex="0">
         <div className={this._toggleClasses()}>
           {this._generateName()}
-          <div aria-controls="environmentSwitcherMenu"
+          <div
+            aria-controls="environmentSwitcherMenu"
             aria-expanded="false"
             aria-haspopup="true"
             aria-owns="environmentSwitcherMenu"

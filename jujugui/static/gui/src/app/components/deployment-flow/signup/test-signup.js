@@ -84,7 +84,8 @@ describe('DeploymentSignup', function() {
               </li>
             </ul>
             <p>
-              <a className="button--inline-positive"
+              <a
+                className="button--inline-positive"
                 href="https://jujucharms.com/beta"
                 onClick={wrapper.find('.button--inline-positive').prop('onClick')}
                 target="_blank">

@@ -52,7 +52,8 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.args[0][1], 'Readme.md');
     const expected = (
       <div className="entity-content__readme">
-        <div className="entity-content__readme-content"
+        <div
+          className="entity-content__readme-content"
           dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}}
           ref="content" />
       </div>);

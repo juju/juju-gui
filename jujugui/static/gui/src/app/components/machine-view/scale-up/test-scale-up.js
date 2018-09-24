@@ -90,15 +90,19 @@ describe('MachineViewScaleUp', function() {
     const wrapper = renderComponent();
     const buttons = wrapper.find('ButtonRow').prop('buttons');
     const expected = (
-      <form className="machine-view__scale-up"
+      <form
+        className="machine-view__scale-up"
         onSubmit={wrapper.prop('onSubmit')}>
         <ul className="machine-view__scale-up-units">
-          <li className="machine-view__scale-up-unit"
+          <li
+            className="machine-view__scale-up-unit"
             key="111111$">
-            <img alt="django"
+            <img
+              alt="django"
               className="machine-view__scale-up-unit-icon"
               src="data:image/gif;base64," />
-            <div className="machine-view__scale-up-unit-name"
+            <div
+              className="machine-view__scale-up-unit-name"
               title="django">
               django
             </div>
@@ -111,12 +115,15 @@ describe('MachineViewScaleUp', function() {
               step="1"
               type="number" />
           </li>
-          <li className="machine-view__scale-up-unit"
+          <li
+            className="machine-view__scale-up-unit"
             key="222222$">
-            <img alt="mysql"
+            <img
+              alt="mysql"
               className="machine-view__scale-up-unit-icon"
               src="data:image/gif;base64," />
-            <div className="machine-view__scale-up-unit-name"
+            <div
+              className="machine-view__scale-up-unit-name"
               title="mysql">
               mysql
             </div>

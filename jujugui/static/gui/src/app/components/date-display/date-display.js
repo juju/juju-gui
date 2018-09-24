@@ -174,7 +174,8 @@ class DateDisplay extends React.Component {
     // just return it without any date-parsing fun.
     if (!isNaN(Date.parse(this.props.date))) {
       return (
-        <time dateTime={this._generateDate()}
+        <time
+          dateTime={this._generateDate()}
           title={this._generateTitle()}>
           {this._generateContent()}
         </time>

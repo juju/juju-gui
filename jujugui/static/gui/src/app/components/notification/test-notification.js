@@ -44,7 +44,8 @@ describe('Notification', function() {
     const dismiss = sinon.stub();
     const wrapper = renderComponent({ dismiss });
     const expected = (
-      <button className="p-notification__action"
+      <button
+        className="p-notification__action"
         onClick={wrapper.find('.p-notification__action').prop('onClick')}>
         <SvgIcon
           name="close_16"

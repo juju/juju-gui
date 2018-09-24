@@ -34,7 +34,8 @@ class DeploymentMachines extends React.Component {
     const machineList = Object.keys(machineDetails).map(machine => {
       const count = machineDetails[machine];
       return (
-        <li className="deployment-flow__row twelve-col"
+        <li
+          className="deployment-flow__row twelve-col"
           key={machine}>
           <div className="eight-col">
             {machine}

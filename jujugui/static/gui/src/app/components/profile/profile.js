@@ -53,7 +53,8 @@ class Profile extends React.Component {
 
     if (profileUrl.full === 'revenue-statement') {
       return (
-        <Panel instanceName="revenue-statement"
+        <Panel
+          instanceName="revenue-statement"
           visible={true}>
           <RevenueStatement />
         </Panel>
@@ -62,7 +63,8 @@ class Profile extends React.Component {
 
     if (sectionInfo.active === 'invoices' && sectionInfo.sub !== null) {
       return (
-        <Panel instanceName="invoice"
+        <Panel
+          instanceName="invoice"
           visible={true}>
           <Invoice />
         </Panel>
@@ -165,14 +167,16 @@ class Profile extends React.Component {
       sectionsMap.set('invoices', {
         label: 'Invoices',
         getComponent: () => {
-          return (<ProfileInvoiceList baseURL={props.baseURL}
+          return (<ProfileInvoiceList
+            baseURL={props.baseURL}
             user={props.userInfo.external} />);
         }
       });
       sectionsMap.set('revenue-statement', {
         label: 'Revenue Statements',
         getComponent: () => {
-          return (<ProfileInvoiceList baseURL={props.baseURL}
+          return (<ProfileInvoiceList
+            baseURL={props.baseURL}
             user={props.userInfo.external} />);
         }
       });
@@ -188,7 +192,8 @@ class Profile extends React.Component {
     }
 
     return (
-      <Panel instanceName="profile"
+      <Panel
+        instanceName="profile"
         visible={true}>
         <ProfileHeader
           changeState={props.changeState}

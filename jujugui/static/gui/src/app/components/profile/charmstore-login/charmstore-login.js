@@ -56,14 +56,16 @@ class ProfileCharmstoreLogin extends React.Component {
         </h2>
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
-          <span className="link"
+          <span
+            className="link"
             onClick={this._interactiveLogin.bind(this)}
             role="button"
             tabIndex="0">
             login
           </span>&nbsp;
           to the&nbsp;
-          <span className="link"
+          <span
+            className="link"
             onClick={this._openStore.bind(this)}
             role="button"
             tabIndex="0">

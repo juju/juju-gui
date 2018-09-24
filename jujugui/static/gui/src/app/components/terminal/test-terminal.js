@@ -59,17 +59,20 @@ describe('Terminal', () => {
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
-            <span onClick={actions.at(0).prop('onClick')}
+            <span
+              onClick={actions.at(0).prop('onClick')}
               role="button"
               tabIndex="0">
               <SvgIcon name="minimize-bar_16" size="16" />
             </span>
-            <span onClick={actions.at(1).prop('onClick')}
+            <span
+              onClick={actions.at(1).prop('onClick')}
               role="button"
               tabIndex="0">
               <SvgIcon name="maximize-bar_16" size="16" />
             </span>
-            <span onClick={actions.at(2).prop('onClick')}
+            <span
+              onClick={actions.at(2).prop('onClick')}
               role="button"
               tabIndex="0">
               <SvgIcon name="close_16" size="16" />

@@ -22,7 +22,8 @@ class Machine extends React.Component {
     }
     const items = hardware.map((item, i) => {
       return (
-        <li className="machine__hardware-item"
+        <li
+          className="machine__hardware-item"
           key={item.label + item.value + i}>
           <span className="machine__hardware-item-label">
             {item.label}:
@@ -153,7 +154,8 @@ class Machine extends React.Component {
 
   render() {
     return (
-      <div className={this._generateClasses()}
+      <div
+        className={this._generateClasses()}
         onClick={this.props.onClick}
         role="button"
         tabIndex="0">

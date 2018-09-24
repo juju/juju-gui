@@ -20,7 +20,8 @@ describe('Logout', () => {
   it('renders properly for regular logout', () => {
     const wrapper = renderComponent();
     const expected = (
-      <a className="logout-link dropdown-menu__list-item-link"
+      <a
+        className="logout-link dropdown-menu__list-item-link"
         href="http://logout"
         onClick={wrapper.prop('onClick')}
         target="_self">Logout</a>

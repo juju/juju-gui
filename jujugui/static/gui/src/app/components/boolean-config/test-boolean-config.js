@@ -48,7 +48,8 @@ describe('BooleanConfig', function() {
             </label>
           </div>
         </div>
-        <div className="boolean-config--description"
+        <div
+          className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
         </div>
       </div>

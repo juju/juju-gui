@@ -521,13 +521,16 @@ Browser: ${navigator.userAgent}`
       });
     };
     return (
-      <li className="header-banner__list-item header-banner__list-item--no-padding"
+      <li
+        className="header-banner__list-item header-banner__list-item--no-padding"
         id="header-help">
-        <span className="header__button"
+        <span
+          className="header__button"
           onClick={openHelp.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon className="header__button-icon"
+          <SvgIcon
+            className="header__button-icon"
             name="help_16"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -679,7 +682,8 @@ Browser: ${navigator.userAgent}`
     const homePath = gisf ? '/' :
       this.props.appState.generatePath({profile: userName});
     return (
-      <div className="header-banner__logo"
+      <div
+        className="header-banner__logo"
         id="header-logo" >
         <HeaderLogo
           gisf={gisf}
@@ -1155,7 +1159,8 @@ Browser: ${navigator.userAgent}`
     };
 
     return (
-      <li className="header-banner__list-item header-banner__list-item--no-padding"
+      <li
+        className="header-banner__list-item header-banner__list-item--no-padding"
         id="profile-link-container">
         <UserMenu
           controllerAPI={controllerAPI}
@@ -1342,7 +1347,8 @@ Browser: ${navigator.userAgent}`
     }
     return (
       <li className="header-banner__list-item">
-        <a className="header-banner__link"
+        <a
+          className="header-banner__link"
           href={maasServer}
           target="_blank">
           MAAS UI

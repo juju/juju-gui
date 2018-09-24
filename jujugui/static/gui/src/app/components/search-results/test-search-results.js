@@ -138,7 +138,8 @@ describe('SearchResults', function() {
               http://jujucharms.com
             </a>
             {' '}or go{' '}
-            <span className="link"
+            <span
+              className="link"
               onClick={wrapper.find('.link').prop('onClick')}>
               back
             </span>.

@@ -98,15 +98,20 @@ class InspectorHeader extends React.Component {
     var backIcon = type && type !== 'started' ? backIconWhite : backIconGrey;
 
     return (
-      <div className={this._headerClasses()}
-        onClick={this.props.backCallback} role="button" tabIndex="0">
-        <span className="inspector-header__back"
+      <div
+        className={this._headerClasses()}
+        onClick={this.props.backCallback}
+        role="button"
+        tabIndex="0">
+        <span
+          className="inspector-header__back"
           dangerouslySetInnerHTML={{__html: backIcon}} />
         <span className="inspector-header__title">
           {this.props.title}
         </span>
         <span className="inspector-header__icon-container">
-          <img className="inspector-header__service-icon"
+          <img
+            className="inspector-header__service-icon"
             src={this.props.icon} />
         </span>
         {this._generateLinks()}

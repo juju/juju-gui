@@ -18,7 +18,8 @@ describe('HashLink', () => {
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="hash-link"
+      <div
+        className="hash-link"
         onClick={wrapper.prop('onClick')}>
         <SvgIcon
           name="anchor_16"

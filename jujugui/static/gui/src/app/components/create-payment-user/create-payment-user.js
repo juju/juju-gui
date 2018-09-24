@@ -268,7 +268,8 @@ class CreatePaymentUser extends React.Component {
             <ul className="create-payment-user__form-type">
               <li className="create-payment-user__form-type-option">
                 <label htmlFor="business">
-                  <input checked={this.state.business}
+                  <input
+                    checked={this.state.business}
                     id="business"
                     name="formType"
                     onChange={this._setFormType.bind(this)}
@@ -278,7 +279,8 @@ class CreatePaymentUser extends React.Component {
               </li>
               <li className="create-payment-user__form-type-option">
                 <label htmlFor="personal">
-                  <input checked={!this.state.business}
+                  <input
+                    checked={!this.state.business}
                     id="personal"
                     name="formType"
                     onChange={this._setFormType.bind(this)}
@@ -311,7 +313,8 @@ class CreatePaymentUser extends React.Component {
               createCardElement={this.props.stripe.createCardElement}
               ref="cardForm" />
             <label htmlFor="cardAddressSame">
-              <input checked={this.state.cardAddressSame}
+              <input
+                checked={this.state.cardAddressSame}
                 id="cardAddressSame"
                 name="cardAddressSame"
                 onChange={this._handleCardSameChange.bind(this)}
@@ -320,7 +323,8 @@ class CreatePaymentUser extends React.Component {
               Credit or debit card address is the same as above
             </label>
             <label htmlFor="billingAddressSame">
-              <input checked={this.state.billingAddressSame}
+              <input
+                checked={this.state.billingAddressSame}
                 id="billingAddressSame"
                 name="billingAddressSame"
                 onChange={this._handleBillingSameChange.bind(this)}

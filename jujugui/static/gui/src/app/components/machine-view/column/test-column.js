@@ -59,7 +59,8 @@ describe('MachineViewColumn', function() {
         <div className="machine-view__column-content">
           <div>contents</div>
           <div className="machine-view__column-drop-target">
-            <SvgIcon name="add_16"
+            <SvgIcon
+              name="add_16"
               size="16" />
           </div>
         </div>

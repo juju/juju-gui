@@ -16,7 +16,8 @@ class ExpertCard extends React.Component {
         classes={this.props.classes}
         title="Juju expert partners">
         <div className="expert-card__logo">
-          <img alt={expert.logo}
+          <img
+            alt={expert.logo}
             className="expert-card__logo-image"
             src={logo} />
         </div>

@@ -38,7 +38,8 @@ class InspectorExposeUnit extends React.Component {
         const href = `${protocol}://${label}`;
         return (
           <li className="inspector-expose__item" key={href}>
-            <a href={href}
+            <a
+              href={href}
               onClick={this._stopBubble.bind(this)}
               target="_blank">
               {label}
@@ -62,7 +63,10 @@ class InspectorExposeUnit extends React.Component {
     var publicList = this._getAddressList(
       unit.public_address, unit.portRanges);
     return (
-      <li className="inspector-expose__unit" data-id={unit.id} onClick={this.props.action}
+      <li
+        className="inspector-expose__unit"
+        data-id={unit.id}
+        onClick={this.props.action}
         role="button"
         tabIndex="0">
         <div className="inspector-expose__unit-detail">

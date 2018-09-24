@@ -28,14 +28,16 @@ class StatusModel extends React.Component {
   _generateFilters() {
     const options = ['none'].concat(utils.STATUS_ORDER).map(status => {
       return (
-        <option className="status-view__filter-option"
+        <option
+          className="status-view__filter-option"
           key={status}
           value={status}>
           {status}
         </option>);
     });
     return (
-      <select className="status-view__filter-select"
+      <select
+        className="status-view__filter-select"
         onChange={this._handleFilterChange.bind(this)}
         value={this.props.statusFilter || 'none'}>
         {options}

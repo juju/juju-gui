@@ -120,7 +120,8 @@ describe('MachineView', function() {
                   Unplaced units will appear here. Drag and drop them to
                   customise your deployment.
                 </p>
-                <span className="link"
+                <span
+                  className="link"
                   onClick={links.at(0).prop('onClick')}>
                   Add applications to get started
                 </span>
@@ -180,7 +181,8 @@ describe('MachineView', function() {
                 <li>Manually place new units</li>
                 <li>Colocate applications</li>
               </ul>
-              <span className="link"
+              <span
+                className="link"
                 onClick={links.at(1).prop('onClick')}
                 role="button"
                 tabIndex="0">
@@ -232,7 +234,8 @@ describe('MachineView', function() {
             Unplaced units will appear here. Drag and drop them to
             customise your deployment.
           </p>
-          <span className="link"
+          <span
+            className="link"
             onClick={
               wrapper.find('.machine-view__column-onboarding .link').at(0).prop('onClick')}>
             Add applications to get started
@@ -256,7 +259,8 @@ describe('MachineView', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__column-onboarding">
-        <SvgIcon name="task-done_16"
+        <SvgIcon
+          name="task-done_16"
           size="16" />
         You have placed all of your units
       </div>);
@@ -304,7 +308,8 @@ describe('MachineView', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__column-onboarding">
-        <SvgIcon name="task-done_16"
+        <SvgIcon
+          name="task-done_16"
           size="16" />
         You have placed all of your units
       </div>);
@@ -341,7 +346,8 @@ describe('MachineView', function() {
           <li>Manually place new units</li>
           <li>Colocate applications</li>
         </ul>
-        <span className="link"
+        <span
+          className="link"
           onClick={wrapper.find('.link').at(1).prop('onClick')}
           role="button"
           tabIndex="0">

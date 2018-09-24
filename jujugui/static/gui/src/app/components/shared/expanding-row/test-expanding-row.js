@@ -35,16 +35,19 @@ describe('ExpandingRow', () => {
       classes: {extraClass: true}
     });
     var expected = (
-      <li className={
-        'expanding-row twelve-col extraClass expanding-row--clickable'}
-      onClick={wrapper.prop('onClick')}
-      style={undefined}>
+      <li
+        className={
+          'expanding-row twelve-col extraClass expanding-row--clickable'}
+        onClick={wrapper.prop('onClick')}
+        style={undefined}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
         </div>
-        <div className="expanding-row__expanded twelve-col"
+        <div
+          className="expanding-row__expanded twelve-col"
           style={{height: '0px', opacity: 0}}>
-          <div className="twelve-col no-margin-bottom"
+          <div
+            className="twelve-col no-margin-bottom"
             ref="inner">
             <span>open</span>
           </div>

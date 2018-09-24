@@ -79,7 +79,9 @@ describe('LocalInspector', function() {
           <ul className="local-inspector__list">
             <li>
               <label>
-                <input defaultChecked={true} disabled={false}
+                <input
+                  defaultChecked={true}
+                  disabled={false}
                   name="action"
                   onChange={inputs.at(0).prop('onChange')}
                   type="radio" />
@@ -88,7 +90,9 @@ describe('LocalInspector', function() {
             </li>
             <li>
               <label>
-                <input defaultChecked={false} disabled={false}
+                <input
+                  defaultChecked={false}
+                  disabled={false}
                   name="action"
                   onChange={inputs.at(1).prop('onChange')}
                   type="radio" />
@@ -98,7 +102,9 @@ describe('LocalInspector', function() {
           </ul>
           <div className="local-inspector__content-new">
             <p>Choose a series to deploy this charm</p>
-            <select className="local-inspector__series" defaultValue="trusty"
+            <select
+              className="local-inspector__series"
+              defaultValue="trusty"
               disabled={false}
               ref="series">
               <option key="vivid" value="vivid">Vivid Vervet 15.04</option>
@@ -120,7 +126,9 @@ describe('LocalInspector', function() {
         <ul className="local-inspector__list">
           <li key="apache2-2">
             <label>
-              <input data-id="apache2-2" disabled={false}
+              <input
+                data-id="apache2-2"
+                disabled={false}
                 ref="service-apache2-2"
                 type="checkbox" />
               apache2
@@ -128,7 +136,9 @@ describe('LocalInspector', function() {
           </li>
           <li key="mysql-1">
             <label>
-              <input data-id="mysql-1" disabled={false}
+              <input
+                data-id="mysql-1"
+                disabled={false}
                 ref="service-mysql-1"
                 type="checkbox" />
               mysql

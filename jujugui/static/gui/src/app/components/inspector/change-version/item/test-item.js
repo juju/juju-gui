@@ -27,10 +27,13 @@ describe('InspectorChangeVersionItem', function() {
   it('can display the version item', function() {
     const wrapper = renderComponent();
     const expected = (
-      <li className="inspector-current-version__item"
-        onClick={wrapper.prop('onClick')} role="button"
+      <li
+        className="inspector-current-version__item"
+        onClick={wrapper.prop('onClick')}
+        role="button"
         tabIndex="0">
-        <span className="inspector-current-version__title"
+        <span
+          className="inspector-current-version__title"
           title="django/xenial/5">
           version {5}
         </span>

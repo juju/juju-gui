@@ -73,7 +73,8 @@ describe('BasicTableRow', () => {
       clickURL: 'http://example.com'
     });
     const expected = (
-      <a className="basic-table__row-link"
+      <a
+        className="basic-table__row-link"
         href="http://example.com"
         onClick={wrapper.find('.basic-table__row-link').prop('onClick')}></a>);
     assert.compareJSX(wrapper.find('.basic-table__row-link').at(0), expected);

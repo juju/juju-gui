@@ -23,7 +23,9 @@ describe('EntityContentDiagram', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="entity-content__diagram">
-        <object className="entity-content__diagram-image" data="example.com/diagram.svg"
+        <object
+          className="entity-content__diagram-image"
+          data="example.com/diagram.svg"
           title="example"
           type="image/svg+xml" />
       </div>);

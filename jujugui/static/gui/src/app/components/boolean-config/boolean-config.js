@@ -101,7 +101,8 @@ class BooleanConfig extends React.Component {
             </label>
           </div>
         </div>
-        <div className="boolean-config--description"
+        <div
+          className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: this.props.option.description}}>
         </div>
       </div>

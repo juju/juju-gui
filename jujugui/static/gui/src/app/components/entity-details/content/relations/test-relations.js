@@ -32,20 +32,23 @@ describe('EntityContentRelations', function() {
       <div className="section entity-relations" id="relations">
         <h3 className="section__title">
           Relations&nbsp;
-          <a href="https://jujucharms.com/docs/stable/charms-relations"
+          <a
+            href="https://jujucharms.com/docs/stable/charms-relations"
             target="_blank">
             <SvgIcon name="help_16" size="16" />
           </a>
         </h3>
         <ul className="section__list" ref="list">
-          <li className="link section__list-item"
+          <li
+            className="link section__list-item"
             key="http"
             onClick={wrapper.find('.section__list-item').at(0).prop('onClick')}
             role="button"
             tabIndex="0">
             {'http'}: {'http'}
           </li>
-          <li className="link section__list-item"
+          <li
+            className="link section__list-item"
             key="cache"
             onClick={wrapper.find('.section__list-item').at(1).prop('onClick')}
             role="button"
@@ -93,7 +96,8 @@ describe('EntityContentRelations', function() {
       };
       const wrapper = renderComponent();
       const expected = (
-        <button className="button--inline-neutral"
+        <button
+          className="button--inline-neutral"
           onClick={wrapper.find('button').prop('onClick')}
           role="button">View more relations</button>);
       assert.compareJSX(wrapper.find('button'), expected);

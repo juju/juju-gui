@@ -39,11 +39,13 @@ describe('ModelActions', function() {
     var expected = (
       <div className="model-actions">
         <div className="model-actions__buttons">
-          <span className="model-actions__export model-actions__button"
+          <span
+            className="model-actions__export model-actions__button"
             onClick={wrapper.find('.model-actions__export').prop('onClick')}
             role="button"
             tabIndex="0">
-            <SvgIcon className="model-actions__icon"
+            <SvgIcon
+              className="model-actions__icon"
               name="export_16"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -52,11 +54,13 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <span className="model-actions__import model-actions__button"
+          <span
+            className="model-actions__import model-actions__button"
             onClick={wrapper.find('.model-actions__import').prop('onClick')}
             role="button"
             tabIndex="0">
-            <SvgIcon className="model-actions__icon"
+            <SvgIcon
+              className="model-actions__icon"
               name="import_16"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -65,11 +69,13 @@ describe('ModelActions', function() {
               </span>
             </span>
           </span>
-          <span className="model-actions__share model-actions__button"
+          <span
+            className="model-actions__share model-actions__button"
             onClick={wrapper.find('.model-actions__share').prop('onClick')}
             role="button"
             tabIndex="0">
-            <SvgIcon className="model-actions__icon"
+            <SvgIcon
+              className="model-actions__icon"
               name="share_16"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -79,7 +85,8 @@ describe('ModelActions', function() {
             </span>
           </span>
         </div>
-        <input accept=".zip,.yaml,.yml"
+        <input
+          accept=".zip,.yaml,.yml"
           className="model-actions__file"
           onChange={wrapper.find('.model-actions__file').prop('onChange')}
           ref="file-input"
@@ -91,11 +98,13 @@ describe('ModelActions', function() {
   it('can render the terminalAction', () => {
     const wrapper = renderComponent({ displayTerminalButton: true });
     var expected = (
-      <span className="model-actions__shell model-actions__button"
+      <span
+        className="model-actions__shell model-actions__button"
         onClick={wrapper.find('.model-actions__shell').prop('onClick')}
         role="button"
         tabIndex="0">
-        <SvgIcon className="model-actions__icon"
+        <SvgIcon
+          className="model-actions__icon"
           name="code-snippet_24"
           size="16" />
         <span className="tooltip__tooltip--below">

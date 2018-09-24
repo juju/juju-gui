@@ -46,14 +46,18 @@ describe('EntityHeader', function() {
   it('renders the latest entity properly', function() {
     const wrapper = renderComponent();
     const expected = (
-      <div className="row-hero"
+      <div
+        className="row-hero"
         ref="headerWrapper"
         style={{}}>
         <header className="entity-header">
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
-              <img alt="django" className="entity-header__icon"
-                src="data:image/gif;base64," width="96" />
+              <img
+                alt="django"
+                className="entity-header__icon"
+                src="data:image/gif;base64,"
+                width="96" />
               <h1
                 className="entity-header__title"
                 itemProp="name"
@@ -66,13 +70,15 @@ describe('EntityHeader', function() {
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By&nbsp;
-                  <span className="link"
+                  <span
+                    className="link"
                     onClick={wrapper.find('.entity-header__by .link').prop('onClick')}>
                     test-owner
                   </span>
                 </li>
                 <li className="entity-header__series">
-                  <span className="link"
+                  <span
+                    className="link"
                     onClick={wrapper.find('.entity-header__series .link').prop('onClick')}>
                     Latest version (#{42})
                   </span>
@@ -81,28 +87,31 @@ describe('EntityHeader', function() {
                   trusty
                 </li>]}
                 {undefined}
-                {<li className="entity-header__channels"
+                {<li
+                  className="entity-header__channels"
                   key="Stable, Candidate">
                   Stable, Candidate
                 </li>}
               </ul>
               <ul className="entity-header__social-list">
                 <li>
-                  <a href={'https://twitter.com/intent/tweet?text=django%20' +
+                  <a
+                    href={'https://twitter.com/intent/tweet?text=django%20' +
                       'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
                       '.com%2Fdjango%2Ftrusty%2F'}
-                  id="item-twitter"
-                  target="_blank">
+                    id="item-twitter"
+                    target="_blank">
                     <SvgIcon
                       name="icon-social-twitter"
                       size="36" />
                   </a>
                 </li>
                 <li>
-                  <a href={'https://plus.google.com/share?url=https%3A%2F%2F' +
+                  <a
+                    href={'https://plus.google.com/share?url=https%3A%2F%2F' +
                       'jujucharms.com%2Fdjango%2Ftrusty%2F'}
-                  id="item-googleplus"
-                  target="_blank">
+                    id="item-googleplus"
+                    target="_blank">
                     <SvgIcon
                       name="icon-social-google"
                       size="36" />
@@ -147,10 +156,12 @@ describe('EntityHeader', function() {
       plans
     });
     const expected = (
-      <select className="entity-header__select"
+      <select
+        className="entity-header__select"
         ref="plan">
         <option key="default">Choose a plan</option>
-        {[<option key="test0"
+        {[<option
+          key="test0"
           value="test">
           test
         </option>]}
@@ -164,7 +175,8 @@ describe('EntityHeader', function() {
       plans: null
     });
     const expected = (
-      <select className="entity-header__select"
+      <select
+        className="entity-header__select"
         ref="plan">
         <option key="default">Loading plans...</option>
         {null}
@@ -205,10 +217,11 @@ describe('EntityHeader', function() {
     const expected = (
       <li className="entity-header__subordinate">
         Subordinate
-        <a href={
-          'https://jujucharms.com/docs/stable/' +
-          'authors-subordinate-applications'}
-        target="_blank">
+        <a
+          href={
+            'https://jujucharms.com/docs/stable/' +
+            'authors-subordinate-applications'}
+          target="_blank">
           <SvgIcon
             name="help_16"
             size="16" />

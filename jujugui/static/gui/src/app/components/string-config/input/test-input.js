@@ -18,7 +18,8 @@ describe('StringConfigInput', function() {
   it('can render', function() {
     const wrapper = renderComponent();
     var expected = (
-      <div className="string-config-input"
+      <div
+        className="string-config-input"
         contentEditable={true}
         dangerouslySetInnerHTML={{__html: 'config value'}}
         onBlur={wrapper.prop('onBlur')}

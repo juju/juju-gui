@@ -92,8 +92,10 @@ ${this.props.youtubeAPIKey}`,
         'https://jujucharms.com/docs/stable/about-juju';
     }
     return (
-      <a className="link"
-        href={link} target="_blank">{label}</a>);
+      <a
+        className="link"
+        href={link}
+        target="_blank">{label}</a>);
   }
 
   _generateJujuShow() {
@@ -101,10 +103,12 @@ ${this.props.youtubeAPIKey}`,
       return null;
     }
     return (
-      <a className="four-col juju-show"
+      <a
+        className="four-col juju-show"
         href={`https://youtube.com/watch?v=${this.state.jujuShow.videoId}`}
         target="_blank">
-        <img className="juju-show__image"
+        <img
+          className="juju-show__image"
           src={this.state.jujuShow.thumbnail.url} />
         <p>
           <b>The Juju show</b>
@@ -138,15 +142,20 @@ ${this.props.youtubeAPIKey}`,
         <header className="help__header clearfix">
           <h3 className="help__header-title">Help</h3>
           <div className="help__header-search header-search">
-            <form action="https://jujucharms.com/docs/search/"
+            <form
+              action="https://jujucharms.com/docs/search/"
               className="header-search__form"
               target="_blank">
-              <button className="header-search__submit"
+              <button
+                className="header-search__submit"
                 type="submit">
-                <SvgIcon name="search_16"
+                <SvgIcon
+                  name="search_16"
                   size="16" />
               </button>
-              <input className="header-search__input" name="text"
+              <input
+                className="header-search__input"
+                name="text"
                 placeholder="Search the docs"
                 ref={input => {this.searchDocs = input;}}
                 type="search" />
@@ -200,7 +209,9 @@ ${this.props.youtubeAPIKey}`,
                 src={`${basePath}/help@1x.png`}
                 srcSet={`${basePath}/help@2x.png 2x`}
                 width="201" />
-              <span className="link" onClick={this._startTour.bind(this)}
+              <span
+                className="link"
+                onClick={this._startTour.bind(this)}
                 role="button">
                 Learn how to use the canvas.
               </span>
@@ -210,13 +221,16 @@ ${this.props.youtubeAPIKey}`,
         <footer className="help__footer clearfix">
           <div className="four-col">
             <p>
-              <span className="link" onClick={this._handleShortcutsLink.bind(this)}
+              <span
+                className="link"
+                onClick={this._handleShortcutsLink.bind(this)}
                 role="button">
                 Keyboard shortcuts
               </span>
             </p>
             <p>
-              <a className="link"
+              <a
+                className="link"
                 href="https://jujucharms.com/how-it-works#frequently-asked-questions"
                 target="_blank">
                 FAQs

@@ -39,7 +39,8 @@ describe('DateDisplay', () => {
   it('can display a date in the correct format', () => {
     const wrapper = renderComponent({ date: relative });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 21:07">
         19/01/2020
       </time>);
@@ -49,7 +50,8 @@ describe('DateDisplay', () => {
   it('can parse a date from a string', () => {
     const wrapper = renderComponent({ date: 'Mon, 19 Jan 2020 21:07:24 GMT' });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 21:07">
         19/01/2020
       </time>);
@@ -63,7 +65,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 21:07">
         just now
       </time>);
@@ -77,7 +80,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 21:06">
         1 minute ago
       </time>);
@@ -91,7 +95,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 20:48">
         19 minutes ago
       </time>);
@@ -105,7 +110,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 20:07">
         1 hour ago
       </time>);
@@ -119,7 +125,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="19/01/2020"
+      <time
+        dateTime="19/01/2020"
         title="19/01/2020 10:07">
         11 hours ago
       </time>);
@@ -133,7 +140,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="18/01/2020"
+      <time
+        dateTime="18/01/2020"
         title="18/01/2020 21:07">
         1 day ago
       </time>);
@@ -147,7 +155,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="13/01/2020"
+      <time
+        dateTime="13/01/2020"
         title="13/01/2020 21:07">
         6 days ago
       </time>);
@@ -161,7 +170,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="11/01/2020"
+      <time
+        dateTime="11/01/2020"
         title="11/01/2020 21:07">
         1 week ago
       </time>);
@@ -175,7 +185,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="25/12/2019"
+      <time
+        dateTime="25/12/2019"
         title="25/12/2019 21:07">
         3 weeks ago
       </time>);
@@ -189,7 +200,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="18/12/2019"
+      <time
+        dateTime="18/12/2019"
         title="18/12/2019 21:07">
         1 month ago
       </time>);
@@ -203,7 +215,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="11/10/2019"
+      <time
+        dateTime="11/10/2019"
         title="11/10/2019 21:07">
         3 months ago
       </time>);
@@ -217,7 +230,8 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time dateTime="26/10/2018"
+      <time
+        dateTime="26/10/2018"
         title="26/10/2018 21:07">
         26/10/2018
       </time>);

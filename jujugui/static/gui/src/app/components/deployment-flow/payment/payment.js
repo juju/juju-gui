@@ -65,7 +65,8 @@ class DeploymentPayment extends React.Component {
   _generatePaymentMethods() {
     const methods = this.props.paymentUser.paymentMethods.map((method, i) => {
       return (
-        <li className="deployment-payment__method"
+        <li
+          className="deployment-payment__method"
           key={method.name + i}>
           <PaymentMethodCard
             card={method} />

@@ -60,7 +60,8 @@ class ReceiptPopup extends React.Component {
     } else {
       content = (
         <div className="receipt-popup__container">
-          <iframe height="100%"
+          <iframe
+            height="100%"
             src={
               `data:text/html;charset=utf-8,${encodeURIComponent(receipt)}`}
             width="100%">

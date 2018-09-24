@@ -199,7 +199,8 @@ class Charmbrowser extends React.Component {
         focus={false}
         instanceName="white-box"
         visible={true}>
-        <div className="charmbrowser"
+        <div
+          className="charmbrowser"
           ref="charmbrowser">
           {this._generateContent()}
         </div>

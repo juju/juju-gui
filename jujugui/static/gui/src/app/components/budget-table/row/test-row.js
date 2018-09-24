@@ -98,7 +98,8 @@ describe('BudgetTableRow', function() {
           <div>
             <div>
               <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
+                <img
+                  className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
               </div>
@@ -202,7 +203,8 @@ describe('BudgetTableRow', function() {
             'budget-table__current twelve-col no-margin-bottom'}>
             <div>
               <div className="five-col no-margin-bottom">
-                <img className="budget-table__charm-icon"
+                <img
+                  className="budget-table__charm-icon"
                   src="landscape.svg" />
                 Landscape
               </div>

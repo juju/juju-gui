@@ -25,14 +25,16 @@ describe('EnvSwitcher', function() {
   it('renders the closed switcher component', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div aria-label="Model switcher"
+      <div
+        aria-label="Model switcher"
         className="env-switcher"
         onClick={null}
         role="navigation"
         tabIndex="0">
         <div className="env-switcher__toggle editable">
           <div>
-            <span className="env-switcher__name"
+            <span
+              className="env-switcher__name"
               contentEditable={true}
               dangerouslySetInnerHTML={{__html: 'MyEnv'}}
               onBlur={wrapper.find('.env-switcher__name').prop('onBlur')}
@@ -43,7 +45,8 @@ describe('EnvSwitcher', function() {
               It must not start or end with a hyphen.
             </div>
           </div>
-          <div aria-controls="environmentSwitcherMenu"
+          <div
+            aria-controls="environmentSwitcherMenu"
             aria-expanded="false"
             aria-haspopup="true"
             aria-owns="environmentSwitcherMenu"
@@ -66,7 +69,8 @@ describe('EnvSwitcher', function() {
   it('should not have an editable name when the model is committed', () => {
     const wrapper = renderComponent({modelCommitted: true});
     const expected = (
-      <span className="env-switcher__name"
+      <span
+        className="env-switcher__name"
         ref="name">
         MyEnv
       </span>);

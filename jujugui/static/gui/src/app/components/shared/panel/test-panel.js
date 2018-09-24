@@ -32,11 +32,13 @@ describe('PanelComponent', function() {
   it('generates a visible panel when visible flag is provided', function() {
     const wrapper = renderComponent();
     var expected = (
-      <div className="panel-component custom-instance-name"
+      <div
+        className="panel-component custom-instance-name"
         onClick={wrapper.prop('onClick')}
         ref="content"
         tabIndex="0">
-        <div className="panel-component__inner"
+        <div
+          className="panel-component__inner"
           onClick={wrapper.find('.panel-component__inner').prop('onClick')}>
           <div>child</div>
         </div>

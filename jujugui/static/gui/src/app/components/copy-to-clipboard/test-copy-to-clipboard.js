@@ -27,12 +27,14 @@ describe('CopyToClipboard', function() {
     const wrapper = renderComponent();
     var expected = (
       <div className="copy-to-clipboard">
-        <input className="copy-to-clipboard__input"
+        <input
+          className="copy-to-clipboard__input"
           readOnly="true"
           ref="input"
           type="text"
           value="" />
-        <button className="copy-to-clipboard__btn"
+        <button
+          className="copy-to-clipboard__btn"
           ref="btn">
           <SvgIcon
             name="copy-to-clipboard-16"

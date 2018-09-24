@@ -116,7 +116,8 @@ class ProfileCharmList extends React.Component {
       return null;
     }
     const tagList = tags.map((tag, i) => (
-      <li className="link profile-charm-list__tag"
+      <li
+        className="link profile-charm-list__tag"
         key={tag + i}
         onClick={this._handleTagClick.bind(this, tag)}
         role="button"
@@ -180,7 +181,8 @@ class ProfileCharmList extends React.Component {
             {this._generateTitle()}
             <p className="profile-charm-list__onboarding">
               Learn about&nbsp;
-              <a href="https://jujucharms.com/docs/stable/developer-getting-started"
+              <a
+                href="https://jujucharms.com/docs/stable/developer-getting-started"
                 target="_blank">
                 writing your own charm
               </a>.
@@ -196,7 +198,8 @@ class ProfileCharmList extends React.Component {
         const version = `#${url.revision}`;
         const series = charm.series.join(', ');
         const icon = (
-          <img className="profile-charm-list__icon"
+          <img
+            className="profile-charm-list__icon"
             key="img"
             src={src}
             title={charm.name} />);
@@ -209,7 +212,8 @@ class ProfileCharmList extends React.Component {
                     {icon}
                   </div>
                   <div>
-                    <a href={`${this.props.baseURL}${path}`}
+                    <a
+                      href={`${this.props.baseURL}${path}`}
                       key="link"
                       onClick={this._navigateToCharm.bind(this, path)}>
                       {charm.name}
@@ -238,7 +242,8 @@ class ProfileCharmList extends React.Component {
                 <div>
                   <div className="six-col profile-expanded-content__top-row">
                     {icon}
-                    <a href={`${this.props.baseURL}${path}`}
+                    <a
+                      href={`${this.props.baseURL}${path}`}
                       key="link"
                       onClick={this._navigateToCharm.bind(this, path)}>
                       {charm.name}

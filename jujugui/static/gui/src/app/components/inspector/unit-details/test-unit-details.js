@@ -89,7 +89,8 @@ describe('UnitDetails', function() {
     unit.workloadStatusMessage = '';
     const wrapper = renderComponent();
     const expected = (
-      <li className="twelve-col unit-details__list-item"
+      <li
+        className="twelve-col unit-details__list-item"
         key="uncommitted0">
         <div className="four-col prepend-one no-margin-bottom unit-details__label">
           started
@@ -109,7 +110,8 @@ describe('UnitDetails', function() {
     const wrapper = renderComponent();
     const expected = (
       <ul className="twelve-col unit-details__list">
-        <li className="twelve-col unit-details__list-item"
+        <li
+          className="twelve-col unit-details__list-item"
           key="uncommitted0">
           <div className="four-col prepend-one no-margin-bottom unit-details__label">
             started
@@ -127,7 +129,8 @@ describe('UnitDetails', function() {
     const wrapper = renderComponent();
     const expected = (
       <ul className="twelve-col unit-details__list">
-        <li className="twelve-col unit-details__list-item"
+        <li
+          className="twelve-col unit-details__list-item"
           key="uncommitted0">
           <div className="four-col prepend-one no-margin-bottom unit-details__label">
             uncommitted
@@ -157,7 +160,8 @@ describe('UnitDetails', function() {
     const wrapper = renderComponent();
     const publicAddresses = (
       <ul className="unit-details__action-list">
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="93.20.93.20:9000-10000/udp">
           <span>
             {'93.20.93.20:9000-10000/udp'}
@@ -176,21 +180,24 @@ describe('UnitDetails', function() {
       </ul>);
     const ipAddresses = (
       <ul className="unit-details__action-list">
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="192.168.0.1:9000-10000/udp">
           <span>
             {'192.168.0.1:9000-10000/udp'}
           </span>
         </li>
         <li className="unit-details__action-list-item" key="192.168.0.1:443">
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href="https://192.168.0.1:443"
             target="_blank">
             {'192.168.0.1:443'}
           </a>
         </li>
         <li className="unit-details__action-list-item" key="192.168.0.1:8080">
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href="http://192.168.0.1:8080"
             target="_blank">
             {'192.168.0.1:8080'}
@@ -228,21 +235,24 @@ describe('UnitDetails', function() {
     const wrapper = renderComponent();
     const publicAddresses = (
       <ul className="unit-details__action-list">
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="93.20.93.20:9000-10000/udp">
           <span>
             {'93.20.93.20:9000-10000/udp'}
           </span>
         </li>
         <li className="unit-details__action-list-item" key="93.20.93.20:443">
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href="https://93.20.93.20:443"
             target="_blank">
             {'93.20.93.20:443'}
           </a>
         </li>
         <li className="unit-details__action-list-item" key="93.20.93.20:8080">
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href="http://93.20.93.20:8080"
             target="_blank">
             {'93.20.93.20:8080'}
@@ -251,21 +261,24 @@ describe('UnitDetails', function() {
       </ul>);
     const ipAddresses = (
       <ul className="unit-details__action-list">
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="192.168.0.1:9000-10000/udp">
           <span>
             {'192.168.0.1:9000-10000/udp'}
           </span>
         </li>
         <li className="unit-details__action-list-item" key="192.168.0.1:443">
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href="https://192.168.0.1:443"
             target="_blank">
             {'192.168.0.1:443'}
           </a>
         </li>
         <li className="unit-details__action-list-item" key="192.168.0.1:8080">
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href="http://192.168.0.1:8080"
             target="_blank">
             {'192.168.0.1:8080'}
@@ -329,7 +342,8 @@ describe('UnitDetails', function() {
         </div>
         <div className="seven-col last-col no-margin-bottom">
           <ul className="unit-details__action-list">
-            <li className="unit-details__action-list-item"
+            <li
+              className="unit-details__action-list-item"
               key="SSH to unit">
               <Link
                 changeState={sinon.stub()}
@@ -351,7 +365,8 @@ describe('UnitDetails', function() {
     const wrapper = renderComponent({showSSHButtons: true});
     const expected = (
       <ul className="unit-details__action-list">
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="SSH to unit">
           <Link
             changeState={sinon.stub()}
@@ -362,7 +377,8 @@ describe('UnitDetails', function() {
             SSH to unit
           </Link>
         </li>
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="Tail logs">
           <Link
             changeState={sinon.stub()}
@@ -373,7 +389,8 @@ describe('UnitDetails', function() {
             Tail logs
           </Link>
         </li>
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key="Debug hooks">
           <Link
             changeState={sinon.stub()}

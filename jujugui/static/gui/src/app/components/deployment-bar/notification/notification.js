@@ -68,7 +68,8 @@ class DeploymentBarNotification extends React.Component {
       'deployment-bar__notification--visible': this.state.visible
     });
     return (
-      <div className={classes}
+      <div
+        className={classes}
         onClick={this._handleClick.bind(this)}>
         {description}
       </div>

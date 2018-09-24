@@ -19,13 +19,16 @@ describe('HeaderLogo', function() {
   it('renders', () => {
     const wrapper = renderComponent();
     const expected = (
-      <a href="/"
+      <a
+        href="/"
         onClick={wrapper.prop('onClick')}
         role="button"
         title="Home">
-        <SvgIcon className="svg-icon"
+        <SvgIcon
+          className="svg-icon"
           height="35"
-          name="juju-logo" width="90" />
+          name="juju-logo"
+          width="90" />
       </a>);
     assert.compareJSX(wrapper, expected);
   });

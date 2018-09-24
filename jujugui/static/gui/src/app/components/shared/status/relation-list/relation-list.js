@@ -22,11 +22,11 @@ class StatusRelationList extends React.Component {
       return (<span>{name}</span>);
     }
     return (
-      <a className="status-view__link"
+      <a
+        className="status-view__link"
         href={this.props.generateApplicationURL(name)}
         onClick={this.props.onApplicationClick.bind(this, name)}>
-        <img className="status-view__icon"
-          src={this.props.getIconPath(app)} />
+        <img className="status-view__icon" src={this.props.getIconPath(app)} />
         {name}
       </a>);
   }

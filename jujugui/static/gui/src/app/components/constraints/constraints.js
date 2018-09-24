@@ -93,7 +93,8 @@ class Constraints extends React.Component {
         <label className="constraints__label" htmlFor="cpu-constraint">
           CPU (GHZ)
         </label>
-        <input className="constraints__input"
+        <input
+          className="constraints__input"
           defaultValue={constraints['cpu-power']}
           disabled={disabled}
           id="cpu-constraint"
@@ -108,7 +109,8 @@ class Constraints extends React.Component {
         <label className="constraints__label" htmlFor="cores-constraint">
           Cores
         </label>
-        <input className="constraints__input"
+        <input
+          className="constraints__input"
           defaultValue={constraints['cpu-cores']}
           disabled={disabled}
           id="cores-constraint"
@@ -123,7 +125,8 @@ class Constraints extends React.Component {
         <label className="constraints__label" htmlFor="mem-constraint">
           Ram (MB)
         </label>
-        <input className="constraints__input"
+        <input
+          className="constraints__input"
           defaultValue={constraints.mem}
           disabled={disabled}
           id="mem-constraint"
@@ -138,7 +141,8 @@ class Constraints extends React.Component {
         <label className="constraints__label" htmlFor="disk-constraint">
           Disk (MB)
         </label>
-        <input className="constraints__input"
+        <input
+          className="constraints__input"
           defaultValue={constraints['root-disk']}
           disabled={disabled}
           id="disk-constraint"

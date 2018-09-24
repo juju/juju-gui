@@ -38,7 +38,8 @@ const AmbiguousRelationMenu = function(props) {
         {_generateRelations(props.endpoints)}
       </ul>
       <div className="cancel link" role="button" tabIndex="0">
-        <SvgIcon name="close_16"
+        <SvgIcon
+          name="close_16"
           size="16" />
       </div>
     </div>

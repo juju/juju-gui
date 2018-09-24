@@ -35,7 +35,8 @@ describe('DeploymentBarNotification', function() {
     };
     const wrapper = renderComponent({ change });
     const expected = (
-      <div className="deployment-bar__notification deployment-bar__notification--visible"
+      <div
+        className="deployment-bar__notification deployment-bar__notification--visible"
         onClick={wrapper.prop('onClick')}>
           Django added
       </div>);

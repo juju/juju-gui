@@ -63,7 +63,8 @@ describe('InspectorChangeVersion', function() {
       <div className="inspector-change-version">
         <div className="inspector-change-version__current">
           Current version:
-          <div className="inspector-change-version__current-version"
+          <div
+            className="inspector-change-version__current-version"
             onClick={
               wrapper.find('.inspector-change-version__current-version').prop('onClick')}
             role="button"

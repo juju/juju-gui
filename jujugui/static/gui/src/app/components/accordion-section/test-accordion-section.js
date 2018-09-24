@@ -21,7 +21,8 @@ describe('AccordionSection', () => {
     const wrapper = renderComponent();
     const expected = (
       <div className="accordion-section">
-        <div className="accordion-section__title"
+        <div
+          className="accordion-section__title"
           onClick={wrapper.find('.accordion-section__title').prop('onClick')}
           role="button">
           <span className="accordion-section__title-content">My title!</span>
@@ -30,7 +31,9 @@ describe('AccordionSection', () => {
             name="chevron_down_16"
             size="16" />
         </div>
-        <div className="accordion-section__content" ref="content"
+        <div
+          className="accordion-section__content"
+          ref="content"
           style={{maxHeight: 0}}><span>Hello</span></div>
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -44,7 +47,9 @@ describe('AccordionSection', () => {
     };
     instance._toggle();
     const expected = (
-      <div className="accordion-section__content" ref="content"
+      <div
+        className="accordion-section__content"
+        ref="content"
         style={{maxHeight: '100px'}}>
         <span>Hello</span>
       </div>);
@@ -54,7 +59,9 @@ describe('AccordionSection', () => {
   it('does not show chevron or content when there are no children', () => {
     const wrapper = renderComponent({ children: null });
     const expected = (
-      <div className="accordion-section__content" ref="content"
+      <div
+        className="accordion-section__content"
+        ref="content"
         style={{maxHeight: '100px'}}>
         {null}
       </div>);

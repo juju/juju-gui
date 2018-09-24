@@ -56,7 +56,8 @@ class ProfileExpandedContent extends React.Component {
         content = username;
       } else {
         content = (
-          <Link changeState={this.props.changeState}
+          <Link
+            changeState={this.props.changeState}
             clickState={{
               hash: null,
               profile: username
@@ -66,14 +67,16 @@ class ProfileExpandedContent extends React.Component {
           </Link>);
       }
       return (
-        <li className="profile-expanded-content__permission"
+        <li
+          className="profile-expanded-content__permission"
           key={username + i}>
           {content}
         </li>);
     });
     if (items.length === 0) {
       items = (
-        <li className="profile-expanded-content__permission"
+        <li
+          className="profile-expanded-content__permission"
           key="none">
           None
         </li>);
@@ -104,7 +107,8 @@ class ProfileExpandedContent extends React.Component {
         <div className="six-col last-col">
           {entity.bugUrl ? (
             <div>
-              <a href={entity.bugUrl}
+              <a
+                href={entity.bugUrl}
                 onClick={this._stopPropagation.bind(this)}
                 target="_blank">
                 Bugs
@@ -112,7 +116,8 @@ class ProfileExpandedContent extends React.Component {
             </div>) : null}
           {entity.homepage ? (
             <div>
-              <a href={entity.homepage}
+              <a
+                href={entity.homepage}
                 onClick={this._stopPropagation.bind(this)}
                 target="_blank">
                 Homepage

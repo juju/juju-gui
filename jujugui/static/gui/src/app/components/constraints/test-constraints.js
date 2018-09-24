@@ -66,7 +66,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="cpu-constraint">
               CPU (GHZ)
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cpu-constraint"
@@ -79,7 +80,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="cores-constraint">
               Cores
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cores-constraint"
@@ -92,7 +94,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="mem-constraint">
               Ram (MB)
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="mem-constraint"
@@ -105,7 +108,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="disk-constraint">
               Disk (MB)
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="disk-constraint"

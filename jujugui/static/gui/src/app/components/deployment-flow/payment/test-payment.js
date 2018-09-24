@@ -71,7 +71,8 @@ describe('DeploymentPayment', function() {
     const wrapper = renderComponent({ paymentUser: user });
     const expected = (
       <ul className="deployment-payment__methods twelve-col">
-        {[<li className="deployment-payment__method"
+        {[<li
+          className="deployment-payment__method"
           key="Company0">
           <PaymentMethodCard
             card={{name: 'Company'}} />

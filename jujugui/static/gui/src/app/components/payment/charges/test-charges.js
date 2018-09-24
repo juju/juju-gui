@@ -127,7 +127,8 @@ describe('PaymentCharges', function() {
                         Price
                       </div>
                     </li>
-                    <li className="user-profile__list-row twelve-col"
+                    <li
+                      className="user-profile__list-row twelve-col"
                       key="this is line 10">
                       <div className="three-col no-margin-bottom">
                         this is line 1

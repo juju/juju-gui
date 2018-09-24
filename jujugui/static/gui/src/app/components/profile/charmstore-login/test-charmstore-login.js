@@ -37,14 +37,16 @@ describe('ProfileCharmstoreLogin ', function() {
         </h2>
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
-          <span className="link"
+          <span
+            className="link"
             onClick={links.at(0).prop('onClick')}
             role="button"
             tabIndex="0">
             login
           </span>&nbsp;
           to the&nbsp;
-          <span className="link"
+          <span
+            className="link"
             onClick={links.at(1).prop('onClick')}
             role="button"
             tabIndex="0">

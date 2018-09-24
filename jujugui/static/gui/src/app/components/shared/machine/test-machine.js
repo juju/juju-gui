@@ -60,7 +60,8 @@ describe('Machine', () => {
       units
     });
     const expected = (
-      <div className="machine machine--machine"
+      <div
+        className="machine machine--machine"
         onClick={undefined}
         role="button"
         tabIndex="0">
@@ -85,7 +86,8 @@ describe('Machine', () => {
           </li>
         </ul>
         <ul className="machine__hardware">
-          <li className="machine__hardware-item"
+          <li
+            className="machine__hardware-item"
             key="diskfloppy0">
             <span className="machine__hardware-item-label">
               {'disk'}:
@@ -94,7 +96,8 @@ describe('Machine', () => {
               floppy
             </span>
           </li>
-          <li className="machine__hardware-item"
+          <li
+            className="machine__hardware-item"
             key="memorygoldfish-like1">
             <span className="machine__hardware-item-label">
               {'memory'}:

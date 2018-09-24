@@ -95,7 +95,8 @@ describe('MachineViewAddMachine', function() {
     const wrapper = renderComponent({ parentId: 'new0' });
     const expected = (
       <div className="add-machine">{[
-        <select className="add-machine__container"
+        <select
+          className="add-machine__container"
           defaultValue=""
           disabled={false}
           key="containers"

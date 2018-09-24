@@ -22,7 +22,8 @@ describe('InspectorRelateTo', function() {
     var expected = (
       <div className="inspector-relate-to">
         <ul className="inspector-view__list">
-          {[<li className="inspector-view__list-item"
+          {[<li
+            className="inspector-view__list-item"
             data-id="id"
             key="id0"
             onClick={wrapper.find('.inspector-view__list-item').prop('onClick')}

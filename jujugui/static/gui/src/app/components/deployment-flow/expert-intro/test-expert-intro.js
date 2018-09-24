@@ -45,7 +45,8 @@ describe('DeploymentExpertIntro', () => {
       <div className="deployment-expert-intro__not-found">
         This {'charm'} could not be found.
         Visit the&nbsp;
-        <span className="link"
+        <span
+          className="link"
           onClick={wrapper.find('.deployment-expert-intro__not-found .link').prop('onClick')}
           role="button"
           tabIndex="0">
@@ -81,7 +82,8 @@ describe('DeploymentExpertIntro', () => {
                 <ul>
                   <li>
                     Your&nbsp;
-                    <a href="https://jujucharms.com/docs/stable/credentials"
+                    <a
+                      href="https://jujucharms.com/docs/stable/credentials"
                       target="_blank">
                       cloud credentials
                     </a>.&nbsp;
@@ -109,7 +111,8 @@ describe('DeploymentExpertIntro', () => {
                   <div
                     className="deployment-expert-intro__description"
                     dangerouslySetInnerHTML={{_html: 'md'}} />
-                  <Link changeState={sinon.stub()}
+                  <Link
+                    changeState={sinon.stub()}
                     clickState={{ hash: 'support-level' }}
                     generatePath={sinon.stub()}>
                     View other support options

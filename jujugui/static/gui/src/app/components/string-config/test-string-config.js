@@ -38,7 +38,8 @@ describe('StringConfig', function() {
             ref="editableInput"
             setValue={wrapper.find('StringConfigInput').prop('setValue')} />
         </div>
-        <span className="string-config--description"
+        <span
+          className="string-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
         </span>
       </div>);
