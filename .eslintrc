@@ -30,6 +30,7 @@
     "no-undef": 2,
     "no-underscore-dangle": 0,
     "no-unused-vars": [2, { "args": "none" }],
+    "object-curly-spacing": 2,
     "quotes": [2, "single"],
     "react/jsx-curly-spacing": 2,
     "react/jsx-equals-spacing": 2,
