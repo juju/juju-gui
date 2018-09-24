@@ -51,14 +51,14 @@ describe('MachineViewHeader', function() {
   });
 
   it('can render in droppable mode', function() {
-    const wrapper = renderComponent({ canDrop: true });
+    const wrapper = renderComponent({canDrop: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__header--droppable'),
       true);
   });
 
   it('can render in drop mode', function() {
-    const wrapper = renderComponent({ isOver: true });
+    const wrapper = renderComponent({isOver: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__header--drop'),
       true);
@@ -66,7 +66,7 @@ describe('MachineViewHeader', function() {
 
   it('can render with a menu', function() {
     const menuItems = [];
-    const wrapper = renderComponent({ menuItems });
+    const wrapper = renderComponent({menuItems});
     const dropdown = wrapper.find('ButtonDropdown');
     assert.equal(dropdown.length, 1);
     assert.equal(dropdown.prop('listItems'), menuItems);
@@ -78,7 +78,7 @@ describe('MachineViewHeader', function() {
       disabled: false,
       toggleOn: true
     };
-    const wrapper = renderComponent({ toggle });
+    const wrapper = renderComponent({toggle});
     assert.equal(wrapper.find('Button').length, 1);
   });
 });

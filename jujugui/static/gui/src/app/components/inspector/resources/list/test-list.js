@@ -31,7 +31,7 @@ describe('InspectorResourcesList', function() {
       Path: 'file2',
       Revision: 2
     }];
-    const wrapper = renderComponent({ resources });
+    const wrapper = renderComponent({resources});
     const expected = (
       <div className="inspector-resources-list">
         <ul className="inspector-resources-list__list">

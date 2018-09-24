@@ -20,7 +20,7 @@ describe('EntityContentConfigOption', function() {
       type: 'string',
       default: 'abc123'
     };
-    const wrapper = renderComponent({ option });
+    const wrapper = renderComponent({option});
     const expected = (
       <div className="entity-content__config-option">
         <dt
@@ -50,7 +50,7 @@ describe('EntityContentConfigOption', function() {
       description: 'Required password',
       type: 'string'
     };
-    const wrapper = renderComponent({ option });
+    const wrapper = renderComponent({option});
     assert.equal(wrapper.find('.entity-content__config-default').length, 0);
   });
 });

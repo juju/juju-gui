@@ -165,7 +165,7 @@ class InspectorChangeVersion extends React.Component {
       );
     }
     let components = [];
-    const { versions } = this.state;
+    const {versions} = this.state;
     if (!versions || versions.length === 1) {
       components = (
         <li className="inspector-change-version__none">

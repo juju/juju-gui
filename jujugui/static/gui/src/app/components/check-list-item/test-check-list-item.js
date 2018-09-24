@@ -89,7 +89,7 @@ describe('CheckListItem', () => {
 
   it('calls the supplied whenChanged if supplied', () => {
     const whenChanged = sinon.stub();
-    const wrapper = renderComponent({ whenChanged });
+    const wrapper = renderComponent({whenChanged});
     wrapper.find('input').simulate('change', {
       currentTarget: {
         checked: true
@@ -101,18 +101,18 @@ describe('CheckListItem', () => {
 
   it('does not bubble the click event when clicking a checkbox', () => {
     const action = sinon.stub();
-    const wrapper = renderComponent({ action });
-    wrapper.find('input').simulate('click', { stopPropagation: sinon.stub() });
+    const wrapper = renderComponent({action});
+    wrapper.find('input').simulate('click', {stopPropagation: sinon.stub()});
     assert.equal(action.callCount, 0);
   });
 
   it('can have a disabled checkbox', () => {
-    const wrapper = renderComponent({ disabled: true });
+    const wrapper = renderComponent({disabled: true});
     assert.equal(wrapper.find('input').prop('disabled'), true);
   });
 
   it('can toggle the checkbox from the hit area', () => {
-    const wrapper = renderComponent({ action: sinon.stub() });
+    const wrapper = renderComponent({action: sinon.stub()});
     assert.equal(wrapper.find('input').prop('checked'), false);
     wrapper.find('.check-list-item__hit-area').simulate('click',
       {stopPropagation: sinon.stub()});

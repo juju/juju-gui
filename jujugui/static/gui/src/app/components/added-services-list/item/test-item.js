@@ -90,7 +90,7 @@ describe('AddedServicesListItem', function() {
         get: function() {
           return false;
         }};
-      const wrapper = renderComponent({ service });
+      const wrapper = renderComponent({service});
       const expected = (
         <span className="inspector-view__status-block">
           {statusIcon(status)}
@@ -112,7 +112,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     const expected = (
       <span className="inspector-view__status-block">
         {undefined}
@@ -133,7 +133,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     assert.equal(wrapper.find('.inspector-view__status--error').length, 1);
   });
 
@@ -150,7 +150,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     assert.equal(wrapper.find('.inspector-view__status--pending').length, 1);
   });
 

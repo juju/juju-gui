@@ -18,8 +18,8 @@ describe('ModalSortcuts', function() {
   beforeEach(function() {
     ModalShortcuts.__Rewire__('hotkeys', {
       keyBindings: {
-        test: { label: 'test', help: 'a test item' },
-        test2: { label: 'test2', help: 'a second test item' }
+        test: {label: 'test', help: 'a test item'},
+        test2: {label: 'test2', help: 'a second test item'}
       }
     });
   });

@@ -3,7 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-const { urls } = require('jaaslib');
+const {urls} = require('jaaslib');
 
 const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');

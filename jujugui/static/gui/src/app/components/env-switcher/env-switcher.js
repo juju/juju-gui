@@ -79,7 +79,7 @@ class EnvSwitcher extends React.Component {
   _toggleEnvList(e) {
     e.preventDefault();
     this.updateEnvList();
-    this.setState({ showEnvList: !this.state.showEnvList });
+    this.setState({showEnvList: !this.state.showEnvList});
   }
 
   /**

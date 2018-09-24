@@ -49,7 +49,7 @@ describe('InspectorChangeVersionItem', function() {
   });
 
   it('can show a downgrade label', function() {
-    const wrapper = renderComponent({ downgrade: true });
+    const wrapper = renderComponent({downgrade: true});
     assert.equal(wrapper.find('Button').children().text(), 'Downgrade');
   });
 

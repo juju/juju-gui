@@ -36,7 +36,7 @@ describe('EnvList', function() {
         lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       }
     ];
-    const wrapper = renderComponent({ envs: models });
+    const wrapper = renderComponent({envs: models});
 
     const expected = (
       <ul
@@ -114,7 +114,7 @@ describe('EnvList', function() {
         owner: 'dalek@external'
       }
     ];
-    const wrapper = renderComponent({ envs: models });
+    const wrapper = renderComponent({envs: models});
     const expected = (
       <ul
         aria-expanded="true"
@@ -215,7 +215,7 @@ describe('EnvList', function() {
         lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       }
     ];
-    const wrapper = renderComponent({ envs: models });
+    const wrapper = renderComponent({envs: models});
     const expected = (
       <ul
         aria-expanded="true"
@@ -278,7 +278,7 @@ describe('EnvList', function() {
     getAttribute.withArgs('data-id').returns('abc123');
     getAttribute.withArgs('data-name').returns('the name');
     getAttribute.withArgs('data-owner').returns('who@external');
-    const wrapper = renderComponent({ envs: models, handleModelClick });
+    const wrapper = renderComponent({envs: models, handleModelClick});
     wrapper.find('.env-list__environment').simulate('click', {
       currentTarget: {
         getAttribute: getAttribute
@@ -290,14 +290,14 @@ describe('EnvList', function() {
   it('new model call is made when clicking on the createm model button', function() {
     const handleModelClick = sinon.stub();
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
-    const wrapper = renderComponent({ envs: models, handleModelClick });
+    const wrapper = renderComponent({envs: models, handleModelClick});
     wrapper.find('CreateModelButton').props().action();
     assert.equal(handleModelClick.callCount, 1);
   });
 
   it('new model is not made when user has incorrect permissions', () => {
     const acl = {canAddModels: sinon.stub().returns(false)};
-    const wrapper = renderComponent({ acl: acl });
+    const wrapper = renderComponent({acl: acl});
     assert.strictEqual(wrapper.find('CreateModelButton').prop('disabled'), true);
   });
 });

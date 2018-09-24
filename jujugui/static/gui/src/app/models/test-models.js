@@ -617,32 +617,32 @@ describe('test_model.js', function() {
         var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
             service = new models.Service({id: 'mysql', exposed: false}),
             rel0 = new models.Relation(
-              { id: 'relation-0',
+              {id: 'relation-0',
                 endpoints:
                  [['mediawiki', {name: 'cache', role: 'source'}],
                    ['squid', {name: 'cache', role: 'front'}]],
-                'interface': 'cache' }),
+                'interface': 'cache'}),
             rel1 = new models.Relation(
-              { id: 'relation-1',
+              {id: 'relation-1',
                 endpoints: [['wordpress', {
                   role: 'peer', name: 'loadbalancer'}]],
-                'interface': 'reversenginx' }),
+                'interface': 'reversenginx'}),
             rel2 = new models.Relation(
-              { id: 'relation-2',
+              {id: 'relation-2',
                 endpoints: [['mysql', {name: 'db', role: 'db'}],
                   ['mediawiki', {name: 'storage', role: 'app'}]],
                 'interface': 'db'}),
             rel3 = new models.Relation(
-              { id: 'relation-3',
+              {id: 'relation-3',
                 endpoints:
                  [['mysql', {role: 'peer', name: 'loadbalancer'}]],
-                'interface': 'mysql-loadbalancer' }),
+                'interface': 'mysql-loadbalancer'}),
             rel4 = new models.Relation(
-              { id: 'relation-4',
+              {id: 'relation-4',
                 endpoints:
                  [['something', {name: 'foo', role: 'bar'}],
                    ['mysql', {name: 'la', role: 'lee'}]],
-                'interface': 'thing' });
+                'interface': 'thing'});
         db.relations.add([rel0, rel1, rel2, rel3, rel4]);
         db.relations.get_relations_for_service(service).map(
           function(r) { return r.get('id'); })

@@ -61,7 +61,7 @@ describe('ExpertContactCard', function() {
   });
 
   it('can render without a matching expert', () => {
-    const wrapper = renderComponent({ expert: 'spinach' });
+    const wrapper = renderComponent({expert: 'spinach'});
     assert.strictEqual(wrapper.html(), null);
   });
 
@@ -114,7 +114,7 @@ describe('ExpertContactCard', function() {
 
   it('can send analytics when the contact button is clicked', () => {
     const sendAnalytics = sinon.stub();
-    const wrapper = renderComponent({ sendAnalytics });
+    const wrapper = renderComponent({sendAnalytics});
     wrapper.find('Button').props().action();
     assert.equal(sendAnalytics.callCount, 1);
   });

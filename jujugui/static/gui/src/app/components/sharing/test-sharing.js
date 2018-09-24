@@ -81,7 +81,7 @@ describe('Sharing', () => {
   });
 
   it('can render with a spinner', () => {
-    const wrapper = renderComponent({ getModelUserInfo: sinon.stub() });
+    const wrapper = renderComponent({getModelUserInfo: sinon.stub()});
     assert.equal(wrapper.find('Spinner').length, 1);
   });
 
@@ -160,7 +160,7 @@ describe('Sharing', () => {
   });
 
   it('can render the invitation form', () => {
-    const wrapper = renderComponent({ canShareModel: true });
+    const wrapper = renderComponent({canShareModel: true});
     const expectedOptions = [{
       label: 'Read',
       value: 'read'
@@ -255,7 +255,7 @@ describe('Sharing', () => {
   });
 
   it('handles revoke/grant errors', () => {
-    const wrapper = renderComponent({ canShareModel: true });
+    const wrapper = renderComponent({canShareModel: true});
     const instance = wrapper.instance();
     instance._modifyModelAccessCallback('boom');
     wrapper.update();
@@ -268,16 +268,16 @@ describe('Sharing', () => {
   describe('add button states', () => {
 
     it('shows a disabled button with "add" text by default', () => {
-      const wrapper = renderComponent({ canShareModel: true });
+      const wrapper = renderComponent({canShareModel: true});
       const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.children().text(), 'Add');
       assert.equal(button.prop('disabled'), true);
     });
 
     it('shows an active button with "add" text when enabled', () => {
-      const wrapper = renderComponent({ canShareModel: true });
+      const wrapper = renderComponent({canShareModel: true});
       const instance = wrapper.instance();
-      instance.setState({ canAdd: true });
+      instance.setState({canAdd: true});
       wrapper.update();
       const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.children().text(), 'Add');
@@ -285,9 +285,9 @@ describe('Sharing', () => {
     });
 
     it('shows a disabled button with "add" text when sending', () => {
-      const wrapper = renderComponent({ canShareModel: true });
+      const wrapper = renderComponent({canShareModel: true});
       const instance = wrapper.instance();
-      instance.setState({ sending: true });
+      instance.setState({sending: true});
       wrapper.update();
       const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.children().text(), 'Add');
@@ -295,9 +295,9 @@ describe('Sharing', () => {
     });
 
     it('shows a disabled button with tick icon when sent', () => {
-      const wrapper = renderComponent({ canShareModel: true });
+      const wrapper = renderComponent({canShareModel: true});
       const instance = wrapper.instance();
-      instance.setState({ sent: true });
+      instance.setState({sent: true});
       wrapper.update();
       const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.find('SvgIcon').length, 1);

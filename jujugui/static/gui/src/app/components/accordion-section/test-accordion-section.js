@@ -57,7 +57,7 @@ describe('AccordionSection', () => {
   });
 
   it('does not show chevron or content when there are no children', () => {
-    const wrapper = renderComponent({ children: null });
+    const wrapper = renderComponent({children: null});
     const expected = (
       <div
         className="accordion-section__content"

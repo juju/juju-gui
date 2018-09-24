@@ -20,7 +20,7 @@ describe('EntityContentReadme', function() {
         getFile={options.getFile || sinon.stub()}
         hash={options.hash}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()} />,
-      { disableLifecycleMethods: true });
+      {disableLifecycleMethods: true});
     const instance = wrapper.instance();
     // Stub the method for getting the container node so that the component
     // works in the shallow renderer.

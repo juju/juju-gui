@@ -60,7 +60,7 @@ class DeploymentPlanTable extends React.Component {
     }
     const newPlans = this.state.plans;
     newPlans[charmId] = (plans || [])[0];
-    this.setState({ plans: newPlans });
+    this.setState({plans: newPlans});
   }
 
   /**

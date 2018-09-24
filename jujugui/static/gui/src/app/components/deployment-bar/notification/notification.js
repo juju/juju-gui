@@ -19,7 +19,7 @@ class DeploymentBarNotification extends React.Component {
     @method _hideNotification
   */
   _hideNotification() {
-    this.setState({ visible: false });
+    this.setState({visible: false});
   }
 
   componentDidMount() {
@@ -42,7 +42,7 @@ class DeploymentBarNotification extends React.Component {
       var oldId = prevProps && prevProps.change ? prevProps.change.id : null;
       // Only show the notification if we've received a new id.
       if (newId !== oldId) {
-        this.setState({ visible: true });
+        this.setState({visible: true});
         this.timeout = window.setTimeout(
           this._hideNotification.bind(this), 4000);
       }

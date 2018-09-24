@@ -27,7 +27,7 @@ describe('InspectorPlan', () => {
       price: 'price/goes/here',
       url: 'canonical-landscape/24-7'
     };
-    const wrapper = renderComponent({ currentPlan });
+    const wrapper = renderComponent({currentPlan});
     var expected = (
       <div className="inspector-plan">
         <div className="inspector-plan__details">

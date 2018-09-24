@@ -193,7 +193,7 @@ describe('PaymentCharges', function() {
   it('can handle errors when getting the charges', function() {
     const addNotification = sinon.stub();
     payment.getCharges = sinon.stub().callsArgWith(1, 'Uh oh!', null);
-    renderComponent({ addNotification });
+    renderComponent({addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not load the list of charges',

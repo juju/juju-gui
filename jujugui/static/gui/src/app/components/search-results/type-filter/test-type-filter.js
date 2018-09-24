@@ -49,14 +49,14 @@ describe('SearchResultsTypeFilter', function() {
   });
 
   it('can show a filter as active', function() {
-    const wrapper = renderComponent({ currentType: 'bundle' });
+    const wrapper = renderComponent({currentType: 'bundle'});
     assert.equal(
       wrapper.find('li').at(2).prop('className').includes('selected'), true);
   });
 
   it('can change the state when a filter is clicked', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('li').at(1).simulate('click');
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

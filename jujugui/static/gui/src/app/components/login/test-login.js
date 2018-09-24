@@ -21,7 +21,7 @@ describe('LoginComponent', function() {
         gisf={options.gisf === undefined ? false : options.gisf}
         loginToAPIs={options.loginToAPIs || sinon.stub()}
         loginToController={options.loginToController || sinon.stub()} />,
-      { disableLifecycleMethods: true }
+      {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
     instance.refs = {
@@ -112,21 +112,21 @@ describe('LoginComponent', function() {
   });
 
   it('renders but is hidden in gisf', function() {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     assert.equal(wrapper.prop('className').includes('hidden'), true);
   });
 
   it('can display a login error message', function() {
-    const wrapper = renderComponent({ errorMessage: 'bad wolf' });
+    const wrapper = renderComponent({errorMessage: 'bad wolf'});
     assert.equal(wrapper.find('.login__failure-message').text(), 'bad wolf');
   });
 
   it('calls to log the user in on submit', function() {
     var loginToAPIs = sinon.stub();
-    const wrapper = renderComponent({ loginToAPIs });
+    const wrapper = renderComponent({loginToAPIs});
     const instance = wrapper.instance();
-    instance.refs.username = { value: 'foo' };
-    instance.refs.password = { value: 'bar' };
+    instance.refs.username = {value: 'foo'};
+    instance.refs.password = {value: 'bar'};
     wrapper.find('form').simulate('submit');
     assert.equal(loginToAPIs.callCount, 1, 'loginToAPIs never called');
     assert.deepEqual(loginToAPIs.args[0], [{

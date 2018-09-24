@@ -22,7 +22,7 @@ describe('OverviewAction', function() {
 
   it('calls the callable provided when clicked', function() {
     const action = sinon.stub();
-    const wrapper = renderComponent({ action });
+    const wrapper = renderComponent({action});
     wrapper.simulate('click');
     assert.equal(action.callCount, 1);
   });
@@ -33,7 +33,7 @@ describe('OverviewAction', function() {
   });
 
   it('sets the provided icon', function() {
-    const wrapper = renderComponent({ icon: 'action-icon' });
+    const wrapper = renderComponent({icon: 'action-icon'});
     const expected = (
       <span className="overview-action__icon">
         <SvgIcon
@@ -80,7 +80,7 @@ describe('OverviewAction', function() {
   });
 
   it('sets the value', function() {
-    const wrapper = renderComponent({ value: '5' });
+    const wrapper = renderComponent({value: '5'});
     assert.equal(wrapper.find('.overview-action__value').text(), '5');
   });
 

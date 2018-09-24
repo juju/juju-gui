@@ -8,7 +8,7 @@ const React = require('react');
 const HashLink = require('../../../hash-link/hash-link');
 
 const EntityContentDescription = props => {
-  const { description } = props;
+  const {description} = props;
   if (!description) {
     return false;
   }

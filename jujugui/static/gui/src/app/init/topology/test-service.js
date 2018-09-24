@@ -42,7 +42,7 @@ describe('service module annotations', function() {
     viewContainer = utils.makeContainer(this);
     db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     called = false;
-    location = { 'gui-x': 0, 'gui-y': 0};
+    location = {'gui-x': 0, 'gui-y': 0};
     const env = {
       update_annotations: function(name, type, data) {
         called = true;
@@ -71,7 +71,7 @@ describe('service module annotations', function() {
   it('should set location annotations on service block drag end',
     function() {
       const d =
-           { id: 'wordpress',
+           {id: 'wordpress',
              inDrag: serviceModule.DRAG_ACTIVE,
              x: 100.1,
              y: 200.2};
@@ -84,7 +84,7 @@ describe('service module annotations', function() {
   it('should not set annotations on drag end if building a relation',
     function() {
       const d =
-           { id: 'wordpress',
+           {id: 'wordpress',
              x: 100.1,
              y: 200.2};
       const topo = serviceModule.topo;
@@ -131,7 +131,7 @@ describe('service updates', function() {
     viewContainer = utils.makeContainer(this);
     db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
     view = new EnvironmentView(
-      { container: viewContainer,
+      {container: viewContainer,
         db: db,
         env: {
           update_annotations: function() {}
@@ -427,7 +427,7 @@ describe('service module events', function() {
   });
 
   it('should deploy a bundle on file drop events', function(done) {
-    const file = { name: '', type: '' };
+    const file = {name: '', type: ''};
     const fakeEventObject = {
       dataTransfer: {
         // All we need to fake things out is to have a file.
@@ -508,10 +508,10 @@ describe('service module events', function() {
   });
 
   it('_extractCharmMetadata: calls ziputils.getEntries()', function() {
-    const fileObj = { file: '' },
-        topoObj = { topo: '' },
-        envObj = { env: '' },
-        dbObj = { db: '' };
+    const fileObj = {file: ''},
+        topoObj = {topo: ''},
+        envObj = {env: ''},
+        dbObj = {db: ''};
     const findCharmEntries = sinon.stub(
       serviceModule, '_findCharmEntries');
     cleanups.push(findCharmEntries.restore);
@@ -544,9 +544,9 @@ describe('service module events', function() {
     let dbObj, envObj, fileObj, topoObj, notificationParams;
 
     beforeEach(function() {
-      fileObj = { name: 'foo' };
-      topoObj = { topo: '' };
-      envObj = { env: '' };
+      fileObj = {name: 'foo'};
+      topoObj = {topo: ''};
+      envObj = {env: ''};
       dbObj = {
         notifications: {
           add: function(info) {
@@ -557,7 +557,7 @@ describe('service module events', function() {
     });
 
     it('finds the files in the zip', function() {
-      const entries = { metadata: 'foo' };
+      const entries = {metadata: 'foo'};
       findCharmEntries.returns(entries);
       const readEntries = sinon.stub(
         serviceModule, '_readCharmEntries');
@@ -577,7 +577,7 @@ describe('service module events', function() {
     });
 
     it('shows an error notification if there is no metadata.yaml', function() {
-      const entries = { foo: 'bar' };
+      const entries = {foo: 'bar'};
       findCharmEntries.returns(entries);
       const readEntries = sinon.stub(
         serviceModule, '_readCharmEntries');
@@ -601,10 +601,10 @@ describe('service module events', function() {
   });
 
   it('_readCharmEntries: calls ziputils.readCharmEntries', function() {
-    const fileObj = { file: '' },
-        topoObj = { topo: '' },
-        envObj = { env: '' },
-        dbObj = { db: '' };
+    const fileObj = {file: ''},
+        topoObj = {topo: ''},
+        envObj = {env: ''},
+        dbObj = {db: ''};
     const existingServices = sinon.stub(
       serviceModule, '_checkForExistingServices');
     cleanups.push(existingServices);
@@ -640,12 +640,12 @@ describe('service module events', function() {
 
     beforeEach(function() {
       cleanups = [];
-      fileObj = { name: 'foo' };
+      fileObj = {name: 'foo'};
       topochangeState = sinon.stub();
       topoObj = {};
       view.topo.state.changeState = topochangeState;
-      envObj = { env: 'foo' };
-      contentsObj = { metadata: 'foo' };
+      envObj = {env: 'foo'};
+      contentsObj = {metadata: 'foo'};
     });
 
     afterEach(() => {
@@ -668,7 +668,7 @@ describe('service module events', function() {
       setup(this);
 
       getServicesStub = sinon.stub().returns(['service']);
-      dbObj = { services: { getServicesFromCharmName: getServicesStub }};
+      dbObj = {services: {getServicesFromCharmName: getServicesStub}};
 
       serviceModule._checkForExistingServices(
         fileObj, topoObj, envObj, dbObj, contentsObj);
@@ -681,7 +681,7 @@ describe('service module events', function() {
       setup(this);
 
       getServicesStub = sinon.stub().returns(['service']);
-      dbObj = { services: { getServicesFromCharmName: getServicesStub }};
+      dbObj = {services: {getServicesFromCharmName: getServicesStub}};
 
       serviceModule._checkForExistingServices(
         fileObj, topoObj, envObj, dbObj, contentsObj);
@@ -701,7 +701,7 @@ describe('service module events', function() {
         }
       }
     };
-    const fileObj = { name: 'foo' };
+    const fileObj = {name: 'foo'};
     const fadeHelpIndicator = sinon.stub();
     const topo = {
       environmentView: {
@@ -720,10 +720,10 @@ describe('service module events', function() {
   });
 
   it('_showUpgradeOrNewInspector: shows the inspector', function() {
-    const dbObj = { db: 'db' };
-    const fileObj = { name: 'foo' };
-    const envObj = { env: 'env' };
-    const services = [{ getAttrs: function() {} }];
+    const dbObj = {db: 'db'};
+    const fileObj = {name: 'foo'};
+    const envObj = {env: 'env'};
+    const services = [{getAttrs: function() {}}];
     const changeState = serviceModule.topo.state.changeState;
 
     serviceModule._showUpgradeOrNewInspector(services, fileObj, envObj, dbObj);
@@ -739,9 +739,9 @@ describe('service module events', function() {
   });
 
   it('_deployLocalCharm: calls to show the inspector', function() {
-    const dbObj = { db: 'db' };
-    const fileObj = { name: 'foo' };
-    const envObj = { env: 'env' };
+    const dbObj = {db: 'db'};
+    const fileObj = {name: 'foo'};
+    const envObj = {env: 'env'};
     const changeState = serviceModule.topo.state.changeState;
 
     serviceModule._deployLocalCharm(fileObj, envObj, dbObj);
@@ -959,22 +959,22 @@ describe('updateElementVisibility', function() {
     serviceModule.topo.db.services = serviceList;
     serviceModule.updateElementVisibility();
     assert.equal(fade.callCount, 1);
-    assert.deepEqual(fade.lastCall.args[0], { serviceNames: ['foo1'] });
+    assert.deepEqual(fade.lastCall.args[0], {serviceNames: ['foo1']});
     assert.equal(hide.callCount, 1);
-    assert.deepEqual(hide.lastCall.args[0], { serviceNames: ['foo2'] });
+    assert.deepEqual(hide.lastCall.args[0], {serviceNames: ['foo2']});
     assert.equal(show.callCount, 3);
     assert.deepEqual(show.args, [
-      [{ serviceNames: ['foo1'] }],
-      [{ serviceNames: ['foo3'] }],
-      [{ serviceNames: ['foo4'] }]
+      [{serviceNames: ['foo1']}],
+      [{serviceNames: ['foo3']}],
+      [{serviceNames: ['foo4']}]
     ]);
     assert.equal(highlight.callCount, 1);
-    assert.deepEqual(highlight.lastCall.args[0], { serviceName: ['foo3'] });
+    assert.deepEqual(highlight.lastCall.args[0], {serviceName: ['foo3']});
     assert.equal(unhighlight.callCount, 3);
     assert.deepEqual(unhighlight.args, [
-      [{ serviceName: ['foo1'] }],
-      [{ serviceName: ['foo2'] }],
-      [{ serviceName: ['foo4'] }]
+      [{serviceName: ['foo1']}],
+      [{serviceName: ['foo2']}],
+      [{serviceName: ['foo4']}]
     ]);
   });
 });

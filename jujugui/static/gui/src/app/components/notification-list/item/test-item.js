@@ -64,7 +64,7 @@ describe('NotificationListItem', function() {
 
   it('calls the remove notification prop after the timeout', () => {
     const removeNotification = sinon.stub();
-    const wrapper = renderComponent({ removeNotification });
+    const wrapper = renderComponent({removeNotification});
     wrapper.find('.notification-list-item__hide').simulate('click');
     assert.equal(removeNotification.callCount, 0);
     clock.tick(1000);

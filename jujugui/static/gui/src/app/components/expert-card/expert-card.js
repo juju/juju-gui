@@ -8,7 +8,7 @@ const ExpertBlock = require('../expert-block/expert-block');
 
 class ExpertCard extends React.Component {
   render() {
-    const { expert } = this.props;
+    const {expert} = this.props;
     const logo = `${this.props.staticURL}/static/gui/build/app/assets/images/` +
       `non-sprites/experts/${expert.logo}`;
     return (

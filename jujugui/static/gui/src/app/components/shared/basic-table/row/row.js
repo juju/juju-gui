@@ -76,7 +76,7 @@ class BasicTableRow extends React.Component {
     @returns {Object} The anchor element or null.
   */
   _generateCell(column, index) {
-    const { isHeader } = this.props;
+    const {isHeader} = this.props;
     const conditionalClasses = isHeader ? this.props.headerColumnClasses :
       this.props.rowColumnClasses;
     const classes = (column.classes || []).concat(conditionalClasses);
@@ -112,7 +112,7 @@ class BasicTableRow extends React.Component {
   }
 
   render() {
-    const { expandedContent, isHeader } = this.props;
+    const {expandedContent, isHeader} = this.props;
     const classes = classNames(
       'twelve-col',
       this.props.classes,

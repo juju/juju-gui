@@ -26,7 +26,7 @@ describe('InspectorRelationDetails', function() {
       interface: 'postgresql',
       scope: 'global'
     };
-    const wrapper = renderComponent({ relation });
+    const wrapper = renderComponent({relation});
     var expected = (<div className='inspector-relation-details__properties'>
       <p className='inspector-relation-details__property'>
         Interface: {relation.interface}

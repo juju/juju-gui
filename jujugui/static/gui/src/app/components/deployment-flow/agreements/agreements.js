@@ -22,7 +22,7 @@ class DeploymentAgreements extends React.Component {
    Toggle the terms state.
   */
   _toggleTerms() {
-    this.setState({ showTerms: !this.state.showTerms });
+    this.setState({showTerms: !this.state.showTerms});
   }
 
   /**

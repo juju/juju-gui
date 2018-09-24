@@ -36,7 +36,7 @@ describe('DeploymentBar', function() {
 
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
-    const wrapper = renderComponent({ currentChangeSet });
+    const wrapper = renderComponent({currentChangeSet});
     var expected = (
       <div className="deployment-bar">
         <DeploymentBarNotification
@@ -200,7 +200,7 @@ describe('DeploymentBar', function() {
     });
     wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {gui: { deploy: ''}});
+    assert.deepEqual(changeState.args[0][0], {gui: {deploy: ''}});
     assert.equal(sendAnalytics.callCount, 1);
     assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
     assert.equal(sendAnalytics.args[0][1], 'Button click');

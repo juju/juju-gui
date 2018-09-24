@@ -16,7 +16,7 @@ class AddedServicesListItem extends React.Component {
   */
   _getPriorityUnits(units) {
     var unitStatuses = initUtils.getUnitStatusCounts(units);
-    var top = { priority: 99, key: '', size: 0 };
+    var top = {priority: 99, key: '', size: 0};
     var status;
     for (var key in unitStatuses) {
       status = unitStatuses[key];

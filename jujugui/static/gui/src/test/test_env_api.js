@@ -43,7 +43,7 @@ const utils = require('../app/init/testing-utils');
       // hand-crafted bundles.
       var endpointA = [
         'foo',
-        { name: 'bar' }
+        {name: 'bar'}
       ];
       var endpointB = [
         'bar',
@@ -701,7 +701,7 @@ const utils = require('../app/init/testing-utils');
       it('responds with only the server data if no error', function() {
         const callback = sinon.stub();
         env.redirectInfo(callback);
-        conn.msg({ 'request-id': 1, response: { servers: 'servers' }});
+        conn.msg({'request-id': 1, response: {servers: 'servers'}});
         assert.equal(callback.callCount, 1);
         assert.deepEqual(callback.args[0], [null, 'servers']);
       });
@@ -709,7 +709,7 @@ const utils = require('../app/init/testing-utils');
       it('responds with the error if error', function() {
         const callback = sinon.stub();
         env.redirectInfo(callback);
-        conn.msg({ 'request-id': 1, response: { error: 'error' }});
+        conn.msg({'request-id': 1, response: {error: 'error'}});
         assert.equal(callback.callCount, 1);
         assert.deepEqual(callback.args[0][0], 'error');
       });
@@ -1093,7 +1093,7 @@ const utils = require('../app/init/testing-utils');
       });
 
       it('uses the correct endpoint when served from juju', function() {
-        window.juju_config = { staticURL: '/static-url'};
+        window.juju_config = {staticURL: '/static-url'};
         env.userIsAuthenticated = true;
         var mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
@@ -2014,7 +2014,7 @@ const utils = require('../app/init/testing-utils');
         {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
         {jobs: [machineJobs.HOST_UNITS], 'container-type': 'kvm'},
         {jobs: [machineJobs.HOST_UNITS],
-          'container-type': 'lxc', 'parent-id': '1' }
+          'container-type': 'lxc', 'parent-id': '1'}
       ];
       var expectedMsg = {
         'request-id': 1,

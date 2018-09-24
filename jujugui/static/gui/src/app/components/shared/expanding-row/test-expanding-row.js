@@ -20,11 +20,11 @@ describe('ExpandingRow', () => {
         <span>closed</span>
         <span>open</span>
       </ExpandingRow>,
-      { disableLifecycleMethods: true }
+      {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
     // Mock the ref. The MutationObserver needs a real DOM node.
-    instance.refs = { inner: document.createElement('div') };
+    instance.refs = {inner: document.createElement('div')};
     instance.componentDidMount();
     wrapper.update();
     return wrapper;
@@ -122,8 +122,8 @@ describe('ExpandingRow', () => {
   });
 
   it('can pass through styles', () => {
-    const style = { zIndex: 5 };
-    const wrapper = renderComponent({ style });
+    const style = {zIndex: 5};
+    const wrapper = renderComponent({style});
     assert.deepEqual(wrapper.prop('style'), style);
   });
 });

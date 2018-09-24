@@ -37,7 +37,7 @@ class ScaleService extends React.Component {
   */
   _toggleConstraints(e) {
     var id = e.currentTarget.id;
-    this.setState({ constraintsVisibility: id === 'auto-place-units'});
+    this.setState({constraintsVisibility: id === 'auto-place-units'});
   }
 
   /**

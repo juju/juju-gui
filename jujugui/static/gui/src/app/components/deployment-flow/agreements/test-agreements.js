@@ -20,7 +20,7 @@ describe('DeploymentAgreements', function() {
   );
 
   beforeEach(() => {
-    acl = { isReadOnly: sinon.stub().returns(false) };
+    acl = {isReadOnly: sinon.stub().returns(false)};
     terms = [];
   });
 
@@ -44,7 +44,7 @@ describe('DeploymentAgreements', function() {
   });
 
   it('can display as disabled', function() {
-    const wrapper = renderComponent({ disabled: true });
+    const wrapper = renderComponent({disabled: true});
     assert.strictEqual(wrapper.find('input').prop('disabled'), true);
   });
 
@@ -56,7 +56,7 @@ describe('DeploymentAgreements', function() {
 
   it('can show the terms link', function() {
     terms = [{}, {}];
-    const wrapper = renderComponent({ showTerms: true });
+    const wrapper = renderComponent({showTerms: true});
     const expected = (
       <Button
         action={wrapper.find('Button').prop('action')}
@@ -68,7 +68,7 @@ describe('DeploymentAgreements', function() {
 
   it('can show the terms popup', function() {
     terms = [{}, {}];
-    const wrapper = renderComponent({ showTerms: true });
+    const wrapper = renderComponent({showTerms: true});
     wrapper.find('Button').props().action();
     wrapper.update();
     assert.equal(wrapper.find('TermsPopup').length, 1);

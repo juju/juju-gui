@@ -29,7 +29,7 @@ describe('AddedServicesList', () => {
   it('generates a list of added services list items', () => {
     const allServices = [{get: () => 1}, {get: () => 2}, {get: () => 3}];
     const services = {each: cb => allServices.forEach(cb)};
-    const component = renderComponent({ services });
+    const component = renderComponent({services});
     expect(component).toMatchSnapshot();
   });
 
@@ -43,7 +43,7 @@ describe('AddedServicesList', () => {
       }
     }}, {get: () => 3}];
     const services = {each: cb => allServices.forEach(cb)};
-    const component = renderComponent({ services });
+    const component = renderComponent({services});
     expect(component).toMatchSnapshot();
   });
 });

@@ -37,7 +37,7 @@ describe('DateDisplay', () => {
   });
 
   it('can display a date in the correct format', () => {
-    const wrapper = renderComponent({ date: relative });
+    const wrapper = renderComponent({date: relative});
     const expected = (
       <time
         dateTime="19/01/2020"
@@ -48,7 +48,7 @@ describe('DateDisplay', () => {
   });
 
   it('can parse a date from a string', () => {
-    const wrapper = renderComponent({ date: 'Mon, 19 Jan 2020 21:07:24 GMT' });
+    const wrapper = renderComponent({date: 'Mon, 19 Jan 2020 21:07:24 GMT'});
     const expected = (
       <time
         dateTime="19/01/2020"

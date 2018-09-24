@@ -96,7 +96,7 @@ describe('ModelActions', function() {
   });
 
   it('can render the terminalAction', () => {
-    const wrapper = renderComponent({ displayTerminalButton: true });
+    const wrapper = renderComponent({displayTerminalButton: true});
     var expected = (
       <span
         className="model-actions__shell model-actions__button"
@@ -118,7 +118,7 @@ describe('ModelActions', function() {
 
   it('can export the env', function() {
     var exportEnvironmentFile = sinon.stub();
-    const wrapper = renderComponent({ exportEnvironmentFile });
+    const wrapper = renderComponent({exportEnvironmentFile});
     wrapper.find('.model-actions__export').props().onClick();
     assert.equal(exportEnvironmentFile.callCount, 1);
   });
@@ -134,7 +134,7 @@ describe('ModelActions', function() {
 
   it('can get a file when a file is selected', function() {
     var importBundleFile = sinon.stub();
-    const wrapper = renderComponent({ importBundleFile });
+    const wrapper = renderComponent({importBundleFile});
     var instance = wrapper.instance();
     instance.refs = {
       'file-input': {files: ['apache2.yaml']}
@@ -152,38 +152,38 @@ describe('ModelActions', function() {
   });
 
   it('disables sharing when not connected', function() {
-    const wrapper = renderComponent({ userIsAuthenticated: false });
+    const wrapper = renderComponent({userIsAuthenticated: false});
     assert.equal(wrapper.find('.model-actions__share').length, 0);
   });
 
   it('disables sharing when creating a new model', function() {
-    const wrapper = renderComponent({ appState: {current: {root: 'new'}} });
+    const wrapper = renderComponent({appState: {current: {root: 'new'}}});
     assert.equal(wrapper.find('.model-actions__share').length, 0);
   });
 
   it('can trigger the sharing UI', function() {
     const sharingVisibility = sinon.stub();
-    const wrapper = renderComponent({ sharingVisibility });
+    const wrapper = renderComponent({sharingVisibility});
     wrapper.find('.model-actions__share').props().onClick();
     assert.equal(sharingVisibility.callCount, 1);
   });
 
   it('applies the correct class when model is loading', function() {
-    const wrapper = renderComponent({ loadingModel: true });
+    const wrapper = renderComponent({loadingModel: true});
     const className = 'model-actions--loading-model';
     assert.equal(
       wrapper.find('.model-actions').prop('className').includes(className), true);
   });
 
   it('applies the correct class when on a user profile', function() {
-    const wrapper = renderComponent({ appState: {current: {profile: 'foo'}} });
+    const wrapper = renderComponent({appState: {current: {profile: 'foo'}}});
     const className = 'model-actions--loading-model';
     assert.equal(
       wrapper.find('.model-actions').prop('className').includes(className), true);
   });
 
   it('applies the correct class when on a user account page', function() {
-    const wrapper = renderComponent({ appState: {current: {root: 'account'}} });
+    const wrapper = renderComponent({appState: {current: {root: 'account'}}});
     const className = 'model-actions--loading-model';
     assert.equal(
       wrapper.find('.model-actions').prop('className').includes(className), true);

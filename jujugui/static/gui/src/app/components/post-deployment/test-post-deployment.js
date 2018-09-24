@@ -146,7 +146,7 @@ target="_blank">Juju CLI client</a>');
 
   it('replaces templateTags in markdown', () => {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     const instance = wrapper.instance();
     instance._handleContentClick({
       target: {

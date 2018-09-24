@@ -27,7 +27,7 @@ describe('InspectorExposeUnit', function() {
       }],
       public_address: '20.20.20.199'
     };
-    const wrapper = renderComponent({ unit });
+    const wrapper = renderComponent({unit});
     var expected = (
       <li
         className="inspector-expose__unit"
@@ -74,7 +74,7 @@ describe('InspectorExposeUnit', function() {
       id: 'django/1',
       displayName: 'django/1'
     };
-    const wrapper = renderComponent({ unit });
+    const wrapper = renderComponent({unit});
     assert.equal(
       wrapper.find('.inspector-expose__unit-detail').at(1).text(),
       'No public address');

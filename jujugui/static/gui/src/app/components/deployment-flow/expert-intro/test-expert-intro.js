@@ -113,7 +113,7 @@ describe('DeploymentExpertIntro', () => {
                     dangerouslySetInnerHTML={{_html: 'md'}} />
                   <Link
                     changeState={sinon.stub()}
-                    clickState={{ hash: 'support-level' }}
+                    clickState={{hash: 'support-level'}}
                     generatePath={sinon.stub()}>
                     View other support options
                   </Link>

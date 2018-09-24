@@ -5,7 +5,7 @@ const marked = require('marked');
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const { urls } = require('jaaslib');
+const {urls} = require('jaaslib');
 
 const Button = require('../shared/button/button');
 const Panel = require('../shared/panel/panel');

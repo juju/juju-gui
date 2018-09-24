@@ -34,12 +34,12 @@ class ProfileHeader extends React.Component {
     @param {Array} modelList The list of models.
   */
   _getUserCallback(err, user) {
-    this.setState({ userRequested: true }, () => {
+    this.setState({userRequested: true}, () => {
       if (err) {
         console.log('unable to load user:', err);
         return;
       }
-      this.setState({ user: user });
+      this.setState({user: user});
     });
   }
 

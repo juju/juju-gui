@@ -45,7 +45,7 @@ describe('CardForm', function() {
     const createCardElement = sinon.stub().callsArgWith(0, {
       mount: mount
     });
-    const wrapper = renderComponent({ createCardElement });
+    const wrapper = renderComponent({createCardElement});
     const instance = wrapper.instance();
     instance.refs = {cardNode: {}};
     instance.componentDidMount();

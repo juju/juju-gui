@@ -415,7 +415,7 @@ describe('UnitDetails', function() {
 
   it('destroys the unit when the destroy button is clicked', function() {
     const destroyUnits = sinon.stub();
-    const wrapper = renderComponent({ destroyUnits });
+    const wrapper = renderComponent({destroyUnits});
     wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [unit.id]);

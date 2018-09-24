@@ -163,7 +163,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on an item', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.list-block__list--item-main-link').simulate('click', {
       preventDefault: preventDefault
     });
@@ -179,7 +179,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on a series', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.list-series__item a').at(0).simulate('click', {
       preventDefault: preventDefault
     });
@@ -205,7 +205,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on a tag', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.tag-list a').at(0).simulate('click', {
       preventDefault: preventDefault
     });
@@ -227,7 +227,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on an owner', function() {
     const changeState = sinon.stub();
     const preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.owner__column a').at(0).simulate('click', {
       preventDefault: preventDefault
     });

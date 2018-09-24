@@ -29,12 +29,12 @@ describe('Terminal', () => {
           macaroons: {}
         }}
         WebSocket={options.websocket || websocket} />,
-      { disableLifeCycleMethods: true }
+      {disableLifeCycleMethods: true}
     );
     const instance = wrapper.instance();
     instance.refs = {
       terminal: {
-        querySelector: sinon.stub().returns({ focus: sinon.stub() })
+        querySelector: sinon.stub().returns({focus: sinon.stub()})
       }
     };
     return wrapper;
@@ -150,7 +150,7 @@ describe('Terminal', () => {
   }
 
   it('sends supplied commands when it is set up', () => {
-    wrapper = renderComponent({ commands: ['juju status'] });
+    wrapper = renderComponent({commands: ['juju status']});
     const instance = wrapper.instance();
     // Check that fit is called after receiving the first PS1.
     instance.term.fit = sinon.stub(); // eslint-disable-line
@@ -165,7 +165,7 @@ describe('Terminal', () => {
   });
 
   it('sends multiple commands when it is set up', () => {
-    wrapper = renderComponent({ commands: ['juju status', 'juju switch'] });
+    wrapper = renderComponent({commands: ['juju status', 'juju switch']});
     const instance = wrapper.instance();
     instance.term.fit = sinon.stub(); // eslint-disable-line
     // Send the setup from the term.
@@ -193,7 +193,7 @@ describe('Terminal', () => {
 
   it('handles unexpected WebSocket closures', () => {
     const addNotification = sinon.stub();
-    wrapper = renderComponent({ addNotification });
+    wrapper = renderComponent({addNotification});
     const instance = wrapper.instance();
     instance.ws.onclose({
       // Should only throw the notification on code over 1000 which is an

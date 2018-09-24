@@ -175,7 +175,7 @@ describe('Environment Change Set', function() {
       });
 
       it('creates a new record of the specified type', function() {
-        var command = { foo: 'foo' };
+        var command = {foo: 'foo'};
         var wrapCallback = sinon.stub(
           ecs, '_wrapCallback').returns(command);
         _cleanups.push(wrapCallback.restore);
@@ -202,7 +202,7 @@ describe('Environment Change Set', function() {
       });
 
       it('adds supplied parent records to the new record', function() {
-        var command = { foo: 'foo' };
+        var command = {foo: 'foo'};
         var wrapCallback = sinon.stub(
           ecs, '_wrapCallback').returns(command);
         _cleanups.push(wrapCallback.restore);
@@ -334,52 +334,52 @@ describe('Environment Change Set', function() {
 
       it('only acts on the current index', function() {
         ecs.changeSet = {
-          a: { index: 0, parents: [] },
-          b: { index: 0, parents: [] },
-          c: { index: 1, parents: [] }
+          a: {index: 0, parents: []},
+          b: {index: 0, parents: []},
+          c: {index: 1, parents: []}
         };
         var result = ecs._buildHierarchy();
         // XXX assert.deepEqual does not seem to play well with arrays
         // of objects.  Slack card on board - Makyo 2014-04-23
         assert.deepEqual(JSON.stringify(result), JSON.stringify([
           [
-            { index: 0, parents: [], key: 'a' },
-            { index: 0, parents: [], key: 'b' }
+            {index: 0, parents: [], key: 'a'},
+            {index: 0, parents: [], key: 'b'}
           ]
         ]));
       });
 
       it('acts sane with "flat" hierarchies', function() {
         ecs.changeSet = {
-          a: { index: 0, parents: [] },
-          b: { index: 0, parents: [] },
-          c: { index: 0, parents: [] },
-          d: { index: 0, parents: [] },
-          e: { index: 0, parents: [] },
-          f: { index: 0 } // Can handle missing parents attribute.
+          a: {index: 0, parents: []},
+          b: {index: 0, parents: []},
+          c: {index: 0, parents: []},
+          d: {index: 0, parents: []},
+          e: {index: 0, parents: []},
+          f: {index: 0} // Can handle missing parents attribute.
         };
 
         var result = ecs._buildHierarchy();
         assert.deepEqual(JSON.stringify(result), JSON.stringify([
           [
-            { index: 0, parents: [], key: 'a' },
-            { index: 0, parents: [], key: 'b' },
-            { index: 0, parents: [], key: 'c' },
-            { index: 0, parents: [], key: 'd' },
-            { index: 0, parents: [], key: 'e' },
-            { index: 0, key: 'f' }
+            {index: 0, parents: [], key: 'a'},
+            {index: 0, parents: [], key: 'b'},
+            {index: 0, parents: [], key: 'c'},
+            {index: 0, parents: [], key: 'd'},
+            {index: 0, parents: [], key: 'e'},
+            {index: 0, key: 'f'}
           ]
         ]));
       });
 
       it('splits commands into dependency levels', function() {
         ecs.changeSet = {
-          a: { index: 0, parents: [] },
-          b: { index: 0, parents: [] },
-          c: { index: 0, parents: ['a', 'b'] },
-          d: { index: 0, parents: ['a'] },
-          e: { index: 0, parents: ['a', 'c'] },
-          f: { index: 0, parents: ['e'] }
+          a: {index: 0, parents: []},
+          b: {index: 0, parents: []},
+          c: {index: 0, parents: ['a', 'b']},
+          d: {index: 0, parents: ['a']},
+          e: {index: 0, parents: ['a', 'c']},
+          f: {index: 0, parents: ['e']}
         };
 
         var result = ecs._buildHierarchy();
@@ -388,31 +388,31 @@ describe('Environment Change Set', function() {
         assert.equal(JSON.stringify(result), JSON.stringify([
           // Top-level.
           [
-            { index: 0, parents: [], key: 'a' },
-            { index: 0, parents: [], key: 'b' }
+            {index: 0, parents: [], key: 'a'},
+            {index: 0, parents: [], key: 'b'}
           ],
           [
-            { index: 0, parents: ['a', 'b'], key: 'c' },
-            { index: 0, parents: ['a'], key: 'd' }
+            {index: 0, parents: ['a', 'b'], key: 'c'},
+            {index: 0, parents: ['a'], key: 'd'}
           ],
           [
-            { index: 0, parents: ['a', 'c'], key: 'e' }
+            {index: 0, parents: ['a', 'c'], key: 'e'}
           ],
           [
-            { index: 0, parents: ['e'], key: 'f' }
+            {index: 0, parents: ['e'], key: 'f'}
           ]
         ]));
       });
 
       it('filters out unplaced units when instructed to', function() {
         ecs.changeSet = {
-          a: { index: 0, parents: [], command: {
+          a: {index: 0, parents: [], command: {
             method: '_deploy',
-            options: { modelId: '75930989$' }
+            options: {modelId: '75930989$'}
           }},
-          b: { index: 0, parents: [], command: {
+          b: {index: 0, parents: [], command: {
             method: '_add_unit',
-            options: { modelId: '75930989$/0' }
+            options: {modelId: '75930989$/0'}
           }}
         };
 
@@ -429,7 +429,7 @@ describe('Environment Change Set', function() {
               parents: [],
               command: {
                 method: '_deploy',
-                options: { modelId: '75930989$' }
+                options: {modelId: '75930989$'}
               },
               key: 'a'
             }
@@ -642,7 +642,7 @@ describe('Environment Change Set', function() {
           };
         }
         if (key === 'environmentConfig') {
-          return { foo: 'baz' };
+          return {foo: 'baz'};
         }
       };
       db.services.getById = sinon.stub().returns({
@@ -1065,7 +1065,7 @@ describe('Environment Change Set', function() {
     describe('lazyDestroyMachines', function() {
       it('creates a new destroy record', function(done) {
         const args = [['0/lxc/0'], false, done];
-        const machineObj = { units: [] };
+        const machineObj = {units: []};
         ecs.db = {
           machines: {
             getById: function(arg) {
@@ -1142,7 +1142,7 @@ describe('Environment Change Set', function() {
           destroy: function() {},
           reset: function() {},
           getById: function() {
-            return { units: []};
+            return {units: []};
           }
         };
         ecs.changeSet = {
@@ -1199,7 +1199,7 @@ describe('Environment Change Set', function() {
       it('removes machines from uncommitted units', function() {
         var stubSet = sinon.stub();
         var db = ecs.db;
-        var unit = { machine: 'foo'};
+        var unit = {machine: 'foo'};
         db.machines = {
           getById: function() {
             return {};
@@ -1218,7 +1218,7 @@ describe('Environment Change Set', function() {
           free: sinon.stub()
         };
         db.units = {
-          revive: function() { return { set: stubSet }; },
+          revive: function() { return {set: stubSet}; },
           free: function() {},
           reset: function() {},
           detachAll: function() {},
@@ -1376,7 +1376,7 @@ describe('Environment Change Set', function() {
           'service-1': {
             command: {
               method: '_deploy',
-              options: { modelId: 'mysql' },
+              options: {modelId: 'mysql'},
               args: ['charmid', 'mysql']
             }
           }
@@ -1463,7 +1463,7 @@ describe('Environment Change Set', function() {
             if (key === '_dirtyFields') {
               return service._dirtyFields;
             } else {
-              return { foo: 'bar' };
+              return {foo: 'bar'};
             }
           },
           set: function(key, value) {
@@ -1512,7 +1512,7 @@ describe('Environment Change Set', function() {
         var dirtyFields = service.get('_dirtyFields');
         dirtyFields.push('bax');
         service.set('_dirtyFields', dirtyFields);
-        var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz' }];
+        var args = ['mysql', {foo: 'bar'}, null, {foo: 'baz'}];
         ecs.lazySetConfig(args);
         dirtyFields = service.get('_dirtyFields');
         assert.equal(dirtyFields.length, 2);
@@ -1520,11 +1520,11 @@ describe('Environment Change Set', function() {
       });
 
       it('sets the changed values to the service model', function() {
-        var args = ['mysql', { foo: 'bar' }, null, { foo: 'baz', bax: 'qux' }];
+        var args = ['mysql', {foo: 'bar'}, null, {foo: 'baz', bax: 'qux'}];
         service.set = sinon.stub();
         ecs.lazySetConfig(args);
         assert.equal(service.set.callCount, 2);
-        assert.deepEqual(service.set.lastCall.args[1], { foo: 'bar' });
+        assert.deepEqual(service.set.lastCall.args[1], {foo: 'bar'});
       });
     });
 
@@ -1540,14 +1540,14 @@ describe('Environment Change Set', function() {
             command: {
               args: ['charm', 'mysql'],
               method: '_deploy',
-              options: { modelId: 'serviceId1$' }
+              options: {modelId: 'serviceId1$'}
             }
           },
           'service-2': {
             command: {
               args: ['charm', 'wordpress'],
               method: '_deploy',
-              options: { modelId: 'serviceId2$' }
+              options: {modelId: 'serviceId2$'}
             }
           }
         };
@@ -1751,7 +1751,7 @@ describe('Environment Change Set', function() {
         var lazyAddCharm = sinon.stub(ecs, 'lazyAddCharm');
         _cleanups.push(lazyAddCharm.restore);
         var callback = sinon.stub();
-        var args = [1, 2, callback, { immediate: true}];
+        var args = [1, 2, callback, {immediate: true}];
         envObj.addCharm.apply(envObj, args);
         assert.equal(envObj._addCharm.calledOnce, true);
         var addCharmArgs = envObj._addCharm.lastCall.args;
@@ -1811,7 +1811,7 @@ describe('Environment Change Set', function() {
         var lazySetConfig = sinon.stub(ecs, 'lazySetConfig');
         _cleanups.push(lazySetConfig.restore);
         var callback = sinon.stub();
-        var args = ['service', {key: 'value'}, callback, { immediate: true}];
+        var args = ['service', {key: 'value'}, callback, {immediate: true}];
         envObj.set_config.apply(envObj, args);
         assert.equal(envObj._set_config.calledOnce, true);
         var setConfigArgs = envObj._set_config.lastCall.args;
@@ -1832,7 +1832,7 @@ describe('Environment Change Set', function() {
           // this is using bind instead of apply because of how the
           // assert.throws assertion operates.
           envObj.set_config.bind(
-            envObj, 'foo', {}, callback, { immediate: true}),
+            envObj, 'foo', {}, callback, {immediate: true}),
           'You cannot immediately set config on a queued application');
         assert.equal(envObj._set_config.callCount, 0);
         // make sure that we don't add it to the changeSet.
@@ -1853,14 +1853,14 @@ describe('Environment Change Set', function() {
       it('handles heirarchical changes on queued services', function() {
         var db = ecs.db;
         db.services = new Y.juju.models.ServiceList();
-        db.services.add({ id: 'serviceId1$' });
+        db.services.add({id: 'serviceId1$'});
         db.units.filterByMachine = sinon.stub();
         ecs.changeSet = {
           'service-1': {
             command: {
               args: ['charm', 'mysql'],
               method: '_deploy',
-              options: { modelId: 'serviceId1$' }
+              options: {modelId: 'serviceId1$'}
             }
           }
         };
@@ -2034,15 +2034,15 @@ describe('Environment Change Set', function() {
             command: {
               method: '_add_unit',
               options: {
-                modelId: unit.id }},
-            parents: ['addMachines_123'] },
+                modelId: unit.id}},
+            parents: ['addMachines_123']},
           addMachines_123: {
             command: {
               args: [[{series: 'trusty'}]],
               method: '_addMachines',
               options: {
-                modelId: machineId }},
-            parents: [] }
+                modelId: machineId}},
+            parents: []}
         };
         assert.equal(ecs.changeSet.a.parents.length, 1);
         ecs.placeUnit(unit, machineId);
@@ -2065,8 +2065,8 @@ describe('Environment Change Set', function() {
               args: cmdArgs,
               method: '_add_unit',
               options: {
-                modelId: unit.id }},
-            parents: [] }
+                modelId: unit.id}},
+            parents: []}
         };
         assert.deepEqual(ecs.changeSet.a.command.args, cmdArgs);
         ecs.placeUnit(unit, machineId);
@@ -2089,7 +2089,7 @@ describe('Environment Change Set', function() {
         assert.isNull(err);
         assert.strictEqual(mockValidateUnitPlacement.calledOnce, true);
         var args = mockValidateUnitPlacement.lastCall.args;
-        assert.deepEqual(args, [{ id: 'django/42' }, '0', ecs.db]);
+        assert.deepEqual(args, [{id: 'django/42'}, '0', ecs.db]);
       });
 
       it('does not apply changes if unit placement is not valid', function() {

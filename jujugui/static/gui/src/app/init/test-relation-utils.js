@@ -367,21 +367,21 @@ describe('RelationUtils', () => {
     beforeEach(() => {
       source = {
         id: 'source-id',
-        model: { get: function() {} },
+        model: {get: function() {}},
         modelId: function() {
           return 'source-id';
         },
         _units: [],
-        units: { toArray: () => source._units }
+        units: {toArray: () => source._units}
       };
       target = {
         id: 'target-id',
-        model: { get: function() {} },
+        model: {get: function() {}},
         modelId: function() {
           return 'target-id';
         },
         _units: [],
-        units: { toArray: () => target._units }
+        units: {toArray: () => target._units}
       };
       inputRelation = new models.Relation({
         endpoints: [
@@ -489,7 +489,7 @@ describe('RelationUtils', () => {
 
     it('can store relations in collections', () => {
       const thirdModel = {
-        model: { get: function() {} },
+        model: {get: function() {}},
         modelId: function() {
           return 'third-id';
         }
@@ -516,7 +516,7 @@ describe('RelationUtils', () => {
       thirdModel._units = [Object.assign({}, unit)];
       thirdModel._units[0].agent_state = 'error';
       thirdModel._units[0].agent_state_data.hook = 'endpoint-1-relation';
-      thirdModel.units = { toArray: function() { return thirdModel._units; } };
+      thirdModel.units = {toArray: function() { return thirdModel._units; }};
       // Add two relations between the same two models, plus a third.
       const relations = [
         relationUtils.DecoratedRelation(inputRelation, source, target),
@@ -633,7 +633,7 @@ describe('RelationUtils', () => {
       assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
       env.add_relation.lastCall.args[2]({
-        result: { id: 'foo', 'interface': 'bar', scope: 'global' }
+        result: {id: 'foo', 'interface': 'bar', scope: 'global'}
       });
       // Callback method assertions.
       assert.equal(db.relations.remove.callCount, 1);
@@ -724,7 +724,7 @@ describe('RelationUtils', () => {
       assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
       env.add_relation.lastCall.args[2]({
-        result: { id: 'foo', 'interface': 'bar', scope: 'global' }
+        result: {id: 'foo', 'interface': 'bar', scope: 'global'}
       });
       // Callback method assertions.
       assert.equal(db.relations.remove.callCount, 1);
@@ -818,7 +818,7 @@ describe('RelationUtils', () => {
       assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
       env.add_relation.lastCall.args[2]({
-        result: { id: 'foo', 'interface': 'bar', scope: 'global' }
+        result: {id: 'foo', 'interface': 'bar', scope: 'global'}
       });
       // Callback method assertions.
       assert.equal(db.relations.remove.callCount, 1);
@@ -845,7 +845,7 @@ describe('RelationUtils', () => {
       endpointData[vals.applicationToId] = JSON.parse(vals.getEndpoints);
       const getEndpoints = sinon.stub().returns(endpointData);
       const applicationFrom = vals.applicationFrom || {};
-      const applicationTo = { get: function() { return vals.applicationToId; } };
+      const applicationTo = {get: function() { return vals.applicationToId; }};
       return relationUtils.getAvailableEndpoints(
         endpointsController, 'db', getEndpoints, applicationFrom,
         applicationTo, JSON.parse(vals.getRelationDataForService));

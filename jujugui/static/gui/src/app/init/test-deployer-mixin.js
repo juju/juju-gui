@@ -41,14 +41,14 @@ describe('Ghost Deployer Extension', function() {
       constructor() {
         var getMethod = sinon.stub();
         this.db = {
-          charms: { add: sinon.stub().returns({ get: getMethod }) },
+          charms: {add: sinon.stub().returns({get: getMethod})},
           services: {
             ghostService: sinon.stub().returns({
               get: sinon.stub().returns('ghost-service-id'),
               set: sinon.stub()
             })
           },
-          notifications: { add: sinon.stub() },
+          notifications: {add: sinon.stub()},
           addUnits: sinon.stub(),
           removeUnits: sinon.stub()
         };
@@ -88,7 +88,7 @@ describe('Ghost Deployer Extension', function() {
 
   it('sets the ghost service config to its defaults', function() {
     var charm = makeCharm();
-    charm.set('options', { foo: { default: 'bar' }});
+    charm.set('options', {foo: {default: 'bar'}});
     ghostDeployer.db.services = new models.ServiceList();
     ghostDeployer.deployService(charm);
     var service = ghostDeployer.db.services.item(0);

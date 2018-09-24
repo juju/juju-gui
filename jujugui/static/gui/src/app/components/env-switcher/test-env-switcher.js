@@ -89,7 +89,7 @@ describe('EnvSwitcher', function() {
 
   it('can change the model name', () => {
     const setModelName = sinon.stub();
-    const wrapper = renderComponent({ setModelName });
+    const wrapper = renderComponent({setModelName});
     const instance = wrapper.instance();
     instance.refs = {
       name: {
@@ -103,7 +103,7 @@ describe('EnvSwitcher', function() {
 
   it('does not change the model name if there is an error', () => {
     const setModelName = sinon.stub();
-    const wrapper = renderComponent({ setModelName });
+    const wrapper = renderComponent({setModelName});
     const instance = wrapper.instance();
     instance.refs = {
       name: {
@@ -128,9 +128,9 @@ describe('EnvSwitcher', function() {
   });
 
   it('opens the list on click', () => {
-    const models = [{ isAlive: true }, { isAlive: true }];
+    const models = [{isAlive: true}, {isAlive: true}];
     const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
-    const wrapper = renderComponent({ listModelsWithInfo });
+    const wrapper = renderComponent({listModelsWithInfo});
     assert.equal(wrapper.find('EnvList').length, 0);
     wrapper.find('.env-switcher__chevron').simulate('click', {
       preventDefault: () => null
@@ -143,7 +143,7 @@ describe('EnvSwitcher', function() {
 
   it('fetches a list of environments on mount', () => {
     const listModelsWithInfo = sinon.stub();
-    const wrapper = renderComponent({ listModelsWithInfo });
+    const wrapper = renderComponent({listModelsWithInfo});
     const instance = wrapper.instance();
     assert.equal(listModelsWithInfo.callCount, 1);
     const err = null;
@@ -157,7 +157,7 @@ describe('EnvSwitcher', function() {
 
   it('fetches the env list when opening', () => {
     const listModelsWithInfo = sinon.stub();
-    const wrapper = renderComponent({ listModelsWithInfo });
+    const wrapper = renderComponent({listModelsWithInfo});
     const instance = wrapper.instance();
     // Click the toggler
     wrapper.find('.env-switcher__chevron').simulate('click', {
@@ -185,7 +185,7 @@ describe('EnvSwitcher', function() {
     }];
     const listModelsWithInfo = sinon.stub();
     const switchModel = sinon.stub();
-    const wrapper = renderComponent({ listModelsWithInfo, switchModel });
+    const wrapper = renderComponent({listModelsWithInfo, switchModel});
     const instance = wrapper.instance();
     listModelsWithInfo.args[0][0](null, models);
     const model = {
@@ -201,7 +201,7 @@ describe('EnvSwitcher', function() {
   it('handles errors when getting models', function() {
     const addNotification = sinon.stub();
     const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
-    renderComponent({ listModelsWithInfo, addNotification });
+    renderComponent({listModelsWithInfo, addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'unable to retrieve model list',

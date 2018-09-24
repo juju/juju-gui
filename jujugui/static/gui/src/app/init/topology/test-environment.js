@@ -162,7 +162,7 @@ describe('EnvironmentView', function() {
     // Additional relations between the same two services for collection
     // testing. Note that this uses the gojuju style relation ideas for
     // additional compatibility.
-    var additionalRelations = { 'result': [
+    var additionalRelations = {'result': [
       [
         'relationInfo',
         'add', {
@@ -623,14 +623,14 @@ describe('EnvironmentView', function() {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.onDelta({detail: { data: addSubordinate }});
+      db.onDelta({detail: {data: addSubordinate}});
       view.update();
 
       container.querySelectorAll('.subordinate.service').forEach(service => {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.onDelta({detail: { data: addRelation }});
+      db.onDelta({detail: {data: addRelation}});
       view.update();
 
       validateRelationCount(container.querySelector('.subordinate.service'),
@@ -667,7 +667,7 @@ describe('EnvironmentView', function() {
       };
       view.render();
 
-      db.onDelta({detail: { data: tmp_data }});
+      db.onDelta({detail: {data: tmp_data}});
       view.render();
 
       container.querySelectorAll('.service').forEach(serviceNode => {
@@ -717,7 +717,7 @@ describe('EnvironmentView', function() {
           chartSizedProperly(service).should.equal(true);
         });
 
-        db.onDelta({detail: { data: tmp_data }});
+        db.onDelta({detail: {data: tmp_data}});
 
         container.querySelectorAll('.service').forEach(service => {
           chartSizedProperly(service).should.equal(true);
@@ -794,7 +794,7 @@ describe('EnvironmentView', function() {
         });
 
         // Resize the wordpress service.
-        db.onDelta({detail: { data: tmp_data }});
+        db.onDelta({detail: {data: tmp_data}});
 
         // Ensure that endpoints still match for all services, now that
         // one service has been resized.  This is the real test here.
@@ -850,7 +850,7 @@ describe('EnvironmentView', function() {
           .should.equal(true);
       });
 
-      db.onDelta({detail: { data: tmp_data }});
+      db.onDelta({detail: {data: tmp_data}});
       view.render();
 
       container.querySelectorAll('.service').forEach(serviceNode => {
@@ -884,10 +884,10 @@ describe('EnvironmentView', function() {
       view.topo.modules.ServiceModule.useTransitions = false;
       view.render();
 
-      db.onDelta({detail: { data: tmp_data }});
+      db.onDelta({detail: {data: tmp_data}});
       view.update();
       tmp_data.result[0][2].name = 'wordpressb';
-      db.onDelta({detail: { data: tmp_data }});
+      db.onDelta({detail: {data: tmp_data}});
       view.update();
 
       assert.notDeepEqual(
@@ -924,7 +924,7 @@ describe('EnvironmentView', function() {
       match[1].should.eql('100');
       match[2].should.eql('200');
 
-      db.onDelta({detail: { data: tmp_data }});
+      db.onDelta({detail: {data: tmp_data}});
       view.update();
 
       // On annotation change  position should be updated.
@@ -950,7 +950,7 @@ describe('EnvironmentView', function() {
           ]
         ]
       };
-      db.onDelta({detail: { data: tmp_data }});
+      db.onDelta({detail: {data: tmp_data}});
       view.update();
     });
 
@@ -1098,8 +1098,8 @@ describe('EnvironmentView', function() {
             type: 'relType'
           }]];
         // Add a mock charm for the service.
-        var charm = { id: service.charm, loaded: false };
-        var charm2 = { id: 'cs:precise/mediawiki-3', loaded: false };
+        var charm = {id: service.charm, loaded: false};
+        var charm2 = {id: 'cs:precise/mediawiki-3', loaded: false};
         db.charms.add(charm);
         db.charms.add(charm2);
         charm = db.charms.getById(service.charm);
@@ -1380,7 +1380,7 @@ describe('EnvironmentView', function() {
         fauxController.endpointsMap = endpointsMap;
         fauxController.db = db;
         var view = new EnvironmentView(
-          { container: container,
+          {container: container,
             db: db,
             endpointsController: fauxController,
             env: env,

@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
-const { charmstore } = require('jaaslib');
+const {charmstore} = require('jaaslib');
 
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 

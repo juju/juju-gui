@@ -200,7 +200,7 @@ describe('init', () => {
       it('returns "zip" for zip files', () => {
         const result = app._determineFileType({
           types: ['Files'],
-          items: [{ type: 'application/zip' }]
+          items: [{type: 'application/zip'}]
         });
         assert.equal(result, 'zip');
       });
@@ -209,7 +209,7 @@ describe('init', () => {
         // IE uses a different mime type than other browsers.
         const result = app._determineFileType({
           types: ['Files'],
-          items: [{ type: 'application/x-zip-compressed' }]
+          items: [{type: 'application/x-zip-compressed'}]
         });
         assert.equal(result, 'zip');
       });
@@ -219,7 +219,7 @@ describe('init', () => {
         // across browser so we respond with yaml for now.
         const result = app._determineFileType({
           types: ['Files'],
-          items: [{ type: 'application/x-yaml' }]
+          items: [{type: 'application/x-yaml'}]
         });
         assert.equal(result, 'yaml');
       });
@@ -251,9 +251,9 @@ describe('init', () => {
 
       const noop = () => {};
       const ev1 = {
-        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
-      const ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
-      const ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter'};
+      const ev2 = {dataTransfer: {}, preventDefault: noop, type: 'dragleave'};
+      const ev3 = {dataTransfer: {}, preventDefault: noop, type: 'dragover'};
 
       app._appDragOverHandler(ev1);
       app._appDragOverHandler(ev2);

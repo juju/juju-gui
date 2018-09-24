@@ -336,7 +336,7 @@ describe('Inspector', function() {
     appState.current.gui.inspector = {
       activeComponent: 'scale'
     };
-    const wrapper = renderComponent({ providerType: 'lxd' });
+    const wrapper = renderComponent({providerType: 'lxd'});
     const header = wrapper.find('InspectorHeader');
     assert.equal(header.prop('activeComponent'), 'scale');
     assert.equal(header.prop('title'), 'Scale');

@@ -192,7 +192,7 @@ describe('DeploymentMachines', function() {
   });
 
   it('can render for a local cloud', function() {
-    const wrapper = renderComponent({ cloud: {name: 'localhost'} });
+    const wrapper = renderComponent({cloud: {name: 'localhost'}});
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'localhost'}.&nbsp;
@@ -202,7 +202,7 @@ describe('DeploymentMachines', function() {
   });
 
   it('can render with unknown cloud', function() {
-    const wrapper = renderComponent({ cloud: null });
+    const wrapper = renderComponent({cloud: null});
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'the cloud'}.&nbsp;

@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const { urls } = require('jaaslib');
+const {urls} = require('jaaslib');
 
 const EntityContent = require('./content/content');
 const EntityHeader = require('./header/header');
@@ -91,7 +91,7 @@ class EntityDetails extends React.Component {
         break;
       case 'entity-details':
         var entityModel = this.state.entityModel;
-        const { charmstore } = this.props;
+        const {charmstore} = this.props;
         activeChild = (
           <div>
             <EntityHeader

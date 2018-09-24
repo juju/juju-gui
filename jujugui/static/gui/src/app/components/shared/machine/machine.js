@@ -16,7 +16,7 @@ class Machine extends React.Component {
     @returns {Object} the machine hardware elements.
   */
   _generateHardware() {
-    const { hardware } = this.props;
+    const {hardware} = this.props;
     if (!hardware) {
       return null;
     }
@@ -44,7 +44,7 @@ class Machine extends React.Component {
     @returns {Object} the unit elements.
   */
   _generateUnits() {
-    const { isContainer, units } = this.props;
+    const {isContainer, units} = this.props;
     if (!units || !units.length) {
       return null;
     }
@@ -73,7 +73,7 @@ class Machine extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    const { isContainer, machine } = this.props;
+    const {isContainer, machine} = this.props;
     const classes = {
       'machine--root': machine.root
     };
@@ -90,7 +90,7 @@ class Machine extends React.Component {
     @returns {Object} The button JSX.
   */
   _generateTerminalAction() {
-    const { sshAction } = this.props;
+    const {sshAction} = this.props;
     if (!sshAction) {
       return null;
     }
@@ -113,7 +113,7 @@ class Machine extends React.Component {
     @returns {Object} The menu JSX.
   */
   _generateMenu() {
-    const { menuItems } = this.props;
+    const {menuItems} = this.props;
     if (!menuItems) {
       return null;
     }
@@ -128,7 +128,7 @@ class Machine extends React.Component {
     @returns {Object} The details JSX.
   */
   _generateDetails() {
-    const { machine } = this.props;
+    const {machine} = this.props;
     const machineName = (
       <span className="machine__name">
         {machine.name}

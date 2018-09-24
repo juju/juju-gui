@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
 
-const { getStatusClass } = require('../../utils');
+const {getStatusClass} = require('../../utils');
 
 const StatusLabel = props => {
   const status = props.status;

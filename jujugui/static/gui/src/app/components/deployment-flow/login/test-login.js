@@ -91,7 +91,7 @@ describe('DeploymentLogin', function() {
   });
 
   it('can render for the direct deploy flow', function() {
-    const wrapper = renderComponent({ isDirectDeploy: true });
+    const wrapper = renderComponent({isDirectDeploy: true});
     const expected = (
       <div className="deployment-login__login">
         <DeploymentSection

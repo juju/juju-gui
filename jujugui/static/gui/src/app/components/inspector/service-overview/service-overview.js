@@ -66,7 +66,7 @@ class ServiceOverview extends React.Component {
           }
           if (plans && plans.length > 0) {
             service.set('activePlan', activePlan);
-            this.setState({ activePlan, plans });
+            this.setState({activePlan, plans});
           }
         });
     }

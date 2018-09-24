@@ -23,7 +23,7 @@ describe('ReceiptPopup', function() {
 
   it('can display the receipt', function() {
     const getReceipt = sinon.stub().callsArgWith(1, null, '<html>...</html>');
-    const wrapper = renderComponent({ getReceipt });
+    const wrapper = renderComponent({getReceipt});
     assert.equal(
       wrapper.find('iframe').prop('src').includes('%3Chtml%3E...%3C%2Fhtml%3E'),
       true);
@@ -46,7 +46,7 @@ describe('ReceiptPopup', function() {
 
   it('can close the popup', function() {
     const close = sinon.stub();
-    const wrapper = renderComponent({ close });
+    const wrapper = renderComponent({close});
     wrapper.props().close();
     assert.equal(close.callCount, 1);
   });
@@ -54,7 +54,7 @@ describe('ReceiptPopup', function() {
   it('can abort requests when unmounting', function() {
     const abort = sinon.stub();
     const getReceipt = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({ getReceipt });
+    const wrapper = renderComponent({getReceipt});
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

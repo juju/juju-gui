@@ -19,7 +19,7 @@ describe('BudgetChart', function() {
         limit: 80
       }
     };
-    const wrapper = renderComponent({ budgets });
+    const wrapper = renderComponent({budgets});
     var expected = (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">

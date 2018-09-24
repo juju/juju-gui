@@ -75,7 +75,7 @@ describe('EntityContentRelations', function() {
 
   it('can navigate to a relation', function() {
     var changeState = sinon.spy();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.section__list-item').at(0).simulate('click');
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

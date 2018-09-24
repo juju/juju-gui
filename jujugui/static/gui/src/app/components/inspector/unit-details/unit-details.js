@@ -33,7 +33,7 @@ class UnitDetails extends React.Component {
   _generateDebugHooksState() {
     const unit = this.props.unit;
     let commands = [`juju debug-hooks ${unit.id}`];
-    return { terminal: commands };
+    return {terminal: commands};
   }
 
   /**
@@ -45,7 +45,7 @@ class UnitDetails extends React.Component {
     const unit = this.props.unit;
     let commands = [`juju ssh ${unit.id}`];
     cmds.forEach(cmd => commands.push(cmd));
-    return { terminal: commands };
+    return {terminal: commands};
   }
 
   /**
@@ -141,7 +141,7 @@ class UnitDetails extends React.Component {
     @returns {Object} The status list JSX.
   */
   _generateStatuses() {
-    const { unit } = this.props;
+    const {unit} = this.props;
     let statuses = [];
     if (!unit.agent_state) {
       statuses.push({
@@ -173,7 +173,7 @@ class UnitDetails extends React.Component {
     @returns {Object} The address list JSX.
   */
   _generateAddressList() {
-    const { unit } = this.props;
+    const {unit} = this.props;
     const privateList = this._generateAddresses(
       unit.private_address, unit.portRanges, true);
     const publicList = this._generateAddresses(

@@ -262,7 +262,7 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('stores the SSH keys', function() {
-      const wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      const wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       const instance = wrapper.instance();
       instance.refs = {
         githubUsername: {
@@ -284,7 +284,7 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('disables the add key button after keys stored', function() {
-      const wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      const wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       const instance = wrapper.instance();
       let githubUsername = 'spinach';
       instance.refs = {
@@ -321,7 +321,7 @@ describe('DeploymentSSHKey', function() {
     let instance, wrapper;
 
     beforeEach(() => {
-      wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       instance = wrapper.instance();
       instance.refs = {
         sshSource: {getValue: () => 'launchpad'},
@@ -464,7 +464,7 @@ describe('DeploymentSSHKey', function() {
     let instance, wrapper;
 
     beforeEach(() => {
-      wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       instance = wrapper.instance();
       instance.refs = {
         sshSource: {getValue: () => 'manual'},

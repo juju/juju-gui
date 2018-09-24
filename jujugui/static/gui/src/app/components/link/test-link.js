@@ -31,15 +31,15 @@ describe('Link', function() {
   });
 
   it('can render with extra classes', () => {
-    const wrapper = renderComponent({ classes: ['another'] });
+    const wrapper = renderComponent({classes: ['another']});
     assert.equal(wrapper.prop('className').includes('another'), true);
   });
 
   it('changes state when clicked on', () => {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     const preventDefault = sinon.stub();
-    wrapper.simulate('click', { preventDefault });
+    wrapper.simulate('click', {preventDefault});
     assert.equal(preventDefault.callCount, 1);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {state: 'new'});

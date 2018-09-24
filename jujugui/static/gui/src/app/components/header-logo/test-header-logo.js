@@ -49,7 +49,7 @@ describe('HeaderLogo', function() {
   it('does not call showProfile on click in gisf', () => {
     const showProfile = sinon.stub();
     const preventDefault = sinon.stub();
-    const wrapper = renderComponent({ showProfile });
+    const wrapper = renderComponent({showProfile});
     // Call the click handler
     wrapper.props().onClick({preventDefault});
     assert.equal(preventDefault.callCount, 0);

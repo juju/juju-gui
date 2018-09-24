@@ -10,7 +10,7 @@ const StringConfigInput = require('./input/input');
 class StringConfig extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: this.props.config };
+    this.state = {value: this.props.config};
   }
 
   /**

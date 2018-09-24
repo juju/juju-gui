@@ -84,7 +84,7 @@ utils.exportEnvironmentFile = (db, sendAnalytics)=> {
   apps.forEach(app => {
     idMap.set(app.get('id'), app.get('name'));
   });
-  const bundleExporter = new BundleExporter({ db });
+  const bundleExporter = new BundleExporter({db});
   const result = bundleExporter.exportBundle();
   let exportData = jsyaml.dump(result);
   // Replace the temporary app ids with the real ids.
@@ -304,10 +304,10 @@ utils.destroyModel = (
 */
 utils.getUnitStatusCounts = units => {
   const unitStatuses = {
-    uncommitted: { priority: 3, size: 0 },
-    started: { priority: 2, size: 0 },
-    pending: { priority: 1, size: 0 },
-    error: { priority: 0, size: 0 }
+    uncommitted: {priority: 3, size: 0},
+    started: {priority: 2, size: 0},
+    pending: {priority: 1, size: 0},
+    error: {priority: 0, size: 0}
   };
   let agentState;
   units.forEach(unit => {
@@ -315,7 +315,7 @@ utils.getUnitStatusCounts = units => {
     // If we don't have it in our status list then add it to the end
     // with a very low priority.
     if (!unitStatuses[agentState]) {
-      unitStatuses[agentState] = { priority: 99, size: 0 };
+      unitStatuses[agentState] = {priority: 99, size: 0};
     }
     unitStatuses[agentState].size += 1;
   });
@@ -954,7 +954,7 @@ utils.parseMachineDetails = (genericConstraints, machine) => {
           label = 'disk';
           break;
       }
-      details.push({ label, value });
+      details.push({label, value});
     }
   });
   return details && details.length ? details : null;
@@ -1013,7 +1013,7 @@ utils.createMachinesPlaceUnits = function(
       constraints: constraints
     }], function(machine) {
       db.machines.remove(machine);
-    }.bind(this, machine), { modelId: machine.id});
+    }.bind(this, machine), {modelId: machine.id});
     env.placeUnit(addGhostAndEcsUnits(db, env, service, 1)[0], machine.id);
   }
 };

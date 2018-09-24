@@ -20,7 +20,7 @@ describe('CopyToClipboard', function() {
         value={options.value} />,
       // Don't call componentDidMount as it requires nodes that don't exist in
       // the shallow renderer.
-      { disableLifecycleMethods: true });
+      {disableLifecycleMethods: true});
   };
 
   it('renders with a default value', function() {
@@ -46,7 +46,7 @@ describe('CopyToClipboard', function() {
   });
 
   it('can render with a provided className', function() {
-    const wrapper = renderComponent({ className: 'class-name' });
+    const wrapper = renderComponent({className: 'class-name'});
     assert.equal(wrapper.prop('className'), 'class-name');
     assert.equal(wrapper.find('input').prop('className'), 'class-name__input');
     assert.equal(wrapper.find('button').prop('className'), 'class-name__btn');
@@ -54,7 +54,7 @@ describe('CopyToClipboard', function() {
 
   it('renders a user-provided value properly', function() {
     var value = 'foobar';
-    const wrapper = renderComponent({ value });
+    const wrapper = renderComponent({value});
     assert.equal(wrapper.find('input').prop('value'), value,
       'Value is not set properly for input');
   });

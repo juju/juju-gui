@@ -57,27 +57,27 @@ describe('State', () => {
 
   const userStateTests = [{
     path: 'http://abc.com:123/u/ant',
-    state: { profile: 'ant' },
+    state: {profile: 'ant'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging',
-    state: { user: 'hatch/staging' },
+    state: {user: 'hatch/staging'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/mongodb/xenial',
-    state: { store: 'u/hatch/mongodb/xenial' },
+    state: {store: 'u/hatch/mongodb/xenial'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/mongodb/47',
-    state: { store: 'u/hatch/mongodb/47' },
+    state: {store: 'u/hatch/mongodb/47'},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/django/bundle/0',
-    state: { store: 'u/frankban/django/bundle/0' },
+    state: {store: 'u/frankban/django/bundle/0'},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/django/bundle/0/#jam',
-    state: { hash: 'jam', store: 'u/frankban/django/bundle/0' },
+    state: {hash: 'jam', store: 'u/frankban/django/bundle/0'},
     error: null
   }];
 
@@ -87,31 +87,31 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/new',
-    state: { root: 'new' },
+    state: {root: 'new'},
     error: null
   }, {
     path: 'http://abc.com:123/new/store',
-    state: { root: 'new', store: '' },
+    state: {root: 'new', store: ''},
     error: null
   }, {
     path: 'http://abc.com:123/new/u/spinach/django/xenial/9',
-    state: { root: 'new', store: 'u/spinach/django/xenial/9' },
+    state: {root: 'new', store: 'u/spinach/django/xenial/9'},
     error: null
   }, {
     path: 'http://abc.com:123/new/apache2',
-    state: { root: 'new', store: 'apache2' },
+    state: {root: 'new', store: 'apache2'},
     error: null
   }, {
     path: 'http://abc.com:123/about',
-    state: { root: 'about' },
+    state: {root: 'about'},
     error: null
   }, {
     path: 'http://abc.com:123/docs',
-    state: { root: 'docs' },
+    state: {root: 'docs'},
     error: null
   }, {
     path: 'http://abc.com:123/login',
-    state: { root: 'login' },
+    state: {root: 'login'},
     error: null
   }, {
     path: 'http://abc.com:123/login/#honey',
@@ -119,7 +119,7 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/logout',
-    state: { root: 'logout' },
+    state: {root: 'logout'},
     error: null
   }];
 
@@ -203,11 +203,11 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/i/machines',
-    state: {gui: {machines: '' }},
+    state: {gui: {machines: ''}},
     error: null
   }, {
     path: 'http://abc.com:123/store/i/machines',
-    state: {gui: {machines: '' }, store: ''},
+    state: {gui: {machines: ''}, store: ''},
     error: null
   }, {
     path: 'http://abc.com:123/i/applications/inspector/ghost',
@@ -217,7 +217,7 @@ describe('State', () => {
     path:
       'http://abc.com:123/i/inspector/apache2/machines/3/lxc-0/deploy',
     state: {
-      gui: { inspector: {id: 'apache2'}, machines: '3/lxc-0', deploy: ''}
+      gui: {inspector: {id: 'apache2'}, machines: '3/lxc-0', deploy: ''}
     },
     error: null
   }, {
@@ -249,78 +249,78 @@ describe('State', () => {
 
   const storeStateTests = [{
     path: 'http://abc.com:123/store',
-    state: { store: '' },
+    state: {store: ''},
     error: null
   }, {
     path: 'http://abc.com:123/haproxy',
-    state: { store: 'haproxy' },
+    state: {store: 'haproxy'},
     error: null
   }, {
     path: 'http://abc.com:123/haproxy/xenial',
-    state: { store: 'haproxy/xenial' },
+    state: {store: 'haproxy/xenial'},
     error: null
   }, {
     path: 'http://abc.com:123/haproxy/42',
-    state: { store: 'haproxy/42' },
+    state: {store: 'haproxy/42'},
     error: null
   }, {
     path: 'http://abc.com:123/django/bundle/47',
-    state: { store: 'django/bundle/47' },
+    state: {store: 'django/bundle/47'},
     error: null
   }, {
     path: 'http://abc.com:123/django/bundle/47/#relish',
-    state: { hash: 'relish', store: 'django/bundle/47' },
+    state: {hash: 'relish', store: 'django/bundle/47'},
     error: null
   }];
 
   const modelStoreStateTests = [{
     path: 'http://abc.com:123/u/hatch/staging/store',
-    state: { user: 'hatch/staging', store: '' },
+    state: {user: 'hatch/staging', store: ''},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/haproxy',
-    state: { user: 'hatch/staging', store: 'haproxy' },
+    state: {user: 'hatch/staging', store: 'haproxy'},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/production/ghost/xenial',
-    state: { user: 'frankban/production', store: 'ghost/xenial' },
+    state: {user: 'frankban/production', store: 'ghost/xenial'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/ghost/42',
-    state: { user: 'hatch/staging', store: 'ghost/42' },
+    state: {user: 'hatch/staging', store: 'ghost/42'},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/production/django/bundle/47',
-    state: { user: 'frankban/production', store: 'django/bundle/47' },
+    state: {user: 'frankban/production', store: 'django/bundle/47'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/u/hatch',
-    state: { user: 'hatch/staging', profile: 'hatch' },
+    state: {user: 'hatch/staging', profile: 'hatch'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/u/frankban/django',
-    state: { user: 'hatch/staging', store: 'u/frankban/django' },
+    state: {user: 'hatch/staging', store: 'u/frankban/django'},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/production/u/hatch/mongodb/xenial',
-    state: { user: 'frankban/production', store: 'u/hatch/mongodb/xenial' },
+    state: {user: 'frankban/production', store: 'u/hatch/mongodb/xenial'},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/staging/u/hatch/mongodb/47',
-    state: { user: 'hatch/staging', store: 'u/hatch/mongodb/47' },
+    state: {user: 'hatch/staging', store: 'u/hatch/mongodb/47'},
     error: null
   }, {
     path:
       'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0',
     state: {
-      user: 'frankban/production', store: 'u/frankban/django/bundle/0' },
+      user: 'frankban/production', store: 'u/frankban/django/bundle/0'},
     error: null
   }, {
     path:
       'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/#ham', // eslint-disable-line max-len
     state: {
       hash: 'ham',
-      user: 'frankban/production', store: 'u/frankban/django/bundle/0' },
+      user: 'frankban/production', store: 'u/frankban/django/bundle/0'},
     error: null
   }];
 
@@ -329,25 +329,25 @@ describe('State', () => {
     state: {
       user: 'hatch/staging',
       gui: {
-        inspector: {id: 'haproxy', activeComponent: 'config', config: true }
+        inspector: {id: 'haproxy', activeComponent: 'config', config: true}
       }},
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/production/i/machines',
-    state: { user: 'frankban/production', gui: { machines: '' } },
+    state: {user: 'frankban/production', gui: {machines: ''}},
     error: null
   }, {
     path:
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost',
     state: {
-      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost' }}},
+      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost'}}},
     error: null
   }, {
     path:
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/#mayo',
     state: {
       hash: 'mayo',
-      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost' }}},
+      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost'}}},
     error: null
   }];
 
@@ -356,12 +356,12 @@ describe('State', () => {
     state: {
       store: 'haproxy',
       gui: {
-        inspector: {id: 'haproxy', activeComponent: 'config', config: true }
+        inspector: {id: 'haproxy', activeComponent: 'config', config: true}
       }},
     error: null
   }, {
     path: 'http://abc.com:123/ghost/xenial/i/machines',
-    state: { store: 'ghost/xenial', gui: { machines: '' } },
+    state: {store: 'ghost/xenial', gui: {machines: ''}},
     error: null
   }, {
     path: 'http://abc.com:123/ghost/42/i/applications/inspector/ghost',
@@ -370,7 +370,7 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/django/bundle/47/i/machines',
-    state: { store: 'django/bundle/47', gui: { machines: '' } },
+    state: {store: 'django/bundle/47', gui: {machines: ''}},
     error: null
   }, {
     path: 'http://abc.com:123/u/hatch/mongodb/xenial/i/applications/inspector/ghost', // eslint-disable-line max-len
@@ -380,7 +380,7 @@ describe('State', () => {
     error: null
   }, {
     path: 'http://abc.com:123/u/frankban/django/bundle/0/i/machines',
-    state: { store: 'u/frankban/django/bundle/0', gui: { machines: '' } },
+    state: {store: 'u/frankban/django/bundle/0', gui: {machines: ''}},
     error: null
   }];
 
@@ -413,7 +413,7 @@ describe('State', () => {
     state: {
       user: 'frankban/production',
       store: 'django/bundle/47',
-      gui: { machines: '' }
+      gui: {machines: ''}
     },
     error: null
   }, {
@@ -429,7 +429,7 @@ describe('State', () => {
     state: {
       user: 'frankban/production',
       store: 'u/hatch/mongodb/xenial',
-      gui: { machines: '' }
+      gui: {machines: ''}
     },
     error: null
   }, {
@@ -445,7 +445,7 @@ describe('State', () => {
     state: {
       user: 'frankban/production',
       store: 'u/frankban/django/bundle/0',
-      gui: { applications: '' }
+      gui: {applications: ''}
     },
     error: null
   }, {
@@ -454,7 +454,7 @@ describe('State', () => {
       hash: 'turkey',
       user: 'frankban/production',
       store: 'u/frankban/django/bundle/0',
-      gui: { applications: '' }
+      gui: {applications: ''}
     },
     error: null
   }, {
@@ -787,62 +787,62 @@ describe('State', () => {
         outputParts: []
       }, {
         parts: ['u', 'ant'],
-        state: { profile: 'ant' },
+        state: {profile: 'ant'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'settings'],
-        state: { profile: 'frankban/settings' },
+        state: {profile: 'frankban/settings'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'charms'],
-        state: { profile: 'frankban/charms' },
+        state: {profile: 'frankban/charms'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'issues'],
-        state: { profile: 'frankban/issues' },
+        state: {profile: 'frankban/issues'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'revenue'],
-        state: { profile: 'frankban/revenue' },
+        state: {profile: 'frankban/revenue'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'hatch', 'staging', 'haproxy'],
-        state: { user: 'hatch/staging' },
+        state: {user: 'hatch/staging'},
         error: null,
         outputParts: ['haproxy']
       }, {
         parts: ['u', 'frankban', 'production', 'ghost', 'xenial'],
-        state: { user: 'frankban/production' },
+        state: {user: 'frankban/production'},
         error: null,
         outputParts: ['ghost', 'xenial']
       }, {
         parts: ['u', 'hatch', 'charms', 'ghost', 'xenial'],
-        state: { profile: 'hatch/charms' },
+        state: {profile: 'hatch/charms'},
         error: null,
         outputParts: ['ghost', 'xenial']
       }, {
         parts: ['u', 'hatch', 'staging', 'ghost', '42'],
-        state: { user: 'hatch/staging' },
+        state: {user: 'hatch/staging'},
         error: null,
         outputParts: ['ghost', '42']
       }, {
         parts: ['u', 'hatch', 'mongodb', 'xenial'],
-        state: { store: 'u/hatch/mongodb/xenial' },
+        state: {store: 'u/hatch/mongodb/xenial'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'hatch', 'mongodb', '47'],
-        state: { store: 'u/hatch/mongodb/47' },
+        state: {store: 'u/hatch/mongodb/47'},
         error: null,
         outputParts: []
       }, {
         parts: ['u', 'frankban', 'django', 'bundle', '0'],
-        state: { store: 'u/frankban/django/bundle/0' },
+        state: {store: 'u/frankban/django/bundle/0'},
         error: null,
         outputParts: []
       }, {
@@ -1090,7 +1090,7 @@ describe('State', () => {
       });
       const stub = sinon
         .stub(state, 'generateState')
-        .callsFake(() => ({ error: null, state: {}}));
+        .callsFake(() => ({error: null, state: {}}));
       state.dispatch([], true, false, true);
       assert.equal(stub.callCount, 1);
       assert.deepEqual(stub.args[0], ['/hatch/ghost', true]);
@@ -1104,7 +1104,7 @@ describe('State', () => {
       });
       sinon
         .stub(state, 'generateState')
-        .callsFake(() => ({ error: null, state: {new: 'state'}}));
+        .callsFake(() => ({error: null, state: {new: 'state'}}));
       state.dispatch([], true, false, true);
       assert.deepEqual(state._appStateHistory, [{new: 'state'}]);
     });
@@ -1118,7 +1118,7 @@ describe('State', () => {
       const currentState = {
         gui: {
           deploy: '',
-          inspector: { id: '$foo'}}};
+          inspector: {id: '$foo'}}};
       sinon
         .stub(state, 'generateState')
         .callsFake(() => ({error: null, state: currentState}));
@@ -1268,7 +1268,7 @@ describe('State', () => {
       assert.deepEqual(
         state.current, {
           user: 'hatch/staging',
-          gui: {applications: '', inspector: {id: 'ghost' }}
+          gui: {applications: '', inspector: {id: 'ghost'}}
         },
         'generateState() did not parse location properly');
       const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});
@@ -1279,10 +1279,10 @@ describe('State', () => {
       });
       assert.deepEqual(state._appStateHistory, [{
         user: 'hatch/staging',
-        gui: {applications: '', inspector: {id: 'ghost' }}
+        gui: {applications: '', inspector: {id: 'ghost'}}
       }, {
         user: 'hatch/staging',
-        gui: {applications: 'foo', inspector: {id: 'ghost' }}
+        gui: {applications: 'foo', inspector: {id: 'ghost'}}
       }]);
       assert.equal(pushStub.callCount, 1);
       assert.equal(dispatchStub.callCount, 1);
@@ -1305,7 +1305,7 @@ describe('State', () => {
       assert.deepEqual(
         state.current, {
           user: 'hatch/staging',
-          gui: {applications: '', inspector: {id: 'ghost' }}
+          gui: {applications: '', inspector: {id: 'ghost'}}
         },
         'generateState() did not parse location properly');
       const dispatchStub = sinon.stub(state, 'dispatch').returns({error: null});

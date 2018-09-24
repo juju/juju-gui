@@ -33,7 +33,7 @@ describe('DeploymentBarNotification', function() {
     var change = {
       description: 'Django added'
     };
-    const wrapper = renderComponent({ change });
+    const wrapper = renderComponent({change});
     const expected = (
       <div
         className="deployment-bar__notification deployment-bar__notification--visible"
@@ -59,7 +59,7 @@ describe('DeploymentBarNotification', function() {
       id: 'service-added-1',
       description: 'Django added'
     };
-    const wrapper = renderComponent({ change });
+    const wrapper = renderComponent({change});
     assert.equal(
       wrapper.prop('className').includes('deployment-bar__notification--visible'), true);
     wrapper.simulate('click');
@@ -67,7 +67,7 @@ describe('DeploymentBarNotification', function() {
     assert.equal(window.setTimeout.callCount, 1);
     assert.equal(
       wrapper.prop('className').includes('deployment-bar__notification--visible'), false);
-    wrapper.setProps({ change });
+    wrapper.setProps({change});
     assert.equal(window.setTimeout.callCount, 1);
     assert.equal(
       wrapper.prop('className').includes('deployment-bar__notification--visible'), false);

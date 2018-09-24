@@ -32,7 +32,7 @@ describe('Profile Header', function() {
   });
 
   it('can render', () => {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 
@@ -48,7 +48,7 @@ describe('Profile Header', function() {
   });
 
   it('displays a different link list for non-jaas', () => {
-    const wrapper = renderComponent({ gisf: false });
+    const wrapper = renderComponent({gisf: false});
     const expected = (
       <ul className="p-list ts-profile-header__menu">
         <li
@@ -69,7 +69,7 @@ describe('Profile Header', function() {
 
   it('displays a hidden gravatar until the user request has returned', () => {
     // For the test where it has returned successfully see the above tests.
-    const wrapper = renderComponent({ getUser: sinon.stub() });
+    const wrapper = renderComponent({getUser: sinon.stub()});
     assert.equal(
       wrapper
         .find('.profile-header__avatar')
@@ -94,7 +94,7 @@ describe('Profile Header', function() {
 
   it('can close the profile', () => {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper
       .find('.profile-header__close')
       .props()

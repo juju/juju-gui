@@ -47,7 +47,7 @@ describe('StringConfig', function() {
   });
 
   it('can handle a string config without a config value', function() {
-    const wrapper = renderComponent({ config: null });
+    const wrapper = renderComponent({config: null});
     assert.equal(wrapper.find('StringConfigInput').prop('config'), null);
   });
 
@@ -58,7 +58,7 @@ describe('StringConfig', function() {
   });
 
   it('can be disabled', function() {
-    const wrapper = renderComponent({ disabled: true });
+    const wrapper = renderComponent({disabled: true});
     assert.equal(wrapper.find('StringConfigInput').prop('disabled'), true);
   });
 
@@ -74,7 +74,7 @@ describe('StringConfig', function() {
   });
 
   it('correctly compares existing numbers', function() {
-    const wrapper = renderComponent({ config: 123 });
+    const wrapper = renderComponent({config: 123});
     const instance = wrapper.instance();
     instance._setValue('123');
     wrapper.update();
@@ -85,7 +85,7 @@ describe('StringConfig', function() {
   });
 
   it('can handle empty strings with newlines', function() {
-    const wrapper = renderComponent({ config: '' });
+    const wrapper = renderComponent({config: ''});
     const instance = wrapper.instance();
     instance._setValue('\n');
     wrapper.update();
@@ -97,7 +97,7 @@ describe('StringConfig', function() {
   });
 
   it('can remove trailing newlines', function() {
-    const wrapper = renderComponent({ config: '0' });
+    const wrapper = renderComponent({config: '0'});
     const instance = wrapper.instance();
     instance._setValue('0\n');
     wrapper.update();

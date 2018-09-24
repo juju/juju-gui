@@ -65,7 +65,7 @@ describe('PaymentDetails', () => {
         phones: ['00001111']
       }]
     };
-    const wrapper = renderComponent({ paymentUser });
+    const wrapper = renderComponent({paymentUser});
     const expected = (
       <div className="payment__section">
         <h2 className="payment__title twelve-col">

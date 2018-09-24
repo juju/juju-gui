@@ -62,7 +62,7 @@ class BasicTable extends React.Component {
       this.props.tableClasses);
     return (
       <ul className={classes}>
-        {this._generateRow(true, { columns: this.props.headers })}
+        {this._generateRow(true, {columns: this.props.headers})}
         {this._generateContent()}
       </ul>
     );

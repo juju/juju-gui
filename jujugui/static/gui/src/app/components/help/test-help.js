@@ -19,12 +19,12 @@ describe('Help', () => {
   );
 
   it('renders', () => {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 
   it('renders for non-gisf', () => {
-    const wrapper = renderComponent({ gisf: false });
+    const wrapper = renderComponent({gisf: false});
     assert.equal(wrapper.find('.link').at(0).text(), 'Read the Juju docs');
     assert.equal(
       wrapper.find('.link').at(6).prop('href'),

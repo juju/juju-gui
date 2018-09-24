@@ -1111,7 +1111,7 @@ describe('init utils', () => {
     );
 
     it('properly removes the ghost units on env add_unit callback', function() {
-      const ghostUnit = { ghostUnit: 'I am' };
+      const ghostUnit = {ghostUnit: 'I am'};
       const db = {
         removeUnits: sinon.stub()
       };

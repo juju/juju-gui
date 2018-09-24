@@ -4,7 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
-const { urls } = require('jaaslib');
+const {urls} = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const Button = require('../../shared/button/button');

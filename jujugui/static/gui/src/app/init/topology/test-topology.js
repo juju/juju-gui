@@ -34,7 +34,7 @@ describe('topology', function() {
         this.name = 'TestModule';
         this.container = container;
         this.events = {
-          scene: { '.thing': {click: 'decorateThing'}},
+          scene: {'.thing': {click: 'decorateThing'}},
           d3: {'.target': {click: 'targetTarget'}},
           topo: {
             cancel: 'cancelHandler'

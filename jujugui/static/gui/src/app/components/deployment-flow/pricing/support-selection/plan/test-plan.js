@@ -63,14 +63,14 @@ describe('DeploymentSupportSelectionPlan', () => {
   });
 
   it('can display as selected', function() {
-    const wrapper = renderComponent({ selected: true });
+    const wrapper = renderComponent({selected: true});
     assert.equal(
       wrapper.prop('className').includes('deployment-support-select-plan--selected'),
       true);
   });
 
   it('can handle extra classes', function() {
-    const wrapper = renderComponent({ classes: ['extra'] });
+    const wrapper = renderComponent({classes: ['extra']});
     assert.equal(wrapper.prop('className').includes('extra'), true);
   });
 });

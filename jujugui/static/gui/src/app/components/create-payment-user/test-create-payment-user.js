@@ -62,7 +62,7 @@ describe('CreatePaymentUser', function() {
 
   it('can display a personal form', function() {
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     const options = wrapper.find('input');
     const expected = (
       <div className="create-payment-user">
@@ -151,13 +151,13 @@ describe('CreatePaymentUser', function() {
           </div>
         </form>
       </div>);
-    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
+    wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
     assert.compareJSX(wrapper, expected);
   });
 
   it('can display a business form', function() {
     const wrapper = renderComponent({});
-    wrapper.find('#business').simulate('change', { target: { id: 'business'} });
+    wrapper.find('#business').simulate('change', {target: {id: 'business'}});
     const inputs = wrapper.find('GenericInput');
     assert.equal(inputs.at(0).prop('label'), 'VAT number (optional)');
     assert.equal(inputs.at(1).prop('label'), 'Business name');
@@ -165,7 +165,7 @@ describe('CreatePaymentUser', function() {
 
   it('can display card and billing address fields', function() {
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     wrapper.find('#cardAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.find('#billingAddressSame').simulate('change',
@@ -272,7 +272,7 @@ describe('CreatePaymentUser', function() {
   it('can handle errors when trying to create the token', function() {
     const addNotification = sinon.stub();
     stripe.createToken.callsArgWith(2, 'Uh oh!', null);
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('Button').props().action();
@@ -289,7 +289,7 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
+    wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
     wrapper.find('Button').props().action();
     assert.equal(payment.createUser.callCount, 1);
     assert.deepEqual(payment.createUser.args[0][0], {
@@ -338,7 +338,7 @@ describe('CreatePaymentUser', function() {
     };
     instance.refs = Object.assign(refs, extraRefs);
     instance.refs = refs;
-    wrapper.find('#business').simulate('change', { target: { id: 'business'} });
+    wrapper.find('#business').simulate('change', {target: {id: 'business'}});
     wrapper.update();
     wrapper.find('Button').props().action();
     assert.equal(payment.createUser.callCount, 1);
@@ -365,7 +365,7 @@ describe('CreatePaymentUser', function() {
       })
     };
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
+    wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
     wrapper.find('#billingAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.update();
@@ -407,10 +407,10 @@ describe('CreatePaymentUser', function() {
     const addNotification = sinon.stub();
     stripe.createToken.callsArgWith(2, null, {id: 'token_123'});
     payment.createUser.callsArgWith(1, 'Uh oh!', null);
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
+    wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
     wrapper.find('Button').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
@@ -426,7 +426,7 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
+    wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
     wrapper.find('Button').props().action();
     assert.equal(onUserCreated.callCount, 1);
   });

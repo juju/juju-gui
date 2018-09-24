@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
-const { urls } = require('jaaslib');
+const {urls} = require('jaaslib');
 
 class InspectorHeader extends React.Component {
   /**

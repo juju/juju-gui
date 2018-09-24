@@ -27,7 +27,7 @@ describe('DeploymentChangeItem', function() {
 
   it('can display a sprite icon', function() {
     change.icon = 'my-icon';
-    const wrapper = renderComponent({ change });
+    const wrapper = renderComponent({change});
     const expected = (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
@@ -64,7 +64,7 @@ describe('DeploymentChangeItem', function() {
   });
 
   it('can display without the time', function() {
-    const wrapper = renderComponent({ showTime: false });
+    const wrapper = renderComponent({showTime: false});
     assert.equal(wrapper.find('.deployment-change-item__time').length, 0);
   });
 });

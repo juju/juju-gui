@@ -123,7 +123,7 @@ class DeploymentPayment extends React.Component {
 
   render() {
     let content;
-    const { paymentUser } = this.props;
+    const {paymentUser} = this.props;
     const hasPaymentMethods = paymentUser && paymentUser.paymentMethods &&
       paymentUser.paymentMethods.length;
     if (this.state.loading) {

@@ -8,7 +8,7 @@ const React = require('react');
 class BooleanConfig extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: this._cleanConfig(this.props.config) };
+    this.state = {value: this._cleanConfig(this.props.config)};
   }
 
   /**
@@ -57,7 +57,7 @@ class BooleanConfig extends React.Component {
     // Due to a bug in React we must use target here because we aren't able
     // to simulate changes on currentTarget.
     // https://github.com/facebook/react/issues/4950
-    this.setState({ value: e.target.checked }, () => {
+    this.setState({value: e.target.checked}, () => {
       if (onChange) {
         onChange();
       }

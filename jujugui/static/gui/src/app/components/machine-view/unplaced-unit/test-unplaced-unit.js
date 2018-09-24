@@ -73,7 +73,7 @@ describe('MachineViewUnplacedUnit', function() {
   });
 
   it('can display in dragged mode', function() {
-    const wrapper = renderComponent({ isDragging: true });
+    const wrapper = renderComponent({isDragging: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__unplaced-unit--dragged'),
       true);

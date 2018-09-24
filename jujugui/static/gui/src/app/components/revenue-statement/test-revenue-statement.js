@@ -9,7 +9,7 @@ describe('Revenue statement', () => {
   const renderComponent = (options = {}) => enzyme.shallow(<RevenueStatement />);
 
   it('can render', () => {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 });

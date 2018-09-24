@@ -28,7 +28,7 @@ describe('EntityHeader', function() {
       plans={options.plans}
       scrollPosition={
         options.scrollPosition === undefined ? 0 : options.scrollPosition} />,
-    { disableLifecycleMethods: true }
+    {disableLifecycleMethods: true}
   );
 
   beforeEach(function() {
@@ -275,7 +275,7 @@ describe('EntityHeader', function() {
     });
     const instance = wrapper.instance();
     // Change the select value to a plan.
-    instance.refs = { plan: { value: 'test-plan' } };
+    instance.refs = {plan: {value: 'test-plan'}};
     // Simulate a click.
     wrapper.find('Button').props().action();
     assert.equal(deployService.callCount, 1);

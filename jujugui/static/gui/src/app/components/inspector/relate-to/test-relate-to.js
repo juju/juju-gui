@@ -13,7 +13,7 @@ describe('InspectorRelateTo', function() {
       application={options.application || {}}
       changeState={options.changeState || sinon.stub()}
       relatableApplications={options.relatableApplications || [{
-        getAttrs: () => ({ id: 'id', name: 'name', icon: 'icon'})
+        getAttrs: () => ({id: 'id', name: 'name', icon: 'icon'})
       }]} />
   );
 
@@ -39,7 +39,7 @@ describe('InspectorRelateTo', function() {
   });
 
   it('can render when there are no relatable endpoints', () => {
-    const wrapper = renderComponent({ relatableApplications: [] });
+    const wrapper = renderComponent({relatableApplications: []});
     assert.equal(
       wrapper.find('.unit-list__message').text(),
       'No relatable endpoints available.');

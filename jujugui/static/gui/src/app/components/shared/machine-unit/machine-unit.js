@@ -20,7 +20,7 @@ class MachineUnit extends React.Component {
   render() {
     let menu;
     let title;
-    const { name, menuItems } = this.props;
+    const {name, menuItems} = this.props;
     if (menuItems) {
       title = (
         <span className="machine-unit__name">

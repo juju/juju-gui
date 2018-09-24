@@ -14,7 +14,7 @@ describe('d3-components', function() {
         this.name = options.name || 'TestModule';
         this.container = options.container;
         this.events = {
-          scene: { '.thing': {click: 'decorateThing'}},
+          scene: {'.thing': {click: 'decorateThing'}},
           d3: {'.target': {click: 'targetTarget'}},
           topo: {
             cancel: 'cancelHandler'

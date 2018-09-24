@@ -31,18 +31,18 @@ describe('Logout', () => {
 
   it('renders properly for charmstore logout', () => {
     const doCharmstoreLogout = sinon.stub().returns(true);
-    const wrapper = renderComponent({ doCharmstoreLogout });
+    const wrapper = renderComponent({doCharmstoreLogout});
     assert.equal(wrapper.prop('href'), 'http://charmstorelogout');
   });
 
   it('can be hidden', () => {
-    const wrapper = renderComponent({ visible: false });
+    const wrapper = renderComponent({visible: false});
     assert.equal(wrapper.prop('className').includes('logout-link--hidden'), true);
   });
 
   it('does not redirect to logout onClick for regular logout', () => {
     const locationAssign = sinon.stub();
-    const wrapper = renderComponent({ locationAssign });
+    const wrapper = renderComponent({locationAssign});
     wrapper.simulate('click');
     assert.equal(locationAssign.callCount, 0);
   });

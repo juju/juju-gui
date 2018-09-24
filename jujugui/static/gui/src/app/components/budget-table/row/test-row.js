@@ -132,7 +132,7 @@ describe('BudgetTableRow', function() {
   });
 
   it('can render without plans', function() {
-    const wrapper = renderComponent({ withPlans: false });
+    const wrapper = renderComponent({withPlans: false});
     assert.equal(wrapper.find('.budget-table-row__plans').length, 0);
   });
 
@@ -170,7 +170,7 @@ describe('BudgetTableRow', function() {
         }
       }
     };
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     const expected = (
       <span className="budget-table-row__plan">{'plan 1'} ({'$5'})</span>);
     assert.compareJSX(wrapper.find('.budget-table-row__plan'), expected);
@@ -286,7 +286,7 @@ describe('BudgetTableRow', function() {
   it('will abort the request when unmounting', function() {
     var abort = sinon.stub();
     listPlansForCharm = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({ listPlansForCharm });
+    const wrapper = renderComponent({listPlansForCharm});
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
@@ -296,7 +296,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(null)
     });
     const showTerms = sinon.stub();
-    const wrapper = renderComponent({ charmsGetById, showTerms });
+    const wrapper = renderComponent({charmsGetById, showTerms});
     assert.equal(showTerms.callCount, 0);
     assert.equal(wrapper.find('TermsPopup').length, 0);
   });
@@ -306,7 +306,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms'])
     });
     const showTerms = sinon.stub();
-    const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
+    const wrapper = renderComponent({charmsGetById, parseTermId, showTerms});
     const expected = (
       <div className={
         'two-col prepend-five no-margin-bottom budget-table-row__link ' +
@@ -325,7 +325,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms'])
     });
     const showTerms = sinon.stub();
-    renderComponent({ charmsGetById, parseTermId, showTerms });
+    renderComponent({charmsGetById, parseTermId, showTerms});
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'landscape-terms');
     assert.isNull(showTerms.args[0][1]);
@@ -336,7 +336,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms/15'])
     });
     const showTerms = sinon.stub();
-    renderComponent({ charmsGetById, parseTermId, showTerms });
+    renderComponent({charmsGetById, parseTermId, showTerms});
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'landscape-terms');
     assert.equal(showTerms.args[0][1], 15);
@@ -347,7 +347,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['spinach/landscape-terms'])
     });
     const showTerms = sinon.stub();
-    renderComponent({ charmsGetById, parseTermId, showTerms });
+    renderComponent({charmsGetById, parseTermId, showTerms});
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'spinach/landscape-terms');
     assert.isNull(showTerms.args[0][1]);
@@ -358,7 +358,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['spinach/landscape-terms/15'])
     });
     const showTerms = sinon.stub();
-    renderComponent({ charmsGetById, parseTermId, showTerms });
+    renderComponent({charmsGetById, parseTermId, showTerms});
     assert.equal(showTerms.callCount, 1);
     assert.equal(showTerms.args[0][0], 'spinach/landscape-terms');
     assert.equal(showTerms.args[0][1], 15);
@@ -377,7 +377,7 @@ describe('BudgetTableRow', function() {
       name: 'apache2',
       content: 'Apache2 terms.'
     });
-    const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
+    const wrapper = renderComponent({charmsGetById, parseTermId, showTerms});
     wrapper.find('.budget-table-row__terms-link Button').props().action();
     wrapper.update();
     const popup = wrapper.find('TermsPopup');
@@ -390,7 +390,7 @@ describe('BudgetTableRow', function() {
 
   it('can handle errors when getting plans', function() {
     listPlansForCharm = sinon.stub().callsArgWith(1, 'uh oh!', null);
-    renderComponent({ listPlansForCharm });
+    renderComponent({listPlansForCharm});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Fetching plans failed',
@@ -404,7 +404,7 @@ describe('BudgetTableRow', function() {
       get: sinon.stub().returns(['landscape-terms', 'apache2-terms'])
     });
     const showTerms = sinon.stub().callsArgWith(2, 'uh oh!', null);
-    const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
+    const wrapper = renderComponent({charmsGetById, parseTermId, showTerms});
     wrapper.find('.budget-table-row__terms-link Button').props().action();
     wrapper.update();
     assert.equal(addNotification.callCount, 2);

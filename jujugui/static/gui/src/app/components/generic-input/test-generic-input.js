@@ -138,7 +138,7 @@ describe('GenericInput', function() {
   });
 
   it('can validate the form', () => {
-    const wrapper = renderComponent({ value: '' });
+    const wrapper = renderComponent({value: ''});
     const instance = wrapper.instance();
     instance.validate();
     wrapper.update();
@@ -184,19 +184,19 @@ describe('GenericInput', function() {
   });
 
   it('can validate the input when leaving', () => {
-    const wrapper = renderComponent({ value: '' });
+    const wrapper = renderComponent({value: ''});
     wrapper.find('input').props().onBlur();
     wrapper.update();
     assert.equal(wrapper.find('.generic-input__errors').length, 1);
   });
 
   it('allows the label to be optional', () => {
-    const wrapper = renderComponent({ label: null });
+    const wrapper = renderComponent({label: null});
     assert.equal(wrapper.find('.generic-input__label').length, 0);
   });
 
   it('adds a class to the wrapper element on error', () => {
-    const wrapper = renderComponent({ value: '' });
+    const wrapper = renderComponent({value: ''});
     wrapper.find('input').props().onBlur();
     wrapper.update();
     assert.equal(wrapper.prop('className').includes('has-error'), true);

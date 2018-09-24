@@ -45,7 +45,7 @@ class DeploymentExpertIntro extends React.Component {
   }
 
   render() {
-    const { entityModel } = this.props;
+    const {entityModel} = this.props;
     let content;
     if (!entityModel) {
       content = (
@@ -119,7 +119,7 @@ class DeploymentExpertIntro extends React.Component {
                     dangerouslySetInnerHTML={{__html: supportedDescription}}></div>
                   <Link
                     changeState={this.props.changeState}
-                    clickState={{ hash: 'support-level' }}
+                    clickState={{hash: 'support-level'}}
                     generatePath={this.props.generatePath}>
                     View other support options
                   </Link>

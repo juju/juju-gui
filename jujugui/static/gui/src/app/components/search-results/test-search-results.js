@@ -97,7 +97,7 @@ describe('SearchResults', function() {
 
   describe('functional tests', function() {
     it('can initially show the spinner', function() {
-      const wrapper = renderComponent({ charmstoreSearch: sinon.stub() });
+      const wrapper = renderComponent({charmstoreSearch: sinon.stub()});
       assert.equal(wrapper.find('Spinner').length, 1);
     });
 
@@ -325,7 +325,7 @@ describe('SearchResults', function() {
       charmstoreSearch.returns({abort: abort});
       const wrapper = renderComponent();
       assert.equal(abort.callCount, 0);
-      wrapper.setProps({ query: 'apache2' });
+      wrapper.setProps({query: 'apache2'});
       assert.equal(abort.callCount, 1);
     });
   });

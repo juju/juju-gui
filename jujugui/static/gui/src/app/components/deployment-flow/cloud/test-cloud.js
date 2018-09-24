@@ -92,7 +92,7 @@ describe('DeploymentCloud', function() {
   });
 
   it('can display the loading state', function() {
-    const wrapper = renderComponent({ listClouds: sinon.stub() });
+    const wrapper = renderComponent({listClouds: sinon.stub()});
     var expected = (
       <div className="deployment-cloud__loading">
         <Spinner />

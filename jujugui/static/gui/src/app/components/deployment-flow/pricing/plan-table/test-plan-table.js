@@ -121,7 +121,7 @@ describe('DeploymentPlanTable', () => {
   it('can handle errors when getting plans', function() {
     const addNotification = sinon.stub();
     listPlansForCharm.callsArgWith(1, 'Uh oh!', null);
-    renderComponent({ addNotification });
+    renderComponent({addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Fetching plans failed',

@@ -18,7 +18,7 @@ describe('SvgIcon', function() {
   );
 
   it('can render an icon', function() {
-    const wrapper = renderComponent({ size: 24 });
+    const wrapper = renderComponent({size: 24});
     const expected = (
       <svg
         className="svg-icon"
@@ -45,7 +45,7 @@ describe('SvgIcon', function() {
   });
 
   it('can set a class', function() {
-    const wrapper = renderComponent({ className: 'extra-class' });
+    const wrapper = renderComponent({className: 'extra-class'});
     assert.equal(wrapper.prop('className').includes('extra-class'), true);
   });
 });

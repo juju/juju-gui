@@ -31,7 +31,7 @@ describe('StringConfigInput', function() {
 
   it('can update the value', function() {
     const setValue = sinon.stub();
-    const wrapper = renderComponent({ setValue });
+    const wrapper = renderComponent({setValue});
     const instance = wrapper.instance();
     instance.refs = {
       editableInput: {

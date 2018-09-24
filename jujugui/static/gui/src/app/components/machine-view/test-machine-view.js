@@ -26,7 +26,7 @@ describe('MachineView', function() {
         parseMachineDetails={options.parseMachineDetails || sinon.stub()}
         parseMachineName={options.parseMachineName || parseMachineName}
         sendAnalytics={options.sendAnalytics || sinon.stub()} />,
-      { disableLifecycleMethods: true }
+      {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
     const column = document.createElement('div');
@@ -248,7 +248,7 @@ describe('MachineView', function() {
 
   it('can open the store from the onboarding', function() {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.machine-view__column-onboarding .link').at(0).props().onClick();
     assert.equal(changeState.callCount, 2);
     assert.deepEqual(changeState.args[1][0], {store: ''});
@@ -417,7 +417,7 @@ describe('MachineView', function() {
 
   it('can select a machine', function() {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     const instance = wrapper.instance();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: {machines: 'new0'}});

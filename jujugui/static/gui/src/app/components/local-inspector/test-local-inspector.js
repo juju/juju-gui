@@ -119,7 +119,7 @@ describe('LocalInspector', function() {
   });
 
   it('can display the update service view', function() {
-    const wrapper = renderComponent({ localType: 'update' });
+    const wrapper = renderComponent({localType: 'update'});
     var expected = (
       <div className="local-inspector__content-update">
         <p className="local-inspector__label">Choose applications to upgrade:</p>
@@ -161,7 +161,7 @@ describe('LocalInspector', function() {
 
   it('can handle deploying a new charm', function() {
     var uploadLocalCharm = sinon.spy();
-    const wrapper = renderComponent({ uploadLocalCharm });
+    const wrapper = renderComponent({uploadLocalCharm});
     const instance = wrapper.instance();
     instance.refs = {series: {value: 'wily'}};
     wrapper.find('ButtonRow').prop('buttons')[1].action();
@@ -199,7 +199,7 @@ describe('LocalInspector', function() {
 
   it('can cancel the upload', function() {
     var changeState = sinon.spy();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
