@@ -450,14 +450,15 @@ const utils = require('../app/init/testing-utils');
       it('calls currentModelInfo and watchAll after login', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {
-          facades: [
-            {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [2]}
-          ],
-          'user-info': {},
-          'model-tag': 'model-my-model'
-        }});
+        conn.msg({'request-id': 1,
+          response: {
+            facades: [
+              {name: 'Client', versions: [0]},
+              {name: 'ModelManager', versions: [2]}
+            ],
+            'user-info': {},
+            'model-tag': 'model-my-model'
+          }});
         var currentModelInfoMessage = conn.last_message(2);
         // ModelInfo is the second request.
         var currentModelInfoExpected = {
@@ -487,14 +488,15 @@ const utils = require('../app/init/testing-utils');
       it('stores user information', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {
-          facades: [
-            {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [2]}
-          ],
-          'model-tag': 'model-42',
-          'user-info': {'controller-access': 'login', 'model-access': 'read'}
-        }});
+        conn.msg({'request-id': 1,
+          response: {
+            facades: [
+              {name: 'Client', versions: [0]},
+              {name: 'ModelManager', versions: [2]}
+            ],
+            'model-tag': 'model-42',
+            'user-info': {'controller-access': 'login', 'model-access': 'read'}
+          }});
         assert.strictEqual(env.get('controllerAccess'), 'login');
         assert.strictEqual(env.get('modelAccess'), 'read');
       });
@@ -502,17 +504,18 @@ const utils = require('../app/init/testing-utils');
       it('stores user information (legacy addmodel)', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1, response: {
-          facades: [
-            {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [2]}
-          ],
-          'model-tag': 'model-42',
-          'user-info': {
-            'controller-access': 'addmodel',
-            'model-access': 'admin'
-          }
-        }});
+        conn.msg({'request-id': 1,
+          response: {
+            facades: [
+              {name: 'Client', versions: [0]},
+              {name: 'ModelManager', versions: [2]}
+            ],
+            'model-tag': 'model-42',
+            'user-info': {
+              'controller-access': 'addmodel',
+              'model-access': 'admin'
+            }
+          }});
         assert.strictEqual(env.get('controllerAccess'), 'add-model');
         assert.strictEqual(env.get('modelAccess'), 'admin');
       });
@@ -2014,7 +2017,8 @@ const utils = require('../app/init/testing-utils');
         {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
         {jobs: [machineJobs.HOST_UNITS], 'container-type': 'kvm'},
         {jobs: [machineJobs.HOST_UNITS],
-          'container-type': 'lxc', 'parent-id': '1'}
+          'container-type': 'lxc',
+          'parent-id': '1'}
       ];
       var expectedMsg = {
         'request-id': 1,

@@ -70,9 +70,17 @@ const keyBindings = {
 */
 const activate = () => {
   const key_map = {
-    '1': 49, '/': 191, '?': 63, '+': 187, '-': 189,
-    enter: 13, esc: 27, backspace: 8,
-    tab: 9, pageup: 33, pagedown: 34};
+    '1': 49,
+    '/': 191,
+    '?': 63,
+    '+': 187,
+    '-': 189,
+    enter: 13,
+    esc: 27,
+    backspace: 8,
+    tab: 9,
+    pageup: 33,
+    pagedown: 34};
   const code_map = {};
   Object.keys(key_map).forEach(k => code_map[key_map[k]] = k);
   const listener = evt => {

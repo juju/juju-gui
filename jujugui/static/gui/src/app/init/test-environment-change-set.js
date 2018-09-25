@@ -406,14 +406,18 @@ describe('Environment Change Set', function() {
 
       it('filters out unplaced units when instructed to', function() {
         ecs.changeSet = {
-          a: {index: 0, parents: [], command: {
-            method: '_deploy',
-            options: {modelId: '75930989$'}
-          }},
-          b: {index: 0, parents: [], command: {
-            method: '_add_unit',
-            options: {modelId: '75930989$/0'}
-          }}
+          a: {index: 0,
+            parents: [],
+            command: {
+              method: '_deploy',
+              options: {modelId: '75930989$'}
+            }},
+          b: {index: 0,
+            parents: [],
+            command: {
+              method: '_add_unit',
+              options: {modelId: '75930989$/0'}
+            }}
         };
 
         filterStub.returns([{id: '75930989$/0'}]);

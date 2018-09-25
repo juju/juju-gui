@@ -907,7 +907,8 @@ describe('init', () => {
           path: 'frankban/latta',
           uuid: 'fe9a2845-4829-4d61-8653-248b7052204e'
         },
-        user: null, root: null
+        user: null,
+        root: null
       }]);
     });
 
@@ -921,7 +922,8 @@ describe('init', () => {
           path: 'uros-jovanovic/jujugui-org',
           uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0'
         },
-        user: null, root: null
+        user: null,
+        root: null
       }]);
     });
 
@@ -931,7 +933,10 @@ describe('init', () => {
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
-        root: null, store: null, model: null, user: null,
+        root: null,
+        store: null,
+        model: null,
+        user: null,
         profile: ''
       }]);
     });
@@ -942,7 +947,10 @@ describe('init', () => {
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
-        root: null, store: null, model: null, user: null,
+        root: null,
+        store: null,
+        model: null,
+        user: null,
         profile: ''
       }]);
     });

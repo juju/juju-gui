@@ -320,7 +320,8 @@ describe('State', () => {
       'http://abc.com:123/u/frankban/production/u/frankban/django/bundle/0/#ham', // eslint-disable-line max-len
     state: {
       hash: 'ham',
-      user: 'frankban/production', store: 'u/frankban/django/bundle/0'},
+      user: 'frankban/production',
+      store: 'u/frankban/django/bundle/0'},
     error: null
   }];
 
@@ -347,7 +348,8 @@ describe('State', () => {
       'http://abc.com:123/u/hatch/staging/i/applications/inspector/ghost/#mayo',
     state: {
       hash: 'mayo',
-      user: 'hatch/staging', gui: {applications: '', inspector: {id: 'ghost'}}},
+      user: 'hatch/staging',
+      gui: {applications: '', inspector: {id: 'ghost'}}},
     error: null
   }];
 

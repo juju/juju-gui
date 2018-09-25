@@ -567,14 +567,18 @@ describe('EnvironmentView', function() {
                 {
                   'application-name': 'puppet2',
                   relation: {
-                    name: 'juju-info', role: 'requirer',
-                    interface: 'juju-info', scope: 'container'
+                    name: 'juju-info',
+                    role: 'requirer',
+                    interface: 'juju-info',
+                    scope: 'container'
                   }
                 }, {
                   'application-name': 'wordpress',
                   relation: {
-                    name: 'juju-info', role: 'provider',
-                    interface: 'juju-info', scope: 'container'
+                    name: 'juju-info',
+                    role: 'provider',
+                    interface: 'juju-info',
+                    scope: 'container'
                   }
                 }
               ]
@@ -593,14 +597,18 @@ describe('EnvironmentView', function() {
                 {
                   'application-name': 'mediawiki',
                   relation: {
-                    name: 'juju-info', role: 'provider',
-                    interface: 'juju-info', scope: 'container'
+                    name: 'juju-info',
+                    role: 'provider',
+                    interface: 'juju-info',
+                    scope: 'container'
                   }
                 }, {
                   'application-name': 'puppet',
                   relation: {
-                    name: 'juju-info', role: 'requirer',
-                    interface: 'juju-info', scope: 'container'
+                    name: 'juju-info',
+                    role: 'requirer',
+                    interface: 'juju-info',
+                    scope: 'container'
                   }
                 }
               ]
