@@ -12,6 +12,7 @@
     }
   },
   "rules": {
+    "array-bracket-spacing": [2, "never"],
     "arrow-parens": ["error", "as-needed"],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "comma-dangle": ["error", "never"],
