@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericButton = require('../../generic-button/generic-button');
-const Panel = require('../../panel/panel');
+const Panel = require('../../shared/panel/panel');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 class DeploymentPanel extends React.Component {
