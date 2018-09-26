@@ -12,7 +12,7 @@ const StatusRemoteApplicationList = require(
   '../remote-application-list/remote-application-list');
 const StatusRelationList = require('../relation-list/relation-list');
 const StatusUnitList = require('../unit-list/unit-list');
-const Panel = require('../../../panel/panel');
+const Panel = require('../../panel/panel');
 const maracaPropTypes = require('../../../../maraca/prop-types');
 const utils = require('../../utils');
 

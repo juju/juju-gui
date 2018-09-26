@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
 const GenericButton = require('../generic-button/generic-button');
-const Panel = require('../panel/panel');
+const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 const GET_STARTED = 'getstarted.md';

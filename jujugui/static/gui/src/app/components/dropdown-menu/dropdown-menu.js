@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const enhanceWithClickOutside = require('../../init/react-click-outside');
 
-const Panel = require('../panel/panel');
+const Panel = require('../shared/panel/panel');
 
 /**
   Creates a dropdown menu with the supplied children as items.

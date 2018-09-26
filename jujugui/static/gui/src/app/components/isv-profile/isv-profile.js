@@ -10,7 +10,7 @@ charms and bundles. You can only see this page is you have access.
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Panel = require('../panel/panel');
+const Panel = require('../shared/panel/panel');
 const PlansUsage = require('./plans-usage/plans-usage');
 
 class ISVProfile extends React.Component {
