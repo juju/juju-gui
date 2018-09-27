@@ -19,7 +19,7 @@ describe('StatusUnitList', () => {
         options.generateUnitOnClick || sinon.stub().returns(sinon.stub())}
       generateUnitURL={
         options.generateUnitURL || sinon.stub().returns('http://example.com')}
-        getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
+      getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
       onMachineClick={options.onCharmClick || sinon.stub()}
       statusFilter={options.statusFilter}
       units={options.units || units} />
