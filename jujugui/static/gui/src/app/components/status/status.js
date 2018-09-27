@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const initUtils = require('../../init/utils');
 const maracaPropTypes = require('../../maraca/prop-types');
 const SharedStatus = require('../shared/status/status/status');
 
@@ -176,6 +177,15 @@ class Status extends React.Component {
       this, this._generateMachineClickState(machineId));
   }
 
+  /**
+    Generate an icon path for an app.
+    @param {Object} app - The details for an app.
+    @returns {String} The icon path.
+  */
+  _getIconPath(app) {
+    return initUtils.getIconPath(app.charmURL, false);
+  }
+
   render() {
 
     return (
@@ -187,6 +197,7 @@ class Status extends React.Component {
         generateMachineURL={this._generateMachineURL.bind(this)}
         generateUnitOnClick={this._generateUnitOnClick.bind(this)}
         generateUnitURL={this._generateUnitURL.bind(this)}
+        getIconPath={this._getIconPath.bind(this)}
         model={this.props.model}
         navigateToApplication={this._navigateToApplication.bind(this)}
         navigateToCharm={this._navigateToCharm.bind(this)}

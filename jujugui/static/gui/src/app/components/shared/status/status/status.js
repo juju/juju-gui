@@ -123,6 +123,7 @@ class Status extends React.Component {
         generateApplicationOnClick={this.props.generateApplicationOnClick}
         generateApplicationURL={this.props.generateApplicationURL}
         generateCharmURL={this.props.generateCharmURL}
+        getIconPath={this.props.getIconPath}
         onCharmClick={this.props.navigateToCharm}
         statusFilter={this.state.statusFilter}
         units={this.props.valueStore.units} />);
@@ -143,6 +144,7 @@ class Status extends React.Component {
         generateMachineURL={this.props.generateMachineURL}
         generateUnitOnClick={this.props.generateUnitOnClick}
         generateUnitURL={this.props.generateUnitURL}
+        getIconPath={this.props.getIconPath}
         onMachineClick={this.props.navigateToMachine}
         statusFilter={this.state.statusFilter}
         units={units} />);
@@ -178,6 +180,7 @@ class Status extends React.Component {
       <StatusRelationList
         applications={this.props.valueStore.applications}
         generateApplicationURL={this.props.generateApplicationURL}
+        getIconPath={this.props.getIconPath}
         onApplicationClick={this.props.navigateToApplication}
         relations={relations}
         statusFilter={this.state.statusFilter} />);
@@ -221,6 +224,7 @@ Status.propTypes = {
   generateMachineURL: PropTypes.func.isRequired,
   generateUnitOnClick: PropTypes.func.isRequired,
   generateUnitURL: PropTypes.func.isRequired,
+  getIconPath: PropTypes.func.isRequired,
   model: shapeup.shape({
     cloud: PropTypes.string,
     environmentName: PropTypes.string,
