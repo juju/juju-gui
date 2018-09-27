@@ -8,8 +8,6 @@ const { urls } = require('jaaslib');
 const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
-
-const utils = require('../../../../init/utils');
 const {
   getStatusClass,
   normaliseStatus
@@ -44,7 +42,7 @@ class StatusApplicationList extends React.Component {
           content: (
             <span>
               <img className="status-view__icon"
-                src={utils.getIconPath(app.charmURL, false)} />
+                src={this.props.getIconPath(app)} />
               {app.name}
             </span>)
         }, {
@@ -115,6 +113,7 @@ StatusApplicationList.propTypes = {
   generateApplicationOnClick: PropTypes.func.isRequired,
   generateApplicationURL: PropTypes.func.isRequired,
   generateCharmURL: PropTypes.func.isRequired,
+  getIconPath: PropTypes.func.isRequired,
   onCharmClick: PropTypes.func.isRequired,
   statusFilter: PropTypes.string,
   units: maracaPropTypes.units

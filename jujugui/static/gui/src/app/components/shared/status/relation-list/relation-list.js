@@ -6,7 +6,6 @@ const React = require('react');
 
 const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusTable = require('../table/table');
-const utils = require('../../../../init/utils');
 
 class StatusRelationList extends React.Component {
 
@@ -27,7 +26,7 @@ class StatusRelationList extends React.Component {
         href={this.props.generateApplicationURL(name)}
         onClick={this.props.onApplicationClick.bind(this, name)}>
         <img className="status-view__icon"
-          src={utils.getIconPath(app.charmURL, false)} />
+          src={this.props.getIconPath(app)} />
         {name}
       </a>);
   }
@@ -109,6 +108,7 @@ class StatusRelationList extends React.Component {
 StatusRelationList.propTypes = {
   applications: maracaPropTypes.applications,
   generateApplicationURL: PropTypes.func.isRequired,
+  getIconPath: PropTypes.func.isRequired,
   onApplicationClick: PropTypes.func.isRequired,
   relations: maracaPropTypes.relations,
   statusFilter: PropTypes.string

@@ -15,6 +15,7 @@ describe('StatusRelationList', () => {
       changeState={options.changeState || sinon.stub()}
       generateApplicationURL={options.generateApplicationURL || sinon.stub()}
       generatePath={options.generatePath || sinon.stub()}
+      getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
       onApplicationClick={options.onApplicationClick || sinon.stub()}
       relations={options.relations || relations}
       statusFilter={options.statusFilter} />

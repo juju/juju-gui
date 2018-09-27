@@ -47,7 +47,7 @@ exports[`StatusUnitList renders 1`] = `
             "content": <span>
               <img
                 className="status-view__icon"
-                src="v5/~containers/etcd-126/icon.svg"
+                src="icon.svg"
               />
               etcd/0
             </span>,
