@@ -23,9 +23,20 @@ class AddedServicesLabel extends React.Component {
   }
 
   render() {
-    // A bundleURL is in the format elasticsearch-cluster/bundle/17
-    const url = urls.URL.fromAnyString(this.props.bundleURL);
-    const name = url.name.replace('-', ' ');
+    // A bundleURL is in the format elasticsearch-cluster/bundle/17 unless it
+    // has been imported from a local file then it'll be the file name without
+    // the extension.
+    let name = '';
+    const bundleURL = this.props.bundleURL;
+
+    try {
+      const url = urls.URL.fromAnyString(bundleURL);
+      name = url.name.replace('-', ' ');
+    } catch (e) {
+      // The bundleURL is probably a local file import.
+      name = bundleURL;
+    }
+
     return (
       <li className="inspector-view__label-item">
         <div className="inspector-view__label-name">{name}</div>
