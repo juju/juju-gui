@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 
 const EntityDetails = require('../entity-details/entity-details');
-const Panel = require('../panel/panel');
+const Panel = require('../shared/panel/panel');
 const SearchResults = require('../search-results/search-results');
 const Store = require('../store/store');
 

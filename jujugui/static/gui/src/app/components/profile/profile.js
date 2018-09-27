@@ -14,7 +14,7 @@ const ProfileBundleList = require('./bundle-list/bundle-list');
 const ProfileCredentialList = require('./credential-list/credential-list');
 const ProfileInvoiceList = require('./invoice-list/invoice-list');
 const Invoice = require('../invoice/invoice');
-const Panel = require('../panel/panel');
+const Panel = require('../shared/panel/panel');
 const RevenueStatement = require('../revenue-statement/revenue-statement');
 
 /** Profile React component used to display user details. */
