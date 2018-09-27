@@ -42,13 +42,14 @@ describe('bundle exporter', () => {
 
   it('can export the model as a bundle', () => {
     // Mock a topology that can return positions.
-    db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
+    db.services.add({id: 'mysql', charm: 'precise/mysql-1', series: 'xenial'});
     db.services.add({
       id: 'wordpress',
       charm: 'precise/wordpress-1',
       config: {debug: 'no', username: 'admin'},
       constraints: 'cpu-power=2 cpu-cores=4',
-      annotations: {'gui-x': 100, 'gui-y': 200}
+      annotations: {'gui-x': 100, 'gui-y': 200},
+      series: 'bionic'
     });
     db.addUnits({
       id: 'wordpress/0'
@@ -82,6 +83,8 @@ describe('bundle exporter', () => {
     var relation = result.relations[0];
 
     assert.equal(result.series, 'precise');
+    assert.equal(result.applications.mysql.series, 'xenial');
+    assert.equal(result.applications.wordpress.series, 'bionic');
     assert.equal(result.applications.mysql.charm, 'precise/mysql-1');
     assert.equal(result.applications.wordpress.charm, 'precise/wordpress-1');
     // Services with no units are allowed.
