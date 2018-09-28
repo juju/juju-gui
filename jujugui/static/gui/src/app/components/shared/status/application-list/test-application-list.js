@@ -17,6 +17,7 @@ describe('StatusApplicationList', () => {
       generateApplicationURL={
         options.generateApplicationURL || sinon.stub().returns('http://example.com')}
       generateCharmURL={options.generateCharmURL || sinon.stub()}
+      getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
       onCharmClick={options.onCharmClick || sinon.stub()}
       statusFilter={options.statusFilter}
       units={options.units || units} />

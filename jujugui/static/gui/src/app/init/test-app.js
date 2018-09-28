@@ -44,7 +44,8 @@ describe('App', () => {
       switchModel={options.switchModel || sinon.stub()}
       terms={options.terms || {}}
       topology={options.topology || topology}
-      user={options.user || {}} />
+      user={options.user || {}}
+      valueStore={options.valueStore || {}} />
   );
 
   beforeEach(() => {

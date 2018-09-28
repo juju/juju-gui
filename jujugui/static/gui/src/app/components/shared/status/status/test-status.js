@@ -11,17 +11,18 @@ describe('Status', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Status
-      generateApplicationOnClick={options._generateApplicationOnClick || sinon.stub()}
-      generateApplicationURL={options._generateApplicationURL || sinon.stub()}
-      generateCharmURL={options._generateCharmURL || sinon.stub()}
-      generateMachineOnClick={options._generateMachineOnClick || sinon.stub()}
-      generateMachineURL={options._generateMachineURL || sinon.stub()}
-      generateUnitOnClick={options._generateUnitOnClick || sinon.stub()}
-      generateUnitURL={options._generateUnitURL || sinon.stub()}
+      generateApplicationOnClick={options.generateApplicationOnClick || sinon.stub()}
+      generateApplicationURL={options.generateApplicationURL || sinon.stub()}
+      generateCharmURL={options.generateCharmURL || sinon.stub()}
+      generateMachineOnClick={options.generateMachineOnClick || sinon.stub()}
+      generateMachineURL={options.generateMachineURL || sinon.stub()}
+      generateUnitOnClick={options.generateUnitOnClick || sinon.stub()}
+      generateUnitURL={options.generateUnitURL || sinon.stub()}
+      getIconPath={options.getIconPath || sinon.stub()}
       model={options.model || model}
-      navigateToApplication={options._navigateToApplication || sinon.stub()}
-      navigateToCharm={options._navigateToCharm || sinon.stub()}
-      navigateToMachine={options._navigateToMachine || sinon.stub()}
+      navigateToApplication={options.navigateToApplication || sinon.stub()}
+      navigateToCharm={options.navigateToCharm || sinon.stub()}
+      navigateToMachine={options.navigateToMachine || sinon.stub()}
       valueStore={options.valueStore || valueStore} />
   );
 

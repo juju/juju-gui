@@ -55,6 +55,7 @@ exports[`Status renders with entites 1`] = `
         generateApplicationOnClick={[Function]}
         generateApplicationURL={[Function]}
         generateCharmURL={[Function]}
+        getIconPath={[Function]}
         onCharmClick={[Function]}
         statusFilter={null}
         units={
@@ -83,6 +84,7 @@ exports[`Status renders with entites 1`] = `
         generateMachineURL={[Function]}
         generateUnitOnClick={[Function]}
         generateUnitURL={[Function]}
+        getIconPath={[Function]}
         onMachineClick={[Function]}
         statusFilter={null}
         units={
@@ -123,6 +125,7 @@ exports[`Status renders with entites 1`] = `
           }
         }
         generateApplicationURL={[Function]}
+        getIconPath={[Function]}
         onApplicationClick={[Function]}
         relations={
           Object {
