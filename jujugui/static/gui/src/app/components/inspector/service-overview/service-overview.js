@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const ButtonRow = require('../../button-row/button-row');
+const ButtonRow = require('../../shared/button-row/button-row');
 const initUtils = require('../../../init/utils');
 const InspectorConfirm = require('../confirm/confirm');
 const OverviewAction = require('../overview-action/overview-action');

@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
 const MachineViewAddMachine = require('./add-machine');
-const ButtonRow = require('../../button-row/button-row');
+const ButtonRow = require('../../shared/button-row/button-row');
 const Constraints = require('../../constraints/constraints');
 
 describe('MachineViewAddMachine', function() {

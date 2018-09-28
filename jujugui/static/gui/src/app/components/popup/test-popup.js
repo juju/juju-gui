@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const Popup = require('./popup');
-const ButtonRow = require('../button-row/button-row');
+const ButtonRow = require('../shared/button-row/button-row');
 const Button = require('../shared/button/button');
 const SvgIcon = require('../svg-icon/svg-icon');
 

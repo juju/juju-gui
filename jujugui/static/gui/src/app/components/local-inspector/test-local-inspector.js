@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const LocalInspector = require('./local-inspector');
-const ButtonRow = require('../button-row/button-row');
+const ButtonRow = require('../shared/button-row/button-row');
 const InspectorHeader = require('../inspector/header/header');
 
 describe('LocalInspector', function() {

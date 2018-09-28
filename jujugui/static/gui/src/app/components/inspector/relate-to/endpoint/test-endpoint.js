@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const InspectorRelateToEndpoint = require('./endpoint');
-const ButtonRow = require('../../../button-row/button-row');
+const ButtonRow = require('../../../shared/button-row/button-row');
 const CheckListItem = require('../../../check-list-item/check-list-item');
 
 describe('InspectorRelateToEndpoint', () => {

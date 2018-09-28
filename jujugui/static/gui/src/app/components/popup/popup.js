@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../button-row/button-row');
+const ButtonRow = require('../shared/button-row/button-row');
 const Button = require('../shared/button/button');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');

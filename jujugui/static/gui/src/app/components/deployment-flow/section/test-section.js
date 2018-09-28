@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentSection = require('./section');
-const ButtonRow = require('../../button-row/button-row');
+const ButtonRow = require('../../shared/button-row/button-row');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('DeploymentSection', function() {

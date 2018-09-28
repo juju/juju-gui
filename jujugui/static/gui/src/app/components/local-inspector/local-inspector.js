@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../button-row/button-row');
+const ButtonRow = require('../shared/button-row/button-row');
 const InspectorHeader = require('../inspector/header/header');
 
 class LocalInspector extends React.Component {
