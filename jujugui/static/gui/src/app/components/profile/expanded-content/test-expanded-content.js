@@ -6,7 +6,7 @@ const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const Link = require('../../link/link');
 const ProfileExpandedContent = require('../expanded-content/expanded-content');
 
@@ -133,13 +133,13 @@ describe('Profile expanded content', function() {
           </ul>
         </div>
         <div className="three-col prepend-nine last-col">
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             disabled={false}
             tooltip="Add this bundle to your current model"
             type="positive">
             Add to snazzy-model
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -209,13 +209,13 @@ describe('Profile expanded content', function() {
           </ul>
         </div>
         <div className="three-col prepend-nine last-col">
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             disabled={false}
             tooltip="Add this bundle to your current model"
             type="positive">
             Add to snazzy-model
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -252,7 +252,7 @@ describe('Profile expanded content', function() {
       addToModel: addToModel,
       entity: rawBundleData
     });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(addToModel.callCount, 1);
     assert.equal(addToModel.args[0][0], 'cs:~lazypower/bundle/logstash-core-1');
     assert.equal(changeState.callCount, 1);

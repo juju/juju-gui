@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const Spinner = require('../spinner/spinner');
 
 // List, add and remove cloud credentials in the account page.
@@ -108,11 +108,11 @@ class CredentialAddEdit extends React.Component {
     }
     return (
       <div className="credential-add-edit__choose-cloud">
-        <GenericButton
+        <Button
           action={this._setCloud.bind(this, null)}
           type="inline-neutral">
           Change cloud
-        </GenericButton>
+        </Button>
       </div>);
   }
 

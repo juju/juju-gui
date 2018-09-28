@@ -9,7 +9,7 @@ const {urls} = require('jaaslib');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
-const ButtonRow = require('../../button-row/button-row');
+const ButtonRow = require('../../shared/button-row/button-row');
 
 class Configuration extends React.Component {
   constructor(props) {

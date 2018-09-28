@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentPanel = require('./panel');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('DeploymentPanel', function() {
@@ -27,11 +27,11 @@ describe('DeploymentPanel', function() {
       <div className="deployment-panel">
         <div className="deployment-panel__header">
           <div className="deployment-panel__close">
-            <GenericButton
-              action={wrapper.find('GenericButton').prop('action')}
+            <Button
+              action={wrapper.find('Button').prop('action')}
               type="neutral">
               Back to canvas
-            </GenericButton>
+            </Button>
           </div>
           <div className="deployment-panel__header-name">
             Lamington
@@ -77,7 +77,7 @@ describe('DeploymentPanel', function() {
   it('can close', function() {
     const changeState = sinon.stub();
     const wrapper = renderComponent({ changeState });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {deploy: null},

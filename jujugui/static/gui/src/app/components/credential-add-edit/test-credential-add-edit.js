@@ -8,7 +8,7 @@ const enzyme = require('enzyme');
 const CredentialAddEdit = require('./credential-add-edit');
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const Spinner = require('../spinner/spinner');
 
 describe('CredentialAddEdit', () => {
@@ -83,11 +83,11 @@ describe('CredentialAddEdit', () => {
       <div className="credential-add-edit">
         <div>
           <div className="credential-add-edit__choose-cloud">
-            <GenericButton
-              action={wrapper.find('GenericButton').prop('action')}
+            <Button
+              action={wrapper.find('Button').prop('action')}
               type="inline-neutral">
               Change cloud
-            </GenericButton>
+            </Button>
           </div>
           <DeploymentCloud
             acl={acl}

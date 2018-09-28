@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const GenericInput = require('../generic-input/generic-input');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const initUtils = require('../../init/utils');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
@@ -331,12 +331,12 @@ class CreatePaymentUser extends React.Component {
             {this._generateCardAddressFields()}
             {this._generateBillingAddressFields()}
             <div className="create-payment-user__add">
-              <GenericButton
+              <Button
                 action={this._handleAddUser.bind(this)}
                 disabled={disabled}
                 type="inline-positive">
                 Add payment details
-              </GenericButton>
+              </Button>
             </div>
           </div>
         </form>

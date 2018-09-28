@@ -8,7 +8,7 @@ const SvgIcon = require('../../../svg-icon/svg-icon');
 const initUtils = require('../../../../init/utils');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
-const ButtonRow = require('../../../button-row/button-row');
+const ButtonRow = require('../../../shared/button-row/button-row');
 const FileField = require('../../../file-field/file-field');
 
 class DeploymentCredentialAdd extends React.Component {

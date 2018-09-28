@@ -6,7 +6,7 @@ const React = require('react');
 
 const EXPERTS = require('../expert-card/experts');
 const ExpertCard = require('../expert-card/expert-card');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 class ExpertContactCard extends React.Component {
@@ -43,11 +43,11 @@ class ExpertContactCard extends React.Component {
         <ul className="expert-contact-card__highlights">
           {highlights}
         </ul>
-        <GenericButton
+        <Button
           action={this._showContact.bind(this)}
           type="positive">
           Show contact details&hellip;
-        </GenericButton>
+        </Button>
       </div>);
   }
 

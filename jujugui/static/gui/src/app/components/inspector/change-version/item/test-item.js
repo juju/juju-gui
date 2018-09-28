@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 const {urls} = require('jaaslib');
 
 const InspectorChangeVersionItem = require('./item');
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 
 describe('InspectorChangeVersionItem', function() {
   let acl;
@@ -34,25 +34,25 @@ describe('InspectorChangeVersionItem', function() {
           title="django/xenial/5">
           version {5}
         </span>
-        <GenericButton
-          action={wrapper.find('GenericButton').prop('action')}
+        <Button
+          action={wrapper.find('Button').prop('action')}
           disabled={false}
           key="django/xenial/5"
           type="inline-neutral">
           Upgrade
-        </GenericButton>
+        </Button>
       </li>);
     assert.compareJSX(wrapper, expected);
   });
 
   it('can show a downgrade label', function() {
     const wrapper = renderComponent({ downgrade: true });
-    assert.equal(wrapper.find('GenericButton').children().text(), 'Downgrade');
+    assert.equal(wrapper.find('Button').children().text(), 'Downgrade');
   });
 
   it('can disable the button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const wrapper = renderComponent();
-    assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
+    assert.equal(wrapper.find('Button').prop('disabled'), true);
   });
 });

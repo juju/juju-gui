@@ -316,7 +316,7 @@ describe('MachineView', function() {
     dbAPI.units.filterByMachine.returns(units);
     dbAPI.applications.size.returns(1);
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(modelAPI.autoPlaceUnits.callCount, 1);
   });
 
@@ -325,7 +325,7 @@ describe('MachineView', function() {
     dbAPI.units.filterByMachine.returns(units);
     dbAPI.applications.size.returns(1);
     const wrapper = renderComponent();
-    assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
+    assert.equal(wrapper.find('Button').prop('disabled'), true);
   });
 
   it('can display onboarding if there are no machines', function() {

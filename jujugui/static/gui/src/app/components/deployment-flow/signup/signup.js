@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const DeploymentPanel = require('../panel/panel');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -87,11 +87,11 @@ class DeploymentSignup extends React.Component {
               </ol>
               <p>
                 Continue to the&nbsp;
-                <GenericButton
+                <Button
                   action={this._displayFlow.bind(this)}
                   type="inline-neutral">
                   Deployment demo of Juju
-                </GenericButton>
+                </Button>
               </p>
             </div>
             <div className="prepend-one four-col last-col">

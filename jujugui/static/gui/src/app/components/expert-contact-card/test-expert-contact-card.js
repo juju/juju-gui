@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const SvgIcon = require('../svg-icon/svg-icon');
 const ExpertContactCard = require('../expert-contact-card/expert-contact-card');
 
@@ -47,11 +47,11 @@ describe('ExpertContactCard', function() {
               </li>
             ]}
           </ul>
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             type="positive">
             Show contact details&hellip;
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper.find('.expert-contact-card'), expected);
@@ -64,7 +64,7 @@ describe('ExpertContactCard', function() {
 
   it('can display the contact details', () => {
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     const expected = (
       <div className="expert-contact-card__contact">
@@ -110,7 +110,7 @@ describe('ExpertContactCard', function() {
   it('can send analytics when the contact button is clicked', () => {
     const sendAnalytics = sinon.stub();
     const wrapper = renderComponent({ sendAnalytics });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(sendAnalytics.callCount, 1);
   });
 });

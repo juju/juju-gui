@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 const GenericInput = require('../../../generic-input/generic-input');
 const initUtils = require('../../../../init/utils');
 const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
@@ -116,16 +116,16 @@ class PaymentMethod extends React.Component {
             value={`${month}/${paymentMethod.year}`} />
         </div>
         <div className="twelve-col payment-method__buttons">
-          <GenericButton
+          <Button
             action={this._toggleForm.bind(this)}
             type="inline-neutral">
             Cancel
-          </GenericButton>
-          <GenericButton
+          </Button>
+          <Button
             action={this._updatePaymentMethod.bind(this)}
             type="inline-positive">
             Update
-          </GenericButton>
+          </Button>
         </div>
       </div>);
   }

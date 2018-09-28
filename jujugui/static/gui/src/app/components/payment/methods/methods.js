@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const initUtils = require('../../../init/utils');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const CardForm = require('../../card-form/card-form');
@@ -40,11 +40,11 @@ class PaymentMethods extends React.Component {
         <div className="payment-methods__no-methods">
           <p>You do not have a payment method.</p>
           <p>
-            <GenericButton
+            <Button
               action={this._toggleAdd.bind(this)}
               type="inline-positive">
               Add payment method
-            </GenericButton>
+            </Button>
           </p>
         </div>);
     }
@@ -212,16 +212,16 @@ class PaymentMethods extends React.Component {
             {this._generateCardAddressFields()}
           </div>
           <div className="twelve-col payment-methods__form-buttons">
-            <GenericButton
+            <Button
               action={this._toggleAdd.bind(this)}
               type="inline-neutral">
               Cancel
-            </GenericButton>
-            <GenericButton
+            </Button>
+            <Button
               action={this._createToken.bind(this)}
               type="inline-positive">
               Add
-            </GenericButton>
+            </Button>
           </div>
         </div>
       </ExpandingRow>);

@@ -5,7 +5,7 @@ const enzyme = require('enzyme');
 const React = require('react');
 
 const DeploymentAgreements = require('./agreements');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 
 describe('DeploymentAgreements', function() {
   let acl, terms;
@@ -56,18 +56,18 @@ describe('DeploymentAgreements', function() {
     terms = [{}, {}];
     const wrapper = renderComponent({ showTerms: true });
     const expected = (
-      <GenericButton
-        action={wrapper.find('GenericButton').prop('action')}
+      <Button
+        action={wrapper.find('Button').prop('action')}
         type="inline-base">
         View terms
-      </GenericButton>);
-    assert.compareJSX(wrapper.find('GenericButton'), expected);
+      </Button>);
+    assert.compareJSX(wrapper.find('Button'), expected);
   });
 
   it('can show the terms popup', function() {
     terms = [{}, {}];
     const wrapper = renderComponent({ showTerms: true });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     assert.equal(wrapper.find('TermsPopup').length, 1);
   });

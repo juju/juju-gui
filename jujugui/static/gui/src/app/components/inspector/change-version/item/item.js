@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 
 class InspectorChangeVersionItem extends React.Component {
   /**
@@ -27,13 +27,13 @@ class InspectorChangeVersionItem extends React.Component {
         <span className="inspector-current-version__title" title={path}>
           version {props.url.revision}
         </span>
-        <GenericButton
+        <Button
           action={props.buttonAction}
           disabled={props.acl.isReadOnly()}
           key={path}
           type='inline-neutral'>
           {this._generateButtonLabel()}
-        </GenericButton>
+        </Button>
       </li>
     );
   }

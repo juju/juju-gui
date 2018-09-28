@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const MachineUnit = require('../machine-unit/machine-unit');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -99,11 +99,11 @@ class Machine extends React.Component {
           className="machine__ssh-icon"
           name="code-snippet_24"
           size="16" />
-        <GenericButton
+        <Button
           action={sshAction}
           type="inline-base link machine__ssh-action">
           {this.props.sshLabel}
-        </GenericButton>
+        </Button>
       </li>);
   }
 

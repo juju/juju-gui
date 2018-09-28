@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DateDisplay = require('../date-display/date-display');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Spinner = require('../spinner/spinner');
@@ -187,13 +187,13 @@ class Sharing extends React.Component {
         const revokeUserAccess = this._revokeModelAccess.bind(this, user);
         revokeMarkup = (
           <div className="sharing__user-revoke">
-            <GenericButton
+            <Button
               action={revokeUserAccess}
               tooltip="Remove user">
               <SvgIcon
                 name="close_16"
                 size="16" />
-            </GenericButton>
+            </Button>
           </div>
         );
       }
@@ -283,14 +283,14 @@ class Sharing extends React.Component {
   */
   generateAddButton() {
     if (this.state.sending) {
-      return (<GenericButton
+      return (<Button
         disabled={true}
         ref="grantButton"
         submit={true}
         tooltip="Add user"
         type="positive">
         Add
-      </GenericButton>);
+      </Button>);
     } else if (this.state.sent) {
       // We want the button to transition back to it's resting state after a
       // set amount of time, so make a closure then trigger it after 1.5s.
@@ -300,7 +300,7 @@ class Sharing extends React.Component {
         };
       })();
       setTimeout(sent, 1500);
-      return (<GenericButton
+      return (<Button
         disabled={!this.state.canAdd}
         ref="grantButton"
         submit={true}
@@ -309,16 +309,16 @@ class Sharing extends React.Component {
         <SvgIcon
           name="tick_16"
           size="16" />
-      </GenericButton>);
+      </Button>);
     } else {
-      return (<GenericButton
+      return (<Button
         disabled={!this.state.canAdd}
         ref="grantButton"
         submit={true}
         tooltip="Add user"
         type="positive">
         Add
-      </GenericButton>);
+      </Button>);
     }
   }
 
@@ -341,12 +341,12 @@ class Sharing extends React.Component {
           <div className="sharing__users">
             {this._generateUsersWithAccess()}
           </div>
-          <GenericButton
+          <Button
             action={this.props.closeHandler}
             extraClasses="right"
             type="inline-neutral">
             Done
-          </GenericButton>
+          </Button>
         </Popup>
       </div>
     );

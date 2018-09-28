@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const Machine = require('./machine');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const MachineUnit = require('../machine-unit/machine-unit');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -154,11 +154,11 @@ describe('Machine', () => {
           className="machine__ssh-icon"
           name="code-snippet_24"
           size="16" />
-        <GenericButton
+        <Button
           action={sinon.stub()}
           type="inline-base link machine__ssh-action">
           1.1.1.1
-        </GenericButton>
+        </Button>
       </li>);
     assert.compareJSX(wrapper.find('.machine__terminal-action'), expected);
   });

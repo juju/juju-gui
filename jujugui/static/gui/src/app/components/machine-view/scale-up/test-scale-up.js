@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
 const MachineViewScaleUp = require('./scale-up');
-const ButtonRow = require('../../button-row/button-row');
+const ButtonRow = require('../../shared/button-row/button-row');
 
 describe('MachineViewScaleUp', function() {
   let acl, dbAPI;

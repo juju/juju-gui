@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
 class BudgetTableRow extends React.Component {
@@ -124,12 +124,12 @@ class BudgetTableRow extends React.Component {
             Recommended allocation: $550.
           </div>
           <div className="two-col last-col">
-            <GenericButton
+            <Button
               action={this._toggle.bind(this)}
               disabled={disabled}
               type="neutral">
               Select plan
-            </GenericButton>
+            </Button>
           </div>
         </li>);
     });
@@ -177,12 +177,12 @@ class BudgetTableRow extends React.Component {
     return (
       <div className="two-col last-col no-margin-bottom">
         <div className="budget-table__edit">
-          <GenericButton
+          <Button
             action={this._toggle.bind(this)}
             disabled={disabled}
             type="neutral">
             Change plan
-          </GenericButton>
+          </Button>
         </div>
       </div>);
   }
@@ -309,11 +309,11 @@ class BudgetTableRow extends React.Component {
         <div className={
           'two-col prepend-five no-margin-bottom budget-table-row__link ' +
           'budget-table-row__terms-link'}>
-          <GenericButton
+          <Button
             action={this._toggleTerms.bind(this)}
             type="base">
             Terms
-          </GenericButton>
+          </Button>
         </div>);
     }
   }

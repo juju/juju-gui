@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DeploymentBarNotification = require('./notification/notification');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 class DeploymentBar extends React.Component {
   constructor() {
@@ -85,12 +85,12 @@ class DeploymentBar extends React.Component {
     }
     return (
       <div className="deployment-bar__deploy">
-        <GenericButton
+        <Button
           action={this._deployAction.bind(this)}
           disabled={changeCount === 0}
           type="inline-deployment">
           {this._getDeployButtonLabel()}
-        </GenericButton>
+        </Button>
       </div>);
   }
 

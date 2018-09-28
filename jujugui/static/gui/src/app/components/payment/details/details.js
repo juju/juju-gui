@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const GenericInput = require('../../generic-input/generic-input');
 const PaymentDetailsAddress = require('./address/address');
 
@@ -70,25 +70,25 @@ class PaymentDetails extends React.Component {
         <h4>
           Addresses
           {this.state.addressEdit ? null : (
-            <GenericButton
+            <Button
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
               extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
-            </GenericButton>)}
+            </Button>)}
         </h4>
         {this._generateAddresses(user.addresses)}
         <h4>
           Billing addresses
           {this.state.billingAddressEdit ? null : (
-            <GenericButton
+            <Button
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
               extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
-            </GenericButton>)}
+            </Button>)}
         </h4>
         {this._generateAddresses(user.billingAddresses, true)}
       </div>);

@@ -78,7 +78,7 @@ describe('PostDeployment', () => {
     instance._handleFileResponse('post-deployment.sh', null, 'markdown');
     wrapper.update();
     const expected = 'Execute post-deployment script';
-    assert.equal(wrapper.find('GenericButton').props().children, expected);
+    assert.equal(wrapper.find('Button').props().children, expected);
   });
 
   it('sends the post-deployment script to the terminal', () => {
@@ -90,7 +90,7 @@ describe('PostDeployment', () => {
     on multiple
     lines`);
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     // sinon.callsArgWith passes the same file each time it's called, so we
     // expect the markdown content, here.
     assert.deepEqual(changeState.args[0][0], {

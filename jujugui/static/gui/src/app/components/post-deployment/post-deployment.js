@@ -7,7 +7,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const { urls } = require('jaaslib');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
@@ -128,10 +128,10 @@ class PostDeployment extends React.Component {
   _renderPostDeploymentScriptButton() {
     if (this.state[POST_DEPLOYMENT]) {
       return (<div>
-        <GenericButton
+        <Button
           action={this._executePostDeploymentScript.bind(this)}>
             Execute post-deployment script
-        </GenericButton>
+        </Button>
       </div>);
     }
   }

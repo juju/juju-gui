@@ -16,7 +16,7 @@ const DeploymentPanel = require('./panel/panel');
 const DeploymentSection = require('./section/section');
 const DeploymentServices = require('./services/services');
 const DeploymentSSHKey = require('./sshkey/sshkey');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 describe('DeploymentFlow', function() {
   let acl, applications, changesUtils, controllerAPI, charmstore, initUtils,
@@ -290,12 +290,12 @@ describe('DeploymentFlow', function() {
               <div className="inner-wrapper deployment-flow__deploy">
                 {undefined}
                 <div className="deployment-flow__deploy-action">
-                  <GenericButton
-                    action={wrapper.find('GenericButton').prop('action')}
+                  <Button
+                    action={wrapper.find('Button').prop('action')}
                     disabled={true}
                     type="positive">
                     Deploy
-                  </GenericButton>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -746,7 +746,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     const props = instance.props;
     // Click to deploy.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(initUtils.deploy.callCount, 1);
     assert.strictEqual(initUtils.deploy.args[0].length, 5);
     assert.equal(initUtils.deploy.args[0][2], 'Pavlova');
@@ -781,11 +781,11 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     const props = instance.props;
     // Click to deploy.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(initUtils.deploy.callCount, 1);
     assert.equal(props.changeState.callCount, 0);
     wrapper.update();
-    assert.equal(wrapper.find('GenericButton').prop('disabled'), false);
+    assert.equal(wrapper.find('Button').prop('disabled'), false);
   });
 
   it('increases stats when deploying', function() {
@@ -802,7 +802,7 @@ describe('DeploymentFlow', function() {
       stats: {increase: statsIncrease}
     });
     // Click to deploy.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
     const args = statsIncrease.args[0];
     assert.equal(args.length, 1, 'statsIncrease args length');
@@ -819,7 +819,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._handleTermsAgreement({target: {checked: true}});
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(initUtils.deploy.callCount, 0,
       'The deploy function should not be called');
     assert.equal(terms.addAgreement.callCount, 1,
@@ -1018,11 +1018,11 @@ describe('DeploymentFlow', function() {
       modelCommitted: true,
       region: 'north'
     });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
 
     // .action() rerenders the component so we need to get it again
     wrapper.update();
-    const deployButton = wrapper.find('GenericButton');
+    const deployButton = wrapper.find('Button');
 
     assert.equal(deployButton.prop('disabled'), true);
     assert.equal(deployButton.children().text(), 'Committing...');
@@ -1040,7 +1040,7 @@ describe('DeploymentFlow', function() {
       modelCommitted: true,
       region: 'north'
     });
-    assert.equal(wrapper.find('GenericButton').children().text(), 'Commit');
+    assert.equal(wrapper.find('Button').children().text(), 'Commit');
   });
 
   it('can deploy with SSH keys', function() {
@@ -1058,7 +1058,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setSSHKeys([{text: 'my SSH key'}]);
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
@@ -1087,7 +1087,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setLaunchpadUsernames(['rose']);
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(modelAPI.importKeys.callCount, 1);
     assert.deepEqual(modelAPI.importKeys.args[0][1], ['lp:rose']);
   });
@@ -1107,7 +1107,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setVPCId('my VPC id');
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
@@ -1136,7 +1136,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setVPCId('my VPC id', true);
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);

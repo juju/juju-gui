@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentDirectDeploy = require('./direct-deploy');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 
@@ -103,11 +103,11 @@ describe('DirectDeploy', function() {
             </div>
           </div>
           <div className="deployment-direct-deploy__edit-model">
-            <GenericButton
-              action={wrapper.find('GenericButton').prop('action')}
+            <Button
+              action={wrapper.find('Button').prop('action')}
               type="inline-neutral">
               Edit model
-            </GenericButton>
+            </Button>
           </div>
         </div>
       </div>);
@@ -156,11 +156,11 @@ describe('DirectDeploy', function() {
               diagramUrl="imageLink" />
           </div>
           <div className="deployment-direct-deploy__edit-model">
-            <GenericButton
-              action={wrapper.find('GenericButton').prop('action')}
+            <Button
+              action={wrapper.find('Button').prop('action')}
               type="inline-neutral">
               Edit model
-            </GenericButton>
+            </Button>
           </div>
         </div>
       </div>);

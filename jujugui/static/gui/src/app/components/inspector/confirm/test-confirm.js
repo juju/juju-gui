@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const InspectorConfirm = require('./confirm');
-const ButtonRow = require('../../button-row/button-row');
+const ButtonRow = require('../../shared/button-row/button-row');
 
 describe('InspectorConfirm', function() {
   let buttons;

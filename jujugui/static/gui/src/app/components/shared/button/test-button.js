@@ -4,13 +4,13 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const GenericButton = require('./generic-button');
+const Button = require('./button');
 
-describe('GenericButton', function() {
+describe('Button', function() {
   let evt;
 
   const renderComponent = (options = {}) => enzyme.shallow(
-    <GenericButton
+    <Button
       action={options.action}
       disabled={options.disabled}
       extraClasses={options.extraClasses}
@@ -18,7 +18,7 @@ describe('GenericButton', function() {
       tooltip={options.tooltip}
       type={options.type}>
       {options.children}
-    </GenericButton>
+    </Button>
   );
 
   beforeEach(() => {

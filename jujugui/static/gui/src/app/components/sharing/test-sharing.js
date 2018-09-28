@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DateDisplay = require('../date-display/date-display');
 const Sharing = require('./sharing');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Popup = require('../popup/popup');
@@ -68,12 +68,12 @@ describe('Sharing', () => {
           <div className="sharing__users">
             {undefined}
           </div>
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             extraClasses="right"
             type="inline-neutral">
             Done
-          </GenericButton>
+          </Button>
         </Popup>
       </div>
     );
@@ -191,14 +191,14 @@ describe('Sharing', () => {
               ref="access" />
           </div>
           <div className="sharing__invite--grant-button">
-            <GenericButton
+            <Button
               disabled={true}
               ref="grantButton"
               submit={true}
               tooltip="Add user"
               type="positive">
               Add
-            </GenericButton>
+            </Button>
           </div>
           {undefined}
         </form>
@@ -236,18 +236,18 @@ describe('Sharing', () => {
     // Validate that the markup is correct.
     const expected = (
       <div className="sharing__user-revoke">
-        <GenericButton
-          action={wrapper.find('.sharing__user-revoke GenericButton').at(0).prop('action')}
+        <Button
+          action={wrapper.find('.sharing__user-revoke Button').at(0).prop('action')}
           tooltip="Remove user">
           <SvgIcon
             name="close_16"
             size="16" />
-        </GenericButton>
+        </Button>
       </div>
     );
     assert.compareJSX(wrapper.find('.sharing__user-revoke').at(0), expected);
     // Verify that the button triggers the API call as expected.
-    wrapper.find('.sharing__user-revoke GenericButton').at(0).props().action();
+    wrapper.find('.sharing__user-revoke Button').at(0).props().action();
     assert.equal(revokeModelAccess.called, true,
       'revokeModelAccess was not called');
     assert.equal(revokeModelAccess.args[0][0], 'drwho@external');
@@ -269,7 +269,7 @@ describe('Sharing', () => {
 
     it('shows a disabled button with "add" text by default', () => {
       const wrapper = renderComponent({ canShareModel: true });
-      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.children().text(), 'Add');
       assert.equal(button.prop('disabled'), true);
     });
@@ -279,7 +279,7 @@ describe('Sharing', () => {
       const instance = wrapper.instance();
       instance.setState({ canAdd: true });
       wrapper.update();
-      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.children().text(), 'Add');
       assert.equal(button.prop('disabled'), false);
     });
@@ -289,7 +289,7 @@ describe('Sharing', () => {
       const instance = wrapper.instance();
       instance.setState({ sending: true });
       wrapper.update();
-      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.children().text(), 'Add');
       assert.equal(button.prop('disabled'), true);
     });
@@ -299,7 +299,7 @@ describe('Sharing', () => {
       const instance = wrapper.instance();
       instance.setState({ sent: true });
       wrapper.update();
-      const button = wrapper.find('.sharing__invite--grant-button GenericButton');
+      const button = wrapper.find('.sharing__invite--grant-button Button');
       assert.equal(button.find('SvgIcon').length, 1);
       assert.equal(button.prop('disabled'), true);
     });

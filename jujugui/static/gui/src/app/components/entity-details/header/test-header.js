@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const EntityHeader = require('./header');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -115,14 +115,14 @@ describe('EntityHeader', function() {
               {undefined}
               <CopyToClipboard
                 value="juju deploy cs:django" />
-              <GenericButton
-                action={wrapper.find('GenericButton').prop('action')}
+              <Button
+                action={wrapper.find('Button').prop('action')}
                 disabled={false}
                 ref="deployAction"
                 tooltip="Add this charm to a new model"
                 type="positive">
                 Add to model
-              </GenericButton>
+              </Button>
             </div>
           </div>
         </header>
@@ -219,7 +219,7 @@ describe('EntityHeader', function() {
 
   it('displays an add to model button', function() {
     const wrapper = renderComponent();
-    const deployAction = wrapper.find('GenericButton');
+    const deployAction = wrapper.find('Button');
     assert.equal(deployAction.prop('type'), 'positive');
     assert.equal(deployAction.children().text(), 'Add to model');
   });
@@ -228,7 +228,7 @@ describe('EntityHeader', function() {
     const wrapper = renderComponent({
       getModelName: sinon.stub().returns('porkchop')
     });
-    const deployAction = wrapper.find('GenericButton');
+    const deployAction = wrapper.find('Button');
     assert.equal(deployAction.prop('type'), 'positive');
     assert.equal(deployAction.children().text(), 'Add to porkchop');
   });
@@ -247,7 +247,7 @@ describe('EntityHeader', function() {
       deployService
     });
     // Simulate a click.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
   });
@@ -264,7 +264,7 @@ describe('EntityHeader', function() {
     // Change the select value to a plan.
     instance.refs = { plan: { value: 'test-plan' } };
     // Simulate a click.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(deployService.callCount, 1);
     assert.deepEqual(deployService.args[0][2], plans);
     assert.deepEqual(deployService.args[0][3], plans[0]);
@@ -279,7 +279,7 @@ describe('EntityHeader', function() {
       plans: plans
     });
     // Simulate a click.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(deployService.callCount, 1);
     assert.deepEqual(deployService.args[0][2], plans);
     assert.isUndefined(deployService.args[0][3]);
@@ -297,7 +297,7 @@ describe('EntityHeader', function() {
       importBundleYAML
     });
     // Simulate a click.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
@@ -315,7 +315,7 @@ describe('EntityHeader', function() {
       getBundleYAML
     });
     // Simulate a click.
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
@@ -393,6 +393,6 @@ describe('EntityHeader', function() {
   it('can disable the deploy button when read only', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     const wrapper = renderComponent();
-    assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
+    assert.equal(wrapper.find('Button').prop('disabled'), true);
   });
 });

@@ -8,7 +8,7 @@ const DeploymentBudget = require('./budget');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
 const GenericInput = require('../../generic-input/generic-input');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
@@ -67,12 +67,12 @@ describe('DeploymentBudget', function() {
             </div>
             <div className="three-col">
               <span className="deployment-budget__increase-button">
-                <GenericButton
-                  action={wrapper.find('GenericButton').at(0).prop('action')}
+                <Button
+                  action={wrapper.find('Button').at(0).prop('action')}
                   disabled={false}
                   type="base">
                   Increase budget
-                </GenericButton>
+                </Button>
               </span>
             </div>
             <BudgetChart
@@ -111,20 +111,20 @@ describe('DeploymentBudget', function() {
                   <span className="link">Manage all budgets</span>
                 </div>
                 <div className="two-col">
-                  <GenericButton
-                    action={wrapper.find('GenericButton').at(1).prop('action')}
+                  <Button
+                    action={wrapper.find('Button').at(1).prop('action')}
                     disabled={false}
                     type="base">
                     Cancel
-                  </GenericButton>
+                  </Button>
                 </div>
                 <div className="two-col last-col">
-                  <GenericButton
-                    action={wrapper.find('GenericButton').at(2).prop('action')}
+                  <Button
+                    action={wrapper.find('Button').at(2).prop('action')}
                     disabled={false}
                     type="neutral">
                     Confirm
-                  </GenericButton>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -141,7 +141,7 @@ describe('DeploymentBudget', function() {
       listBudgets: sinon.stub().callsArgWith(0, null, budgets)
     });
     assert.equal(wrapper.find('InsetSelect').prop('disabled'), true);
-    wrapper.find('GenericButton').forEach(button => {
+    wrapper.find('Button').forEach(button => {
       assert.equal(button.prop('disabled'), true);
     });
     wrapper.find('GenericInput').forEach(input => {

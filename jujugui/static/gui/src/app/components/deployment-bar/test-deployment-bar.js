@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentBar = require('./deployment-bar');
 const DeploymentBarNotification = require('./notification/notification');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
@@ -42,12 +42,12 @@ describe('DeploymentBar', function() {
         <DeploymentBarNotification
           change={null} />
         <div className="deployment-bar__deploy">
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             disabled={false}
             type="inline-deployment">
             Deploy changes (2)
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);
@@ -59,14 +59,14 @@ describe('DeploymentBar', function() {
       currentChangeSet,
       hasEntities: false
     });
-    assert.isFalse(wrapper.find('GenericButton').prop('disabled'));
+    assert.isFalse(wrapper.find('Button').prop('disabled'));
   });
 
   it('disables the button if there are no changes', function() {
     const wrapper = renderComponent({
       hasEntities: false
     });
-    assert.isTrue(wrapper.find('GenericButton').prop('disabled'));
+    assert.isTrue(wrapper.find('Button').prop('disabled'));
   });
 
   it('passes the button the correct title if there are commits', function() {
@@ -75,7 +75,7 @@ describe('DeploymentBar', function() {
       modelCommitted: true
     });
     assert.equal(
-      wrapper.find('GenericButton').children().text(),
+      wrapper.find('Button').children().text(),
       'Commit changes (0)');
   });
 
@@ -188,7 +188,7 @@ describe('DeploymentBar', function() {
         Read only
       </div>);
     assert.compareJSX(wrapper.find('.deployment-bar__read-only'), expected);
-    assert.equal(wrapper.find('GenericButton').length, 0);
+    assert.equal(wrapper.find('Button').length, 0);
   });
 
   it('calls the deploy method when the deploy button is pressed', () =>{
@@ -198,7 +198,7 @@ describe('DeploymentBar', function() {
       sendAnalytics,
       changeState
     });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: { deploy: ''}});
     assert.equal(sendAnalytics.callCount, 1);

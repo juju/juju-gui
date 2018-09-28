@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentSignup = require('./signup');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('DeploymentSignup', function() {
@@ -48,11 +48,11 @@ describe('DeploymentSignup', function() {
             </ol>
             <p>
               Continue to the&nbsp;
-              <GenericButton
-                action={wrapper.find('GenericButton').prop('action')}
+              <Button
+                action={wrapper.find('Button').prop('action')}
                 type="inline-neutral">
                 Deployment demo of Juju
-              </GenericButton>
+              </Button>
             </p>
           </div>
           <div className="prepend-one four-col last-col">
@@ -122,7 +122,7 @@ describe('DeploymentSignup', function() {
   it('can navigate to the flow view', function() {
     const changeState = sinon.stub();
     const wrapper = renderComponent({ changeState });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {

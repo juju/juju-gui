@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const {urls} = require('jaaslib');
 const React = require('react');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const DeploymentSection = require('../section/section');
@@ -129,11 +129,11 @@ class DeploymentDirectDeploy extends React.Component {
               {this._generateImage()}
             </div>
             <div className="deployment-direct-deploy__edit-model">
-              <GenericButton
+              <Button
                 action={this._handleClose.bind(this)}
                 type="inline-neutral">
                 Edit model
-              </GenericButton>
+              </Button>
             </div>
           </div>
         </div>);

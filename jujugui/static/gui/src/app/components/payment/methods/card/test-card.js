@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const PaymentMethodCard = require('./card');
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 const SvgIcon = require('../../../svg-icon/svg-icon');
 
 describe('PaymentMethodCard', () => {
@@ -96,16 +96,16 @@ describe('PaymentMethodCard', () => {
     });
     const expected = (
       <div className="payment-card-actions">
-        <GenericButton
+        <Button
           action={sinon.stub()}
           type="inline-neutral">
           Update payment details
-        </GenericButton>
-        <GenericButton
-          action={wrapper.find('GenericButton').at(1).prop('action')}
+        </Button>
+        <Button
+          action={wrapper.find('Button').at(1).prop('action')}
           type="inline-neutral">
           Remove payment details
-        </GenericButton>
+        </Button>
       </div>);
     assert.compareJSX(wrapper.find('.payment-card-actions'), expected);
   });
@@ -128,7 +128,7 @@ describe('PaymentMethodCard', () => {
       onPaymentMethodRemoved,
       removePaymentMethod
     });
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
     assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
@@ -142,7 +142,7 @@ describe('PaymentMethodCard', () => {
       addNotification,
       removePaymentMethod
     });
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to remove the payment method',
@@ -157,7 +157,7 @@ describe('PaymentMethodCard', () => {
     const wrapper = renderComponent({
       removePaymentMethod
     });
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

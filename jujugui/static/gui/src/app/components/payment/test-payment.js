@@ -9,7 +9,7 @@ const Payment = require('./payment');
 const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
 const PaymentMethods = require('./methods/methods');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 describe('Payment', function() {
   let acl, payment, stripe, user;
@@ -131,11 +131,11 @@ describe('Payment', function() {
       <div className="payment__no-user">
         <p>You are not set up to make payments.</p>
         <p>
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             type="inline-positive">
             Set up payments
-          </GenericButton>
+          </Button>
         </p>
       </div>);
     assert.compareJSX(wrapper.find('.payment__no-user'), expected);
@@ -144,7 +144,7 @@ describe('Payment', function() {
   it('can display a new user form', function() {
     payment.getUser = sinon.stub().callsArgWith(1, null, null);
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     assert.equal(wrapper.find('CreatePaymentUser').length, 1);
   });

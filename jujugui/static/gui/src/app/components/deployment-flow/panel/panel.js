@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const Panel = require('../../shared/panel/panel');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -49,11 +49,11 @@ class DeploymentPanel extends React.Component {
       return (
         <div className="deployment-panel__header">
           <div className="deployment-panel__close">
-            <GenericButton
+            <Button
               action={this._handleClose.bind(this)}
               type="neutral">
               Back to canvas
-            </GenericButton>
+            </Button>
           </div>
           <div className="deployment-panel__header-name">
             {this.props.title}

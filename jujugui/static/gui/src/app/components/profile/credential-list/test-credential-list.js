@@ -9,7 +9,7 @@ const enzyme = require('enzyme');
 const BasicTable = require('../../shared/basic-table/basic-table');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const ProfileCredentialList = require('./credential-list');
 const ProfileCredentialListDelete = require('./delete/delete');
@@ -224,11 +224,11 @@ describe('ProfileCredentialList', () => {
           </div>
           <div className="push-four four-col">
             <div className="profile-credential-list__add">
-              <GenericButton
-                action={wrapper.find('GenericButton').prop('action')}
+              <Button
+                action={wrapper.find('Button').prop('action')}
                 type="inline-neutral">
                 Add credentials
-              </GenericButton>
+              </Button>
             </div>
           </div>
           <ExpandingRow
@@ -382,7 +382,7 @@ describe('ProfileCredentialList', () => {
     const wrapper = shallowRenderComponent();
     const instance = wrapper.instance();
     return instance._getClouds().then(() => {
-      wrapper.find('GenericButton').props().action();
+      wrapper.find('Button').props().action();
       wrapper.update();
       const expected = (
         <div className="twelve-col">

@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
 const DateDisplay = require('../../date-display/date-display');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const Spinner = require('../../spinner/spinner');
 
 class PaymentCharges extends React.Component {
@@ -164,12 +164,12 @@ class PaymentCharges extends React.Component {
               {(charge.price + charge.vat) / 100} {charge.currency}
             </div>
             <div className="two-col last-col no-margin-bottom">
-              <GenericButton
+              <Button
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
                 type="inline-neutral">
                 Show receipt
-              </GenericButton>
+              </Button>
             </div>
           </div>
           <div className="twelve-col">

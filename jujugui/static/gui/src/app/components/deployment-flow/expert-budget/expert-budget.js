@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericInput = require('../../generic-input/generic-input');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 
 class DeploymentExpertBudget extends React.Component {
   constructor(props) {
@@ -49,12 +49,12 @@ class DeploymentExpertBudget extends React.Component {
           </span>
         </div>
         <div className="deployment-expert-budget__row">
-          <GenericButton
+          <Button
             action={this.props.setBudget.bind(this, this.state.budget)}
             disabled={!changed}
             type="inline-positive">
             Set budget
-          </GenericButton>
+          </Button>
         </div>
       </div>
     );
