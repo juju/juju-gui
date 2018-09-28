@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-class GenericButton extends React.Component {
+class Button extends React.Component {
   /**
     Returns the classes for the button based on the provided props.
     @method _generateClasses
@@ -52,7 +52,7 @@ class GenericButton extends React.Component {
   }
 };
 
-GenericButton.propTypes = {
+Button.propTypes = {
   action: PropTypes.func,
   children: PropTypes.node,
   disabled: PropTypes.bool,
@@ -62,4 +62,4 @@ GenericButton.propTypes = {
   type: PropTypes.string
 };
 
-module.exports = GenericButton;
+module.exports = Button;
