@@ -8,11 +8,9 @@ exports[`Profile Header can render 1`] = `
     className="p-strip is-shallow"
   >
     <div
-      className="row p-divider u-no-padding--top u-no-padding--bottom"
+      className="row profile-header__inner u-no-padding--top u-no-padding--bottom"
     >
-      <div
-        className="col-10 p-divider__block"
-      >
+      <div>
         <div
           className="p-media-object--large u-no-margin--bottom"
         >
@@ -60,9 +58,7 @@ exports[`Profile Header can render 1`] = `
           </div>
         </div>
       </div>
-      <div
-        className="col-2 p-divider__block"
-      >
+      <div>
         <ul
           className="p-list ts-profile-header__menu"
         >
