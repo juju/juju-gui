@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const Link = require('../../link/link');
 
 /**
@@ -128,14 +128,14 @@ class ProfileExpandedContent extends React.Component {
           {this._generatePermissions(entity.perm.read)}
         </div>
         <div className="three-col prepend-nine last-col">
-          <GenericButton
+          <Button
             action={this._handleDeploy.bind(this, entity.id)}
             disabled={this.props.acl.isReadOnly()}
             tooltip={
               `Add this ${type} to ${modelName ? 'your current' : 'a new'} model`}
             type="positive">
             {title}
-          </GenericButton>
+          </Button>
         </div>
       </div>);
   }

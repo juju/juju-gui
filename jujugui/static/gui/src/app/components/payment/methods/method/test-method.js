@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 const GenericInput = require('../../../generic-input/generic-input');
 const AddressForm = require('../../../address-form/address-form');
 const PaymentMethodCard = require('../card/card');
@@ -117,16 +117,16 @@ describe('PaymentMethod', () => {
             value="04/22" />
         </div>
         <div className="twelve-col payment-method__buttons">
-          <GenericButton
-            action={wrapper.find('GenericButton').at(0).prop('action')}
+          <Button
+            action={wrapper.find('Button').at(0).prop('action')}
             type="inline-neutral">
             Cancel
-          </GenericButton>
-          <GenericButton
-            action={wrapper.find('GenericButton').at(1).prop('action')}
+          </Button>
+          <Button
+            action={wrapper.find('Button').at(1).prop('action')}
             type="inline-positive">
             Update
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper.find('.payment-method__form'), expected);
@@ -139,7 +139,7 @@ describe('PaymentMethod', () => {
     instance.refs.cardAddress.validate = sinon.stub().returns(false);
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(payment.updatePaymentMethod.callCount, 0);
   });
 
@@ -149,7 +149,7 @@ describe('PaymentMethod', () => {
     const wrapper = renderComponent({ updateUser });
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(payment.updatePaymentMethod.callCount, 1);
     assert.equal(payment.updatePaymentMethod.args[0][0], 'spinach');
     assert.equal(payment.updatePaymentMethod.args[0][1], 'method1');
@@ -174,7 +174,7 @@ describe('PaymentMethod', () => {
     const wrapper = renderComponent({ addNotification });
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not update the payment method',
@@ -189,7 +189,7 @@ describe('PaymentMethod', () => {
     const wrapper = renderComponent();
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

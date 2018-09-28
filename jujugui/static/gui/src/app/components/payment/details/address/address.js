@@ -6,7 +6,7 @@ const React = require('react');
 
 const AddressForm = require('../../../address-form/address-form');
 const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 const initUtils = require('../../../../init/utils');
 
 class PaymentDetailsAddress extends React.Component {
@@ -75,18 +75,18 @@ class PaymentDetailsAddress extends React.Component {
               ref="addressForm" />
             <div className={
               'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
-              <GenericButton
+              <Button
                 action={this.props.close}
                 disabled={disabled}
                 type="inline-neutral">
                 Cancel
-              </GenericButton>
-              <GenericButton
+              </Button>
+              <Button
                 action={this._updateAddress.bind(this)}
                 disabled={disabled}
                 type="inline-positive">
                 Update
-              </GenericButton>
+              </Button>
             </div>
           </div>
         </ExpandingRow>

@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const DeploymentSSHKey = require('./sshkey');
 const InsetSelect = require('../../inset-select/inset-select');
 const SvgIcon = require('../../svg-icon/svg-icon');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const GenericInput = require('../../generic-input/generic-input');
 const Notification = require('../../notification/notification');
 
@@ -83,10 +83,10 @@ describe('DeploymentSSHKey', function() {
               type="text" />
           </div>
           <div className="deployment-ssh-key__add-key right">
-            <GenericButton
-              action={wrapper.find('GenericButton').prop('action')}
+            <Button
+              action={wrapper.find('Button').prop('action')}
               disabled
-              type="positive">Add keys</GenericButton>
+              type="positive">Add keys</Button>
           </div>
         </div>
       </div>
@@ -294,13 +294,13 @@ describe('DeploymentSSHKey', function() {
       };
       instance.componentDidUpdate();
       wrapper.update();
-      assert.equal(wrapper.find('GenericButton').prop('disabled'), false);
+      assert.equal(wrapper.find('Button').prop('disabled'), false);
       instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
       ]);
       expect(instance.props.setSSHKeys.callCount).toEqual(1);
       wrapper.update();
-      assert.equal(wrapper.find('GenericButton').prop('disabled'), true);
+      assert.equal(wrapper.find('Button').prop('disabled'), true);
     });
   });
 
@@ -518,12 +518,12 @@ describe('DeploymentSSHKey', function() {
     const instance = wrapper.instance();
     let expected = (
       <div className="deployment-ssh-key__add-key right">
-        <GenericButton
-          action={wrapper.find('GenericButton').prop('action')}
+        <Button
+          action={wrapper.find('Button').prop('action')}
           disabled={true}
           type="positive">
           Add keys
-        </GenericButton>
+        </Button>
       </div>
     );
     assert.compareJSX(wrapper.find('.deployment-ssh-key__add-key'), expected);
@@ -533,12 +533,12 @@ describe('DeploymentSSHKey', function() {
     wrapper.update();
     expected = (
       <div className="deployment-ssh-key__add-key right">
-        <GenericButton
-          action={wrapper.find('GenericButton').prop('action')}
+        <Button
+          action={wrapper.find('Button').prop('action')}
           disabled={false}
           type="positive">
           Add keys
-        </GenericButton>
+        </Button>
       </div>
     );
     assert.compareJSX(wrapper.find('.deployment-ssh-key__add-key'), expected);

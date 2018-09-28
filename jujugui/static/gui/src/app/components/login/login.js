@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const SvgIcon = require('../svg-icon/svg-icon');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
@@ -130,11 +130,11 @@ class Login extends React.Component {
                 ref="password"
                 type="password" />
             </label>
-            <GenericButton
+            <Button
               submit={true}
               type="positive">
               Login
-            </GenericButton>
+            </Button>
             {this._generateUSSOLink()}
           </form>
         </div>

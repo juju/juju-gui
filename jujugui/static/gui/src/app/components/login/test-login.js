@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const Login = require('./login');
 const SvgIcon = require('../svg-icon/svg-icon');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 describe('LoginComponent', function() {
@@ -78,11 +78,11 @@ describe('LoginComponent', function() {
                 ref="password"
                 type="password" />
             </label>
-            <GenericButton
+            <Button
               submit={true}
               type="positive">
               Login
-            </GenericButton>
+            </Button>
             <USSOLoginLink
               addNotification={sinon.stub()}
               displayType="button"

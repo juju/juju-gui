@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ButtonRow = require('./button-row');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 describe('ButtonRow', function() {
 
@@ -24,14 +24,14 @@ describe('ButtonRow', function() {
     const wrapper = renderComponent({ buttons });
     const expected = (
       <div className="button-row button-row--multiple button-row--count-1">
-        <GenericButton
+        <Button
           action={callbackStub}
           disabled={undefined}
           key="My button"
           submit={undefined}
           type="submit">
           My button
-        </GenericButton>
+        </Button>
       </div>
     );
     assert.compareJSX(wrapper, expected);
@@ -51,22 +51,22 @@ describe('ButtonRow', function() {
     const wrapper = renderComponent({ buttons });
     const expected = (
       <div className="button-row button-row--multiple button-row--count-2">
-        <GenericButton
+        <Button
           action={callbackStub}
           disabled={undefined}
           key="My button"
           submit={undefined}
           type="submit">
           My button
-        </GenericButton>
-        <GenericButton
+        </Button>
+        <Button
           action={callbackStub}
           disabled={undefined}
           key="Another button"
           submit={undefined}
           type="submit">
           Another button
-        </GenericButton>
+        </Button>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

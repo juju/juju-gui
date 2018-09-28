@@ -7,7 +7,7 @@ const React = require('react');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
 const GenericInput = require('../../generic-input/generic-input');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
@@ -153,12 +153,12 @@ class DeploymentBudget extends React.Component {
             </div>
             <div className="three-col">
               <span className="deployment-budget__increase-button">
-                <GenericButton
+                <Button
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
                   type="base">
                   Increase budget
-                </GenericButton>
+                </Button>
               </span>
             </div>
             <BudgetChart
@@ -197,20 +197,20 @@ class DeploymentBudget extends React.Component {
                   <span className="link">Manage all budgets</span>
                 </div>
                 <div className="two-col">
-                  <GenericButton
+                  <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
                     type="base">
                     Cancel
-                  </GenericButton>
+                  </Button>
                 </div>
                 <div className="two-col last-col">
-                  <GenericButton
+                  <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
                     type="neutral">
                     Confirm
-                  </GenericButton>
+                  </Button>
                 </div>
               </div>
             </div>

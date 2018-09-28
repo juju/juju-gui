@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../../../generic-button/generic-button');
+const Button = require('../../../shared/button/button');
 const SvgIcon = require('../../../svg-icon/svg-icon');
 
 class PaymentMethodCard extends React.Component {
@@ -82,16 +82,16 @@ class PaymentMethodCard extends React.Component {
     }
     return (
       <div className="payment-card-actions">
-        <GenericButton
+        <Button
           action={this.props.updatePaymentMethod}
           type="inline-neutral">
           Update payment details
-        </GenericButton>
-        <GenericButton
+        </Button>
+        <Button
           action={this._removePaymentMethod.bind(this)}
           type="inline-neutral">
           Remove payment details
-        </GenericButton>
+        </Button>
       </div>);
   }
 

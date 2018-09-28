@@ -29,7 +29,7 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const DeploymentVPC = require('./vpc/vpc');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 // Define the VPC ID zero value.
 const INITIAL_VPC_ID = null;
@@ -1080,12 +1080,12 @@ class DeploymentFlow extends React.Component {
         <div className={classes}>
           {this._generateAgreementsSection()}
           <div className="deployment-flow__deploy-action">
-            <GenericButton
+            <Button
               action={this._handleDeploy.bind(this)}
               disabled={!this._deploymentAllowed()}
               type="positive">
               {deployTitle}
-            </GenericButton>
+            </Button>
           </div>
         </div>
       </div>);

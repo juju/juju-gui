@@ -8,7 +8,7 @@ const enzyme = require('enzyme');
 const PaymentCharges = require('./charges');
 const DateDisplay = require('../../date-display/date-display');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 
 describe('PaymentCharges', function() {
   let acl, payment;
@@ -101,12 +101,12 @@ describe('PaymentCharges', function() {
                   {120} {'USD'}
                 </div>
                 <div className="two-col last-col no-margin-bottom">
-                  <GenericButton
-                    action={wrapper.find('GenericButton').prop('action')}
+                  <Button
+                    action={wrapper.find('Button').prop('action')}
                     disabled={false}
                     type="inline-neutral">
                     Show receipt
-                  </GenericButton>
+                  </Button>
                 </div>
               </div>
               <div className="twelve-col">
@@ -212,7 +212,7 @@ describe('PaymentCharges', function() {
       lineItems: []
     }]);
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     const popup = wrapper.find('ReceiptPopup');
     assert.equal(popup.length, 1);

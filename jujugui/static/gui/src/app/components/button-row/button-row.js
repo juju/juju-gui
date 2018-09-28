@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 class ButtonRow extends React.Component {
   /**
@@ -34,14 +34,14 @@ class ButtonRow extends React.Component {
     var components = [];
     buttons.forEach(button => {
       components.push(
-        <GenericButton
+        <Button
           action={button.action}
           disabled={button.disabled}
           key={button.title}
           submit={button.submit}
           type={button.type}>
           {button.title}
-        </GenericButton>);
+        </Button>);
     });
     return components;
   }

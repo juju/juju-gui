@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const TermsPopup = require('../../terms-popup/terms-popup');
 /**
   A component for the user to agree to terms in the deployment flow.
@@ -50,11 +50,11 @@ class DeploymentAgreements extends React.Component {
     const terms = this.props.terms;
     if (terms && terms.length) {
       return (
-        <GenericButton
+        <Button
           action={this._toggleTerms.bind(this)}
           type="inline-base">
           View terms
-        </GenericButton>);
+        </Button>);
     }
   }
 

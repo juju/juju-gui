@@ -6,7 +6,7 @@ const React = require('react');
 
 const InsetSelect = require('../../inset-select/inset-select');
 const SvgIcon = require('../../svg-icon/svg-icon');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const GenericInput = require('../../generic-input/generic-input');
 const githubSSHKeys = require('../../../utils/github-ssh-keys');
 const Notification = require('../../notification/notification');
@@ -371,12 +371,12 @@ class DeploymentSSHKey extends React.Component {
     const disabled = this.state.buttonDisabled;
     return (
       <div className="deployment-ssh-key__add-key right">
-        <GenericButton
+        <Button
           action={this._handleAddMoreKeys.bind(this)}
           disabled={disabled}
           type="positive">
           {title}
-        </GenericButton>
+        </Button>
       </div>);
   }
 

@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 
 
 class ProfileCharmstoreLogin extends React.Component {
@@ -45,11 +45,11 @@ class ProfileCharmstoreLogin extends React.Component {
     return (
       <div className="profile-charmstore-login">
         <div className="profile-charmstore-login__button">
-          <GenericButton
+          <Button
             action={this._interactiveLogin.bind(this)}
             type="neutral">
             Login to the charm store
-          </GenericButton>
+          </Button>
         </div>
         <h2 className="profile__title">
           No {this.props.type}

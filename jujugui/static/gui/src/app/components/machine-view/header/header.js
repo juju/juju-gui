@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -76,14 +76,14 @@ class MachineViewHeader extends React.Component {
     } else if (toggle) {
       var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
       return (
-        <GenericButton
+        <Button
           action={toggle.action}
           disabled={toggle.disabled}
           type='inline-positive'>
           <SvgIcon
             name={icon}
             size="16" />
-        </GenericButton>);
+        </Button>);
     }
   }
 

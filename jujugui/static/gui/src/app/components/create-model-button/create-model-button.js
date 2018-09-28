@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 class CreateModelButton extends React.Component {
   _createNewModel() {
@@ -29,12 +29,12 @@ class CreateModelButton extends React.Component {
     const disabled = this.props.disabled || false;
     return (
       <div className="create-new-model">
-        <GenericButton
+        <Button
           action={this._createNewModel.bind(this)}
           disabled={disabled}
           type={this.props.type}>
           {this.props.title}
-        </GenericButton>
+        </Button>
       </div>
     );
   }

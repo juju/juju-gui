@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const ProfileCharmstoreLogin = require('./charmstore-login');
 
 describe('ProfileCharmstoreLogin ', function() {
@@ -26,11 +26,11 @@ describe('ProfileCharmstoreLogin ', function() {
     const expected = (
       <div className="profile-charmstore-login">
         <div className="profile-charmstore-login__button">
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             type="neutral">
             Login to the charm store
-          </GenericButton>
+          </Button>
         </div>
         <h2 className="profile__title">
           No {'charms'}

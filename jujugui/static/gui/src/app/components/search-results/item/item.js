@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const IconList = require('../../icon-list/icon-list');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -263,7 +263,7 @@ class SearchResultsItem extends React.Component {
           </p>
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
-          <GenericButton
+          <Button
             action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
             extraClasses="list-block__list--item-deploy-link"
@@ -271,7 +271,7 @@ class SearchResultsItem extends React.Component {
             <SvgIcon
               name="add-icon"
               size="16" />
-          </GenericButton>
+          </Button>
         </div>
       </li>
     );

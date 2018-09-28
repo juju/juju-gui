@@ -9,7 +9,7 @@ const BasicTable = require('../../shared/basic-table/basic-table');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const ProfileCredentialListDelete = require('./delete/delete');
 const Spinner = require('../../spinner/spinner');
 
@@ -364,11 +364,11 @@ class ProfileCredentialList extends React.Component {
   render() {
     const clouds = this.state.clouds;
     let addButton = (
-      <GenericButton
+      <Button
         action={this._toggleAdd.bind(this)}
         type="inline-neutral">
         Add credentials
-      </GenericButton>);
+      </Button>);
     if (clouds && clouds[LOCAL_CLOUD]) {
       addButton = null;
     }

@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const CreatePaymentUser = require('./create-payment-user');
 const GenericInput = require('../generic-input/generic-input');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
 
@@ -137,12 +137,12 @@ describe('CreatePaymentUser', function() {
             {null}
             {null}
             <div className="create-payment-user__add">
-              <GenericButton
-                action={wrapper.find('GenericButton').prop('action')}
+              <Button
+                action={wrapper.find('Button').prop('action')}
                 disabled={false}
                 type="inline-positive">
                 Add payment details
-              </GenericButton>
+              </Button>
             </div>
           </div>
         </form>
@@ -200,7 +200,7 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
@@ -210,7 +210,7 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     instance.refs.emailAddress.validate = sinon.stub().returns(false);
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(stripe.createToken.callCount, 0);
   });
 
@@ -218,7 +218,7 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {card: 'value'});
     assert.deepEqual(stripe.createToken.args[0][1], {
@@ -251,7 +251,7 @@ describe('CreatePaymentUser', function() {
     wrapper.find('#cardAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {card: 'value'});
     assert.deepEqual(stripe.createToken.args[0][1], {
@@ -271,7 +271,7 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent({ addNotification });
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create Stripe token',
@@ -286,7 +286,7 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(payment.createUser.callCount, 1);
     assert.deepEqual(payment.createUser.args[0][0], {
       nickname: 'spinach',
@@ -336,7 +336,7 @@ describe('CreatePaymentUser', function() {
     instance.refs = refs;
     wrapper.find('#business').simulate('change', { target: { id: 'business'} });
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(payment.createUser.callCount, 1);
     const args = payment.createUser.args[0][0];
     assert.equal(args.business, true);
@@ -365,7 +365,7 @@ describe('CreatePaymentUser', function() {
     wrapper.find('#billingAddressSame').simulate('change',
       {currentTarget: {checked: false}});
     wrapper.update();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(payment.createUser.callCount, 1);
     assert.deepEqual(payment.createUser.args[0][0], {
       nickname: 'spinach',
@@ -407,7 +407,7 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create a payment user',
@@ -423,7 +423,7 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', { target: { id: 'personal'} });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(onUserCreated.callCount, 1);
   });
 });

@@ -6,7 +6,7 @@ const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
 const PaymentDetails = require('./details');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const GenericInput = require('../../generic-input/generic-input');
 const PaymentDetailsAddress = require('./address/address');
 
@@ -92,13 +92,13 @@ describe('PaymentDetails', () => {
           </div>
           <h4>
             Addresses
-            <GenericButton
-              action={wrapper.find('GenericButton').at(0).prop('action')}
+            <Button
+              action={wrapper.find('Button').at(0).prop('action')}
               disabled={false}
               extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
-            </GenericButton>
+            </Button>
           </h4>
           <ul className="payment-details-addresses">
             {[<PaymentDetailsAddress
@@ -126,13 +126,13 @@ describe('PaymentDetails', () => {
           </ul>
           <h4>
             Billing addresses
-            <GenericButton
-              action={wrapper.find('GenericButton').at(1).prop('action')}
+            <Button
+              action={wrapper.find('Button').at(1).prop('action')}
               disabled={false}
               extraClasses="payment-details-title-button"
               type="inline-neutral">
               Edit
-            </GenericButton>
+            </Button>
           </h4>
           <ul className="payment-details-addresses">
             {[<PaymentDetailsAddress

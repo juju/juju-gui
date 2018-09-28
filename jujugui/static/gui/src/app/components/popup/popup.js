@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const ButtonRow = require('../button-row/button-row');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
@@ -39,13 +39,13 @@ class Popup extends React.Component {
     if (close) {
       return (
         <div className="popup__close">
-          <GenericButton
+          <Button
             action={close}
             type="inline-base">
             <SvgIcon
               name="close_16"
               size="16" />
-          </GenericButton>
+          </Button>
         </div>);
     }
   }

@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 class USSOLoginLink extends React.Component {
   /**
@@ -66,12 +66,12 @@ class USSOLoginLink extends React.Component {
   */
   _renderButtonLink() {
     return (
-      <GenericButton
+      <Button
         action={this.handleLogin.bind(this)}
         extraClasses="usso-login__action"
         type="positive">
         {this._generateContent('Sign up/Log in with USSO')}
-      </GenericButton>
+      </Button>
     );
   }
 

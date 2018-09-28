@@ -7,7 +7,7 @@ const React = require('react');
 const { urls } = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const initUtils = require('../../../init/utils');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
@@ -156,7 +156,7 @@ class EntityHeader extends React.Component {
     const title = `Add to ${modelName || 'model'}`;
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
-        <GenericButton
+        <Button
           action={this._handleDeployClick.bind(this)}
           disabled={this.props.acl.isReadOnly()}
           ref="deployAction"
@@ -165,7 +165,7 @@ class EntityHeader extends React.Component {
             `${modelName ? 'your current' : 'a new'} model`}
           type="positive">
           {title}
-        </GenericButton>
+        </Button>
       );
     } else {
       deployAction = (

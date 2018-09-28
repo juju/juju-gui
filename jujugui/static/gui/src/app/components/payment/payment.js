@@ -10,7 +10,7 @@ const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
 const PaymentMethods = require('./methods/methods');
 const CreatePaymentUser = require('../create-payment-user/create-payment-user');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 class Payment extends React.Component {
   constructor() {
@@ -179,11 +179,11 @@ class Payment extends React.Component {
         <div className="payment__no-user">
           <p>You are not set up to make payments.</p>
           <p>
-            <GenericButton
+            <Button
               action={this._toggleAdd.bind(this)}
               type="inline-positive">
               Set up payments
-            </GenericButton>
+            </Button>
           </p>
         </div>
       </div>);

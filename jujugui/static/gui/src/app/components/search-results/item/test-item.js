@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const IconList = require('../../icon-list/icon-list');
 const SearchResultsItem = require('./item');
 const SvgIcon = require('../../svg-icon/svg-icon');
@@ -111,15 +111,15 @@ describe('SearchResultsItem', function() {
           </p>
         </div>
         <div className="one-col last-col list-block__list--item-deploy">
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             disabled={false}
             extraClasses="list-block__list--item-deploy-link"
             type="inline-neutral">
             <SvgIcon
               name="add-icon"
               size="16" />
-          </GenericButton>
+          </Button>
         </div>
       </li>
     );
@@ -255,7 +255,7 @@ describe('SearchResultsItem', function() {
       addToModel,
       changeState
     });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.equal(addToModel.callCount, 1);
     assert.deepEqual(addToModel.args[0][0], 'mysql');

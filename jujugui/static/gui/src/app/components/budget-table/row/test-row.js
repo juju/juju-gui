@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const BudgetTableRow = require('./row');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 
 describe('BudgetTableRow', function() {
   var acl, addNotification, listPlansForCharm, parseTermId, service;
@@ -222,12 +222,12 @@ describe('BudgetTableRow', function() {
                   Recommended allocation: $550.
                 </div>
                 <div className="two-col last-col">
-                  <GenericButton
-                    action={wrapper.find('GenericButton').at(1).prop('action')}
+                  <Button
+                    action={wrapper.find('Button').at(1).prop('action')}
                     disabled={false}
                     type="neutral">
                     Select plan
-                  </GenericButton>
+                  </Button>
                 </div>
               </li>,
               <li className="budget-table__plan twelve-col" key={1}>
@@ -242,12 +242,12 @@ describe('BudgetTableRow', function() {
                   Recommended allocation: $550.
                 </div>
                 <div className="two-col last-col">
-                  <GenericButton
-                    action={wrapper.find('GenericButton').at(2).prop('action')}
+                  <Button
+                    action={wrapper.find('Button').at(2).prop('action')}
                     disabled={false}
                     type="neutral">
                     Select plan
-                  </GenericButton>
+                  </Button>
                 </div>
               </li>
             ]}
@@ -261,12 +261,12 @@ describe('BudgetTableRow', function() {
     assert.compareJSX(wrapper.find('.budget-table-row__change-plan-wrapper'), expected);
     assert.compareJSX(wrapper.find('.budget-table__edit'), (
       <div className="budget-table__edit">
-        <GenericButton
-          action={wrapper.find('GenericButton').at(0).prop('action')}
+        <Button
+          action={wrapper.find('Button').at(0).prop('action')}
           disabled={false}
           type="neutral">
           Change plan
-        </GenericButton>
+        </Button>
       </div>));
   });
 
@@ -276,9 +276,9 @@ describe('BudgetTableRow', function() {
       acl,
       plansEditable: true
     });
-    assert.equal(wrapper.find('GenericButton').at(0).prop('disabled'), true);
-    assert.equal(wrapper.find('GenericButton').at(1).prop('disabled'), true);
-    assert.equal(wrapper.find('GenericButton').at(2).prop('disabled'), true);
+    assert.equal(wrapper.find('Button').at(0).prop('disabled'), true);
+    assert.equal(wrapper.find('Button').at(1).prop('disabled'), true);
+    assert.equal(wrapper.find('Button').at(2).prop('disabled'), true);
   });
 
   it('will abort the request when unmounting', function() {
@@ -309,11 +309,11 @@ describe('BudgetTableRow', function() {
       <div className={
         'two-col prepend-five no-margin-bottom budget-table-row__link ' +
         'budget-table-row__terms-link'}>
-        <GenericButton
-          action={wrapper.find('.budget-table-row__terms-link GenericButton').prop('action')}
+        <Button
+          action={wrapper.find('.budget-table-row__terms-link Button').prop('action')}
           type="base">
           Terms
-        </GenericButton>
+        </Button>
       </div>);
     assert.compareJSX(wrapper.find('.budget-table-row__terms-link'), expected);
   });
@@ -376,7 +376,7 @@ describe('BudgetTableRow', function() {
       content: 'Apache2 terms.'
     });
     const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
-    wrapper.find('.budget-table-row__terms-link GenericButton').props().action();
+    wrapper.find('.budget-table-row__terms-link Button').props().action();
     wrapper.update();
     const popup = wrapper.find('TermsPopup');
     assert.equal(popup.length, 1);
@@ -403,7 +403,7 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub().callsArgWith(2, 'uh oh!', null);
     const wrapper = renderComponent({ charmsGetById, parseTermId, showTerms });
-    wrapper.find('.budget-table-row__terms-link GenericButton').props().action();
+    wrapper.find('.budget-table-row__terms-link Button').props().action();
     wrapper.update();
     assert.equal(addNotification.callCount, 2);
     assert.deepEqual(addNotification.args[0][0], {

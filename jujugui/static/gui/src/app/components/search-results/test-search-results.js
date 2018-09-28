@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 const SearchResults = require('./search-results');
 const SearchResultsItem = require('./item/item');
 const SearchResultsSelectFilter = require('./select-filter/select-filter');
@@ -272,12 +272,12 @@ describe('SearchResults', function() {
                   </div>
                   <div className="clearfix community-results">
                     <div className="button-wrapper--ruled">
-                      <GenericButton
-                        action={wrapper.find('GenericButton').prop('action')}
+                      <Button
+                        action={wrapper.find('Button').prop('action')}
                         extraClasses="show-community-button"
                         type="inline-neutral">
                         Show 2 community results
-                      </GenericButton>
+                      </Button>
                     </div>
                     <div
                       className="clearfix community-results__content hidden">

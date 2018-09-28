@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const CardForm = require('../../card-form/card-form');
 const PaymentMethod = require('./method/method');
 const PaymentMethods = require('./methods');
@@ -100,11 +100,11 @@ describe('PaymentMethods', () => {
       <div className="payment-methods__no-methods">
         <p>You do not have a payment method.</p>
         <p>
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             type="inline-positive">
             Add payment method
-          </GenericButton>
+          </Button>
         </p>
       </div>);
     assert.compareJSX(wrapper.find('.payment-methods__no-methods'), expected);
@@ -114,16 +114,16 @@ describe('PaymentMethods', () => {
     const abort = sinon.stub();
     stripe.createToken = sinon.stub().returns({abort: abort});
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
 
   it('can show the add payment form', () => {
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     const expected = (
       <div className="payment-methods__form">
@@ -145,16 +145,16 @@ describe('PaymentMethods', () => {
           {null}
         </div>
         <div className="twelve-col payment-methods__form-buttons">
-          <GenericButton
-            action={wrapper.find('GenericButton').at(0).prop('action')}
+          <Button
+            action={wrapper.find('Button').at(0).prop('action')}
             type="inline-neutral">
             Cancel
-          </GenericButton>
-          <GenericButton
-            action={wrapper.find('GenericButton').at(1).prop('action')}
+          </Button>
+          <Button
+            action={wrapper.find('Button').at(1).prop('action')}
             type="inline-positive">
             Add
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper.find('.payment-methods__form'), expected);
@@ -162,7 +162,7 @@ describe('PaymentMethods', () => {
 
   it('can show the address form', () => {
     const wrapper = renderComponent();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     wrapper.find('input').props().onChange({
       currentTarget: {
@@ -177,9 +177,9 @@ describe('PaymentMethods', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs.cardForm.validate = sinon.stub().returns(false);
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(stripe.createToken.callCount, 0);
   });
 
@@ -187,9 +187,9 @@ describe('PaymentMethods', () => {
     const updateUser = sinon.stub();
     const wrapper = renderComponent({ updateUser });
     const instance = wrapper.instance();
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {
       card: 'data'
@@ -224,14 +224,14 @@ describe('PaymentMethods', () => {
         phones: ['00001111']
       })
     };
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
     wrapper.find('input').props().onChange({
       currentTarget: {
         checked: false
       }
     });
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {
       card: 'data'
@@ -254,9 +254,9 @@ describe('PaymentMethods', () => {
     stripe.createToken = sinon.stub().callsArgWith(2, 'Uh oh!');
     const addNotification = sinon.stub();
     const wrapper = renderComponent({ addNotification });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create Stripe token',
@@ -269,9 +269,9 @@ describe('PaymentMethods', () => {
     payment.createPaymentMethod = sinon.stub().callsArgWith(3, 'Uh oh!', null);
     const addNotification = sinon.stub();
     const wrapper = renderComponent({ addNotification });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     wrapper.update();
-    wrapper.find('GenericButton').at(1).props().action();
+    wrapper.find('Button').at(1).props().action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create the payment method',

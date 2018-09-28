@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentExpertBudget = require('./expert-budget');
-const GenericButton = require('../../generic-button/generic-button');
+const Button = require('../../shared/button/button');
 const GenericInput = require('../../generic-input/generic-input');
 
 describe('DeploymentExpertBudget', () => {
@@ -42,12 +42,12 @@ describe('DeploymentExpertBudget', () => {
           </span>
         </div>
         <div className="deployment-expert-budget__row">
-          <GenericButton
-            action={wrapper.find('GenericButton').prop('action')}
+          <Button
+            action={wrapper.find('Button').prop('action')}
             disabled={false}
             type="inline-positive">
             Set budget
-          </GenericButton>
+          </Button>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);

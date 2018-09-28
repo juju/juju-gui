@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const USSOLoginLink = require('./usso-login-link');
-const GenericButton = require('../generic-button/generic-button');
+const Button = require('../shared/button/button');
 
 describe('USSOLoginLink', () => {
 
@@ -60,12 +60,12 @@ describe('USSOLoginLink', () => {
     const wrapper = renderComponent({ displayType: 'button' });
     var expected = (
       <div className="usso-login">
-        <GenericButton
-          action={wrapper.find('GenericButton').prop('action')}
+        <Button
+          action={wrapper.find('Button').prop('action')}
           extraClasses="usso-login__action"
           type="positive" >
           Sign up/Log in with USSO
-        </GenericButton>
+        </Button>
       </div>);
     assert.compareJSX(wrapper, expected);
   });
@@ -75,7 +75,7 @@ describe('USSOLoginLink', () => {
       children: 'Scooby Doo',
       displayType: 'button'
     });
-    assert.equal(wrapper.find('GenericButton').children().text(), 'Scooby Doo');
+    assert.equal(wrapper.find('Button').children().text(), 'Scooby Doo');
   });
 
   it('can render a text link with custom content', () => {
@@ -89,7 +89,7 @@ describe('USSOLoginLink', () => {
       displayType: 'button',
       loginToController
     });
-    wrapper.find('GenericButton').props().action();
+    wrapper.find('Button').props().action();
     assert.equal(loginToController.callCount, 1);
   });
 });

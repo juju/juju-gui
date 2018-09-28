@@ -79,6 +79,6 @@ describe('MachineViewHeader', function() {
       toggleOn: true
     };
     const wrapper = renderComponent({ toggle });
-    assert.equal(wrapper.find('GenericButton').length, 1);
+    assert.equal(wrapper.find('Button').length, 1);
   });
 });
