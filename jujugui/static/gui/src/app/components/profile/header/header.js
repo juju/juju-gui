@@ -150,8 +150,8 @@ class ProfileHeader extends React.Component {
     return (
       <div className="profile-header v1">
         <div className="p-strip is-shallow">
-          <div className="row p-divider u-no-padding--top u-no-padding--bottom">
-            <div className="col-10 p-divider__block">
+          <div className="row profile-header__inner u-no-padding--top u-no-padding--bottom">
+            <div>
               <div className="p-media-object--large u-no-margin--bottom">
                 {this._generateAvatar()}
                 <div className="p-media-object__details">
@@ -163,7 +163,7 @@ class ProfileHeader extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-2 p-divider__block">
+            <div>
               {this._generateControllerDetails()}
               <div
                 className="profile-header__close"

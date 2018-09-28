@@ -1,23 +1,48 @@
 .profile-header {
   margin-bottom: 3rem; // Temporarily compensate for lack of following strip
 
-  .p-strip {
-    background-color: $color-x-light !important;
+  &__inner {
+    @media (max-width: $breakpoint-medium){
+      
+      > div:last-child {
+        margin-top: 2rem;
+      }
+    }
+
+    @media (min-width: $breakpoint-medium){
+      display: flex;
+
+      > div:last-child {
+        margin-left: auto;
+        border-left: 1px solid $color-mid-light;
+        padding: 0 2rem;
+      }
+    }
+  }
+
+  div.p-strip { 
+    background-color: $color-x-light;
   }
 
   &__close {
     position: absolute;
-    top: 0;
     right: 0;
+    top: 0;
 
     &:hover {
       cursor: pointer;
     }
   }
+
+  .contextual-nav {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+  }
 }
 
 .profile-header__avatar .p-tooltip:hover .p-tooltip__message {
-  top: 2.75rem;
   left: 40% !important;
   min-width: 0;
+  top: 2.75rem;
 }
