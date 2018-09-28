@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
+const Button = require('../button/button');
 
 class ButtonRow extends React.Component {
   /**

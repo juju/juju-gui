@@ -16,7 +16,6 @@
 @import '../../components/budget-table/budget-table';
 @import '../../components/budget-table/row/row';
 @import '../../components/button-dropdown/button-dropdown';
-@import '../../components/button-row/button-row';
 @import '../../components/card-form/card-form';
 @import '../../components/charmbrowser/charmbrowser';
 @import '../../components/check-list-item/check-list-item';
@@ -143,6 +142,7 @@
 // Shared Components
 @import '../../components/shared/basic-table/basic-table';
 @import '../../components/shared/button/button';
+@import '../../components/shared/button-row/button-row';
 @import '../../components/shared/expanding-row/expanding-row';
 @import '../../components/shared/machine/machine';
 @import '../../components/shared/machine-unit/machine-unit';

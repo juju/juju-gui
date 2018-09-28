@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ButtonRow = require('./button-row');
-const Button = require('../shared/button/button');
+const Button = require('../button/button');
 
 describe('ButtonRow', function() {
 
