@@ -51,6 +51,12 @@ describe('PostDeployment', () => {
     assert.equal(content, 'The bundle author has not provided a getstarted.md file.');
   });
 
+  it('supports local bundle paths', () => {
+    // If the fix is not implemented in _fetchFiles this will fail by throwing
+    // on render so no assertions are necessary.
+    renderComponent({entityURLs: ['local-bundle (1)']});
+  });
+
   it('correctly updates when the entityURLs prop changes', () => {
     const getFileStub = sinon.stub();
     const wrapper = renderComponent({

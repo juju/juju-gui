@@ -37,4 +37,10 @@ describe('AddedServicesLabel', () => {
     assert.deepEqual(changeState.args[0][0], {postDeploymentPanel: bundleURL});
   });
 
+  it('supports local bundle urls', () => {
+    const name = 'local-bundle (1)';
+    const component = renderComponent({bundleURL: name});
+    assert.equal(component.find('.inspector-view__label-name').text(), name);
+  });
+
 });

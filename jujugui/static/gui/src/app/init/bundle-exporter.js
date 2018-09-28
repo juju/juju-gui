@@ -80,6 +80,11 @@ class BundleExporter {
         serviceData.expose = true;
       }
 
+      const series = service.get('series');
+      if (series) {
+        serviceData.series = series;
+      }
+
       // XXX: Only expose position. Currently these are position absolute
       // rather than relative.
       var anno = service.get('annotations');

@@ -51,9 +51,15 @@ class PostDeployment extends React.Component {
     const props = this.props;
     const getFile = props.charmstore.getFile;
     props.entityURLs.forEach(entityURL => {
-      const url = urls.URL.fromAnyString(entityURL).toLegacyString();
-      getFile(url, GET_STARTED, this._handleFileResponse.bind(this, GET_STARTED));
-      getFile(url, POST_DEPLOYMENT, this._handleFileResponse.bind(this, POST_DEPLOYMENT));
+      try {
+        const url = urls.URL.fromAnyString(entityURL).toLegacyString();
+        getFile(url, GET_STARTED, this._handleFileResponse.bind(this, GET_STARTED));
+        getFile(url, POST_DEPLOYMENT, this._handleFileResponse.bind(this, POST_DEPLOYMENT));
+      } catch(e) {
+        // If the bundleURL is a local file then the url parser could fail
+        // for a number of reasons. Just carry on if this doesn't parse
+        // properly.
+      }
     });
   }
 
