@@ -49,7 +49,7 @@ describe('InspectorRelateToEndpoint', () => {
   });
 
   it('can render when there are no relatable endpoints', () => {
-    const wrapper = renderComponent({ endpoints: [] });
+    const wrapper = renderComponent({endpoints: []});
     assert.equal(
       wrapper.find('.inspector-relate-to-endpoint__message').text(),
       'No relatable endpoints for these applications.');
@@ -68,7 +68,7 @@ describe('InspectorRelateToEndpoint', () => {
     // Trigger the checkbox for the available relation
     instance.refs = {
       'InspectorRelateToEndpoint-0': {
-        state: { checked: true }}};
+        state: {checked: true}}};
     wrapper.find('CheckListItem').props().whenChanged();
     // Click the add relation button
     wrapper.find('ButtonRow').prop('buttons')[0].action();

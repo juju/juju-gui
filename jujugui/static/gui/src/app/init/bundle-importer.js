@@ -363,7 +363,7 @@ class BundleImporter {
     );
     this.modelAPI.addMachines(record.args, function(machine) {
       this.db.machines.remove(machine);
-    }.bind(this, machine), { modelId: machine.id});
+    }.bind(this, machine), {modelId: machine.id});
     // Loop through recordSet and add the machine model to every record which
     // requires it.
     this._saveModelToRequires(record.id, machine);
@@ -663,8 +663,8 @@ class BundleImporter {
     const ep1 = record.args[0].split(':');
     const ep2 = record.args[1].split(':');
     const endpoints = [
-      [ep1[0], { name: ep1[1] }],
-      [ep2[0], { name: ep2[1] }]
+      [ep1[0], {name: ep1[1]}],
+      [ep2[0], {name: ep2[1]}]
     ];
     // Resolve the record indexes to the service names.
     endpoints.forEach(function(ep, index) {

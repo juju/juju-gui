@@ -46,7 +46,7 @@ describe('Popup', () => {
   });
 
   it('can set a type class', () => {
-    const wrapper = renderComponent({ type: 'wide' });
+    const wrapper = renderComponent({type: 'wide'});
     assert.equal(
       wrapper.find('.popup__panel').prop('className').includes('popup__panel--wide'),
       true);

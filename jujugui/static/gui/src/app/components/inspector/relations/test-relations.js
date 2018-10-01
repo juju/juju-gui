@@ -108,7 +108,7 @@ describe('InspectorRelations', function() {
 
   it('can show relation details on click', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('CheckListItem').at(1).props().action();
     assert.deepEqual(changeState.args[0][0].gui.inspector, {
       activeComponent: 'relation',
@@ -126,7 +126,7 @@ describe('InspectorRelations', function() {
   });
 
   it('renders if there are no relations', () => {
-    const wrapper = renderComponent({ serviceRelations: [] });
+    const wrapper = renderComponent({serviceRelations: []});
     assert.equal(
       wrapper.find('.inspector-relations__message').text(),
       'No active relations for this application.');
@@ -161,7 +161,7 @@ describe('InspectorRelations', function() {
 
   it('can remove the selected relations', function() {
     var destroyRelations = sinon.stub();
-    const wrapper = renderComponent({ destroyRelations });
+    const wrapper = renderComponent({destroyRelations});
     const instance = wrapper.instance();
     instance.refs = {
       'CheckListItem-mysql': {
@@ -185,7 +185,7 @@ describe('InspectorRelations', function() {
 
   it('deselects all relations after removal', function() {
     var destroyRelations = sinon.stub();
-    const wrapper = renderComponent({ destroyRelations });
+    const wrapper = renderComponent({destroyRelations});
     const instance = wrapper.instance();
     instance.refs = {
       'CheckListItem-mysql': {
@@ -212,7 +212,7 @@ describe('InspectorRelations', function() {
 
   it('navigates to show build relation on build-relation click', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     // Call the action for the create relation button.
     wrapper.find('OverviewAction').props().action();
     assert.deepEqual(changeState.args[0][0], {

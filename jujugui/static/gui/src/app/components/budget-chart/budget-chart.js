@@ -52,10 +52,12 @@ class BudgetChart extends React.Component {
         <div className="budget-chart__chart twelve-col">
           <div className="budget-chart__chart-limit">
           </div>
-          <div className="budget-chart__chart-new"
+          <div
+            className="budget-chart__chart-new"
             style={styles.new}>
           </div>
-          <div className="budget-chart__chart-existing"
+          <div
+            className="budget-chart__chart-existing"
             style={styles.existing}>
           </div>
         </div>

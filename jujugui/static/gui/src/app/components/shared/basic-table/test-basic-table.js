@@ -88,7 +88,7 @@ describe('BasicTable', () => {
       }
       return 0;
     };
-    const wrapper = renderComponent({ sort });
+    const wrapper = renderComponent({sort});
     const rowItems = wrapper.find('BasicTableRow');
     assert.equal(rowItems.at(0).key(), 'basic-table-header');
     assert.equal(rowItems.at(1).key(), 'row-one-key');

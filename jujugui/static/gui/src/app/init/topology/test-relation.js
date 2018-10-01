@@ -61,7 +61,7 @@ describe('topology relation module', function() {
     var topo = {
       vis: {
         selectAll: function() {
-          return { remove: stubRemove };
+          return {remove: stubRemove};
         }
       }
     };
@@ -88,7 +88,7 @@ describe('topology relation module', function() {
       assert.equal(state.changeState.callCount, 1);
       assert.deepEqual(state.changeState.args[0][0], {
         gui: {
-          inspector: { id: 'one' }
+          inspector: {id: 'one'}
         }});
     });
 
@@ -148,7 +148,7 @@ describe('topology relation module', function() {
       assert.deepEqual(hide.lastCall.args[0], {
         serviceNames: ['foo2', 'foo4']
       });
-      assert.deepEqual(show.lastCall.args[0], { serviceNames: ['foo3'] });
+      assert.deepEqual(show.lastCall.args[0], {serviceNames: ['foo3']});
     });
   });
 

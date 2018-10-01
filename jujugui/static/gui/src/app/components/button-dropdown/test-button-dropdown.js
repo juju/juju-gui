@@ -36,7 +36,8 @@ describe('Button Dropdown', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="button-dropdown extra-classes">
-        <span aria-controls="headerDropdownMenu"
+        <span
+          aria-controls="headerDropdownMenu"
           aria-expanded="false"
           aria-haspopup="true"
           aria-owns="headerDropdownMenu"
@@ -44,7 +45,8 @@ describe('Button Dropdown', function() {
           onClick={wrapper.find('.button-dropdown__button').prop('onClick')}
           role="button"
           tabIndex="0">
-          <SvgIcon className="button-dropdown__icon"
+          <SvgIcon
+            className="button-dropdown__icon"
             name="icon_16"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -66,33 +68,39 @@ describe('Button Dropdown', function() {
     const menuItems = wrapper.find('.dropdown-menu__list-item');
     const links = wrapper.find('.dropdown-menu__list-item-link');
     const children = [
-      <li className="dropdown-menu__list-item"
+      <li
+        className="dropdown-menu__list-item"
         key="item1"
         role="menuitem"
         tabIndex="0">
-        <a className="dropdown-menu__list-item-link"
+        <a
+          className="dropdown-menu__list-item-link"
           onClick={links.at(0).prop('onClick')}
           role="button">
           item1
         </a>
       </li>,
-      <li className="dropdown-menu__list-item dropdown-menu__list-item--inactive"
+      <li
+        className="dropdown-menu__list-item dropdown-menu__list-item--inactive"
         key="item2"
         role="menuitem"
         tabIndex="0">
         item2
       </li>,
-      <li className="dropdown-menu__list-item"
+      <li
+        className="dropdown-menu__list-item"
         key="item-2"
         role="menuitem"
         tabIndex="0">
         <span>item3</span>
       </li>,
-      <li className="dropdown-menu__list-item dropdown-menu__list-item--active"
+      <li
+        className="dropdown-menu__list-item dropdown-menu__list-item--active"
         key="i4"
         role="menuitem"
         tabIndex="0">
-        <a className="dropdown-menu__list-item-link"
+        <a
+          className="dropdown-menu__list-item-link"
           onClick={links.at(1).prop('onClick')}
           role="button">
           item4

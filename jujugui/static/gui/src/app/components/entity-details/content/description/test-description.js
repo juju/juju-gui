@@ -20,10 +20,10 @@ describe('EntityContentDescription', function() {
 
   it('can render markdown in the description', () => {
     const description = 'A simple [link](http://google.com/).';
-    const wrapper = renderComponent({ description });
+    const wrapper = renderComponent({description});
     assert.deepEqual(
       wrapper.find('.entity-content__description-content').prop('dangerouslySetInnerHTML'),
-      { __html: '<p>A simple <a href="http://google.com/">link</a>.</p>\n' });
+      {__html: '<p>A simple <a href="http://google.com/">link</a>.</p>\n'});
   });
 
   describe('bundle', () => {
@@ -36,7 +36,7 @@ describe('EntityContentDescription', function() {
     });
 
     it('can render without description', () => {
-      const wrapper = renderComponent({ description: null });
+      const wrapper = renderComponent({description: null});
       assert.equal(wrapper.text(), false);
     });
 
@@ -44,7 +44,8 @@ describe('EntityContentDescription', function() {
       const wrapper = renderComponent();
       const expected = (
         <div className="entity-content__description">
-          <div className="entity-content__description-content"
+          <div
+            className="entity-content__description-content"
             dangerouslySetInnerHTML={{__html: 'HA Django cluster.'}} />
         </div>
       );
@@ -62,7 +63,7 @@ describe('EntityContentDescription', function() {
     });
 
     it('can render without description', () => {
-      const wrapper = renderComponent({ description: null });
+      const wrapper = renderComponent({description: null});
       assert.equal(wrapper.text(), false);
     });
 
@@ -70,7 +71,8 @@ describe('EntityContentDescription', function() {
       const wrapper = renderComponent();
       const expected = (
         <div className="entity-content__description">
-          <div className="entity-content__description-content"
+          <div
+            className="entity-content__description-content"
             dangerouslySetInnerHTML={{__html: 'Django framework.'}} />
         </div>
       );

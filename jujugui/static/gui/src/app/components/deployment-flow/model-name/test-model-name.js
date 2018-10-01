@@ -72,17 +72,17 @@ describe('DeploymentModelName', () => {
   });
 
   it('does not focus on the model name field when specified', () => {
-    const wrapper = renderComponent({ focusName: false });
+    const wrapper = renderComponent({focusName: false});
     const instance = wrapper.instance();
     const focus = sinon.stub();
-    instance.refs = { modelName: { focus } };
+    instance.refs = {modelName: {focus}};
     instance.componentDidMount();
     assert.equal(focus.callCount, 0);
   });
 
   it('can update the model name on blur', () => {
     const setModelName = sinon.stub();
-    const wrapper = renderComponent({ setModelName });
+    const wrapper = renderComponent({setModelName});
     wrapper.find('GenericInput').simulate('blur', {
       currentTarget: {
         value: 'snazzy-bundle'
@@ -94,7 +94,7 @@ describe('DeploymentModelName', () => {
 
   it('can update the model name on change', () => {
     const setModelName = sinon.stub();
-    const wrapper = renderComponent({ setModelName });
+    const wrapper = renderComponent({setModelName});
     wrapper.find('GenericInput').simulate('change', 'snazzy-bundle');
     assert.equal(setModelName.callCount, 1);
     assert.equal(setModelName.args[0][0], 'snazzy-bundle');
@@ -102,7 +102,7 @@ describe('DeploymentModelName', () => {
 
   it('does not update the model name if there is no value', () => {
     const setModelName = sinon.stub();
-    const wrapper = renderComponent({ setModelName });
+    const wrapper = renderComponent({setModelName});
     wrapper.find('GenericInput').simulate('blur', {
       currentTarget: {
         value: ''

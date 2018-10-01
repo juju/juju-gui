@@ -16,7 +16,7 @@ class AddedServicesListItem extends React.Component {
   */
   _getPriorityUnits(units) {
     var unitStatuses = initUtils.getUnitStatusCounts(units);
-    var top = { priority: 99, key: '', size: 0 };
+    var top = {priority: 99, key: '', size: 0};
     var status;
     for (var key in unitStatuses) {
       status = unitStatuses[key];
@@ -100,7 +100,8 @@ class AddedServicesListItem extends React.Component {
     var statusData = this._getPriorityUnits(service.units.toArray());
     var statusIndicator = this._renderStatusIndicator(statusData);
     return (
-      <li className={this._generateClassName()}
+      <li
+        className={this._generateClassName()}
         data-serviceid={service.id}
         onClick={this._onClickHandler.bind(this)}
         onMouseEnter={this._onMouseEnter.bind(this)}

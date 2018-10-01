@@ -16,7 +16,7 @@ describe('ScaleService', function() {
       changeState={options.changeState || sinon.stub()}
       initUtils={options.initUtils || initUtils}
       serviceId={options.serviceId || '123'} />,
-    { disableLifecycleMethods: true }
+    {disableLifecycleMethods: true}
   );
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('ScaleService', function() {
 
   it('creates and autoplaces units if constraints is open', function() {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     // Set the value in the input.
     wrapper.find('.scale-service--units input').simulate('change', {
       currentTarget: {
@@ -102,7 +102,7 @@ describe('ScaleService', function() {
 
   it('creates and shows the machine view if constraints is closed', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     // Set the value in the input.
     wrapper.find('.scale-service--units input').simulate('change', {
       currentTarget: {

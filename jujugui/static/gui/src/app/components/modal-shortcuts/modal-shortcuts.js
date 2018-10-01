@@ -60,9 +60,13 @@ class ModalShortcuts extends React.Component {
       <div className="modal">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Keyboard Shortcuts</h2>
-          <span className="close" onClick={this.props.closeModal} role="button"
+          <span
+            className="close"
+            onClick={this.props.closeModal}
+            role="button"
             tabIndex="0">
-            <SvgIcon name="close_16"
+            <SvgIcon
+              name="close_16"
               size="16" />
           </span>
         </div>

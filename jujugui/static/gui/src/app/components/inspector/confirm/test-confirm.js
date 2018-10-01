@@ -46,14 +46,14 @@ describe('InspectorConfirm', function() {
   });
 
   it('generates the correct classes if it is open', function() {
-    const wrapper = renderComponent({ open: true });
+    const wrapper = renderComponent({open: true});
     assert.equal(
       wrapper.prop('className').includes('inspector-confirm--open'),
       true);
   });
 
   it('hides the message if one is not provided', function() {
-    const wrapper = renderComponent({ message: null });
+    const wrapper = renderComponent({message: null});
     const expected = (
       <p className="inspector-confirm__message hidden">
         {undefined}

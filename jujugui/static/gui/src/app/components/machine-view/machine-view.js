@@ -140,7 +140,8 @@ class MachineView extends React.Component {
               Unplaced units will appear here. Drag and drop them to
               customise your deployment.
             </p>
-            <span className="link"
+            <span
+              className="link"
               onClick={this._openStore.bind(this)}>
               Add applications to get started
             </span>
@@ -153,7 +154,8 @@ class MachineView extends React.Component {
       return (
         <div className="machine-view__column-onboarding">
           {icon ? (
-            <SvgIcon name={icon}
+            <SvgIcon
+              name={icon}
               size="16" />) : null}
           {content}
         </div>);
@@ -314,7 +316,8 @@ class MachineView extends React.Component {
             <li>Manually place new units</li>
             <li>Colocate applications</li>
           </ul>
-          <span className="link"
+          <span
+            className="link"
             onClick={this._addMachine.bind(this)}
             role="button"
             tabIndex="0">

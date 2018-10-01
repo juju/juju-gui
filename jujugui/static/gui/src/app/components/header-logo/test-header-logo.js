@@ -19,13 +19,16 @@ describe('HeaderLogo', function() {
   it('renders', () => {
     const wrapper = renderComponent();
     const expected = (
-      <a href="/"
+      <a
+        href="/"
         onClick={wrapper.prop('onClick')}
         role="button"
         title="Home">
-        <SvgIcon className="svg-icon"
+        <SvgIcon
+          className="svg-icon"
           height="35"
-          name="juju-logo" width="90" />
+          name="juju-logo"
+          width="90" />
       </a>);
     assert.compareJSX(wrapper, expected);
   });
@@ -46,7 +49,7 @@ describe('HeaderLogo', function() {
   it('does not call showProfile on click in gisf', () => {
     const showProfile = sinon.stub();
     const preventDefault = sinon.stub();
-    const wrapper = renderComponent({ showProfile });
+    const wrapper = renderComponent({showProfile});
     // Call the click handler
     wrapper.props().onClick({preventDefault});
     assert.equal(preventDefault.callCount, 0);

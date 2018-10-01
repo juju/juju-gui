@@ -290,7 +290,7 @@ describe('MachineViewMachine', function() {
       displayName: 'new0/lxc/0'
     };
     machineAPI.machine = machine;
-    const wrapper = renderComponent({ type: 'container' });
+    const wrapper = renderComponent({type: 'container'});
     assert.equal(wrapper.find('.add-machine__constraints').length, 0);
     const expected = (
       <ul className="machine-view__machine-units machine__units">
@@ -333,7 +333,7 @@ describe('MachineViewMachine', function() {
       displayName: 'new0/lxc/0'
     };
     machineAPI.machine = machine;
-    const wrapper = renderComponent({ type: 'container' });
+    const wrapper = renderComponent({type: 'container'});
     wrapper.find('DragSource(MachineViewMachineUnit)').at(0).props().removeUnit();
     assert.equal(machineAPI.removeUnit.callCount, 1);
   });

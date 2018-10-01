@@ -21,7 +21,7 @@ class DeploymentExpertBudget extends React.Component {
     @param {String} The select value.
   */
   _inputChange(value) {
-    this.setState({ budget: value });
+    this.setState({budget: value});
   }
 
   render() {

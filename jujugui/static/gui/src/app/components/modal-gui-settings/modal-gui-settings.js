@@ -73,7 +73,10 @@ class ModalGUISettings extends React.Component {
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span className="close" onClick={props.closeModal} role="button"
+          <span
+            className="close"
+            onClick={props.closeModal}
+            role="button"
             tabIndex="0">
             <SvgIcon name="close_16" size="16" />
           </span>
@@ -81,7 +84,9 @@ class ModalGUISettings extends React.Component {
         <div className="content">
           <p>
             <label htmlFor="disable-cookie">
-              <input defaultChecked={state['disable-cookie']} id="disable-cookie"
+              <input
+                defaultChecked={state['disable-cookie']}
+                id="disable-cookie"
                 name="disable-cookie"
                 onChange={handleChange}
                 type="checkbox" />&nbsp;
@@ -90,7 +95,9 @@ class ModalGUISettings extends React.Component {
           </p>
           <p>
             <label htmlFor="force-containers">
-              <input defaultChecked={state['force-containers']} id="force-containers"
+              <input
+                defaultChecked={state['force-containers']}
+                id="force-containers"
                 name="force-containers"
                 onChange={handleChange}
                 type="checkbox" />&nbsp;
@@ -99,7 +106,9 @@ class ModalGUISettings extends React.Component {
           </p>
           <p>
             <label htmlFor="disable-auto-place">
-              <input defaultChecked={state['disable-auto-place']} id="disable-auto-place"
+              <input
+                defaultChecked={state['disable-auto-place']}
+                id="disable-auto-place"
                 name="disable-auto-place"
                 onChange={handleChange}
                 type="checkbox" />&nbsp;
@@ -108,7 +117,9 @@ class ModalGUISettings extends React.Component {
           </p>
           <p>
             <label htmlFor="jujushell-url">
-              <input id="jujushell-url" name="jujushell-url"
+              <input
+                id="jujushell-url"
+                name="jujushell-url"
                 onChange={handleChange}
                 type="text"
                 value={state['jujushell-url']} />&nbsp;
@@ -120,9 +131,13 @@ class ModalGUISettings extends React.Component {
               NOTE: You will need to reload for changes to take effect.
             </small>
           </p>
-          <input className="button--positive" id="save-settings"
-            name="save-settings" onClick={this._handleSave.bind(this)}
-            type="button" value="Save" />
+          <input
+            className="button--positive"
+            id="save-settings"
+            name="save-settings"
+            onClick={this._handleSave.bind(this)}
+            type="button"
+            value="Save" />
         </div>
       </div>
     );

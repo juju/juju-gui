@@ -43,10 +43,12 @@ class SearchResultsTypeFilter extends React.Component {
     }];
     items.forEach(function(item) {
       components.push(
-        <li className={this._generateClasses(item.selected)}
+        <li
+          className={this._generateClasses(item.selected)}
           key={item.label}
           onClick={this._handleFilterClick.bind(this, item.action)}
-          role="button" tabIndex="0">
+          role="button"
+          tabIndex="0">
           {item.label}
         </li>);
     }, this);

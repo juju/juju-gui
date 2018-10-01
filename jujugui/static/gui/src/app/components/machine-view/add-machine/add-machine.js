@@ -125,7 +125,8 @@ class MachineViewAddMachine extends React.Component {
   */
   _generateSelectContainer() {
     return (
-      <select className="add-machine__container"
+      <select
+        className="add-machine__container"
         defaultValue=""
         disabled={this.props.acl.isReadOnly()}
         key="containers"

@@ -49,7 +49,8 @@ class InsetSelect extends React.Component {
     if (label) {
       id = label.replace(' ', '-');
       element = (
-        <label className="inset-select__label"
+        <label
+          className="inset-select__label"
           htmlFor={id}>
           {label}
         </label>);
@@ -69,7 +70,8 @@ class InsetSelect extends React.Component {
   _generateOptions() {
     return this.props.options.map((option, i) => {
       return (
-        <option key={option.value + i}
+        <option
+          key={option.value + i}
           value={option.value}>
           {option.label}
         </option>
@@ -100,7 +102,8 @@ class InsetSelect extends React.Component {
     return (
       <div className={this._generateClasses()}>
         {labelElement}
-        <select className="inset-select__field"
+        <select
+          className="inset-select__field"
           defaultValue={this.props.value}
           disabled={this.props.disabled}
           id={id}

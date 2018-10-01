@@ -67,7 +67,7 @@ describe('UserMenu', () => {
 
   it('navigates to user profile when clicked', () => {
     const navigateUserProfile = sinon.stub();
-    const wrapper = renderComponent({ navigateUserProfile });
+    const wrapper = renderComponent({navigateUserProfile});
     wrapper.find('ButtonDropdown').prop('listItems')[0].action();
     assert.equal(navigateUserProfile.callCount, 1);
   });

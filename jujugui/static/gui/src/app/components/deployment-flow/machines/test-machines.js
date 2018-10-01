@@ -133,7 +133,8 @@ describe('DeploymentMachines', function() {
             </div>
           </li>
           {[
-            <li className="deployment-flow__row twelve-col"
+            <li
+              className="deployment-flow__row twelve-col"
               key="xenial (constraints not set)">
               <div className="eight-col">
                 xenial, (constraints not set)
@@ -145,7 +146,8 @@ describe('DeploymentMachines', function() {
                 {1}
               </div>
             </li>,
-            <li className="deployment-flow__row twelve-col"
+            <li
+              className="deployment-flow__row twelve-col"
               key="2x0.03GHz, 1024, 4096">
               <div className="eight-col">
                 cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB
@@ -157,7 +159,8 @@ describe('DeploymentMachines', function() {
                 {2}
               </div>
             </li>,
-            <li className="deployment-flow__row twelve-col"
+            <li
+              className="deployment-flow__row twelve-col"
               key="trusty, 2x0.03GHz, 1024, 4096">
               <div className="eight-col">
                 trusty, cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB
@@ -169,7 +172,8 @@ describe('DeploymentMachines', function() {
                 {1}
               </div>
             </li>,
-            <li className="deployment-flow__row twelve-col"
+            <li
+              className="deployment-flow__row twelve-col"
               key="(constraints not set)">
               <div className="eight-col">
                 (constraints not set)
@@ -188,7 +192,7 @@ describe('DeploymentMachines', function() {
   });
 
   it('can render for a local cloud', function() {
-    const wrapper = renderComponent({ cloud: {name: 'localhost'} });
+    const wrapper = renderComponent({cloud: {name: 'localhost'}});
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'localhost'}.&nbsp;
@@ -198,7 +202,7 @@ describe('DeploymentMachines', function() {
   });
 
   it('can render with unknown cloud', function() {
-    const wrapper = renderComponent({ cloud: null });
+    const wrapper = renderComponent({cloud: null});
     var expected = (
       <p className="deployment-machines__message">
         These machines will be provisioned on {'the cloud'}.&nbsp;

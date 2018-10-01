@@ -184,7 +184,7 @@ describe('DeploymentFlow', function() {
       withPlans: true
     });
     const instance = wrapper.instance();
-    instance.setState({ cloudCount: 2 });
+    instance.setState({cloudCount: 2});
     wrapper.update();
     const expected = (
       <div className="deployment-flow">
@@ -312,8 +312,8 @@ describe('DeploymentFlow', function() {
       modelCommitted: false
     });
     assert.equal(terms.getAgreementsByTerms.callCount, 1);
-    applications.push({ get: sinon.stub().returns('service2') });
-    wrapper.setProps({ applications });
+    applications.push({get: sinon.stub().returns('service2')});
+    wrapper.setProps({applications});
     assert.equal(terms.getAgreementsByTerms.callCount, 2);
     assert.deepEqual(terms.getAgreementsByTerms.args[0][0], ['service1-terms']);
   });
@@ -329,13 +329,13 @@ describe('DeploymentFlow', function() {
         one: {
           command: {
             method: '_deploy',
-            args: [{ charmURL: 'service1' }]
+            args: [{charmURL: 'service1'}]
           }
         },
         two: {
           command: {
             method: '_deploy',
-            args: [{ charmURL: 'mysql' }]
+            args: [{charmURL: 'mysql'}]
           }
         }
       }
@@ -346,7 +346,7 @@ describe('DeploymentFlow', function() {
 
   it('shows a spinnner when loading the direct deploy entity', () => {
     const wrapper = createDeploymentFlow({
-      ddData: { id: 'cs:bundle/kubernetes-core-8' },
+      ddData: {id: 'cs:bundle/kubernetes-core-8'},
       getEntity: sinon.stub()
     });
     assert.equal(wrapper.find('Spinner').length, 1);
@@ -413,7 +413,7 @@ describe('DeploymentFlow', function() {
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
-      ddData: { id: entityId },
+      ddData: {id: entityId},
       modelCommitted: false
     });
     const instance = wrapper.instance();
@@ -447,13 +447,13 @@ describe('DeploymentFlow', function() {
     const wrapper = createDeploymentFlow({
       addNotification: addNotification,
       changeState: changeState,
-      ddData: { id: entityId },
+      ddData: {id: entityId},
       modelCommitted: false
     });
     const instance = wrapper.instance();
     assert.equal(instance.state.isDirectDeploy, true);
     assert.deepEqual(instance.state.ddEntity, entityModel);
-    wrapper.setProps({ ddData: null });
+    wrapper.setProps({ddData: null});
     assert.equal(instance.state.isDirectDeploy, false);
     assert.strictEqual(instance.state.ddEntity, null);
   });
@@ -494,7 +494,7 @@ describe('DeploymentFlow', function() {
     assert.equal(wrapper.find('DeploymentAgreements').length, 0);
     assert.equal(wrapper.find('.deployment-flow__deploy-action').length, 0);
     const instance = wrapper.instance();
-    instance.setState({ budget: 125 });
+    instance.setState({budget: 125});
     wrapper.update();
     assert.equal(wrapper.find('DeploymentPayment').length, 1);
     assert.equal(wrapper.find('DeploymentAgreements').length, 1);
@@ -527,7 +527,7 @@ describe('DeploymentFlow', function() {
     const wrapper = createDeploymentFlow();
     const instance = wrapper.instance();
     instance.setState({
-      cloud: { name: 'cloud' },
+      cloud: {name: 'cloud'},
       cloudCount: 2
     });
     wrapper.update();
@@ -545,7 +545,7 @@ describe('DeploymentFlow', function() {
     const wrapper = createDeploymentFlow();
     const instance = wrapper.instance();
     instance.setState({
-      cloud: { name: 'cloud' },
+      cloud: {name: 'cloud'},
       cloudCount: 1
     });
     wrapper.update();

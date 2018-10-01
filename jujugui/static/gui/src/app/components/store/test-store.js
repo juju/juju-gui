@@ -18,7 +18,7 @@ describe('Store', function() {
   );
 
   it('can render the right items for gij', function() {
-    const wrapper = renderComponent({ gisf: false, showExperts: false });
+    const wrapper = renderComponent({gisf: false, showExperts: false});
     assert.equal(wrapper.find('.box--kubernetes').length, 1, 'k8s');
     assert.equal(wrapper.find('.box--openstack').length, 1, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 1, 'hadoop');
@@ -29,7 +29,7 @@ describe('Store', function() {
   });
 
   it('can render the right items for gisf', function() {
-    const wrapper = renderComponent({ gisf: true, showExperts: false });
+    const wrapper = renderComponent({gisf: true, showExperts: false});
     assert.equal(wrapper.find('.box--kubernetes').length, 1, 'k8s');
     assert.equal(wrapper.find('.box--openstack').length, 0, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 1, 'hadoop');
@@ -40,7 +40,7 @@ describe('Store', function() {
   });
 
   it('can render the right items for gij with experts', function() {
-    const wrapper = renderComponent({ gisf: false, showExperts: true });
+    const wrapper = renderComponent({gisf: false, showExperts: true});
     assert.equal(wrapper.find('.box--kubernetes').length, 1, 'k8s');
     assert.equal(wrapper.find('.box--openstack').length, 1, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 0, 'hadoop');
@@ -53,7 +53,7 @@ describe('Store', function() {
   });
 
   it('can render the right items for gisf with experts', function() {
-    const wrapper = renderComponent({ gisf: true, showExperts: true });
+    const wrapper = renderComponent({gisf: true, showExperts: true});
     assert.equal(wrapper.find('.box--kubernetes').length, 1, 'k8s');
     assert.equal(wrapper.find('.box--openstack').length, 0, 'openstack');
     assert.equal(wrapper.find('.box--hadoop').length, 1, 'hadoop');
@@ -78,7 +78,8 @@ describe('Store', function() {
             scripts is straightforward. You can keep new charms
             private, or share them back with the community.</p>
             <p>
-              <a className="link link--cold"
+              <a
+                className="link link--cold"
                 href={href}
                 target="_blank">
               Learn more about writing charms&nbsp;&rsaquo;
@@ -98,7 +99,7 @@ describe('Store', function() {
     var changeState = sinon.stub();
     var stopPropagation = sinon.stub();
     var target = {dataset: {entity: 'kibana'}};
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.featured-entity__link[data-entity="kibana"]').simulate('click', {
       stopPropagation: stopPropagation,
       target: target
@@ -119,7 +120,7 @@ describe('Store', function() {
         filtervalue: 'databases'
       }
     };
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.link[data-filtervalue="databases"]').at(0).simulate('click', {
       stopPropagation: stopPropagation,
       currentTarget: target

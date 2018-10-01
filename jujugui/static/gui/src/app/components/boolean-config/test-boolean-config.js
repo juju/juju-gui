@@ -48,7 +48,8 @@ describe('BooleanConfig', function() {
             </label>
           </div>
         </div>
-        <div className="boolean-config--description"
+        <div
+          className="boolean-config--description"
           dangerouslySetInnerHTML={{__html: option.description}}>
         </div>
       </div>
@@ -57,23 +58,23 @@ describe('BooleanConfig', function() {
   });
 
   it('renders an unchecked input based on config prop', function() {
-    const wrapper = renderComponent({ config: false });
+    const wrapper = renderComponent({config: false});
     assert.equal(wrapper.find('.boolean-config--input').prop('defaultChecked'), false);
   });
 
   it('supports string boolean config props (true)', function() {
-    const wrapper = renderComponent({ config: 'True' });
+    const wrapper = renderComponent({config: 'True'});
     assert.equal(wrapper.find('.boolean-config--input').prop('defaultChecked'), true);
   });
 
   it('supports string boolean config props (false)', function() {
-    const wrapper = renderComponent({ config: 'False' });
+    const wrapper = renderComponent({config: 'False'});
     assert.equal(wrapper.find('.boolean-config--input').prop('defaultChecked'), false);
   });
 
   it('can call an onChange method if supplied', function() {
     const onChange = sinon.stub();
-    const wrapper = renderComponent({ onChange });
+    const wrapper = renderComponent({onChange});
     wrapper.find('.boolean-config--input').simulate('change', {
       target: {
         checked: true
@@ -83,7 +84,7 @@ describe('BooleanConfig', function() {
   });
 
   it('can be disabled', function() {
-    const wrapper = renderComponent({ disabled: true });
+    const wrapper = renderComponent({disabled: true});
     assert.equal(wrapper.find('.boolean-config--input').prop('disabled'), true);
   });
 });

@@ -115,7 +115,7 @@ describe('Payment', function() {
   it('can display an error when getting users', function() {
     payment.getUser = sinon.stub().callsArgWith(1, 'Uh oh!', null);
     const addNotification = sinon.stub();
-    renderComponent({ addNotification });
+    renderComponent({addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not load user info',

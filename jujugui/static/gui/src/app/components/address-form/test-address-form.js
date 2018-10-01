@@ -55,7 +55,7 @@ describe('AddressForm', function() {
   });
 
   it('can display a loading spinner', function() {
-    const wrapper = renderComponent({ getCountries: sinon.stub() });
+    const wrapper = renderComponent({getCountries: sinon.stub()});
     const expected = (
       <div className="address-form">
         <Spinner />
@@ -191,7 +191,7 @@ describe('AddressForm', function() {
   it('can abort requests when unmounting', function() {
     const abort = sinon.stub();
     getCountries = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({ getCountries });
+    const wrapper = renderComponent({getCountries});
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

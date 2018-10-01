@@ -20,11 +20,11 @@ describe('ExpandingRow', () => {
         <span>closed</span>
         <span>open</span>
       </ExpandingRow>,
-      { disableLifecycleMethods: true }
+      {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
     // Mock the ref. The MutationObserver needs a real DOM node.
-    instance.refs = { inner: document.createElement('div') };
+    instance.refs = {inner: document.createElement('div')};
     instance.componentDidMount();
     wrapper.update();
     return wrapper;
@@ -35,16 +35,19 @@ describe('ExpandingRow', () => {
       classes: {extraClass: true}
     });
     var expected = (
-      <li className={
-        'expanding-row twelve-col extraClass expanding-row--clickable'}
-      onClick={wrapper.prop('onClick')}
-      style={undefined}>
+      <li
+        className={
+          'expanding-row twelve-col extraClass expanding-row--clickable'}
+        onClick={wrapper.prop('onClick')}
+        style={undefined}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           <span>closed</span>
         </div>
-        <div className="expanding-row__expanded twelve-col"
+        <div
+          className="expanding-row__expanded twelve-col"
           style={{height: '0px', opacity: 0}}>
-          <div className="twelve-col no-margin-bottom"
+          <div
+            className="twelve-col no-margin-bottom"
             ref="inner">
             <span>open</span>
           </div>
@@ -119,8 +122,8 @@ describe('ExpandingRow', () => {
   });
 
   it('can pass through styles', () => {
-    const style = { zIndex: 5 };
-    const wrapper = renderComponent({ style });
+    const style = {zIndex: 5};
+    const wrapper = renderComponent({style});
     assert.deepEqual(wrapper.prop('style'), style);
   });
 });

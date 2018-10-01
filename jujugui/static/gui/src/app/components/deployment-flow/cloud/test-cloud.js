@@ -46,7 +46,8 @@ describe('DeploymentCloud', function() {
     var expected = (
       <div>
         <ul className="deployment-cloud__list">
-          <li className="deployment-cloud__cloud four-col"
+          <li
+            className="deployment-cloud__cloud four-col"
             key="google"
             onClick={options.at(0).prop('onClick')}
             role="button"
@@ -58,7 +59,8 @@ describe('DeploymentCloud', function() {
                 width={256} />
             </span>
           </li>
-          <li className="deployment-cloud__cloud four-col"
+          <li
+            className="deployment-cloud__cloud four-col"
             key="azure"
             onClick={options.at(1).prop('onClick')}
             role="button"
@@ -70,7 +72,8 @@ describe('DeploymentCloud', function() {
                 width={204} />
             </span>
           </li>
-          <li className="deployment-cloud__cloud four-col last-col"
+          <li
+            className="deployment-cloud__cloud four-col last-col"
             key="aws"
             onClick={options.at(2).prop('onClick')}
             role="button"
@@ -89,7 +92,7 @@ describe('DeploymentCloud', function() {
   });
 
   it('can display the loading state', function() {
-    const wrapper = renderComponent({ listClouds: sinon.stub() });
+    const wrapper = renderComponent({listClouds: sinon.stub()});
     var expected = (
       <div className="deployment-cloud__loading">
         <Spinner />

@@ -85,7 +85,8 @@ class AccordionSection extends React.Component {
     @return {Object} The React div element.
   */
   _generateContent() {
-    return (<div className="accordion-section__content"
+    return (<div
+      className="accordion-section__content"
       ref="content"
       style={this._getStyle()}>
       {this.props.children}

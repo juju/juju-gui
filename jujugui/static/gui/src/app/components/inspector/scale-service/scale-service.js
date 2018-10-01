@@ -37,7 +37,7 @@ class ScaleService extends React.Component {
   */
   _toggleConstraints(e) {
     var id = e.currentTarget.id;
-    this.setState({ constraintsVisibility: id === 'auto-place-units'});
+    this.setState({constraintsVisibility: id === 'auto-place-units'});
   }
 
   /**
@@ -109,7 +109,8 @@ class ScaleService extends React.Component {
     }];
 
     return (
-      <form className="scale-service"
+      <form
+        className="scale-service"
         onSubmit={this._scaleUpService.bind(this)}>
         <div className="scale-service--units">
           <input
@@ -129,7 +130,8 @@ class ScaleService extends React.Component {
             <input
               className="scale-service--selector__radio"
               disabled={disabled}
-              id="auto-place-units" name="placement"
+              id="auto-place-units"
+              name="placement"
               onChange={this._toggleConstraints.bind(this)}
               ref="autoPlaceUnitsToggle"
               type="radio" />
@@ -139,7 +141,8 @@ class ScaleService extends React.Component {
             <input
               className="scale-service--selector__radio"
               defaultChecked={true}
-              disabled={disabled} id="manually-place-units"
+              disabled={disabled}
+              id="manually-place-units"
               name="placement"
               onChange={this._toggleConstraints.bind(this)}
               type="radio" />

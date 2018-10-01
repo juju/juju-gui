@@ -52,7 +52,9 @@ describe('MachineViewUnplacedUnit', function() {
     const items = wrapper.find('ButtonDropdown').prop('listItems');
     const expected = (
       <li className="machine-view__unplaced-unit">
-        <img alt="django/7" className="machine-view__unplaced-unit-icon"
+        <img
+          alt="django/7"
+          className="machine-view__unplaced-unit-icon"
           src="icon.svg" />
         django/7
         <ButtonDropdown
@@ -71,7 +73,7 @@ describe('MachineViewUnplacedUnit', function() {
   });
 
   it('can display in dragged mode', function() {
-    const wrapper = renderComponent({ isDragging: true });
+    const wrapper = renderComponent({isDragging: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__unplaced-unit--dragged'),
       true);

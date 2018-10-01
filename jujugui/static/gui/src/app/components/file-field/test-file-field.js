@@ -20,7 +20,8 @@ describe('FileField', function() {
     const wrapper = renderComponent();
     var expected = (
       <div className="file-field">
-        <input accept=".json"
+        <input
+          accept=".json"
           className="file-field__field"
           disabled={false}
           id="Dingo"
@@ -28,7 +29,8 @@ describe('FileField', function() {
           ref="field"
           required={true}
           type="file" />
-        <label className="file-field__label"
+        <label
+          className="file-field__label"
           htmlFor="Dingo">
           Dingo
         </label>
@@ -71,7 +73,8 @@ describe('FileField', function() {
     wrapper.update();
     var expected = (
       <ul className="file-field__errors">
-        {[<li className="file-field__error"
+        {[<li
+          className="file-field__error"
           key="required">
           This field is required.
         </li>]}
@@ -88,7 +91,8 @@ describe('FileField', function() {
     wrapper.update();
     var expected = (
       <ul className="file-field__errors">
-        {[<li className="file-field__error"
+        {[<li
+          className="file-field__error"
           key="required">
           This field is required.
         </li>]}
@@ -103,7 +107,8 @@ describe('FileField', function() {
     instance.setState({contents: 'foo'});
     wrapper.update();
     const expected = (
-      <label className="file-field__label"
+      <label
+        className="file-field__label"
         htmlFor="Dingo">
         File stored.
       </label>);

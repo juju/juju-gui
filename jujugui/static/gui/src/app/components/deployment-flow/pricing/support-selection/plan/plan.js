@@ -11,7 +11,8 @@ class DeploymentSupportSelectionPlan extends React.Component {
 
   _generateFeatures() {
     const features = this.props.features.map((feature, i) => (
-      <li className="deployment-support-select-plan__feature"
+      <li
+        className="deployment-support-select-plan__feature"
         key={feature + i}>
         <SvgIcon
           name="bullet"
@@ -40,7 +41,8 @@ class DeploymentSupportSelectionPlan extends React.Component {
       });
     return (
       <div className={classes}>
-        <div className="deployment-support-select-plan__card"
+        <div
+          className="deployment-support-select-plan__card"
           onClick={this.props.onSelect}
           role="button"
           tabIndex="0">

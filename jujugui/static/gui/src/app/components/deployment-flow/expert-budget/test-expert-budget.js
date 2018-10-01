@@ -18,7 +18,7 @@ describe('DeploymentExpertBudget', () => {
   );
 
   it('can render', function() {
-    const wrapper = renderComponent({ budget: 99 });
+    const wrapper = renderComponent({budget: 99});
     const expected = (
       <div className="deployment-expert-budget">
         <div className="deployment-expert-budget__row">

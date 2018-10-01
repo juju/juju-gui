@@ -19,16 +19,18 @@ describe('BudgetChart', function() {
         limit: 80
       }
     };
-    const wrapper = renderComponent({ budgets });
+    const wrapper = renderComponent({budgets});
     var expected = (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">
           <div className="budget-chart__chart-limit">
           </div>
-          <div className="budget-chart__chart-new"
+          <div
+            className="budget-chart__chart-new"
             style={{width: '0%'}}>
           </div>
-          <div className="budget-chart__chart-existing"
+          <div
+            className="budget-chart__chart-existing"
             style={{
               left: '0%',
               width: '25%'
@@ -64,10 +66,12 @@ describe('BudgetChart', function() {
         <div className="budget-chart__chart twelve-col">
           <div className="budget-chart__chart-limit">
           </div>
-          <div className="budget-chart__chart-new"
+          <div
+            className="budget-chart__chart-new"
             style={{width: '0%'}}>
           </div>
-          <div className="budget-chart__chart-existing"
+          <div
+            className="budget-chart__chart-existing"
             style={{
               left: '0%',
               width: '0%'

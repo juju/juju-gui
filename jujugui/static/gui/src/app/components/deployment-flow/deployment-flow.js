@@ -80,18 +80,18 @@ class DeploymentFlow extends React.Component {
     // If the direct deploy data changes then get and store the new entity or
     // clear the state.
     const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
-    this.setState({ isDirectDeploy });
+    this.setState({isDirectDeploy});
     if (isDirectDeploy) {
       if (nextProps.ddData.id !== this.props.ddData.id) {
         this._getDirectDeployEntity(nextProps.ddData.id);
       }
     } else {
-      this.setState({ ddEntity: null });
+      this.setState({ddEntity: null});
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { hash } = this.props;
+    const {hash} = this.props;
     if (hash && (hash !== prevProps.hash)) {
       this._scrollDeploymentFlow(`#${hash}`);
     }
@@ -272,7 +272,7 @@ class DeploymentFlow extends React.Component {
     @param count {Int} The number of clouds.
   */
   _setCloudCount(count) {
-    this.setState({ cloudCount: count });
+    this.setState({cloudCount: count});
   }
 
   /**
@@ -912,7 +912,7 @@ class DeploymentFlow extends React.Component {
       return;
     }
     var cloud = this.state.cloud;
-    const { initUtils } = this.props;
+    const {initUtils} = this.props;
     return (
       <DeploymentSection
         completed={status.completed}

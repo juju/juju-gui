@@ -31,7 +31,8 @@ class ExpertContactCard extends React.Component {
   _generateInitial() {
     const expert = EXPERTS[this.props.expert];
     const highlights = expert.highlights.map(highlight => (
-      <li className="expert-contact-card__highlight"
+      <li
+        className="expert-contact-card__highlight"
         key={highlight}>
         <SvgIcon
           name="bullet"
@@ -57,7 +58,8 @@ class ExpertContactCard extends React.Component {
   _generateContact() {
     const expert = EXPERTS[this.props.expert];
     const phoneNumbers = expert.phoneNumbers.map(number => (
-      <li className="expert-contact-card__phone-number"
+      <li
+        className="expert-contact-card__phone-number"
         key={number}>
         {number}
       </li>));

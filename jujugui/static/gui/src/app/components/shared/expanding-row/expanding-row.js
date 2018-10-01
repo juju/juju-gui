@@ -89,15 +89,18 @@ class ExpandingRow extends React.Component {
 
   render() {
     return (
-      <li className={this._generateClasses()}
+      <li
+        className={this._generateClasses()}
         onClick={this.props.clickable ? this._toggle.bind(this) : undefined}
         style={this.props.style}>
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           {this.props.children[0]}
         </div>
-        <div className="expanding-row__expanded twelve-col"
+        <div
+          className="expanding-row__expanded twelve-col"
           style={this.state.styles}>
-          <div className="twelve-col no-margin-bottom"
+          <div
+            className="twelve-col no-margin-bottom"
             ref="inner">
             {this.props.children[1]}
           </div>

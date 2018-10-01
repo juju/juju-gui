@@ -19,7 +19,8 @@ describe('Tour', () => {
   it('renders', () => {
     const wrapper = renderComponent();
     const expected = (
-      <span className="back-to-help"
+      <span
+        className="back-to-help"
         onClick={wrapper.find('.back-to-help').prop('onClick')}>
         <SvgIcon
           className="back-to-help__icon"

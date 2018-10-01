@@ -94,14 +94,16 @@ describe('Profile expanded content', function() {
         </div>
         <div className="six-col last-col">
           <div>
-            <a href="example.com/bugs"
+            <a
+              href="example.com/bugs"
               onClick={wrapper.find('a').at(0).prop('onClick')}
               target="_blank">
               Bugs
             </a>
           </div>
           <div>
-            <a href="example.com/"
+            <a
+              href="example.com/"
               onClick={wrapper.find('a').at(1).prop('onClick')}
               target="_blank">
               Homepage
@@ -111,9 +113,11 @@ describe('Profile expanded content', function() {
             Writeable:
           </p>
           <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission"
+            <li
+              className="profile-expanded-content__permission"
               key="lazypower">
-              <Link changeState={sinon.stub()}
+              <Link
+                changeState={sinon.stub()}
                 clickState={{
                   hash: null,
                   profile: 'lazypower'
@@ -159,14 +163,16 @@ describe('Profile expanded content', function() {
         </div>
         <div className="six-col last-col">
           <div>
-            <a href="example.com/bugs"
+            <a
+              href="example.com/bugs"
               onClick={wrapper.find('a').at(0).prop('onClick')}
               target="_blank">
               Bugs
             </a>
           </div>
           <div>
-            <a href="example.com/"
+            <a
+              href="example.com/"
               onClick={wrapper.find('a').at(1).prop('onClick')}
               target="_blank">
               Homepage
@@ -176,9 +182,11 @@ describe('Profile expanded content', function() {
             Writeable:
           </p>
           <ul className="profile-expanded-content__permissions">
-            <li className="profile-expanded-content__permission"
+            <li
+              className="profile-expanded-content__permission"
               key="hatch">
-              <Link changeState={sinon.stub()}
+              <Link
+                changeState={sinon.stub()}
                 clickState={{
                   hash: null,
                   profile: 'hatch'
@@ -195,9 +203,11 @@ describe('Profile expanded content', function() {
             <li className="profile-expanded-content__permission">
               everyone
             </li>
-            <li className="profile-expanded-content__permission"
+            <li
+              className="profile-expanded-content__permission"
               key="hatch">
-              <Link changeState={sinon.stub()}
+              <Link
+                changeState={sinon.stub()}
                 clickState={{
                   hash: null,
                   profile: 'hatch'

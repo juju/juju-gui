@@ -59,7 +59,8 @@ describe('MachineViewColumn', function() {
         <div className="machine-view__column-content">
           <div>contents</div>
           <div className="machine-view__column-drop-target">
-            <SvgIcon name="add_16"
+            <SvgIcon
+              name="add_16"
               size="16" />
           </div>
         </div>
@@ -68,14 +69,14 @@ describe('MachineViewColumn', function() {
   });
 
   it('can render in droppable mode', function() {
-    const wrapper = renderComponent({ canDrop: true });
+    const wrapper = renderComponent({canDrop: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__column--droppable'),
       true);
   });
 
   it('can render in drop mode', function() {
-    const wrapper = renderComponent({ isOver: true });
+    const wrapper = renderComponent({isOver: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__column--drop'),
       true);

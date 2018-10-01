@@ -25,11 +25,13 @@ describe('InsetSelect', function() {
     const wrapper = renderComponent();
     var expected = (
       <div className='inset-select inset-select--spork'>
-        <label className="inset-select__label"
+        <label
+          className="inset-select__label"
           htmlFor="Spork!">
           Spork!
         </label>
-        <select className="inset-select__field"
+        <select
+          className="inset-select__field"
           defaultValue={undefined}
           disabled={undefined}
           id="Spork!"
@@ -63,7 +65,7 @@ describe('InsetSelect', function() {
 
   it('can pass the field value to a supplied onChange method', () => {
     var onChange = sinon.stub();
-    const wrapper = renderComponent({ onChange });
+    const wrapper = renderComponent({onChange});
     var instance = wrapper.instance();
     instance.refs = {field: {value: 'new'}};
     wrapper.find('.inset-select__field').props().onChange();
@@ -72,7 +74,7 @@ describe('InsetSelect', function() {
   });
 
   it('allows the label to be optional', () => {
-    const wrapper = renderComponent({ label: null });
+    const wrapper = renderComponent({label: null});
     assert.equal(wrapper.find('.inset-select__label').length, 0);
   });
 });

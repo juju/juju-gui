@@ -125,7 +125,8 @@ class NotificationList extends React.Component {
 
   render() {
     return (
-      <ul className="notification-list"
+      <ul
+        className="notification-list"
         onMouseOut={this._restartTimeouts.bind(this)}
         onMouseOver={this._clearTimeouts.bind(this)}>
         {this._generateNotifications()}

@@ -60,7 +60,7 @@ class DeploymentPlanTable extends React.Component {
     }
     const newPlans = this.state.plans;
     newPlans[charmId] = (plans || [])[0];
-    this.setState({ plans: newPlans });
+    this.setState({plans: newPlans});
   }
 
   /**
@@ -81,7 +81,8 @@ class DeploymentPlanTable extends React.Component {
         columns: [{
           content: (
             <div>
-              <img alt={app.name}
+              <img
+                alt={app.name}
                 className="deployment-plan-table__charm-icon"
                 src={app.icon} />
               <span className="deployment-plan-table__charm-name">

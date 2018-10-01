@@ -27,11 +27,12 @@ describe('DeploymentChangeItem', function() {
 
   it('can display a sprite icon', function() {
     change.icon = 'my-icon';
-    const wrapper = renderComponent({ change });
+    const wrapper = renderComponent({change});
     const expected = (
       <div className="deployment-change-item">
         <span className="deployment-change-item__change">
-          <SvgIcon className="deployment-change-item__icon"
+          <SvgIcon
+            className="deployment-change-item__icon"
             name="my-icon"
             size="16" />
           Django was added
@@ -49,7 +50,9 @@ describe('DeploymentChangeItem', function() {
   it('can display an svg icon', function() {
     const wrapper = renderComponent();
     const expected = (
-      <img alt="" className="deployment-change-item__icon"
+      <img
+        alt=""
+        className="deployment-change-item__icon"
         src="my-icon.svg" />);
     assert.compareJSX(wrapper.find('.deployment-change-item__icon'), expected);
   });
@@ -61,7 +64,7 @@ describe('DeploymentChangeItem', function() {
   });
 
   it('can display without the time', function() {
-    const wrapper = renderComponent({ showTime: false });
+    const wrapper = renderComponent({showTime: false});
     assert.equal(wrapper.find('.deployment-change-item__time').length, 0);
   });
 });

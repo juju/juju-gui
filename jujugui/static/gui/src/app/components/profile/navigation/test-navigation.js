@@ -8,8 +8,8 @@ const ProfileNavigation = require('./navigation');
 
 describe('Profile Navigation', function() {
   const sectionsMap = new Map([
-    ['models', { label: 'Models' }],
-    ['charms', { label: 'Charms' }]
+    ['models', {label: 'Models'}],
+    ['charms', {label: 'Charms'}]
   ]);
 
   const renderComponent = (options = {}) =>
@@ -21,7 +21,7 @@ describe('Profile Navigation', function() {
     );
 
   it('can render', () => {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 
@@ -36,7 +36,7 @@ describe('Profile Navigation', function() {
       .props()
       .onClick();
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], { hash: 'charms' });
+    assert.deepEqual(changeState.args[0][0], {hash: 'charms'});
   });
 
   it('updates the active nav item when re-rendered', () => {
@@ -45,7 +45,7 @@ describe('Profile Navigation', function() {
       changeState
     });
     assert.equal(wrapper.find('.is-active').length, 0);
-    wrapper.setProps({ activeSection: 'charms' });
+    wrapper.setProps({activeSection: 'charms'});
     assert.equal(wrapper.find('.is-active').length, 1);
   });
 });

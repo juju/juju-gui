@@ -20,7 +20,7 @@ describe('EntityContentReadme', function() {
         getFile={options.getFile || sinon.stub()}
         hash={options.hash}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()} />,
-      { disableLifecycleMethods: true });
+      {disableLifecycleMethods: true});
     const instance = wrapper.instance();
     // Stub the method for getting the container node so that the component
     // works in the shallow renderer.
@@ -52,7 +52,8 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.args[0][1], 'Readme.md');
     const expected = (
       <div className="entity-content__readme">
-        <div className="entity-content__readme-content"
+        <div
+          className="entity-content__readme-content"
           dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}}
           ref="content" />
       </div>);

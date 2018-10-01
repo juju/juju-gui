@@ -56,7 +56,7 @@ const factory = {
         var pathParts = path.split('/');
         // The path might not contain the series.
         path = pathParts[1] ? pathParts[1].split('-')[0] : pathParts[0];
-        var xhr = { target: { responseText: null}};
+        var xhr = {target: {responseText: null}};
         if (charms[path]) {
           xhr.target.responseText = charms[path];
           callback(null, xhr);

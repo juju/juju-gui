@@ -107,12 +107,14 @@ describe('Profile Charm List', function() {
                   <div>
                     <div className="profile-charm-list__item">
                       <div>
-                        <img className="profile-charm-list__icon"
+                        <img
+                          className="profile-charm-list__icon"
                           src="/charmstore/~hatch/precise/failtester-7/icon.svg"
                           title="failtester" />
                       </div>
                       <div>
-                        <a href="/gui/u/hatch/failtester/precise/7"
+                        <a
+                          href="/gui/u/hatch/failtester/precise/7"
                           onClick={sinon.stub()}>
                           failtester
                         </a>
@@ -138,10 +140,12 @@ describe('Profile Charm List', function() {
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
-                        <img className="profile-charm-list__icon"
+                        <img
+                          className="profile-charm-list__icon"
                           src="/charmstore/~hatch/precise/failtester-7/icon.svg"
                           title="failtester" />
-                        <a href="/gui/u/hatch/failtester/precise/7"
+                        <a
+                          href="/gui/u/hatch/failtester/precise/7"
                           onClick={sinon.stub()}>
                           failtester
                         </a>
@@ -161,23 +165,27 @@ describe('Profile Charm List', function() {
                   <div>
                     <div className="profile-charm-list__item">
                       <div>
-                        <img className="profile-charm-list__icon"
+                        <img
+                          className="profile-charm-list__icon"
                           src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
                           title="ghost" />
                       </div>
                       <div>
-                        <a href="/gui/u/hatch/ghost/xenial/3"
+                        <a
+                          href="/gui/u/hatch/ghost/xenial/3"
                           onClick={sinon.stub()}>
                           ghost
                         </a>
                         <ul className="profile-charm-list__tags">
-                          <li className="link profile-charm-list__tag"
+                          <li
+                            className="link profile-charm-list__tag"
                             onClick={sinon.stub()}
                             role="button"
                             tabIndex="0">
                             misc
                           </li>
-                          <li className="link profile-charm-list__tag"
+                          <li
+                            className="link profile-charm-list__tag"
                             onClick={sinon.stub()}
                             role="button"
                             tabIndex="0">
@@ -206,10 +214,12 @@ describe('Profile Charm List', function() {
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
-                        <img className="profile-charm-list__icon"
+                        <img
+                          className="profile-charm-list__icon"
                           src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
                           title="ghost" />
-                        <a href="/gui/u/hatch/ghost/xenial/3"
+                        <a
+                          href="/gui/u/hatch/ghost/xenial/3"
                           onClick={sinon.stub()}>
                           ghost
                         </a>
@@ -229,12 +239,14 @@ describe('Profile Charm List', function() {
                   <div>
                     <div className="profile-charm-list__item">
                       <div>
-                        <img className="profile-charm-list__icon"
+                        <img
+                          className="profile-charm-list__icon"
                           src="/charmstore/~hatch/privghost-1/icon.svg"
                           title="privghost" />
                       </div>
                       <div>
-                        <a href="/gui/u/hatch/privghost/1"
+                        <a
+                          href="/gui/u/hatch/privghost/1"
                           onClick={sinon.stub()}>
                           privghost
                         </a>
@@ -260,10 +272,12 @@ describe('Profile Charm List', function() {
                   topRow={(
                     <div>
                       <div className="six-col profile-expanded-content__top-row">
-                        <img className="profile-charm-list__icon"
+                        <img
+                          className="profile-charm-list__icon"
                           src="/charmstore/~hatch/privghost-1/icon.svg"
                           title="privghost" />
-                        <a href="/gui/u/hatch/privghost/1"
+                        <a
+                          href="/gui/u/hatch/privghost/1"
                           onClick={sinon.stub()}>
                           privghost
                         </a>
@@ -291,7 +305,8 @@ describe('Profile Charm List', function() {
     const expected = (
       <p className="profile-charm-list__onboarding">
         Learn about&nbsp;
-        <a href="https://jujucharms.com/docs/stable/developer-getting-started"
+        <a
+          href="https://jujucharms.com/docs/stable/developer-getting-started"
           target="_blank">
           writing your own charm
         </a>.

@@ -155,8 +155,10 @@ topologyUtils.getBoundingBox = function(vertices, boxWidth, boxHeight) {
     if (v[1] > maxY) { maxY = v[1]; }
   });
   return {
-    translateX: minX - boxWidth / 2, translateY: minY - boxHeight / 2,
-    w: maxX - minX + boxWidth, h: maxY - minY + boxHeight};
+    translateX: minX - boxWidth / 2,
+    translateY: minY - boxHeight / 2,
+    w: maxX - minX + boxWidth,
+    h: maxY - minY + boxHeight};
 };
 
 /**

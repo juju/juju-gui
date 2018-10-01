@@ -43,7 +43,8 @@ describe('NotificationList', function() {
         timestamp={notifications[0].timestamp}
         type={notifications[0].level} />];
     const expected = (
-      <ul className="notification-list"
+      <ul
+        className="notification-list"
         onMouseOut={wrapper.prop('onMouseOut')}
         onMouseOver={wrapper.prop('onMouseOver')}>
         {items}
@@ -53,26 +54,26 @@ describe('NotificationList', function() {
   });
 
   it('can render with no notifications', () => {
-    const wrapper = renderComponent({ notifications: [] });
+    const wrapper = renderComponent({notifications: []});
     assert.equal(wrapper.find('NotificationListItem').length, 0);
   });
 
   it('can render notifications after rendering none', () => {
-    const wrapper = renderComponent({ notifications: [] });
+    const wrapper = renderComponent({notifications: []});
     assert.equal(wrapper.find('NotificationListItem').length, 0);
-    wrapper.setProps({ notifications });
+    wrapper.setProps({notifications});
     wrapper.update();
     assert.equal(wrapper.find('NotificationListItem').length, 1);
   });
 
   it('times out non error messages', () => {
     const timeout = 500;
-    const wrapper = renderComponent({ timeout });
+    const wrapper = renderComponent({timeout});
     const instance = wrapper.instance();
     const key = 'NotificationListItem' + notifications[0].timestamp;
     const refs = {};
     const hideStub = sinon.stub();
-    refs[key] = { hide: hideStub };
+    refs[key] = {hide: hideStub};
     instance.refs = refs;
     // Trigger the timeout.
     clock.tick(timeout + 10);
@@ -82,12 +83,12 @@ describe('NotificationList', function() {
   it('does not time out error messages', () => {
     notifications[0].level = 'error';
     const timeout = 500;
-    const wrapper = renderComponent({ timeout });
+    const wrapper = renderComponent({timeout});
     const instance = wrapper.instance();
     const key = 'NotificationListItem' + notifications[0].timestamp;
     const refs = {};
     const hideStub = sinon.stub();
-    refs[key] = { hide: hideStub };
+    refs[key] = {hide: hideStub};
     instance.refs = refs;
     // Trigger the timeout.
     clock.tick(timeout + 10);
@@ -96,7 +97,7 @@ describe('NotificationList', function() {
 
   it('can clear and restart timeouts', () => {
     const timeout = 10000;
-    const wrapper = renderComponent({ timeout });
+    const wrapper = renderComponent({timeout});
     const instance = wrapper.instance();
     assert.equal(instance.timeouts.length, 1,
       'notification timeouts were not populated');
@@ -123,7 +124,7 @@ describe('NotificationList', function() {
       message: 'notification2 message',
       level: 'error'
     });
-    wrapper.setProps({ notifications });
+    wrapper.setProps({notifications});
     items = wrapper.find('NotificationListItem');
     assert.equal(items.length, 1);
     assert.equal(items.first().prop('timestamp'), '2468');

@@ -4,7 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
-const { urls } = require('jaaslib');
+const {urls} = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const Button = require('../../shared/button/button');
@@ -169,7 +169,8 @@ class EntityHeader extends React.Component {
       );
     } else {
       deployAction = (
-        <div className="entity-header__deploy-action"
+        <div
+          className="entity-header__deploy-action"
           ref="deployAction">
           This type of charm can only be deployed from the command line.
         </div>
@@ -204,14 +205,16 @@ class EntityHeader extends React.Component {
       options = [];
       plans.forEach((plan, i) => {
         options.push(
-          <option key={plan.url + i}
+          <option
+            key={plan.url + i}
             value={plan.url}>
             {plan.url}
           </option>);
       });
     }
     return (
-      <select className="entity-header__select"
+      <select
+        className="entity-header__select"
         ref="plan">
         <option key="default">{defaultMessage}</option>
         {options}
@@ -253,10 +256,11 @@ class EntityHeader extends React.Component {
     return (
       <li className="entity-header__subordinate">
         Subordinate
-        <a href={
-          'https://jujucharms.com/docs/stable/' +
-          'authors-subordinate-applications'}
-        target="_blank">
+        <a
+          href={
+            'https://jujucharms.com/docs/stable/' +
+            'authors-subordinate-applications'}
+          target="_blank">
           <SvgIcon
             name="help_16"
             size="16" />
@@ -378,11 +382,15 @@ class EntityHeader extends React.Component {
     ].join('');
 
     if (entity.type !== 'bundle') {
-      icon = (<img alt={entity.displayName} className="entity-header__icon"
-        src={entity.iconPath} width="96" />);
+      icon = (<img
+        alt={entity.displayName}
+        className="entity-header__icon"
+        src={entity.iconPath}
+        width="96" />);
     }
     return (
-      <div className="row-hero"
+      <div
+        className="row-hero"
         ref="headerWrapper"
         style={this._generateWrapperStyles()}>
         <header className={this._generateClasses()}>
@@ -401,7 +409,8 @@ class EntityHeader extends React.Component {
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By&nbsp;
-                  <span className="link"
+                  <span
+                    className="link"
                     onClick={this._onOwnerClick.bind(this)}>
                     {entity.owner}
                   </span>
@@ -414,7 +423,8 @@ class EntityHeader extends React.Component {
               {this._generateCounts()}
               <ul className="entity-header__social-list">
                 <li>
-                  <a href={twitterUrl}
+                  <a
+                    href={twitterUrl}
                     id="item-twitter"
                     target="_blank">
                     <SvgIcon
@@ -423,7 +433,8 @@ class EntityHeader extends React.Component {
                   </a>
                 </li>
                 <li>
-                  <a href={googlePlusUrl}
+                  <a
+                    href={googlePlusUrl}
                     id="item-googleplus"
                     target="_blank">
                     <SvgIcon

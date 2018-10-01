@@ -40,9 +40,11 @@ class SearchResultsItem extends React.Component {
     }
     tags.forEach(function(tag, i) {
       components.push(
-        <li className="tag-list--item"
+        <li
+          className="tag-list--item"
           key={tag + i}>
-          <a className="list-block__list--item-link"
+          <a
+            className="list-block__list--item-link"
             href={this.props.generatePath({search: {tags: tag}})}
             onClick={this._handleTagClick.bind(this, tag)}>
             {tag}
@@ -69,9 +71,11 @@ class SearchResultsItem extends React.Component {
     }
     series.forEach(function(s) {
       components.push(
-        <li className="list-series__item"
+        <li
+          className="list-series__item"
           key={s.name}>
-          <a className="list-block__list--item-link"
+          <a
+            className="list-block__list--item-link"
             href={this._generateStoreURL(s.storeId)}
             onClick={this._handleItemClick.bind(this, s.storeId)}>
             {s.name}
@@ -227,7 +231,8 @@ class SearchResultsItem extends React.Component {
     var item = this.props.item;
     return (
       <li className={'list-block__list--item ' + item.type}>
-        <a className="list-block__list--item-main-link"
+        <a
+          className="list-block__list--item-main-link"
           href={this._generateStoreURL(item.id)}
           onClick={this._handleItemClick.bind(this, item.id)}></a>
         <div className="four-col charm-name__column">
@@ -253,7 +258,8 @@ class SearchResultsItem extends React.Component {
         <div className="two-col owner__column list-block__column">
           <p className="cell">
             {'By '}
-            <a className="list-block__list--item-link"
+            <a
+              className="list-block__list--item-link"
               href={
                 this.props.generatePath({search: null, profile: item.owner})}
               onClick={this._handleOwnerClick.bind(this, item.owner)}

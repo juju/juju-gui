@@ -30,13 +30,15 @@ const DeploymentPricing = props => {
           </span>
         </div>
       </div>
-      <div className="twelve-col no-margin-bottom"
+      <div
+        className="twelve-col no-margin-bottom"
         id="support-level">
         <div className="six-col deployment-pricing__support-title">
           Choose your level of support
         </div>
         <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
-          <a href="https://www.ubuntu.com/support/plans-and-pricing#ua-support"
+          <a
+            href="https://www.ubuntu.com/support/plans-and-pricing#ua-support"
             target="_blank">
             Support details
           </a>
@@ -54,7 +56,8 @@ const DeploymentPricing = props => {
           downgrade at the end of a month.
         </div>
         <div className="six-col last-col u-align--right no-margin-bottom">
-          <Link changeState={props.changeState}
+          <Link
+            changeState={props.changeState}
             clickState={{
               gui: {
                 deploy: ''

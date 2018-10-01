@@ -72,7 +72,8 @@ describe('Charmbrowser', function() {
     });
     const searchResults = wrapper.find('SearchResults');
     const expected = (
-      <div className="charmbrowser"
+      <div
+        className="charmbrowser"
         ref="charmbrowser">
         <SearchResults
           acl={acl}
@@ -101,7 +102,8 @@ describe('Charmbrowser', function() {
       staticURL: 'surl'
     });
     const expected = (
-      <div className="charmbrowser"
+      <div
+        className="charmbrowser"
         ref="charmbrowser">
         <Store
           changeState={wrapper.find('Store').prop('changeState')}
@@ -143,7 +145,8 @@ describe('Charmbrowser', function() {
     });
     const entityDetails = wrapper.find('EntityDetails');
     const expected = (
-      <div className="charmbrowser"
+      <div
+        className="charmbrowser"
         ref="charmbrowser">
         <EntityDetails
           acl={acl}

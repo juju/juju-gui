@@ -20,7 +20,7 @@ class MachineUnit extends React.Component {
   render() {
     let menu;
     let title;
-    const { name, menuItems } = this.props;
+    const {name, menuItems} = this.props;
     if (menuItems) {
       title = (
         <span className="machine-unit__name">
@@ -34,7 +34,8 @@ class MachineUnit extends React.Component {
     return (
       <li className={this._generateClasses()}>
         <span className="machine-unit__icon">
-          <img alt={name}
+          <img
+            alt={name}
             className="machine-unit__icon-img"
             src={this.props.icon}
             title={name} />

@@ -47,7 +47,8 @@ class StatusUnitList extends React.Component {
         const protocol = port === 443 ? 'https' : 'http';
         const href = `${protocol}://${label}`;
         publicAddress = (
-          <a className="status-view__link"
+          <a
+            className="status-view__link"
             href={href}
             target="_blank">
             {unit.publicAddress}
@@ -65,8 +66,7 @@ class StatusUnitList extends React.Component {
           columnSize: 2,
           content: (
             <span>
-              <img className="status-view__icon"
-                src={this.props.getIconPath(application)} />
+              <img className="status-view__icon" src={this.props.getIconPath(application)} />
               {unit.name}
             </span>)
         }, {
@@ -80,7 +80,8 @@ class StatusUnitList extends React.Component {
         }, {
           columnSize: 1,
           content: (
-            <a className="status-view__link"
+            <a
+              className="status-view__link"
               href={this.props.generateMachineURL(unit.machineID)}
               onClick={this.props.onMachineClick.bind(this, unit.machineID)}>
               {unit.machineID}

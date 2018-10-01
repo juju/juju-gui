@@ -14,12 +14,12 @@ describe('StatusTable', () => {
   );
 
   it('renders', () => {
-    const wrapper = renderComponent({ status: 'available' });
+    const wrapper = renderComponent({status: 'available'});
     expect(wrapper).toMatchSnapshot();
   });
 
   it('renders with a known status', () => {
-    const wrapper = renderComponent({ status: 'ok' });
+    const wrapper = renderComponent({status: 'ok'});
     assert.strictEqual(wrapper.prop('className').includes('status-label--ok'), true);
   });
 });

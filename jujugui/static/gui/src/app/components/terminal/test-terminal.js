@@ -29,12 +29,12 @@ describe('Terminal', () => {
           macaroons: {}
         }}
         WebSocket={options.websocket || websocket} />,
-      { disableLifeCycleMethods: true }
+      {disableLifeCycleMethods: true}
     );
     const instance = wrapper.instance();
     instance.refs = {
       terminal: {
-        querySelector: sinon.stub().returns({ focus: sinon.stub() })
+        querySelector: sinon.stub().returns({focus: sinon.stub()})
       }
     };
     return wrapper;
@@ -59,17 +59,20 @@ describe('Terminal', () => {
         <div className="juju-shell__header">
           <span className="juju-shell__header-label">Juju Shell</span>
           <div className="juju-shell__header-actions">
-            <span onClick={actions.at(0).prop('onClick')}
+            <span
+              onClick={actions.at(0).prop('onClick')}
               role="button"
               tabIndex="0">
               <SvgIcon name="minimize-bar_16" size="16" />
             </span>
-            <span onClick={actions.at(1).prop('onClick')}
+            <span
+              onClick={actions.at(1).prop('onClick')}
               role="button"
               tabIndex="0">
               <SvgIcon name="maximize-bar_16" size="16" />
             </span>
-            <span onClick={actions.at(2).prop('onClick')}
+            <span
+              onClick={actions.at(2).prop('onClick')}
               role="button"
               tabIndex="0">
               <SvgIcon name="close_16" size="16" />
@@ -147,7 +150,7 @@ describe('Terminal', () => {
   }
 
   it('sends supplied commands when it is set up', () => {
-    wrapper = renderComponent({ commands: ['juju status'] });
+    wrapper = renderComponent({commands: ['juju status']});
     const instance = wrapper.instance();
     // Check that fit is called after receiving the first PS1.
     instance.term.fit = sinon.stub(); // eslint-disable-line
@@ -162,7 +165,7 @@ describe('Terminal', () => {
   });
 
   it('sends multiple commands when it is set up', () => {
-    wrapper = renderComponent({ commands: ['juju status', 'juju switch'] });
+    wrapper = renderComponent({commands: ['juju status', 'juju switch']});
     const instance = wrapper.instance();
     instance.term.fit = sinon.stub(); // eslint-disable-line
     // Send the setup from the term.
@@ -190,7 +193,7 @@ describe('Terminal', () => {
 
   it('handles unexpected WebSocket closures', () => {
     const addNotification = sinon.stub();
-    wrapper = renderComponent({ addNotification });
+    wrapper = renderComponent({addNotification});
     const instance = wrapper.instance();
     instance.ws.onclose({
       // Should only throw the notification on code over 1000 which is an

@@ -43,7 +43,7 @@ class Inspector extends React.Component {
     @return {Object} A generated state object which can be passed to setState.
   */
   generateState(nextProps) {
-    const { modelAPI } = nextProps;
+    const {modelAPI} = nextProps;
     const service = nextProps.service;
     const serviceId = service.get('id');
     const appState = this.props.appState;
@@ -167,7 +167,7 @@ class Inspector extends React.Component {
                 unitStatus: unitStatus}}}};
         break;
       case 'scale':
-        const { initUtils } = nextProps;
+        const {initUtils} = nextProps;
         state.activeChild = {
           title: 'Scale',
           icon: service.get('icon'),

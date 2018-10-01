@@ -200,7 +200,8 @@ class PaymentMethods extends React.Component {
               createCardElement={this.props.stripe.createCardElement}
               ref="cardForm" />
             <label htmlFor="cardAddressSame">
-              <input checked={this.state.cardAddressSame}
+              <input
+                checked={this.state.cardAddressSame}
                 className="payment-methods__form-checkbox"
                 id="cardAddressSame"
                 name="cardAddressSame"

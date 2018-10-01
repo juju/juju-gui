@@ -12,7 +12,7 @@ describe('Revenue statement details item', () => {
     );
 
   it('can render', () => {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 });

@@ -63,7 +63,8 @@ class BasicTableRow extends React.Component {
       return null;
     }
     return (
-      <a className="basic-table__row-link"
+      <a
+        className="basic-table__row-link"
         href={clickURL}
         onClick={onClick && this._handleRowClick.bind(this, onClick)}></a>);
   }
@@ -75,7 +76,7 @@ class BasicTableRow extends React.Component {
     @returns {Object} The anchor element or null.
   */
   _generateCell(column, index) {
-    const { isHeader } = this.props;
+    const {isHeader} = this.props;
     const conditionalClasses = isHeader ? this.props.headerColumnClasses :
       this.props.rowColumnClasses;
     const classes = (column.classes || []).concat(conditionalClasses);
@@ -111,7 +112,7 @@ class BasicTableRow extends React.Component {
   }
 
   render() {
-    const { expandedContent, isHeader } = this.props;
+    const {expandedContent, isHeader} = this.props;
     const classes = classNames(
       'twelve-col',
       this.props.classes,
@@ -123,7 +124,8 @@ class BasicTableRow extends React.Component {
       });
     const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
     return (
-      <li className={classes}
+      <li
+        className={classes}
         onClick={onClick}
         role="button"
         tabIndex="0">

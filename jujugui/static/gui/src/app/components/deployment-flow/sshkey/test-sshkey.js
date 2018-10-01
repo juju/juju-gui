@@ -161,7 +161,9 @@ describe('DeploymentSSHKey', function() {
                 <b>Error:</b>
                 <span>
                   No keys found.
-                  <a className="link" href="https://github.com/settings/keys"
+                  <a
+                    className="link"
+                    href="https://github.com/settings/keys"
                     target="_blank">Create an SSH Key</a>.
                 </span>
               </span>
@@ -214,7 +216,8 @@ describe('DeploymentSSHKey', function() {
                 thekey
               </div>
               <div className="one-col last-col">
-                <span className="added-keys__key-remove right"
+                <span
+                  className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
                   title="Remove key">
@@ -244,7 +247,8 @@ describe('DeploymentSSHKey', function() {
       wrapper.update();
       assert.equal(wrapper.find('.deployment-ssh-key__added-keys').length, 1);
       const expected = (
-        <span className="added-keys__key-remove right"
+        <span
+          className="added-keys__key-remove right"
           onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
           role="button"
           title="Remove key">
@@ -258,7 +262,7 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('stores the SSH keys', function() {
-      const wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      const wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       const instance = wrapper.instance();
       instance.refs = {
         githubUsername: {
@@ -280,7 +284,7 @@ describe('DeploymentSSHKey', function() {
     });
 
     it('disables the add key button after keys stored', function() {
-      const wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      const wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       const instance = wrapper.instance();
       let githubUsername = 'spinach';
       instance.refs = {
@@ -317,7 +321,7 @@ describe('DeploymentSSHKey', function() {
     let instance, wrapper;
 
     beforeEach(() => {
-      wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       instance = wrapper.instance();
       instance.refs = {
         sshSource: {getValue: () => 'launchpad'},
@@ -352,7 +356,8 @@ describe('DeploymentSSHKey', function() {
                 rose
               </div>
               <div className="one-col last-col">
-                <span className="added-keys__key-remove right"
+                <span
+                  className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
                   title="Remove username">
@@ -380,7 +385,8 @@ describe('DeploymentSSHKey', function() {
                 rose
               </div>
               <div className="one-col last-col">
-                <span className="added-keys__key-remove right"
+                <span
+                  className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
                   title="Remove username">
@@ -419,7 +425,8 @@ describe('DeploymentSSHKey', function() {
                 thekey
               </div>
               <div className="one-col last-col">
-                <span className="added-keys__key-remove right"
+                <span
+                  className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').at(0).prop('onClick')}
                   role="button"
                   title="Remove key">
@@ -437,7 +444,8 @@ describe('DeploymentSSHKey', function() {
                 rose
               </div>
               <div className="one-col last-col">
-                <span className="added-keys__key-remove right"
+                <span
+                  className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').at(1).prop('onClick')}
                   role="button"
                   title="Remove username">
@@ -456,7 +464,7 @@ describe('DeploymentSSHKey', function() {
     let instance, wrapper;
 
     beforeEach(() => {
-      wrapper = renderComponent({ cloud: { cloudType: 'gce' } });
+      wrapper = renderComponent({cloud: {cloudType: 'gce'}});
       instance = wrapper.instance();
       instance.refs = {
         sshSource: {getValue: () => 'manual'},
@@ -498,7 +506,8 @@ describe('DeploymentSSHKey', function() {
                 thekey
               </div>
               <div className="one-col last-col">
-                <span className="added-keys__key-remove right"
+                <span
+                  className="added-keys__key-remove right"
                   onClick={instance._removeKey.bind(instance)}
                   role="button"
                   title="Remove key">

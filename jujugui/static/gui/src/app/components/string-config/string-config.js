@@ -10,7 +10,7 @@ const StringConfigInput = require('./input/input');
 class StringConfig extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: this.props.config };
+    this.state = {value: this.props.config};
   }
 
   /**
@@ -77,7 +77,8 @@ class StringConfig extends React.Component {
             ref="editableInput"
             setValue={this._setValue.bind(this)} />
         </div>
-        <span className="string-config--description"
+        <span
+          className="string-config--description"
           dangerouslySetInnerHTML={{__html: this.props.option.description}}>
         </span>
       </div>

@@ -24,7 +24,7 @@ const COLUMN_CLASSES = [
 /** Basic table React component used to display data in a table structure. */
 class BasicTableCell extends React.Component {
   render() {
-    const { classes } = this.props;
+    const {classes} = this.props;
     let conditionalClasses = {'last-col': this.props.isLastCol};
     // Map the column size to the appropriate CSS class.
     conditionalClasses[COLUMN_CLASSES[this.props.columnSize - 1]] = true;

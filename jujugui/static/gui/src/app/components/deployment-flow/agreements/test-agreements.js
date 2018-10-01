@@ -20,7 +20,7 @@ describe('DeploymentAgreements', function() {
   );
 
   beforeEach(() => {
-    acl = { isReadOnly: sinon.stub().returns(false) };
+    acl = {isReadOnly: sinon.stub().returns(false)};
     terms = [];
   });
 
@@ -28,12 +28,14 @@ describe('DeploymentAgreements', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="deployment-flow-agreements deployment-flow__deploy-option">
-        <input className="deployment-flow__deploy-checkbox"
+        <input
+          className="deployment-flow__deploy-checkbox"
           disabled={false}
           id="terms"
           onChange={sinon.stub()}
           type="checkbox" />
-        <label className="deployment-flow__deploy-label"
+        <label
+          className="deployment-flow__deploy-label"
           htmlFor="terms">
           I agree to all terms.
         </label>
@@ -42,7 +44,7 @@ describe('DeploymentAgreements', function() {
   });
 
   it('can display as disabled', function() {
-    const wrapper = renderComponent({ disabled: true });
+    const wrapper = renderComponent({disabled: true});
     assert.strictEqual(wrapper.find('input').prop('disabled'), true);
   });
 
@@ -54,7 +56,7 @@ describe('DeploymentAgreements', function() {
 
   it('can show the terms link', function() {
     terms = [{}, {}];
-    const wrapper = renderComponent({ showTerms: true });
+    const wrapper = renderComponent({showTerms: true});
     const expected = (
       <Button
         action={wrapper.find('Button').prop('action')}
@@ -66,7 +68,7 @@ describe('DeploymentAgreements', function() {
 
   it('can show the terms popup', function() {
     terms = [{}, {}];
-    const wrapper = renderComponent({ showTerms: true });
+    const wrapper = renderComponent({showTerms: true});
     wrapper.find('Button').props().action();
     wrapper.update();
     assert.equal(wrapper.find('TermsPopup').length, 1);

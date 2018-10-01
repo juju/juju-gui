@@ -20,10 +20,11 @@ describe('EntityContentConfigOption', function() {
       type: 'string',
       default: 'abc123'
     };
-    const wrapper = renderComponent({ option });
+    const wrapper = renderComponent({option});
     const expected = (
       <div className="entity-content__config-option">
-        <dt className="entity-content__config-name"
+        <dt
+          className="entity-content__config-name"
           id="charm-config-password">
             password
         </dt>
@@ -49,7 +50,7 @@ describe('EntityContentConfigOption', function() {
       description: 'Required password',
       type: 'string'
     };
-    const wrapper = renderComponent({ option });
+    const wrapper = renderComponent({option});
     assert.equal(wrapper.find('.entity-content__config-default').length, 0);
   });
 });

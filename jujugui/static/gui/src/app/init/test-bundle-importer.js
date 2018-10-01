@@ -113,7 +113,7 @@ describe('BundleImporter', () => {
     describe('FileReader onload callback', () => {
       it('calls fetchDryRun if yaml file', () => {
         const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
-        const yamlFile = { name: 'path/to/file.yaml' };
+        const yamlFile = {name: 'path/to/file.yaml'};
         bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
         assert.equal(fetch.callCount, 1);
         const args = fetch.lastCall.args;
@@ -127,22 +127,22 @@ describe('BundleImporter', () => {
 
   describe('importBundleDryRun', () => {
     const unsortedRecords = [
-      { id: '2', requires: []},
-      { id: '5', requires: ['3']},
+      {id: '2', requires: []},
+      {id: '5', requires: ['3']},
       // The order of the following records (id:6) requires is important.
       // The sorter must check that all requires are resolved before
       // adding it to the changeSet.
-      { id: '6', requires: ['2', '5']},
-      { id: '4', requires: ['2']},
-      { id: '3', requires: []}
+      {id: '6', requires: ['2', '5']},
+      {id: '4', requires: ['2']},
+      {id: '3', requires: []}
     ];
 
     const sortedRecords = [
-      { id: '2', requires: []},
-      { id: '4', requires: ['2']},
-      { id: '3', requires: []},
-      { id: '5', requires: ['3']},
-      { id: '6', requires: ['2', '5']}
+      {id: '2', requires: []},
+      {id: '4', requires: ['2']},
+      {id: '3', requires: []},
+      {id: '5', requires: ['3']},
+      {id: '6', requires: ['2', '5']}
     ];
 
     it('sorts the records then calls to execute', () => {
@@ -236,12 +236,12 @@ describe('BundleImporter', () => {
       bundleImporter._execute_setAnnotations = executor;
 
       const sortedRecords = [
-        { method: 'addCharm' },
-        { method: 'addMachines' },
-        { method: 'deploy' },
-        { method: 'addUnit' },
-        { method: 'addRelation' },
-        { method: 'setAnnotations' }
+        {method: 'addCharm'},
+        {method: 'addMachines'},
+        {method: 'deploy'},
+        {method: 'addUnit'},
+        {method: 'addRelation'},
+        {method: 'setAnnotations'}
       ];
       bundleImporter._executeDryRun(sortedRecords);
       assert.deepEqual(called, {
@@ -275,7 +275,7 @@ describe('BundleImporter', () => {
 
     it('stops but does not fail if unknown record type', () => {
       const sortedRecords = [
-        { method: 'badMethod' }
+        {method: 'badMethod'}
       ];
       const execute = sinon.stub(bundleImporter, '_executeRecord');
       const notification = sinon.stub(
@@ -403,7 +403,7 @@ describe('BundleImporter', () => {
           id,
           'trusty',
           name,
-          { services: '', enable_monitoring: true, source: 'backports' },
+          {services: '', enable_monitoring: true, source: 'backports'},
           '',
           {},
           {},
@@ -411,7 +411,7 @@ describe('BundleImporter', () => {
         ],
         id: 'deploy-1',
         method: 'deploy',
-        requires: [ 'addCharm-0' ]
+        requires: ['addCharm-0']
       };
       const options = {
         services: {

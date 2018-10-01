@@ -23,7 +23,8 @@ class DeploymentChangeItem extends React.Component {
       node = <img alt="" className={className} src={icon} />;
     } else {
       node = (
-        <SvgIcon className={className}
+        <SvgIcon
+          className={className}
           name={icon}
           size="16" />);
     }

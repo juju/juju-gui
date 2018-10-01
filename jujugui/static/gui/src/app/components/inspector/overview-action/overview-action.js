@@ -69,7 +69,8 @@ class OverviewAction extends React.Component {
     }
     return (
       <span className="overview-action__icon">
-        <SvgIcon name={icon}
+        <SvgIcon
+          name={icon}
           size="16" />
       </span>
     );
@@ -78,14 +79,18 @@ class OverviewAction extends React.Component {
   render() {
     var titleClass = this.baseClass + '__title';
     return (
-      <li className={this.baseClass}
+      <li
+        className={this.baseClass}
         onClick={this.props.action}
-        role="button" tabIndex="0" title={this.props.title}>
+        role="button"
+        tabIndex="0"
+        title={this.props.title}>
         {this._generateIcon()}
         <span className={titleClass}>
           {this.props.title}
         </span>
-        <span className={this._linkClasses()}
+        <span
+          className={this._linkClasses()}
           onClick={this._handleLinkClick.bind(this)}>
           {this.props.linkTitle}
         </span>

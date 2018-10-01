@@ -8,7 +8,7 @@ const React = require('react');
 const HashLink = require('../../../hash-link/hash-link');
 
 const EntityContentDescription = props => {
-  const { description } = props;
+  const {description} = props;
   if (!description) {
     return false;
   }
@@ -27,7 +27,8 @@ const EntityContentDescription = props => {
   return (
     <div className="entity-content__description">
       {heading}
-      <div className="entity-content__description-content"
+      <div
+        className="entity-content__description-content"
         dangerouslySetInnerHTML={{__html: htmlDescription}}>
       </div>
     </div>

@@ -53,7 +53,7 @@ describe('ServiceOverview', function() {
     service.get.withArgs('plans').throws('it should not fetch this if no metrics');
     charm.hasMetrics.returns(false);
     const showActivePlan = sinon.stub();
-    const wrapper = renderComponent({ showActivePlan });
+    const wrapper = renderComponent({showActivePlan});
     const instance = wrapper.instance();
     assert.equal(showActivePlan.callCount, 0);
     assert.equal(instance.state.plans, null);
@@ -130,7 +130,7 @@ describe('ServiceOverview', function() {
     service.get.withArgs('id').returns('demo');
     service.get.withArgs('pending').returns(true);
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
     wrapper.find('OverviewAction[valueType="all"]').props().action({
@@ -210,7 +210,7 @@ describe('ServiceOverview', function() {
 
   it('shows the charm details if the version is clicked', function() {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('OverviewAction[title="Change version"]').props().linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -228,7 +228,7 @@ describe('ServiceOverview', function() {
     // Return an array to make it think it has plans
     charm.get.withArgs('plans').returns([]);
     const showActivePlan = sinon.stub();
-    const wrapper = renderComponent({ showActivePlan });
+    const wrapper = renderComponent({showActivePlan});
     assert.equal(
       showActivePlan.callCount, 0,
       'we are defining plans in the service, it should not call to fetch more');
@@ -265,7 +265,7 @@ describe('ServiceOverview', function() {
 
   it('calls the destroy service method if destroy is clicked', function() {
     const destroyService = sinon.stub();
-    const wrapper = renderComponent({ destroyService });
+    const wrapper = renderComponent({destroyService});
     // Simulate the confirm click.
     wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(destroyService.callCount, 1);

@@ -106,7 +106,8 @@ class PaymentMethodCard extends React.Component {
     return (
       <div className="payment-card">
         <div className="five-col">
-          <div className={cardClasses}
+          <div
+            className={cardClasses}
             onClick={this._handleCardClick.bind(this)}>
             <div className="payment-card-container">
               <div className="payment-card-front">

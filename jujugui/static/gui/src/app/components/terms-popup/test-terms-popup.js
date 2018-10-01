@@ -45,13 +45,13 @@ describe('TermsPopup', function() {
   });
 
   it('can display the loading spinner', function() {
-    const wrapper = renderComponent({ terms: [] });
+    const wrapper = renderComponent({terms: []});
     assert.equal(wrapper.find('Spinner').length, 1);
   });
 
   it('can close the popup', function() {
     const close = sinon.stub();
-    const wrapper = renderComponent({ close });
+    const wrapper = renderComponent({close});
     wrapper.find('Popup').props().close();
     assert.equal(close.callCount, 1);
   });

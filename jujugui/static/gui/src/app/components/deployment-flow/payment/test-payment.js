@@ -62,16 +62,17 @@ describe('DeploymentPayment', function() {
 
   it('can store the user details', function() {
     const setPaymentUser = sinon.stub();
-    renderComponent({ setPaymentUser });
+    renderComponent({setPaymentUser});
     assert.equal(setPaymentUser.callCount, 1);
     assert.deepEqual(setPaymentUser.args[0][0], user);
   });
 
   it('can display payment methods', function() {
-    const wrapper = renderComponent({ paymentUser: user });
+    const wrapper = renderComponent({paymentUser: user});
     const expected = (
       <ul className="deployment-payment__methods twelve-col">
-        {[<li className="deployment-payment__method"
+        {[<li
+          className="deployment-payment__method"
           key="Company0">
           <PaymentMethodCard
             card={{name: 'Company'}} />

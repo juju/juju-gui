@@ -49,7 +49,8 @@ describe('SearchResultsItem', function() {
     const seriesLinks = wrapper.find('.list-series__item a');
     var expected = (
       <li className="list-block__list--item charm">
-        <a className="list-block__list--item-main-link"
+        <a
+          className="list-block__list--item-main-link"
           href="/u/spinach/apache2"
           onClick={
             wrapper.find('.list-block__list--item-main-link').prop('onClick')}></a>
@@ -60,14 +61,16 @@ describe('SearchResultsItem', function() {
           </h3>
           <ul className="tag-list">
             <li className="tag-list--item">
-              <a className="list-block__list--item-link"
+              <a
+                className="list-block__list--item-link"
                 href="/u/spinach/apache2"
                 onClick={tagLinks.at(0).prop('onClick')}>
                 tag1
               </a>
             </li>
             <li className="tag-list--item">
-              <a className="list-block__list--item-link"
+              <a
+                className="list-block__list--item-link"
                 href="/u/spinach/apache2"
                 onClick={tagLinks.at(1).prop('onClick')}>
                 tag2
@@ -78,15 +81,19 @@ describe('SearchResultsItem', function() {
         <div className="series__column four-col">
           <ul className="list-series">
             {[
-              <li className="list-series__item"
+              <li
+                className="list-series__item"
                 key="vivid">
-                <a className="list-block__list--item-link"
+                <a
+                  className="list-block__list--item-link"
                   href="/u/spinach/apache2"
                   onClick={seriesLinks.at(0).prop('onClick')}>vivid</a>
               </li>,
-              <li className="list-series__item"
+              <li
+                className="list-series__item"
                 key="wily">
-                <a className="list-block__list--item-link"
+                <a
+                  className="list-block__list--item-link"
                   href="/u/spinach/apache2"
                   onClick={seriesLinks.at(1).prop('onClick')}>wily</a>
               </li>
@@ -102,7 +109,8 @@ describe('SearchResultsItem', function() {
         <div className="two-col owner__column list-block__column">
           <p className="cell">
             {'By '}
-            <a className="list-block__list--item-link"
+            <a
+              className="list-block__list--item-link"
               href="/u/spinach/apache2"
               onClick={wrapper.find('.owner__column a').prop('onClick')}
               title="See other charms and bundles by test-owner">
@@ -155,7 +163,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on an item', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.list-block__list--item-main-link').simulate('click', {
       preventDefault: preventDefault
     });
@@ -171,7 +179,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on a series', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.list-series__item a').at(0).simulate('click', {
       preventDefault: preventDefault
     });
@@ -197,7 +205,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on a tag', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.tag-list a').at(0).simulate('click', {
       preventDefault: preventDefault
     });
@@ -219,7 +227,7 @@ describe('SearchResultsItem', function() {
   it('can handle clicking on an owner', function() {
     const changeState = sinon.stub();
     const preventDefault = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.owner__column a').at(0).simulate('click', {
       preventDefault: preventDefault
     });

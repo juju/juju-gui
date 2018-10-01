@@ -56,7 +56,8 @@ class CardForm extends React.Component {
           ref="name"
           required={true}
           validate={[required]} />
-        <div className="card-form__card"
+        <div
+          className="card-form__card"
           ref="cardNode"></div>
       </div>
     );

@@ -175,7 +175,7 @@ describe('DeploymentBudget', function() {
   it('will abort the requests when unmounting', function() {
     var abort = sinon.stub();
     var listBudgets = sinon.stub().returns({abort: abort});
-    const wrapper = renderComponent({ listBudgets });
+    const wrapper = renderComponent({listBudgets});
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

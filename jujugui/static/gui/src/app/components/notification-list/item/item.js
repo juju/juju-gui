@@ -54,10 +54,13 @@ class NotificationListItem extends React.Component {
     return (
       <li className={this._generateClasses()}>
         <span>{this.props.message}</span>
-        <span className="notification-list-item__hide" onClick={this.hide.bind(this)}
+        <span
+          className="notification-list-item__hide"
+          onClick={this.hide.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon name="close_16"
+          <SvgIcon
+            name="close_16"
             size="16" />
         </span>
       </li>);

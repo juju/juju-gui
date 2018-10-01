@@ -24,21 +24,24 @@ describe('ExpertContactCard', function() {
         <div className="expert-contact-card__initial">
           <ul className="expert-contact-card__highlights">
             {[
-              <li className="expert-contact-card__highlight"
+              <li
+                className="expert-contact-card__highlight"
                 key="Machine learning">
                 <SvgIcon
                   name="bullet"
                   size="14" />
                 Machine learning
               </li>,
-              <li className="expert-contact-card__highlight"
+              <li
+                className="expert-contact-card__highlight"
                 key="Data service deployments">
                 <SvgIcon
                   name="bullet"
                   size="14" />
                 Data service deployments
               </li>,
-              <li className="expert-contact-card__highlight"
+              <li
+                className="expert-contact-card__highlight"
                 key="Container orchestration">
                 <SvgIcon
                   name="bullet"
@@ -58,7 +61,7 @@ describe('ExpertContactCard', function() {
   });
 
   it('can render without a matching expert', () => {
-    const wrapper = renderComponent({ expert: 'spinach' });
+    const wrapper = renderComponent({expert: 'spinach'});
     assert.strictEqual(wrapper.html(), null);
   });
 
@@ -91,11 +94,13 @@ describe('ExpertContactCard', function() {
               size="16" />
             <ul className="expert-contact-card__phone-numbers">
               {[
-                <li className="expert-contact-card__phone-number"
+                <li
+                  className="expert-contact-card__phone-number"
                   key="UK +44 (0)1603 327762">
                   UK +44 (0)1603 327762
                 </li>,
-                <li className="expert-contact-card__phone-number"
+                <li
+                  className="expert-contact-card__phone-number"
                   key="US +1 8448141689">
                   US +1 8448141689
                 </li>
@@ -109,7 +114,7 @@ describe('ExpertContactCard', function() {
 
   it('can send analytics when the contact button is clicked', () => {
     const sendAnalytics = sinon.stub();
-    const wrapper = renderComponent({ sendAnalytics });
+    const wrapper = renderComponent({sendAnalytics});
     wrapper.find('Button').props().action();
     assert.equal(sendAnalytics.callCount, 1);
   });

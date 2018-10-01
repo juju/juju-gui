@@ -21,7 +21,7 @@ describe('ButtonRow', function() {
       type: 'submit',
       action: callbackStub
     }];
-    const wrapper = renderComponent({ buttons });
+    const wrapper = renderComponent({buttons});
     const expected = (
       <div className="button-row button-row--multiple button-row--count-1">
         <Button
@@ -48,7 +48,7 @@ describe('ButtonRow', function() {
       type: 'submit',
       action: callbackStub
     }];
-    const wrapper = renderComponent({ buttons });
+    const wrapper = renderComponent({buttons});
     const expected = (
       <div className="button-row button-row--multiple button-row--count-2">
         <Button

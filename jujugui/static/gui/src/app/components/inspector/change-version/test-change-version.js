@@ -40,13 +40,13 @@ describe('InspectorChangeVersion', function() {
   });
 
   it('can display a loading spinner', function() {
-    const wrapper = renderComponent({ getAvailableVersions: sinon.stub() });
+    const wrapper = renderComponent({getAvailableVersions: sinon.stub()});
     assert.equal(wrapper.find('Spinner').length, 1);
   });
 
   it('can display an empty versions list', function() {
     const getAvailableVersions = sinon.stub().callsArgWith(1, null, ['cs:django']);
-    const wrapper = renderComponent({ getAvailableVersions });
+    const wrapper = renderComponent({getAvailableVersions});
     const expected = (
       <ul className="inspector-change-version__versions">
         <li className="inspector-change-version__none">
@@ -63,7 +63,8 @@ describe('InspectorChangeVersion', function() {
       <div className="inspector-change-version">
         <div className="inspector-change-version__current">
           Current version:
-          <div className="inspector-change-version__current-version"
+          <div
+            className="inspector-change-version__current-version"
             onClick={
               wrapper.find('.inspector-change-version__current-version').prop('onClick')}
             role="button"
@@ -93,7 +94,7 @@ describe('InspectorChangeVersion', function() {
 
   it('can display a message if there is a get versions failure', function() {
     var getAvailableVersions = sinon.stub().callsArg(1, 'bad wolf', []);
-    const wrapper = renderComponent({ getAvailableVersions });
+    const wrapper = renderComponent({getAvailableVersions});
     const expected = (
       <ul className="inspector-change-version__versions">
         <li className="inspector-change-version__none">
@@ -105,7 +106,7 @@ describe('InspectorChangeVersion', function() {
 
   it('can navigate to the current charm version details', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.inspector-change-version__current-version').props().onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -115,7 +116,7 @@ describe('InspectorChangeVersion', function() {
 
   it('can navigate to another charm version details', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('InspectorChangeVersionItem').at(0).props().itemAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

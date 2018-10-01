@@ -19,7 +19,8 @@ class HashLink extends React.Component {
 
   render() {
     return (
-      <div className="hash-link"
+      <div
+        className="hash-link"
         onClick={this._handleClick.bind(this)}>
         <SvgIcon
           name="anchor_16"

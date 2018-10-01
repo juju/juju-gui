@@ -880,11 +880,11 @@ class State {
     });
     // If we have no user parts then we don't need to parse them.
     if (indexes.length === 0) {
-      return { state, parts: urlParts, error };
+      return {state, parts: urlParts, error};
     }
     // If we don't have a user delimeter at 0 then this is an invalid URL.
     if (indexes[0] !== 0) {
-      return { state, parts: urlParts, error: 'invalid user path.'};
+      return {state, parts: urlParts, error: 'invalid user path.'};
     }
     /**
       Takes the section of the URL parts which needs to be added to either the

@@ -41,10 +41,10 @@ class RelationModule {
           mousemove: 'mousemove'
         },
         '.relation-remove': {
-          click: {callback: 'relationRemoveClick' }
+          click: {callback: 'relationRemoveClick'}
         },
         '.inspect-relation': {
-          click: {callback: 'inspectRelationClick' }
+          click: {callback: 'inspectRelationClick'}
         },
         '.dragline': {
           /**
@@ -890,11 +890,11 @@ class RelationModule {
       const ep = endpoints[0];
       const endpoints_item = [
         [ep[0].service,
-          { name: ep[0].name,
-            role: 'server' }],
+          {name: ep[0].name,
+            role: 'server'}],
         [ep[1].service,
-          { name: ep[1].name,
-            role: 'client' }]];
+          {name: ep[1].name,
+            role: 'client'}]];
       view.addRelationEnd(endpoints_item, view, context);
       return;
     }
@@ -981,10 +981,10 @@ class RelationModule {
         const endpoints_item = [
           [el.getAttribute('data-startservice'), {
             name: el.getAttribute('data-startname'),
-            role: 'server' }],
+            role: 'server'}],
           [el.getAttribute('data-endservice'), {
             name: el.getAttribute('data-endname'),
-            role: 'client' }]
+            role: 'client'}]
         ];
         menu.classList.remove('active');
         view.addRelationEnd(endpoints_item, view, context);
@@ -1090,7 +1090,7 @@ class RelationModule {
     const z = topo.zoom.scale();
     const line = relation.source.getConnectorPair(relation.target);
     const coords = topoUtils.findCenterPoint(line[0], line[1]);
-    const point = { x: coords[0], y: coords[1], w: 0, h: 0 };
+    const point = {x: coords[0], y: coords[1], w: 0, h: 0};
     const locateAt = topoUtils.locateRelativePointOnCanvas(point, tr, z);
     // Shift the menu to the left by half its width, and up by its height
     // plus the height of the arrow (16px).

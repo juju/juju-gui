@@ -150,7 +150,7 @@ class App extends React.Component {
     @param evt {String} The event details.
   */
   _loginNotificationListener(evt) {
-    this.setState({ loginNotificiationURL: evt.detail });
+    this.setState({loginNotificiationURL: evt.detail});
   }
 
   /**
@@ -196,7 +196,7 @@ class App extends React.Component {
     @param evt {String} The event details.
   */
   _popupActionListener(evt) {
-    this.setState({ popupAction: evt.detail });
+    this.setState({popupAction: evt.detail});
   }
 
   /**
@@ -234,7 +234,7 @@ class App extends React.Component {
       this._removeEvent('topo.hoverService');
     }
     const onHover = evt => {
-      this.setState({ hoveredService: evt.detail.id });
+      this.setState({hoveredService: evt.detail.id});
     };
     this._addEvent('topo.hoverService', onHover);
     // Deselect the active service token. This needs to happen so that when a
@@ -258,7 +258,7 @@ class App extends React.Component {
     designated element.
   */
   _generateEnvSizeDisplay() {
-    const { db } = this.props;
+    const {db} = this.props;
     return (
       <EnvSizeDisplay
         appState={this.props.appState}
@@ -299,7 +299,7 @@ class App extends React.Component {
                      (false); defaults to true.
   */
   _sharingVisibility(visibility = true) {
-    this.setState({ sharingVisible: visibility });
+    this.setState({sharingVisible: visibility});
   }
 
   /**
@@ -521,13 +521,16 @@ Browser: ${navigator.userAgent}`
       });
     };
     return (
-      <li className="header-banner__list-item header-banner__list-item--no-padding"
+      <li
+        className="header-banner__list-item header-banner__list-item--no-padding"
         id="header-help">
-        <span className="header__button"
+        <span
+          className="header__button"
           onClick={openHelp.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon className="header__button-icon"
+          <SvgIcon
+            className="header__button-icon"
             name="help_16"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -544,7 +547,7 @@ Browser: ${navigator.userAgent}`
     @param visible {Boolean} Whether the modal should be shown.
   */
   _displayShortcutsModal(visible=true) {
-    this.setState({ shortcutsModalVisible: visible });
+    this.setState({shortcutsModalVisible: visible});
   }
 
   /**
@@ -565,7 +568,7 @@ Browser: ${navigator.userAgent}`
     @param visible {Boolean} Whether the modal should be shown.
   */
   _displaySettingsModal(visible=true) {
-    this.setState({ settingsModalVisible: visible });
+    this.setState({settingsModalVisible: visible});
   }
 
   /**
@@ -599,14 +602,14 @@ Browser: ${navigator.userAgent}`
     Hides the lightbox.
   */
   _hideLightbox() {
-    this.setState({ lightbox: null });
+    this.setState({lightbox: null});
   }
 
   /**
     Displays a lightbox with provided content.
   */
   _generateLightbox() {
-    const { lightbox } = this.state;
+    const {lightbox} = this.state;
     if (!lightbox) {
       return null;
     }
@@ -644,7 +647,7 @@ Browser: ${navigator.userAgent}`
   */
   _generatePostDeployment() {
     const state = this.props.appState.current;
-    const { postDeploymentPanel } = state;
+    const {postDeploymentPanel} = state;
     if (!postDeploymentPanel) {
       return null;
     }
@@ -679,7 +682,8 @@ Browser: ${navigator.userAgent}`
     const homePath = gisf ? '/' :
       this.props.appState.generatePath({profile: userName});
     return (
-      <div className="header-banner__logo"
+      <div
+        className="header-banner__logo"
         id="header-logo" >
         <HeaderLogo
           gisf={gisf}
@@ -1155,7 +1159,8 @@ Browser: ${navigator.userAgent}`
     };
 
     return (
-      <li className="header-banner__list-item header-banner__list-item--no-padding"
+      <li
+        className="header-banner__list-item header-banner__list-item--no-padding"
         id="profile-link-container">
         <UserMenu
           controllerAPI={controllerAPI}
@@ -1282,7 +1287,7 @@ Browser: ${navigator.userAgent}`
   */
   _showDragOverNotification(showIndicator = true) {
     this.props.topology.fadeHelpIndicator(showIndicator);
-    this.setState({ dragOverNotificationVisible: showIndicator });
+    this.setState({dragOverNotificationVisible: showIndicator});
   }
 
   /**
@@ -1309,13 +1314,13 @@ Browser: ${navigator.userAgent}`
     Generate the login notification.
   */
   _generateLoginNotification() {
-    const { loginNotificiationURL } = this.state;
+    const {loginNotificiationURL} = this.state;
     if (!loginNotificiationURL) {
       return null;
     }
     let dismiss = null;
     if (this.props.appState.current.root !== 'login') {
-      dismiss = this.setState.bind(this, { loginNotificiationURL: null });
+      dismiss = this.setState.bind(this, {loginNotificiationURL: null});
     }
     const content = (
       <span>
@@ -1336,13 +1341,14 @@ Browser: ${navigator.userAgent}`
     Generate the MAAS link.
   */
   _generateMAASLink() {
-    const { maasServer } = this.props;
+    const {maasServer} = this.props;
     if (!maasServer) {
       return null;
     }
     return (
       <li className="header-banner__list-item">
-        <a className="header-banner__link"
+        <a
+          className="header-banner__link"
           href={maasServer}
           target="_blank">
           MAAS UI
@@ -1354,13 +1360,13 @@ Browser: ${navigator.userAgent}`
     Generate the confirmation for losing uncommitted changes.
   */
   _generateUncommittedConfirm() {
-    const { popupAction } = this.state;
+    const {popupAction} = this.state;
     if (!popupAction) {
       return null;
     }
     const buttons = [{
       title: 'Cancel',
-      action: this.setState.bind(this, { popupAction: null }),
+      action: this.setState.bind(this, {popupAction: null}),
       type: 'inline-neutral'
     }, {
       title: 'Continue',

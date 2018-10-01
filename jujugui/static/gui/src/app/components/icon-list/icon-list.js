@@ -63,12 +63,15 @@ class IconList extends React.Component {
       const src = app.iconPath ||
           'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
       components.push(
-        <li className="icon-list__item tooltip"
+        <li
+          className="icon-list__item tooltip"
           key={app.displayName}>
-          <a className="icon-list__link"
+          <a
+            className="icon-list__link"
             href={this._generateStoreURL(app.id)}
             onClick={this._handleItemClick.bind(this, app.id)}>
-            <img alt={app.displayName}
+            <img
+              alt={app.displayName}
               className="icon-list__image"
               src={src} />
             <span className="tooltip__tooltip">

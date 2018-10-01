@@ -115,8 +115,10 @@ class DeploymentSSHKey extends React.Component {
 
     if (keys.length === 0) {
       this.setState({error:
-        (<span>No keys found. <a className="link"
-          href="https://github.com/settings/keys" target="_blank">
+        (<span>No keys found. <a
+          className="link"
+          href="https://github.com/settings/keys"
+          target="_blank">
           Create an SSH Key</a>.</span>)});
       return;
     }
@@ -252,7 +254,8 @@ class DeploymentSSHKey extends React.Component {
                 role="button"
                 title="Remove key">
                 <SvgIcon
-                  name="close_16" size="16" />
+                  name="close_16"
+                  size="16" />
               </span>
             </div>
           </li>
@@ -277,12 +280,14 @@ class DeploymentSSHKey extends React.Component {
           <li className="deployment-flow__row twelve-col" key={'lp-' + username}>
             <div className="eleven-col">{username}</div>
             <div className="one-col last-col">
-              <span className="added-keys__key-remove right"
+              <span
+                className="added-keys__key-remove right"
                 onClick={this._removeLPUsername.bind(this, username)}
                 role="button"
                 title="Remove username">
                 <SvgIcon
-                  name="close_16" size="16" />
+                  name="close_16"
+                  size="16" />
               </span>
             </div>
           </li>

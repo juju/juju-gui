@@ -175,7 +175,8 @@ class DeploymentCredentialAdd extends React.Component {
       const required = field.required === undefined ? true : field.required;
       if (field.json) {
         return (
-          <div className="deployment-credential-add__upload"
+          <div
+            className="deployment-credential-add__upload"
             key={field.id}>
             <FileField
               accept=".json"
@@ -271,7 +272,9 @@ class DeploymentCredentialAdd extends React.Component {
         </h4>
         {credentialName || !signupURL ? null : (
           <div className="twelve-col deployment-credential-add__signup">
-            <a className="deployment-credential-add__link" href={signupURL}
+            <a
+              className="deployment-credential-add__link"
+              href={signupURL}
               target="_blank">
               Sign up for {title}
               &nbsp;
@@ -280,7 +283,8 @@ class DeploymentCredentialAdd extends React.Component {
                 size="12" />
             </a>
           </div>)}
-        <form className="twelve-col no-margin-bottom"
+        <form
+          className="twelve-col no-margin-bottom"
           onSubmit={this._handleAddCredentials.bind(this)}>
           <div className="six-col last-col">
             <GenericInput

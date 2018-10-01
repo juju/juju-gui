@@ -32,19 +32,23 @@ describe('Zoom', function() {
     const wrapper = renderComponent();
     var expected = (
       <ul className="zoom">
-        <li className="zoom__in link"
+        <li
+          className="zoom__in link"
           onClick={wrapper.find('.zoom__in').prop('onClick')}
           role="button"
           tabIndex="0">
-          <SvgIcon className="zoom-in__icon"
+          <SvgIcon
+            className="zoom-in__icon"
             name="add_16"
             size="12" />
         </li>
-        <li className="zoom__out link"
+        <li
+          className="zoom__out link"
           onClick={wrapper.find('.zoom__out').prop('onClick')}
           role="button"
           tabIndex="0">
-          <SvgIcon className="zoom-out__icon"
+          <SvgIcon
+            className="zoom-out__icon"
             name="minus_16"
             size="12" />
         </li>

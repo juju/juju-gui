@@ -183,7 +183,8 @@ class ProfileModelList extends React.Component {
       const username = owner === profileUsername ? 'Me' : owner;
       const region = model.region ? '/' + model.region : '';
       const nameContent = (
-        <a href={path}
+        <a
+          href={path}
           onClick={this.switchToModel.bind(this, {
             name: model.name,
             id: model.id,
@@ -223,7 +224,8 @@ class ProfileModelList extends React.Component {
       if (owner === profileUsername) {
         expandedContent = (
           <div className="three-col prepend-five profile-model-list__credential-name">
-            <span className="link"
+            <span
+              className="link"
               onClick={this._handleCredentialClick.bind(this, model.credential)}
               role="button"
               tabIndex="0">

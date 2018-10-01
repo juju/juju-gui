@@ -55,7 +55,8 @@ class EnvSizeDisplay extends React.Component {
   _generateStatus() {
     return (
       <li className={this._genClasses('status')}>
-        <a className="env-size-display__link"
+        <a
+          className="env-size-display__link"
           data-view="status"
           onClick={this._changeEnvironmentView.bind(this)}>
           status
@@ -71,7 +72,8 @@ class EnvSizeDisplay extends React.Component {
       <div className="env-size-display">
         <ul className="env-size-display__list">
           <li className={this._genClasses('application')}>
-            <a className="env-size-display__link"
+            <a
+              className="env-size-display__link"
               data-view="application"
               onClick={this._changeEnvironmentView.bind(this)}>
               {serviceCount}&nbsp;
@@ -79,7 +81,8 @@ class EnvSizeDisplay extends React.Component {
             </a>
           </li>
           {props.providerType !== 'kubernetes' ? <li className={this._genClasses('machines')}>
-            <a className="env-size-display__link"
+            <a
+              className="env-size-display__link"
               data-view="machines"
               onClick={this._changeEnvironmentView.bind(this)}>
               {machineCount}&nbsp;

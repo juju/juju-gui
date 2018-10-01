@@ -97,14 +97,14 @@ describe('PaymentDetailsAddress', () => {
 
   it('can cancel the form', () => {
     const close = sinon.stub();
-    const wrapper = renderComponent({ close });
+    const wrapper = renderComponent({close});
     wrapper.find('Button').at(0).props().action();
     assert.equal(close.callCount, 1);
   });
 
   it('can validate the form', () => {
     const removeAddress = sinon.stub();
-    const wrapper = renderComponent({ removeAddress });
+    const wrapper = renderComponent({removeAddress});
     const instance = wrapper.instance();
     instance.refs = {
       addressForm: {

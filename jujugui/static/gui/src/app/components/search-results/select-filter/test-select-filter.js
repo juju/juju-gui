@@ -33,7 +33,8 @@ describe('SearchResultsSelectFilter', function() {
     const expected = (
       <div className="list-block__sort">
         {'Sort by'}:
-        <select defaultValue={null}
+        <select
+          defaultValue={null}
           onChange={wrapper.find('select').prop('onChange')}>
           <option key="-downloads" value="-downloads">Most popular</option>
           <option key="downloads" value="downloads">Least popular</option>
@@ -43,13 +44,13 @@ describe('SearchResultsSelectFilter', function() {
   });
 
   it('can select an option', function() {
-    const wrapper = renderComponent({ currentValue: 'downloads' });
+    const wrapper = renderComponent({currentValue: 'downloads'});
     assert.equal(wrapper.find('select').prop('defaultValue'), 'downloads');
   });
 
   it('can change the search state', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('select').simulate('change', {
       currentTarget: {
         value: 'downloads'
