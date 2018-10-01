@@ -411,7 +411,7 @@ describe('BundleImporter', () => {
         ],
         id: 'deploy-1',
         method: 'deploy',
-        requires: [ 'addCharm-0' ]
+        requires: ['addCharm-0']
       };
       const options = {
         services: {

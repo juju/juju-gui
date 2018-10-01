@@ -1386,7 +1386,7 @@ describe('State', () => {
       sinon.stub(state, 'dispatch').returns({error: null});
       const stub1 = sinon.stub();
       state.register([
-        ['test', stub1 ]
+        ['test', stub1]
       ]);
       state.changeState({
         test: {

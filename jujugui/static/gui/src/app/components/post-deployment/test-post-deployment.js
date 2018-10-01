@@ -95,7 +95,7 @@ describe('PostDeployment', () => {
     // sinon.callsArgWith passes the same file each time it's called, so we
     // expect the markdown content, here.
     assert.deepEqual(changeState.args[0][0], {
-      terminal: [ 'commands', '    on multiple', '    lines']
+      terminal: ['commands', '    on multiple', '    lines']
     });
   });
 
