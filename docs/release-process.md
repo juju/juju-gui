@@ -1,11 +1,12 @@
 # GUI Release Process
 
-This document outlines the process of creating a distribution archive of the Juju GUI.
+This document outlines the process of creating a distribution archive of the
+Juju GUI.
 
 ### Prepare for the Release
 
-Clone a fresh copy from the root repo. Do not attempt a release in your
-current working repository as the following commands expect a fresh clone.
+Clone a fresh copy from the root repo. Do not attempt a release in your current
+working repository as the following commands expect a fresh clone.
 Make the clone using:
 
 ```bash
@@ -13,23 +14,21 @@ git clone git@github.com:juju/juju-gui.git juju-gui-release
 cd juju-gui-release
 ```
 
-Next you'll want to generate the list of changes for CHANGES.yaml.
+The CHANGELOG.md should have been kept up to date but you'll want to review it,
+and the list of merge commit messages, to make sure nothing was missed.
 
 ```bash
-git log `git describe --tags --abbrev=0`..HEAD --author 'jujugui' --format='* [%h] %b'
+git log `git describe --tags --abbrev=0`..HEAD --format='- %b' --merges | sed '/^- $/d'
 ```
 
-Based on the log output, update the CHANGES.yaml file. If it makes sense, you
-may collapse multiple commits into a single entry in the change log. Follow
-the existing formatting of the file, including bullets and spaces as the tools
-are non-forgiving with respect to format.
+Change `[Unreleased]` to the next semver version and date it following the
+existing format.
 
 Commit the changes to the changelog.
 
 ```bash
-git commit -am "Updating changelog."
+git commit -am "Updated changelog."
 ```
-
 
 Now checkout master and merge in develop.
 
@@ -72,7 +71,7 @@ make check
 
 ```bash
 make run
-guiproxy -env production
+guiproxy -env prod
 ```
 
 ##### Test Juju controller integration with a new dist
@@ -102,8 +101,8 @@ git push origin develop
 
 You can find the release on github at
 https://github.com/juju/juju-gui/releases/tag/<the newest tag>. Update the
-release notes with the entry from CHANGES.yaml and upload the
-dist/jujugui-2.10.1.tar.bz2 package as a binary.
+release notes with the entry from CHANGELOG.md and upload the
+dist/jujugui-x.tar.bz2 package as a binary.
 
 Congratulations! You've created a release of the Juju GUI.
 
