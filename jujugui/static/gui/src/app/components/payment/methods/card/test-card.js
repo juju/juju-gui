@@ -47,7 +47,8 @@ describe('PaymentMethodCard', () => {
     const expected = (
       <div className="payment-card">
         <div className="five-col">
-          <div className="payment-card-wrapper"
+          <div
+            className="payment-card-wrapper"
             onClick={wrapper.find('.payment-card-wrapper').prop('onClick')}>
             <div className="payment-card-container">
               <div className="payment-card-front">

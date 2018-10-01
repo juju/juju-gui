@@ -25,7 +25,9 @@ describe('ExpertCard', function() {
         classes={undefined}
         title="Juju expert partners">
         <div className="expert-card__logo">
-          <img alt="spicule.png" className="expert-card__logo-image"
+          <img
+            alt="spicule.png"
+            className="expert-card__logo-image"
             src={
               '/media/static/gui/build/app/assets/images/' +
               'non-sprites/experts/spicule.png'} />

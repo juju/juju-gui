@@ -123,7 +123,8 @@ class DeploymentSignup extends React.Component {
                 </li>
               </ul>
               <p>
-                <a className="button--inline-positive"
+                <a
+                  className="button--inline-positive"
                   href="https://jujucharms.com/beta"
                   onClick={this._handleSignup.bind(this)}
                   target="_blank">

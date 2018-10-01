@@ -36,16 +36,18 @@ describe('EnvList', function() {
         lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       }
     ];
-    const wrapper = renderComponent({ envs: models });
+    const wrapper = renderComponent({envs: models});
 
     const expected = (
-      <ul aria-expanded="true"
+      <ul
+        aria-expanded="true"
         aria-hidden="false"
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
         id="environmentSwitcherMenu"
         role="menubar">
-        <li className="env-list__environment"
+        <li
+          className="env-list__environment"
           data-id={models[0].uuid}
           data-name={models[0].name}
           data-owner={models[0].owner}
@@ -63,7 +65,8 @@ describe('EnvList', function() {
             </span>
           </div>
         </li>
-        <li className="env-list__environment"
+        <li
+          className="env-list__environment"
           data-id={models[1].uuid}
           data-name={models[1].name}
           data-owner={models[1].owner}
@@ -111,16 +114,18 @@ describe('EnvList', function() {
         owner: 'dalek@external'
       }
     ];
-    const wrapper = renderComponent({ envs: models });
+    const wrapper = renderComponent({envs: models});
     const expected = (
-      <ul aria-expanded="true"
+      <ul
+        aria-expanded="true"
         aria-hidden="false"
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
         id="environmentSwitcherMenu"
         role="menubar">
         {[
-          <li className="env-list__environment"
+          <li
+            className="env-list__environment"
             data-id={models[0].uuid}
             data-name={models[0].name}
             data-owner={models[0].owner}
@@ -138,7 +143,8 @@ describe('EnvList', function() {
               </span>
             </div>
           </li>,
-          <li className="env-list__environment"
+          <li
+            className="env-list__environment"
             data-id={models[1].uuid}
             data-name={models[1].name}
             data-owner={models[1].owner}
@@ -156,7 +162,8 @@ describe('EnvList', function() {
               </span>
             </div>
           </li>,
-          <li className="env-list__environment"
+          <li
+            className="env-list__environment"
             data-id={models[2].uuid}
             data-name={models[2].name}
             data-owner={models[2].owner}
@@ -174,7 +181,8 @@ describe('EnvList', function() {
               </span>
             </div>
           </li>,
-          <li className="env-list__environment"
+          <li
+            className="env-list__environment"
             data-id={models[3].uuid}
             data-name={models[3].name}
             data-owner={models[3].owner}
@@ -207,9 +215,10 @@ describe('EnvList', function() {
         lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
       }
     ];
-    const wrapper = renderComponent({ envs: models });
+    const wrapper = renderComponent({envs: models});
     const expected = (
-      <ul aria-expanded="true"
+      <ul
+        aria-expanded="true"
         aria-hidden="false"
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
@@ -241,7 +250,8 @@ describe('EnvList', function() {
           data-owner="dalek"
           key="model-uuid-2"
           onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
-          role="menuitem" tabIndex="0">
+          role="menuitem"
+          tabIndex="0">
           dalek/model-name-2
           <div className="env-list__last-connected">
             <span>
@@ -268,7 +278,7 @@ describe('EnvList', function() {
     getAttribute.withArgs('data-id').returns('abc123');
     getAttribute.withArgs('data-name').returns('the name');
     getAttribute.withArgs('data-owner').returns('who@external');
-    const wrapper = renderComponent({ envs: models, handleModelClick });
+    const wrapper = renderComponent({envs: models, handleModelClick});
     wrapper.find('.env-list__environment').simulate('click', {
       currentTarget: {
         getAttribute: getAttribute
@@ -280,14 +290,14 @@ describe('EnvList', function() {
   it('new model call is made when clicking on the createm model button', function() {
     const handleModelClick = sinon.stub();
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
-    const wrapper = renderComponent({ envs: models, handleModelClick });
+    const wrapper = renderComponent({envs: models, handleModelClick});
     wrapper.find('CreateModelButton').props().action();
     assert.equal(handleModelClick.callCount, 1);
   });
 
   it('new model is not made when user has incorrect permissions', () => {
     const acl = {canAddModels: sinon.stub().returns(false)};
-    const wrapper = renderComponent({ acl: acl });
+    const wrapper = renderComponent({acl: acl});
     assert.strictEqual(wrapper.find('CreateModelButton').prop('disabled'), true);
   });
 });

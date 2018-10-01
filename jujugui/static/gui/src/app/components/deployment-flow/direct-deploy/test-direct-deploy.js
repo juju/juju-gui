@@ -29,7 +29,8 @@ describe('DirectDeploy', function() {
       <div className="deployment-direct-deploy__content">
         This {'bundle'} could not be found.
         Visit the&nbsp;
-        <span className="link"
+        <span
+          className="link"
           onClick={wrapper.find('.link').prop('onClick')}
           role="button"
           tabIndex="0">
@@ -48,7 +49,8 @@ describe('DirectDeploy', function() {
       <div className="deployment-direct-deploy__content">
         This {'charm'} could not be found.
         Visit the&nbsp;
-        <span className="link"
+        <span
+          className="link"
           onClick={wrapper.find('.link').prop('onClick')}
           role="button"
           tabIndex="0">
@@ -87,7 +89,8 @@ describe('DirectDeploy', function() {
               machine{''} in your cloud.
             </li>
           </ul>
-          <a className="link"
+          <a
+            className="link"
             href="http://example.com/"
             target="_blank">
             Learn more about this {'charm'}.
@@ -96,7 +99,8 @@ describe('DirectDeploy', function() {
         <div className="six-col last-col no-margin-bottom">
           <div className="deployment-direct-deploy__image">
             <div className="deployment-direct-deploy__image-block">
-              <img alt="Apache 2"
+              <img
+                alt="Apache 2"
                 className="deployment-direct-deploy__image-block-icon"
                 src="http://example.com/icon.svg"
                 width="96" />
@@ -144,7 +148,8 @@ describe('DirectDeploy', function() {
               machine{'s'} in your cloud.
             </li>
           </ul>
-          <a className="link"
+          <a
+            className="link"
             href="http://example.com/"
             target="_blank">
             Learn more about this {'bundle'}.

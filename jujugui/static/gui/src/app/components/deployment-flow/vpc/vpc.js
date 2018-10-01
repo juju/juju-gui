@@ -75,8 +75,10 @@ class DeploymentVPC extends React.Component {
         <p>
           AWS accounts created since December 2013 have this –&nbsp;
           older accounts may not.&nbsp;
-          <a className="link"
-            href={vpcLink} target="_blank">Default VPC basics.</a>
+          <a
+            className="link"
+            href={vpcLink}
+            target="_blank">Default VPC basics.</a>
         </p>
         <div className="six-col">
           <GenericInput

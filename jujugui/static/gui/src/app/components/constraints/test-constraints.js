@@ -66,7 +66,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="cpu-constraint">
               CPU (GHZ)
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cpu-constraint"
@@ -79,7 +80,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="cores-constraint">
               Cores
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="cores-constraint"
@@ -92,7 +94,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="mem-constraint">
               Ram (MB)
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="mem-constraint"
@@ -105,7 +108,8 @@ describe('Constraints', function() {
             <label className="constraints__label" htmlFor="disk-constraint">
               Disk (MB)
             </label>
-            <input className="constraints__input"
+            <input
+              className="constraints__input"
               defaultValue={undefined}
               disabled={false}
               id="disk-constraint"
@@ -184,7 +188,7 @@ describe('Constraints', function() {
 
   it('calls the provided method when the component is mounted', function() {
     const valuesChanged = sinon.stub();
-    renderComponent({ valuesChanged });
+    renderComponent({valuesChanged});
     assert.equal(valuesChanged.callCount, 1, 'valuesChanged.callCount');
     const args = valuesChanged.args[0];
     assert.equal(args.length, 1, 'args.length');
@@ -200,15 +204,15 @@ describe('Constraints', function() {
 
   it('calls the provided method when the values changed', function() {
     const valuesChanged = sinon.stub();
-    const wrapper = renderComponent({ valuesChanged });
+    const wrapper = renderComponent({valuesChanged});
     const instance = wrapper.instance();
     const refs = {};
-    refs.seriesConstraintSelect = { value: 'xenial' };
-    refs.archConstraintSelect = { value: 'i386' };
-    refs.cpuConstraintInput = { value: '1024' };
-    refs.coresConstraintInput = { value: '2' };
-    refs.memConstraintInput = { value: '2048' };
-    refs.diskConstraintInput = { value: '4096' };
+    refs.seriesConstraintSelect = {value: 'xenial'};
+    refs.archConstraintSelect = {value: 'i386'};
+    refs.cpuConstraintInput = {value: '1024'};
+    refs.coresConstraintInput = {value: '2'};
+    refs.memConstraintInput = {value: '2048'};
+    refs.diskConstraintInput = {value: '4096'};
     instance.refs = refs;
     wrapper.find('#cpu-constraint').simulate('change', refs.cpuConstraintInput);
     assert.equal(valuesChanged.callCount, 2, 'valuesChanged.callCount');

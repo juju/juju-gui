@@ -133,7 +133,8 @@ describe('PaymentMethods', () => {
             createCardElement={sinon.stub()}
             ref="cardForm" />
           <label htmlFor="cardAddressSame">
-            <input checked={true}
+            <input
+              checked={true}
               className="payment-methods__form-checkbox"
               id="cardAddressSame"
               name="cardAddressSame"
@@ -185,7 +186,7 @@ describe('PaymentMethods', () => {
 
   it('can create a new payment method with an existing address', () => {
     const updateUser = sinon.stub();
-    const wrapper = renderComponent({ updateUser });
+    const wrapper = renderComponent({updateUser});
     const instance = wrapper.instance();
     wrapper.find('Button').props().action();
     wrapper.update();
@@ -210,7 +211,7 @@ describe('PaymentMethods', () => {
 
   it('can create a new payment method with a new address', () => {
     const updateUser = sinon.stub();
-    const wrapper = renderComponent({ updateUser });
+    const wrapper = renderComponent({updateUser});
     const instance = wrapper.instance();
     instance.refs.cardAddress = {
       getValue: sinon.stub().returns({
@@ -253,7 +254,7 @@ describe('PaymentMethods', () => {
   it('can handle errors when creating a token', () => {
     stripe.createToken = sinon.stub().callsArgWith(2, 'Uh oh!');
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     wrapper.find('Button').props().action();
     wrapper.update();
     wrapper.find('Button').at(1).props().action();
@@ -268,7 +269,7 @@ describe('PaymentMethods', () => {
   it('can handle errors when creating a payment method', () => {
     payment.createPaymentMethod = sinon.stub().callsArgWith(3, 'Uh oh!', null);
     const addNotification = sinon.stub();
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     wrapper.find('Button').props().action();
     wrapper.update();
     wrapper.find('Button').at(1).props().action();

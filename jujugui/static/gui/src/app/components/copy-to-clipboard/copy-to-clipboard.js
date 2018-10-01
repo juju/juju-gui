@@ -31,12 +31,14 @@ class CopyToClipboard extends React.Component {
     var className = this.props.className;
     return (
       <div className={className}>
-        <input className={className + '__input'}
+        <input
+          className={className + '__input'}
           readOnly="true"
           ref="input"
           type="text"
           value={this.props.value} />
-        <button className={className + '__btn'}
+        <button
+          className={className + '__btn'}
           ref="btn">
           <SvgIcon
             name="copy-to-clipboard-16"

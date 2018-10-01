@@ -215,13 +215,17 @@ class HeaderSearch extends React.Component {
     return (
       <div className={this._generateClasses()} ref="headerSearchContainer">
         <form className="header-search__form">
-          <button className="header-search__submit"
+          <button
+            className="header-search__submit"
             onClick={this._handleSubmit.bind(this)}
             type="submit">
-            <SvgIcon name="search_16"
+            <SvgIcon
+              name="search_16"
               size="16" />
           </button>
-          <input className="header-search__input" name="query"
+          <input
+            className="header-search__input"
+            name="query"
             onChange={this._handleQueryChange.bind(this)}
             onFocus={this._handleSearchFocus.bind(this)}
             placeholder="Search the store"
@@ -236,14 +240,18 @@ class HeaderSearch extends React.Component {
           role="button"
           tabIndex="0">
           <span className="header-search__store-icon">
-            <SvgIcon name="search_16"
+            <SvgIcon
+              name="search_16"
               size="16" />
           </span>
         </span>
-        <span className={this._closeClasses()} onClick={this._handleClose.bind(this)}
+        <span
+          className={this._closeClasses()}
+          onClick={this._handleClose.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon name="close_16"
+          <SvgIcon
+            name="close_16"
             size="16" />
         </span>
       </div>

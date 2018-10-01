@@ -47,7 +47,8 @@ class DeploymentDirectDeploy extends React.Component {
       store: url.path()
     });
     return (
-      <a className="link"
+      <a
+        className="link"
         href={url}
         target="_blank">
         Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
@@ -68,7 +69,8 @@ class DeploymentDirectDeploy extends React.Component {
       const entity = this.props.entityModel.toEntity();
       return (
         <div className="deployment-direct-deploy__image-block">
-          <img alt={entity.displayName}
+          <img
+            alt={entity.displayName}
             className="deployment-direct-deploy__image-block-icon"
             src={entity.iconPath}
             width="96" />
@@ -96,7 +98,8 @@ class DeploymentDirectDeploy extends React.Component {
         <div className="deployment-direct-deploy__content">
           This {this.state.isBundle ? 'bundle' : 'charm'} could not be found.
           Visit the&nbsp;
-          <span className="link"
+          <span
+            className="link"
             onClick={this._handleStoreClick.bind(this)}
             role="button"
             tabIndex="0">

@@ -91,7 +91,7 @@ describe('DeploymentLogin', function() {
   });
 
   it('can render for the direct deploy flow', function() {
-    const wrapper = renderComponent({ isDirectDeploy: true });
+    const wrapper = renderComponent({isDirectDeploy: true});
     const expected = (
       <div className="deployment-login__login">
         <DeploymentSection
@@ -131,7 +131,8 @@ describe('DeploymentLogin', function() {
               a fully managed Juju infrastructure.
             </p>
             <p>
-              <a className="deployment-login-features__link"
+              <a
+                className="deployment-login-features__link"
                 href="http://jujucharms.com/jaas"
                 target="_blank">
                 Learn more about JAAS &rsaquo;

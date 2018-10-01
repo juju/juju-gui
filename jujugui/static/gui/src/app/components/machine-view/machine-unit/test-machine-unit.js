@@ -51,7 +51,7 @@ describe('MachineViewMachineUnit', function() {
   });
 
   it('can render for a container', function() {
-    const wrapper = renderComponent({ machineType: 'container' });
+    const wrapper = renderComponent({machineType: 'container'});
     const menuItems = wrapper.find('MachineUnit').prop('menuItems');
     assert.deepEqual(menuItems, [{
       label: 'Destroy',
@@ -61,20 +61,20 @@ describe('MachineViewMachineUnit', function() {
 
   it('can disable the destroy when read only', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => true});
-    const wrapper = renderComponent({ machineType: 'container' });
+    const wrapper = renderComponent({machineType: 'container'});
     assert.strictEqual(
       wrapper.find('MachineUnit').prop('menuItems')[0].action, null);
   });
 
   it('can display in dragged mode', function() {
-    const wrapper = renderComponent({ isDragging: true });
+    const wrapper = renderComponent({isDragging: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__machine-unit--dragged'),
       true);
   });
 
   it('can display in draggable mode', function() {
-    const wrapper = renderComponent({ canDrag: true });
+    const wrapper = renderComponent({canDrag: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__machine-unit--draggable'),
       true);

@@ -151,7 +151,7 @@ describe('App', () => {
     it('reports true when the controller API is ready', () => {
       controllerAPI.get = sinon.stub().withArgs('connected').returns(true);
       controllerAPI.userIsAuthenticated = true;
-      const wrapper = renderComponent({ controllerAPI });
+      const wrapper = renderComponent({controllerAPI});
       const instance = wrapper.instance();
       assert.strictEqual(instance._controllerIsReady(), true);
     });
@@ -160,16 +160,16 @@ describe('App', () => {
       const wrapper = renderComponent();
       const instance = wrapper.instance();
       // Without a controller API object the controller is not ready.
-      wrapper.setProps({ controllerAPI: null });
+      wrapper.setProps({controllerAPI: null});
       assert.strictEqual(instance._controllerIsReady(), false, 'no controller');
       // Before the API is connected the controller is not ready.
       controllerAPI.get.withArgs('connected').returns(false);
       controllerAPI.userIsAuthenticated = false;
-      wrapper.setProps({ controllerAPI });
+      wrapper.setProps({controllerAPI});
       assert.strictEqual(instance._controllerIsReady(), false, 'not connected');
       // Before the API is properly logged in the controller is not ready.
       controllerAPI.get.withArgs('connected').returns(true);
-      wrapper.setProps({ controllerAPI });
+      wrapper.setProps({controllerAPI});
       assert.strictEqual(instance._controllerIsReady(), false, 'not authenticated');
     });
   });

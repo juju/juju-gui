@@ -143,7 +143,8 @@ class GenericInput extends React.Component {
     }
     const components = errors.map(error => {
       return (
-        <li className="generic-input__error"
+        <li
+          className="generic-input__error"
           key={error}
           role="alert">
           {error}
@@ -173,7 +174,8 @@ class GenericInput extends React.Component {
     if (label) {
       id = label.replace(' ', '-');
       element = (
-        <label className={classes}
+        <label
+          className={classes}
           htmlFor={id}>
           {label}
         </label>);
@@ -211,7 +213,8 @@ class GenericInput extends React.Component {
         </div>);
     }
     return (
-      <input aria-invalid={errors}
+      <input
+        aria-invalid={errors}
         autoComplete={this.props.autocomplete ? 'on' : 'off'}
         className="generic-input__field"
         defaultValue={this.props.value}

@@ -19,22 +19,28 @@ describe('SearchResultsTypeFilter', function() {
     const expected = (
       <nav className="six-col list-block__type">
         <ul>
-          <li className="selected"
+          <li
+            className="selected"
             key="All"
             onClick={wrapper.find('li').at(0).prop('onClick')}
-            role="button" tabIndex="0">
+            role="button"
+            tabIndex="0">
             All
           </li>
-          <li className=""
+          <li
+            className=""
             key="Charms"
             onClick={wrapper.find('li').at(1).prop('onClick')}
-            role="button" tabIndex="0">
+            role="button"
+            tabIndex="0">
             Charms
           </li>
-          <li className=""
+          <li
+            className=""
             key="Bundles"
             onClick={wrapper.find('li').at(2).prop('onClick')}
-            role="button" tabIndex="0">
+            role="button"
+            tabIndex="0">
             Bundles
           </li>
         </ul>
@@ -43,14 +49,14 @@ describe('SearchResultsTypeFilter', function() {
   });
 
   it('can show a filter as active', function() {
-    const wrapper = renderComponent({ currentType: 'bundle' });
+    const wrapper = renderComponent({currentType: 'bundle'});
     assert.equal(
       wrapper.find('li').at(2).prop('className').includes('selected'), true);
   });
 
   it('can change the state when a filter is clicked', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('li').at(1).simulate('click');
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

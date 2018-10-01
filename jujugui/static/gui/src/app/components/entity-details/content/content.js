@@ -135,7 +135,8 @@ class EntityContent extends React.Component {
       // Generate the list of options for this application.
       let optionsList = Object.keys(options).map((name, i) => {
         return (
-          <div className="entity-content__config-option"
+          <div
+            className="entity-content__config-option"
             key={name + i}>
             <dt className="entity-content__config-name">
               {name}
@@ -152,9 +153,11 @@ class EntityContent extends React.Component {
       }
       const title = (
         <span>
-          <img alt={application}
+          <img
+            alt={application}
             className="entity-content__config-image"
-            src={applicationIcons[id]} width="26" />
+            src={applicationIcons[id]}
+            width="26" />
           {application}</span>
       );
       if (optionsList) {
@@ -192,7 +195,8 @@ class EntityContent extends React.Component {
     if (optionsList) {
       const title = isCharm ? 'Configuration' : 'Bundle configuration';
       return (
-        <div className="entity-content__configuration"
+        <div
+          className="entity-content__configuration"
           id="configuration">
           <h3 className="entity-content__header">{title}</h3>
           {optionsList}
@@ -277,7 +281,8 @@ class EntityContent extends React.Component {
     } else {
       content = terms.map((item, i) => {
         return [i > 0 ? ', ' : ''].concat(
-          <a className="link link--cold"
+          <a
+            className="link link--cold"
             key={item.name}
             onClick={this._toggleTerms.bind(this, item)}>
             {item.name}
@@ -439,7 +444,8 @@ class EntityContent extends React.Component {
         <ul className="section__list">
           {bugLink ? (
             <li className="section__list-item">
-              <a className="link link--cold"
+              <a
+                className="link link--cold"
                 href={bugLink}
                 target="_blank">
                 Submit a bug
@@ -447,7 +453,8 @@ class EntityContent extends React.Component {
             </li>) : undefined}
           {homepageLink ? (
             <li className="section__list-item">
-              <a className="link link--cold"
+              <a
+                className="link link--cold"
                 href={homepageLink}
                 target="_blank">
                 Project homepage
@@ -496,7 +503,8 @@ class EntityContent extends React.Component {
           </span>);
       }
       priceList.push(
-        <li className="entity-content__plan-price-item"
+        <li
+          className="entity-content__plan-price-item"
           key={amount + (quantity || '') + i}>
           <span className="entity-content__plan-price-amount">
             {amount}
@@ -535,7 +543,8 @@ class EntityContent extends React.Component {
         {'last-col': (i + 1) % 3 === 0});
 
       plansList.push(
-        <div className={classes}
+        <div
+          className={classes}
           key={plan.url + i}>
           <div className="entity-content__plan-content">
             <h3 className="entity-content__plan-title">
@@ -551,7 +560,8 @@ class EntityContent extends React.Component {
         </div>);
     });
     return (
-      <div className="row entity-content__plans"
+      <div
+        className="row entity-content__plans"
         id="plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
@@ -591,7 +601,9 @@ class EntityContent extends React.Component {
         </h3>
         <p>
           Add this card to your website by copying the code below.&nbsp;
-          <a className="entity-content__card-cta" href="https://jujucharms.com/community/cards"
+          <a
+            className="entity-content__card-cta"
+            href="https://jujucharms.com/community/cards"
             target="_blank">
             Learn more
           </a>.

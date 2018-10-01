@@ -86,7 +86,8 @@ describe('EntityContent', function() {
                   <h4 className="entity-content__metadata-title">
                     Tags:
                   </h4>&nbsp;
-                  <a className="link link--cold"
+                  <a
+                    className="link link--cold"
                     data-id="database"
                     onClick={wrapper.find('.link').at(0).prop('onClick')}>
                     database
@@ -100,7 +101,8 @@ describe('EntityContent', function() {
                 getFile={sinon.stub()}
                 hash="readme"
                 scrollCharmbrowser={sinon.stub()} />
-              <div className="entity-content__configuration"
+              <div
+                className="entity-content__configuration"
                 id="configuration">
                 <h3 className="entity-content__header">
                   Configuration
@@ -131,7 +133,8 @@ describe('EntityContent', function() {
                 </h3>
                 <ul className="section__list">
                   <li className="section__list-item">
-                    <a className="link link--cold"
+                    <a
+                      className="link link--cold"
                       href="https://bugs.launchpad.net/charms/+source/django"
                       target="_blank">
                       Submit a bug
@@ -156,7 +159,8 @@ describe('EntityContent', function() {
                 </h3>
                 <p>
                   Add this card to your website by copying the code below.&nbsp;
-                  <a className="entity-content__card-cta"
+                  <a
+                    className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
@@ -205,12 +209,14 @@ describe('EntityContent', function() {
     const expected = (
       <div className="entity-content__metadata">
         <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
-        <a className="link link--cold"
+        <a
+          className="link link--cold"
           key="terms1"
           onClick={links.at(0).prop('onClick')}>
             terms1
         </a>{', '}
-        <a className="link link--cold"
+        <a
+          className="link link--cold"
           key="terms2"
           onClick={links.at(1).prop('onClick')}>
             terms2
@@ -296,14 +302,16 @@ describe('EntityContent', function() {
         </h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a className="link link--cold"
+            <a
+              className="link link--cold"
               href="http://example.com/bugs"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a className="link link--cold"
+            <a
+              className="link link--cold"
               href="http://example.com/"
               target="_blank">
               Project homepage
@@ -349,7 +357,8 @@ describe('EntityContent', function() {
                 getFile={sinon.stub()}
                 hash="readme"
                 scrollCharmbrowser={sinon.stub()} />
-              <div className="entity-content__configuration"
+              <div
+                className="entity-content__configuration"
                 id="configuration">
                 <h3 className="entity-content__header">
                   Bundle configuration
@@ -357,9 +366,11 @@ describe('EntityContent', function() {
                 <div>
                   <AccordionSection
                     title={<span>
-                      <img alt="gunicorn"
+                      <img
+                        alt="gunicorn"
                         className="entity-content__config-image"
-                        src={undefined} width="26" />
+                        src={undefined}
+                        width="26" />
                       gunicorn
                     </span>}>
                     <div className="entity-content__config-description">
@@ -383,9 +394,11 @@ describe('EntityContent', function() {
                   </AccordionSection>
                   <AccordionSection
                     title={<span>
-                      <img alt="django"
+                      <img
+                        alt="django"
                         className="entity-content__config-image"
-                        src={undefined} width="26" />
+                        src={undefined}
+                        width="26" />
                       django
                     </span>} />
                 </div>
@@ -403,7 +416,8 @@ describe('EntityContent', function() {
                 <ul className="section__list">
                   {undefined}
                   <li className="section__list-item">
-                    <a className="link link--cold"
+                    <a
+                      className="link link--cold"
                       href={'https://code.launchpad.net/~charmers/charms/' +
                       'bundles/django-cluster/bundle'}
                       target="_blank">
@@ -423,7 +437,8 @@ describe('EntityContent', function() {
                 </h3>
                 <p>
                   Add this card to your website by copying the code below.&nbsp;
-                  <a className="entity-content__card-cta"
+                  <a
+                    className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
                     target="_blank">
                     Learn more
@@ -455,14 +470,16 @@ describe('EntityContent', function() {
         </h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a className="link link--cold"
+            <a
+              className="link link--cold"
               href="http://example.com/bugs"
               target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a className="link link--cold"
+            <a
+              className="link link--cold"
               href="http://example.com/"
               target="_blank">
               Project homepage
@@ -499,21 +516,24 @@ describe('EntityContent', function() {
       plans
     });
     const expected = (
-      <div className="row entity-content__plans"
+      <div
+        className="row entity-content__plans"
         id="plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
             <div className="equal-height">
               {[
-                <div className="entity-content__plan four-col"
+                <div
+                  className="entity-content__plan four-col"
                   key="plan10">
                   <div className="entity-content__plan-content">
                     <h3 className="entity-content__plan-title">
                       plan1
                     </h3>
                     <ul className="entity-content__plan-price">
-                      {[<li className="entity-content__plan-price-item"
+                      {[<li
+                        className="entity-content__plan-price-item"
                         key="testprice10">
                         <span className="entity-content__plan-price-amount">
                           test
@@ -528,14 +548,16 @@ describe('EntityContent', function() {
                     </p>
                   </div>
                 </div>,
-                <div className="entity-content__plan four-col"
+                <div
+                  className="entity-content__plan four-col"
                   key="plan21">
                   <div className="entity-content__plan-content">
                     <h3 className="entity-content__plan-title">
                       plan2
                     </h3>
                     <ul className="entity-content__plan-price">
-                      {[<li className="entity-content__plan-price-item"
+                      {[<li
+                        className="entity-content__plan-price-item"
                         key="price20">
                         <span className="entity-content__plan-price-amount">
                           price2
@@ -548,14 +570,16 @@ describe('EntityContent', function() {
                     </p>
                   </div>
                 </div>,
-                <div className="entity-content__plan four-col last-col"
+                <div
+                  className="entity-content__plan four-col last-col"
                   key="plan32">
                   <div className="entity-content__plan-content">
                     <h3 className="entity-content__plan-title">
                       plan3
                     </h3>
                     <ul className="entity-content__plan-price">
-                      <li className="entity-content__plan-price-item"
+                      <li
+                        className="entity-content__plan-price-item"
                         key="testprice30">
                         <span className="entity-content__plan-price-amount">
                           test
@@ -564,7 +588,8 @@ describe('EntityContent', function() {
                           / {'price3'}
                         </span>
                       </li>
-                      <li className="entity-content__plan-price-item"
+                      <li
+                        className="entity-content__plan-price-item"
                         key="price3b1">
                         <span className="entity-content__plan-price-amount">
                           price3b

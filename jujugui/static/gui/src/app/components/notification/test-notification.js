@@ -31,20 +31,21 @@ describe('Notification', function() {
   });
 
   it('renders type', () => {
-    const wrapper = renderComponent({ type: 'positive' });
+    const wrapper = renderComponent({type: 'positive'});
     assert.equal(wrapper.prop('className'), 'p-notification--positive');
   });
 
   it('renders with additional classes', () => {
-    const wrapper = renderComponent({ extraClasses: 'test' });
+    const wrapper = renderComponent({extraClasses: 'test'});
     assert.equal(wrapper.prop('className').includes('test'), true);
   });
 
   it('renders with dismiss function', () => {
     const dismiss = sinon.stub();
-    const wrapper = renderComponent({ dismiss });
+    const wrapper = renderComponent({dismiss});
     const expected = (
-      <button className="p-notification__action"
+      <button
+        className="p-notification__action"
         onClick={wrapper.find('.p-notification__action').prop('onClick')}>
         <SvgIcon
           name="close_16"
@@ -56,7 +57,7 @@ describe('Notification', function() {
   it('can be dismissed', () => {
     const dismiss = sinon.stub();
     const stopPropagation = sinon.stub();
-    const wrapper = renderComponent({ dismiss });
+    const wrapper = renderComponent({dismiss});
     wrapper.find('.p-notification__action').props().onClick({
       stopPropagation: stopPropagation
     });
@@ -65,7 +66,7 @@ describe('Notification', function() {
   });
 
   it('renders with a blocking div', () => {
-    const wrapper = renderComponent({ isBlocking: true });
+    const wrapper = renderComponent({isBlocking: true});
     assert.equal(wrapper.find('.p-notification__blocker').length, 1);
     assert.equal(wrapper.find('.p-notification').length, 1);
   });

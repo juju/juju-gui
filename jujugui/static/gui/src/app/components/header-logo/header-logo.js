@@ -40,7 +40,8 @@ class HeaderLogo extends React.Component {
 
   render() {
     return (
-      <a href={this.props.homePath}
+      <a
+        href={this.props.homePath}
         onClick={this._showProfile.bind(this)}
         role="button"
         title="Home">

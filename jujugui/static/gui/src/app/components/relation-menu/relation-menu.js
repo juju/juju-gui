@@ -71,21 +71,25 @@ const RelationMenu = function(props) {
       var targetClasses = 'inspect-relation endpoint ' + (
         relation.targetHasError() ? 'error' : '');
       components.push(
-        <li className={relationClasses}
+        <li
+          className={relationClasses}
           data-relationid={relation.id}
           key={relation.id}>
           {_generateIcon(relation)}
-          <span className={sourceClasses}
+          <span
+            className={sourceClasses}
             data-endpoint={relation.sourceId}>
             {_getRealServiceName(relation.sourceId, relation)}
           </span>
           {' '}-{' '}
-          <span className={targetClasses}
+          <span
+            className={targetClasses}
             data-endpoint={relation.targetId}>
             {_getRealServiceName(relation.targetId, relation)}
           </span>
           <span className="relation-remove link">
-            <SvgIcon name="delete_16"
+            <SvgIcon
+              name="delete_16"
               size="16" />
           </span>
         </li>);

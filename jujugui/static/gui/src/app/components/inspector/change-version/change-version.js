@@ -165,7 +165,7 @@ class InspectorChangeVersion extends React.Component {
       );
     }
     let components = [];
-    const { versions } = this.state;
+    const {versions} = this.state;
     if (!versions || versions.length === 1) {
       components = (
         <li className="inspector-change-version__none">
@@ -204,7 +204,8 @@ class InspectorChangeVersion extends React.Component {
       <div className="inspector-change-version">
         <div className="inspector-change-version__current">
           Current version:
-          <div className="inspector-change-version__current-version"
+          <div
+            className="inspector-change-version__current-version"
             onClick={this._viewCharmDetails.bind(this, url)}
             role="button"
             tabIndex="0">

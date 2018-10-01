@@ -85,7 +85,8 @@ function _renderNotification(doc, state) {
       We use cookies to improve your experience. By your continued use
       of this application you accept such use. To change your settings
       please&nbsp;
-      <a href="http://www.ubuntu.com/privacy-policy#cookies"
+      <a
+        href="http://www.ubuntu.com/privacy-policy#cookies"
         target="_blank">
         see our policy
       </a>

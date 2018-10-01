@@ -18,7 +18,8 @@ describe('HashLink', () => {
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="hash-link"
+      <div
+        className="hash-link"
         onClick={wrapper.prop('onClick')}>
         <SvgIcon
           name="anchor_16"
@@ -29,7 +30,7 @@ describe('HashLink', () => {
 
   it('can change the hash state', () => {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.props().onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

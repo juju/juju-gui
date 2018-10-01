@@ -42,7 +42,8 @@ class Button extends React.Component {
 
   render() {
     return (
-      <button className={this._generateClasses()}
+      <button
+        className={this._generateClasses()}
         onClick={this._handleClick.bind(this)}
         title={this.props.tooltip}
         type={this.props.submit ? 'submit' : 'button'}>

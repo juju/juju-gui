@@ -84,7 +84,7 @@ class SearchResults extends React.Component {
         // The series data structure is modified in the non-multi series
         // charms so this formats the series to match.
         entity.series = series.map(
-          name => ({ name: name, storeId: entity.id }));
+          name => ({name: name, storeId: entity.id}));
         collapsedEntities[key] = entity;
         orderedKeys.push(key);
         continue;
@@ -237,7 +237,7 @@ class SearchResults extends React.Component {
       filters.owner = owner;
     }
     this._changeActiveComponent('loading');
-    this.setState({ waitingForSearch: true });
+    this.setState({waitingForSearch: true});
     // If there is an existing search request then abort it before starting
     // the new search.
     if (this.searchXhr) {
@@ -399,7 +399,8 @@ class SearchResults extends React.Component {
                   http://jujucharms.com
                 </a>
                 {' '}or go{' '}
-                <span className="link"
+                <span
+                  className="link"
                   onClick={this._handleBack.bind(this)}>
                   back
                 </span>.

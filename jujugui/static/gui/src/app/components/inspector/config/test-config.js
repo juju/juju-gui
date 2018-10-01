@@ -62,7 +62,7 @@ describe('Configuration', function() {
     const option1key = 'string body value';
     const option2key = true;
     const charmGet = sinon.stub();
-    charmGet.withArgs('options').returns({ option1: option1, option2: option2 });
+    charmGet.withArgs('options').returns({option1: option1, option2: option2});
     charmGet.withArgs('name').returns('apache2');
     charm = {
       get: charmGet
@@ -72,7 +72,7 @@ describe('Configuration', function() {
     serviceGet.withArgs('name').returns('ghost');
     serviceGet.withArgs('series').returns('trusty');
     serviceGet.withArgs('config').returns(
-      { option1: option1key, option2: option2key });
+      {option1: option1key, option2: option2key});
     service = {
       get: serviceGet,
       set: sinon.stub()
@@ -321,7 +321,7 @@ describe('Configuration', function() {
 
   it('can handle cancelling the changes', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('.inspector-config__buttons ButtonRow').prop('buttons')[0].action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -334,7 +334,7 @@ describe('Configuration', function() {
 
   it('can open the file dialog when the button is clicked', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     const instance = wrapper.instance();
     wrapper.find('.inspector-config__config-file ButtonRow').prop('buttons')[0].action();
     assert.equal(instance.refs.file.click.callCount, 1);

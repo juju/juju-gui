@@ -80,7 +80,7 @@ describe('UnitList', () => {
   });
 
   it('renders if there are no units', () => {
-    const wrapper = renderComponent({ units: [] });
+    const wrapper = renderComponent({units: []});
     var expected = (
       <div className="unit-list">
         <div className="unit-list__actions">
@@ -99,7 +99,7 @@ describe('UnitList', () => {
 
   it('renders a list of unit components', () => {
     units.pop();
-    const wrapper = renderComponent({ units });
+    const wrapper = renderComponent({units});
     const items = wrapper.find('CheckListItem');
     const expected = (
       <ul className="unit-list__units">
@@ -187,7 +187,7 @@ describe('UnitList', () => {
   });
 
   it('does not render the actions when viewing a status list', () => {
-    const wrapper = renderComponent({ unitStatus: 'pending' });
+    const wrapper = renderComponent({unitStatus: 'pending'});
     assert.equal(wrapper.find('.unit-list__actions').length, 0);
   });
 
@@ -213,7 +213,7 @@ describe('UnitList', () => {
 
   it('navigates to the unit when a list item is clicked', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('CheckListItem').at(1).props().action({
       currentTarget: {
         getAttribute: function() {
@@ -246,7 +246,7 @@ describe('UnitList', () => {
   });
 
   it('displays Resolve and Retry buttons for an error list', function() {
-    const wrapper = renderComponent({ unitStatus: 'error' });
+    const wrapper = renderComponent({unitStatus: 'error'});
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Resolve',
@@ -323,7 +323,7 @@ describe('UnitList', () => {
     units[0].agent_status = 'running';
     units[1].agent_status = 'running';
     units[2].agent_status = 'running';
-    const wrapper = renderComponent({ envResolved });
+    const wrapper = renderComponent({envResolved});
     wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
@@ -334,7 +334,7 @@ describe('UnitList', () => {
 
   it('will not resolve pending units', function() {
     const envResolved = sinon.stub();
-    const wrapper = renderComponent({ envResolved });
+    const wrapper = renderComponent({envResolved});
     wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(envResolved.callCount, 0);
   });

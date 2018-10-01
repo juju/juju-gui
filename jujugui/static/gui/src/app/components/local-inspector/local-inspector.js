@@ -64,7 +64,9 @@ class LocalInspector extends React.Component {
         component = (
           <div className="local-inspector__content-new">
             <p>Choose a series to deploy this charm</p>
-            <select className="local-inspector__series" defaultValue="trusty"
+            <select
+              className="local-inspector__series"
+              defaultValue="trusty"
               disabled={this.props.acl.isReadOnly()}
               ref="series">
               {seriesOptions}
@@ -103,7 +105,9 @@ class LocalInspector extends React.Component {
       items.push(
         <li key={serviceId}>
           <label>
-            <input data-id={serviceId} disabled={props.acl.isReadOnly()}
+            <input
+              data-id={serviceId}
+              disabled={props.acl.isReadOnly()}
               ref={'service-' + serviceId}
               type="checkbox" />
             {service.get('name')}
@@ -184,7 +188,9 @@ class LocalInspector extends React.Component {
           <ul className="local-inspector__list">
             <li>
               <label>
-                <input defaultChecked={localType === 'new'} disabled={isReadOnly}
+                <input
+                  defaultChecked={localType === 'new'}
+                  disabled={isReadOnly}
                   name="action"
                   onChange={this._changeActiveComponent.bind(this, 'new')}
                   type="radio" />
@@ -193,7 +199,9 @@ class LocalInspector extends React.Component {
             </li>
             <li>
               <label>
-                <input defaultChecked={localType === 'update'} disabled={isReadOnly}
+                <input
+                  defaultChecked={localType === 'update'}
+                  disabled={isReadOnly}
                   name="action"
                   onChange={
                     this._changeActiveComponent.bind(this, 'update')}

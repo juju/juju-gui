@@ -22,7 +22,7 @@ describe('OverviewAction', function() {
 
   it('calls the callable provided when clicked', function() {
     const action = sinon.stub();
-    const wrapper = renderComponent({ action });
+    const wrapper = renderComponent({action});
     wrapper.simulate('click');
     assert.equal(action.callCount, 1);
   });
@@ -33,10 +33,11 @@ describe('OverviewAction', function() {
   });
 
   it('sets the provided icon', function() {
-    const wrapper = renderComponent({ icon: 'action-icon' });
+    const wrapper = renderComponent({icon: 'action-icon'});
     const expected = (
       <span className="overview-action__icon">
-        <SvgIcon name="action-icon"
+        <SvgIcon
+          name="action-icon"
           size="16" />
       </span>);
     assert.compareJSX(wrapper.find('.overview-action__icon'), expected);
@@ -49,7 +50,8 @@ describe('OverviewAction', function() {
       linkTitle: 'Juju Charms'
     });
     const expected = (
-      <span className="overview-action__link"
+      <span
+        className="overview-action__link"
         onClick={wrapper.find('.overview-action__link').prop('onClick')}>
           Juju Charms
       </span>);
@@ -78,7 +80,7 @@ describe('OverviewAction', function() {
   });
 
   it('sets the value', function() {
-    const wrapper = renderComponent({ value: '5' });
+    const wrapper = renderComponent({value: '5'});
     assert.equal(wrapper.find('.overview-action__value').text(), '5');
   });
 

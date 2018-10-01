@@ -51,7 +51,8 @@ describe('HeaderBreadcrumb', () => {
         <div className="header-breadcrumb__loading">Loading model</div>
         <ul className="header-breadcrumb__list" data-username="who">
           <li className="header-breadcrumb__list-item">
-            <a className="header-breadcrumb--link"
+            <a
+              className="header-breadcrumb--link"
               href="/u/who"
               onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
               title="who">
@@ -85,7 +86,8 @@ describe('HeaderBreadcrumb', () => {
       showEnvSwitcher: true
     });
     const expected = (
-      <a className="header-breadcrumb--link"
+      <a
+        className="header-breadcrumb--link"
         href="/u/rose"
         onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
         title="rose">
@@ -106,7 +108,8 @@ describe('HeaderBreadcrumb', () => {
       showEnvSwitcher: true
     });
     const expected = (
-      <a className="header-breadcrumb--link"
+      <a
+        className="header-breadcrumb--link"
         href="/u/cyberman"
         onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
         title="cyberman">

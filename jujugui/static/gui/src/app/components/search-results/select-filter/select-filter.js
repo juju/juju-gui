@@ -15,7 +15,8 @@ class SearchResultsSelectFilter extends React.Component {
     var components = [];
     this.props.items.forEach(function(item) {
       components.push(
-        <option key={item.value}
+        <option
+          key={item.value}
           value={item.value}>
           {item.label}
         </option>);
@@ -42,7 +43,8 @@ class SearchResultsSelectFilter extends React.Component {
     return (
       <div className={className}>
         {this.props.label}:
-        <select defaultValue={this.props.currentValue}
+        <select
+          defaultValue={this.props.currentValue}
           onChange={this._handleChange.bind(this)}>
           {this._generateItems()}
         </select>

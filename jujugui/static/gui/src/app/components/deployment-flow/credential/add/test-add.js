@@ -65,7 +65,8 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add twelve-col no-margin-bottom">
         <h4>Create new Google Compute Engine credential</h4>
         <div className="twelve-col deployment-credential-add__signup">
-          <a className="deployment-credential-add__link"
+          <a
+            className="deployment-credential-add__link"
             href="https://console.cloud.google.com/billing/freetrial"
             target="_blank">
             Sign up for {'Google Compute Engine'}
@@ -75,7 +76,8 @@ describe('DeploymentCredentialAdd', function() {
               size="12" />
           </a>
         </div>
-        <form className="twelve-col no-margin-bottom"
+        <form
+          className="twelve-col no-margin-bottom"
           onSubmit={wrapper.find('form').prop('onSubmit')}>
           <div className="six-col last-col">
             <GenericInput
@@ -100,10 +102,13 @@ describe('DeploymentCredentialAdd', function() {
           <div className="deployment-credential-add__credentials">
             <div className="six-col">
               <p>
-                Need help? Read more about <a className="deployment-panel__link"
+                Need help? Read more about <a
+                  className="deployment-panel__link"
                   href="https://jujucharms.com/docs/stable/credentials"
-                  target="_blank" title="Cloud credentials help">credentials in
-                general</a> or <a className="deployment-panel__link"
+                  target="_blank"
+                  title="Cloud credentials help">credentials in
+                general</a> or <a
+                  className="deployment-panel__link"
                   href="https://jujucharms.com/docs/stable/help-google"
                   target="_blank"
                   title="Help using the Google Compute Engine public cloud">
@@ -242,10 +247,13 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add__credentials">
         <div className="six-col">
           <p>
-            Need help? Read more about <a className="deployment-panel__link"
+            Need help? Read more about <a
+              className="deployment-panel__link"
               href="https://jujucharms.com/docs/stable/credentials"
-              target="_blank" title="Cloud credentials help">credentials in
-            general</a> or <a className="deployment-panel__link"
+              target="_blank"
+              title="Cloud credentials help">credentials in
+            general</a> or <a
+              className="deployment-panel__link"
               href="https://jujucharms.com/docs/stable/help-google"
               target="_blank"
               title="Help using the Google Compute Engine public cloud">
@@ -343,10 +351,13 @@ describe('DeploymentCredentialAdd', function() {
       <div className="deployment-credential-add__credentials">
         <div className="six-col">
           <p>
-            Need help? Read more about <a className="deployment-panel__link"
+            Need help? Read more about <a
+              className="deployment-panel__link"
               href="https://jujucharms.com/docs/stable/credentials"
-              target="_blank" title="Cloud credentials help">credentials in
-            general</a> or <a className="deployment-panel__link"
+              target="_blank"
+              title="Cloud credentials help">credentials in
+            general</a> or <a
+              className="deployment-panel__link"
               href="https://jujucharms.com/docs/stable/help-google"
               target="_blank"
               title="Help using the Google Compute Engine public cloud">

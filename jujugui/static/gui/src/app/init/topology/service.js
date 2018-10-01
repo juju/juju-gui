@@ -1022,7 +1022,7 @@ class ServiceModule {
     var dragData = JSON.parse(evt.dataTransfer.getData('Text'));
     var translation = topo.getTranslate();
     var scale = topo.getScale();
-    var ghostAttributes = { coordinates: [] };
+    var ghostAttributes = {coordinates: []};
     // The following magic number 71 is the height of the header and is
     // required to position the service in the proper y position.
     var dropXY = [evt.clientX, (evt.clientY - 71)];

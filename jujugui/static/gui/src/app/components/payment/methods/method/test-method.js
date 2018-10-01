@@ -146,7 +146,7 @@ describe('PaymentMethod', () => {
   it('can update a payment method', () => {
     payment.updatePaymentMethod = sinon.stub().callsArgWith(4, null);
     const updateUser = sinon.stub();
-    const wrapper = renderComponent({ updateUser });
+    const wrapper = renderComponent({updateUser});
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
     wrapper.find('Button').at(1).props().action();
@@ -171,7 +171,7 @@ describe('PaymentMethod', () => {
   it('can handle errors when creating a token', () => {
     const addNotification = sinon.stub();
     payment.updatePaymentMethod = sinon.stub().callsArgWith(4, 'Uh oh!');
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
     wrapper.update();
     wrapper.find('Button').at(1).props().action();

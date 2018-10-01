@@ -84,7 +84,8 @@ describe('DeploymentSignup', function() {
               </li>
             </ul>
             <p>
-              <a className="button--inline-positive"
+              <a
+                className="button--inline-positive"
                 href="https://jujucharms.com/beta"
                 onClick={wrapper.find('.button--inline-positive').prop('onClick')}
                 target="_blank">
@@ -121,7 +122,7 @@ describe('DeploymentSignup', function() {
 
   it('can navigate to the flow view', function() {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {

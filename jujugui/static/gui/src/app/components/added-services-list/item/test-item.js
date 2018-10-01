@@ -33,7 +33,8 @@ describe('AddedServicesListItem', function() {
     mockService.set('fade', false);
     const wrapper = renderComponent();
     const expected = (
-      <li className="inspector-view__list-item"
+      <li
+        className="inspector-view__list-item"
         data-serviceid="wordpress"
         onClick={wrapper.prop('onClick')}
         onMouseEnter={wrapper.prop('onMouseEnter')}
@@ -80,7 +81,10 @@ describe('AddedServicesListItem', function() {
       var service = {
         getAttrs: function() {
           return {
-            icon: 'icon.gif', unit_count: '1', name: 'demo', id: 'demo',
+            icon: 'icon.gif',
+            unit_count: '1',
+            name: 'demo',
+            id: 'demo',
             units: {
               toArray: function() {
                 return [{agent_state: status.name}];
@@ -89,7 +93,7 @@ describe('AddedServicesListItem', function() {
         get: function() {
           return false;
         }};
-      const wrapper = renderComponent({ service });
+      const wrapper = renderComponent({service});
       const expected = (
         <span className="inspector-view__status-block">
           {statusIcon(status)}
@@ -102,7 +106,10 @@ describe('AddedServicesListItem', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
+          icon: 'icon.gif',
+          unit_count: '5',
+          name: 'demo',
+          id: 'demo',
           units: {
             toArray: function() {
               return [{agent_state: 'unknown-state'}];
@@ -111,7 +118,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     const expected = (
       <span className="inspector-view__status-block">
         {undefined}
@@ -123,7 +130,10 @@ describe('AddedServicesListItem', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
+          icon: 'icon.gif',
+          unit_count: '2',
+          name: 'demo',
+          id: 'demo',
           units: {
             toArray: function() {
               return [{agent_state: 'pending'}, {agent_state: 'error'}];
@@ -132,7 +142,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     assert.equal(wrapper.find('.inspector-view__status--error').length, 1);
   });
 
@@ -140,7 +150,10 @@ describe('AddedServicesListItem', function() {
     var service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '2', name: 'demo', id: 'demo',
+          icon: 'icon.gif',
+          unit_count: '2',
+          name: 'demo',
+          id: 'demo',
           units: {
             toArray: function() {
               return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
@@ -149,7 +162,7 @@ describe('AddedServicesListItem', function() {
       get: function() {
         return false;
       }};
-    const wrapper = renderComponent({ service });
+    const wrapper = renderComponent({service});
     assert.equal(wrapper.find('.inspector-view__status--pending').length, 1);
   });
 
@@ -157,7 +170,10 @@ describe('AddedServicesListItem', function() {
     const service = {
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
+          icon: 'icon.gif',
+          unit_count: '5',
+          name: 'demo',
+          id: 'demo',
           units: {
             toArray: function() {
               return [];
@@ -192,7 +208,10 @@ describe('AddedServicesListItem', function() {
       get: sinon.stub().returns('apache2'),
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
+          icon: 'icon.gif',
+          unit_count: '5',
+          name: 'demo',
+          id: 'demo',
           units: {
             toArray: function() {
               return [];
@@ -212,7 +231,10 @@ describe('AddedServicesListItem', function() {
       get: sinon.stub().returns('apache2'),
       getAttrs: function() {
         return {
-          icon: 'icon.gif', unit_count: '5', name: 'demo', id: 'demo',
+          icon: 'icon.gif',
+          unit_count: '5',
+          name: 'demo',
+          id: 'demo',
           units: {
             toArray: function() {
               return [];

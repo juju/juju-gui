@@ -49,13 +49,15 @@ describe('GenericInput', function() {
     const input = wrapper.find('input');
     const expected = (
       <div className="generic-input">
-        <label className={
-          'generic-input__label generic-input__label--value-present ' +
-          'generic-input__label--placeholder-present'}
-        htmlFor="Region">
+        <label
+          className={
+            'generic-input__label generic-input__label--value-present ' +
+            'generic-input__label--placeholder-present'}
+          htmlFor="Region">
           Region
         </label>
-        <input aria-invalid={false}
+        <input
+          aria-invalid={false}
           autoComplete="off"
           className="generic-input__field"
           defaultValue="default"
@@ -82,7 +84,8 @@ describe('GenericInput', function() {
     });
     const input = wrapper.find('.generic-input__multiline-field');
     const expected = (
-      <div aria-invalid={false}
+      <div
+        aria-invalid={false}
         className="generic-input__multiline-field"
         contentEditable={true}
         dangerouslySetInnerHTML={{__html: 'default'}}
@@ -135,13 +138,14 @@ describe('GenericInput', function() {
   });
 
   it('can validate the form', () => {
-    const wrapper = renderComponent({ value: '' });
+    const wrapper = renderComponent({value: ''});
     const instance = wrapper.instance();
     instance.validate();
     wrapper.update();
     const expected = (
       <ul className="generic-input__errors">
-        {[<li className="generic-input__error"
+        {[<li
+          className="generic-input__error"
           key="This field is required."
           role="alert">
           This field is required.
@@ -180,19 +184,19 @@ describe('GenericInput', function() {
   });
 
   it('can validate the input when leaving', () => {
-    const wrapper = renderComponent({ value: '' });
+    const wrapper = renderComponent({value: ''});
     wrapper.find('input').props().onBlur();
     wrapper.update();
     assert.equal(wrapper.find('.generic-input__errors').length, 1);
   });
 
   it('allows the label to be optional', () => {
-    const wrapper = renderComponent({ label: null });
+    const wrapper = renderComponent({label: null});
     assert.equal(wrapper.find('.generic-input__label').length, 0);
   });
 
   it('adds a class to the wrapper element on error', () => {
-    const wrapper = renderComponent({ value: '' });
+    const wrapper = renderComponent({value: ''});
     wrapper.find('input').props().onBlur();
     wrapper.update();
     assert.equal(wrapper.prop('className').includes('has-error'), true);

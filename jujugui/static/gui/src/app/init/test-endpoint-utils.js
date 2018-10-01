@@ -348,7 +348,7 @@ describe('Endpoints map', function() {
           'interface': 'logging',
           scope: 'container'
         }
-      ] }});
+      ]}});
   });
 
   it('should add a service to the map, neither provides nor requires',

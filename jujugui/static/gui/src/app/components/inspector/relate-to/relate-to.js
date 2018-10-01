@@ -43,7 +43,8 @@ class InspectorRelateTo extends React.Component {
     return applications.map((application, index) => {
       var data = application.getAttrs();
       return (
-        <li className="inspector-view__list-item"
+        <li
+          className="inspector-view__list-item"
           data-id={data.id}
           key={data.id + index}
           onClick={this._relateToItemAction.bind(this)}

@@ -67,7 +67,7 @@ describe('InspectorExpose', function() {
       {id: 'django/2'}
     ];
     var units = {toArray: sinon.stub().returns(unitList)};
-    const wrapper = renderComponent({ units });
+    const wrapper = renderComponent({units});
     const expected = (
       <ul className="inspector-expose__units">
         <InspectorExposeUnit
@@ -84,7 +84,7 @@ describe('InspectorExpose', function() {
 
   it('can navigate to a unit', function() {
     var changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     wrapper.find('InspectorExposeUnit').at(0).props().action({
       currentTarget: {
         getAttribute: sinon.stub().returns('django/1')
@@ -121,7 +121,7 @@ describe('InspectorExpose', function() {
     modelAPI.exposeService.callsArgWith(1, {err: 'error'});
     var addNotification = sinon.stub();
     service.get.withArgs('exposed').returns(false);
-    const wrapper = renderComponent({ addNotification });
+    const wrapper = renderComponent({addNotification});
     wrapper.find('BooleanConfig').props().onChange();
     assert.equal(addNotification.callCount, 1);
     assert.equal(addNotification.args[0][0].title, 'Exposing charm failed');

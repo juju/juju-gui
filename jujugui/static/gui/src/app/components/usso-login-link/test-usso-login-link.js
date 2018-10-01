@@ -24,7 +24,8 @@ describe('USSOLoginLink', () => {
     const wrapper = renderComponent();
     const expected = (
       <div className="usso-login">
-        <a className="usso-login__action"
+        <a
+          className="usso-login__action"
           onClick={wrapper.find('.usso-login__action').prop('onClick')}
           target="_blank">
             Login
@@ -35,7 +36,7 @@ describe('USSOLoginLink', () => {
 
   it('calls loginToController on click for text link', () => {
     const loginToController = sinon.stub();
-    const wrapper = renderComponent({ loginToController });
+    const wrapper = renderComponent({loginToController});
     wrapper.find('.usso-login__action').simulate('click');
     assert.equal(loginToController.callCount, 1);
   });
@@ -57,7 +58,7 @@ describe('USSOLoginLink', () => {
   });
 
   it('can render a button link', () => {
-    const wrapper = renderComponent({ displayType: 'button' });
+    const wrapper = renderComponent({displayType: 'button'});
     var expected = (
       <div className="usso-login">
         <Button
@@ -79,7 +80,7 @@ describe('USSOLoginLink', () => {
   });
 
   it('can render a text link with custom content', () => {
-    const wrapper = renderComponent({ children: 'Scooby Doo' });
+    const wrapper = renderComponent({children: 'Scooby Doo'});
     assert.equal(wrapper.find('.usso-login__action').text(), 'Scooby Doo');
   });
 

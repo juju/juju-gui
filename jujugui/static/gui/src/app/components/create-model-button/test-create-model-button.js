@@ -45,20 +45,20 @@ describe('CreateModelButton', () => {
   });
 
   it('renders a disabled button when provided with disabled state', () => {
-    const wrapper = renderComponent({ disabled: true });
+    const wrapper = renderComponent({disabled: true});
     assert.equal(wrapper.find('Button').prop('disabled'), true);
   });
 
   it('calls the passed action', () => {
     const action = sinon.stub();
-    const wrapper = renderComponent({ action });
+    const wrapper = renderComponent({action});
     wrapper.find('Button').props().action();
     assert.isTrue(action.called);
   });
 
   it('the passed action isn\'t called if button is disabled', () => {
     const action = sinon.stub();
-    const wrapper = renderComponent({ action, disabled: true });
+    const wrapper = renderComponent({action, disabled: true});
     wrapper.find('Button').props().action();
     assert.isFalse(action.called);
   });

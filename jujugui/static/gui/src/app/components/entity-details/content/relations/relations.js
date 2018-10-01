@@ -71,7 +71,8 @@ class EntityContentRelations extends React.Component {
       );
       const type = this.role === 'requirer' ? 'requires' : 'provides';
       components.push(
-        <li className={classes}
+        <li
+          className={classes}
           key={relation.name}
           onClick={this._handleRelationClick.bind(
             this, type, relation.interface)}
@@ -87,7 +88,8 @@ class EntityContentRelations extends React.Component {
         'View more relations';
       components.push(
         <li className="section__list-item" key="show-more">
-          <button className="button--inline-neutral"
+          <button
+            className="button--inline-neutral"
             onClick={this._handleViewMore.bind(this)}
             role="button">
             {buttonText}
@@ -103,10 +105,11 @@ class EntityContentRelations extends React.Component {
       <div className="section entity-relations" id="relations">
         <h3 className="section__title">
           Relations&nbsp;
-          <a href={
-            'https://jujucharms.com/docs/stable/' +
+          <a
+            href={
+              'https://jujucharms.com/docs/stable/' +
             'charms-relations'}
-          target="_blank">
+            target="_blank">
             <SvgIcon
               name="help_16"
               size="16" />

@@ -92,10 +92,11 @@ describe('MachineViewAddMachine', function() {
   });
 
   it('can render for creating a container', function() {
-    const wrapper = renderComponent({ parentId: 'new0' });
+    const wrapper = renderComponent({parentId: 'new0'});
     const expected = (
       <div className="add-machine">{[
-        <select className="add-machine__container"
+        <select
+          className="add-machine__container"
           defaultValue=""
           disabled={false}
           key="containers"
@@ -147,7 +148,7 @@ describe('MachineViewAddMachine', function() {
 
   it('can call the cancel method', function() {
     const close = sinon.stub();
-    const wrapper = renderComponent({ close });
+    const wrapper = renderComponent({close});
     wrapper.find('ButtonRow').prop('buttons')[0].action();
     assert.equal(close.callCount, 1);
   });
@@ -164,7 +165,7 @@ describe('MachineViewAddMachine', function() {
   });
 
   it('can create a container', function() {
-    const wrapper = renderComponent({ parentId: 'new0' });
+    const wrapper = renderComponent({parentId: 'new0'});
     wrapper.find('.add-machine__container').simulate('change', {
       currentTarget: {
         value: 'lxd'

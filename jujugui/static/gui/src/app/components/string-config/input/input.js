@@ -30,7 +30,8 @@ class StringConfigInput extends React.Component {
 
   render() {
     return (
-      <div className="string-config-input"
+      <div
+        className="string-config-input"
         contentEditable={!this.props.disabled}
         dangerouslySetInnerHTML={{__html: this.state.value}}
         onBlur={this._updateValue.bind(this)}

@@ -53,19 +53,22 @@ describe('EntityResources', function() {
             {3}&nbsp;{'resources'}
           </h3>
           <ul className="section__list entity-files__listing">
-            <li className="entity-files__file"
+            <li
+              className="entity-files__file"
               key="file10">
               <a href="/api/foo-0/resource/file1/5" title="Download file1">
                 {'file1'} {'(.zip)'}
               </a>
             </li>
-            <li className="entity-files__file"
+            <li
+              className="entity-files__file"
               key="file21">
               <a href="/api/foo-0/resource/file2/2" title="Download file2">
                 {'file2'} {''}
               </a>
             </li>
-            <li className="entity-files__file"
+            <li
+              className="entity-files__file"
               key="file32">
               <span>
                 {'file3'} {'(.tar)'}

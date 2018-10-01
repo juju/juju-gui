@@ -66,7 +66,8 @@ class EnvList extends React.Component {
           name = `${ownerNoDomain}/${model.name}`;
         }
         return (
-          <li className="env-list__environment"
+          <li
+            className="env-list__environment"
             data-id={model.uuid}
             data-name={model.name}
             data-owner={model.owner}
@@ -115,7 +116,8 @@ class EnvList extends React.Component {
   */
   _generateModels() {
     return (
-      <ul aria-expanded="true"
+      <ul
+        aria-expanded="true"
         aria-hidden="false"
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"

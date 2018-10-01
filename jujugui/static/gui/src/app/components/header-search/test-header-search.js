@@ -72,7 +72,7 @@ describe('HeaderSearch', function() {
       wrapper.find('.header-search__input').prop('value'), 'hexo');
     // re-render which will get the new state.
     delete appState.current.search;
-    wrapper.setProps({ appState });
+    wrapper.setProps({appState});
     // It should be emptied out when metadata.search is undefined.
     // It is important that this is an empty string with React 15.3+ because
     // it now treats an undefined value as the input being 'uncontrolled',
@@ -116,7 +116,7 @@ describe('HeaderSearch', function() {
     appState.current.store = '/u/hatch/juju-gui/precise/14';
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance.setState({ active: false });
+    instance.setState({active: false});
     instance._handleSearchFocus();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -164,7 +164,7 @@ describe('HeaderSearch', function() {
     };
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance.setState({ active: true });
+    instance.setState({active: true});
     wrapper.find('.header-search__submit').props().onClick({
       preventDefault: sinon.stub()
     });
@@ -192,7 +192,7 @@ describe('HeaderSearch', function() {
     };
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance.setState({ active: true });
+    instance.setState({active: true});
     wrapper.find('.header-search__submit').props().onClick({
       preventDefault: sinon.stub()
     });
@@ -220,7 +220,7 @@ describe('HeaderSearch', function() {
     };
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance.setState({ active: true });
+    instance.setState({active: true});
     wrapper.find('.header-search__submit').props().onClick({
       preventDefault: sinon.stub()
     });

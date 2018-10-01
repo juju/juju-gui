@@ -64,7 +64,8 @@ class EntityResources extends React.Component {
     }
     const resourceList = resources.map((resource, i) => {
       return (
-        <li className="entity-files__file"
+        <li
+          className="entity-files__file"
           key={resource.Name + i}>
           {this._generateResource(resource)}
         </li>);

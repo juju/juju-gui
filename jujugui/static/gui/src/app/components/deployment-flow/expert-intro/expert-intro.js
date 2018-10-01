@@ -45,14 +45,15 @@ class DeploymentExpertIntro extends React.Component {
   }
 
   render() {
-    const { entityModel } = this.props;
+    const {entityModel} = this.props;
     let content;
     if (!entityModel) {
       content = (
         <div className="deployment-expert-intro__not-found">
           This {this.isBundle ? 'bundle' : 'charm'} could not be found.
           Visit the&nbsp;
-          <span className="link"
+          <span
+            className="link"
             onClick={this._handleStoreClick.bind(this)}
             role="button"
             tabIndex="0">
@@ -87,7 +88,8 @@ class DeploymentExpertIntro extends React.Component {
                 <ul>
                   <li>
                     Your&nbsp;
-                    <a href="https://jujucharms.com/docs/stable/credentials"
+                    <a
+                      href="https://jujucharms.com/docs/stable/credentials"
                       target="_blank">
                       cloud credentials
                     </a>.&nbsp;
@@ -115,8 +117,9 @@ class DeploymentExpertIntro extends React.Component {
                   <div
                     className="deployment-expert-intro__description"
                     dangerouslySetInnerHTML={{__html: supportedDescription}}></div>
-                  <Link changeState={this.props.changeState}
-                    clickState={{ hash: 'support-level' }}
+                  <Link
+                    changeState={this.props.changeState}
+                    clickState={{hash: 'support-level'}}
                     generatePath={this.props.generatePath}>
                     View other support options
                   </Link>

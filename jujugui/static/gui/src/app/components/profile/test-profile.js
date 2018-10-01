@@ -52,7 +52,7 @@ describe('Profile', function() {
   let acl, controllerAPI, userInfo;
 
   beforeEach(() => {
-    acl = shapeup.deepFreeze({ isReadOnly: () => false });
+    acl = shapeup.deepFreeze({isReadOnly: () => false});
     controllerAPI = {
       getCloudCredentialNames: sinon.stub(),
       listClouds: sinon.stub(),
@@ -68,7 +68,7 @@ describe('Profile', function() {
   });
 
   it('can render', () => {
-    const wrapper = renderComponent({ gisf: true });
+    const wrapper = renderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 
@@ -79,20 +79,20 @@ describe('Profile', function() {
   });
 
   it('shows the payments section when the flag is on', () => {
-    const wrapper = renderComponent({ showPay: true });
+    const wrapper = renderComponent({showPay: true});
     const sectionsMap = getSectionsMap(wrapper);
     assert.isObject(sectionsMap.get('payment'));
   });
 
   it('hides certain sections when viewing others profile pages', () => {
-    const wrapper = renderComponent({ controllerUser: 'foo' });
+    const wrapper = renderComponent({controllerUser: 'foo'});
     const sectionsMap = getSectionsMap(wrapper);
     const allowedKeys = ['charms', 'bundles'];
     assert.deepEqual(Array.from(sectionsMap.keys()), allowedKeys);
   });
 
   it('correctly parses the URL', () => {
-    const wrapper = renderComponent({ activeSection: 'credentials/aws_test' });
+    const wrapper = renderComponent({activeSection: 'credentials/aws_test'});
     const instance = wrapper.instance();
     assert.deepEqual(instance._getSectionInfo(), {
       full: 'credentials/aws_test',

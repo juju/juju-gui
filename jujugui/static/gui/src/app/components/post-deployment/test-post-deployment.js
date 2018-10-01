@@ -32,12 +32,13 @@ describe('PostDeployment', () => {
       'content', null, '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>');
     wrapper.update();
     const expected = (
-      <div dangerouslySetInnerHTML={
-        {
-          __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+      <div
+        dangerouslySetInnerHTML={
+          {
+            __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+          }
         }
-      }
-      onClick={wrapper.find('div').prop('onClick')} />
+        onClick={wrapper.find('div').prop('onClick')} />
     );
     assert.compareJSX(wrapper.find('div'), expected);
   });
@@ -94,7 +95,7 @@ describe('PostDeployment', () => {
     // sinon.callsArgWith passes the same file each time it's called, so we
     // expect the markdown content, here.
     assert.deepEqual(changeState.args[0][0], {
-      terminal: [ 'commands', '    on multiple', '    lines']
+      terminal: ['commands', '    on multiple', '    lines']
     });
   });
 
@@ -145,7 +146,7 @@ target="_blank">Juju CLI client</a>');
 
   it('replaces templateTags in markdown', () => {
     const changeState = sinon.stub();
-    const wrapper = renderComponent({ changeState });
+    const wrapper = renderComponent({changeState});
     const instance = wrapper.instance();
     instance._handleContentClick({
       target: {

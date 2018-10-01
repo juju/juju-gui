@@ -14,17 +14,21 @@ class Tour extends React.PureComponent {
     const basePath = `${staticURL}/static/gui/build/app/assets/images/non-sprites/tour`;
     return (
       <div>
-        <span className="back-to-help"
+        <span
+          className="back-to-help"
           onClick={this.props.endTour.bind(this)}>
           <SvgIcon
-            className="back-to-help__icon" name="chevron_down_16" size="16" />
+            className="back-to-help__icon"
+            name="chevron_down_16"
+            size="16" />
           Back to GUI help
         </span>
         <Lightbox
           close={this.props.close.bind(this)}
           extraClasses={['tour']}>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               src={`${basePath}/welcome@1x.png`}
               srcSet={`${basePath}/welcome@2x.png 2x`} />
             <div className="tour__slide-description clearfix">
@@ -36,7 +40,8 @@ class Tour extends React.PureComponent {
             </div>
           </div>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               sizes="(max-width: 768px) 347w"
               src={`${basePath}/store@1x.png`}
               srcSet={`
@@ -51,7 +56,8 @@ ${basePath}/store-mobile@1x.png 347w,
             </div>
           </div>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               sizes="(max-width: 768px) 335w"
               src={`${basePath}/relations@1x.png`}
               srcSet={`
@@ -69,7 +75,8 @@ ${basePath}/relations-mobile@1x.png 335w,
             </div>
           </div>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               sizes="(max-width: 768px) 307w"
               src={`${basePath}/inspector@1x.png`}
               srcSet={`
@@ -84,7 +91,8 @@ ${basePath}/inspector-mobile@1x.png 307w,
             </div>
           </div>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               sizes="(max-width: 768px) 431w"
               src={`${basePath}/machine-app-view@1x.png`}
               srcSet={`
@@ -101,7 +109,8 @@ ${basePath}/machine-app-view-mobile@1x.png 431w,
             </div>
           </div>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               sizes="(max-width: 768px) 341w"
               src={`${basePath}/deploy@1x.png`}
               srcSet={`
@@ -116,7 +125,8 @@ ${basePath}/deploy-mobile@1x.png 341w,
             </div>
           </div>
           <div className="tour__slide">
-            <img className="tour__slide-image"
+            <img
+              className="tour__slide-image"
               sizes="(max-width: 768px) 375w"
               src={`${basePath}/post-deploy@1x.png`}
               srcSet={`

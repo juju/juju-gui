@@ -33,7 +33,8 @@ describe('ModalGUISettings', function() {
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span className="close"
+          <span
+            className="close"
             onClick={sinon.stub()}
             role="button"
             tabIndex="0">
@@ -43,7 +44,9 @@ describe('ModalGUISettings', function() {
         <div className="content">
           <p>
             <label htmlFor="disable-cookie">
-              <input defaultChecked={false} id="disable-cookie"
+              <input
+                defaultChecked={false}
+                id="disable-cookie"
                 name="disable-cookie"
                 onChange={wrapper.find('#disable-cookie').prop('onChange')}
                 type="checkbox" />&nbsp;
@@ -52,7 +55,9 @@ describe('ModalGUISettings', function() {
           </p>
           <p>
             <label htmlFor="force-containers">
-              <input defaultChecked={false} id="force-containers"
+              <input
+                defaultChecked={false}
+                id="force-containers"
                 name="force-containers"
                 onChange={wrapper.find('#force-containers').prop('onChange')}
                 type="checkbox" />&nbsp;
@@ -61,7 +66,9 @@ describe('ModalGUISettings', function() {
           </p>
           <p>
             <label htmlFor="disable-auto-place">
-              <input defaultChecked={false} id="disable-auto-place"
+              <input
+                defaultChecked={false}
+                id="disable-auto-place"
                 name="disable-auto-place"
                 onChange={wrapper.find('#disable-auto-place').prop('onChange')}
                 type="checkbox" />&nbsp;
@@ -70,7 +77,9 @@ describe('ModalGUISettings', function() {
           </p>
           <p>
             <label htmlFor="jujushell-url">
-              <input id="jujushell-url" name="jujushell-url"
+              <input
+                id="jujushell-url"
+                name="jujushell-url"
                 onChange={wrapper.find('#jujushell-url').prop('onChange')}
                 type="text"
                 value="" />&nbsp;
@@ -82,10 +91,13 @@ describe('ModalGUISettings', function() {
               NOTE: You will need to reload for changes to take effect.
             </small>
           </p>
-          <input className="button--positive" id="save-settings"
+          <input
+            className="button--positive"
+            id="save-settings"
             name="save-settings"
             onClick={wrapper.find('#save-settings').prop('onClick')}
-            type="button" value="Save" />
+            type="button"
+            value="Save" />
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);

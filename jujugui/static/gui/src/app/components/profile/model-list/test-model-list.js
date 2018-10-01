@@ -209,7 +209,8 @@ describe('Profile Model List', function() {
           rows={[{
             columns: [{
               content: (
-                <a href="/gui/u/tester/mymodel"
+                <a
+                  href="/gui/u/tester/mymodel"
                   onClick={sinon.stub()}>
                   mymodel
                 </a>),
@@ -248,7 +249,8 @@ describe('Profile Model List', function() {
             }, {
               content: (
                 <a onClick={sinon.stub()}>
-                  <SvgIcon name="delete_16"
+                  <SvgIcon
+                    name="delete_16"
                     size="16" />
                 </a>),
               columnSize: 1,
@@ -257,7 +259,8 @@ describe('Profile Model List', function() {
             expandedContent: (
               <div className="profile-model-list__expanded-content">
                 <div className="three-col">
-                  <a href="/gui/u/tester/mymodel"
+                  <a
+                    href="/gui/u/tester/mymodel"
                     onClick={sinon.stub()}>
                       mymodel
                   </a>
@@ -298,7 +301,8 @@ describe('Profile Model List', function() {
                   </a>
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  <span className="link"
+                  <span
+                    className="link"
                     onClick={sinon.stub()}
                     role="button"
                     tabIndex="0">
@@ -310,7 +314,8 @@ describe('Profile Model List', function() {
           }, {
             columns: [{
               content: (
-                <a href="/gui/u/tester/mymodel2"
+                <a
+                  href="/gui/u/tester/mymodel2"
                   onClick={sinon.stub()}>
                   mymodel2
                 </a>),
@@ -349,7 +354,8 @@ describe('Profile Model List', function() {
             }, {
               content: (
                 <a onClick={sinon.stub()}>
-                  <SvgIcon name="delete_16"
+                  <SvgIcon
+                    name="delete_16"
                     size="16" />
                 </a>),
               columnSize: 1,
@@ -358,7 +364,8 @@ describe('Profile Model List', function() {
             expandedContent: (
               <div className="profile-model-list__expanded-content">
                 <div className="three-col">
-                  <a href="/gui/u/tester/mymodel2"
+                  <a
+                    href="/gui/u/tester/mymodel2"
                     onClick={sinon.stub()}>
                       mymodel2
                   </a>
@@ -399,7 +406,8 @@ describe('Profile Model List', function() {
                   </a>
                 </div>
                 <div className="three-col prepend-five profile-model-list__credential-name">
-                  <span className="link"
+                  <span
+                    className="link"
                     onClick={sinon.stub()}
                     role="button"
                     tabIndex="0">
@@ -411,7 +419,8 @@ describe('Profile Model List', function() {
           }, {
             columns: [{
               content: (
-                <a href="/gui/u/tester2/test-db"
+                <a
+                  href="/gui/u/tester2/test-db"
                   onClick={sinon.stub()}>
                   test-db
                 </a>),
@@ -455,7 +464,8 @@ describe('Profile Model List', function() {
             expandedContent: (
               <div className="profile-model-list__expanded-content">
                 <div className="three-col">
-                  <a href="/gui/u/tester2/test-db"
+                  <a
+                    href="/gui/u/tester2/test-db"
                     onClick={sinon.stub()}>
                       test-db
                   </a>
@@ -498,7 +508,8 @@ describe('Profile Model List', function() {
           }, {
             columns: [{
               content: (
-                <a href="/gui/u/tester3/website"
+                <a
+                  href="/gui/u/tester3/website"
                   onClick={sinon.stub()}>
                   website
                 </a>),
@@ -537,7 +548,8 @@ describe('Profile Model List', function() {
             }, {
               content: (
                 <a onClick={sinon.stub()}>
-                  <SvgIcon name="delete_16"
+                  <SvgIcon
+                    name="delete_16"
                     size="16" />
                 </a>),
               columnSize: 1,
@@ -546,7 +558,8 @@ describe('Profile Model List', function() {
             expandedContent: (
               <div className="profile-model-list__expanded-content">
                 <div className="three-col">
-                  <a href="/gui/u/tester3/website"
+                  <a
+                    href="/gui/u/tester3/website"
                     onClick={sinon.stub()}>
                       website
                   </a>

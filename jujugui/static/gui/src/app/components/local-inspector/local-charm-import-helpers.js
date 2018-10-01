@@ -49,7 +49,7 @@ function uploadLocalCharm(env, db, series, file, options) {
     has been loaded.
 */
 function loadCharmDetails(charmUrl, env, callback) {
-  var charm = new yui.juju.models.Charm({ id: charmUrl });
+  var charm = new yui.juju.models.Charm({id: charmUrl});
   charm.after('load', function(e) {
     callback(charm);
   });

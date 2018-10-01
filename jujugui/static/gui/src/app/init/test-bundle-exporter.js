@@ -37,7 +37,7 @@ describe('bundle exporter', () => {
 
   beforeEach(() => {
     db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-    bundleExporter = new BundleExporter({ db });
+    bundleExporter = new BundleExporter({db});
   });
 
   it('can export the model as a bundle', () => {
@@ -137,7 +137,7 @@ describe('bundle exporter', () => {
     db.services.add({
       id: 'resourcemanager', charm: 'hadoop-resourcemanager-14'});
     db.services.add({
-      id: 'namenode', charm: 'hadoop-namenode-13' });
+      id: 'namenode', charm: 'hadoop-namenode-13'});
     db.relations.add({
       id: 'relation-0',
       endpoints: [
@@ -297,7 +297,7 @@ describe('bundle exporter', () => {
   });
 
   it('can determine complex machine placement for services', () => {
-    var machines = [{ id: '0' }, { id: '1' }, { id: '2' }];
+    var machines = [{id: '0'}, {id: '1'}, {id: '2'}];
     var units = [{
       service: 'wordpress',
       id: 'wordpress/0',
@@ -388,9 +388,9 @@ describe('bundle exporter', () => {
     // Because we ignore any machines which do not have units placed or only
     // host the GUI service we remap all machine ids to start at 0.
     var machines = [
-      { id: '3', hardware: {}, series: 'trusty' },
-      { id: '4', hardware: {}, series: 'trusty' },
-      { id: '5', hardware: {}, series: 'trusty' }
+      {id: '3', hardware: {}, series: 'trusty'},
+      {id: '4', hardware: {}, series: 'trusty'},
+      {id: '5', hardware: {}, series: 'trusty'}
     ];
     var units = [{
       service: 'wordpress',
@@ -429,14 +429,14 @@ describe('bundle exporter', () => {
       machine: '5'
     }];
     var services = [
-      { id: 'wordpress', charm: 'cs:trusty/wordpress-27' },
-      { id: 'apache2', charm: 'cs:trusty/apache2-27' },
-      { id: 'mysql', charm: 'cs:trusty/mysql-27' }
+      {id: 'wordpress', charm: 'cs:trusty/wordpress-27'},
+      {id: 'apache2', charm: 'cs:trusty/apache2-27'},
+      {id: 'mysql', charm: 'cs:trusty/mysql-27'}
     ];
     var charms = [
-      { id: 'cs:trusty/wordpress-27' },
-      { id: 'cs:trusty/apache2-27' },
-      { id: 'cs:trusty/mysql-27' }
+      {id: 'cs:trusty/wordpress-27'},
+      {id: 'cs:trusty/apache2-27'},
+      {id: 'cs:trusty/mysql-27'}
     ];
     db.machines.add(machines);
     db.services.add(services);
@@ -444,9 +444,9 @@ describe('bundle exporter', () => {
     db.units.add(units, true);
     const bundle = bundleExporter.exportBundle();
     const expectedMachines = {
-      '0': { series: 'trusty' },
-      '1': { series: 'trusty' },
-      '2': { series: 'trusty' }
+      '0': {series: 'trusty'},
+      '1': {series: 'trusty'},
+      '2': {series: 'trusty'}
     };
     assert.deepEqual(bundle.machines, expectedMachines);
   });
@@ -480,7 +480,7 @@ describe('bundle exporter', () => {
   });
 
   it('includes uncommmitted units when determining placement', () => {
-    var machine = { id: '0' };
+    var machine = {id: '0'};
     var units = [{
       service: 'wordpress',
       id: 'wordpress/0',
@@ -508,7 +508,7 @@ describe('bundle exporter', () => {
   });
 
   it('includes uncommitted machines when determining placement', () => {
-    var machine = { id: 'new0', commitStatus: 'uncommitted' };
+    var machine = {id: 'new0', commitStatus: 'uncommitted'};
     var units = [{
       service: 'wordpress',
       id: 'wordpress/0',
@@ -537,7 +537,7 @@ describe('bundle exporter', () => {
 
   it('ignores machines with no units when determining placements',
     () => {
-      var machine = { id: '0' };
+      var machine = {id: '0'};
       db.machines.add(machine);
       var placement = bundleExporter._mapServicesToMachines(db.machines);
       assert.deepEqual(placement, {});
@@ -546,7 +546,7 @@ describe('bundle exporter', () => {
   it('annotates services with placement info', () => {
     db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
     db.services.add({id: 'wordpress', charm: 'precise/wordpress-1'});
-    db.machines.add({ id: '0', hardware: {}});
+    db.machines.add({id: '0', hardware: {}});
     db.units.add([{
       service: 'wordpress',
       id: 'wordpress/0',

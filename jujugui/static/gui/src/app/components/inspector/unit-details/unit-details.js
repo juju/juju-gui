@@ -33,7 +33,7 @@ class UnitDetails extends React.Component {
   _generateDebugHooksState() {
     const unit = this.props.unit;
     let commands = [`juju debug-hooks ${unit.id}`];
-    return { terminal: commands };
+    return {terminal: commands};
   }
 
   /**
@@ -45,7 +45,7 @@ class UnitDetails extends React.Component {
     const unit = this.props.unit;
     let commands = [`juju ssh ${unit.id}`];
     cmds.forEach(cmd => commands.push(cmd));
-    return { terminal: commands };
+    return {terminal: commands};
   }
 
   /**
@@ -69,14 +69,16 @@ class UnitDetails extends React.Component {
       let link = (<span>{label}</span>);
       if (href) {
         link = (
-          <a className="unit-details__address-link"
+          <a
+            className="unit-details__address-link"
             href={href}
             target="_blank">
             {label}
           </a>);
       }
       return (
-        <li className="unit-details__action-list-item"
+        <li
+          className="unit-details__action-list-item"
           key={label}>
           {link}
         </li>);
@@ -116,7 +118,8 @@ class UnitDetails extends React.Component {
   */
   _generateList(items) {
     const list = items.map((item, i) => (
-      <li className="twelve-col unit-details__list-item"
+      <li
+        className="twelve-col unit-details__list-item"
         key={item.label + item.value + i}>
         <div className="four-col prepend-one no-margin-bottom unit-details__label">
           {item.label}
@@ -138,7 +141,7 @@ class UnitDetails extends React.Component {
     @returns {Object} The status list JSX.
   */
   _generateStatuses() {
-    const { unit } = this.props;
+    const {unit} = this.props;
     let statuses = [];
     if (!unit.agent_state) {
       statuses.push({
@@ -170,7 +173,7 @@ class UnitDetails extends React.Component {
     @returns {Object} The address list JSX.
   */
   _generateAddressList() {
-    const { unit } = this.props;
+    const {unit} = this.props;
     const privateList = this._generateAddresses(
       unit.private_address, unit.portRanges, true);
     const publicList = this._generateAddresses(
@@ -222,7 +225,8 @@ class UnitDetails extends React.Component {
         [`cd /var/lib/juju/agents/unit-${this.props.unit.urlName}/charm`])
     }].concat(this._generateErrorButtons());
     const links = actions.map(action => (
-      <li className="unit-details__action-list-item"
+      <li
+        className="unit-details__action-list-item"
         key={action.title}>
         <Link
           changeState={this.props.changeState}

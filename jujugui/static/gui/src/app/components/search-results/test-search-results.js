@@ -97,7 +97,7 @@ describe('SearchResults', function() {
 
   describe('functional tests', function() {
     it('can initially show the spinner', function() {
-      const wrapper = renderComponent({ charmstoreSearch: sinon.stub() });
+      const wrapper = renderComponent({charmstoreSearch: sinon.stub()});
       assert.equal(wrapper.find('Spinner').length, 1);
     });
 
@@ -138,7 +138,8 @@ describe('SearchResults', function() {
               http://jujucharms.com
             </a>
             {' '}or go{' '}
-            <span className="link"
+            <span
+              className="link"
               onClick={wrapper.find('.link').prop('onClick')}>
               back
             </span>.
@@ -324,7 +325,7 @@ describe('SearchResults', function() {
       charmstoreSearch.returns({abort: abort});
       const wrapper = renderComponent();
       assert.equal(abort.callCount, 0);
-      wrapper.setProps({ query: 'apache2' });
+      wrapper.setProps({query: 'apache2'});
       assert.equal(abort.callCount, 1);
     });
   });
@@ -343,7 +344,10 @@ describe('SearchResults', function() {
     it('collapses identical charms with different series', function() {
       var entities = [
         {id: 'foo', name: 'foo', owner: 'bar', type: 'charm', series: 'trusty'},
-        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm',
+        {id: 'foo',
+          name: 'foo',
+          owner: 'bar',
+          type: 'charm',
           series: 'precise'},
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
@@ -372,9 +376,15 @@ describe('SearchResults', function() {
 
     it('can collapse charms when the id contains "cs:"', () => {
       const entities = [
-        {id: 'cs:foo', name: 'foo', owner: 'bar', type: 'charm',
+        {id: 'cs:foo',
+          name: 'foo',
+          owner: 'bar',
+          type: 'charm',
           series: 'trusty'},
-        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm',
+        {id: 'foo',
+          name: 'foo',
+          owner: 'bar',
+          type: 'charm',
           series: 'precise'},
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
@@ -384,11 +394,23 @@ describe('SearchResults', function() {
 
     it('aggregates downloads when collapsing charms', function() {
       var entities = [
-        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's1',
+        {name: 'c1',
+          id: 'c1',
+          owner: 'o1',
+          type: 'c',
+          series: 's1',
           downloads: 1},
-        {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 's2',
+        {name: 'c1',
+          id: 'c1',
+          owner: 'o1',
+          type: 'c',
+          series: 's2',
           downloads: 5},
-        {name: 'c1', id: 'c1', owner: 'o2', type: 'c', series: 's3',
+        {name: 'c1',
+          id: 'c1',
+          owner: 'o2',
+          type: 'c',
+          series: 's3',
           downloads: 3}
       ];
       var actual = searchResults._collapseSeries(entities);
@@ -398,21 +420,53 @@ describe('SearchResults', function() {
 
     it('maintains sort order when collapsing charms', function() {
       var entities = [
-        {id: 'foo1', name: 'foo1', owner: 'bar', type: 'c', series: 's1',
+        {id: 'foo1',
+          name: 'foo1',
+          owner: 'bar',
+          type: 'c',
+          series: 's1',
           downloads: 6},
-        {id: 'foo2', name: 'foo2', owner: 'bar', type: 'c', series: 's1',
+        {id: 'foo2',
+          name: 'foo2',
+          owner: 'bar',
+          type: 'c',
+          series: 's1',
           downloads: 5},
-        {id: 'foo1', name: 'foo1', owner: 'bar', type: 'c', series: 's2',
+        {id: 'foo1',
+          name: 'foo1',
+          owner: 'bar',
+          type: 'c',
+          series: 's2',
           downloads: 4},
-        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's1',
+        {id: 'foo3',
+          name: 'foo3',
+          owner: 'bar',
+          type: 'c',
+          series: 's1',
           downloads: 4},
-        {id: 'foo2', name: 'foo2', owner: 'bar', type: 'c', series: 's1',
+        {id: 'foo2',
+          name: 'foo2',
+          owner: 'bar',
+          type: 'c',
+          series: 's1',
           downloads: 3},
-        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's3',
+        {id: 'foo3',
+          name: 'foo3',
+          owner: 'bar',
+          type: 'c',
+          series: 's3',
           downloads: 3},
-        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's4',
+        {id: 'foo3',
+          name: 'foo3',
+          owner: 'bar',
+          type: 'c',
+          series: 's4',
           downloads: 3},
-        {id: 'foo3', name: 'foo3', owner: 'bar', type: 'c', series: 's5',
+        {id: 'foo3',
+          name: 'foo3',
+          owner: 'bar',
+          type: 'c',
+          series: 's5',
           downloads: 3}
       ];
       var actual = searchResults._collapseSeries(entities);

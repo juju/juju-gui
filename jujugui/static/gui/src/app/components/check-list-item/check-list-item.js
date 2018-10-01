@@ -107,7 +107,8 @@ class CheckListItem extends React.Component {
       return;
     }
     return (
-      <span className="check-list-item__extra-info"
+      <span
+        className="check-list-item__extra-info"
         title={this.props.extraInfo}>
         {this.props.extraInfo}
       </span>);
@@ -116,11 +117,15 @@ class CheckListItem extends React.Component {
   render() {
     var id = this.props.label + '-item';
     return (
-      <li className={this._generateClasses()}
+      <li
+        className={this._generateClasses()}
         data-id={this.props.id}
-        onClick={this.props.action} role="button" tabIndex="0">
+        onClick={this.props.action}
+        role="button"
+        tabIndex="0">
         <label htmlFor={this._generateId(id)}>
-          <div className="check-list-item__hit-area"
+          <div
+            className="check-list-item__hit-area"
             onClick={this._hitAreaClick.bind(this)}>
             <input
               checked={this.state.checked}

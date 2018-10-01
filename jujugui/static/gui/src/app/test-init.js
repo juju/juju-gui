@@ -200,7 +200,7 @@ describe('init', () => {
       it('returns "zip" for zip files', () => {
         const result = app._determineFileType({
           types: ['Files'],
-          items: [{ type: 'application/zip' }]
+          items: [{type: 'application/zip'}]
         });
         assert.equal(result, 'zip');
       });
@@ -209,7 +209,7 @@ describe('init', () => {
         // IE uses a different mime type than other browsers.
         const result = app._determineFileType({
           types: ['Files'],
-          items: [{ type: 'application/x-zip-compressed' }]
+          items: [{type: 'application/x-zip-compressed'}]
         });
         assert.equal(result, 'zip');
       });
@@ -219,7 +219,7 @@ describe('init', () => {
         // across browser so we respond with yaml for now.
         const result = app._determineFileType({
           types: ['Files'],
-          items: [{ type: 'application/x-yaml' }]
+          items: [{type: 'application/x-yaml'}]
         });
         assert.equal(result, 'yaml');
       });
@@ -251,9 +251,9 @@ describe('init', () => {
 
       const noop = () => {};
       const ev1 = {
-        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter' };
-      const ev2 = { dataTransfer: {}, preventDefault: noop, type: 'dragleave' };
-      const ev3 = { dataTransfer: {}, preventDefault: noop, type: 'dragover' };
+        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter'};
+      const ev2 = {dataTransfer: {}, preventDefault: noop, type: 'dragleave'};
+      const ev3 = {dataTransfer: {}, preventDefault: noop, type: 'dragover'};
 
       app._appDragOverHandler(ev1);
       app._appDragOverHandler(ev2);
@@ -907,7 +907,8 @@ describe('init', () => {
           path: 'frankban/latta',
           uuid: 'fe9a2845-4829-4d61-8653-248b7052204e'
         },
-        user: null, root: null
+        user: null,
+        root: null
       }]);
     });
 
@@ -921,7 +922,8 @@ describe('init', () => {
           path: 'uros-jovanovic/jujugui-org',
           uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0'
         },
-        user: null, root: null
+        user: null,
+        root: null
       }]);
     });
 
@@ -931,7 +933,10 @@ describe('init', () => {
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
-        root: null, store: null, model: null, user: null,
+        root: null,
+        store: null,
+        model: null,
+        user: null,
         profile: ''
       }]);
     });
@@ -942,7 +947,10 @@ describe('init', () => {
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
       assert.deepEqual(app.state.changeState.args[0], [{
-        root: null, store: null, model: null, user: null,
+        root: null,
+        store: null,
+        model: null,
+        user: null,
         profile: ''
       }]);
     });

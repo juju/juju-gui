@@ -33,11 +33,13 @@ describe('NotificationListItem', function() {
     var expected = (
       <li className={classes}>
         <span>notification message</span>
-        <span className="notification-list-item__hide"
+        <span
+          className="notification-list-item__hide"
           onClick={wrapper.find('.notification-list-item__hide').prop('onClick')}
           role="button"
           tabIndex="0">
-          <SvgIcon name="close_16"
+          <SvgIcon
+            name="close_16"
             size="16" />
         </span>
       </li>);
@@ -62,7 +64,7 @@ describe('NotificationListItem', function() {
 
   it('calls the remove notification prop after the timeout', () => {
     const removeNotification = sinon.stub();
-    const wrapper = renderComponent({ removeNotification });
+    const wrapper = renderComponent({removeNotification});
     wrapper.find('.notification-list-item__hide').simulate('click');
     assert.equal(removeNotification.callCount, 0);
     clock.tick(1000);

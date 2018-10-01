@@ -95,7 +95,8 @@ class MachineViewColumn extends React.Component {
         <div className="machine-view__column-content">
           {this.props.children}
           <div className="machine-view__column-drop-target">
-            <SvgIcon name="add_16"
+            <SvgIcon
+              name="add_16"
               size="16" />
           </div>
         </div>

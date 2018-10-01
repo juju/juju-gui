@@ -111,7 +111,8 @@ class BudgetTableRow extends React.Component {
     var disabled = this.props.acl.isReadOnly();
     var plans = this.state.plans.map((plan, i) => {
       return (
-        <li className="budget-table__plan twelve-col"
+        <li
+          className="budget-table__plan twelve-col"
           key={i}>
           <div className="six-col">
             <h4>{plan.url}</h4>
@@ -196,7 +197,8 @@ class BudgetTableRow extends React.Component {
   _generateAllocation() {
     if (this.props.allocationEditable && this.state.editAllocation) {
       return (
-        <input className="budget-table-row__allocation-input"
+        <input
+          className="budget-table-row__allocation-input"
           type="text"
           value="$1" />);
     } else {
@@ -219,7 +221,8 @@ class BudgetTableRow extends React.Component {
     return (
       <div>
         <div className="five-col no-margin-bottom">
-          <img className="budget-table__charm-icon"
+          <img
+            className="budget-table__charm-icon"
             src={service.get('icon')} />
           {service.get('name')}
         </div>

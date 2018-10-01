@@ -159,7 +159,7 @@ class Charmbrowser extends React.Component {
       case 'entity-details':
         // TODO frankban: do we still really need this?
         const id = currentState.store || `~${currentState.user}`;
-        const { charmstore } = this.props;
+        const {charmstore} = this.props;
         activeChild = (
           <EntityDetails
             acl={this.props.acl}
@@ -199,7 +199,8 @@ class Charmbrowser extends React.Component {
         focus={false}
         instanceName="white-box"
         visible={true}>
-        <div className="charmbrowser"
+        <div
+          className="charmbrowser"
           ref="charmbrowser">
           {this._generateContent()}
         </div>

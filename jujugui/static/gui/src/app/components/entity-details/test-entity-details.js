@@ -36,7 +36,7 @@ describe('EntityDetails', function() {
         setPageTitle={options.setPageTitle || sinon.stub()}
         showTerms={options.showTerms || sinon.stub()}
         staticURL={options.staticURL || 'http://example.com'} />,
-      { disableLifecycleMethods: true }
+      {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
     instance.refs = {content: {focus: sinon.stub()}};
@@ -80,7 +80,8 @@ describe('EntityDetails', function() {
     assert.equal(charmstore.getEntity.args[0][0], 'django',
       'getEntity not called with the entity ID');
     const expected = (
-      <div className="entity-details charm"
+      <div
+        className="entity-details charm"
         ref="content"
         tabIndex="0">
         <div>
@@ -127,13 +128,15 @@ describe('EntityDetails', function() {
     charmstore.getEntity.callsArgWith(1, 'bad wolf', [mockEntity]);
     const wrapper = renderComponent();
     const expected = (
-      <div className="entity-details"
+      <div
+        className="entity-details"
         ref="content"
         tabIndex="0">
         <p className="error">
           There was a problem while loading the entity details.
           You could try searching for another charm or bundle or go{' '}
-          <span className="link"
+          <span
+            className="link"
             onClick={wrapper.find('.link').prop('onClick')}>
             back
           </span>.
@@ -162,7 +165,7 @@ describe('EntityDetails', function() {
     const plans = ['plan1', 'plan2'];
     charmstore.getEntity.callsArgWith(1, null, [mockEntity]);
     const listPlansForCharm = sinon.stub().callsArgWith(1, null, plans);
-    const wrapper = renderComponent({ listPlansForCharm });
+    const wrapper = renderComponent({listPlansForCharm});
     assert.equal(wrapper.find('EntityHeader').prop('hasPlans'), true);
     assert.deepEqual(wrapper.find('EntityHeader').prop('plans'), plans);
     assert.equal(wrapper.find('EntityContent').prop('hasPlans'), true);
@@ -175,7 +178,7 @@ describe('EntityDetails', function() {
     mockEntity.hasMetrics = sinon.stub().returns(true);
     charmstore.getEntity.callsArgWith(1, null, [mockEntity]);
     const listPlansForCharm = sinon.stub().callsArgWith(1, 'An error', null);
-    const wrapper = renderComponent({ listPlansForCharm });
+    const wrapper = renderComponent({listPlansForCharm});
     assert.equal(wrapper.find('EntityHeader').prop('hasPlans'), true);
     assert.deepEqual(wrapper.find('EntityHeader').prop('plans'), []);
     assert.equal(wrapper.find('EntityContent').prop('hasPlans'), true);
@@ -187,7 +190,7 @@ describe('EntityDetails', function() {
     mockEntity.hasMetrics = sinon.stub().returns(false);
     const addNotification = sinon.stub();
     charmstore.getEntity.callsArgWith(1, 'Uh oh!', null);
-    renderComponent({ addNotification });
+    renderComponent({addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'cannot fetch the entity',

@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
-const { charmstore } = require('jaaslib');
+const {charmstore} = require('jaaslib');
 
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
@@ -144,7 +144,8 @@ class Store extends React.Component {
             scripts is straightforward. You can keep new charms
             private, or share them back with the community.</p>
             <p>
-              <a className="link link--cold"
+              <a
+                className="link link--cold"
                 href={href}
                 target="_blank">
               Learn more about writing charms&nbsp;&rsaquo;
@@ -170,11 +171,13 @@ class Store extends React.Component {
         <h2>Development tools</h2>
         <ul className="twelve-col no-bullets equal-height">
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="gitlab"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('gitlab')} />
               </div>
@@ -188,11 +191,13 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="jenkins"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('jenkins')} />
               </div>
@@ -226,36 +231,42 @@ class Store extends React.Component {
     if (lastCol) {
       sharedClasses.push('last-col');
     }
-    let kubernetesButton = (<a className="button--inline-neutral"
+    let kubernetesButton = (<a
+      className="button--inline-neutral"
       href="https://jujucharms.com/kubernetes"
       onClick={this._stopPropagation.bind(this)}
       target="_blank">
           Find out more
     </a>);
-    let openstackButton = (<a className="button--inline-neutral"
+    let openstackButton = (<a
+      className="button--inline-neutral"
       href="https://jujucharms.com/openstack"
       onClick={this._stopPropagation.bind(this)}
       target="_blank">
           Find out more
     </a>);
-    let bigdataButton = (<a className="button--inline-neutral"
+    let bigdataButton = (<a
+      className="button--inline-neutral"
       href="https://jujucharms.com/big-data"
       onClick={this._stopPropagation.bind(this)}
       target="_blank">
       Find out more
     </a>);
     if (!this.props.gisf) {
-      kubernetesButton = (<span className="button--inline-neutral"
+      kubernetesButton = (<span
+        className="button--inline-neutral"
         data-query="kubernetes"
         onClick={this._handleSearchClick.bind(this)}>
         View
       </span>);
-      openstackButton = (<span className="button--inline-neutral"
+      openstackButton = (<span
+        className="button--inline-neutral"
         data-query="openstack"
         onClick={this._handleSearchClick.bind(this)}>
           View
       </span>);
-      bigdataButton = (<span className="button--inline-neutral"
+      bigdataButton = (<span
+        className="button--inline-neutral"
         data-query="hadoop"
         onClick={this._handleSearchClick.bind(this)}>
         View
@@ -264,11 +275,13 @@ class Store extends React.Component {
     switch (name) {
       case 'kubernetes':
         return (
-          <div className={classNames('box--kubernetes', sharedClasses)}
+          <div
+            className={classNames('box--kubernetes', sharedClasses)}
             data-query="kubernetes"
             key="kubernetes"
             onClick={this._handleSearchClick.bind(this)}>
-            <img alt="Kubernetes"
+            <img
+              alt="Kubernetes"
               className="box__image"
               src={this._generateLocalImagePath('k8-image.png')} />
             <div className="align-bottom">
@@ -278,11 +291,13 @@ class Store extends React.Component {
           </div>);
       case 'openstack':
         return (
-          <div className={classNames('box--openstack', sharedClasses)}
+          <div
+            className={classNames('box--openstack', sharedClasses)}
             data-query="openstack"
             key="openstack"
             onClick={this._handleSearchClick.bind(this)}>
-            <img alt="Openstack"
+            <img
+              alt="Openstack"
               className="box__image"
               src={this._generateLocalImagePath('openstack-promo.png')} />
             <div className="align-bottom">
@@ -292,12 +307,14 @@ class Store extends React.Component {
           </div>);
       case 'bigdata':
         return (
-          <div className={classNames('box--hadoop', sharedClasses)}
+          <div
+            className={classNames('box--hadoop', sharedClasses)}
             data-query="hadoop"
             key="hadoop"
             onClick={this._handleSearchClick.bind(this)}>
             <div className="box--hadoop-container">
-              <img alt="Hadoop"
+              <img
+                alt="Hadoop"
                 className="box__image"
                 src={this._generateLocalImagePath('hadoop-elephant.png')} />
               <div className="align-bottom">
@@ -378,7 +395,8 @@ class Store extends React.Component {
       let key = `tagItem-${index}`;
       let comma = index === topics.length - 1 ? '' : ',';
       list.push(<li className="inline-list__item" key={key}>
-        <span className="link link--cold"
+        <span
+          className="link link--cold"
           data-filterkey="tags"
           data-filtervalue={topic.name}
           onClick={this._handleSearchClick.bind(this)}>
@@ -415,7 +433,8 @@ class Store extends React.Component {
             <p>Charms are sets of scripts that simplify the
                   deployment and management tasks of a service. They
                   are regularly reviewed and updated.</p>
-            <span className="button--inline-neutral"
+            <span
+              className="button--inline-neutral"
               data-filterkey="type"
               data-filtervalue="charm"
               onClick={this._handleSearchClick.bind(this)}>
@@ -433,7 +452,8 @@ class Store extends React.Component {
             <p>Bundles are collections of charms that link
                   applications together, so you can deploy whole
                   chunks of infrastructure in one go.</p>
-            <span className="button--inline-neutral"
+            <span
+              className="button--inline-neutral"
               data-filterkey="type"
               data-filtervalue="bundle"
               onClick={this._handleSearchClick.bind(this)}>
@@ -465,7 +485,8 @@ class Store extends React.Component {
           <div className="six-col no-margin-bottom last-col">
             <h3>Nagios</h3>
             <p>
-                      By <a className="link link--cold"
+                      By <a
+                className="link link--cold"
                 href={this._generateUserPath('charmers')}
                 target="_blank">
                           charmers
@@ -485,11 +506,13 @@ class Store extends React.Component {
 
         <ul className="twelve-col no-bullets equal-height">
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="kibana"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('kibana')} />
               </div>
@@ -503,7 +526,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="logstash"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -522,7 +546,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="elasticsearch"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -541,7 +566,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col last-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="prometheus"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -561,12 +587,14 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <a className="featured-entity__link link"
+            <a
+              className="featured-entity__link link"
               data-entity="munin"
               onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('munin')} />
               </div>
@@ -580,12 +608,14 @@ class Store extends React.Component {
             </a>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="rsyslog"
               onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('rsyslog')} />
               </div>
@@ -598,7 +628,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="zabbix-server"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -616,11 +647,13 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col last-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="u/ricardokirkner/sentry"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image control-size"
                   src={this._generateIconPath(
                     '~ricardokirkner/sentry')} />
@@ -636,7 +669,8 @@ class Store extends React.Component {
           </li>
         </ul>
         <p className="intro">
-          <span className="link link--cold"
+          <span
+            className="link link--cold"
             data-filterkey="tags"
             data-filtervalue="ops"
             onClick={this._handleSearchClick.bind(this)}>
@@ -662,7 +696,8 @@ class Store extends React.Component {
             <p>Juju makes it easy to deploy container management solutions
             by provisioning, installing and configuring all the systems in
             the cluster.</p>
-            <p><span className="button--inline-neutral"
+            <p><span
+              className="button--inline-neutral"
               data-query="containers"
               onClick={this._handleSearchClick.bind(this)}>
               View bundles
@@ -698,7 +733,8 @@ class Store extends React.Component {
           </div>
           <div className="six-col no-margin-bottom last-col">
             <h3>Realtime Syslog Analytics</h3>
-            <p>By <a className="link link--cold"
+            <p>By <a
+              className="link link--cold"
               href={this._generateUserPath('bigdata-charmers')}
               target="_blank">
                           bigdata-charmers
@@ -709,7 +745,8 @@ class Store extends React.Component {
                   components, it offers a repeatable and reliable way
                   to setup complex software across multiple
                   substrates.</p>
-            <span className="button--inline-neutral"
+            <span
+              className="button--inline-neutral"
               data-entity="realtime-syslog-analytics"
               onClick={this._handleEntityClick.bind(this)}>
                       View the bundle
@@ -719,11 +756,13 @@ class Store extends React.Component {
 
         <ul className="twelve-col no-bullets equal-height">
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="hive"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('hive')} />
               </div>
@@ -736,7 +775,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="spark"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -755,7 +795,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="zeppelin"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -773,7 +814,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col last-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="elasticsearch-cluster"
               onClick={this._handleEntityClick.bind(this)}>
               <ul className="featured-entity__image-list one-col">
@@ -785,7 +827,8 @@ class Store extends React.Component {
                       'elasticsearch')} />
                 </li>
                 <li className="featured-entity__image-list-item">
-                  <img alt=""
+                  <img
+                    alt=""
                     className="featured-entity__image"
                     src={this._generateIconPath('kibana')} />
                 </li>
@@ -799,12 +842,14 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="u/elasticsearch-charmers/elk-stack"
               onClick={this._handleEntityClick.bind(this)}>
               <ul className="featured-entity__image-list one-col">
                 <li className="featured-entity__image-list-item">
-                  <img alt=""
+                  <img
+                    alt=""
                     className="featured-entity__image"
                     src={this._generateIconPath('zulu8')} />
                 </li>
@@ -823,7 +868,8 @@ class Store extends React.Component {
                       '~containers/logstash')} />
                 </li>
                 <li className="featured-entity__image-list-item">
-                  <img alt=""
+                  <img
+                    alt=""
                     className="featured-entity__image"
                     src={this._generateIconPath('kibana')} />
                 </li>
@@ -838,7 +884,8 @@ class Store extends React.Component {
           </li>
         </ul>
         <p className="intro">
-          <span className="link link--cold"
+          <span
+            className="link link--cold"
             data-filterkey="tags"
             data-filtervalue="analytics"
             onClick={this._handleSearchClick.bind(this)}>
@@ -867,7 +914,8 @@ class Store extends React.Component {
           </div>
           <div className="six-col no-margin-bottom last-col">
             <h3>MySQL</h3>
-            <p>By <a className="link link--cold"
+            <p>By <a
+              className="link link--cold"
               href={this._generateUserPath('mysql-charmers')}
               target="_blank">
                           mysql-charmers
@@ -876,7 +924,8 @@ class Store extends React.Component {
             <p>MySQL is a fast, stable and true multi-user,
                   multi-threaded SQL database server. Its main goals
                   are speed, robustness and ease of use.</p>
-            <span className="button--inline-neutral"
+            <span
+              className="button--inline-neutral"
               data-entity="mysql"
               onClick={this._handleEntityClick.bind(this)}>
                       View the charm
@@ -886,11 +935,13 @@ class Store extends React.Component {
 
         <ul className="twelve-col no-bullets equal-height">
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="cassandra"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('cassandra')} />
               </div>
@@ -903,7 +954,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="mariadb"
               onClick={this._handleEntityClick.bind(this)}>
               <div
@@ -923,11 +975,13 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="mongodb"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('mongodb')} />
               </div>
@@ -940,7 +994,8 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col last-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="redis"
               onClick={this._handleEntityClick.bind(this)}>
               <div className="one-col no-margin-bottom">
@@ -958,12 +1013,14 @@ class Store extends React.Component {
             </span>
           </li>
           <li className="three-col last-col featured-entity">
-            <span className="featured-entity__link link"
+            <span
+              className="featured-entity__link link"
               data-entity="postgresql"
               onClick={this._handleEntityClick.bind(this)}>
               <div
                 className="one-col no-margin-bottom">
-                <img alt=""
+                <img
+                  alt=""
                   className="featured-entity__image"
                   src={this._generateIconPath('postgresql')} />
               </div>
@@ -977,7 +1034,8 @@ class Store extends React.Component {
           </li>
         </ul>
         <p className="intro">
-          <span className="link link--cold"
+          <span
+            className="link link--cold"
             data-filterkey="tags"
             data-filtervalue="databases"
             onClick={this._handleSearchClick.bind(this)}>

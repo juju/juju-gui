@@ -139,7 +139,8 @@ class ProfileBundleList extends React.Component {
             {this._generateTitle()}
             <p className="profile-bundle-list__onboarding">
               Learn about&nbsp;
-              <a href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
+              <a
+                href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
                 target="_blank">
                 writing your own bundle
               </a>.

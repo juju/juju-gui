@@ -78,11 +78,13 @@ class ModelActions extends React.Component {
         'model-actions__button'
       );
       shareAction = (
-        <span className={shareClasses}
+        <span
+          className={shareClasses}
           onClick={props.sharingVisibility}
           role="button"
           tabIndex="0">
-          <SvgIcon className="model-actions__icon"
+          <SvgIcon
+            className="model-actions__icon"
             name="share_16"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -97,11 +99,13 @@ class ModelActions extends React.Component {
     let terminalAction = null;
     if (props.displayTerminalButton) {
       terminalAction = (
-        <span className="model-actions__shell model-actions__button"
+        <span
+          className="model-actions__shell model-actions__button"
           onClick={this._handleTerminalClick.bind(this)}
           role="button"
           tabIndex="0">
-          <SvgIcon className="model-actions__icon"
+          <SvgIcon
+            className="model-actions__icon"
             name="code-snippet_24"
             size="16" />
           <span className="tooltip__tooltip--below">
@@ -115,11 +119,13 @@ class ModelActions extends React.Component {
     return (
       <div className={this._generateClasses()}>
         <div className="model-actions__buttons">
-          <span className="model-actions__export model-actions__button"
+          <span
+            className="model-actions__export model-actions__button"
             onClick={this._handleExport.bind(this)}
             role="button"
             tabIndex="0">
-            <SvgIcon className="model-actions__icon"
+            <SvgIcon
+              className="model-actions__icon"
               name="export_16"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -128,11 +134,13 @@ class ModelActions extends React.Component {
               </span>
             </span>
           </span>
-          <span className="model-actions__import model-actions__button"
+          <span
+            className="model-actions__import model-actions__button"
             onClick={isReadOnly ? undefined : this._handleImportClick.bind(this)}
             role="button"
             tabIndex="0">
-            <SvgIcon className="model-actions__icon"
+            <SvgIcon
+              className="model-actions__icon"
               name="import_16"
               size="16" />
             <span className="tooltip__tooltip--below">
@@ -144,7 +152,8 @@ class ModelActions extends React.Component {
           {shareAction}
           {terminalAction}
         </div>
-        <input accept=".zip,.yaml,.yml"
+        <input
+          accept=".zip,.yaml,.yml"
           className="model-actions__file"
           onChange={isReadOnly ? null : this._handleImportFile.bind(this)}
           ref="file-input"

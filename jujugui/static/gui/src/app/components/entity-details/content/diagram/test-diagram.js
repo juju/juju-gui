@@ -23,7 +23,9 @@ describe('EntityContentDiagram', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="entity-content__diagram">
-        <object className="entity-content__diagram-image" data="example.com/diagram.svg"
+        <object
+          className="entity-content__diagram-image"
+          data="example.com/diagram.svg"
           title="example"
           type="image/svg+xml" />
       </div>);
@@ -31,13 +33,13 @@ describe('EntityContentDiagram', function() {
   });
 
   it('can display a diagram as a row', () => {
-    const wrapper = renderComponent({ isRow: true });
+    const wrapper = renderComponent({isRow: true});
     assert.equal(wrapper.prop('className'),
       'entity-content__diagram row row--grey');
   });
 
   it('can display a diagram expand button', () => {
-    const wrapper = renderComponent({ isExpandable: true });
+    const wrapper = renderComponent({isExpandable: true});
     const expected = (
       <button
         className="entity-content__diagram-expand"

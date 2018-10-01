@@ -17,7 +17,7 @@ describe('PanelComponent', function() {
         visible={options.visible === undefined ? true : options.visible}>
         {options.children || (<div>child</div>)}
       </Panel>,
-      { disableLifecycleMethods: true }
+      {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
     instance.refs = {
@@ -32,11 +32,13 @@ describe('PanelComponent', function() {
   it('generates a visible panel when visible flag is provided', function() {
     const wrapper = renderComponent();
     var expected = (
-      <div className="panel-component custom-instance-name"
+      <div
+        className="panel-component custom-instance-name"
         onClick={wrapper.prop('onClick')}
         ref="content"
         tabIndex="0">
-        <div className="panel-component__inner"
+        <div
+          className="panel-component__inner"
           onClick={wrapper.find('.panel-component__inner').prop('onClick')}>
           <div>child</div>
         </div>
@@ -45,13 +47,13 @@ describe('PanelComponent', function() {
   });
 
   it('generates a hidden panel if visible flag is falsey', function() {
-    const wrapper = renderComponent({ visible: false });
+    const wrapper = renderComponent({visible: false});
     assert.equal(wrapper.prop('className').includes('hidden'), true);
   });
 
   it('can call a function on click if provided', function() {
     var clickAction = sinon.stub();
-    const wrapper = renderComponent({ clickAction });
+    const wrapper = renderComponent({clickAction});
     wrapper.simulate('click');
     assert.equal(clickAction.callCount, 1);
   });
@@ -59,7 +61,7 @@ describe('PanelComponent', function() {
   it('does not bubble clicks from the children', function() {
     var clickAction = sinon.stub();
     var stopPropagation = sinon.stub();
-    const wrapper = renderComponent({ clickAction });
+    const wrapper = renderComponent({clickAction});
     wrapper.find('.panel-component__inner').simulate('click', {
       stopPropagation: stopPropagation
     });
@@ -74,7 +76,7 @@ describe('PanelComponent', function() {
   });
 
   it('can not set the keyboard focus on load', function() {
-    const wrapper = renderComponent({ focus: false });
+    const wrapper = renderComponent({focus: false});
     const instance = wrapper.instance();
     assert.equal(instance.refs.content.focus.callCount, 0);
   });

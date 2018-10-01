@@ -21,8 +21,10 @@ class InspectorChangeVersionItem extends React.Component {
     const path = this.props.url.path();
     const props = this.props;
     return (
-      <li className="inspector-current-version__item"
-        onClick={props.itemAction} role="button"
+      <li
+        className="inspector-current-version__item"
+        onClick={props.itemAction}
+        role="button"
         tabIndex="0">
         <span className="inspector-current-version__title" title={path}>
           version {props.url.revision}

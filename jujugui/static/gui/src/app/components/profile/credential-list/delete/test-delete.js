@@ -43,7 +43,7 @@ describe('ProfileCredentialListDelete', () => {
 
   it('can cancel', () => {
     const onCancel = sinon.stub();
-    const wrapper = renderComponent({ onCancel });
+    const wrapper = renderComponent({onCancel});
     wrapper.find('Popup').prop('buttons')[0].action();
     assert.equal(onCancel.callCount, 1);
   });
@@ -51,7 +51,7 @@ describe('ProfileCredentialListDelete', () => {
   it('can remove credentials', () => {
     const revokeCloudCredential = sinon.stub().callsArgWith(1, null);
     const onCredentialDeleted = sinon.stub();
-    const wrapper = renderComponent({ revokeCloudCredential, onCredentialDeleted });
+    const wrapper = renderComponent({revokeCloudCredential, onCredentialDeleted});
     wrapper.find('Popup').prop('buttons')[1].action();
     assert.equal(revokeCloudCredential.callCount, 1);
     assert.equal(onCredentialDeleted.callCount, 1);
@@ -63,7 +63,7 @@ describe('ProfileCredentialListDelete', () => {
     const onCredentialDeleted = sinon.stub();
     const addNotification = sinon.stub();
     const wrapper = renderComponent(
-      { addNotification, revokeCloudCredential, onCredentialDeleted });
+      {addNotification, revokeCloudCredential, onCredentialDeleted});
     wrapper.find('Popup').prop('buttons')[1].action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {

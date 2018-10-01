@@ -139,7 +139,7 @@ describe('DeploymentCredential', function() {
 
   it('selects an initial credential', function() {
     var setCredential = sinon.stub();
-    renderComponent({ setCredential });
+    renderComponent({setCredential});
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], 'lxd_admin@local_default');
   });
@@ -149,7 +149,7 @@ describe('DeploymentCredential', function() {
     credentials['new@test'] = {
       name: 'new@test'
     };
-    const wrapper = renderComponent({ setCredential });
+    const wrapper = renderComponent({setCredential});
     const instance = wrapper.instance();
     instance.refs = {credential: {setValue: sinon.stub()}};
     instance._getCredentials('new@test');
@@ -194,7 +194,7 @@ describe('DeploymentCredential', function() {
 
   it('clears the credential when displaying the form', function() {
     var setCredential = sinon.stub();
-    const wrapper = renderComponent({ setCredential });
+    const wrapper = renderComponent({setCredential});
     wrapper.find('InsetSelect').at(0).simulate('change', 'add-credential');
     assert.equal(setCredential.callCount, 2);
     assert.equal(setCredential.args[1][0], null);
@@ -230,7 +230,7 @@ describe('DeploymentCredential', function() {
     const addNotification = sinon.stub();
     controllerAPI.getCloudCredentialNames.callsArgWith(1, 'Uh oh!', null);
     controllerAPI.getCloudCredentials.callsArgWith(1, null, []);
-    renderComponent({ addNotification });
+    renderComponent({addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'unable to get names for credentials',
@@ -242,7 +242,7 @@ describe('DeploymentCredential', function() {
   it('can handle errors when getting credentials', () => {
     const addNotification = sinon.stub();
     controllerAPI.getCloudCredentials.callsArgWith(1, 'Uh oh!', null);
-    renderComponent({ addNotification });
+    renderComponent({addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to get credentials',

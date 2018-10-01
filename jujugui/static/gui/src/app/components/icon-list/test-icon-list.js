@@ -32,10 +32,12 @@ describe('IconList', function() {
     const expected = (
       <ul className="icon-list">
         <li className="icon-list__item tooltip" key="mysql">
-          <a className="icon-list__link"
+          <a
+            className="icon-list__link"
             href="/charm/path"
             onClick={links.at(0).prop('onClick')}>
-            <img alt='mysql'
+            <img
+              alt='mysql'
               className="icon-list__image"
               src="mysql.svg" />
             <span className="tooltip__tooltip">
@@ -46,10 +48,12 @@ describe('IconList', function() {
           </a>
         </li>
         <li className="icon-list__item tooltip" key="wordpress">
-          <a className="icon-list__link"
+          <a
+            className="icon-list__link"
             href="/charm/path"
             onClick={links.at(1).prop('onClick')}>
-            <img alt='wordpress'
+            <img
+              alt='wordpress'
               className="icon-list__image"
               src="static/gui/build/app/assets/images/non-sprites/charm_160.svg" />
             <span className="tooltip__tooltip">
@@ -60,10 +64,12 @@ describe('IconList', function() {
           </a>
         </li>
         <li className="icon-list__item tooltip" key="django">
-          <a className="icon-list__link"
+          <a
+            className="icon-list__link"
             href="/charm/path"
             onClick={links.at(0).prop('onClick')}>
-            <img alt='django'
+            <img
+              alt='django'
               className="icon-list__image"
               src="django.svg" />
             <span className="tooltip__tooltip">

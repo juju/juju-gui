@@ -55,7 +55,8 @@ class Notification extends React.Component {
         className="p-notification__action"
         onClick={this._dismiss.bind(this)}>
         <SvgIcon
-          name="close_16" size="16" />
+          name="close_16"
+          size="16" />
       </button>);
   }
 

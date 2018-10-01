@@ -42,7 +42,7 @@ describe('Status', function() {
   it('can navigate to charms from the app list', () => {
     const wrapper = renderComponent();
     wrapper.props().navigateToCharm(
-      'u/who/django/xenial/42', { preventDefault: sinon.stub() });
+      'u/who/django/xenial/42', {preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
       changeState.args[0][0], {store: 'u/who/django/xenial/42'});
@@ -50,7 +50,7 @@ describe('Status', function() {
 
   it('can navigate to apps from the relation list', () => {
     const wrapper = renderComponent();
-    wrapper.props().navigateToApplication('mysql', { preventDefault: sinon.stub() });
+    wrapper.props().navigateToApplication('mysql', {preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
