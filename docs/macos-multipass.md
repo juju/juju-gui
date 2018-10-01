@@ -1,15 +1,15 @@
 # Juju GUI and multipass
 
 This document describes how to set up a development environment for the Juju
-GUI on macOS with multipass. The *Initial setup* section must be done only once
-initially. The *Working with the GUI* section describes the daily routine of
+GUI on macOS with multipass. The _Initial setup_ section must be done only once
+initially. The _Working with the GUI_ section describes the daily routine of
 switching to GUI branches under review and QAing them.
 
 ## Initial setup
 
 ### Create an ubuntu instance
 
-- Download and install multipass from
+- Download and install Multipass from
   <https://private-fileshare.canonical.com/~msawicz/multipass/current/>.
 - Create an ubuntu instance, for example with
   `multipass launch -n dev -c 4 -d 20G -m 8G`. This command will create an
@@ -20,10 +20,12 @@ switching to GUI branches under review and QAing them.
 
 - In order to make the instance hostname discoverable from macOS, run the
   following commands:
+
 ```shell
 multipass exec dev -- sudo apt update
 multipass exec dev -- sudo apt install avahi-daemon avahi-autoipd
 ```
+
 - At this point you should be able to call the instance by name, for instance
   with `ping dev.local`.
 - Import your SSH keys from launchpad into the instance with
@@ -31,47 +33,54 @@ multipass exec dev -- sudo apt install avahi-daemon avahi-autoipd
   `{launchpad-id}` with your launchpad id, for instance mine is "frankban"
   (without quotes).
 - At this point you should be able to ssh into the instance with
-  `ssh ubuntu@dev.local`: do it!
+  `ssh multipass@dev.local`: do it!
 
 ### Set up the NFS export
 
-- SSH into the instance with `ssh ubuntu@dev.local` as described above.
+- SSH into the instance with `ssh multipass@dev.local` as described above.
 - Create a directory in which your code will live: `mkdir ~/code`.
 - Install the NFS kernel support: `sudo apt install nfs-kernel-server`.
 - Add the code directory to the exports and restart NFS:
+
 ```shell
-sudo sh -c "echo '/home/ubuntu/code *(rw,sync,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
+sudo sh -c "echo '/home/multipass/code *(rw,sync,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
 sudo /etc/init.d/nfs-kernel-server restart
 ```
+
 - Exit to get back to the host system (macOS): you can either use `exit` or
   send the EOF signal with CTRL-D.
 - Double check that the host can see the export: the command
   `showmount -e dev.local` should show an output like:
+
 ```shell
 Exports list on dev.local:
-/home/ubuntu/code                   *
+/home/multipass/code                   *
 ```
-- Create a directory where to mount the export: `mkdir -p ~/code/ubuntu`.
+
+- Create a directory where to mount the export: `mkdir -p ~/code/multipass`.
 - Enable automatic mounting of this share by adding an entry to the host fstab
   file, and then mount it. Note that `{user}` must be replaced with your own
   user name in macOS:
+
 ```shell
-sudo sh -c "echo dev.local:/home/ubuntu/code /Users/{user}/code/ubuntu nfs resvport,rw,rsize=8192,wsize=8192,timeo=14,intr >> /etc/fstab"
+sudo sh -c "echo dev.local:/home/multipass/code /Users/{user}/code/multipass nfs resvport,rw,rsize=8192,wsize=8192,timeo=14,intr >> /etc/fstab"
 sudo mount -a
 ```
+
 - At this point you should have the code directory of the guest mounted in the
   host, so that you will be able, for instance, to build the GUI from the guest
   while still using your favorite visual editor for hacking in the GUI from the
   host. Try creating a file:
+
 ```shell
-ssh ubuntu@dev.local 'touch ~/code/it-works'
-ll ~/code/ubuntu/it-works # This should work.
-rm ~/code/ubuntu/it-works # Clean it up.
+ssh multipass@dev.local 'touch ~/code/it-works'
+ll ~/code/multipass/it-works # This should work.
+rm ~/code/multipass/it-works # Clean it up.
 ```
 
 ### Set up the Juju GUI
 
-- SSH into the instance with `ssh ubuntu@dev.local`.
+- SSH into the instance with `ssh multipass@dev.local`.
 - Install some essential packages that will let you build the GUI:
   `sudo apt install build-essential`.
 - Switch to the code directory: `cd ~/code`.
@@ -84,27 +93,32 @@ rm ~/code/ubuntu/it-works # Clean it up.
 - Build the GUI: `make sysdeps gui`: the process should exit successfully after
   a while.
 - Additionally, set up a git alias that will be useful later:
+
 ```shell
 cat <<EOF > ~/.gitconfig
 [alias]
 review = "!f() { git fetch -fu origin refs/pull/\$1/head:pr/\$1 && git checkout pr/\$1; }; f"
 EOF
 ```
-  Don't worry about this for now: how to use the alias will be explained later.
-  Also, feel free to edit your `~/.gitconfig` file (in both the guest and the
-  host) to include your own aliases and preferred configuration.
+
+Don't worry about this for now: how to use the alias will be explained later.
+Also, feel free to edit your `~/.gitconfig` file (in both the guest and the
+host) to include your own aliases and preferred configuration.
 
 ### Install guiproxy
 
 The guiproxy server is used to connect the GUI to a real Juju controller that
 could live anywhere. As guiproxy is a Go project, installing it requires having
 Go installed. That can be accomplished following the instructions below.
+
 - Install Go and set up a GOPATH environment variable:
+
 ```shell
 sudo apt install golang-go
 echo -e '\nexport GOPATH=$HOME/code/go\nexport PATH=$PATH:$GOROOT/bin:$GOPATH/bin\n' >> ~/.bashrc
 . ~/.bashrc
 ```
+
 - Install guiproxy with `go get github.com/juju/guiproxy`.
 - Double check guiproxy is correctly installed with `guiproxy -version`: you
   should have at least version 0.7.5.
@@ -115,7 +129,7 @@ As mentioned, while development can be done using your favorite macOS editor
 (if you wish), the GUI can be run exclusively from ubuntu. So, from now on,
 this document assumes you are working from inside the dev instance. As usual,
 to run commands in the instance, you first need to SSH into it with
-`ssh ubuntu@dev.local`.
+`ssh multipass@dev.local`.
 
 ### Switching between develop branch and branches under review
 
@@ -137,6 +151,7 @@ to the PR title). The instructions below refer to this id as the `{PR id}`.
   pending pull requests the process is the same. Continue reading for
   instructions on how to actually run your current branch.
 - To switch back to latest "develop", do the following:
+
 ```shell
 git checkout develop
 git pull origin
@@ -157,16 +172,18 @@ git pull origin
 - In another terminal tab, ssh into the dev instance again, and run guiproxy:
   `guiproxy -env prod`. The proxy will start and suggest to you a set of URLs
   to use for opening the GUI, something like
+
 ```shell
 2017/11/07 11:19:10 visit the GUI at any of the following addresses:
   http://127.0.0.1:8042/
   http://192.168.64.7:8042/
 ```
-  Do not use the localhost URL (it will only work from inside the instance);
-  select a URL that can be reached from the macOS host instead, and point your
-  favorite browser to it: you'll get access to the GUI and it will be connected
-  to the production JAAS, because we are running guiproxy with `-env prod`.
-  CTRL-C is used to quit guiproxy as well.
+
+Do not use the localhost URL (it will only work from inside the instance);
+select a URL that can be reached from the macOS host instead, and point your
+favorite browser to it: you'll get access to the GUI and it will be connected
+to the production JAAS, because we are running guiproxy with `-env prod`.
+CTRL-C is used to quit guiproxy as well.
 
 ### Advanced guiproxy
 
