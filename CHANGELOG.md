@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [2.14.0] - 2018-10-01
+### Added
+- Applications deployed via a bundle will now be grouped in the inspector with easy access to their details pages and their post deployment content.
+- Send analytics ping when exporting bundle.
+
+### Changed
+- Expand eslint linting rules. Use --fix on save to auto format into the correct syntax.
+- Continued worked on making React components sharable.
+
+### Removed
+- Beta status notice has been removed.
+
+### Fixed
+- Ensure that IP address display correctly on the Profile page.
+- Export bundles with series information for applications to fix multi-series deployment issues when the model has a different series than the application and specified machine.
+- If a charm cannot be found in the charm store, do not fail when trying to read it from the endpoints map.
+- Importing a bundle file has been disabled when in read-only mode.
+- Post deployment component now correctly updates and handles no-get-started gracefully.
+- Fix post deployment so that it shows even if the bundle is modified.
+- The GUI now passes the correct flags to destroy unused storage instances when destroying a model.
+
+## Older Releases
+<details>
+<summary>Click to expand</summary>
+
 - 2.13.2:
   - Update JAASLib to 0.4.1
   - Update to use external bakery library (https://github.com/juju/bakeryjs).
@@ -1399,3 +1426,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - First tarball release
 - 0.1.0:
     - OpenStack Summit 2012 demo
+</details>
