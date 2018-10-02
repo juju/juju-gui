@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentSSHKey can disable and enable the add 1`] = `
+<div
+  className="deployment-ssh-key"
+>
+  <p
+    className="deployment-ssh-key__description"
+  >
+    Keys will allow you SSH access to the machines provisioned by Juju for this model.
+  </p>
+  <div
+    className="twelve-col no-margin-bottom"
+  >
+    <div
+      className="three-col no-margin-bottom"
+    >
+      <InsetSelect
+        disabled={false}
+        label="Source"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "GitHub",
+              "value": "github",
+            },
+            Object {
+              "label": "Manual",
+              "value": "manual",
+            },
+            Object {
+              "label": "Launchpad",
+              "value": "launchpad",
+            },
+          ]
+        }
+      />
+    </div>
+    <div
+      className="deployment-ssh-key__username three-col last-col no-margin-bottom"
+    >
+      <GenericInput
+        autocomplete={true}
+        key="githubUsername"
+        label="GitHub username"
+        multiLine={false}
+        onKeyUp={[Function]}
+        required={false}
+        type="text"
+      />
+    </div>
+    <div
+      className="deployment-ssh-key__add-key right"
+    >
+      <Button
+        action={[Function]}
+        disabled={true}
+        type="positive"
+      >
+        Add keys
+      </Button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DeploymentSSHKey can disable and enable the add 2`] = `
+<div
+  className="deployment-ssh-key"
+>
+  <p
+    className="deployment-ssh-key__description"
+  >
+    Keys will allow you SSH access to the machines provisioned by Juju for this model.
+  </p>
+  <div
+    className="twelve-col no-margin-bottom"
+  >
+    <div
+      className="three-col no-margin-bottom"
+    >
+      <InsetSelect
+        disabled={false}
+        label="Source"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "GitHub",
+              "value": "github",
+            },
+            Object {
+              "label": "Manual",
+              "value": "manual",
+            },
+            Object {
+              "label": "Launchpad",
+              "value": "launchpad",
+            },
+          ]
+        }
+      />
+    </div>
+    <div
+      className="deployment-ssh-key__username three-col last-col no-margin-bottom"
+    >
+      <GenericInput
+        autocomplete={true}
+        key="githubUsername"
+        label="GitHub username"
+        multiLine={false}
+        onKeyUp={[Function]}
+        required={false}
+        type="text"
+      />
+    </div>
+    <div
+      className="deployment-ssh-key__add-key right"
+    >
+      <Button
+        action={[Function]}
+        disabled={false}
+        type="positive"
+      >
+        Add keys
+      </Button>
+    </div>
+  </div>
+</div>
+`;

@@ -425,10 +425,6 @@ class DeploymentSSHKey extends React.Component {
     return false;
   }
 
-  componentDidUpdate() {
-    this._updateButtonState();
-  }
-
   render() {
     const cloud = this.props.cloud;
     if (!cloud) {

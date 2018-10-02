@@ -103,7 +103,6 @@ describe('DeploymentSSHKey', function() {
       launchpadUsername: {getValue: () => 'rose'},
       sshSource: {getValue: () => 'launchpad'}
     };
-    instance.componentDidUpdate();
     instance._handleSourceChange();
     wrapper.update();
     const expected = (
@@ -296,8 +295,7 @@ describe('DeploymentSSHKey', function() {
           }
         }
       };
-      instance.componentDidUpdate();
-      wrapper.update();
+      instance._updateButtonState();
       assert.equal(wrapper.find('Button').prop('disabled'), false);
       instance._addGithubKeysCallback(null, [
         {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'}
@@ -524,33 +522,11 @@ describe('DeploymentSSHKey', function() {
 
   it('can disable and enable the add', () => {
     const wrapper = renderComponent();
-    const instance = wrapper.instance();
-    let expected = (
-      <div className="deployment-ssh-key__add-key right">
-        <Button
-          action={wrapper.find('Button').prop('action')}
-          disabled={true}
-          type="positive">
-          Add keys
-        </Button>
-      </div>
-    );
-    assert.compareJSX(wrapper.find('.deployment-ssh-key__add-key'), expected);
-    instance.setState({
+    expect(wrapper).toMatchSnapshot();
+    wrapper.setState({
       buttonDisabled: false
     });
-    wrapper.update();
-    expected = (
-      <div className="deployment-ssh-key__add-key right">
-        <Button
-          action={wrapper.find('Button').prop('action')}
-          disabled={false}
-          type="positive">
-          Add keys
-        </Button>
-      </div>
-    );
-    assert.compareJSX(wrapper.find('.deployment-ssh-key__add-key'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
 });
