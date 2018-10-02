@@ -53,7 +53,6 @@ describe('HeaderSearch', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     wrapper.find('.header-search__close').props().onClick();
-    instance.componentDidUpdate();
     assert.equal(instance.refs.searchInput.blur.callCount, 1, 'blurStub not called');
     assert.equal(appState.changeState.callCount, 1, 'changeState not called');
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -133,7 +132,6 @@ describe('HeaderSearch', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     wrapper.find('.header-search__search--mobile').props().onClick();
-    instance.componentDidUpdate();
     assert.equal(instance.refs.searchInput.blur.callCount, 1);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
