@@ -1,0 +1,201 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntityContent can display a bundle for Juju 2 1`] = `
+<div
+  className="entity-content"
+>
+  <div
+    className="row"
+  >
+    <div
+      className="inner-wrapper"
+    >
+      <div
+        className="eight-col"
+      >
+        <EntityContentDescription
+          changeState={[Function]}
+          description="HA Django cluster."
+          includeHeading={true}
+        />
+        <EntityContentDiagram
+          clearLightbox={[Function]}
+          diagramUrl="testRef"
+          displayLightbox={[Function]}
+          isExpandable={true}
+          isRow={false}
+          title="django cluster"
+        />
+        <EntityContentReadme
+          addNotification={[Function]}
+          changeState={[Function]}
+          entityModel={
+            Object {
+              "get": [Function],
+              "getAttrs": [Function],
+              "set": [Function],
+              "toEntity": [Function],
+            }
+          }
+          getFile={[Function]}
+          hash="readme"
+          scrollCharmbrowser={[Function]}
+        />
+        <div
+          className="entity-content__configuration"
+          id="configuration"
+        >
+          <h3
+            className="entity-content__header"
+          >
+            Bundle configuration
+          </h3>
+          <div>
+            <AccordionSection
+              key="gunicorn"
+              title={
+                <span>
+                  <img
+                    alt="gunicorn"
+                    className="entity-content__config-image"
+                    width="26"
+                  />
+                  gunicorn
+                </span>
+              }
+            >
+              <div
+                className="entity-content__config-description"
+              >
+                <div
+                  className="entity-content__config-option"
+                  key="name0"
+                >
+                  <dt
+                    className="entity-content__config-name"
+                  >
+                    name
+                  </dt>
+                  <dd
+                    className="entity-content__config-description"
+                  >
+                    <p>
+                      title
+                    </p>
+                  </dd>
+                </div>
+                <div
+                  className="entity-content__config-option"
+                  key="active1"
+                >
+                  <dt
+                    className="entity-content__config-name"
+                  >
+                    active
+                  </dt>
+                  <dd
+                    className="entity-content__config-description"
+                  >
+                    <p>
+                      <Component />
+                    </p>
+                  </dd>
+                </div>
+              </div>
+            </AccordionSection>
+            <AccordionSection
+              key="django"
+              title={
+                <span>
+                  <img
+                    alt="django"
+                    className="entity-content__config-image"
+                    width="26"
+                  />
+                  django
+                </span>
+              }
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className="four-col last-col"
+      >
+        <ExpertContactCard
+          expert="test-owner"
+          sendAnalytics={[Function]}
+          staticURL="http://example.com"
+        />
+        <div
+          className="section section__contribute"
+        >
+          <h3
+            className="section__title"
+          >
+            Contribute
+          </h3>
+          <ul
+            className="section__list"
+          >
+            <li
+              className="section__list-item"
+            >
+              <a
+                className="link link--cold"
+                href="https://code.launchpad.net/~charmers/charms/bundles/django-cluster/bundle"
+                target="_blank"
+              >
+                Project homepage
+              </a>
+            </li>
+          </ul>
+        </div>
+        <EntityFiles
+          apiUrl="http://example.com"
+          entityModel={
+            Object {
+              "get": [Function],
+              "getAttrs": [Function],
+              "set": [Function],
+              "toEntity": [Function],
+            }
+          }
+        />
+        <div
+          className="entity-content__card section clearfix"
+        >
+          <h3
+            className="section__title"
+          >
+            Embed this charm
+          </h3>
+          <p>
+            Add this card to your website by copying the code below. 
+            <a
+              className="entity-content__card-cta"
+              href="https://jujucharms.com/community/cards"
+              target="_blank"
+            >
+              Learn more
+            </a>
+            .
+          </p>
+          <CopyToClipboard
+            className="copy-to-clipboard"
+            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js\\"></script>
+<div class=\\"juju-card\\"  data-id=\\"django-cluster\\"></div>"
+          />
+          <h4>
+            Preview
+          </h4>
+          <div
+            className="juju-card"
+            data-id="django-cluster"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

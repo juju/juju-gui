@@ -853,4 +853,4 @@ MachineView.propTypes = {
 };
 
 module.exports = ReactDnD.DragDropContext(
-  ReactDnDHTML5Backend)(MachineView);
+  ReactDnDHTML5Backend.default)(MachineView);

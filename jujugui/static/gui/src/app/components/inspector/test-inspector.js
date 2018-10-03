@@ -242,7 +242,7 @@ describe('Inspector', function() {
       activeComponent: 'unit',
       unit: '5'
     };
-    wrapper.setProps();
+    instance.generateState(instance.props);
     // The displayed component should not have been updated.
     assert.equal(instance.state.activeComponent, 'units');
     assert.equal(appState.changeState.callCount, 1);

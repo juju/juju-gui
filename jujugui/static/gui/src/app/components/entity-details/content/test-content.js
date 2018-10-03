@@ -5,17 +5,14 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const AccordionSection = require('../../accordion-section/accordion-section');
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const EntityContent = require('./content');
 const EntityContentConfigOption = require('./config-option/config-option');
 const EntityContentDescription = require('./description/description');
-const EntityContentDiagram = require('./diagram/diagram');
 const EntityContentReadme = require('./readme/readme');
 const EntityContentRelations = require('./relations/relations');
 const EntityFiles = require('./files/files');
 const EntityResources = require('./resources/resources');
-const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
 const Spinner = require('../../spinner/spinner');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -329,133 +326,10 @@ describe('EntityContent', function() {
   });
 
   it('can display a bundle for Juju 2', function() {
-    const mockEntity = jsTestUtils.makeEntity(true);
-    const script = generateScript(true);
     const wrapper = renderComponent({
-      entityModel: mockEntity
+      entityModel: jsTestUtils.makeEntity(true)
     });
-    const expected = (
-      <div className="entity-content">
-        <div className="row">
-          <div className="inner-wrapper">
-            <div className="eight-col">
-              <EntityContentDescription
-                changeState={sinon.stub()}
-                description={mockEntity.get('description')}
-                includeHeading={true} />
-              <EntityContentDiagram
-                clearLightbox={sinon.stub()}
-                diagramUrl="testRef"
-                displayLightbox={sinon.stub()}
-                isExpandable={true}
-                isRow={false}
-                title="django cluster" />
-              <EntityContentReadme
-                addNotification={sinon.stub()}
-                changeState={sinon.stub()}
-                entityModel={mockEntity}
-                getFile={sinon.stub()}
-                hash="readme"
-                scrollCharmbrowser={sinon.stub()} />
-              <div
-                className="entity-content__configuration"
-                id="configuration">
-                <h3 className="entity-content__header">
-                  Bundle configuration
-                </h3>
-                <div>
-                  <AccordionSection
-                    title={<span>
-                      <img
-                        alt="gunicorn"
-                        className="entity-content__config-image"
-                        src={undefined}
-                        width="26" />
-                      gunicorn
-                    </span>}>
-                    <div className="entity-content__config-description">
-                      <div className="entity-content__config-option">
-                        <dt className="entity-content__config-name">
-                          name
-                        </dt>
-                        <dd className="entity-content__config-description">
-                          <p>title</p>
-                        </dd>
-                      </div>
-                      <div className="entity-content__config-option">
-                        <dt className="entity-content__config-name">
-                          active
-                        </dt>
-                        <dd className="entity-content__config-description">
-                          <p><undefined /></p>
-                        </dd>
-                      </div>
-                    </div>
-                  </AccordionSection>
-                  <AccordionSection
-                    title={<span>
-                      <img
-                        alt="django"
-                        className="entity-content__config-image"
-                        src={undefined}
-                        width="26" />
-                      django
-                    </span>} />
-                </div>
-              </div>
-            </div>
-            <div className="four-col last-col">
-              <ExpertContactCard
-                expert="test-owner"
-                sendAnalytics={sinon.stub()}
-                staticURL="http://example.com" />
-              <div className="section section__contribute">
-                <h3 className="section__title">
-                  Contribute
-                </h3>
-                <ul className="section__list">
-                  {undefined}
-                  <li className="section__list-item">
-                    <a
-                      className="link link--cold"
-                      href={'https://code.launchpad.net/~charmers/charms/' +
-                      'bundles/django-cluster/bundle'}
-                      target="_blank">
-                      Project homepage
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {undefined}
-              {undefined}
-              <EntityFiles
-                apiUrl={charmstore.url}
-                entityModel={mockEntity} />
-              <div className="entity-content__card section clearfix">
-                <h3 className="section__title">
-                  Embed this charm
-                </h3>
-                <p>
-                  Add this card to your website by copying the code below.&nbsp;
-                  <a
-                    className="entity-content__card-cta"
-                    href="https://jujucharms.com/community/cards"
-                    target="_blank">
-                    Learn more
-                  </a>.
-                </p>
-                <CopyToClipboard
-                  className="copy-to-clipboard"
-                  value={script} />
-                <h4>Preview</h4>
-                <div className="juju-card" data-id="django-cluster"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can display a bundle with actions', function() {

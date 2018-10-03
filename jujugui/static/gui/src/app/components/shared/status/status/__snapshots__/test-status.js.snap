@@ -9,132 +9,130 @@ exports[`Status renders with entites 1`] = `
   <div
     className="status-view__content"
   >
-    <React.Fragment>
-      <StatusModel
-        changeFilter={[Function]}
-        counts={
-          Object {
-            "applications": 1,
-            "machines": 1,
-            "relations": 1,
-            "remoteApplications": 1,
-            "units": 1,
-          }
+    <StatusModel
+      changeFilter={[Function]}
+      counts={
+        Object {
+          "applications": 1,
+          "machines": 1,
+          "relations": 1,
+          "remoteApplications": 1,
+          "units": 1,
         }
-        highestStatus="ok"
-        model={
-          Object {
-            "cloud": "aws",
-            "environmentName": "my-model",
-            "modelUUID": "myuuid",
-            "region": "neutral zone",
-            "sla": "advanced",
-            "version": "2.42.47",
-          }
+      }
+      highestStatus="ok"
+      model={
+        Object {
+          "cloud": "aws",
+          "environmentName": "my-model",
+          "modelUUID": "myuuid",
+          "region": "neutral zone",
+          "sla": "advanced",
+          "version": "2.42.47",
         }
-        statusFilter={null}
-      />
-      <StatusRemoteApplicationList
-        remoteApplications={
-          Object {
-            "app": Object {},
-          }
+      }
+      statusFilter={null}
+    />
+    <StatusRemoteApplicationList
+      remoteApplications={
+        Object {
+          "app": Object {},
         }
-        statusFilter={null}
-      />
-      <StatusApplicationList
-        applications={
-          Object {
-            "app": Object {
-              "status": Object {
-                "current": "",
-              },
+      }
+      statusFilter={null}
+    />
+    <StatusApplicationList
+      applications={
+        Object {
+          "app": Object {
+            "status": Object {
+              "current": "",
             },
-          }
+          },
         }
-        generateApplicationOnClick={[Function]}
-        generateApplicationURL={[Function]}
-        generateCharmURL={[Function]}
-        getIconPath={[Function]}
-        onCharmClick={[Function]}
-        statusFilter={null}
-        units={
-          Object {
-            "unit": Object {
-              "agentStatus": Object {
-                "current": "",
-              },
-              "workloadStatus": Object {
-                "current": "",
-              },
+      }
+      generateApplicationOnClick={[Function]}
+      generateApplicationURL={[Function]}
+      generateCharmURL={[Function]}
+      getIconPath={[Function]}
+      onCharmClick={[Function]}
+      statusFilter={null}
+      units={
+        Object {
+          "unit": Object {
+            "agentStatus": Object {
+              "current": "",
             },
-          }
-        }
-      />
-      <StatusUnitList
-        applications={
-          Object {
-            "app": Object {
-              "status": Object {
-                "current": "",
-              },
+            "workloadStatus": Object {
+              "current": "",
             },
-          }
+          },
         }
-        generateMachineURL={[Function]}
-        generateUnitOnClick={[Function]}
-        generateUnitURL={[Function]}
-        getIconPath={[Function]}
-        onMachineClick={[Function]}
-        statusFilter={null}
-        units={
-          Object {
-            "unit": Object {
-              "agentStatus": Object {
-                "current": "",
-              },
-              "workloadStatus": Object {
-                "current": "",
-              },
+      }
+    />
+    <StatusUnitList
+      applications={
+        Object {
+          "app": Object {
+            "status": Object {
+              "current": "",
             },
-          }
+          },
         }
-      />
-      <StatusMachineList
-        generateMachineOnClick={[Function]}
-        generateMachineURL={[Function]}
-        machines={
-          Object {
-            "machine": Object {
-              "agentStatus": Object {
-                "current": "",
-              },
+      }
+      generateMachineURL={[Function]}
+      generateUnitOnClick={[Function]}
+      generateUnitURL={[Function]}
+      getIconPath={[Function]}
+      onMachineClick={[Function]}
+      statusFilter={null}
+      units={
+        Object {
+          "unit": Object {
+            "agentStatus": Object {
+              "current": "",
             },
-          }
-        }
-        statusFilter={null}
-      />
-      <StatusRelationList
-        applications={
-          Object {
-            "app": Object {
-              "status": Object {
-                "current": "",
-              },
+            "workloadStatus": Object {
+              "current": "",
             },
-          }
+          },
         }
-        generateApplicationURL={[Function]}
-        getIconPath={[Function]}
-        onApplicationClick={[Function]}
-        relations={
-          Object {
-            "relation": Object {},
-          }
+      }
+    />
+    <StatusMachineList
+      generateMachineOnClick={[Function]}
+      generateMachineURL={[Function]}
+      machines={
+        Object {
+          "machine": Object {
+            "agentStatus": Object {
+              "current": "",
+            },
+          },
         }
-        statusFilter={null}
-      />
-    </React.Fragment>
+      }
+      statusFilter={null}
+    />
+    <StatusRelationList
+      applications={
+        Object {
+          "app": Object {
+            "status": Object {
+              "current": "",
+            },
+          },
+        }
+      }
+      generateApplicationURL={[Function]}
+      getIconPath={[Function]}
+      onApplicationClick={[Function]}
+      relations={
+        Object {
+          "relation": Object {},
+        }
+      }
+      statusFilter={null}
+    />
   </div>
 </Panel>
 `;
@@ -148,32 +146,30 @@ exports[`Status renders without entities 1`] = `
   <div
     className="status-view__content"
   >
-    <React.Fragment>
-      <StatusModel
-        changeFilter={[Function]}
-        counts={
-          Object {
-            "applications": 0,
-            "machines": 0,
-            "relations": 0,
-            "remoteApplications": 0,
-            "units": 0,
-          }
+    <StatusModel
+      changeFilter={[Function]}
+      counts={
+        Object {
+          "applications": 0,
+          "machines": 0,
+          "relations": 0,
+          "remoteApplications": 0,
+          "units": 0,
         }
-        highestStatus="ok"
-        model={
-          Object {
-            "cloud": "aws",
-            "environmentName": "my-model",
-            "modelUUID": "myuuid",
-            "region": "neutral zone",
-            "sla": "advanced",
-            "version": "2.42.47",
-          }
+      }
+      highestStatus="ok"
+      model={
+        Object {
+          "cloud": "aws",
+          "environmentName": "my-model",
+          "modelUUID": "myuuid",
+          "region": "neutral zone",
+          "sla": "advanced",
+          "version": "2.42.47",
         }
-        statusFilter={null}
-      />
-    </React.Fragment>
+      }
+      statusFilter={null}
+    />
   </div>
 </Panel>
 `;
