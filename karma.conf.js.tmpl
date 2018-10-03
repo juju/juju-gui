@@ -96,6 +96,10 @@ module.exports = function(config) {
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false,
 
+    // The default for jasmine now is to run the tests in a random order. This
+    // makes sense however, we we know, the environment.js tests are a mess
+    // and randomly fail. These tests will all be being deleted with the
+    // jujulib change so at that time we'll want to remove this.
     client: {
       jasmine: {
         random: false
