@@ -2,7 +2,7 @@
 
 exports[`BasicTableRow can display rows with expandable content 1`] = `
 <li
-  className="twelve-col  basic-table__row basic-table__row--expandable basic-table__row--clickable"
+  className="twelve-col basic-table__row basic-table__row--expandable basic-table__row--clickable"
   onClick={[Function]}
   role="button"
   tabIndex="0"
@@ -15,7 +15,7 @@ exports[`BasicTableRow can display rows with expandable content 1`] = `
 
 exports[`BasicTableRow can render 1`] = `
 <li
-  className="twelve-col  basic-table__row"
+  className="twelve-col basic-table__row"
   onClick={null}
   role="button"
   tabIndex="0"
