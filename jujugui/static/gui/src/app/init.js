@@ -1655,6 +1655,7 @@ class GUIApp {
     @param {Object} doc The html document.
   */
   reloadConfigFile(doc) {
+    return;
     // Fetch the url for the config file from the DOM. This is necessary because
     // the config path is defined on render by the various deployment environments.
     const oldScript = doc.querySelector('script[data=config]');

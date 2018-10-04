@@ -1,4 +1,4 @@
-var juju_config = {
+module.exports = {
   "apiAddress": "jimm.staging.jujucharms.com:443",
   "baseUrl": "/",
   "bundleServiceURL": "https://api.staging.jujucharms.com/bundleservice/",

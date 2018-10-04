@@ -55,6 +55,8 @@ const UserMenu = require('../components/user-menu/user-menu');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
 
+require('../assets/css/base.scss');
+
 /**
     A component to render the app.
 */

@@ -8,7 +8,7 @@
 /// @group Utils
 @mixin cloud-base {
   body {
-    background: url('#{$asset-path}img/image-background-paper.png') repeat-y center top $light-grey;
+    // background: url('#{$asset-path}img/image-background-paper.png') repeat-y center top $light-grey;
     background-size: cover;
   }
 }

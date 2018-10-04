@@ -82,7 +82,7 @@ $z-indexed-elements: search-results-list-block__tags,
 // sass-lint:enable indentation
 
 // Asset path used by Vanilla to load fonts instead of asset server
-$asset-path: '../../../../../../../';
+$asset-path: '../../../../../';
 
 // Classes for extending.
 .vertical-center {
@@ -95,7 +95,7 @@ $asset-path: '../../../../../../../';
 @import 'normalize.css/normalize';
 
 // Imports legacy cloud vanilla theme from local plugins folder
-@import 'plugins/cloud-vanilla-theme/scss/theme';
+@import './plugins/cloud-vanilla-theme/scss/theme';
 
 // Imports need to be after vars.
 @import 'variables';
