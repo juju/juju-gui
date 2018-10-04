@@ -1,0 +1,23 @@
+var juju_config = {
+  "apiAddress": "jimm.staging.jujucharms.com:443",
+  "baseUrl": "/",
+  "bundleServiceURL": "https://api.staging.jujucharms.com/bundleservice/",
+  "charmstoreURL": "https://api.staging.jujucharms.com/charmstore/",
+  "consoleEnabled": true,
+  "container": "#main",
+  "controllerSocketTemplate": "/controller/?controller=$server:$port",
+  "gisf": true,
+  "html5": true,
+  "interactiveLogin": true,
+  "jujuCoreVersion": "2.2.0",
+  "jujuEnvUUID": "",
+  "jujushellURL": "wss://shell.staging.jujugui.org/ws/",
+  "paymentURL": "https://api.staging.jujucharms.com/payment/",
+  "plansURL": "https://api.staging.jujucharms.com/omnibus/",
+  "ratesURL": "https://api.staging.jujucharms.com/omnibus/",
+  "serverRouting": false,
+  "socketTemplate": "/model/?model=$server:$port\u0026uuid=$uuid",
+  "socket_protocol": "ws",
+  "termsURL": "https://api.staging.jujucharms.com/terms/",
+  "viewContainer": "#main"
+};

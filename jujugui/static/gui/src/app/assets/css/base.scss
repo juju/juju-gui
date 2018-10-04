@@ -82,7 +82,7 @@ $z-indexed-elements: search-results-list-block__tags,
 // sass-lint:enable indentation
 
 // Asset path used by Vanilla to load fonts instead of asset server
-$asset-path: 'static/gui/build/app/assets/';
+$asset-path: '../../../../../../../';
 
 // Classes for extending.
 .vertical-center {
