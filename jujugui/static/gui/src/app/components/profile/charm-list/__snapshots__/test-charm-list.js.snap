@@ -1,0 +1,351 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Charm List can render 1`] = `
+<div
+  className="profile-charm-list"
+>
+  <React.Fragment>
+    <h2
+      className="profile__title"
+    >
+      My
+       charms
+      <span
+        className="profile__title-count"
+      >
+        (
+        3
+        )
+      </span>
+    </h2>
+    <BasicTable
+      headerClasses={Array []}
+      headers={
+        Array [
+          Object {
+            "content": "Name",
+          },
+          Object {
+            "content": "Series",
+          },
+          Object {
+            "content": "Release",
+          },
+        ]
+      }
+      rowClasses={Array []}
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "content": <React.Fragment>
+                  <span
+                    className="profile-charm-list__name"
+                  >
+                    <span
+                      className="profile-charm-list__icon"
+                    >
+                      <img
+                        src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                        title="failtester"
+                      />
+                    </span>
+                    <span
+                      className="profile-charm-list__desc"
+                    >
+                      <a
+                        href="/gui/u/hatch/failtester/precise/7"
+                        onClick={[Function]}
+                      >
+                        failtester
+                      </a>
+                    </span>
+                  </span>
+                </React.Fragment>,
+              },
+              Object {
+                "content": "precise",
+              },
+              Object {
+                "content": "#7",
+              },
+            ],
+            "expandedContent": <React.Fragment>
+              <td
+                className="profile-charm-list__name"
+              >
+                <span
+                  className="profile-charm-list__icon"
+                >
+                  <img
+                    src="/charmstore/~hatch/precise/failtester-7/icon.svg"
+                    title="failtester"
+                  />
+                </span>
+                <span
+                  className="profile-charm-list__meta"
+                >
+                  <a
+                    href="/gui/u/hatch/failtester/precise/7"
+                    onClick={[Function]}
+                  >
+                    failtester
+                  </a>
+                  <span
+                    className="entity__desc"
+                  />
+                </span>
+              </td>
+              <td>
+                <span
+                  className="profile-charm-list__series"
+                >
+                  precise
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Writeable:
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Readable:
+                </span>
+              </td>
+              <td
+                className="profile-charm-list__release"
+              >
+                <span>
+                  #7
+                </span>
+                <button
+                  className="p-button--positive"
+                  disabled={false}
+                  tooltip="Add this undefined to a new model"
+                >
+                  Add to model
+                </button>
+              </td>
+            </React.Fragment>,
+            "key": "cs:~hatch/precise/failtester-7",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "content": <React.Fragment>
+                  <span
+                    className="profile-charm-list__name"
+                  >
+                    <span
+                      className="profile-charm-list__icon"
+                    >
+                      <img
+                        src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                        title="ghost"
+                      />
+                    </span>
+                    <span
+                      className="profile-charm-list__desc"
+                    >
+                      <a
+                        href="/gui/u/hatch/ghost/xenial/3"
+                        onClick={[Function]}
+                      >
+                        ghost
+                      </a>
+                      <ul
+                        className="p-inline-list u-no-margin-bottom"
+                      >
+                        <li
+                          className="p-inline-list__item"
+                          onClick={[Function]}
+                          role="button"
+                          tabIndex="0"
+                        >
+                          misc
+                          ,
+                        </li>
+                        <li
+                          className="p-inline-list__item"
+                          onClick={[Function]}
+                          role="button"
+                          tabIndex="0"
+                        >
+                          ops
+                        </li>
+                      </ul>
+                    </span>
+                  </span>
+                </React.Fragment>,
+              },
+              Object {
+                "content": "xenial",
+              },
+              Object {
+                "content": "#3",
+              },
+            ],
+            "expandedContent": <React.Fragment>
+              <td
+                className="profile-charm-list__name"
+              >
+                <span
+                  className="profile-charm-list__icon"
+                >
+                  <img
+                    src="/charmstore/~hatch/xenial/ghost-3/icon.svg"
+                    title="ghost"
+                  />
+                </span>
+                <span
+                  className="profile-charm-list__meta"
+                >
+                  <a
+                    href="/gui/u/hatch/ghost/xenial/3"
+                    onClick={[Function]}
+                  >
+                    ghost
+                  </a>
+                  <span
+                    className="entity__desc"
+                  />
+                </span>
+              </td>
+              <td>
+                <span
+                  className="profile-charm-list__series"
+                >
+                  xenial
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Writeable:
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Readable:
+                </span>
+              </td>
+              <td
+                className="profile-charm-list__release"
+              >
+                <span>
+                  #3
+                </span>
+                <button
+                  className="p-button--positive"
+                  disabled={false}
+                  tooltip="Add this undefined to a new model"
+                >
+                  Add to model
+                </button>
+              </td>
+            </React.Fragment>,
+            "key": "cs:~hatch/xenial/ghost-3",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "content": <React.Fragment>
+                  <span
+                    className="profile-charm-list__name"
+                  >
+                    <span
+                      className="profile-charm-list__icon"
+                    >
+                      <img
+                        src="/charmstore/~hatch/privghost-1/icon.svg"
+                        title="privghost"
+                      />
+                    </span>
+                    <span
+                      className="profile-charm-list__desc"
+                    >
+                      <a
+                        href="/gui/u/hatch/privghost/1"
+                        onClick={[Function]}
+                      >
+                        privghost
+                      </a>
+                    </span>
+                  </span>
+                </React.Fragment>,
+              },
+              Object {
+                "content": "xenial, trusty",
+              },
+              Object {
+                "content": "#1",
+              },
+            ],
+            "expandedContent": <React.Fragment>
+              <td
+                className="profile-charm-list__name"
+              >
+                <span
+                  className="profile-charm-list__icon"
+                >
+                  <img
+                    src="/charmstore/~hatch/privghost-1/icon.svg"
+                    title="privghost"
+                  />
+                </span>
+                <span
+                  className="profile-charm-list__meta"
+                >
+                  <a
+                    href="/gui/u/hatch/privghost/1"
+                    onClick={[Function]}
+                  >
+                    privghost
+                  </a>
+                  <span
+                    className="entity__desc"
+                  />
+                </span>
+              </td>
+              <td>
+                <span
+                  className="profile-charm-list__series"
+                >
+                  xenial, trusty
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Writeable:
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Readable:
+                </span>
+              </td>
+              <td
+                className="profile-charm-list__release"
+              >
+                <span>
+                  #1
+                </span>
+                <button
+                  className="p-button--positive"
+                  disabled={false}
+                  tooltip="Add this undefined to a new model"
+                >
+                  Add to model
+                </button>
+              </td>
+            </React.Fragment>,
+            "key": "cs:~hatch/privghost-1",
+          },
+        ]
+      }
+      sort={[Function]}
+    />
+  </React.Fragment>
+</div>
+`;

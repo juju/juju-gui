@@ -1,40 +1,47 @@
 .profile-charm-list {
-  &__title {
-    margin-bottom: 25px;
-    font-size: 1.5em;
+  tr {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
   }
 
-  &__item {
-    display: flex;
+  &__name {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    padding: 0;
+
+    a {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
   }
 
   &__icon {
-    border-radius: 50%;
-    width: 24px;
-    margin-bottom: auto;
-    margin-right: 12px;
-    margin-left: 12px;
-    float: left;
+    padding: 0.5rem;
+    padding-right: 1rem;
   }
 
-  &__tags {
-    @extend %list-style;
-    padding-top: 5px;
+  &__series {
+    display: block;
+    margin-bottom: 2rem;
   }
 
-  &__tag.link {
-    display: inline-block;
-    margin-bottom: 0;
-    color: $color-mid-dark;
+  &__desc {
 
-    &:after {
-      content: ',';
-      display: inline-block;
-      margin-right: 0.25em;
+    li.p-inline-list__item {
+      margin-right: .5rem;
+    }
+  }
+
+  &__release {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      display: block;
     }
 
-    &:last-child:after {
-      content: '';
+    button {
+      margin-top: auto;
     }
   }
 }

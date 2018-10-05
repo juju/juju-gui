@@ -8,7 +8,6 @@ const {urls} = require('jaaslib');
 
 const BasicTable = require('../../shared/basic-table/basic-table');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
-const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
 
 /**
@@ -103,7 +102,8 @@ class ProfileCharmList extends React.Component {
         text: '',
         type: null
       },
-      hash: null});
+      hash: null
+    });
   }
 
   /**
@@ -115,19 +115,19 @@ class ProfileCharmList extends React.Component {
     if (!tags || !tags.length) {
       return null;
     }
+    const noOfTags = tags.length;
     const tagList = tags.map((tag, i) => (
       <li
-        className="link profile-charm-list__tag"
+        className="p-inline-list__item"
         key={tag + i}
         onClick={this._handleTagClick.bind(this, tag)}
         role="button"
         tabIndex="0">
         {tag}
-      </li>));
-    return (
-      <ul className="profile-charm-list__tags">
-        {tagList}
-      </ul>);
+        {((i + 1) === noOfTags ? null : ',')}
+      </li>
+    ));
+    return <ul className="p-inline-list u-no-margin-bottom">{tagList}</ul>;
   }
 
   /**
@@ -138,10 +138,9 @@ class ProfileCharmList extends React.Component {
     return (
       <h2 className="profile__title">
         {this.props.isActiveUsersProfile ? 'My' : 'Their'} charms
-        <span className="profile__title-count">
-          ({(this.state.data || []).length})
-        </span>
-      </h2>);
+        <span className="profile__title-count">({(this.state.data || []).length})</span>
+      </h2>
+    );
   }
 
   /**
@@ -163,7 +162,7 @@ class ProfileCharmList extends React.Component {
   render() {
     let content;
     if (this.state.loading) {
-      content = (<Spinner />);
+      content = <Spinner />;
     } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
       if (!this.props.user) {
         content = (
@@ -171,13 +170,16 @@ class ProfileCharmList extends React.Component {
             addNotification={this.props.addNotification}
             bakery={this.props.bakery}
             changeState={this.props.changeState}
-            charmstore={shapeup.fromShape(this.props.charmstore,
-              ProfileCharmstoreLogin.propTypes.charmstore)}
+            charmstore={shapeup.fromShape(
+              this.props.charmstore,
+              ProfileCharmstoreLogin.propTypes.charmstore
+            )}
             storeUser={this.props.storeUser}
-            type="charms" />);
+            type="charms" />
+        );
       } else {
         content = (
-          <div>
+          <React.Fragment>
             {this._generateTitle()}
             <p className="profile-charm-list__onboarding">
               Learn about&nbsp;
@@ -185,9 +187,11 @@ class ProfileCharmList extends React.Component {
                 href="https://jujucharms.com/docs/stable/developer-getting-started"
                 target="_blank">
                 writing your own charm
-              </a>.
+              </a>
+              .
             </p>
-          </div>);
+          </React.Fragment>
+        );
       }
     } else {
       const rows = this.state.data.map(charm => {
@@ -199,95 +203,112 @@ class ProfileCharmList extends React.Component {
         const series = charm.series.join(', ');
         const icon = (
           <img
-            className="profile-charm-list__icon"
             key="img"
             src={src}
-            title={charm.name} />);
-        return ({
-          columns: [{
-            content: (
-              <div>
-                <div className="profile-charm-list__item">
-                  <div>
-                    {icon}
-                  </div>
-                  <div>
-                    <a
-                      href={`${this.props.baseURL}${path}`}
-                      key="link"
-                      onClick={this._navigateToCharm.bind(this, path)}>
-                      {charm.name}
-                    </a>
-                    {this._generateTags(charm.tags)}
-                  </div>
-                </div>
-              </div>),
-            columnSize: 6
-          }, {
-            content: series,
-            columnSize: 3
-          }, {
-            content: version,
-            columnSize: 3
-          }],
+            title={charm.name} />
+        );
+        const modelName = this.props.getModelName();
+        const title = `Add to ${modelName || 'model'}`;
+        return {
+          columns: [
+            {
+              content: (
+                <React.Fragment>
+                  <span className="profile-charm-list__name">
+                    <span className="profile-charm-list__icon">
+                      {icon}
+                    </span>
+                    <span className="profile-charm-list__desc">
+                      <a
+                        href={`${this.props.baseURL}${path}`}
+                        key="link"
+                        onClick={this._navigateToCharm.bind(this, path)}>
+                        {charm.name}
+                      </a>
+                      {this._generateTags(charm.tags)}
+                    </span>
+                  </span>
+                </React.Fragment>
+              )
+            }, {
+              content: series
+            }, {
+              content: version
+            }
+          ],
           expandedContent: (
-            <ProfileExpandedContent
-              acl={this.props.acl}
-              addToModel={this.props.addToModel}
-              changeState={this.props.changeState}
-              entity={charm}
-              generatePath={this.props.generatePath}
-              getModelName={this.props.getModelName}
-              topRow={(
-                <div>
-                  <div className="six-col profile-expanded-content__top-row">
-                    {icon}
-                    <a
-                      href={`${this.props.baseURL}${path}`}
-                      key="link"
-                      onClick={this._navigateToCharm.bind(this, path)}>
-                      {charm.name}
-                    </a>
-                  </div>
-                  <div className="three-col profile-expanded-content__top-row">
-                    {series}
-                  </div>
-                  <div className="three-col last-col profile-expanded-content__top-row">
-                    {version}
-                  </div>
-                </div>)} />),
-          extraData: charm.name,
+            <React.Fragment>
+              <td className="profile-charm-list__name">
+                <span className="profile-charm-list__icon">
+                  {icon}
+                </span>
+                <span className="profile-charm-list__meta">
+                  <a
+                    href={`${this.props.baseURL}${path}`}
+                    key="link"
+                    onClick={this._navigateToCharm.bind(this, path)}>
+                    {charm.name}
+                  </a>
+                  <span className="entity__desc">
+                    {charm.description}
+                  </span>
+                </span>
+              </td>
+              <td>
+                <span className="profile-charm-list__series">
+                  {series}
+                </span>
+                <span className="entity__permissions">
+                  Writeable:
+                  {this.props.generatePermissions(charm.perm.write, this.props)}
+                </span>
+                <span className="entity__permissions">
+                  Readable:
+                  {this.props.generatePermissions(charm.perm.read, this.props)}
+                </span>
+              </td>
+              <td className="profile-charm-list__release">
+                <span>
+                  {version}
+                </span>
+                <button
+                  // onClick={this.props.handleDeploy(charm.id, this.props)}
+                  className="p-button--positive"
+                  disabled={this.props.acl.isReadOnly()}
+                  tooltip={
+                    `Add this ${charm.entityType} to ${this.modelName ? 'your current' : 'a new'} model`}>
+                  {title}
+                </button>
+              </td>
+            </React.Fragment>
+          ),
           key: charm.id
-        });
+        };
       });
       content = (
-        <div>
+        <React.Fragment>
           {this._generateTitle()}
           <BasicTable
-            headerClasses={['profile__entity-table-header-row']}
-            headerColumnClasses={['profile__entity-table-header-column']}
-            headers={[{
-              content: 'Name',
-              columnSize: 6
-            }, {
-              content: 'Series',
-              columnSize: 3
-            }, {
-              content: 'Release',
-              columnSize: 3
-            }]}
-            rowClasses={['profile__entity-table-row']}
-            rowColumnClasses={['profile__entity-table-column']}
+            headers={[
+              {
+                content: 'Name'
+              }, {
+                content: 'Series'
+              }, {
+                content: 'Release'
+              }
+            ]}
             rows={rows}
             sort={this._byName.bind(this)} />
-        </div>);
+        </React.Fragment>
+      );
     }
     return (
       <div className="profile-charm-list">
         {content}
       </div>);
   }
-};
+}
 
 ProfileCharmList.propTypes = {
   acl: shapeup.shape({
@@ -304,6 +325,7 @@ ProfileCharmList.propTypes = {
     url: PropTypes.string.isRequired
   }).isRequired,
   generatePath: PropTypes.func.isRequired,
+  generatePermissions: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   storeUser: PropTypes.func.isRequired,
