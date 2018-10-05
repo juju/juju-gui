@@ -28,43 +28,28 @@ exports[`Invoice Bundle List can render 1`] = `
       headers={
         Array [
           Object {
-            "columnSize": 3,
             "content": "Status",
           },
           Object {
-            "columnSize": 3,
             "content": "Invoice Number",
           },
           Object {
-            "columnSize": 3,
             "content": "Charged to",
           },
           Object {
-            "columnSize": 3,
             "content": "Date",
           },
         ]
       }
-      rowClasses={
-        Array [
-          "profile__entity-table-row",
-        ]
-      }
-      rowColumnClasses={
-        Array [
-          "profile__entity-table-column",
-        ]
-      }
+      rowClasses={Array []}
       rows={
         Array [
           Object {
             "columns": Array [
               Object {
-                "columnSize": 3,
                 "content": "Paid",
               },
               Object {
-                "columnSize": 3,
                 "content": <a
                   href="#invoices/42"
                 >
@@ -72,11 +57,9 @@ exports[`Invoice Bundle List can render 1`] = `
                 </a>,
               },
               Object {
-                "columnSize": 3,
                 "content": "card ending 1234",
               },
               Object {
-                "columnSize": 3,
                 "content": "12/05/2017",
               },
             ],
@@ -85,11 +68,9 @@ exports[`Invoice Bundle List can render 1`] = `
           Object {
             "columns": Array [
               Object {
-                "columnSize": 3,
                 "content": "Declined: will retry",
               },
               Object {
-                "columnSize": 3,
                 "content": <a
                   href="#invoices/42"
                 >
@@ -97,11 +78,9 @@ exports[`Invoice Bundle List can render 1`] = `
                 </a>,
               },
               Object {
-                "columnSize": 3,
                 "content": "card ending 1231",
               },
               Object {
-                "columnSize": 3,
                 "content": "12/05/2017",
               },
             ],
