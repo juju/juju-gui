@@ -92,48 +92,38 @@ class ProfileInvoiceList extends React.Component {
       const rows = (this.props.data || this.state.data).map(invoice => {
         return {
           columns: [{
-            content: invoice.status,
-            columnSize: 3
+            content: invoice.status
           }, {
             content: (
               <a
                 href='#invoices/42'>
                 {invoice.number}
-              </a>),
-            columnSize: 3
+              </a>)
           }, {
-            content: invoice.chargedTo,
-            columnSize: 3
+            content: invoice.chargedTo
           }, {
-            content: invoice.date,
-            columnSize: 3
+            content: invoice.date
           }],
           key: String(invoice.number)
         };
       });
       content = (
         <div>
-          <h2 className="profile__title">
-            Payment history
-          </h2>
+          <div className="v1">
+            <h2 className="profile__title">Payment history</h2>
+          </div>
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
-              content: 'Status',
-              columnSize: 3
+              content: 'Status'
             }, {
-              content: 'Invoice Number',
-              columnSize: 3
+              content: 'Invoice Number'
             }, {
-              content: 'Charged to',
-              columnSize: 3
+              content: 'Charged to'
             }, {
-              content: 'Date',
-              columnSize: 3
+              content: 'Date'
             }]}
-            rowClasses={['profile__entity-table-row']}
-            rowColumnClasses={['profile__entity-table-column']}
             rows={rows} />
         </div>);
     }
