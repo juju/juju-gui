@@ -154,7 +154,7 @@ class ProfileHeader extends React.Component {
   render() {
     const user = this.state.user || {};
     return (
-      <div className="profile-header v1">
+      <div className="profile-header">
         <div className="p-strip is-shallow">
           <div className="row profile-header__inner u-no-padding--top u-no-padding--bottom">
             <div>

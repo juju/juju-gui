@@ -1,9 +1,8 @@
 .profile-header {
-  margin-bottom: 3rem; // Temporarily compensate for lack of following strip
 
   &__inner {
     @media (max-width: $breakpoint-medium){
-      
+
       > div:last-child {
         margin-top: 2rem;
       }
@@ -20,7 +19,7 @@
     }
   }
 
-  div.p-strip { 
+  div.p-strip {
     background-color: $color-x-light;
   }
 

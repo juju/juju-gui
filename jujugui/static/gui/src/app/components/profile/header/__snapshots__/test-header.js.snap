@@ -2,7 +2,7 @@
 
 exports[`Profile Header can render 1`] = `
 <div
-  className="profile-header v1"
+  className="profile-header"
 >
   <div
     className="p-strip is-shallow"
