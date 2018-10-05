@@ -44,7 +44,7 @@ class ProfileCredentialList extends React.Component {
       credentialToModel.forEach((modelNames, credentialKey) => {
         if (!credentialMap.has(credentialKey)) {
           // A model was created with a key which no longer exists so we cannot
-          // assign the models to that non-existant key.
+          // assign the models to that non-existent key.
           return;
         }
         credentialKey = credentialMap.get(credentialKey).models = modelNames;
@@ -166,15 +166,14 @@ class ProfileCredentialList extends React.Component {
   */
   _generateAddCredentials() {
     // Only generate the form when we want to display it so that it gets
-    // rerendered and therefore the fields cleared between uses.
+    // re-rendered and therefore the fields cleared between uses.
     const form = this.state.showAdd ? this._generateCredentialForm() : null;
     return (
       <ExpandingRow
-        classes={{'twelve-col': true}}
         clickable={false}
         expanded={this.state.showAdd}>
         <div></div>
-        <div className="twelve-col">
+        <div className="col-12">
           {form}
         </div>
       </ExpandingRow>);
@@ -295,11 +294,9 @@ class ProfileCredentialList extends React.Component {
       rows.push({
         classes: key === selectedCredential ? ['profile-credential-list--highlighted'] : null,
         columns: [{
-          content: credential.displayName,
-          columnSize: 6
+          content: credential.displayName
         }, {
-          content: credential.cloud,
-          columnSize: 2
+          content: credential.cloud
         }, {
           content: function() {
             const models = credential.models;
@@ -314,8 +311,7 @@ class ProfileCredentialList extends React.Component {
               default:
                 return `${modelCount} Models`;
             }
-          }(),
-          columnSize: 3
+          }()
         }, {
           content: (
             <ButtonDropdown
@@ -327,7 +323,7 @@ class ProfileCredentialList extends React.Component {
                 label: 'Delete',
                 action: this._setDeleteCredential.bind(this, key)
               }]} />),
-          columnSize: 1
+          classes: ['u-align-text--right']
         }],
         expandedContent: this._generateEditCredentials(credential, key),
         expandedContentExpanded: this.state.editCredential === key,
@@ -339,23 +335,16 @@ class ProfileCredentialList extends React.Component {
     return (
       <div className="profile-credential-list__list">
         <BasicTable
-          headerClasses={['profile__entity-table-header-row']}
-          headerColumnClasses={['profile__entity-table-header-column']}
           headers={[{
-            content: 'Name',
-            columnSize: 6
+            content: 'Name'
           }, {
-            content: 'Provider',
-            columnSize: 2
+            content: 'Provider'
           }, {
-            content: 'Used by',
-            columnSize: 3
+            content: 'Used by'
           }, {
             content: 'Action',
-            columnSize: 1
+            classes: ['u-align-text--right']
           }]}
-          rowClasses={['profile__entity-table-row']}
-          rowColumnClasses={['profile__entity-table-column']}
           rows={rows} />
       </div>
     );
@@ -366,7 +355,7 @@ class ProfileCredentialList extends React.Component {
     let addButton = (
       <Button
         action={this._toggleAdd.bind(this)}
-        type="inline-neutral">
+        type="p-button--neutral">
         Add credentials
       </Button>);
     if (clouds && clouds[LOCAL_CLOUD]) {
@@ -374,18 +363,14 @@ class ProfileCredentialList extends React.Component {
     }
     return (
       <div className="profile-credential-list">
-        <div className="four-col">
+        <div className="profile-credential-list__header">
           <h2 className="profile__title">
             My credentials
             <span className="profile__title-count">
               ({this.state.credentialMap.size})
             </span>
           </h2>
-        </div>
-        <div className="push-four four-col">
-          <div className="profile-credential-list__add">
-            {addButton}
-          </div>
+          <div className="profile-credential-list__add">{addButton}</div>
         </div>
         {this._generateAddCredentials()}
         {this._generateCredentialsList()}
