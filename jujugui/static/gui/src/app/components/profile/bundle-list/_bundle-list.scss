@@ -1,49 +1,28 @@
 .profile-bundle-list {
-  .icon-list__item {
-    margin: 0 4px 0 0;
-  }
 
-  &__icon {
-    border-radius: 50%;
-    width: 24px;
-    margin: 0 4px 4px 0;
-  }
+  tr {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
 
-  .profile__entity-table-header-column:first-child,
-  .profile__entity-table-column:first-child {
-    padding-left: 16px;
-  }
-
-  .expanding-row {
-    padding-bottom: 0;
-
-    &__initial {
-      min-height: 35px;
+    &.is-expanded {
+      grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
     }
   }
 
-  .expanding-row--expanded .expanding-row__initial {
-    min-height: 0;
-  }
+  &__meta {
+    display: block;
 
-  .profile-expanded-content {
-
-    &__entity-desc {
-      padding: 0 12px 0 18px;
+    a {
+      display: inline-block;
+      margin-bottom: 1rem;
     }
-  }
-
-  .profile-expanded-content .profile-expanded-content__top-row:first-child {
-    padding-left: 16px;
   }
 
   .entity-content__diagram {
-    margin-bottom: -1.2rem;
-    margin-left: 16px;
-    padding-bottom: 0;
+    margin: 1.5rem 0 0;
   }
 
-  .expanding-row--expanded .expanding-row__expanded {
-    margin: 4px 0 16px;
+  .icon-list__item {
+    margin-right: .25rem;
   }
 }

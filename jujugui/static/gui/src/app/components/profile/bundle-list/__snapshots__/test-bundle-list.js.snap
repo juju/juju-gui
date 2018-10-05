@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile Bundle List can render 1`] = `
+<div
+  className="profile-bundle-list"
+>
+  <React.Fragment>
+    <h2
+      className="profile__title"
+    >
+      My
+       bundles
+      <span
+        className="profile__title-count"
+      >
+        (
+        2
+        )
+      </span>
+    </h2>
+    <BasicTable
+      headerClasses={Array []}
+      headers={
+        Array [
+          Object {
+            "content": "Name",
+          },
+          Object {
+            "content": "",
+          },
+          Object {
+            "classes": Array [
+              "u-align-text--right",
+            ],
+            "content": "Machines",
+          },
+          Object {
+            "classes": Array [
+              "u-align-text--right",
+            ],
+            "content": "Units",
+          },
+          Object {
+            "content": "Release",
+          },
+        ]
+      }
+      rowClasses={Array []}
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "content": <a
+                  href="/gui/u/lazypower/logstash-core/bundle/1"
+                  onClick={[Function]}
+                >
+                  logstash-core
+                </a>,
+              },
+              Object {
+                "content": <IconList
+                  applications={
+                    Array [
+                      Object {
+                        "displayName": "elasticsearch",
+                        "iconPath": "/charmstore/~lazypower/trusty/elasticsearch/icon.svg",
+                        "id": "cs:~lazypower/trusty/elasticsearch",
+                      },
+                      Object {
+                        "displayName": "kibana",
+                        "iconPath": "/charmstore/trusty/kibana-10/icon.svg",
+                        "id": "cs:trusty/kibana-10",
+                      },
+                      Object {
+                        "displayName": "logstash",
+                        "iconPath": "/charmstore/~lazypower/trusty/logstash-20/icon.svg",
+                        "id": "cs:~lazypower/trusty/logstash-20",
+                      },
+                      Object {
+                        "displayName": "openjdk",
+                        "iconPath": "/charmstore/~kwmonroe/trusty/openjdk/icon.svg",
+                        "id": "cs:~kwmonroe/trusty/openjdk",
+                      },
+                    ]
+                  }
+                  changeState={[Function]}
+                  generatePath={[Function]}
+                />,
+              },
+              Object {
+                "classes": Array [
+                  "u-align-text--right",
+                ],
+                "content": 2,
+              },
+              Object {
+                "classes": Array [
+                  "u-align-text--right",
+                ],
+                "content": 3,
+              },
+              Object {
+                "content": "#1",
+              },
+            ],
+            "expandedContent": <React.Fragment>
+              <td>
+                <span
+                  className="profile-bundle-list__meta"
+                >
+                  <a
+                    href="/gui/u/lazypower/logstash-core/bundle/1"
+                    onClick={[Function]}
+                  >
+                    logstash-core
+                  </a>
+                  <span
+                    className="entity__desc"
+                  >
+                    logstash-core description
+                  </span>
+                </span>
+                <EntityContentDiagram
+                  diagramUrl="diagram.svg"
+                />
+              </td>
+              <td>
+                <span
+                  className="entity__permissions"
+                >
+                  Writeable:
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Readable:
+                </span>
+              </td>
+              <td
+                className="u-align-text--right"
+              >
+                2
+              </td>
+              <td
+                className="u-align-text--right"
+              >
+                3
+              </td>
+              <td>
+                #1
+              </td>
+            </React.Fragment>,
+            "extraData": "logstash-core",
+            "key": "cs:~lazypower/bundle/logstash-core-1",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "content": <a
+                  href="/gui/u/lazypower/swarm-core/bundle/1"
+                  onClick={[Function]}
+                >
+                  swarm-core
+                </a>,
+              },
+              Object {
+                "content": <IconList
+                  applications={
+                    Array [
+                      Object {
+                        "displayName": "consul",
+                        "iconPath": "/charmstore/~containers/trusty/consul/icon.svg",
+                        "id": "cs:~containers/trusty/consul",
+                      },
+                      Object {
+                        "displayName": "swarm",
+                        "iconPath": "/charmstore/~lazypower/swarm/icon.svg",
+                        "id": "cs:~lazypower/swarm",
+                      },
+                    ]
+                  }
+                  changeState={[Function]}
+                  generatePath={[Function]}
+                />,
+              },
+              Object {
+                "classes": Array [
+                  "u-align-text--right",
+                ],
+                "content": 5,
+              },
+              Object {
+                "classes": Array [
+                  "u-align-text--right",
+                ],
+                "content": 5,
+              },
+              Object {
+                "content": "#1",
+              },
+            ],
+            "expandedContent": <React.Fragment>
+              <td>
+                <span
+                  className="profile-bundle-list__meta"
+                >
+                  <a
+                    href="/gui/u/lazypower/swarm-core/bundle/1"
+                    onClick={[Function]}
+                  >
+                    swarm-core
+                  </a>
+                  <span
+                    className="entity__desc"
+                  >
+                    swarm-core description
+                  </span>
+                </span>
+                <EntityContentDiagram
+                  diagramUrl="diagram.svg"
+                />
+              </td>
+              <td>
+                <span
+                  className="entity__permissions"
+                >
+                  Writeable:
+                </span>
+                <span
+                  className="entity__permissions"
+                >
+                  Readable:
+                </span>
+              </td>
+              <td
+                className="u-align-text--right"
+              >
+                5
+              </td>
+              <td
+                className="u-align-text--right"
+              >
+                5
+              </td>
+              <td>
+                #1
+              </td>
+            </React.Fragment>,
+            "extraData": "swarm-core",
+            "key": "cs:~lazypower/bundle/swarm-core-1",
+          },
+        ]
+      }
+      sort={[Function]}
+    />
+  </React.Fragment>
+</div>
+`;
