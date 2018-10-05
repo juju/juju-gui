@@ -2,7 +2,7 @@
 
 exports[`Profile Navigation can render 1`] = `
 <div
-  className="profile-navigation v1"
+  className="profile-navigation"
 >
   <ul
     className="p-list"

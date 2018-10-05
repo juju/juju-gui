@@ -42,7 +42,7 @@ class ProfileNavigation extends React.Component {
     });
 
     return (
-      <div className="profile-navigation v1">
+      <div className="profile-navigation">
         <ul className="p-list">{links}</ul>
       </div>
     );
