@@ -1,264 +1,272 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`BasicTable can apply extra classes 1`] = `
-<ul
-  className="basic-table twelve-col table-class"
+<table
+  className="basic-table table-class"
+  role="grid"
 >
-  <BasicTableRow
-    classes={
-      Array [
-        "row-class",
-        "header-class",
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "classes": Array [
-            "class1",
-            "class2",
-          ],
-          "columnSize": 3,
-          "content": "Column 1",
-        },
-        Object {
-          "columnSize": 4,
-          "content": <span>
-            Column 2
-          </span>,
-        },
-      ]
-    }
-    headerColumnClasses={
-      Array [
-        "header-column",
-      ]
-    }
-    isHeader={true}
-    key="basic-table-header"
-    rowColumnClasses={
-      Array [
-        "row-column",
-      ]
-    }
-    rowKey="basic-table-header"
-  />
-  <BasicTableRow
-    classes={
-      Array [
-        "row-class",
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "classes": Array [
-            "r1c1class1",
-            "r1c1class2",
-          ],
-          "columnSize": 3,
-          "content": <span>
-            row 1 column 1
-          </span>,
-        },
-        Object {
-          "columnSize": 3,
-          "content": "row 1 column 2",
-        },
-      ]
-    }
-    headerColumnClasses={
-      Array [
-        "header-column",
-      ]
-    }
-    isHeader={false}
-    key="row-one-key"
-    rowColumnClasses={
-      Array [
-        "row-column",
-      ]
-    }
-    rowKey="row-one-key"
-  />
-  <BasicTableRow
-    classes={
-      Array [
-        "second-row-class",
-        "row-class",
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "columnSize": 7,
-          "content": "row 2 column 1",
-        },
-      ]
-    }
-    headerColumnClasses={
-      Array [
-        "header-column",
-      ]
-    }
-    isHeader={false}
-    key="row-two-key"
-    rowColumnClasses={
-      Array [
-        "row-column",
-      ]
-    }
-    rowKey="row-two-key"
-  />
-  <BasicTableRow
-    classes={
-      Array [
-        "row-class",
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "columnSize": 3,
-          "content": "row 3 column 1",
-        },
-        Object {
-          "columnSize": 3,
-        },
-        Object {
-          "columnSize": 6,
-          "content": 0,
-        },
-      ]
-    }
-    headerColumnClasses={
-      Array [
-        "header-column",
-      ]
-    }
-    isHeader={false}
-    key="row-three-key"
-    rowColumnClasses={
-      Array [
-        "row-column",
-      ]
-    }
-    rowKey="row-three-key"
-  />
-</ul>
+  <thead>
+    <BasicTableRow
+      classes={
+        Array [
+          "row-class",
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "classes": Array [
+              "class1",
+              "class2",
+            ],
+            "columnSize": 3,
+            "content": "Column 1",
+          },
+          Object {
+            "columnSize": 4,
+            "content": <span>
+              Column 2
+            </span>,
+          },
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "header-column",
+        ]
+      }
+      isHeader={true}
+      key="basic-table-header"
+      rowColumnClasses={
+        Array [
+          "row-column",
+        ]
+      }
+      rowKey="basic-table-header"
+    />
+  </thead>
+  <tbody>
+    <BasicTableRow
+      classes={
+        Array [
+          "row-class",
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "classes": Array [
+              "r1c1class1",
+              "r1c1class2",
+            ],
+            "columnSize": 3,
+            "content": <span>
+              row 1 column 1
+            </span>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "row 1 column 2",
+          },
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "header-column",
+        ]
+      }
+      isHeader={false}
+      key="row-one-key"
+      rowColumnClasses={
+        Array [
+          "row-column",
+        ]
+      }
+      rowKey="row-one-key"
+    />
+    <BasicTableRow
+      classes={
+        Array [
+          "second-row-class",
+          "row-class",
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "columnSize": 7,
+            "content": "row 2 column 1",
+          },
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "header-column",
+        ]
+      }
+      isHeader={false}
+      key="row-two-key"
+      rowColumnClasses={
+        Array [
+          "row-column",
+        ]
+      }
+      rowKey="row-two-key"
+    />
+    <BasicTableRow
+      classes={
+        Array [
+          "row-class",
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "columnSize": 3,
+            "content": "row 3 column 1",
+          },
+          Object {
+            "columnSize": 3,
+          },
+          Object {
+            "columnSize": 6,
+            "content": 0,
+          },
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "header-column",
+        ]
+      }
+      isHeader={false}
+      key="row-three-key"
+      rowColumnClasses={
+        Array [
+          "row-column",
+        ]
+      }
+      rowKey="row-three-key"
+    />
+  </tbody>
+</table>
 `;
 
 exports[`BasicTable can render the table 1`] = `
-<ul
-  className="basic-table twelve-col"
+<table
+  className="basic-table"
+  role="grid"
 >
-  <BasicTableRow
-    classes={
-      Array [
-        null,
-        null,
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "classes": Array [
-            "class1",
-            "class2",
-          ],
-          "columnSize": 3,
-          "content": "Column 1",
-        },
-        Object {
-          "columnSize": 4,
-          "content": <span>
-            Column 2
-          </span>,
-        },
-      ]
-    }
-    headerColumnClasses={null}
-    isHeader={true}
-    key="basic-table-header"
-    rowColumnClasses={null}
-    rowKey="basic-table-header"
-  />
-  <BasicTableRow
-    classes={
-      Array [
-        null,
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "classes": Array [
-            "r1c1class1",
-            "r1c1class2",
-          ],
-          "columnSize": 3,
-          "content": <span>
-            row 1 column 1
-          </span>,
-        },
-        Object {
-          "columnSize": 3,
-          "content": "row 1 column 2",
-        },
-      ]
-    }
-    headerColumnClasses={null}
-    isHeader={false}
-    key="row-one-key"
-    rowColumnClasses={null}
-    rowKey="row-one-key"
-  />
-  <BasicTableRow
-    classes={
-      Array [
-        null,
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "columnSize": 7,
-          "content": "row 2 column 1",
-        },
-      ]
-    }
-    headerColumnClasses={null}
-    isHeader={false}
-    key="row-two-key"
-    rowColumnClasses={null}
-    rowKey="row-two-key"
-  />
-  <BasicTableRow
-    classes={
-      Array [
-        null,
-      ]
-    }
-    columns={
-      Array [
-        Object {
-          "columnSize": 3,
-          "content": "row 3 column 1",
-        },
-        Object {
-          "columnSize": 3,
-        },
-        Object {
-          "columnSize": 6,
-          "content": 0,
-        },
-      ]
-    }
-    headerColumnClasses={null}
-    isHeader={false}
-    key="row-three-key"
-    rowColumnClasses={null}
-    rowKey="row-three-key"
-  />
-</ul>
+  <thead>
+    <BasicTableRow
+      classes={
+        Array [
+          null,
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "classes": Array [
+              "class1",
+              "class2",
+            ],
+            "columnSize": 3,
+            "content": "Column 1",
+          },
+          Object {
+            "columnSize": 4,
+            "content": <span>
+              Column 2
+            </span>,
+          },
+        ]
+      }
+      headerColumnClasses={null}
+      isHeader={true}
+      key="basic-table-header"
+      rowColumnClasses={null}
+      rowKey="basic-table-header"
+    />
+  </thead>
+  <tbody>
+    <BasicTableRow
+      classes={
+        Array [
+          null,
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "classes": Array [
+              "r1c1class1",
+              "r1c1class2",
+            ],
+            "columnSize": 3,
+            "content": <span>
+              row 1 column 1
+            </span>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "row 1 column 2",
+          },
+        ]
+      }
+      headerColumnClasses={null}
+      isHeader={false}
+      key="row-one-key"
+      rowColumnClasses={null}
+      rowKey="row-one-key"
+    />
+    <BasicTableRow
+      classes={
+        Array [
+          null,
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "columnSize": 7,
+            "content": "row 2 column 1",
+          },
+        ]
+      }
+      headerColumnClasses={null}
+      isHeader={false}
+      key="row-two-key"
+      rowColumnClasses={null}
+      rowKey="row-two-key"
+    />
+    <BasicTableRow
+      classes={
+        Array [
+          null,
+        ]
+      }
+      columns={
+        Array [
+          Object {
+            "columnSize": 3,
+            "content": "row 3 column 1",
+          },
+          Object {
+            "columnSize": 3,
+          },
+          Object {
+            "columnSize": 6,
+            "content": 0,
+          },
+        ]
+      }
+      headerColumnClasses={null}
+      isHeader={false}
+      key="row-three-key"
+      rowColumnClasses={null}
+      rowKey="row-three-key"
+    />
+  </tbody>
+</table>
 `;

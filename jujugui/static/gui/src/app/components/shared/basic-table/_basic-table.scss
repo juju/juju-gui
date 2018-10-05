@@ -2,26 +2,59 @@
   @extend %list-style;
   margin-bottom: 20px;
 
+  // .v1 selector required for specificity
+  .v1 & {
+    border-bottom: 1px solid $color-mid-light;
+
+    td,
+    th {
+      background: none;
+      border: 0;
+    }
+
+    tbody {
+      tr {
+        padding: .75rem;
+      }
+    }
+  }
+
   &__header {
+    border-bottom: 1px solid $color-mid-light;
     font-weight: 400;
-    border-bottom: 1px solid $color-dark;
   }
 
   &__row {
-    border-bottom: 1px solid $light-mid-grey;
+    border-bottom: 0;
+    transition: all 0.25s;
 
     &-link {
-      position: absolute;
-      // Raise the main link above the children so that it can be clicked on.
-      z-index: 1;
-      top: 0;
       bottom: 0;
       left: 0;
+      position: absolute;
       right: 0;
+      top: 0;
+      // Raise the main link above the children so that it can be clicked on.
+      z-index: 1;
     }
 
     &--clickable {
       cursor: pointer;
     }
+
+    &.is-expanded {
+      background: $color-x-light;
+      box-shadow: 0 1px 5px 1px hsla(0,0%,7%,.2);
+      border: 0;
+      margin: 1rem 0;
+    }
+
+    &:first-child.is-expanded {
+      border-top: 1px solid $color-mid-light;
+    }
+  }
+
+  tbody tr:hover {
+    background-color: $color-x-light;
   }
 }

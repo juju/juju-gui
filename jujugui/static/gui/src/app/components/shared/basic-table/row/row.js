@@ -33,7 +33,6 @@ class BasicTableRow extends React.Component {
 
   /**
     Show the entity details when clicked.
-
     @method _handleRowClick
     @param onClick {Function} The function to call when a row is clicked.
     @param evt {Object} The click event.
@@ -66,7 +65,8 @@ class BasicTableRow extends React.Component {
       <a
         className="basic-table__row-link"
         href={clickURL}
-        onClick={onClick && this._handleRowClick.bind(this, onClick)}></a>);
+        onClick={onClick && this._handleRowClick.bind(this, onClick)} />
+    );
   }
 
   /**
@@ -77,16 +77,18 @@ class BasicTableRow extends React.Component {
   */
   _generateCell(column, index) {
     const {isHeader} = this.props;
-    const conditionalClasses = isHeader ? this.props.headerColumnClasses :
-      this.props.rowColumnClasses;
+    const conditionalClasses = isHeader
+      ? this.props.headerColumnClasses
+      : this.props.rowColumnClasses;
     const classes = (column.classes || []).concat(conditionalClasses);
     return (
       <BasicTableCell
         classes={classes}
         columnSize={column.columnSize}
         content={column.content}
-        isLastCol={index + 1 === this.props.columns.length}
-        key={index} />);
+        isHeader={isHeader}
+        key={index} />
+    );
   }
 
   /**
@@ -107,33 +109,31 @@ class BasicTableRow extends React.Component {
   */
   _isRowClickable() {
     const {rowClickable} = this.props;
-    return (
-      rowClickable !== undefined ? rowClickable : !!this.props.expandedContent);
+    return rowClickable !== undefined ? rowClickable : !!this.props.expandedContent;
   }
 
   render() {
     const {expandedContent, isHeader} = this.props;
-    const classes = classNames(
-      'twelve-col',
-      this.props.classes,
-      {
-        'basic-table__header': isHeader,
-        'basic-table__row': !isHeader,
-        'basic-table__row--expandable': !!expandedContent,
-        'basic-table__row--clickable': this._isRowClickable()
-      });
+    const classes = classNames(this.props.classes, {
+      'basic-table__header': isHeader,
+      'basic-table__row': !isHeader,
+      'basic-table__row--expandable': !!expandedContent,
+      'basic-table__row--clickable': this._isRowClickable(),
+      'is-expanded': this.state.expanded
+    });
     const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
     return (
-      <li
-        className={classes}
+      <tr
+className={classes}
         onClick={onClick}
         role="button"
         tabIndex="0">
         {this._generateAnchor()}
         {this._generateContent()}
-      </li>);
+      </tr>
+    );
   }
-};
+}
 
 BasicTableRow.defaultProps = {
   classes: []
@@ -144,13 +144,15 @@ BasicTableRow.propTypes = {
   classes: PropTypes.array,
   // A function to call when a row is clicked.
   clickURL: PropTypes.string,
-  columns: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.node,
-    // The number of columns (between 1 and 12).
-    columnSize: PropTypes.number.isRequired,
-    // The extra classes to apply to the column.
-    classes: PropTypes.arrayOf(PropTypes.string)
-  }).isRequired).isRequired,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      content: PropTypes.node,
+      // The number of columns (between 1 and 12).
+      columnSize: PropTypes.number,
+      // The extra classes to apply to the column.
+      classes: PropTypes.arrayOf(PropTypes.string)
+    }).isRequired
+  ).isRequired,
   // Content to be displayed when the row is toggled.
   expandedContent: PropTypes.any,
   // Set the expanded content state from outside the table.

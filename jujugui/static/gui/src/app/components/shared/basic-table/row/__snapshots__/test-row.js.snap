@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`BasicTableRow can display rows with expandable content 1`] = `
-<li
-  className="twelve-col basic-table__row basic-table__row--expandable basic-table__row--clickable"
+<tr
+  className=" basic-table__row basic-table__row--expandable basic-table__row--clickable is-expanded"
   onClick={[Function]}
   role="button"
   tabIndex="0"
@@ -10,12 +10,12 @@ exports[`BasicTableRow can display rows with expandable content 1`] = `
   <div>
     Expanded content!
   </div>
-</li>
+</tr>
 `;
 
 exports[`BasicTableRow can render 1`] = `
-<li
-  className="twelve-col basic-table__row"
+<tr
+  className=" basic-table__row"
   onClick={null}
   role="button"
   tabIndex="0"
@@ -34,7 +34,6 @@ exports[`BasicTableRow can render 1`] = `
         row 1 column 1
       </span>
     }
-    isLastCol={false}
     key="0"
   />
   <BasicTableCell
@@ -45,8 +44,7 @@ exports[`BasicTableRow can render 1`] = `
     }
     columnSize={3}
     content="row 1 column 2"
-    isLastCol={true}
     key="1"
   />
-</li>
+</tr>
 `;
