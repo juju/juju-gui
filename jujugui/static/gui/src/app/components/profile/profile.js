@@ -16,6 +16,7 @@ const ProfileInvoiceList = require('./invoice-list/invoice-list');
 const Invoice = require('../invoice/invoice');
 const Panel = require('../shared/panel/panel');
 const RevenueStatement = require('../revenue-statement/revenue-statement');
+const Link = require('../link/link');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
@@ -42,6 +43,59 @@ class Profile extends React.Component {
       active: parts[0],
       sub: parts.length > 1 ? parts.slice(1, parts.length).join('/') : null
     };
+  }
+
+  /**
+  Handle deploying an entity.
+  @param entityId {String} A charm or bundle id.
+  */
+  _handleDeploy(entityId, props) {
+    props.addToModel(entityId);
+    props.changeState({
+      hash: null,
+      profile: null
+    });
+  }
+
+  /**
+    Generate a list of permissions.
+    @param permissions {Array} The list of permissions.
+    @returns {Object} The list as JSX.
+  */
+  _generatePermissions(permissions, props) {
+    let items = permissions.map((username, i) => {
+      let content;
+      if (username === 'everyone') {
+        content = username;
+      } else {
+        content = (
+          <Link
+            changeState={props.changeState}
+            clickState={{
+              hash: null,
+              profile: username
+            }}
+            generatePath={props.generatePath}>
+            {username}
+          </Link>);
+      }
+      return (
+        <span
+          key={username + i}>
+          {content}
+        </span>);
+    });
+    if (items.length === 0) {
+      items = (
+        <span
+          key="none">
+          None
+        </span>);
+    }
+    return (
+      <span>
+        {items}
+      </span>);
   }
 
   render() {
@@ -75,6 +129,7 @@ class Profile extends React.Component {
       sectionsMap.set('models', {
         label: 'Models',
         getComponent: () => {
+
           return (
             <ProfileModelList
               acl={props.acl}
@@ -104,7 +159,9 @@ class Profile extends React.Component {
             changeState={props.changeState}
             charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
             generatePath={props.generatePath}
+            generatePermissions={this._generatePermissions}
             getModelName={props.getModelName}
+            handleDeploy={this._handleDeploy}
             isActiveUsersProfile={isActiveUsersProfile}
             storeUser={props.storeUser}
             user={props.userInfo.external} />
@@ -125,7 +182,9 @@ class Profile extends React.Component {
             changeState={props.changeState}
             charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
             generatePath={props.generatePath}
+            generatePermissions={this._generatePermissions}
             getModelName={props.getModelName}
+            handleDeploy={this._handleDeploy}
             isActiveUsersProfile={isActiveUsersProfile}
             storeUser={props.storeUser}
             user={props.userInfo.external} />
@@ -195,20 +254,26 @@ class Profile extends React.Component {
       <Panel
         instanceName="profile"
         visible={true}>
-        <ProfileHeader
-          changeState={props.changeState}
-          controllerIP={props.controllerIP}
-          getUser={props.getUser}
-          gisf={props.gisf}
-          userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
-        <div className="twelve-col">
-          <div className="profile__content inner-wrapper">
-            <ProfileNavigation
-              // Use supplied activeSection or the key from the first map entry.
-              activeSection={this._getSectionInfo().active || mapEntry[0]}
-              changeState={props.changeState}
-              sectionsMap={sectionsMap} />
-            {section.getComponent()}
+        <div className="v1">
+          <ProfileHeader
+            changeState={props.changeState}
+            controllerIP={props.controllerIP}
+            getUser={props.getUser}
+            gisf={props.gisf}
+            userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
+          <div className="p-strip--light is-shallow">
+            <div className="row">
+              <div className="col-3 u-no-margin--left">
+                <ProfileNavigation
+                  // Use supplied activeSection or the key from the first map entry.
+                  activeSection={this._getSectionInfo().active || mapEntry[0]}
+                  changeState={props.changeState}
+                  sectionsMap={sectionsMap} />
+              </div>
+              <div className="col-9">
+                {section.getComponent()}
+              </div>
+            </div>
           </div>
         </div>
       </Panel>

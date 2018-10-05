@@ -6,68 +6,80 @@ exports[`Profile can render 1`] = `
   instanceName="profile"
   visible={true}
 >
-  <ProfileHeader
-    changeState={[Function]}
-    controllerIP="1.2.3.4"
-    getUser={[Function]}
-    gisf={true}
-    userInfo={
-      Object {
-        "isCurrent": true,
-        "profile": "spinach",
-      }
-    }
-  />
   <div
-    className="twelve-col"
+    className="v1"
   >
+    <ProfileHeader
+      changeState={[Function]}
+      controllerIP="1.2.3.4"
+      getUser={[Function]}
+      gisf={true}
+      userInfo={
+        Object {
+          "isCurrent": true,
+          "profile": "spinach",
+        }
+      }
+    />
     <div
-      className="profile__content inner-wrapper"
+      className="p-strip--light is-shallow"
     >
-      <ProfileNavigation
-        activeSection="models"
-        changeState={[Function]}
-        sectionsMap={
-          Map {
-            "models" => Object {
-              "getComponent": [Function],
-              "label": "Models",
-            },
-            "charms" => Object {
-              "getComponent": [Function],
-              "label": "Charms",
-            },
-            "bundles" => Object {
-              "getComponent": [Function],
-              "label": "Bundles",
-            },
-            "credentials" => Object {
-              "getComponent": [Function],
-              "label": "Cloud credentials",
-            },
-          }
-        }
-      />
-      <ProfileModelList
-        acl={
-          Object {
-            "isReadOnly": [Function],
-          }
-        }
-        addNotification={[Function]}
-        baseURL="/gui/"
-        changeState={[Function]}
-        destroyModel={[Function]}
-        facadesExist={true}
-        listModelsWithInfo={[Function]}
-        switchModel={[Function]}
-        userInfo={
-          Object {
-            "isCurrent": true,
-            "profile": "spinach",
-          }
-        }
-      />
+      <div
+        className="row"
+      >
+        <div
+          className="col-3 u-no-margin--left"
+        >
+          <ProfileNavigation
+            activeSection="models"
+            changeState={[Function]}
+            sectionsMap={
+              Map {
+                "models" => Object {
+                  "getComponent": [Function],
+                  "label": "Models",
+                },
+                "charms" => Object {
+                  "getComponent": [Function],
+                  "label": "Charms",
+                },
+                "bundles" => Object {
+                  "getComponent": [Function],
+                  "label": "Bundles",
+                },
+                "credentials" => Object {
+                  "getComponent": [Function],
+                  "label": "Cloud credentials",
+                },
+              }
+            }
+          />
+        </div>
+        <div
+          className="col-9"
+        >
+          <ProfileModelList
+            acl={
+              Object {
+                "isReadOnly": [Function],
+              }
+            }
+            addNotification={[Function]}
+            baseURL="/gui/"
+            changeState={[Function]}
+            destroyModel={[Function]}
+            facadesExist={true}
+            listModelsWithInfo={[Function]}
+            switchModel={[Function]}
+            userInfo={
+              Object {
+                "isCurrent": true,
+                "profile": "spinach",
+              }
+            }
+          />
+        </div>
+      </div>
     </div>
   </div>
 </Panel>
