@@ -79,7 +79,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         style="display:none">
         <svg class="svg-icon"
           viewBox="0 0 90 35"
-          style="width:90px; height:35px;">
+          style="width:90px; height:35px;"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
           <use xlink:href="#juju-logo" />
         </svg>
         <div class="panel">
@@ -106,7 +107,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         id="loading-message">
         <svg class="svg-icon"
           viewBox="0 0 90 35"
-          style="width:90px; height:35px;">
+          style="width:90px; height:35px;"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
           <use xlink:href="#juju-logo" />
         </svg>
         <div class="panel">
