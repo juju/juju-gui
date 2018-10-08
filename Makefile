@@ -287,11 +287,11 @@ test-python: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: test-js
-test-js: gui
+test-js: gui-deps
 	./scripts/test-js.sh
 
 .PHONY: test-js-old
-test-js-old: gui
+test-js-old: gui-deps
 	./scripts/test-js-old.sh
 
 .PHONY: start-karma

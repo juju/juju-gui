@@ -8,16 +8,19 @@ const {charmstore} = require('jaaslib');
 
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
+
+// The Karma tests stop these from being loaded so they're set to null in that case.
+// The nulls can be removed once the Karma suite is gone.
 const images = {
-  'bundle-icon.png': require('../../assets/images/store/bundle-icon.png'),
-  'charm-icon.png': require('../../assets/images/store/charm-icon.png'),
-  'hadoop-elephant.png': require('../../assets/images/store/hadoop-elephant.png'),
-  'k8-image.png': require('../../assets/images/store/k8-image.png'),
-  'kubernetes-promo.png': require('../../assets/images/store/kubernetes-promo.png'),
-  'mysql-promo.png': require('../../assets/images/store/mysql-promo.png'),
-  'nagios-promo.png': require('../../assets/images/store/nagios-promo.png'),
-  'openstack-promo.png': require('../../assets/images/store/openstack-promo.png'),
-  'write-your-own.png': require('../../assets/images/store/write-your-own.png')
+  'bundle-icon.png': require('../../assets/images/store/bundle-icon.png') || null,
+  'charm-icon.png': require('../../assets/images/store/charm-icon.png') || null,
+  'hadoop-elephant.png': require('../../assets/images/store/hadoop-elephant.png') || null,
+  'k8-image.png': require('../../assets/images/store/k8-image.png') || null,
+  'kubernetes-promo.png': require('../../assets/images/store/kubernetes-promo.png') || null,
+  'mysql-promo.png': require('../../assets/images/store/mysql-promo.png') || null,
+  'nagios-promo.png': require('../../assets/images/store/nagios-promo.png') || null,
+  'openstack-promo.png': require('../../assets/images/store/openstack-promo.png') || null,
+  'write-your-own.png': require('../../assets/images/store/write-your-own.png') || null
 };
 
 class Store extends React.Component {

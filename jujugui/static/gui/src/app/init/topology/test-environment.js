@@ -398,7 +398,8 @@ describe('EnvironmentView', function() {
       var relationIcon = container.querySelector('.service .relation-button');
       var line = relationIcon.querySelector('line');
       var circles = relationIcon.querySelectorAll('circle');
-      var img = relationIcon.querySelector('image');
+      var img = relationIcon.querySelector('svg');
+      var use = img.querySelector('use');
 
       assert.equal(relationIcon.classList.contains('relation-button'), true);
       assert.equal(relationIcon.getAttribute('transform'), 'translate(95,30)');
@@ -425,12 +426,9 @@ describe('EnvironmentView', function() {
       assert.equal(circles.item(1).getAttribute('stroke-width'), '1.1');
 
       assert.equal(img.classList.contains('relation-button__image'), true);
-      assert.equal(
-        img.getAttribute('href'),
-        'static/gui/build/app/assets/svgs/build-relation_16.svg');
+      assert.equal(use.getAttribute('href'), '#build-relation_16');
       assert.equal(img.getAttribute('width'), '16');
       assert.equal(img.getAttribute('height'), '16');
-      assert.equal(img.getAttribute('transform'), 'translate(-8, -8)');
     });
 
     it('properly renders the create relation icon using staticURL', function() {
@@ -446,10 +444,8 @@ describe('EnvironmentView', function() {
       view.render();
       const relationIcon = container.querySelector('.service').querySelector(
         '.relation-button');
-      const img = relationIcon.querySelector('image');
-      assert.equal(
-        img.getAttribute('href'),
-        'staticpath/static/gui/build/app/assets/svgs/build-relation_16.svg');
+      const img = relationIcon.querySelector('use');
+      assert.equal(img.getAttribute('href'), '#build-relation_16');
     });
 
     // Ensure the environment view loads properly
@@ -1238,21 +1234,21 @@ describe('EnvironmentView', function() {
     it('shows relation status with an indicator', function() {
       view.render();
       var reduceData = function() {
-        return view.topo.vis.selectAll('.rel-indicator image')
+        return view.topo.vis.selectAll('.rel-indicator svg')
           .data().map(function(datum) {
             return datum.aggregatedStatus;
           });
       };
       var reduceImages = function() {
-        return view.topo.vis.selectAll('.rel-indicator image')[0]
+        return view.topo.vis.selectAll('.rel-indicator use')[0]
           .map(function(image) {
             return d3.select(image).attr('href');
           });
       };
       assert.deepEqual(reduceData(), ['subordinate', 'healthy']);
       assert.deepEqual(reduceImages(), [
-        'static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
-        'static/gui/build/app/assets/svgs/relation-icon-healthy.svg'
+        '#relation-icon-subordinate',
+        '#relation-icon-healthy'
       ]);
 
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1263,8 +1259,8 @@ describe('EnvironmentView', function() {
       view.update();
       assert.deepEqual(reduceData(), ['subordinate', 'error']);
       assert.deepEqual(reduceImages(), [
-        'static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
-        'static/gui/build/app/assets/svgs/relation-icon-error.svg'
+        '#relation-icon-subordinate',
+        '#relation-icon-error'
       ]);
     });
 
@@ -1272,14 +1268,14 @@ describe('EnvironmentView', function() {
       view.staticURL = 'static';
       view.render();
       var reduceImages = function() {
-        return view.topo.vis.selectAll('.rel-indicator image')[0]
+        return view.topo.vis.selectAll('.rel-indicator use')[0]
           .map(function(image) {
             return d3.select(image).attr('href');
           });
       };
       assert.deepEqual(reduceImages(), [
-        'static/static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
-        'static/static/gui/build/app/assets/svgs/relation-icon-healthy.svg'
+        '#relation-icon-subordinate',
+        '#relation-icon-healthy'
       ]);
 
       var unit = db.services.getById('mysql').get('units').item(0);
@@ -1289,8 +1285,8 @@ describe('EnvironmentView', function() {
       };
       view.update();
       assert.deepEqual(reduceImages(), [
-        'static/static/gui/build/app/assets/svgs/relation-icon-subordinate.svg',
-        'static/static/gui/build/app/assets/svgs/relation-icon-error.svg'
+        '#relation-icon-subordinate',
+        '#relation-icon-error'
       ]);
     });
 

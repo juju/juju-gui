@@ -17,7 +17,10 @@
     },
     "test": {
       "plugins": [
-        "rewire"
+        "rewire",
+        ["babel-plugin-transform-require-ignore", {
+          "extensions": [".png", ".scss"]
+        }]
       ],
       "presets": [
         "env",
