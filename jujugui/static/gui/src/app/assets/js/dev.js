@@ -25,7 +25,7 @@ window.startTheApp = function() {
 
     const stopHandler = () => {
       document.removeEventListener('login', stopHandler);
-      messageRotator.stop()
+      messageRotator.stop();
     };
     document.addEventListener('login', stopHandler);
   });

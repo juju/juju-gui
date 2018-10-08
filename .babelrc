@@ -13,10 +13,8 @@
       ]
     },
     "development": {
-      "plugins": [
-        "rewire"
-      ]
-  },
+      "plugins": []
+    },
     "test": {
       "plugins": [
         "rewire"

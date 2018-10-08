@@ -8,22 +8,21 @@ const {charmstore} = require('jaaslib');
 
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
+const images = {
+  'bundle-icon.png': require('../../assets/images/store/bundle-icon.png'),
+  'charm-icon.png': require('../../assets/images/store/charm-icon.png'),
+  'hadoop-elephant.png': require('../../assets/images/store/hadoop-elephant.png'),
+  'k8-image.png': require('../../assets/images/store/k8-image.png'),
+  'kubernetes-promo.png': require('../../assets/images/store/kubernetes-promo.png'),
+  'mysql-promo.png': require('../../assets/images/store/mysql-promo.png'),
+  'nagios-promo.png': require('../../assets/images/store/nagios-promo.png'),
+  'openstack-promo.png': require('../../assets/images/store/openstack-promo.png'),
+  'write-your-own.png': require('../../assets/images/store/write-your-own.png')
+};
+
 class Store extends React.Component {
   componentDidMount() {
     this.props.setPageTitle('Store');
-  }
-
-  /**
-    Generate the path for local images on the store page
-
-    @method _generateLocalImagePath
-    @param {String} filename The name of the file
-    @return {String} A path to the local asset
-  */
-  _generateLocalImagePath(filename) {
-    const staticURL = this.props.staticURL || '';
-    const basePath = `${staticURL}/static/gui/build/app/assets/images/store/`;
-    return basePath + filename;
   }
 
   /**
@@ -153,7 +152,7 @@ class Store extends React.Component {
           </div>
         </div>
         <div>
-          <img src={this._generateLocalImagePath('write-your-own.png')} />
+          <img src={images['write-your-own.png']} />
         </div>
       </div>
     </div>);
@@ -283,7 +282,7 @@ class Store extends React.Component {
             <img
               alt="Kubernetes"
               className="box__image"
-              src={this._generateLocalImagePath('k8-image.png')} />
+              src={images['k8-image.png']} />
             <div className="align-bottom">
               <h2>Kubernetes</h2>
               {kubernetesButton}
@@ -299,7 +298,7 @@ class Store extends React.Component {
             <img
               alt="Openstack"
               className="box__image"
-              src={this._generateLocalImagePath('openstack-promo.png')} />
+              src={images['openstack-promo.png']} />
             <div className="align-bottom">
               <h2>OpenStack</h2>
               {openstackButton}
@@ -316,7 +315,7 @@ class Store extends React.Component {
               <img
                 alt="Hadoop"
                 className="box__image"
-                src={this._generateLocalImagePath('hadoop-elephant.png')} />
+                src={images['hadoop-elephant.png']} />
               <div className="align-bottom">
                 <h2>Big Data</h2>
                 {bigdataButton}
@@ -427,7 +426,7 @@ class Store extends React.Component {
           <div className="one-col no-margin-bottom align-center">
             <img
               alt=""
-              src={this._generateLocalImagePath('charm-icon.png')} />
+              src={images['charm-icon.png']} />
           </div>
           <div className="five-col no-margin-bottom last-col">
             <p>Charms are sets of scripts that simplify the
@@ -446,7 +445,7 @@ class Store extends React.Component {
           <div className="one-col no-margin-bottom align-center">
             <img
               alt=""
-              src={this._generateLocalImagePath('bundle-icon.png')} />
+              src={images['bundle-icon.png']} />
           </div>
           <div className="five-col no-margin-bottom last-col">
             <p>Bundles are collections of charms that link
@@ -480,7 +479,7 @@ class Store extends React.Component {
           <div className="six-col no-margin-bottom align-center">
             <img
               alt=""
-              src={this._generateLocalImagePath('nagios-promo.png')} />
+              src={images['nagios-promo.png']} />
           </div>
           <div className="six-col no-margin-bottom last-col">
             <h3>Nagios</h3>
@@ -705,7 +704,7 @@ class Store extends React.Component {
           </div>
         </div>
         <div>
-          <img src={this._generateLocalImagePath('kubernetes-promo.png')} />
+          <img src={images['kubernetes-promo.png']} />
         </div>
       </div>
     </div>);
@@ -910,7 +909,7 @@ class Store extends React.Component {
           <div className="six-col no-margin-bottom align-center">
             <img
               alt=""
-              src={this._generateLocalImagePath('mysql-promo.png')} />
+              src={images['mysql-promo.png']} />
           </div>
           <div className="six-col no-margin-bottom last-col">
             <h3>MySQL</h3>
