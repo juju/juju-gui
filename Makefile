@@ -21,6 +21,8 @@ YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
 JEST := $(NODE_MODULES)/.bin/jest
+PARCEL := $(NODE_MODULES)/.bin/parcel
+PARCEL_INDEX := jujugui/templates/index.html
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_FILES := $(CACHE)/python
@@ -50,6 +52,7 @@ help:
 	@echo "check - run tests and check lint."
 	@echo "clean-downloadcache - remove the downloadcache"
 	@echo "clean-gui - clean the built gui js code"
+	@echo "clean-parcel - clean the parcel cache"
 	@echo "deps - install the dependencies"
 	@echo "dist - create package."
 	@echo "gui - build the gui files"
@@ -102,14 +105,14 @@ qa-server: gui
 	bin/pserve qa.ini
 
 .PHONY: run
-run: gui
+run: gui-deps
 	@echo
 	@echo "=============================================================="
 	@echo "To run the GUI you must point it at a running Juju controller."
 	@echo "The accepted way of doing this is via the GUIProxy project: https://github.com/juju/guiproxy"
 	@echo "=============================================================="
 	@echo
-	$(MAKE) -j2 server watch
+	$(PARCEL) $(PARCEL_INDEX)
 
 
 #########
@@ -176,11 +179,11 @@ gui-deps: $(JUJUGUI) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_IMAGES
 
 .PHONY: gui
 gui: gui-deps
-	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+	BABEL_ENV=development $(PARCEL) build $(PARCEL_INDEX) --out-dir $(GUIBUILD)/development --no-content-hash
 
 .PHONY: prod-gui
 prod-gui: gui-deps
-	BABEL_ENV=production $(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -g [ envify purge --NODE_ENV production ] -g uglifyify
+	BABEL_ENV=production $(PARCEL) build $(PARCEL_INDEX) --out-dir $(GUIBUILD)/production --no-source-maps --no-content-hash
 
 .PHONY: watch
 watch:
@@ -296,15 +299,15 @@ start-karma:
 	MULTI_RUN=true ./scripts/test-js.sh
 
 .PHONY: test-jest
-test-jest: gui
+test-jest: gui-deps
 	$(JEST)
 
 .PHONY: watch-jest
-watch-jest: gui
+watch-jest: gui-deps
 	$(JEST) --watchAll
 
 .PHONY: update-jest-snapshots
-update-jest-snapshots: gui
+update-jest-snapshots: gui-deps
 	$(JEST) -u
 
 .PHONY: test-selenium

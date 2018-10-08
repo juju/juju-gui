@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SvgIcon can render an icon 1`] = `
+<svg
+  className="svg-icon"
+  style={
+    Object {
+      "height": "24px",
+      "width": "24px",
+    }
+  }
+  viewBox="0 0 24 24"
+  xlinkHref="http://www.w3.org/1999/xlink"
+>
+  <use
+    xlinkHref="#icon-name"
+  />
+</svg>
+`;

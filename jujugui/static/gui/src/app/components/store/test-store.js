@@ -88,7 +88,7 @@ describe('Store', function() {
         </div>
         <div>
           <img
-            src="/static/gui/build/app/assets/images/store/write-your-own.png" />
+            src={wrapper.find('.row--write-your-own').find('img').prop('src')} />
         </div>
       </div>
     </div>);
