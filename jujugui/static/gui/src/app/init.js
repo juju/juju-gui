@@ -43,6 +43,8 @@ const {
 
 require('./yui-modules');
 
+require('./assets/css/base.scss');
+
 class GUIApp {
   constructor(config) {
     /**
@@ -1658,6 +1660,10 @@ class GUIApp {
     // Fetch the url for the config file from the DOM. This is necessary because
     // the config path is defined on render by the various deployment environments.
     const oldScript = doc.querySelector('script[data=config]');
+    if (!oldScript) {
+      // We must be using Parcel so no need to do anything.
+      return;
+    }
     // Remove the old config script tag and add it back again for it to re-fetch.
     const script= doc.createElement('script');
     script.setAttribute('data', 'config');

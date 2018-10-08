@@ -1603,14 +1603,23 @@ class ServiceModule {
           detail: [{service: d}]
         }));
       });
-
-    relationButton.append('image')
+      
+    const imageSize = 16;
+    relationButton.append('svg')
       .classed('relation-button__image', true)
       .attr({
-        'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
-        width: 16,
-        height: 16,
-        transform: 'translate(-8, -8)'
+        'viewBox': `0 0 ${imageSize} ${imageSize}`,
+        'style': `width:${imageSize}px; height:${imageSize}px;`,
+        'width': imageSize,
+        'height': imageSize,
+        'x': imageSize / -2,
+        'y': imageSize / -2,
+        'rx': imageSize / 2,
+        'ry': imageSize / 2
+      })
+      .append('use')
+      .attr({
+        'xlink:href': '#build-relation_16'
       });
 
     node.append('circle')

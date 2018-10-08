@@ -366,8 +366,12 @@ clean-gui:
 	- rm .last-transpile
 	- rm browserify-cache.json
 
+.PHONY: clean-parcel
+clean-parcel:
+	- rm -rf .cache
+
 .PHONY: clean-all
-clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest
+clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest clean-parcel
 	- rm -rf *.egg-info
 
 .PHONY: clean-uitest

@@ -5,6 +5,7 @@ build-debug
 build-prod
 build-shared
 browserify-cache.json
+.cache
 classnames.js
 collected-requirements
 dist
