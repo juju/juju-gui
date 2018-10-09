@@ -4,6 +4,8 @@
 const clonedeep = require('lodash.clonedeep');
 let deepmerge = require('deepmerge');
 
+// Handle differences between webpack and browserify loading the deepmerge module.
+// This can be removed once the karma/browserify building has been removed.
 if (deepmerge.default) {
   deepmerge = deepmerge.default;
 }
