@@ -1,9 +1,6 @@
 'use strict';
 
 const config = {
-  moduleNameMapper: {
-    '\\.(scss|png)$': '<rootDir>/jujugui/static/gui/src/test/proxy-module.js'
-  },
   roots: ['<rootDir>/jujugui/static/gui/src/app'],
   setupFiles: [
     '<rootDir>/jujugui/static/gui/src/test/jest-setup.js',
