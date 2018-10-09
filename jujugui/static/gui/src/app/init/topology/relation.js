@@ -297,11 +297,6 @@ class RelationModule {
     // Add a labelgroup.
     const self = this;
     const topo = this.topo;
-    let staticURL = topo.staticURL || '';
-    if (staticURL) {
-      staticURL += '/';
-    };
-    const basePath = `${staticURL}static/gui/build/app`;
     const vis = topo.vis;
     const parentId = topo._yuid;
     const imageSize = 20;
@@ -533,11 +528,6 @@ class RelationModule {
     // Only start a new drag line if no an active dragline. Sometimes a line
     // a relation begins while dragging which shouldnt start a new line.
     if (!this.dragline) {
-      let staticURL = this.topo.staticURL || '';
-      if (staticURL) {
-        staticURL += '/';
-      }
-      const basePath = `${staticURL}static/gui/build/app`;
       const d = evt.service;
       // Create a pending drag-line.
       const vis = this.topo.vis;

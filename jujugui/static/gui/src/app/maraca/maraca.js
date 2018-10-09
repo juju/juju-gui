@@ -2,7 +2,11 @@
 'use strict';
 
 const clonedeep = require('lodash.clonedeep');
-import deepmerge from 'deepmerge';
+let deepmerge = require('deepmerge');
+
+if (deepmerge.default) {
+  deepmerge = deepmerge.default;
+}
 
 const {processDeltas} = require('./delta-handlers');
 

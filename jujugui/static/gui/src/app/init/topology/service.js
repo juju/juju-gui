@@ -1546,11 +1546,6 @@ class ServiceModule {
    * @method createServiceNode
    */
   createServiceNode(node, self) {
-    var staticURL = self.topo.staticURL || '';
-    if (staticURL) {
-      staticURL += '/';
-    }
-    var basePath = `${staticURL}static/gui/build/app`;
     node.attr({'data-name': function(d) { return d.name; }});
 
     // Draw a relation button.
@@ -1603,7 +1598,7 @@ class ServiceModule {
           detail: [{service: d}]
         }));
       });
-      
+
     const imageSize = 16;
     relationButton.append('svg')
       .classed('relation-button__image', true)
