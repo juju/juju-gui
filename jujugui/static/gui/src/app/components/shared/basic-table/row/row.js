@@ -124,7 +124,7 @@ class BasicTableRow extends React.Component {
     const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
     return (
       <tr
-className={classes}
+        className={classes}
         onClick={onClick}
         role="button"
         tabIndex="0">

@@ -153,7 +153,7 @@ class ProfileBundleList extends React.Component {
         const version = `#${url.revision}`;
         const charmstore = this.props.charmstore;
         const charmstoreURL = this.props.charmstore.url;
-        const getDiagramURL=charmstore.getDiagramURL.bind(charmstore);
+        const getDiagramURL = charmstore.getDiagramURL.bind(charmstore);
         const applications = Object.keys(bundle.applications).map(name => {
           const app = bundle.applications[name];
           return {
@@ -194,7 +194,7 @@ class ProfileBundleList extends React.Component {
                   </a>
                   {bundle.description ? (
                     <span className="entity__desc">
-                      { bundle.description }
+                      {bundle.description}
                     </span>
                   ) : null}
                 </span>

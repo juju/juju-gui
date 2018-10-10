@@ -90,7 +90,7 @@ describe('ProfileCredentialList', () => {
       to loading: true.
     @param {Integer} duration How long to wait before each iteration. Default 10ms.
   */
-  function loopCheck(component, callback, duration=10) {
+  function loopCheck(component, callback, duration = 10) {
     let loopCount = 0;
     const timer = setInterval(() => {
       loopCount += 1;
@@ -206,7 +206,7 @@ describe('ProfileCredentialList', () => {
   });
 
   it('can render', () => {
-    const wrapper = shallowRenderComponent({ gisf: true });
+    const wrapper = shallowRenderComponent({gisf: true});
     expect(wrapper).toMatchSnapshot();
   });
 
