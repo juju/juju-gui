@@ -19,14 +19,14 @@ class StatusRemoteApplicationList extends React.Component {
     const {remoteApplications} = this.props;
     return Object.keys(remoteApplications).map(key => {
       const app = remoteApplications[key];
-      const urlParts = app.offerURL.split(':');
+      const urlParts = (app.offerURL || '').split(':');
       return {
         columns: [{
           columnSize: 3,
           content: app.name
         }, {
           columnSize: 3,
-          content: app.status.current
+          content: (app.status || {}).current
         }, {
           columnSize: 3,
           content: urlParts[0]
@@ -34,7 +34,7 @@ class StatusRemoteApplicationList extends React.Component {
           columnSize: 3,
           content: urlParts[1]
         }],
-        extraData: normaliseStatus(app.status.current),
+        extraData: normaliseStatus((app.status || {}).current),
         key: app.offerURL
       };
     });

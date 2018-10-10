@@ -23,6 +23,10 @@ class StatusApplicationList extends React.Component {
     const {applications} = this.props;
     return Object.keys(this.props.applications).map(key => {
       const app = applications[key];
+      if (!app.charmURL) {
+        // The provided data is not correct. A charmURL is required.
+        return;
+      }
       const charm = urls.URL.fromLegacyString(app.charmURL);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
       const revision = charm.revision;
@@ -33,8 +37,7 @@ class StatusApplicationList extends React.Component {
       // charm.path() below.
       charm.revision = null;
       return {
-        classes: [getStatusClass(
-          'status-table__row--', app.status.current)],
+        classes: [getStatusClass('status-table__row--', (app.status || {}).current)],
         onClick: this.props.generateApplicationOnClick(app.name),
         clickURL: this.props.generateApplicationURL(app.name),
         columns: [{
@@ -49,8 +52,8 @@ class StatusApplicationList extends React.Component {
           content: app.workloadVersion
         }, {
           columnSize: 2,
-          content: app.status.current ? (
-            <StatusLabel status={app.status.current} />) : null
+          content: app.status && app.status.current ? (
+            <StatusLabel status={(app.status || {}).current} />) : null
         }, {
           columnSize: 1,
           content: units.length
@@ -70,7 +73,7 @@ class StatusApplicationList extends React.Component {
           columnSize: 1,
           content: revision
         }],
-        extraData: normaliseStatus(app.status.current),
+        extraData: normaliseStatus((app.status || {}).current),
         key: app.name
       };
     });

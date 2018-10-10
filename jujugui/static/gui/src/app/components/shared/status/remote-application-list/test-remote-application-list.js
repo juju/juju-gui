@@ -37,4 +37,10 @@ describe('StatusRemoteApplicationList', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
+
+  it('renders with missing details', () => {
+    remoteApplications.mysql = {};
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
 });

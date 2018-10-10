@@ -43,7 +43,7 @@ class StatusRelationList extends React.Component {
       let provides = '';
       let consumes = '';
       let scope = '';
-      rel.endpoints.forEach(endpoint => {
+      (rel.endpoints || []).forEach(endpoint => {
         const application = endpoint.applicationName;
         const ep = endpoint.relation;
         switch (ep.role) {
@@ -77,7 +77,7 @@ class StatusRelationList extends React.Component {
           columnSize: 3,
           content: scope
         }],
-        key: rel.id.toString()
+        key: (rel.id || '').toString()
       };
     });
   }

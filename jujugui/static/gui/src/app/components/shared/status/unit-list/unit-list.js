@@ -39,6 +39,10 @@ class StatusUnitList extends React.Component {
     return Object.keys(units).map(key => {
       const unit = units[key];
       let application = this.props.applications[unit.application];
+      if (!application) {
+        // The received data must be wrong as there should always be an application for a unit.
+        return;
+      }
       const appExposed = application.exposed;
       let publicAddress = unit.publicAddress;
       if (appExposed && unit.portRanges.length) {
@@ -54,8 +58,8 @@ class StatusUnitList extends React.Component {
             {unit.publicAddress}
           </a>);
       }
-      const agentStatus = unit.agentStatus.current;
-      const workloadStatus = unit.workloadStatus.current;
+      const agentStatus = (unit.agentStatus || {}).current;
+      const workloadStatus = (unit.workloadStatus || {}).current;
       return {
         classes: [utils.getStatusClass(
           'status-table__row--',
@@ -94,7 +98,7 @@ class StatusUnitList extends React.Component {
           content: this._formatPorts(unit.portRanges)
         }, {
           columnSize: 2,
-          content: unit.workloadStatus.message
+          content: (unit.workloadStatus || {}).message
         }],
         extraData: utils.getHighestStatus(
           [agentStatus, workloadStatus]),
