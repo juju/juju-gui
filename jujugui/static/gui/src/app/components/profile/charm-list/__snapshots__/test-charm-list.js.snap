@@ -122,7 +122,8 @@ exports[`Profile Charm List can render 1`] = `
               <button
                 className="p-button--positive"
                 disabled={false}
-                tooltip="Add this undefined to a new model"
+                tooltip="Add this undefined to
+                      a new model"
               >
                 Add to model
               </button>
@@ -238,7 +239,8 @@ exports[`Profile Charm List can render 1`] = `
               <button
                 className="p-button--positive"
                 disabled={false}
-                tooltip="Add this undefined to a new model"
+                tooltip="Add this undefined to
+                      a new model"
               >
                 Add to model
               </button>
@@ -333,7 +335,8 @@ exports[`Profile Charm List can render 1`] = `
               <button
                 className="p-button--positive"
                 disabled={false}
-                tooltip="Add this undefined to a new model"
+                tooltip="Add this undefined to
+                      a new model"
               >
                 Add to model
               </button>
