@@ -258,6 +258,25 @@ class ProfileCharmList extends React.Component {
                 <span className="profile-charm-list__series">
                   {series}
                 </span>
+                {charm.bugUrl ? (
+                  <a
+                    href={charm.bugUrl}
+                    onClick={evt => evt.stopPropagation}
+                    target="_blank">
+                    Bugs
+                  </a>
+                ) : null}
+                {charm.homepage ? (
+                  <a
+                    href={charm.homepage}
+                    onClick={evt => evt.stopPropagation}
+                    target="_blank">
+                    Homepage
+                  </a>
+                ) : null}
+                {charm.bugUrl || charm.homepage ? (
+                  <hr />
+                ) : null}
                 <span className="entity__permissions">
                   Writeable:
                   {this.props.generatePermissions(charm.perm.write, this.props)}

@@ -205,13 +205,32 @@ class ProfileBundleList extends React.Component {
                     diagramUrl={getDiagramURL(bundle.id)} />) : null}
               </td>
               <td>
+                {bundle.bugUrl ? (
+                  <a
+                    href={bundle.bugUrl}
+                    onClick={evt => evt.stopPropagation}
+                    target="_blank">
+                    Bugs
+                  </a>
+                ) : null}
+                {bundle.homepage ? (
+                  <a
+                    href={bundle.homepage}
+                    onClick={evt => evt.stopPropagation}
+                    target="_blank">
+                    Homepage
+                  </a>
+                ) : null}
+                {bundle.bugUrl || bundle.homepage ? (
+                  <hr />
+                ) : null}
                 <span className="entity__permissions">
                   Writeable:
-                  {/* {this.props.generatePermissions(bundle.perm.write)} */}
+                  {this.props.generatePermissions(bundle.perm.write, this.props)}
                 </span>
                 <span className="entity__permissions">
                   Readable:
-                  {/* {this.props.generatePermissions(bundle.perm.read)} */}
+                  {this.props.generatePermissions(bundle.perm.read, this.props)}
                 </span>
               </td>
               <td className="u-align-text--right">

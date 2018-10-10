@@ -125,6 +125,21 @@ exports[`Profile Bundle List can render 1`] = `
               />
             </td>
             <td>
+              <a
+                href="example.com/bugs"
+                onClick={[Function]}
+                target="_blank"
+              >
+                Bugs
+              </a>
+              <a
+                href="example.com/"
+                onClick={[Function]}
+                target="_blank"
+              >
+                Homepage
+              </a>
+              <hr />
               <span
                 className="entity__permissions"
               >
@@ -221,6 +236,21 @@ exports[`Profile Bundle List can render 1`] = `
               />
             </td>
             <td>
+              <a
+                href="example.com/bugs"
+                onClick={[Function]}
+                target="_blank"
+              >
+                Bugs
+              </a>
+              <a
+                href="example.com/"
+                onClick={[Function]}
+                target="_blank"
+              >
+                Homepage
+              </a>
+              <hr />
               <span
                 className="entity__permissions"
               >

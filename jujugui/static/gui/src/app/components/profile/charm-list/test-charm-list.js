@@ -104,11 +104,11 @@ describe('Profile Charm List', function() {
     assert.equal(wrapper.find('ProfileCharmstoreLogin').length, 1);
   });
 
-  // it('updates the header if it is not your profile', () => {
-  //   const wrapper = renderComponent({isActiveUsersProfile: false});
-  //   assert.equal(
-  //     wrapper.find('.profile__title').html().includes('Their charms'), true);
-  // });
+  it('updates the header if it is not your profile', () => {
+    const wrapper = renderComponent({isActiveUsersProfile: false});
+    assert.equal(
+      wrapper.find('.profile__title').html().includes('Their charms'), true);
+  });
 
   it('shows the spinner when loading', () => {
     const wrapper = renderComponent({

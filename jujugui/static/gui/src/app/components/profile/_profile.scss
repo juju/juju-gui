@@ -23,13 +23,21 @@
     line-height: 1.5;
   }
 
-  .entity__permissions {
+  .entity__permissions,
+  .entity__supplementary {
     display: block;
     margin-bottom: 1rem;
 
     a {
       display: block;
       margin-top: 0.5rem;
+    }
+  }
+
+  .entity__supplementary {
+
+    &:last-child {
+      margin-bottom: 2rem !important;
     }
   }
 }
