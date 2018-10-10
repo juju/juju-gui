@@ -276,7 +276,8 @@ class ProfileCharmList extends React.Component {
                   className="p-button--positive"
                   disabled={this.props.acl.isReadOnly()}
                   tooltip={
-                    `Add this ${charm.entityType} to ${this.modelName ? 'your current' : 'a new'} model`}>
+                    `Add this ${charm.entityType} to
+                      ${this.modelName ? 'your current' : 'a new'} model`}>
                   {title}
                 </button>
               </td>

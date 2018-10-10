@@ -189,7 +189,9 @@ class ProfileBundleList extends React.Component {
             <React.Fragment>
               <td>
                 <span className="profile-bundle-list__meta">
-                  <a href={`${this.props.baseURL}${path}`} onClick={this._navigateToBundle.bind(this, path)}>
+                  <a
+                    href={`${this.props.baseURL}${path}`}
+                    onClick={this._navigateToBundle.bind(this, path)}>
                     {bundle.name}
                   </a>
                   {bundle.description ? (

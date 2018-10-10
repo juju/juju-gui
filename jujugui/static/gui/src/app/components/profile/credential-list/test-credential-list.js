@@ -235,5 +235,4 @@ describe('ProfileCredentialList', () => {
       expect(wrapper).toMatchSnapshot();
     });
   });
-
 });
