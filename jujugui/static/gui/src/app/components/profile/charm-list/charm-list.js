@@ -86,11 +86,11 @@ class ProfileCharmList extends React.Component {
   /**
     Display a tag in the store.
     @param tag {String} The name of the tag.
-    @param evt {Object} The click event.
+    @param e {Object} The click event.
   */
-  _handleTagClick(tag, evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
+  _handleTagClick(tag, e) {
+    e.preventDefault();
+    e.stopPropagation();
     this.props.changeState({
       profile: null,
       search: {
@@ -163,18 +163,18 @@ class ProfileCharmList extends React.Component {
     let content;
     if (this.state.loading) {
       content = <Spinner />;
-    } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
-      if (!this.props.user) {
+    } else if (props.isActiveUsersProfile && !(this.state.data || []).length) {
+      if (!props.user) {
         content = (
           <ProfileCharmstoreLogin
-            addNotification={this.props.addNotification}
-            bakery={this.props.bakery}
-            changeState={this.props.changeState}
+            addNotification={props.addNotification}
+            bakery={props.bakery}
+            changeState={props.changeState}
             charmstore={shapeup.fromShape(
-              this.props.charmstore,
+              props.charmstore,
               ProfileCharmstoreLogin.propTypes.charmstore
             )}
-            storeUser={this.props.storeUser}
+            storeUser={props.storeUser}
             type="charms" />
         );
       } else {
@@ -196,7 +196,7 @@ class ProfileCharmList extends React.Component {
     } else {
       const rows = this.state.data.map(charm => {
         const id = charm.id;
-        const src = `${this.props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
+        const src = `${props.charmstore.url}/${id.replace('cs:', '')}/icon.svg`;
         const url = urls.URL.fromLegacyString(id);
         const path = url.path();
         const version = `#${url.revision}`;
@@ -207,7 +207,7 @@ class ProfileCharmList extends React.Component {
             src={src}
             title={charm.name} />
         );
-        const modelName = this.props.getModelName();
+        const modelName = props.getModelName();
         const title = `Add to ${modelName || 'model'}`;
         return {
           columns: [
@@ -220,7 +220,7 @@ class ProfileCharmList extends React.Component {
                     </span>
                     <span className="profile-charm-list__desc">
                       <a
-                        href={`${this.props.baseURL}${path}`}
+                        href={`${props.baseURL}${path}`}
                         key="link"
                         onClick={this._navigateToCharm.bind(this, path)}>
                         {charm.name}
@@ -244,7 +244,7 @@ class ProfileCharmList extends React.Component {
                 </span>
                 <span className="profile-charm-list__meta">
                   <a
-                    href={`${this.props.baseURL}${path}`}
+                    href={`${props.baseURL}${path}`}
                     key="link"
                     onClick={this._navigateToCharm.bind(this, path)}>
                     {charm.name}
@@ -261,7 +261,7 @@ class ProfileCharmList extends React.Component {
                 {charm.bugUrl ? (
                   <a
                     href={charm.bugUrl}
-                    onClick={evt => evt.stopPropagation}
+                    onClick={e => e.stopPropagation}
                     target="_blank">
                     Bugs
                   </a>
@@ -269,7 +269,7 @@ class ProfileCharmList extends React.Component {
                 {charm.homepage ? (
                   <a
                     href={charm.homepage}
-                    onClick={evt => evt.stopPropagation}
+                    onClick={e => e.stopPropagation}
                     target="_blank">
                     Homepage
                   </a>
@@ -292,8 +292,8 @@ class ProfileCharmList extends React.Component {
                 </span>
                 <button
                   className="p-button--positive"
-                  disabled={this.props.acl.isReadOnly()}
-                  onClick={evt => props.handleDeploy(evt, charm.id, this.props)}
+                  disabled={props.acl.isReadOnly()}
+                  onClick={e => props.handleDeploy(e, charm.id, this.props)}
                   tooltip={
                     `Add this ${charm.entityType} to
                       ${this.modelName ? 'your current' : 'a new'} model`}>

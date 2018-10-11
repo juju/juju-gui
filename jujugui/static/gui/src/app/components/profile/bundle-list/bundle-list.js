@@ -122,16 +122,16 @@ class ProfileBundleList extends React.Component {
     const props = this.props;
     if (this.state.loading) {
       content = (<Spinner />);
-    } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
-      if (!this.props.user) {
+    } else if (props.isActiveUsersProfile && !(this.state.data || []).length) {
+      if (!props.user) {
         content = (
           <ProfileCharmstoreLogin
-            addNotification={this.props.addNotification}
-            bakery={this.props.bakery}
-            changeState={this.props.changeState}
-            charmstore={shapeup.fromShape(this.props.charmstore,
+            addNotification={props.addNotification}
+            bakery={props.bakery}
+            changeState={props.changeState}
+            charmstore={shapeup.fromShape(props.charmstore,
               ProfileCharmstoreLogin.propTypes.charmstore)}
-            storeUser={this.props.storeUser}
+            storeUser={props.storeUser}
             type="bundles" />);
       } else {
         content = (
@@ -152,8 +152,8 @@ class ProfileBundleList extends React.Component {
         const url = urls.URL.fromLegacyString(bundle.id);
         const path = url.path();
         const version = `#${url.revision}`;
-        const charmstore = this.props.charmstore;
-        const charmstoreURL = this.props.charmstore.url;
+        const charmstore = props.charmstore;
+        const charmstoreURL = props.charmstore.url;
         const getDiagramURL = charmstore.getDiagramURL.bind(charmstore);
         const applications = Object.keys(bundle.applications).map(name => {
           const app = bundle.applications[name];
@@ -163,13 +163,13 @@ class ProfileBundleList extends React.Component {
             id: app.charm
           };
         });
-        const modelName = this.props.getModelName();
+        const modelName = props.getModelName();
         const title = `Add to ${modelName || 'model'}`;
         return {
           columns: [{
             content: (
               <a
-                href={`${this.props.baseURL}${path}`}
+                href={`${props.baseURL}${path}`}
                 onClick={this._navigateToBundle.bind(this, path)}>
                 {bundle.name}
               </a>)
@@ -177,8 +177,8 @@ class ProfileBundleList extends React.Component {
             content: (
               <IconList
                 applications={applications}
-                changeState={this.props.changeState}
-                generatePath={this.props.generatePath} />)
+                changeState={props.changeState}
+                generatePath={props.generatePath} />)
           }, {
             content: bundle.machineCount,
             classes: ['u-align-text--right']
@@ -193,7 +193,7 @@ class ProfileBundleList extends React.Component {
               <td>
                 <span className="profile-bundle-list__meta">
                   <a
-                    href={`${this.props.baseURL}${path}`}
+                    href={`${props.baseURL}${path}`}
                     onClick={this._navigateToBundle.bind(this, path)}>
                     {bundle.name}
                   </a>
@@ -211,7 +211,7 @@ class ProfileBundleList extends React.Component {
                 {bundle.bugUrl ? (
                   <a
                     href={bundle.bugUrl}
-                    onClick={evt => evt.stopPropagation}
+                    onClick={e => e.stopPropagation}
                     target="_blank">
                     Bugs
                   </a>
@@ -219,7 +219,7 @@ class ProfileBundleList extends React.Component {
                 {bundle.homepage ? (
                   <a
                     href={bundle.homepage}
-                    onClick={evt => evt.stopPropagation}
+                    onClick={e => e.stopPropagation}
                     target="_blank">
                     Homepage
                   </a>
@@ -249,7 +249,7 @@ class ProfileBundleList extends React.Component {
                 <button
                   className="p-button--positive"
                   disabled={this.props.acl.isReadOnly()}
-                  onClick={evt => props.handleDeploy(evt, bundle.id, this.props)}
+                  onClick={e => props.handleDeploy(e, bundle.id, this.props)}
                   tooltip={
                     `Add this ${bundle.entityType} to
                       ${this.modelName ? 'your current' : 'a new'} model`}>
