@@ -89,4 +89,20 @@ describe('StatusApplicationList', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
+
+  it('renders with missing charm details', () => {
+    applications.etcd = {};
+    units['etcd/0'] = {};
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('renders with missing details', () => {
+    applications.etcd = {
+      charmURL: 'cs:~containers/etcd-126'
+    };
+    units['etcd/0'] = {};
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
 });

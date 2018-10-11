@@ -50,3 +50,54 @@ exports[`StatusRemoteApplicationList renders 1`] = `
   }
 />
 `;
+
+exports[`StatusRemoteApplicationList renders with missing details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 3,
+        "content": "SAAS",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Status",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Store",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "URL",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "columns": Array [
+          Object {
+            "columnSize": 3,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 3,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+          Object {
+            "columnSize": 3,
+            "content": undefined,
+          },
+        ],
+        "extraData": "ok",
+        "key": undefined,
+      },
+    ]
+  }
+/>
+`;
