@@ -198,7 +198,7 @@ class ProfileBundleList extends React.Component {
                     {bundle.name}
                   </a>
                   {bundle.description ? (
-                    <span className="entity__desc">
+                    <span className="entity__desc u-hide--small">
                       {bundle.description}
                     </span>
                   ) : null}

@@ -252,13 +252,15 @@ class ProfileModelList extends React.Component {
             {
               content: nameContent
             }, {
-              content: username
+              content: username,
+              classes: ['u-hide--small']
             }, {
               content: regionContent
             }, {
               content: accessContent
             }, {
-              content: dateContent
+              content: dateContent,
+              classes: ['u-hide--small']
             }, {
               content: destroyContent
             }

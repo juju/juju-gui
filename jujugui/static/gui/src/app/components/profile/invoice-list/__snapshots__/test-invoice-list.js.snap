@@ -5,15 +5,11 @@ exports[`Invoice Bundle List can render 1`] = `
   className="profile-invoice-list"
 >
   <div>
-    <div
-      className="v1"
+    <h2
+      className="profile__title"
     >
-      <h2
-        className="profile__title"
-      >
-        Payment history
-      </h2>
-    </div>
+      Payment history
+    </h2>
     <BasicTable
       headerClasses={
         Array [

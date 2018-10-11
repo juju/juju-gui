@@ -64,6 +64,9 @@ exports[`Profile Model List can render 1`] = `
               </a>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": "Me",
             },
             Object {
@@ -97,6 +100,9 @@ exports[`Profile Model List can render 1`] = `
               </span>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": <DateDisplay
                 date="2017-07-06T14:47:03.000Z"
                 relative={true}
@@ -193,6 +199,9 @@ exports[`Profile Model List can render 1`] = `
               </a>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": "Me",
             },
             Object {
@@ -226,6 +235,9 @@ exports[`Profile Model List can render 1`] = `
               </span>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": <DateDisplay
                 date="2017-07-06T16:26:47.000Z"
                 relative={true}
@@ -322,6 +334,9 @@ exports[`Profile Model List can render 1`] = `
               </a>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": "tester2",
             },
             Object {
@@ -355,6 +370,9 @@ exports[`Profile Model List can render 1`] = `
               </span>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": <DateDisplay
                 date="--"
                 relative={true}
@@ -432,6 +450,9 @@ exports[`Profile Model List can render 1`] = `
               </a>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": "tester3",
             },
             Object {
@@ -465,6 +486,9 @@ exports[`Profile Model List can render 1`] = `
               </span>,
             },
             Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
               "content": <DateDisplay
                 date="2017-07-05T01:42:05.000Z"
                 relative={true}

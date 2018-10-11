@@ -118,7 +118,7 @@ exports[`Profile Bundle List can render 1`] = `
                   logstash-core
                 </a>
                 <span
-                  className="entity__desc"
+                  className="entity__desc u-hide--small"
                 >
                   logstash-core description
                 </span>
@@ -242,7 +242,7 @@ exports[`Profile Bundle List can render 1`] = `
                   swarm-core
                 </a>
                 <span
-                  className="entity__desc"
+                  className="entity__desc u-hide--small"
                 >
                   swarm-core description
                 </span>

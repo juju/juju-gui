@@ -92,7 +92,7 @@ exports[`Profile Charm List can render 1`] = `
                   failtester
                 </a>
                 <span
-                  className="entity__desc"
+                  className="entity__desc u-hide--small"
                 />
               </span>
             </td>
@@ -210,7 +210,7 @@ exports[`Profile Charm List can render 1`] = `
                   ghost
                 </a>
                 <span
-                  className="entity__desc"
+                  className="entity__desc u-hide--small"
                 />
               </span>
             </td>
@@ -307,7 +307,7 @@ exports[`Profile Charm List can render 1`] = `
                   privghost
                 </a>
                 <span
-                  className="entity__desc"
+                  className="entity__desc u-hide--small"
                 />
               </span>
             </td>

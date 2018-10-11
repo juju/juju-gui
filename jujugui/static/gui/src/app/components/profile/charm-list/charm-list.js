@@ -249,7 +249,7 @@ class ProfileCharmList extends React.Component {
                     onClick={this._navigateToCharm.bind(this, path)}>
                     {charm.name}
                   </a>
-                  <span className="entity__desc">
+                  <span className="entity__desc u-hide--small">
                     {charm.description}
                   </span>
                 </span>

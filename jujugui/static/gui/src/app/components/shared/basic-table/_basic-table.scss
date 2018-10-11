@@ -1,10 +1,16 @@
 .basic-table {
   @extend %list-style;
   margin-bottom: 20px;
+  width: 100%;
 
   // .v1 selector required for specificity
   .v1 & {
     border-bottom: 1px solid $color-mid-light;
+
+    thead, tbody {
+      display: block;
+      width: 100%;
+    }
 
     td,
     th {
@@ -54,7 +60,7 @@
     }
   }
 
-  tbody tr:hover {
+  tbody tr.basic-table__row--clickable:hover {
     background-color: $color-x-light;
   }
 }
