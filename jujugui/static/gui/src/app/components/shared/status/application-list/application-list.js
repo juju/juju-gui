@@ -21,11 +21,11 @@ class StatusApplicationList extends React.Component {
   */
   _generateRows() {
     const {applications} = this.props;
-    return Object.keys(this.props.applications).map(key => {
+    return Object.keys(this.props.applications).reduce((accumulator, key) => {
       const app = applications[key];
       if (!app.charmURL) {
         // The provided data is not correct. A charmURL is required.
-        return;
+        return accumulator;
       }
       const charm = urls.URL.fromLegacyString(app.charmURL);
       const store = charm.schema === 'cs' ? 'jujucharms' : 'local';
@@ -36,7 +36,7 @@ class StatusApplicationList extends React.Component {
       // Set the revision to null so that it's not included when calling
       // charm.path() below.
       charm.revision = null;
-      return {
+      accumulator.push({
         classes: [getStatusClass('status-table__row--', (app.status || {}).current)],
         onClick: this.props.generateApplicationOnClick(app.name),
         clickURL: this.props.generateApplicationURL(app.name),
@@ -75,8 +75,9 @@ class StatusApplicationList extends React.Component {
         }],
         extraData: normaliseStatus((app.status || {}).current),
         key: app.name
-      };
-    });
+      });
+      return accumulator;
+    }, []);
   }
 
   render() {

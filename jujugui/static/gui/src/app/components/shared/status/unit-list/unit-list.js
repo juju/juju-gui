@@ -36,12 +36,12 @@ class StatusUnitList extends React.Component {
   */
   _generateRows() {
     const {units} = this.props;
-    return Object.keys(units).map(key => {
+    return Object.keys(units).reduce((accumulator, key) => {
       const unit = units[key];
       let application = this.props.applications[unit.application];
       if (!application) {
         // The received data must be wrong as there should always be an application for a unit.
-        return;
+        return accumulator;
       }
       const appExposed = application.exposed;
       let publicAddress = unit.publicAddress;
@@ -60,7 +60,7 @@ class StatusUnitList extends React.Component {
       }
       const agentStatus = (unit.agentStatus || {}).current;
       const workloadStatus = (unit.workloadStatus || {}).current;
-      return {
+      accumulator.push({
         classes: [utils.getStatusClass(
           'status-table__row--',
           [agentStatus, workloadStatus])],
@@ -103,8 +103,9 @@ class StatusUnitList extends React.Component {
         extraData: utils.getHighestStatus(
           [agentStatus, workloadStatus]),
         key: unit.name
-      };
-    });
+      });
+      return accumulator;
+    }, []);
   }
 
   render() {

@@ -129,11 +129,7 @@ exports[`StatusUnitList renders with missing application details 1`] = `
       },
     ]
   }
-  rows={
-    Array [
-      undefined,
-    ]
-  }
+  rows={Array []}
 />
 `;
 

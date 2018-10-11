@@ -127,11 +127,7 @@ exports[`StatusApplicationList renders with missing charm details 1`] = `
       },
     ]
   }
-  rows={
-    Array [
-      undefined,
-    ]
-  }
+  rows={Array []}
 />
 `;
 
