@@ -69,4 +69,10 @@ describe('StatusMachineList', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
+
+  it('renders with missing details', () => {
+    machines['0'] = {};
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
 });

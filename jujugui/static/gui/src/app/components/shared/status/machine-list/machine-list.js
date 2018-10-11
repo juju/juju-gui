@@ -24,13 +24,13 @@ class StatusMachineList extends React.Component {
     return Object.keys(machines).map(key => {
       const machine = machines[key];
       let publicAddress;
-      machine.addresses.some(address => {
+      (machine.addresses || []).some(address => {
         if (address.scope === 'public') {
           publicAddress = address.value;
           return true;
         }
       });
-      const agentStatus = machine.agentStatus.current;
+      const agentStatus = (machine.agentStatus || {}).current;
       return {
         classes: [getStatusClass(
           'status-table__row--', agentStatus)],
@@ -54,7 +54,7 @@ class StatusMachineList extends React.Component {
           content: machine.series
         }, {
           columnSize: 3,
-          content: machine.agentStatus.message
+          content: (machine.agentStatus || {}).message
         }],
         extraData: normaliseStatus(agentStatus),
         key: machine.id

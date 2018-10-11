@@ -92,6 +92,22 @@ describe('StatusUnitList', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  it('renders with missing application details', () => {
+    applications.etcd = {};
+    units['etcd/0'] = {};
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('renders with missing details', () => {
+    applications.etcd = {};
+    units['etcd/0'] = {
+      application: 'etcd'
+    };
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
+
   it('displays a link for exposed units', () => {
     applications.etcd.exposed = true;
     const wrapper = renderComponent();

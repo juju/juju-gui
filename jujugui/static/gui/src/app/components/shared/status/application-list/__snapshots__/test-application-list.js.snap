@@ -92,3 +92,131 @@ exports[`StatusApplicationList renders 1`] = `
   }
 />
 `;
+
+exports[`StatusApplicationList renders with missing charm details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Application",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Version",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Status",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Scale",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Charm",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Store",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Rev",
+      },
+    ]
+  }
+  rows={Array []}
+/>
+`;
+
+exports[`StatusApplicationList renders with missing details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Application",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Version",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Status",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Scale",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Charm",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Store",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Rev",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "classes": Array [
+          "",
+        ],
+        "clickURL": "http://example.com",
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": <span>
+              <img
+                className="status-view__icon"
+                src="icon.svg"
+              />
+            </span>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 2,
+            "content": null,
+          },
+          Object {
+            "columnSize": 1,
+            "content": 1,
+          },
+          Object {
+            "columnSize": 2,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            >
+              u/containers/etcd
+            </a>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": "jujucharms",
+          },
+          Object {
+            "columnSize": 1,
+            "content": 126,
+          },
+        ],
+        "extraData": "ok",
+        "key": undefined,
+        "onClick": [Function],
+      },
+    ]
+  }
+/>
+`;
