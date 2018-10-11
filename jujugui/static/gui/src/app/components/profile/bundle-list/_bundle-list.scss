@@ -2,10 +2,10 @@
 
   tr {
     display: grid;
-    grid-template-columns: 2fr 3fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 3fr 1fr 0.5fr 2fr;
 
     &.is-expanded {
-      grid-template-columns: 3fr 2fr 1fr 1fr 1fr;
+      grid-template-columns: 3fr 2fr 1fr 0.5fr 2fr;
     }
   }
 

@@ -119,6 +119,7 @@ class ProfileBundleList extends React.Component {
 
   render() {
     let content;
+    const props = this.props;
     if (this.state.loading) {
       content = (<Spinner />);
     } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
@@ -162,6 +163,8 @@ class ProfileBundleList extends React.Component {
             id: app.charm
           };
         });
+        const modelName = this.props.getModelName();
+        const title = `Add to ${modelName || 'model'}`;
         return {
           columns: [{
             content: (
@@ -226,11 +229,11 @@ class ProfileBundleList extends React.Component {
                 ) : null}
                 <span className="entity__permissions">
                   Writeable:
-                  {this.props.generatePermissions(bundle.perm.write, this.props)}
+                  {props.generatePermissions(bundle.perm.write, props)}
                 </span>
                 <span className="entity__permissions">
                   Readable:
-                  {this.props.generatePermissions(bundle.perm.read, this.props)}
+                  {props.generatePermissions(bundle.perm.read, props)}
                 </span>
               </td>
               <td className="u-align-text--right">
@@ -239,8 +242,19 @@ class ProfileBundleList extends React.Component {
               <td className="u-align-text--right">
                 {bundle.unitCount}
               </td>
-              <td>
-                {version}
+              <td className="entity__release u-align-text--right">
+                <span>
+                  {version}
+                </span>
+                <button
+                  className="p-button--positive"
+                  disabled={this.props.acl.isReadOnly()}
+                  onClick={evt => props.handleDeploy(evt, bundle.id, this.props)}
+                  tooltip={
+                    `Add this ${bundle.entityType} to
+                      ${this.modelName ? 'your current' : 'a new'} model`}>
+                  {title}
+                </button>
               </td>
             </React.Fragment>
           ),
@@ -263,7 +277,8 @@ class ProfileBundleList extends React.Component {
               content: 'Units',
               classes: ['u-align-text--right']
             }, {
-              content: 'Release'
+              content: 'Release',
+              classes: ['u-align-text--right']
             }]}
             rows={rows}
             sort={this._byName.bind(this)} />
@@ -294,6 +309,7 @@ ProfileBundleList.propTypes = {
   generatePath: PropTypes.func.isRequired,
   generatePermissions: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
+  handleDeploy: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   storeUser: PropTypes.func.isRequired,
   user: PropTypes.string

@@ -158,8 +158,8 @@ class ProfileCharmList extends React.Component {
     }
     return 0;
   }
-
   render() {
+    const props = this.props;
     let content;
     if (this.state.loading) {
       content = <Spinner />;
@@ -279,21 +279,21 @@ class ProfileCharmList extends React.Component {
                 ) : null}
                 <span className="entity__permissions">
                   Writeable:
-                  {this.props.generatePermissions(charm.perm.write, this.props)}
+                  {props.generatePermissions(charm.perm.write, props)}
                 </span>
                 <span className="entity__permissions">
                   Readable:
-                  {this.props.generatePermissions(charm.perm.read, this.props)}
+                  {props.generatePermissions(charm.perm.read, props)}
                 </span>
               </td>
-              <td className="profile-charm-list__release">
+              <td className="entity__release">
                 <span>
                   {version}
                 </span>
                 <button
-                  // onClick={this.props.handleDeploy(charm.id, this.props)}
                   className="p-button--positive"
                   disabled={this.props.acl.isReadOnly()}
+                  onClick={evt => props.handleDeploy(evt, charm.id, this.props)}
                   tooltip={
                     `Add this ${charm.entityType} to
                       ${this.modelName ? 'your current' : 'a new'} model`}>
@@ -347,6 +347,7 @@ ProfileCharmList.propTypes = {
   generatePath: PropTypes.func.isRequired,
   generatePermissions: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
+  handleDeploy: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   storeUser: PropTypes.func.isRequired,
   user: PropTypes.string

@@ -40,6 +40,19 @@
       margin-bottom: 2rem !important;
     }
   }
+
+  .entity__release {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      display: block;
+    }
+
+    button {
+      margin-top: auto;
+    }
+  }
 }
 
 
