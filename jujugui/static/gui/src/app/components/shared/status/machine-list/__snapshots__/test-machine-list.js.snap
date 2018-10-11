@@ -73,3 +73,75 @@ exports[`StatusMachineList renders 1`] = `
   }
 />
 `;
+
+exports[`StatusMachineList renders with missing details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 1,
+        "content": "Machine",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "State",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "DNS",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Instance ID",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Series",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Message",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "classes": Array [
+          "",
+        ],
+        "clickURL": "http://example.com",
+        "columns": Array [
+          Object {
+            "columnSize": 1,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 2,
+            "content": null,
+          },
+          Object {
+            "columnSize": 2,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 3,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 1,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 3,
+            "content": undefined,
+          },
+        ],
+        "extraData": "ok",
+        "key": undefined,
+        "onClick": [Function],
+      },
+    ]
+  }
+/>
+`;

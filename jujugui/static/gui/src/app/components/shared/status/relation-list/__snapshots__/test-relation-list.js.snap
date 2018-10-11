@@ -67,3 +67,57 @@ exports[`StatusRelationList renders 1`] = `
   }
 />
 `;
+
+exports[`StatusRelationList renders with missing details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 3,
+        "content": "Relation",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Provides",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Consumes",
+      },
+      Object {
+        "columnSize": 3,
+        "content": "Type",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "columns": Array [
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+          Object {
+            "columnSize": 3,
+            "content": <span>
+              
+            </span>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": <span>
+              
+            </span>,
+          },
+          Object {
+            "columnSize": 3,
+            "content": "",
+          },
+        ],
+        "key": "",
+      },
+    ]
+  }
+/>
+`;

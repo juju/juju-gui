@@ -104,4 +104,11 @@ describe('StatusRelationList', () => {
     const wrapper = renderComponent();
     expect(wrapper).toMatchSnapshot();
   });
+
+  it('renders with missing details', () => {
+    applications.etcd = {};
+    relations['1'] = {};
+    const wrapper = renderComponent();
+    expect(wrapper).toMatchSnapshot();
+  });
 });

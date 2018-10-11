@@ -94,3 +94,129 @@ exports[`StatusUnitList renders 1`] = `
   }
 />
 `;
+
+exports[`StatusUnitList renders with missing application details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Unit",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Workload",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Agent",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Machine",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Public address",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Ports",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Message",
+      },
+    ]
+  }
+  rows={Array []}
+/>
+`;
+
+exports[`StatusUnitList renders with missing details 1`] = `
+<StatusTable
+  headers={
+    Array [
+      Object {
+        "columnSize": 2,
+        "content": "Unit",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Workload",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Agent",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Machine",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Public address",
+      },
+      Object {
+        "columnSize": 1,
+        "content": "Ports",
+      },
+      Object {
+        "columnSize": 2,
+        "content": "Message",
+      },
+    ]
+  }
+  rows={
+    Array [
+      Object {
+        "classes": Array [
+          "status-table__row--ok",
+        ],
+        "clickURL": "http://example.com",
+        "columns": Array [
+          Object {
+            "columnSize": 2,
+            "content": <span>
+              <img
+                className="status-view__icon"
+                src="icon.svg"
+              />
+            </span>,
+          },
+          Object {
+            "columnSize": 2,
+            "content": null,
+          },
+          Object {
+            "columnSize": 2,
+            "content": null,
+          },
+          Object {
+            "columnSize": 1,
+            "content": <a
+              className="status-view__link"
+              onClick={[Function]}
+            />,
+          },
+          Object {
+            "columnSize": 2,
+            "content": undefined,
+          },
+          Object {
+            "columnSize": 1,
+            "content": "",
+          },
+          Object {
+            "columnSize": 2,
+            "content": undefined,
+          },
+        ],
+        "extraData": "ok",
+        "key": undefined,
+        "onClick": [Function],
+      },
+    ]
+  }
+/>
+`;
