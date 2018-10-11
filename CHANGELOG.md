@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated React to 16.5.2 and remaining dependencies.
 
+### Fixed
+- Status component is now more resilient to missing data.
+
 ## [2.14.0] - 2018-10-01
 ### Added
 - Applications deployed via a bundle will now be grouped in the inspector with easy access to their details pages and their post deployment content.
