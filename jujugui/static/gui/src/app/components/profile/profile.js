@@ -263,7 +263,7 @@ class Profile extends React.Component {
             gisf={props.gisf}
             userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
           <div className="p-strip--light is-shallow">
-            <div className="row">
+            <div className="row profile__main">
               <div className="col-3 u-no-margin--left">
                 <ProfileNavigation
                   // Use supplied activeSection or the key from the first map entry.

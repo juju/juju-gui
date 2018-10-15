@@ -148,7 +148,7 @@ class ProfileHeader extends React.Component {
         </li>
       ];
     }
-    return <ul className="p-list ts-profile-header__menu">{items}</ul>;
+    return <ul className="p-list u-no-margin--bottom ts-profile-header__menu">{items}</ul>;
   }
 
   render() {

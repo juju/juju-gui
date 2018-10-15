@@ -49,22 +49,7 @@ describe('Profile Header', function() {
 
   it('displays a different link list for non-jaas', () => {
     const wrapper = renderComponent({gisf: false});
-    const expected = (
-      <ul className="p-list ts-profile-header__menu">
-        <li
-          className="p-list__item"
-          key="controller">
-          <h2>1.2.3.4</h2>
-          <hr />
-        </li>
-        <li
-          className="p-list__item"
-          key="home">
-          <a href="https://jujucharms.com/about">Juju Home</a>
-        </li>
-      </ul>
-    );
-    assert.compareJSX(wrapper.find('.ts-profile-header__menu'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('displays a hidden gravatar until the user request has returned', () => {
