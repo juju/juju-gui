@@ -10,7 +10,7 @@ exports[`Profile Model List can render 1`] = `
     <h4
       className="profile__title"
     >
-      My models
+      Models
       <span
         className="profile__title-count"
       >

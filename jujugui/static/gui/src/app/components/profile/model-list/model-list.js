@@ -323,7 +323,7 @@ class ProfileModelList extends React.Component {
       <div className="profile-model-list">
         <div className="profile-model-list__header">
           <h4 className="profile__title">
-            My models
+            Models
             <span className="profile__title-count">({rowData.length})</span>
           </h4>
           <CreateModelButton

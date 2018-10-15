@@ -8,7 +8,7 @@ exports[`Invoice Bundle List can render 1`] = `
     <h4
       className="profile__title"
     >
-      Payment history
+      Invoices
     </h4>
     <BasicTable
       headerClasses={

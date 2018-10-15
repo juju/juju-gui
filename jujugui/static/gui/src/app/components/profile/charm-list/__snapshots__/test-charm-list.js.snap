@@ -7,8 +7,7 @@ exports[`Profile Charm List can render 1`] = `
   <h4
     className="profile__title"
   >
-    My
-     charms
+    Charms
     <span
       className="profile__title-count"
     >

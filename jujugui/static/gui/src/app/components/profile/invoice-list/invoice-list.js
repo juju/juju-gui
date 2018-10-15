@@ -109,7 +109,7 @@ class ProfileInvoiceList extends React.Component {
       });
       content = (
         <div>
-          <h4 className="profile__title">Payment history</h4>
+          <h4 className="profile__title">Invoices</h4>
           <BasicTable
             headerClasses={['profile__entity-table-header-row']}
             headerColumnClasses={['profile__entity-table-header-column']}

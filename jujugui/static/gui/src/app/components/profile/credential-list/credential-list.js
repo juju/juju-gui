@@ -365,7 +365,7 @@ class ProfileCredentialList extends React.Component {
       <div className="profile-credential-list">
         <div className="profile-credential-list__header">
           <h4 className="profile__title">
-            My credentials
+            Credentials
             <span className="profile__title-count">
               ({this.state.credentialMap.size})
             </span>

@@ -95,7 +95,7 @@ class ProfileBundleList extends React.Component {
   _generateTitle() {
     return (
       <h4 className="profile__title">
-        {this.props.isActiveUsersProfile ? 'My' : 'Their'} bundles
+        Bundles
         <span className="profile__title-count">({(this.state.data || []).length})</span>
       </h4>
     );
