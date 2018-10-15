@@ -235,7 +235,7 @@ class ProfileModelList extends React.Component {
         if (owner === profileUsername) {
           expandedContent = (
             <a
-              className="profile-model-list__link"
+              className="profile-model-list__link u-no-padding--bottom"
               onClick={this._handleCredentialClick.bind(this, model.credential)}
               role="button"
               tabIndex="0">

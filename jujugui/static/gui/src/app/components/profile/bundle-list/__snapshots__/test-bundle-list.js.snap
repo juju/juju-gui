@@ -102,6 +102,9 @@ exports[`Profile Bundle List can render 1`] = `
               "content": 3,
             },
             Object {
+              "classes": Array [
+                "u-align-text--right",
+              ],
               "content": "#1",
             },
           ],
@@ -226,6 +229,9 @@ exports[`Profile Bundle List can render 1`] = `
               "content": 5,
             },
             Object {
+              "classes": Array [
+                "u-align-text--right",
+              ],
               "content": "#1",
             },
           ],

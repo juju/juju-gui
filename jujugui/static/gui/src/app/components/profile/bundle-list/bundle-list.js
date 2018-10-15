@@ -186,7 +186,8 @@ class ProfileBundleList extends React.Component {
             content: bundle.unitCount,
             classes: ['u-align-text--right']
           }, {
-            content: version
+            content: version,
+            classes: ['u-align-text--right']
           }],
           expandedContent: (
             <React.Fragment>

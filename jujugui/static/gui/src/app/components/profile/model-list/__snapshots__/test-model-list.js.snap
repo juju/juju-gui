@@ -142,7 +142,7 @@ exports[`Profile Model List can render 1`] = `
                 /eu-west-1
               </React.Fragment>
               <a
-                className="profile-model-list__link"
+                className="profile-model-list__link u-no-padding--bottom"
                 onClick={[Function]}
                 role="button"
                 tabIndex="0"
@@ -277,7 +277,7 @@ exports[`Profile Model List can render 1`] = `
                 /us-central1
               </React.Fragment>
               <a
-                className="profile-model-list__link"
+                className="profile-model-list__link u-no-padding--bottom"
                 onClick={[Function]}
                 role="button"
                 tabIndex="0"

@@ -1,5 +1,9 @@
 .profile {
 
+  .icon-list {
+    margin-bottom: 0;
+  }
+
   &__main {
     padding-top: 0rem !important;
   }
@@ -56,6 +60,10 @@
     button {
       margin-top: auto;
     }
+  }
+
+  .dropdown__button {
+    padding: 0;
   }
 }
 
