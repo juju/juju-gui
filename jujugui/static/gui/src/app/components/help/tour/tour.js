@@ -140,7 +140,7 @@ ${basePath}/post-deploy-mobile@1x.png 375w,
                 are outlined in <span className="u-pending">orange</span> &mdash;
                 These are still in progress.
                 Your model will be fully up and running once all application icons
-                are outlined in gery.
+                are outlined in grey.
               </p>
             </div>
           </div>
