@@ -127,7 +127,7 @@ class ProfileCharmList extends React.Component {
         {((i + 1) === noOfTags ? null : ',')}
       </li>
     ));
-    return <ul className="p-inline-list u-no-margin-bottom">{tagList}</ul>;
+    return <ul className="p-inline-list u-no-margin--bottom">{tagList}</ul>;
   }
 
   /**

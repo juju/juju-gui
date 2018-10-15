@@ -156,7 +156,7 @@ exports[`Profile Charm List can render 1`] = `
                       ghost
                     </a>
                     <ul
-                      className="p-inline-list u-no-margin-bottom"
+                      className="p-inline-list u-no-margin--bottom"
                     >
                       <li
                         className="p-inline-list__item"
