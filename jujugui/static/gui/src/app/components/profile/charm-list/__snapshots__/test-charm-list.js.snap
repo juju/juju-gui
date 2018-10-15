@@ -4,7 +4,7 @@ exports[`Profile Charm List can render 1`] = `
 <div
   className="profile-charm-list"
 >
-  <h2
+  <h4
     className="profile__title"
   >
     My
@@ -16,7 +16,7 @@ exports[`Profile Charm List can render 1`] = `
       3
       )
     </span>
-  </h2>
+  </h4>
   <BasicTable
     headerClasses={Array []}
     headers={

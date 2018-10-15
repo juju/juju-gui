@@ -25,7 +25,7 @@ exports[`Profile can render 1`] = `
       className="p-strip--light is-shallow"
     >
       <div
-        className="row"
+        className="row profile__main"
       >
         <div
           className="col-3 u-no-margin--left"

@@ -4,7 +4,7 @@ exports[`Profile Bundle List can render 1`] = `
 <div
   className="profile-bundle-list"
 >
-  <h2
+  <h4
     className="profile__title"
   >
     My
@@ -16,7 +16,7 @@ exports[`Profile Bundle List can render 1`] = `
       2
       )
     </span>
-  </h2>
+  </h4>
   <BasicTable
     headerClasses={Array []}
     headers={

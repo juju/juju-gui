@@ -7,7 +7,7 @@ exports[`Profile Model List can render 1`] = `
   <div
     className="profile-model-list__header"
   >
-    <h2
+    <h4
       className="profile__title"
     >
       My models
@@ -18,7 +18,7 @@ exports[`Profile Model List can render 1`] = `
         4
         )
       </span>
-    </h2>
+    </h4>
     <CreateModelButton
       changeState={[Function]}
       switchModel={[Function]}
