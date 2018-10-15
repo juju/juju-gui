@@ -136,10 +136,10 @@ class ProfileCharmList extends React.Component {
   */
   _generateTitle() {
     return (
-      <h2 className="profile__title">
+      <h4 className="profile__title">
         {this.props.isActiveUsersProfile ? 'My' : 'Their'} charms
         <span className="profile__title-count">({(this.state.data || []).length})</span>
-      </h2>
+      </h4>
     );
   }
 

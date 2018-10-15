@@ -51,9 +51,9 @@ class ProfileCharmstoreLogin extends React.Component {
             Login to the charm store
           </Button>
         </div>
-        <h2 className="profile__title">
+        <h4 className="profile__title">
           No {this.props.type}
-        </h2>
+        </h4>
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span

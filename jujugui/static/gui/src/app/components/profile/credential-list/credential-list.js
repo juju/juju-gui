@@ -364,12 +364,12 @@ class ProfileCredentialList extends React.Component {
     return (
       <div className="profile-credential-list">
         <div className="profile-credential-list__header">
-          <h2 className="profile__title">
+          <h4 className="profile__title">
             My credentials
             <span className="profile__title-count">
               ({this.state.credentialMap.size})
             </span>
-          </h2>
+          </h4>
           <div className="profile-credential-list__add">{addButton}</div>
         </div>
         {this._generateAddCredentials()}

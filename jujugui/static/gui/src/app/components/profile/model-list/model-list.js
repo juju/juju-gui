@@ -322,10 +322,10 @@ class ProfileModelList extends React.Component {
     return (
       <div className="profile-model-list">
         <div className="profile-model-list__header">
-          <h2 className="profile__title">
+          <h4 className="profile__title">
             My models
             <span className="profile__title-count">({rowData.length})</span>
-          </h2>
+          </h4>
           <CreateModelButton
             changeState={this.props.changeState}
             switchModel={this.props.switchModel}
