@@ -117,7 +117,7 @@ class ProfileHeader extends React.Component {
         <li
           className="p-list__item"
           key="controller">
-          <h2>
+          <h2 className="u-no-margin--bottom">
             <a href="/">jaas</a>
           </h2>
           <hr />
@@ -138,7 +138,7 @@ class ProfileHeader extends React.Component {
         <li
           className="p-list__item"
           key="controller">
-          <h2>{this.props.controllerIP}</h2>
+          <h2 className="u-no-margin--bottom">{this.props.controllerIP}</h2>
           <hr />
         </li>,
         <li
@@ -161,7 +161,7 @@ class ProfileHeader extends React.Component {
               <div className="p-media-object--large u-no-margin--bottom">
                 {this._generateAvatar()}
                 <div className="p-media-object__details">
-                  <h1>{this.props.userInfo.profile}</h1>
+                  <h1 className="p-media-object__title">{this.props.userInfo.profile}</h1>
                   <p className="p-media-object__content">
                     <strong>{user.fullname}</strong>
                   </p>

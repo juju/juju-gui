@@ -40,7 +40,9 @@ exports[`Profile Header can render 1`] = `
           <div
             className="p-media-object__details"
           >
-            <h1>
+            <h1
+              className="p-media-object__title"
+            >
               spinach
             </h1>
             <p
@@ -66,7 +68,9 @@ exports[`Profile Header can render 1`] = `
             className="p-list__item"
             key="controller"
           >
-            <h2>
+            <h2
+              className="u-no-margin--bottom"
+            >
               <a
                 href="/"
               >
@@ -153,7 +157,9 @@ exports[`Profile Header displays a different link list for non-jaas 1`] = `
           <div
             className="p-media-object__details"
           >
-            <h1>
+            <h1
+              className="p-media-object__title"
+            >
               spinach
             </h1>
             <p
@@ -179,7 +185,9 @@ exports[`Profile Header displays a different link list for non-jaas 1`] = `
             className="p-list__item"
             key="controller"
           >
-            <h2>
+            <h2
+              className="u-no-margin--bottom"
+            >
               1.2.3.4
             </h2>
             <hr />
