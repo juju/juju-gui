@@ -43,4 +43,27 @@ describe('AddedServicesLabel', () => {
     assert.equal(component.find('.inspector-view__label-name').text(), name);
   });
 
+  it('supports old school bundle urls for readme links', () => {
+    const changeState = sinon.stub();
+    const component = renderComponent({
+      changeState,
+      bundleURL: 'cs:bundle/wiki-simple-4'
+    });
+    component.find('.inspector-view__label-link-list li').at(0).simulate('click');
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(changeState.args[0][0], {store: 'wiki-simple/bundle/4'});
+  });
+
+  it('supports old school bundle urls for post deployment links', () => {
+    const changeState = sinon.stub();
+    const component = renderComponent({
+      changeState,
+      bundleURL: 'cs:bundle/wiki-simple-4'
+    });
+    component.find('.inspector-view__label-link-list li').at(1).simulate('click');
+    assert.equal(changeState.callCount, 1);
+    assert.deepEqual(
+      changeState.args[0][0], {postDeploymentPanel: 'wiki-simple/bundle/4'});
+  });
+
 });

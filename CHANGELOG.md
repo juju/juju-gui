@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Status component is now more resilient to missing data.
+- Opening bundle readme from grouped links in inspector application list now works with bundles deployed from the Juju CLI with Juju 2.5.
 
 ## [2.14.0] - 2018-10-01
 ### Added
