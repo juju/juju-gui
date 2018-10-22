@@ -12,14 +12,22 @@ class AddedServicesLabel extends React.Component {
     Calls changeState to show the readme.
   */
   _showReadme() {
-    this.props.changeState({store: this.props.bundleURL});
+    this.props.changeState({
+      // we use fromAnyString here because juju core will set the bundleURL
+      // to the legacy url format cs:bundle/wiki-simple-4 instead of the new
+      // format wiki-simple/bundle/4.
+      store: urls.URL.fromAnyString(this.props.bundleURL).path()});
   }
 
   /**
     Calls changeState to show the post deployment panel.
   */
   _showGetStarted() {
-    this.props.changeState({postDeploymentPanel: this.props.bundleURL});
+    this.props.changeState({
+      // we use fromAnyString here because juju core will set the bundleURL
+      // to the legacy url format cs:bundle/wiki-simple-4 instead of the new
+      // format wiki-simple/bundle/4.
+      postDeploymentPanel: urls.URL.fromAnyString(this.props.bundleURL).path()});
   }
 
   render() {
