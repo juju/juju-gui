@@ -108,8 +108,8 @@ class BasicTableRow extends React.Component {
   _isRowClickable() {
     const {rowClickable} = this.props;
     return (
-      rowClickable !== undefined ? rowClickable : !!this.props.expandedContent;
-    )
+      rowClickable !== undefined ? rowClickable : !!this.props.expandedContent
+    );
   }
 
   render() {
