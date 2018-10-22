@@ -13,7 +13,7 @@ class BasicTableCell extends React.Component {
     let content = this.props.content;
     // if there is no content then add a space so that the column doesn't
     // collapse.
-    if ((typeof (content) === 'string' && content.replace(/\s/g, '') === '') ||
+    if ((typeof(content) === 'string' && content.replace(/\s/g, '') === '') ||
       content === undefined || content === null) {
       content = (<span>&nbsp;</span>);
     }

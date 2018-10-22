@@ -120,14 +120,17 @@ class ProfileCharmList extends React.Component {
       <li
         className="p-inline-list__item"
         key={tag + i}
-        onClick={this._handleTagClick.bind(this, tag)}
         role="button"
         tabIndex="0">
-        {tag}
+        <a className="p-link--soft" href="#_" onClick={this._handleTagClick.bind(this, tag)}>
+          {tag}
+        </a>
         {((i + 1) === noOfTags ? null : ',')}
       </li>
     ));
-    return <ul className="p-inline-list u-no-margin--bottom">{tagList}</ul>;
+    return (
+      <ul className="p-inline-list u-no-margin--bottom">{tagList}</ul>
+    );
   }
 
   /**
@@ -187,8 +190,7 @@ class ProfileCharmList extends React.Component {
                 href="https://jujucharms.com/docs/stable/developer-getting-started"
                 target="_blank">
                 writing your own charm
-              </a>
-              .
+              </a>.
             </p>
           </React.Fragment>
         );
@@ -210,32 +212,30 @@ class ProfileCharmList extends React.Component {
         const modelName = props.getModelName();
         const title = `Add to ${modelName || 'model'}`;
         return {
-          columns: [
-            {
-              content: (
-                <React.Fragment>
-                  <span className="profile-charm-list__name">
-                    <span className="profile-charm-list__icon">
-                      {icon}
-                    </span>
-                    <span className="profile-charm-list__desc">
-                      <a
-                        href={`${props.baseURL}${path}`}
-                        key="link"
-                        onClick={this._navigateToCharm.bind(this, path)}>
-                        {charm.name}
-                      </a>
-                      {this._generateTags(charm.tags)}
-                    </span>
+          columns: [{
+            content: (
+              <React.Fragment>
+                <span className="profile-charm-list__name">
+                  <span className="profile-charm-list__icon">
+                    {icon}
                   </span>
-                </React.Fragment>
-              )
-            }, {
-              content: series
-            }, {
-              content: version
-            }
-          ],
+                  <span className="profile-charm-list__desc">
+                    <a
+                      href={`${props.baseURL}${path}`}
+                      key="link"
+                      onClick={this._navigateToCharm.bind(this, path)}>
+                      {charm.name}
+                    </a>
+                    {this._generateTags(charm.tags)}
+                  </span>
+                </span>
+              </React.Fragment>
+            )
+          }, {
+            content: series
+          }, {
+            content: version
+          }],
           expandedContent: (
             <React.Fragment>
               <td className="profile-charm-list__name">
@@ -309,15 +309,13 @@ class ProfileCharmList extends React.Component {
         <React.Fragment>
           {this._generateTitle()}
           <BasicTable
-            headers={[
-              {
-                content: 'Name'
-              }, {
-                content: 'Series'
-              }, {
-                content: 'Release'
-              }
-            ]}
+            headers={[{
+              content: 'Name'
+            }, {
+              content: 'Series'
+            }, {
+              content: 'Release'
+            }]}
             rows={rows}
             sort={this._byName.bind(this)} />
         </React.Fragment>

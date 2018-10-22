@@ -31,10 +31,8 @@ class ProfileModelList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const props = this.props;
-    if (
-      props.userInfo.profile !== nextProps.userInfo.profile ||
-      props.facadesExist !== nextProps.facadesExist
-    ) {
+    if (props.userInfo.profile !== nextProps.userInfo.profile ||
+      props.facadesExist !== nextProps.facadesExist) {
       this._fetchModels(nextProps.facadesExist);
     }
   }
@@ -82,22 +80,18 @@ class ProfileModelList extends React.Component {
   */
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
-    this.props.destroyModel(
-      modelUUID,
-      (errors, data) => {
-        if (errors) {
-          errors.forEach(error => {
-            this.props.addNotification({
-              title: 'Error destroying model',
-              message: error,
-              level: 'error'
-            });
+    this.props.destroyModel(modelUUID, (errors, data) => {
+      if (errors) {
+        errors.forEach(error => {
+          this.props.addNotification({
+            title: 'Error destroying model',
+            message: error,
+            level: 'error'
           });
-        }
-        this._fetchModels(this.props.facadesExist);
-      },
-      false
-    );
+        });
+      }
+      this._fetchModels(this.props.facadesExist);
+    }, false);
   }
 
   /**
@@ -105,18 +99,15 @@ class ProfileModelList extends React.Component {
     @param {Object} model The model data.
   */
   _showConfirmation(model) {
-    const buttons = [
-      {
-        title: 'Cancel',
-        action: () => this.setState({notification: null}),
-        type: 'inline-neutral'
-      },
-      {
-        title: 'Destroy',
-        action: this._confirmDestroy.bind(this, model.uuid),
-        type: 'destructive'
-      }
-    ];
+    const buttons = [{
+      title: 'Cancel',
+      action: () => this.setState({notification: null}),
+      type: 'inline-neutral'
+    }, {
+      title: 'Destroy',
+      action: this._confirmDestroy.bind(this, model.uuid),
+      type: 'destructive'
+    }];
     const message =
       `Are you sure you want to destroy ${model.name}?` +
       ' All the applications, units and storage used by the model will be' +
@@ -127,8 +118,7 @@ class ProfileModelList extends React.Component {
           buttons={buttons}
           title="Destroy model">
           <p>{message}</p>
-        </Popup>
-      )
+        </Popup>)
     });
   }
 
@@ -167,7 +157,11 @@ class ProfileModelList extends React.Component {
     @return {Object} The model list as JSX.
   */
   _generateModels() {
-    const icons = new Map([['read', 'show_16'], ['write', 'edit_16'], ['admin', 'user_16']]);
+    const icons = new Map([
+      ['read', 'show_16'],
+      ['write', 'edit_16'],
+      ['admin', 'user_16']
+    ]);
     const profileUsername = this.props.userInfo.profile;
     const models = this.state.models || [];
     return (
@@ -315,8 +309,7 @@ class ProfileModelList extends React.Component {
       return (
         <div className="profile-model-list">
           <Spinner />
-        </div>
-      );
+        </div>);
     }
     const rowData = this._generateModels();
     return (
@@ -351,8 +344,7 @@ class ProfileModelList extends React.Component {
             rows={rowData} />
         )}
         {this._generateNotification()}
-      </div>
-    );
+      </div>);
   }
 }
 

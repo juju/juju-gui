@@ -65,8 +65,7 @@ class BasicTableRow extends React.Component {
       <a
         className="basic-table__row-link"
         href={clickURL}
-        onClick={onClick && this._handleRowClick.bind(this, onClick)} />
-    );
+        onClick={onClick && this._handleRowClick.bind(this, onClick)} />);
   }
 
   /**
@@ -87,8 +86,7 @@ class BasicTableRow extends React.Component {
         columnSize={column.columnSize}
         content={column.content}
         isHeader={isHeader}
-        key={index} />
-    );
+        key={index} />);
   }
 
   /**
@@ -109,7 +107,9 @@ class BasicTableRow extends React.Component {
   */
   _isRowClickable() {
     const {rowClickable} = this.props;
-    return rowClickable !== undefined ? rowClickable : !!this.props.expandedContent;
+    return (
+      rowClickable !== undefined ? rowClickable : !!this.props.expandedContent;
+    )
   }
 
   render() {
@@ -130,8 +130,7 @@ class BasicTableRow extends React.Component {
         tabIndex="0">
         {this._generateAnchor()}
         {this._generateContent()}
-      </tr>
-    );
+      </tr>);
   }
 }
 
@@ -144,8 +143,7 @@ BasicTableRow.propTypes = {
   classes: PropTypes.array,
   // A function to call when a row is clicked.
   clickURL: PropTypes.string,
-  columns: PropTypes.arrayOf(
-    PropTypes.shape({
+  columns: PropTypes.arrayOf(PropTypes.shape({
       content: PropTypes.node,
       // The number of columns (between 1 and 12).
       columnSize: PropTypes.number,
