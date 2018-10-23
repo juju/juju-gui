@@ -2,6 +2,7 @@
 
 exports[`Profile can render 1`] = `
 <Panel
+  extraClasses="v1"
   focus={true}
   instanceName="profile"
   visible={true}
@@ -19,55 +20,63 @@ exports[`Profile can render 1`] = `
     }
   />
   <div
-    className="twelve-col"
+    className="p-strip--light is-shallow"
   >
     <div
-      className="profile__content inner-wrapper"
+      className="row profile__main"
     >
-      <ProfileNavigation
-        activeSection="models"
-        changeState={[Function]}
-        sectionsMap={
-          Map {
-            "models" => Object {
-              "getComponent": [Function],
-              "label": "Models",
-            },
-            "charms" => Object {
-              "getComponent": [Function],
-              "label": "Charms",
-            },
-            "bundles" => Object {
-              "getComponent": [Function],
-              "label": "Bundles",
-            },
-            "credentials" => Object {
-              "getComponent": [Function],
-              "label": "Cloud credentials",
-            },
+      <div
+        className="col-3 u-no-margin--left"
+      >
+        <ProfileNavigation
+          activeSection="models"
+          changeState={[Function]}
+          sectionsMap={
+            Map {
+              "models" => Object {
+                "getComponent": [Function],
+                "label": "Models",
+              },
+              "charms" => Object {
+                "getComponent": [Function],
+                "label": "Charms",
+              },
+              "bundles" => Object {
+                "getComponent": [Function],
+                "label": "Bundles",
+              },
+              "credentials" => Object {
+                "getComponent": [Function],
+                "label": "Cloud credentials",
+              },
+            }
           }
-        }
-      />
-      <ProfileModelList
-        acl={
-          Object {
-            "isReadOnly": [Function],
+        />
+      </div>
+      <div
+        className="col-9"
+      >
+        <ProfileModelList
+          acl={
+            Object {
+              "isReadOnly": [Function],
+            }
           }
-        }
-        addNotification={[Function]}
-        baseURL="/gui/"
-        changeState={[Function]}
-        destroyModel={[Function]}
-        facadesExist={true}
-        listModelsWithInfo={[Function]}
-        switchModel={[Function]}
-        userInfo={
-          Object {
-            "isCurrent": true,
-            "profile": "spinach",
+          addNotification={[Function]}
+          baseURL="/gui/"
+          changeState={[Function]}
+          destroyModel={[Function]}
+          facadesExist={true}
+          listModelsWithInfo={[Function]}
+          switchModel={[Function]}
+          userInfo={
+            Object {
+              "isCurrent": true,
+              "profile": "spinach",
+            }
           }
-        }
-      />
+        />
+      </div>
     </div>
   </div>
 </Panel>

@@ -2,7 +2,7 @@
 
 exports[`Profile Header can render 1`] = `
 <div
-  className="profile-header v1"
+  className="profile-header"
 >
   <div
     className="p-strip is-shallow"
@@ -40,7 +40,9 @@ exports[`Profile Header can render 1`] = `
           <div
             className="p-media-object__details"
           >
-            <h1>
+            <h1
+              className="p-media-object__title"
+            >
               spinach
             </h1>
             <p
@@ -60,13 +62,15 @@ exports[`Profile Header can render 1`] = `
       </div>
       <div>
         <ul
-          className="p-list ts-profile-header__menu"
+          className="p-list u-no-margin--bottom ts-profile-header__menu"
         >
           <li
             className="p-list__item"
             key="controller"
           >
-            <h2>
+            <h2
+              className="u-no-margin--bottom"
+            >
               <a
                 href="/"
               >
@@ -93,6 +97,109 @@ exports[`Profile Header can render 1`] = `
               href="https://jujucharms.com/jaas"
             >
               About JAAS
+            </a>
+          </li>
+        </ul>
+        <div
+          className="profile-header__close"
+          onClick={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          <SvgIcon
+            name="close_16"
+            size="20"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Profile Header displays a different link list for non-jaas 1`] = `
+<div
+  className="profile-header"
+>
+  <div
+    className="p-strip is-shallow"
+  >
+    <div
+      className="row profile-header__inner u-no-padding--top u-no-padding--bottom"
+    >
+      <div>
+        <div
+          className="p-media-object--large u-no-margin--bottom"
+        >
+          <span
+            className="profile-header__avatar tooltip"
+          >
+            <a
+              aria-describedby="tp-cntr"
+              className="p-tooltip p-tooltip--btm-center"
+              href="http://gravatar.com/"
+              target="_blank"
+            >
+              <img
+                alt="Gravatar for Geoffrey Spinach"
+                className="p-media-object__image is-round"
+                src="https://www.gravatar.com/avatar/id123"
+              />
+              <span
+                className="p-tooltip__message"
+                id="tp-cntr"
+                role="tooltip"
+              >
+                Edit your Gravatar
+              </span>
+            </a>
+          </span>
+          <div
+            className="p-media-object__details"
+          >
+            <h1
+              className="p-media-object__title"
+            >
+              spinach
+            </h1>
+            <p
+              className="p-media-object__content"
+            >
+              <strong>
+                Geoffrey Spinach
+              </strong>
+            </p>
+            <p
+              className="p-media-object__content"
+            >
+              spinach@example.com
+            </p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ul
+          className="p-list u-no-margin--bottom ts-profile-header__menu"
+        >
+          <li
+            className="p-list__item"
+            key="controller"
+          >
+            <h2
+              className="u-no-margin--bottom"
+            >
+              1.2.3.4
+            </h2>
+            <hr />
+          </li>
+          <li
+            className="p-list__item"
+            key="home"
+          >
+            <a
+              href="https://jujucharms.com/about"
+            >
+              Juju Home
             </a>
           </li>
         </ul>

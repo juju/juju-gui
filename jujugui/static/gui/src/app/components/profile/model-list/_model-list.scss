@@ -1,42 +1,25 @@
 .profile-model-list {
-  .create-new-model {
-    float: right;
+
+  tr {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 1.5fr 0.25fr 0.75fr 0.25fr;
   }
 
-  &__access {
-    text-align: center;
+  tbody tr {
+    padding: 0.5rem 0;
+  }
+
+  &__header {
+    display: grid;
+    grid-template-columns: 1fr 170px;
   }
 
   &__machine-number {
-    margin-right: 1em;
+    margin-right: 1rem;
   }
 
-  &__expanded-content {
-    padding: 20px 16px;
-
-    a {
-      color: #111;
-      font-weight: 400;
-    }
-  }
-
-  &__credential-name {
-    padding-left: 1.5em;
-  }
-
-  .profile__entity-table-header-row {
-    padding: 0 16px 12px;
-  }
-
-  .expanding-row__initial > div {
-    padding: 0 16px;
-  }
-
-  .expanding-row--expanded .expanding-row__expanded {
-    margin: 12px 0;
-  }
-
-  .u-text-align--right {
-    text-align: right;
+  &__link {
+    display: block;
+    padding: 1rem 0;
   }
 }

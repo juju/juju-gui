@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`BasicTableCell can render 1`] = `
-<div
-  className="five-col"
+<td
+  className=""
 >
   <span>
     Content!
   </span>
-</div>
+</td>
 `;

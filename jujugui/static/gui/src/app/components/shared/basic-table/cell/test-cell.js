@@ -22,11 +22,4 @@ describe('BasicTableCell', () => {
     });
     expect(wrapper).toMatchSnapshot();
   });
-
-  it('can render when last col', () => {
-    const wrapper = renderComponent({
-      isLastCol: true
-    });
-    assert.equal(wrapper.prop('className').includes('last-col'), true);
-  });
 });

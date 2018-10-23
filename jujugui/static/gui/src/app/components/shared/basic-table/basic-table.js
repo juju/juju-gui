@@ -20,9 +20,6 @@ class BasicTable extends React.Component {
   _generateRow(isHeader, row, index = 0, rowCount = 1) {
     const key = isHeader ? 'basic-table-header' : row.key;
     let classes = (row.classes || []).concat(this.props.rowClasses);
-    if (isHeader) {
-      classes = classes.concat(this.props.headerClasses);
-    }
     return (
       <BasicTableRow
         classes={classes}
@@ -58,13 +55,18 @@ class BasicTable extends React.Component {
   render() {
     const classes = classNames(
       'basic-table',
-      'twelve-col',
       this.props.tableClasses);
     return (
-      <ul className={classes}>
-        {this._generateRow(true, {columns: this.props.headers})}
-        {this._generateContent()}
-      </ul>
+      <table
+        className={classes}
+        role="grid">
+        <thead>
+          {this._generateRow(true, {columns: this.props.headers})}
+        </thead>
+        <tbody>
+          {this._generateContent()}
+        </tbody>
+      </table>
     );
   }
 };
@@ -83,8 +85,6 @@ BasicTable.propTypes = {
   headerColumnClasses: PropTypes.array,
   headers: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.node,
-    // The number of columns (between 1 and 12).
-    columnSize: PropTypes.number.isRequired,
     // The extra classes to apply to the column.
     classes: PropTypes.arrayOf(PropTypes.string)
   }).isRequired).isRequired,
@@ -102,10 +102,10 @@ BasicTable.propTypes = {
     columns: PropTypes.arrayOf(PropTypes.shape({
       content: PropTypes.node,
       // The number of columns (between 1 and 12).
-      columnSize: PropTypes.number.isRequired,
+      columnSize: PropTypes.number,
       // The extra classes to apply to the column.
       classes: PropTypes.arrayOf(PropTypes.string)
-    }).isRequired).isRequired,
+    }).isRequired),
     // Content to be displayed when the row is toggled.
     expandedContent: PropTypes.any,
     // Set the expanded content state from outside the table.

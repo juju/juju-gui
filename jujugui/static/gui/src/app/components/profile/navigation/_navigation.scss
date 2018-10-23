@@ -1,11 +1,10 @@
 .profile-navigation {
   color: $color-dark;
-  padding: 0 1rem;
 
   .p-list__item {
     cursor: pointer;
 
-    .profile__content &.cloud-credentials {
+    .profile &.cloud-credentials {
       border-top: 1px solid $color-mid-light;
       margin-top: 1rem;
       padding-top: 1rem;

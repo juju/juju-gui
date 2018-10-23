@@ -68,6 +68,7 @@ help:
 	@echo "test-jest - run Jest tests in the terminal"
 	@echo "test-js-old - run older js tests that have transitioned to karma in the terminal"
 	@echo "update-downloadcache - update the download cache"
+	@echo "update-jest-snapshots - update the Jest snapshots"
 	@echo "uitest - run functional tests;"
 	@echo "  use the ARGS environment variable to append/override uitest arguments"
 

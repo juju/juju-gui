@@ -1,62 +1,68 @@
 .profile {
-  &__content {
-    display: grid;
-    grid-template-columns: 238px 1fr;
+
+  .icon-list {
+    margin-bottom: 0;
   }
 
-  a,
-  .link {
-    color: $link-color;
-    font-weight: 200;
+  &__main {
+    padding-top: 0rem !important;
   }
 
-  &__title {
-    margin-bottom: 25px;
-    font-size: 1.25em;
+  .p-strip--light .row {
+    background-color: transparent;
 
-    &-count {
-      margin-left: 0.25em;
-      color: $warm-grey;
+    .col-3 {
+      margin-left: 0;
     }
   }
 
-  &__entity-table {
-    &-header-row,
-    &-row {
-      margin-bottom: 0;
+  .profile__title {
+    margin-bottom: 1.65rem;
+  }
+
+  .profile__title-count {
+    display: inline-block;
+    color: $color-mid-dark;
+    margin-left: 0.5rem;
+  }
+
+  .entity__desc {
+    display: block;
+    line-height: 1.5;
+  }
+
+  .entity__permissions,
+  .entity__supplementary {
+    display: block;
+    margin-bottom: 1rem;
+
+    a {
+      display: block;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .entity__supplementary {
+
+    &:last-child {
+      margin-bottom: 2rem !important;
+    }
+  }
+
+  .entity__release {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      display: block;
     }
 
-    &-header-row {
-      padding-bottom: 12px;
+    button {
+      margin-top: auto;
     }
+  }
 
-    &-row {
-      padding: 12px 0;
-
-      &.basic-table__row--clickable {
-        &:hover {
-          background-color: #fff;
-        }
-
-        &.expanding-row--expanded {
-          &:hover {
-            background: none;
-          }
-        }
-      }
-
-      & > .expanding-row__expanded {
-        margin: 0;
-      }
-
-      & > .expanding-row--expanded .expanding-row__expanded {
-        margin: 12px 0;
-      }
-    }
-
-    &-header-column,
-    &-column {
-      margin-bottom: 0;
-    }
+  .dropdown__button {
+    padding: 0;
   }
 }

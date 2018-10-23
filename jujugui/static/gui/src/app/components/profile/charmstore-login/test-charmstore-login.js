@@ -32,9 +32,9 @@ describe('ProfileCharmstoreLogin ', function() {
             Login to the charm store
           </Button>
         </div>
-        <h2 className="profile__title">
+        <h4 className="profile__title">
           No {'charms'}
-        </h2>
+        </h4>
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span

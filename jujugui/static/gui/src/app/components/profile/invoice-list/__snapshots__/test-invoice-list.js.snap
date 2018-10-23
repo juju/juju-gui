@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Invoice Bundle List can render 1`] = `
+<div
+  className="profile-invoice-list"
+>
+  <div>
+    <h4
+      className="profile__title"
+    >
+      Invoices
+    </h4>
+    <BasicTable
+      headerClasses={
+        Array [
+          "profile__entity-table-header-row",
+        ]
+      }
+      headerColumnClasses={
+        Array [
+          "profile__entity-table-header-column",
+        ]
+      }
+      headers={
+        Array [
+          Object {
+            "content": "Status",
+          },
+          Object {
+            "content": "Invoice Number",
+          },
+          Object {
+            "content": "Charged to",
+          },
+          Object {
+            "content": "Date",
+          },
+        ]
+      }
+      rowClasses={Array []}
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "content": "Paid",
+              },
+              Object {
+                "content": <a
+                  href="#invoices/42"
+                >
+                  100001
+                </a>,
+              },
+              Object {
+                "content": "card ending 1234",
+              },
+              Object {
+                "content": "12/05/2017",
+              },
+            ],
+            "key": "100001",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "content": "Declined: will retry",
+              },
+              Object {
+                "content": <a
+                  href="#invoices/42"
+                >
+                  100002
+                </a>,
+              },
+              Object {
+                "content": "card ending 1231",
+              },
+              Object {
+                "content": "12/05/2017",
+              },
+            ],
+            "key": "100002",
+          },
+        ]
+      }
+    />
+  </div>
+</div>
+`;

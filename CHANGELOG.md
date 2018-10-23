@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Updated React to 16.5.2 and remaining dependencies.
+- Updated Profile section to use latest styling from Vanilla Framework.
 
 ### Fixed
 - Status component is now more resilient to missing data.

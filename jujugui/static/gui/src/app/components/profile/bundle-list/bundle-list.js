@@ -9,8 +9,8 @@ const {urls} = require('jaaslib');
 const BasicTable = require('../../shared/basic-table/basic-table');
 const IconList = require('../../icon-list/icon-list');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
-const ProfileExpandedContent = require('../expanded-content/expanded-content');
 const Spinner = require('../../spinner/spinner');
+const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 
 /**
   Charm list React component used to display a list of the users bundles in
@@ -94,12 +94,11 @@ class ProfileBundleList extends React.Component {
   */
   _generateTitle() {
     return (
-      <h2 className="profile__title">
-        {this.props.isActiveUsersProfile ? 'My' : 'Their'} bundles
-        <span className="profile__title-count">
-          ({(this.state.data || []).length})
-        </span>
-      </h2>);
+      <h4 className="profile__title">
+        Bundles
+        <span className="profile__title-count">({(this.state.data || []).length})</span>
+      </h4>
+    );
   }
 
   /**
@@ -120,22 +119,23 @@ class ProfileBundleList extends React.Component {
 
   render() {
     let content;
+    const props = this.props;
     if (this.state.loading) {
       content = (<Spinner />);
-    } else if (this.props.isActiveUsersProfile && !(this.state.data || []).length) {
-      if (!this.props.user) {
+    } else if (props.isActiveUsersProfile && !(this.state.data || []).length) {
+      if (!props.user) {
         content = (
           <ProfileCharmstoreLogin
-            addNotification={this.props.addNotification}
-            bakery={this.props.bakery}
-            changeState={this.props.changeState}
-            charmstore={shapeup.fromShape(this.props.charmstore,
+            addNotification={props.addNotification}
+            bakery={props.bakery}
+            changeState={props.changeState}
+            charmstore={shapeup.fromShape(props.charmstore,
               ProfileCharmstoreLogin.propTypes.charmstore)}
-            storeUser={this.props.storeUser}
+            storeUser={props.storeUser}
             type="bundles" />);
       } else {
         content = (
-          <div>
+          <React.Fragment>
             {this._generateTitle()}
             <p className="profile-bundle-list__onboarding">
               Learn about&nbsp;
@@ -145,15 +145,16 @@ class ProfileBundleList extends React.Component {
                 writing your own bundle
               </a>.
             </p>
-          </div>);
+          </React.Fragment>);
       }
     } else {
       const rows = (this.state.data || []).map(bundle => {
         const url = urls.URL.fromLegacyString(bundle.id);
         const path = url.path();
         const version = `#${url.revision}`;
-        const charmstore = this.props.charmstore;
-        const charmstoreURL = this.props.charmstore.url;
+        const charmstore = props.charmstore;
+        const charmstoreURL = props.charmstore.url;
+        const getDiagramURL = charmstore.getDiagramURL.bind(charmstore);
         const applications = Object.keys(bundle.applications).map(name => {
           const app = bundle.applications[name];
           return {
@@ -162,92 +163,127 @@ class ProfileBundleList extends React.Component {
             id: app.charm
           };
         });
+        const modelName = props.getModelName();
+        const title = `Add to ${modelName || 'model'}`;
         return {
           columns: [{
             content: (
               <a
-                href={`${this.props.baseURL}${path}`}
+                href={`${props.baseURL}${path}`}
                 onClick={this._navigateToBundle.bind(this, path)}>
                 {bundle.name}
-              </a>),
-            columnSize: 3
+              </a>)
           }, {
             content: (
               <IconList
                 applications={applications}
-                changeState={this.props.changeState}
-                generatePath={this.props.generatePath} />),
-            columnSize: 3
+                changeState={props.changeState}
+                generatePath={props.generatePath} />)
           }, {
             content: bundle.machineCount,
-            columnSize: 2,
-            classes: ['u-align--right']
+            classes: ['u-align-text--right']
           }, {
             content: bundle.unitCount,
-            columnSize: 1,
-            classes: ['u-align--right']
+            classes: ['u-align-text--right']
           }, {
             content: version,
-            columnSize: 3
+            classes: ['u-align-text--right']
           }],
           expandedContent: (
-            <ProfileExpandedContent
-              acl={this.props.acl}
-              addToModel={this.props.addToModel}
-              changeState={this.props.changeState}
-              entity={bundle}
-              generatePath={this.props.generatePath}
-              getDiagramURL={charmstore.getDiagramURL.bind(charmstore)}
-              getModelName={this.props.getModelName}
-              topRow={(
-                <div>
-                  <div className="six-col profile-expanded-content__top-row">
-                    <a
-                      href={`${this.props.baseURL}${path}`}
-                      onClick={this._navigateToBundle.bind(this, path)}>
-                      {bundle.name}
-                    </a>
-                  </div>
-                  <div className="two-col profile-expanded-content__top-row u-align--right">
-                    {bundle.machineCount}
-                  </div>
-                  <div className="one-col profile-expanded-content__top-row u-align--right">
-                    {bundle.unitCount}
-                  </div>
-                  <div className="three-col last-col profile-expanded-content__top-row">
-                    {version}
-                  </div>
-                </div>)} />),
+            <React.Fragment>
+              <td>
+                <span className="profile-bundle-list__meta">
+                  <a
+                    href={`${props.baseURL}${path}`}
+                    onClick={this._navigateToBundle.bind(this, path)}>
+                    {bundle.name}
+                  </a>
+                  {bundle.description ? (
+                    <span className="entity__desc u-hide--small">
+                      {bundle.description}
+                    </span>
+                  ) : null}
+                </span>
+                {getDiagramURL ? (
+                  <EntityContentDiagram
+                    diagramUrl={getDiagramURL(bundle.id)} />) : null}
+              </td>
+              <td>
+                {bundle.bugUrl ? (
+                  <a
+                    href={bundle.bugUrl}
+                    onClick={e => e.stopPropagation}
+                    target="_blank">
+                    Bugs
+                  </a>
+                ) : null}
+                {bundle.homepage ? (
+                  <a
+                    href={bundle.homepage}
+                    onClick={e => e.stopPropagation}
+                    target="_blank">
+                    Homepage
+                  </a>
+                ) : null}
+                {bundle.bugUrl || bundle.homepage ? (
+                  <hr />
+                ) : null}
+                <span className="entity__permissions">
+                  Writeable:
+                  {props.generatePermissions(bundle.perm.write, props)}
+                </span>
+                <span className="entity__permissions">
+                  Readable:
+                  {props.generatePermissions(bundle.perm.read, props)}
+                </span>
+              </td>
+              <td className="u-align-text--right">
+                {bundle.machineCount}
+              </td>
+              <td className="u-align-text--right">
+                {bundle.unitCount}
+              </td>
+              <td className="entity__release u-align-text--right">
+                <span>
+                  {version}
+                </span>
+                <button
+                  className="p-button--positive"
+                  disabled={this.props.acl.isReadOnly()}
+                  onClick={e => props.handleDeploy(e, bundle.id, this.props)}
+                  tooltip={
+                    `Add this ${bundle.entityType} to
+                      ${this.modelName ? 'your current' : 'a new'} model`}>
+                  {title}
+                </button>
+              </td>
+            </React.Fragment>
+          ),
           extraData: bundle.name,
           key: bundle.id
         };
       });
       content = (
-        <div>
+        <React.Fragment>
           {this._generateTitle()}
           <BasicTable
-            headerClasses={['profile__entity-table-header-row']}
-            headerColumnClasses={['profile__entity-table-header-column']}
             headers={[{
-              content: 'Name',
-              columnSize: 6
+              content: 'Name'
+            }, {
+              content: ''
             }, {
               content: 'Machines',
-              columnSize: 2,
-              classes: ['u-align--right']
+              classes: ['u-align-text--right']
             }, {
               content: 'Units',
-              columnSize: 1,
-              classes: ['u-align--right']
+              classes: ['u-align-text--right']
             }, {
               content: 'Release',
-              columnSize: 3
+              classes: ['u-align-text--right']
             }]}
-            rowClasses={['profile__entity-table-row']}
-            rowColumnClasses={['profile__entity-table-column']}
             rows={rows}
             sort={this._byName.bind(this)} />
-        </div>);
+        </React.Fragment>);
     }
     return (
       <div className="profile-bundle-list">
@@ -272,7 +308,9 @@ ProfileBundleList.propTypes = {
     url: PropTypes.string.isRequired
   }).isRequired,
   generatePath: PropTypes.func.isRequired,
+  generatePermissions: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
+  handleDeploy: PropTypes.func.isRequired,
   isActiveUsersProfile: PropTypes.bool.isRequired,
   storeUser: PropTypes.func.isRequired,
   user: PropTypes.string
