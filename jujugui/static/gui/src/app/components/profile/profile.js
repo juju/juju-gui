@@ -102,7 +102,8 @@ class Profile extends React.Component {
   render() {
     const props = this.props;
     const profileUrl = this._getSectionInfo();
-    const isActiveUsersProfile = props.controllerUser.split('@')[0] === props.userInfo.profile;
+    const isActiveUsersProfile = props.isActiveUsersProfile;
+    const controllerConnection = props.controllerConnection;
     const sectionsMap = new Map();
     const sectionInfo = this._getSectionInfo();
 
@@ -126,11 +127,16 @@ class Profile extends React.Component {
       );
     }
 
-    if (isActiveUsersProfile) {
+    if (isActiveUsersProfile && controllerConnection) {
       sectionsMap.set('models', {
         label: 'Models',
         getComponent: () => {
-
+          let modelManager = null;
+          let userName = null;
+          if (controllerConnection) {
+            modelManager = controllerConnection.facades.modelManager;
+            userName = controllerConnection.info.user.displayName;
+          }
           return (
             <ProfileModelList
               acl={props.acl}
@@ -138,10 +144,9 @@ class Profile extends React.Component {
               baseURL={props.baseURL}
               changeState={props.changeState}
               destroyModel={props.destroyModel}
-              facadesExist={props.facadesExist}
-              listModelsWithInfo={props.controllerAPI.listModelsWithInfo}
+              modelManager={modelManager}
               switchModel={props.switchModel}
-              userInfo={props.userInfo} />
+              userName={userName} />
           );
         }
       });
@@ -300,15 +305,16 @@ Profile.propTypes = {
     revokeCloudCredential: PropTypes.func.isRequired,
     updateCloudCredential: PropTypes.func.isRequired
   }).isRequired,
+  controllerConnection: PropTypes.object,
   controllerIP: PropTypes.string,
   controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
   destroyModel: PropTypes.func.isRequired,
-  facadesExist: PropTypes.bool.isRequired,
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,
+  isActiveUsersProfile: PropTypes.bool.isRequired,
   payment: shapeup.shape({
     addAddress: PropTypes.func,
     addBillingAddress: PropTypes.func,
