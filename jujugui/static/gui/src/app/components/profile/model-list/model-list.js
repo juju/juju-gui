@@ -65,7 +65,11 @@ class ProfileModelList extends React.Component {
   */
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
-    this.props.destroyModel(modelUUID, (errors, data) => {
+    this.props.modelManager.destroyModels({models: [{
+      modelTag: `model-${modelUUID}`,
+      // TODO Allow for selecting not to destroy storage.
+      destroyStorage: true
+    }]}, (errors, data) => {
       if (errors) {
         errors.forEach(error => {
           this.props.addNotification({
@@ -338,7 +342,6 @@ ProfileModelList.propTypes = {
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
-  destroyModel: PropTypes.func.isRequired,
   modelManager: PropTypes.object.isRequired,
   models: PropTypes.array,
   switchModel: PropTypes.func.isRequired,

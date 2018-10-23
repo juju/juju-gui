@@ -143,7 +143,6 @@ class Profile extends React.Component {
               addNotification={props.addNotification}
               baseURL={props.baseURL}
               changeState={props.changeState}
-              destroyModel={props.destroyModel}
               modelManager={modelManager}
               switchModel={props.switchModel}
               userName={userName} />
@@ -309,7 +308,6 @@ Profile.propTypes = {
   controllerIP: PropTypes.string,
   controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
-  destroyModel: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,

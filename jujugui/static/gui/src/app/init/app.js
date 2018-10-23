@@ -141,7 +141,6 @@ class App extends React.Component {
     return {
       addNotification: this.props.db.notifications.add.bind(this.props.db.notifications),
       changeState: this.props.appState.changeState.bind(this.props.appState),
-      destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
       listModelsWithInfo: this.props.controllerAPI.listModelsWithInfo.bind(
         this.props.controllerAPI)
     };
@@ -469,10 +468,6 @@ Browser: ${navigator.userAgent}`
             .replace('wss://', '').replace('ws://', '').split(':')[0]}
         controllerIsReady={this._controllerIsReady.bind(this)}
         controllerUser={this.props.user.controller.user}
-        destroyModel={
-          initUtils.destroyModel.bind(
-            initUtils, this._bound.destroyModels, this.props.modelAPI,
-            this.props.switchModel)}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getModelName={this._getModelName.bind(this)}
         getUser={this.props.identity.getUser.bind(this.props.identity)}
