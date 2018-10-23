@@ -94,6 +94,8 @@ class App extends React.Component {
     this._addEvent('hideModals', this._hideModalsListener.bind(this));
     this._addEvent('popupAction', this._popupActionListener.bind(this));
     this._addEvent('showDragOverNotification', this._dragOverNotificationListener.bind(this));
+    // As soon as the application has rendered hide the loading mask.
+    this.props.maskVisibility(false);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -435,36 +437,20 @@ Browser: ${navigator.userAgent}`
     if (!this.props.appState.isSet('profile')) {
       return null;
     }
-    // The profile view renders itself and then makes requests to identity before the
-    // controller is setup and the user has successfully logged in. So we need to
-    // prevent rendering the profile until the controller is connected.
-    const guiState = state.gui || {};
-    if (
-      guiState.deploy !== undefined ||
-      !state.profile ||
-      !this.props.controllerAPI.get('connected') ||
-      !this.props.controllerAPI.userIsAuthenticated
-    ) {
-      return null;
-    }
-    // XXX Jeff - 18-11-2016 - This profile gets rendered before the
-    // controller has completed connecting and logging in when in gisf. The
-    // proper fix is to queue up the RPC calls but due to time constraints
-    // we're setting up this handler to simply re-render the profile when
-    // the controller is properly connected.
-    const facadesExist = !!this.props.controllerAPI.get('facades');
-    if (!facadesExist) {
-      const handler = this.props.controllerAPI.after('facadesChange', e => {
-        if (e.newVal) {
-          this.appState.dispatch();
-          handler.detach();
-        }
-      });
-    }
     const charmstore = this.props.charmstore;
     const payment = this.props.payment;
     const stripe = this.props.stripe;
     const userInfo = this.props.getUserInfo(state);
+    const controllerConnection = this.props.controllerConnection;
+    const isActiveUsersProfile = (() => {
+      if (controllerConnection) {
+        const displayName = controllerConnection.info.user.displayName;
+        if (state.profile === displayName) {
+          return true;
+        }
+      }
+      return false;
+    })();
     return (
       <Profile
         acl={shapeup.fromShape(this.props.acl, Profile.propTypes.acl)}
@@ -477,6 +463,7 @@ Browser: ${navigator.userAgent}`
         charmstore={charmstore}
         controllerAPI={
           shapeup.fromShape(this.props.controllerAPI, Profile.propTypes.controllerAPI)}
+        controllerConnection={this.props.controllerConnection}
         controllerIP={
           this.props.controllerAPI.get('socket_url')
             .replace('wss://', '').replace('ws://', '').split(':')[0]}
@@ -486,11 +473,11 @@ Browser: ${navigator.userAgent}`
           initUtils.destroyModel.bind(
             initUtils, this._bound.destroyModels, this.props.modelAPI,
             this.props.switchModel)}
-        facadesExist={facadesExist}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getModelName={this._getModelName.bind(this)}
         getUser={this.props.identity.getUser.bind(this.props.identity)}
         gisf={this.props.applicationConfig.gisf}
+        isActiveUsersProfile={isActiveUsersProfile}
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
         sendAnalytics={this.props.sendAnalytics}
         showPay={this.props.applicationConfig.flags.pay || false}
@@ -1088,7 +1075,8 @@ Browser: ${navigator.userAgent}`
       message must be displayed.
   */
   _generateLogin(err) {
-    if (this.props.appState.current.root !== 'login') {
+    // XXX support juju u/p controller logins.
+    if (this.props.appState.current.login !== true) {
       return null;
     }
     document.getElementById('loading-message').style.display = 'none';
@@ -1321,10 +1309,6 @@ Browser: ${navigator.userAgent}`
     if (!loginNotificiationURL) {
       return null;
     }
-    let dismiss = null;
-    if (this.props.appState.current.root !== 'login') {
-      dismiss = this.setState.bind(this, {loginNotificiationURL: null});
-    }
     const content = (
       <span>
         To proceed with the authentication, please accept the pop up window or&nbsp;
@@ -1334,7 +1318,7 @@ Browser: ${navigator.userAgent}`
       <div id="login-notification">
         <Notification
           content={content}
-          dismiss={dismiss}
+          dismiss={null}
           extraClasses="four-col"
           isBlocking={true} />
       </div>);
@@ -1443,6 +1427,7 @@ App.propTypes = {
   bundleImporter: PropTypes.object.isRequired,
   charmstore: PropTypes.object.isRequired,
   controllerAPI: PropTypes.object,
+  controllerConnection: PropTypes.object,
   db: PropTypes.object.isRequired,
   deployService: PropTypes.func.isRequired,
   endpointsController: PropTypes.object.isRequired,
@@ -1452,6 +1437,7 @@ App.propTypes = {
   identity: PropTypes.object.isRequired,
   loginToAPIs: PropTypes.func.isRequired,
   maasServer: PropTypes.string,
+  maskVisibility: PropTypes.func.isRequired,
   modelAPI: PropTypes.object.isRequired,
   modelUUID: PropTypes.string,
   payment: PropTypes.object,
