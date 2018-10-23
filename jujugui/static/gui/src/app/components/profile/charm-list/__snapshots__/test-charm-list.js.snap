@@ -160,20 +160,30 @@ exports[`Profile Charm List can render 1`] = `
                     >
                       <li
                         className="p-inline-list__item"
-                        onClick={[Function]}
                         role="button"
                         tabIndex="0"
                       >
-                        misc
+                        <a
+                          className="p-link--soft"
+                          href="#_"
+                          onClick={[Function]}
+                        >
+                          misc
+                        </a>
                         ,
                       </li>
                       <li
                         className="p-inline-list__item"
-                        onClick={[Function]}
                         role="button"
                         tabIndex="0"
                       >
-                        ops
+                        <a
+                          className="p-link--soft"
+                          href="#_"
+                          onClick={[Function]}
+                        >
+                          ops
+                        </a>
                       </li>
                     </ul>
                   </span>
