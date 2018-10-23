@@ -1,9 +1,10 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const jujulib = require('jujulib');
+const mixwith = require('mixwith');
 const React = require('react');
 const ReactDOM = require('react-dom');
-const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
 const analytics = require('./init/analytics');
@@ -330,11 +331,49 @@ class GUIApp {
       @type {Object}
     */
     this.topology = this._renderTopology();
-    const result = this.state.bootstrap();
-    if (result.error) {
-      console.error(result.error);
-    }
+
+    /**
+      Once login is complete this will hold the connection to the controller
+      @type {Object}
+    */
+    this.controllerConnection = null;
+
+    const connectionOptions = {
+      debug: true,
+      facades: [require('jujulib/api/facades/model-manager-v4.js')],
+      wsclass: WebSocket,
+      bakery: this.bakery
+    };
+
+    jujulib
+      .connect('wss://jimm.jujucharms.com/api', connectionOptions)
+      .then(async juju => {
+        // Connected, dispatch the UI as normal.
+        const result = this.state.bootstrap();
+        if (this.applicationConfig.gisf) {
+          // If we're in JAAS then let the controller handle the login.
+          this.controllerConnection = await juju.login({});
+          // After logging in redirect to their profile if they
+          // weren't already going elsewhere.
+          if (Object.keys(this.state.current).length === 0) {
+            this.state.changeState({
+              profile: this.controllerConnection.info.user.displayName});
+            return;
+          }
+          // Else continue to dispatch.
+          this.state.dispatch();
+
+        }
+        if (result.error) {
+          // XXX Render application with error notification about bootstrap issue.
+          console.error(result.error);
+        }
+      })
+      .catch(err => {
+        // XXX Render application with error notification about unable to connect.
+      });
   }
+
 
   /**
     Perform any processing or modification on the application config values.
@@ -432,21 +471,6 @@ class GUIApp {
     }
     return this.ecs;
   }
-  /**
-    Ensures the controller is connected on dispatch. Does nothing if the
-    controller is already connecting/connected or if we're trying to disconnect.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-   */
-  _ensureControllerConnection(state, next) {
-    if (
-      !this.controllerAPI.get('connecting') &&
-      !this.controllerAPI.get('connected')
-    ) {
-      this.controllerAPI.connect();
-    }
-    next();
-  }
 
   /**
     Ensure that the current user has authenticated.
@@ -503,6 +527,7 @@ class GUIApp {
         bundleImporter={this.bundleImporter}
         charmstore={this.charmstore}
         controllerAPI={this.controllerAPI}
+        controllerConnection={this.controllerConnection}
         db={this.db}
         deployService={this.deployService.bind(this)}
         endpointsController={this.endpointsController}
@@ -512,6 +537,7 @@ class GUIApp {
         identity={this.identity}
         loginToAPIs={this.loginToAPIs.bind(this)}
         maasServer={this._getMaasServer()}
+        maskVisibility={this.maskVisibility.bind(this)}
         modelAPI={this.modelAPI}
         modelUUID={this.modelUUID}
         payment={this.payment}
@@ -550,9 +576,8 @@ class GUIApp {
       sendAnalytics: this.sendAnalytics
     });
     state.register([
-      ['*', this._ensureControllerConnection.bind(this)],
-      ['*', this.checkUserCredentials.bind(this)],
       ['*', this._renderApp.bind(this)],
+      ['*', this.checkUserCredentials.bind(this)],
       ['root',
         this._rootDispatcher.bind(this)],
       ['user',
