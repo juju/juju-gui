@@ -33,7 +33,6 @@ class BasicTableCell extends React.Component {
 
 BasicTableCell.propTypes = {
   classes: PropTypes.arrayOf(PropTypes.string),
-  columnSize: PropTypes.number,
   content: PropTypes.node,
   isHeader: PropTypes.bool
 };

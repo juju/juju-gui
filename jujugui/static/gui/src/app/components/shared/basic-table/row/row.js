@@ -144,12 +144,10 @@ BasicTableRow.propTypes = {
   // A function to call when a row is clicked.
   clickURL: PropTypes.string,
   columns: PropTypes.arrayOf(PropTypes.shape({
-      content: PropTypes.node,
-      // The number of columns (between 1 and 12).
-      columnSize: PropTypes.number,
-      // The extra classes to apply to the column.
-      classes: PropTypes.arrayOf(PropTypes.string)
-    }).isRequired
+    content: PropTypes.node,
+    // The extra classes to apply to the column.
+    classes: PropTypes.arrayOf(PropTypes.string)
+  }).isRequired
   ).isRequired,
   // Content to be displayed when the row is toggled.
   expandedContent: PropTypes.any,
