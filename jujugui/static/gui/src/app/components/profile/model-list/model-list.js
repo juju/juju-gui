@@ -25,36 +25,21 @@ class ProfileModelList extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this._fetchModels(this.props.facadesExist);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const props = this.props;
-    if (props.userInfo.profile !== nextProps.userInfo.profile ||
-      props.facadesExist !== nextProps.facadesExist) {
-      this._fetchModels(nextProps.facadesExist);
-    }
+  componentDidMount() {
+    this._fetchModels();
   }
 
   /**
     Makes a request of the controller to fetch the user's availble models.
-    @param {Boolean} facadesExist Whether the controller is connected or not.
   */
-  _fetchModels(facadesExist) {
-    if (!facadesExist) {
-      console.warn('Controller not connected, skipping fetching models.');
-      return;
-    }
-    // Delay the call until after the state change to prevent race
-    // conditions.
+  _fetchModels() {
     this.setState({loadingModels: true}, () => {
-      this.props.listModelsWithInfo(this._fetchModelsCallback.bind(this));
+      this.props.modelManager.listModelSummaries(null, this._fetchModelsCallback.bind(this));
     });
   }
 
   /**
-    Callback for the controller listModelsWithInfo call.
+    Callback for the controller listModelSummaries call.
     @param {String} err The error from the request, or null.
     @param {Array} modelList The list of models.
   */
@@ -70,7 +55,7 @@ class ProfileModelList extends React.Component {
         });
         return;
       }
-      this.setState({models: modelList});
+      this.setState({models: modelList.results});
     });
   }
 
@@ -90,7 +75,7 @@ class ProfileModelList extends React.Component {
           });
         });
       }
-      this._fetchModels(this.props.facadesExist);
+      this._fetchModels();
     }, false);
   }
 
@@ -162,34 +147,34 @@ class ProfileModelList extends React.Component {
       ['write', 'edit_16'],
       ['admin', 'user_16']
     ]);
-    const profileUsername = this.props.userInfo.profile;
     const models = this.state.models || [];
     return (
-      models.reduce((modelList, model, index) => {
+      models.reduce((modelList, item, index) => {
+        const model = item.result;
         // Keep only the models that aren't currently in the destroy cycle.
-        if (!model.isAlive) {
+        if (model.life !== 'alive') {
           return modelList;
         }
         // It is possible that the user is a superuser with no models but has
-        // access to all of the models. In which case the user objects for the
-        // model will not list their user name and the profileUser will be
-        // undefined.
-        const profileUser = model.users.find(user => user.displayName === profileUsername);
-        if (profileUser === undefined) {
+        // access to all of the models. In this case we don't want to display
+        // all the models. In the future we will add a filter to display these
+        // models.
+        if (model.userAccess === 'superuser') {
           return modelList;
         }
         const bdRef = `mymodel-button-dropdown-${index}`;
-        const owner = model.owner.replace('@external', '') || profileUsername;
+        const owner = model.ownerTag.replace('@external', '').replace('user-', '');
         const path = `${this.props.baseURL}u/${owner}/${model.name}`;
-        const userIsAdmin = profileUser.access === 'admin';
-        const username = owner === profileUsername ? 'Me' : owner;
-        const region = model.region ? '/' + model.region : '';
+        const userIsAdmin = model.userAccess === 'admin';
+        const username = owner === this.props.userName ? 'Me' : owner;
+        const region = model.cloudRegion ? '/' + model.cloudRegion : '';
+        const cloud = model.cloudTag ? model.cloudTag.replace('cloud-', '') : null;
         const nameContent = (
           <a
             href={path}
             onClick={this.switchToModel.bind(this, {
               name: model.name,
-              id: model.id,
+              id: model.uuid,
               owner
             })}>
             {model.name}
@@ -198,17 +183,17 @@ class ProfileModelList extends React.Component {
         const regionContent = (
           <React.Fragment>
             <span className="profile-model-list__machine-number">{model.numMachines}</span>
-            {model.cloud || model.provider}
+            {cloud || model.providerType}
             {region}
           </React.Fragment>
         );
         const accessContent = (
           <span className="profile-model-list__access tooltip">
             <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">{profileUser.access}</span>
+              <span className="tooltip__inner tooltip__inner--down">{model.userAccess}</span>
             </span>
             <SvgIcon
-              name={icons.get(profileUser.access)}
+              name={icons.get(model.userAccess)}
               size="16" />
           </span>
         );
@@ -226,7 +211,7 @@ class ProfileModelList extends React.Component {
             </a>
           ) : null;
         let expandedContent;
-        if (owner === profileUsername) {
+        if (owner === this.props.userName) {
           expandedContent = (
             <a
               className="profile-model-list__link u-no-padding--bottom"
@@ -355,19 +340,10 @@ ProfileModelList.propTypes = {
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyModel: PropTypes.func.isRequired,
-  facadesExist: PropTypes.bool.isRequired,
-  listModelsWithInfo: PropTypes.func.isRequired,
+  modelManager: PropTypes.object.isRequired,
   models: PropTypes.array,
   switchModel: PropTypes.func.isRequired,
-  // userInfo must have the following attributes:
-  // - external: the external user name to use for retrieving data, for
-  //   instance, from the charm store. Might be null if the user is being
-  //   displayed for the current user and they are not authenticated to
-  //   the charm store;
-  // - isCurrent: whether the profile is being displayed for the currently
-  //   authenticated user;
-  // - profile: the user name for whom profile details must be displayed.
-  userInfo: PropTypes.object.isRequired
+  userName: PropTypes.string
 };
 
 module.exports = ProfileModelList;
