@@ -49,8 +49,8 @@ class Profile extends React.Component {
   Handle deploying an entity.
   @param entityId {String} A charm or bundle id.
   */
-  _handleDeploy(evt, entityId, props) {
-    evt.stopPropagation();
+  _handleDeploy(e, entityId, props) {
+    e.stopPropagation();
     props.addToModel(entityId);
     props.changeState({
       hash: null,
