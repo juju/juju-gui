@@ -125,12 +125,12 @@ class ProfileHeader extends React.Component {
         <li
           className="p-list__item"
           key="home">
-          <a href="https://jujucharms.com/home">Home</a>
+          <a href="https://jujucharms.com/home" target="_blank">Home</a>
         </li>,
         <li
           className="p-list__item"
           key="aboutjaas">
-          <a href="https://jujucharms.com/jaas">About JAAS</a>
+          <a href="https://jujucharms.com/jaas" target="_blank">About JAAS</a>
         </li>
       ];
     } else {
@@ -144,7 +144,7 @@ class ProfileHeader extends React.Component {
         <li
           className="p-list__item"
           key="home">
-          <a href="https://jujucharms.com/about">Juju Home</a>
+          <a href="https://jujucharms.com/about" target="_blank">Juju Home</a>
         </li>
       ];
     }
