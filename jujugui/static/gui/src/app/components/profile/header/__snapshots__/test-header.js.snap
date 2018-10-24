@@ -85,6 +85,7 @@ exports[`Profile Header can render 1`] = `
           >
             <a
               href="https://jujucharms.com/home"
+              target="_blank"
             >
               Home
             </a>
@@ -95,6 +96,7 @@ exports[`Profile Header can render 1`] = `
           >
             <a
               href="https://jujucharms.com/jaas"
+              target="_blank"
             >
               About JAAS
             </a>
@@ -198,6 +200,7 @@ exports[`Profile Header displays a different link list for non-jaas 1`] = `
           >
             <a
               href="https://jujucharms.com/about"
+              target="_blank"
             >
               Juju Home
             </a>
