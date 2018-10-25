@@ -1116,10 +1116,10 @@ Browser: ${navigator.userAgent}`
     modelAPIironment the GUI is executing in.
   */
   _generateUserMenu() {
-    if (!this._controllerIsReady()) {
+    const controllerAPI = this.props.controllerAPI;
+    if (!(controllerAPI && controllerAPI.get('connected'))) {
       return null;
     }
-    const controllerAPI = this.props.controllerAPI;
     const charmstore = this.props.charmstore;
     const bakery = this.props.bakery;
     const _USSOLoginLink = (
