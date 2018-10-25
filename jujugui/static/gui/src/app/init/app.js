@@ -1116,10 +1116,13 @@ Browser: ${navigator.userAgent}`
     modelAPIironment the GUI is executing in.
   */
   _generateUserMenu() {
-    if (!this._controllerIsReady()) {
+    const controllerAPI = this.props.controllerAPI;
+    // XXX Jeff - We only check for the existance of the controller API here
+    // because the application doesn't always re-dispatch when the controller
+    // connects. This race condition will disappear with the jujulib update.
+    if (!controllerAPI) {
       return null;
     }
-    const controllerAPI = this.props.controllerAPI;
     const charmstore = this.props.charmstore;
     const bakery = this.props.bakery;
     const _USSOLoginLink = (
