@@ -233,7 +233,7 @@ class MachineView extends React.Component {
       is selected.
   */
   selectMachine(id) {
-    if (!id || id === null) {
+    if (!id) {
       return;
     }
     this.props.changeState({gui: {machines: id}});
