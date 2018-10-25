@@ -2,7 +2,7 @@
 
   tr {
     display: grid;
-    grid-template-columns: 1fr 0.5fr 1.5fr 0.25fr 0.75fr 0.25fr;
+    grid-template-columns: 1fr 1fr 1.25fr 0.25fr 0.75fr 0.25fr;
   }
 
   tbody tr {
@@ -21,5 +21,24 @@
   &__link {
     display: block;
     padding: 1rem 0;
+  }
+
+  // XXX These override styles are required until the <PopUp> components is converted to Vanilla v1
+  .button-row {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+
+    button {
+      width: 100%;
+    }
+
+    .button--destructive {
+      background: $color-negative;
+      color: $color-light;
+    }
   }
 }
