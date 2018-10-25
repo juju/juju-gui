@@ -5,7 +5,6 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDnD = require('react-dnd');
 const ReactDnDHTML5Backend = require('react-dnd-html5-backend');
-const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 
 const MachineViewAddMachine = require('./add-machine/add-machine');
@@ -30,9 +29,7 @@ class MachineView extends React.Component {
   }
 
   componentDidMount() {
-    this.selectMachine(
-      this.props.machine ||
-      this._getFirstMachineId(this.props.dbAPI.machines));
+    this.selectMachine(this.props.machine);
   }
 
   /**
@@ -230,40 +227,14 @@ class MachineView extends React.Component {
   }
 
   /**
-    Scroll a column to a machine or container.
-    @param {String} id The machine id to scroll to.
-    @param {Boolean} isContainer Whether the machine is a container.
-  */
-  _scrollToMachine(id, isContainer=false) {
-    // Get the correct column that contains the machine to scroll to.
-    const column = ReactDOM.findDOMNode(isContainer ?
-      this.refs.containersColumn : this.refs.machinesColumn);
-    // Get the content node that scrolls.
-    const content = column.querySelector('.machine-view__column-content');
-    const machine = ReactDOM.findDOMNode(
-      this.refs[`${isContainer ? 'container' : 'machine'}-${id}`]);
-    if (content && machine) {
-      content.scrollTop = machine.offsetTop - content.offsetTop;
-    }
-  }
-
-  /**
     Handle selecting a machine.
 
     @param {String} id The machine id to select. If the id is null, no machine
       is selected.
-    @param {Boolean} scrollToMachine Whether to scroll to the selected machine.
   */
-  selectMachine(id, scrollToMachine=true) {
-    if (id === null) {
+  selectMachine(id) {
+    if (!id || id === null) {
       return;
-    }
-    if (scrollToMachine) {
-      const selected = this._getSelected(id);
-      this._scrollToMachine(selected.machine, false);
-      if (selected.container) {
-        this._scrollToMachine(selected.container, true);
-      }
     }
     this.props.changeState({gui: {machines: id}});
   }
