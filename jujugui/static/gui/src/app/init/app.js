@@ -1117,7 +1117,10 @@ Browser: ${navigator.userAgent}`
   */
   _generateUserMenu() {
     const controllerAPI = this.props.controllerAPI;
-    if (!(controllerAPI && controllerAPI.get('connected'))) {
+    // XXX Jeff - We only check for the existance of the controller API here
+    // because the application doesn't always re-dispatch when the controller
+    // connects. This race condition will disappear with the jujulib update.
+    if (!controllerAPI) {
       return null;
     }
     const charmstore = this.props.charmstore;
