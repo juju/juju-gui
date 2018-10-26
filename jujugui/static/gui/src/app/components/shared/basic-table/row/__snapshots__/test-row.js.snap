@@ -35,6 +35,7 @@ exports[`BasicTableRow can render 1`] = `
       </span>
     }
     key="0"
+    link={null}
   />
   <BasicTableCell
     classes={
@@ -45,6 +46,7 @@ exports[`BasicTableRow can render 1`] = `
     columnSize={3}
     content="row 1 column 2"
     key="1"
+    link={null}
   />
 </tr>
 `;

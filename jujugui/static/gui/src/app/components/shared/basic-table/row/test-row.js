@@ -67,33 +67,6 @@ describe('BasicTableRow', () => {
       ['r1c1class1', 'r1c1class2', 'extra-header-class']);
   });
 
-  it('displays row links', () => {
-    const wrapper = renderComponent({
-      onClick: sinon.stub(),
-      clickURL: 'http://example.com'
-    });
-    const expected = (
-      <a
-        className="basic-table__row-link"
-        href="http://example.com"
-        onClick={wrapper.find('.basic-table__row-link').prop('onClick')}></a>);
-    assert.compareJSX(wrapper.find('.basic-table__row-link').at(0), expected);
-  });
-
-  it('can navigate when a row is clicked', () => {
-    const onClick = sinon.stub();
-    const clickURL = 'http://example.com';
-    const preventDefault = sinon.stub();
-    const wrapper = renderComponent({
-      onClick,
-      clickURL
-    });
-    wrapper.find('.basic-table__row-link').simulate('click',
-      {preventDefault: preventDefault});
-    assert.equal(preventDefault.callCount, 1);
-    assert.equal(onClick.callCount, 1);
-  });
-
   it('can display rows with expandable content', () => {
     const wrapper = renderComponent({
       expandedContent: (<div>Expanded content!</div>),

@@ -2,7 +2,7 @@
 
 exports[`BasicTableCell can render 1`] = `
 <td
-  className=""
+  className="basic-table__cell"
 >
   <span>
     Content!

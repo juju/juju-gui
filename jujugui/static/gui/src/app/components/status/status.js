@@ -189,20 +189,22 @@ class Status extends React.Component {
   render() {
 
     return (
-      <SharedStatus
-        generateApplicationOnClick={this._generateApplicationOnClick.bind(this)}
-        generateApplicationURL={this._generateApplicationURL.bind(this)}
-        generateCharmURL={this._generateCharmURL.bind(this)}
-        generateMachineOnClick={this._generateMachineOnClick.bind(this)}
-        generateMachineURL={this._generateMachineURL.bind(this)}
-        generateUnitOnClick={this._generateUnitOnClick.bind(this)}
-        generateUnitURL={this._generateUnitURL.bind(this)}
-        getIconPath={this._getIconPath.bind(this)}
-        model={this.props.model}
-        navigateToApplication={this._navigateToApplication.bind(this)}
-        navigateToCharm={this._navigateToCharm.bind(this)}
-        navigateToMachine={this._navigateToMachine.bind(this)}
-        valueStore={this.props.valueStore} />
+      <div className="v1">
+        <SharedStatus
+          generateApplicationOnClick={this._generateApplicationOnClick.bind(this)}
+          generateApplicationURL={this._generateApplicationURL.bind(this)}
+          generateCharmURL={this._generateCharmURL.bind(this)}
+          generateMachineOnClick={this._generateMachineOnClick.bind(this)}
+          generateMachineURL={this._generateMachineURL.bind(this)}
+          generateUnitOnClick={this._generateUnitOnClick.bind(this)}
+          generateUnitURL={this._generateUnitURL.bind(this)}
+          getIconPath={this._getIconPath.bind(this)}
+          model={this.props.model}
+          navigateToApplication={this._navigateToApplication.bind(this)}
+          navigateToCharm={this._navigateToCharm.bind(this)}
+          navigateToMachine={this._navigateToMachine.bind(this)}
+          valueStore={this.props.valueStore} />
+      </div>
     );
   }
 };

@@ -41,7 +41,8 @@ describe('Status', function() {
 
   it('can navigate to charms from the app list', () => {
     const wrapper = renderComponent();
-    wrapper.props().navigateToCharm(
+    const instance = wrapper.instance();
+    instance._navigateToCharm(
       'u/who/django/xenial/42', {preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(
@@ -50,7 +51,8 @@ describe('Status', function() {
 
   it('can navigate to apps from the relation list', () => {
     const wrapper = renderComponent();
-    wrapper.props().navigateToApplication('mysql', {preventDefault: sinon.stub()});
+    const instance = wrapper.instance();
+    instance._navigateToApplication('mysql', {preventDefault: sinon.stub()});
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
