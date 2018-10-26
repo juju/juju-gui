@@ -86,7 +86,8 @@ class BasicTableRow extends React.Component {
         columnSize={column.columnSize}
         content={column.content}
         isHeader={isHeader}
-        key={index} />);
+        key={index}
+        link={this._generateAnchor()} />);
   }
 
   /**
@@ -118,7 +119,7 @@ class BasicTableRow extends React.Component {
       'basic-table__header': isHeader,
       'basic-table__row': !isHeader,
       'basic-table__row--expandable': !!expandedContent,
-      'basic-table__row--clickable': this._isRowClickable(),
+      'basic-table__row--clickable': this._isRowClickable() || this.props.onClick,
       'is-expanded': this.state.expanded
     });
     const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
@@ -128,7 +129,6 @@ class BasicTableRow extends React.Component {
         onClick={onClick}
         role="button"
         tabIndex="0">
-        {this._generateAnchor()}
         {this._generateContent()}
       </tr>);
   }
