@@ -109,6 +109,47 @@ describe('Maraca', () => {
     });
   });
 
+  it('correctly updates arrays', () => {
+    maraca._watcherListener({
+      detail: {
+        response: {
+          deltas: [[
+            'unit', 'change', {
+              name: 'apache2/0',
+              ports: ['80', '443']
+            }
+          ]]
+        }
+      }
+    });
+    assert.deepEqual(maraca.getValueStore().units, {
+      'apache2/0': parsers.parseUnit({
+        name: 'apache2/0',
+        ports: ['80', '443']
+      })
+    });
+    maraca._watcherListener({
+      detail: {
+        response: {
+          deltas: [[
+            'unit', 'change', {
+              name: 'apache2/0',
+              ports: ['81', '443']
+            }
+          ]]
+        }
+      }
+    });
+    const units = maraca.getValueStore().units;
+    assert.equal(units['apache2/0'].ports.length, 2);
+    assert.deepEqual(units, {
+      'apache2/0': parsers.parseUnit({
+        name: 'apache2/0',
+        ports: ['81', '443']
+      })
+    });
+  });
+
   it('removes entities', () => {
     maraca._watcherListener({
       detail: {
