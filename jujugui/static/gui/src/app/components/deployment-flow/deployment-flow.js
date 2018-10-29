@@ -80,14 +80,15 @@ class DeploymentFlow extends React.Component {
     // If the direct deploy data changes then get and store the new entity or
     // clear the state.
     const isDirectDeploy = !!(nextProps.ddData && nextProps.ddData.id);
-    this.setState({isDirectDeploy});
-    if (isDirectDeploy) {
-      if (nextProps.ddData.id !== this.props.ddData.id) {
-        this._getDirectDeployEntity(nextProps.ddData.id);
+    this.setState({isDirectDeploy}, () => {
+      if (isDirectDeploy) {
+        if (nextProps.ddData.id !== this.props.ddData.id) {
+          this._getDirectDeployEntity(nextProps.ddData.id);
+        }
+      } else {
+        this.setState({ddEntity: null});
       }
-    } else {
-      this.setState({ddEntity: null});
-    }
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -125,19 +126,21 @@ class DeploymentFlow extends React.Component {
   */
   _getDirectDeployEntity(entityId) {
     const props = this.props;
-    this.setState({loadingEntity: true});
-    props.charmstore.getEntity(entityId, (error, data) => {
-      this.setState({loadingEntity: false});
-      if (error) {
-        console.error('unable to fetch entity: ' + error);
-        props.addNotification({
-          title: 'Unable to fetch entity',
-          message: `Unable to fetch entity: ${error}`,
-          level: 'error'
+    this.setState({loadingEntity: true}, () => {
+      props.charmstore.getEntity(entityId, (error, data) => {
+        this.setState({loadingEntity: false}, () => {
+          if (error) {
+            console.error('unable to fetch entity: ' + error);
+            props.addNotification({
+              title: 'Unable to fetch entity',
+              message: `Unable to fetch entity: ${error}`,
+              level: 'error'
+            });
+            return;
+          }
+          this.setState({ddEntity: jujulibConversionUtils.makeEntityModel(data[0])});
         });
-        return;
-      }
-      this.setState({ddEntity: jujulibConversionUtils.makeEntityModel(data[0])});
+      });
     });
   }
 
@@ -168,7 +171,7 @@ class DeploymentFlow extends React.Component {
     const willCreateModel = !this.props.modelCommitted;
     const groupedChanges = this._getGroupedChanges();
     const loggedIn = this.props.isLoggedIn();
-    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
+    const isExpertFlow = this._isExpertFlow();
     const hasBudget = !!this.state.budget;
     switch (section) {
       case 'model-name':
@@ -374,6 +377,16 @@ class DeploymentFlow extends React.Component {
         deploy: null
       }
     });
+  }
+
+  /**
+    Check whether this should be an expert flow.
+
+    @method _isExpertFlow
+  */
+  _isExpertFlow() {
+    return this.state.ddEntity && this.state.ddEntity.get('supported') &&
+      this.state.ddEntity.get('plans');
   }
 
   /**
@@ -682,7 +695,7 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
+    const isExpertFlow = this._isExpertFlow();
     return (
       <DeploymentSection
         completed={status.completed}
@@ -1042,7 +1055,7 @@ class DeploymentFlow extends React.Component {
     if (!status.visible) {
       return;
     }
-    const isExpertFlow = this.state.ddEntity && this.state.ddEntity.get('supported');
+    const isExpertFlow = this._isExpertFlow();
     return (
       <DeploymentAgreements
         acl={this.props.acl}
@@ -1122,7 +1135,7 @@ class DeploymentFlow extends React.Component {
       return (<Spinner />);
     }
     if (!state.loadingEntity) {
-      if (state.ddEntity && state.ddEntity.get('supported')) {
+      if (this._isExpertFlow()) {
         return this._generateExpertIntro();
       }
       // As long as we're not loading the entity then pass what data we do have
