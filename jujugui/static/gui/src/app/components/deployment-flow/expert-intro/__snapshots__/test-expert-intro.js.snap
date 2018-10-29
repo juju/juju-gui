@@ -1,0 +1,360 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentExpertIntro can render for a bundle 1`] = `
+<DeploymentSection
+  instance="deployment-expert-intro-section"
+>
+  <div
+    className="deployment-expert-intro"
+  >
+    <div
+      className="twelve-col"
+    >
+      <div
+        className="eight-col"
+      >
+        <div
+          className="deployment-expert-intro__section-title"
+        >
+          You are about to deploy:
+        </div>
+        <h2>
+          Kubernetes core
+        </h2>
+        <div
+          className="six-col"
+        >
+          <EntityContentDescription
+            description="Description"
+          />
+          <div
+            className="deployment-expert-intro__diagram"
+          >
+            <EntityContentDiagram
+              diagramUrl="/diagram/url"
+            />
+          </div>
+        </div>
+        <div
+          className="twelve-col"
+        >
+          <div
+            className="deployment-expert-intro__section-title"
+          >
+            you will need:
+          </div>
+          <ul>
+            <li>
+              Your 
+              <a
+                href="https://jujucharms.com/docs/stable/credentials"
+                target="_blank"
+              >
+                cloud credentials
+              </a>
+              . 
+              <span
+                className="deployment-expert-intro__machine-count"
+              >
+                4
+              </span>
+               machine-instances will be created at your cloud provider
+            </li>
+            <li>
+              A valid credit credit card
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        className="four-col last-col"
+      >
+        <ExpertBlock
+          title="Juju expert partners"
+        >
+          <div
+            className="deployment-expert-intro__plan-details"
+          >
+            <h3>
+              From $undefined per month
+            </h3>
+            <div
+              className="deployment-expert-intro__plan-description"
+            >
+              Default plan with essential support
+            </div>
+            <div
+              className="deployment-expert-intro__description"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "<h4 id=\\"supported-description\\">supported description</h4>
+",
+                }
+              }
+            />
+            <Link
+              changeState={[Function]}
+              classes={Array []}
+              clickState={
+                Object {
+                  "hash": "support-level",
+                }
+              }
+              generatePath={[Function]}
+            >
+              View other support options
+            </Link>
+          </div>
+        </ExpertBlock>
+        <ExpertContactCard
+          expert="spinach"
+          sendAnalytics={[Function]}
+          staticURL="/static/url"
+        />
+      </div>
+    </div>
+  </div>
+</DeploymentSection>
+`;
+
+exports[`DeploymentExpertIntro can render for a charm 1`] = `
+<DeploymentSection
+  instance="deployment-expert-intro-section"
+>
+  <div
+    className="deployment-expert-intro"
+  >
+    <div
+      className="twelve-col"
+    >
+      <div
+        className="eight-col"
+      >
+        <div
+          className="deployment-expert-intro__section-title"
+        >
+          You are about to deploy:
+        </div>
+        <h2>
+          Apache 2
+        </h2>
+        <div
+          className="six-col"
+        >
+          <EntityContentDescription
+            description="Description"
+          />
+        </div>
+        <div
+          className="twelve-col"
+        >
+          <div
+            className="deployment-expert-intro__section-title"
+          >
+            you will need:
+          </div>
+          <ul>
+            <li>
+              Your 
+              <a
+                href="https://jujucharms.com/docs/stable/credentials"
+                target="_blank"
+              >
+                cloud credentials
+              </a>
+              . 
+              <span
+                className="deployment-expert-intro__machine-count"
+              >
+                1
+              </span>
+               machine-instances will be created at your cloud provider
+            </li>
+            <li>
+              A valid credit credit card
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        className="four-col last-col"
+      >
+        <ExpertBlock
+          title="Juju expert partners"
+        >
+          <div
+            className="deployment-expert-intro__plan-details"
+          >
+            <h3>
+              From $8 per month
+            </h3>
+            <div
+              className="deployment-expert-intro__plan-description"
+            >
+              Default plan with essential support
+            </div>
+            <div
+              className="deployment-expert-intro__description"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "<h4 id=\\"supported-description\\">supported description</h4>
+",
+                }
+              }
+            />
+            <Link
+              changeState={[Function]}
+              classes={Array []}
+              clickState={
+                Object {
+                  "hash": "support-level",
+                }
+              }
+              generatePath={[Function]}
+            >
+              View other support options
+            </Link>
+          </div>
+        </ExpertBlock>
+        <ExpertContactCard
+          expert="spinach"
+          sendAnalytics={[Function]}
+          staticURL="/static/url"
+        />
+      </div>
+    </div>
+  </div>
+</DeploymentSection>
+`;
+
+exports[`DeploymentExpertIntro can render for without an entity 1`] = `
+<DeploymentSection
+  instance="deployment-expert-intro-section"
+>
+  <div
+    className="deployment-expert-intro__not-found"
+  >
+    This 
+    charm
+     could not be found. Visit the 
+    <span
+      className="link"
+      onClick={[Function]}
+      role="button"
+      tabIndex="0"
+    >
+      store
+    </span>
+      to find more charms and bundles.
+  </div>
+</DeploymentSection>
+`;
+
+exports[`DeploymentExpertIntro can render without a description 1`] = `
+<DeploymentSection
+  instance="deployment-expert-intro-section"
+>
+  <div
+    className="deployment-expert-intro"
+  >
+    <div
+      className="twelve-col"
+    >
+      <div
+        className="eight-col"
+      >
+        <div
+          className="deployment-expert-intro__section-title"
+        >
+          You are about to deploy:
+        </div>
+        <h2>
+          Apache 2
+        </h2>
+        <div
+          className="six-col"
+        >
+          <EntityContentDescription
+            description="Description"
+          />
+        </div>
+        <div
+          className="twelve-col"
+        >
+          <div
+            className="deployment-expert-intro__section-title"
+          >
+            you will need:
+          </div>
+          <ul>
+            <li>
+              Your 
+              <a
+                href="https://jujucharms.com/docs/stable/credentials"
+                target="_blank"
+              >
+                cloud credentials
+              </a>
+              . 
+              <span
+                className="deployment-expert-intro__machine-count"
+              >
+                1
+              </span>
+               machine-instances will be created at your cloud provider
+            </li>
+            <li>
+              A valid credit credit card
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        className="four-col last-col"
+      >
+        <ExpertBlock
+          title="Juju expert partners"
+        >
+          <div
+            className="deployment-expert-intro__plan-details"
+          >
+            <h3>
+              From $8 per month
+            </h3>
+            <div
+              className="deployment-expert-intro__plan-description"
+            >
+              Default plan with essential support
+            </div>
+            <div
+              className="deployment-expert-intro__description"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The author has not provided a description",
+                }
+              }
+            />
+            <Link
+              changeState={[Function]}
+              classes={Array []}
+              clickState={
+                Object {
+                  "hash": "support-level",
+                }
+              }
+              generatePath={[Function]}
+            >
+              View other support options
+            </Link>
+          </div>
+        </ExpertBlock>
+        <ExpertContactCard
+          expert="spinach"
+          sendAnalytics={[Function]}
+          staticURL="/static/url"
+        />
+      </div>
+    </div>
+  </div>
+</DeploymentSection>
+`;

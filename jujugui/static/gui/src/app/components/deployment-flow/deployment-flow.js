@@ -381,8 +381,7 @@ class DeploymentFlow extends React.Component {
 
   /**
     Check whether this should be an expert flow.
-
-    @method _isExpertFlow
+    returns {Boolean} Whether this should be an expert flow.
   */
   _isExpertFlow() {
     return this.state.ddEntity && this.state.ddEntity.get('supported') &&

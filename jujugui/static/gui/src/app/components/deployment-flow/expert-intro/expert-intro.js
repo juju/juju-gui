@@ -66,7 +66,7 @@ class DeploymentExpertIntro extends React.Component {
       const machineNumber = this.isBundle ? entity.machineCount : 1;
       const price = `From $${entity.price} per month`;
       const supportedDescription = entity.supportedDescription ?
-        marked(entity.supportedDescription) : null;
+        marked(entity.supportedDescription) : 'The author has not provided a description';
       content = (
         <div className="deployment-expert-intro">
           <div className="twelve-col">
