@@ -464,6 +464,7 @@ describe('DeploymentFlow', function() {
     const entityId = 'cs:bundle/kubernetes-core-8';
     const entityGet = sinon.stub();
     entityGet.withArgs('terms').returns([]);
+    entityGet.withArgs('plans').returns([]);
     entityGet.withArgs('supported').returns(true);
     entityGet.withArgs('price').returns(8);
     const entityModel = {
@@ -499,6 +500,35 @@ describe('DeploymentFlow', function() {
     assert.equal(wrapper.find('DeploymentPayment').length, 1);
     assert.equal(wrapper.find('DeploymentAgreements').length, 1);
     assert.equal(wrapper.find('.deployment-flow__deploy-action').length, 1);
+  });
+
+  it('does not render the expert flow if there are no plans', () => {
+    const addNotification = sinon.stub();
+    const changeState = sinon.stub();
+    const entityId = 'cs:bundle/kubernetes-core-8';
+    const entityGet = sinon.stub();
+    entityGet.withArgs('terms').returns([]);
+    entityGet.withArgs('supported').returns(true);
+    entityGet.withArgs('price').returns(8);
+    const entityModel = {
+      id: entityId,
+      get: entityGet,
+      toEntity: sinon.stub().returns({
+        displayName: 'Kubernetes Core'
+      })
+    };
+    window.models.Bundle.returns(entityModel);
+    const entityData = [entityModel];
+    const wrapper = createDeploymentFlow({
+      addNotification: addNotification,
+      changeState: changeState,
+      ddData: {id: entityId},
+      modelCommitted: false,
+      showPay: true
+    });
+    charmstore.getEntity.args[0][1](null, entityData);
+    wrapper.update();
+    assert.equal(wrapper.find('DeploymentExpertIntro').length, 0);
   });
 
   it('can display the cloud section as complete', function() {
