@@ -69,7 +69,11 @@ class Maraca {
           if (!storeCollection[entityKey]) {
             storeCollection[entityKey] = {};
           }
-          storeCollection[entityKey] = deepmerge(storeCollection[entityKey], entity);
+          storeCollection[entityKey] = deepmerge(storeCollection[entityKey], entity, {
+            // Replace entity properties that are arrays with the new array from
+            // the delta instead of merging them.
+            arrayMerge: (destinationArray, sourceArray, options) => sourceArray
+          });
         } else {
           delete storeCollection[entityKey];
         }
