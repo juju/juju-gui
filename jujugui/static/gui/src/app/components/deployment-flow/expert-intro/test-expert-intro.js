@@ -4,12 +4,6 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const DeploymentSection = require('../section/section');
-const ExpertBlock = require('../../expert-block/expert-block');
-const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
-const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
-const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
-const Link = require('../../link/link');
 const DeploymentExpertIntro = require('./expert-intro');
 
 describe('DeploymentExpertIntro', () => {
