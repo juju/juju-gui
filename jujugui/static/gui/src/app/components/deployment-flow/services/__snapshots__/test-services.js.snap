@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentServices can render 1`] = `
+<div>
+  <BudgetTable
+    acl={
+      Object {
+        "isReadOnly": [Function],
+      }
+    }
+    addNotification={[Function]}
+    allocationEditable={true}
+    charmsGetById={[Function]}
+    extraInfo={
+      Object {
+        "elasticsearch": <ul
+          className="deployment-services__changes"
+        >
+          <li>
+            <DeploymentChangeItem
+              change={
+                Object {
+                  "description": "Configuration values will be changed for elasticsearch.",
+                  "icon": "changes-config-changed",
+                  "id": "setConfig-169",
+                  "time": "1:28 pm",
+                }
+              }
+              showTime={false}
+            />
+          </li>
+        </ul>,
+        "kibana": <ul
+          className="deployment-services__changes"
+        >
+          <li>
+            <DeploymentChangeItem
+              change={
+                Object {
+                  "description": " kibana will be added to the model.",
+                  "icon": "https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg",
+                  "id": "service-131",
+                  "time": "1:28 pm",
+                }
+              }
+              showTime={false}
+            />
+          </li>
+          <li>
+            <DeploymentChangeItem
+              change={
+                Object {
+                  "description": " 1 kibana unit will be added.",
+                  "icon": "changes-units-added",
+                  "id": "addUnits-655",
+                  "time": "1:28 pm",
+                }
+              }
+              showTime={false}
+            />
+          </li>
+        </ul>,
+      }
+    }
+    listPlansForCharm={[Function]}
+    parseTermId={[Function]}
+    plansEditable={true}
+    services={
+      Array [
+        undefined,
+        undefined,
+      ]
+    }
+    showTerms={[Function]}
+    withPlans={true}
+  />
+  <div
+    className="deployment-services__spend prepend-seven"
+  >
+    Maximum monthly spend: 
+    <span
+      className="deployment-services__max"
+    >
+      $100
+    </span>
+  </div>
+</div>
+`;
+
+exports[`DeploymentServices can render with machines and no services 1`] = `
+<div>
+  <div
+    className="v1"
+  >
+    <BasicTable
+      headerClasses={Array []}
+      headers={
+        Array [
+          Object {
+            "content": "Machines",
+          },
+        ]
+      }
+      rowClasses={Array []}
+      rows={
+        Array [
+          Object {
+            "columns": Array [
+              Object {
+                "content": <DeploymentChangeItem
+                  change={
+                    Object {
+                      "id": "machine0",
+                    }
+                  }
+                  showTime={false}
+                />,
+              },
+            ],
+            "key": "machine0",
+          },
+          Object {
+            "columns": Array [
+              Object {
+                "content": <DeploymentChangeItem
+                  change={
+                    Object {
+                      "id": "machine1",
+                    }
+                  }
+                  showTime={false}
+                />,
+              },
+            ],
+            "key": "machine1",
+          },
+        ]
+      }
+    />
+  </div>
+</div>
+`;

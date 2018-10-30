@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentPlanTable can render 1`] = `
+<div
+  className="deployment-plan-table v1"
+>
+  <BasicTable
+    headerClasses={
+      Array [
+        "deployment-plan-table__header-row",
+      ]
+    }
+    headerColumnClasses={
+      Array [
+        "deployment-plan-table__header-column",
+      ]
+    }
+    headers={
+      Array [
+        Object {
+          "content": "Applications",
+        },
+        Object {
+          "content": "Plan",
+        },
+        Object {
+          "content": "Metered",
+        },
+        Object {
+          "classes": Array [
+            "u-align--right",
+          ],
+          "content": "Price",
+        },
+      ]
+    }
+    rowClasses={
+      Array [
+        "deployment-plan-table__row",
+      ]
+    }
+    rowColumnClasses={
+      Array [
+        "deployment-plan-table__column",
+      ]
+    }
+    rows={
+      Array [
+        Object {
+          "columns": Array [
+            Object {
+              "content": <div>
+                <img
+                  alt="apache2"
+                  className="deployment-plan-table__charm-icon"
+                  src="apache2.svg"
+                />
+                <span
+                  className="deployment-plan-table__charm-name"
+                >
+                  apache2
+                </span>
+              </div>,
+            },
+            Object {
+              "content": <div>
+                <p
+                  className="deployment-plan-table__plan-description"
+                >
+                  The standard plan description
+                </p>
+              </div>,
+            },
+            Object {
+              "content": <span
+                className="deployment-plan-table__metered"
+              >
+                memory
+              </span>,
+            },
+            Object {
+              "classes": Array [
+                "u-align--right",
+              ],
+              "content": "$3.25 per GB of RAM per month",
+            },
+          ],
+          "key": "apache2-123",
+        },
+      ]
+    }
+    tableClasses={
+      Array [
+        "no-margin-bottom",
+      ]
+    }
+  />
+</div>
+`;
