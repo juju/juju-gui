@@ -5,9 +5,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
-const BudgetTable = require('../../budget-table/budget-table');
-const DeploymentChangeItem = require('../change-item/change-item');
 const DeploymentServices = require('./services');
 
 describe('DeploymentServices', function() {

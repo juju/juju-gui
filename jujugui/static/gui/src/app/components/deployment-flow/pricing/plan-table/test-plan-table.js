@@ -4,7 +4,6 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const BasicTable = require('../../../shared/basic-table/basic-table');
 const DeploymentPlanTable = require('./plan-table');
 
 describe('DeploymentPlanTable', () => {
