@@ -88,28 +88,21 @@ class DeploymentPlanTable extends React.Component {
               <span className="deployment-plan-table__charm-name">
                 {app.name}
               </span>
-            </div>),
-          columnSize: 3
+            </div>)
         }, {
           content: (
             <div>
               <p className="deployment-plan-table__plan-description">
                 {plan.description || '--'}
               </p>
-            </div>),
-          columnSize: 3
-        }, {
-          content: '',
-          columnSize: 1
+            </div>)
         }, {
           content: (
             <span className="deployment-plan-table__metered">
               {metered}
-            </span>),
-          columnSize: 2
+            </span>)
         }, {
           content: plan.price || '--',
-          columnSize: 3,
           classes: ['u-align--right']
         }],
         key: app.id
@@ -120,23 +113,19 @@ class DeploymentPlanTable extends React.Component {
 
   render() {
     return (
-      <div className="deployment-plan-table">
+      <div className="deployment-plan-table v1">
         <BasicTable
           headerClasses={['deployment-plan-table__header-row']}
           headerColumnClasses={['deployment-plan-table__header-column']}
           headers={[{
-            content: 'Applications',
-            columnSize: 3
+            content: 'Applications'
           }, {
-            content: 'Plan',
-            columnSize: 4
+            content: 'Plan'
           }, {
-            content: 'Metered',
-            columnSize: 2
+            content: 'Metered'
           }, {
             content: 'Price',
-            classes: ['u-align--right'],
-            columnSize: 3
+            classes: ['u-align--right']
           }]}
           rowClasses={['deployment-plan-table__row']}
           rowColumnClasses={['deployment-plan-table__column']}

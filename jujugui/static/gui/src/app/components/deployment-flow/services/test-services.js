@@ -5,9 +5,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
-const BudgetTable = require('../../budget-table/budget-table');
-const DeploymentChangeItem = require('../change-item/change-item');
 const DeploymentServices = require('./services');
 
 describe('DeploymentServices', function() {
@@ -43,66 +40,7 @@ describe('DeploymentServices', function() {
       getCurrentChangeSet: sinon.stub().returns({}),
       withPlans: true
     });
-    const expected = (
-      <div>
-        <BudgetTable
-          acl={acl}
-          addNotification={sinon.stub()}
-          allocationEditable={true}
-          charmsGetById={sinon.stub()}
-          extraInfo={{
-            elasticsearch:
-              (<ul className="deployment-services__changes">
-                <li>
-                  <DeploymentChangeItem
-                    change={{
-                      description: 'Configuration values will be changed for elasticsearch.', // eslint-disable-line max-len
-                      icon: 'changes-config-changed',
-                      id: 'setConfig-169',
-                      time: '1:28 pm'
-                    }}
-                    showTime={false} />
-                </li>
-              </ul>),
-            kibana:
-              <ul className="deployment-services__changes">
-                <li>
-                  <DeploymentChangeItem
-                    change={{
-                      description: ' kibana will be added to the model.',
-                      icon: 'https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg', // eslint-disable-line max-len
-                      id: 'service-131',
-                      time: '1:28 pm'
-                    }}
-                    showTime={false} />
-                </li>
-                <li>
-                  <DeploymentChangeItem
-                    change={{
-                      description: ' 1 kibana unit will be added.',
-                      icon: 'changes-units-added',
-                      id: 'addUnits-655',
-                      time: '1:28 pm'
-                    }}
-                    showTime={false} />
-                </li>
-              </ul>
-          }}
-          listPlansForCharm={sinon.stub()}
-          parseTermId={sinon.stub()}
-          plansEditable={true}
-          services={[{name: 'kibana'}, {name: 'elasticsearch'}]}
-          showTerms={sinon.stub()}
-          withPlans={true} />
-        <div className="deployment-services__spend prepend-seven">
-          Maximum monthly spend:&nbsp;
-          <span className="deployment-services__max">
-            $100
-          </span>
-        </div>
-        {null}
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render without plans', function() {
@@ -136,37 +74,6 @@ describe('DeploymentServices', function() {
         }
       })
     });
-    const expected = (
-      <div>
-        {null}
-        {null}
-        <BasicTable
-          headers={[{
-            content: 'Machines',
-            columnSize: 12
-          }]}
-          rows={[{
-            columns: [{
-              columnSize: 12,
-              content: (
-                <DeploymentChangeItem
-                  change={machineChanges[0]}
-                  key={machineChanges[0].id}
-                  showTime={false} />)
-            }],
-            key: machineChanges[0].id
-          }, {
-            columns: [{
-              columnSize: 12,
-              content: (
-                <DeploymentChangeItem
-                  change={machineChanges[1]}
-                  key={machineChanges[1].id}
-                  showTime={false} />)
-            }],
-            key: machineChanges[1].id
-          }]} />
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 });
