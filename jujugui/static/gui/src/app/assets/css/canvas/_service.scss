@@ -7,12 +7,12 @@
   stroke: none;
 
   .service-block {
-    transition: all .3s;
+    transition: all 0.3s;
   }
 
   .relation-button {
     transform: translate(95px, 30px);
-    transition: transform .3s;
+    transition: transform 0.3s;
 
     &__image {
       pointer-events: none;
@@ -67,14 +67,13 @@
     // scss-lint:disable PropertySpelling
     r: 90;
     // scss-lint:enable PropertySpelling
-    transition: all .3s;
+    transition: all 0.3s;
   }
 
   &.hover,
   &:focus,
   &:active,
   &:hover {
-
     .service-block__halo {
       opacity: 1;
       // scss-lint:disable PropertySpelling
@@ -148,7 +147,7 @@
       -webkit-animation: serviceBlockHaloSelected 1s alternate;
       animation: serviceBlockHaloSelected 1s alternate;
       fill: $service-uncommitted;
-      opacity: .3;
+      opacity: 0.3;
       // scss-lint:disable PropertySpelling
       r: 110;
       // scss-lint:enable PropertySpelling
@@ -191,12 +190,20 @@
     }
 
     @-webkit-keyframes serviceBlockHaloSelected {
-      0% { opacity: 0; }
-      100% { opacity: .3; }
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0.3;
+      }
     }
     @keyframes serviceBlockHaloSelected {
-      0% { opacity: 0; }
-      100% { opacity: .3; }
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0.3;
+      }
     }
   }
 }
@@ -210,21 +217,21 @@
 }
 
 .visibility-classes {
-  transition: opacity .4s ease;
+  transition: opacity 0.4s ease;
 
   &.show {
     opacity: 1;
   }
 
   &.fade {
-    opacity: .3;
+    opacity: 0.3;
   }
 
   &.hide {
     // Put visibility on a delay so it gets hidden after the opacity is
     // finished transitioning.
     opacity: 0;
-    transition: visibility 0s linear .4s, opacity .4s ease;
+    transition: visibility 0s linear 0.4s, opacity 0.4s ease;
     visibility: hidden;
   }
 }

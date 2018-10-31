@@ -23,14 +23,13 @@
   }
 
   .generic-input__multiline-field,
-  .generic-input__field[type=text],
-  .generic-input__field[type=password] {
+  .generic-input__field[type='text'],
+  .generic-input__field[type='password'] {
     margin-bottom: 0;
   }
 }
 
 .added-keys {
-
   &__key-value {
     text-overflow: ellipsis;
     overflow: hidden;

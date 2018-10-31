@@ -2,7 +2,6 @@ $pre-background: #fdf6f2;
 
 // Generic unclassed HTML elements
 @mixin juju-gui-generic {
-
   //XXX: Temporarily remove the focus state of interactive elements:
   // Luca says: "Can we remove it for the time being and we'll make sure we
   // explore a solution for tabbing post-ODS."
@@ -24,31 +23,31 @@ $pre-background: #fdf6f2;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  [type="text"],
-  [type="number"],
-  [type="password"] {
+  [type='text'],
+  [type='number'],
+  [type='password'] {
     @extend %input;
   }
 
-  [type=number]::-webkit-inner-spin-button,
-  [type=number]::-webkit-outer-spin-button {
+  [type='number']::-webkit-inner-spin-button,
+  [type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     appearance: none;
     margin: 0;
   }
 
-  [type=number] {
+  [type='number'] {
     -moz-appearance: textfield;
   }
 
-  [type="radio"],
-  [type="checkbox"] {
+  [type='radio'],
+  [type='checkbox'] {
     $size: 14px;
     width: $size;
     height: $size;
     background-color: $white;
     border: 1px solid $mid-grey;
-    box-shadow: inset 0 1px 1px .15px rgba(0, 0, 0, .15);
+    box-shadow: inset 0 1px 1px 0.15px rgba(0, 0, 0, 0.15);
     color: $white;
     text-align: center;
     overflow: hidden;
@@ -71,7 +70,7 @@ $pre-background: #fdf6f2;
     }
   }
 
-  [type="radio"] {
+  [type='radio'] {
     border-radius: 50%;
     vertical-align: middle;
 
@@ -89,7 +88,7 @@ $pre-background: #fdf6f2;
     }
   }
 
-  [type="checkbox"] {
+  [type='checkbox'] {
     border-radius: $border-radius;
 
     &:after {
@@ -164,5 +163,4 @@ $pre-background: #fdf6f2;
     // See <https://bugzilla.mozilla.org/show_bug.cgi?id=1098151>.
     min-height: $base;
   }
-
 }
