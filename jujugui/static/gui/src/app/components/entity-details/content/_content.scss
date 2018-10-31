@@ -245,9 +245,7 @@
 
   .btn__see--more,
   .btn__see--less {
-    // scss-lint:disable PlaceholderInExtend
     @extend .button--inline-neutral;
-    // scss-lint:enable PlaceholderInExtend
   }
 
   .list__controls {

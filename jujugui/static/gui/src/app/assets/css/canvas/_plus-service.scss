@@ -18,9 +18,7 @@
 
   &__halo {
     opacity: 0;
-    // scss-lint:disable PropertySpelling
     r: 60;
-    // scss-lint:enable PropertySpelling
     transition: all 0.3s;
   }
 
@@ -33,9 +31,7 @@
   &:hover {
     .plus-service__halo {
       opacity: 1;
-      // scss-lint:disable PropertySpelling
       r: 80;
-      // scss-lint:enable PropertySpelling
     }
 
     .plus-service__inner-circle {

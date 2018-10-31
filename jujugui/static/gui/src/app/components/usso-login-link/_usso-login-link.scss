@@ -5,14 +5,10 @@
     cursor: pointer;
     padding: 0;
     // Importants to overwrite vanilla values
-    // scss-lint:disable ImportantRule
     color: $warm-grey !important;
-    // scss-lint:enable ImportantRule
 
     &.button--positive {
-      // scss-lint:disable ImportantRule
       color: $white !important;
-      // scss-lint:enable ImportantRule
       padding: 12px 24px;
     }
   }
