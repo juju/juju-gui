@@ -1,16 +1,15 @@
 .entity-content__config {
-
   &-image {
     vertical-align: middle;
     border-radius: 50%;
-    margin: 0 .625rem;
+    margin: 0 0.625rem;
   }
 
   &-option {
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px dotted $light-mid-grey;
-    margin-left: .625rem;
+    margin-left: 0.625rem;
 
     &:first-of-type {
       margin-top: 0;
@@ -26,11 +25,11 @@
 
   &-description,
   &-default {
-    margin: .5rem 0 1rem 2rem;
+    margin: 0.5rem 0 1rem 2rem;
   }
 
   &-default {
     font-weight: normal;
-    font-family: 'Ubuntu Mono' ,'Consolas' ,'Monaco' ,'Lucida Console' ,'Courier New' ,Courier, monospace;
+    font-family: 'Ubuntu Mono', 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', Courier, monospace;
   }
 }

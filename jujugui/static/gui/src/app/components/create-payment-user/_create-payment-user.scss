@@ -1,6 +1,5 @@
 .create-payment-user {
   &__form {
-
     // Clearfix.
     :after {
       content: '';
@@ -46,8 +45,8 @@
     margin-bottom: 20px;
   }
 
-  input[type="radio"],
-  input[type="checkbox"] {
+  input[type='radio'],
+  input[type='checkbox'] {
     margin-right: 10px;
   }
 

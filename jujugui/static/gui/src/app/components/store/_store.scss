@@ -28,7 +28,7 @@
   .featured-entity {
     background-color: $white;
     padding: 20px;
-    transition: background-color .3s;
+    transition: background-color 0.3s;
 
     // Sets the columns to six-col on small screens
     @media only screen and (max-width: $breakpoint-medium - 1) {

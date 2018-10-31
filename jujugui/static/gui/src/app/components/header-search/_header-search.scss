@@ -1,5 +1,5 @@
 .header-search {
-  $transition-duration: .3s;
+  $transition-duration: 0.3s;
   background-color: transparent;
   color: $dark-warm-grey;
   padding: 10px 12px;
@@ -7,7 +7,7 @@
 
   &--active {
     background-color: $white;
-    box-shadow: 0 -4px 4.95px .05px rgba(51, 51, 51, .2);
+    box-shadow: 0 -4px 4.95px 0.05px rgba(51, 51, 51, 0.2);
     position: relative;
     z-index: index($z-indexed-elements, header-search--active);
 
@@ -20,7 +20,7 @@
     }
 
     .header-search__input {
-      box-shadow: inset 0 1px 2px rgba(0,0,0,.12);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
 
       &:focus,
       &:active,
@@ -87,7 +87,7 @@
     right: 12px;
     top: 11px;
     border-left: 1px solid #cdcdcd;
-    padding:  11px;
+    padding: 11px;
     line-height: 15px;
 
     &:focus,

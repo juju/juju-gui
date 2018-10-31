@@ -5,7 +5,7 @@
     @extend .link;
     @extend .tooltip;
     display: inline-block;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
     padding: 11px;
     cursor: pointer;
     // scss-lint:disable ImportantRule

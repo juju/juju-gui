@@ -36,7 +36,7 @@
   &__list {
     @extend %list-style;
 
-    &:not([data-username=""]) {
+    &:not([data-username='']) {
       .header-breadcrumb__list-item:before {
         content: '/';
         position: absolute;
@@ -50,7 +50,7 @@
 
   &__list-item {
     // Delay until after the loading message has faded out.
-    @include visible($delay: .5s);
+    @include visible($delay: 0.5s);
     float: left;
     margin-bottom: 0;
     padding-left: 20px;
@@ -78,7 +78,7 @@
       vertical-align: bottom;
       animation: ellipsis steps(4, end) 900ms infinite;
       content: '\2026';
-      width: 0px
+      width: 0px;
     }
   }
 

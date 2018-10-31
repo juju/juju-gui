@@ -1,4 +1,3 @@
-
 .help {
   $help-max-width: 850px;
 
@@ -12,8 +11,8 @@
 
   .lightbox__close {
     @media screen and (max-width: $help-max-width - 1) {
-      top: .5rem;
-      right: .5rem;
+      top: 0.5rem;
+      right: 0.5rem;
     }
   }
 
@@ -120,7 +119,8 @@
     border-radius: 0 0 $border-radius $border-radius;
     color: $white;
 
-    a, .link {
+    a,
+    .link {
       color: $white;
       cursor: pointer;
 
@@ -144,7 +144,7 @@
           bottom: 0;
         }
         padding-top: 1rem;
-        border-top: 1px solid rgba(255,255,255,.5);
+        border-top: 1px solid rgba(255, 255, 255, 0.5);
 
         &:nth-child(1) {
           order: 2;
@@ -169,7 +169,7 @@
   .juju-show {
     &__image {
       height: 90px;
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
 
       @media screen and (max-width: 400px) {
         height: auto;
@@ -201,7 +201,7 @@
     border: 1px solid $color-mid-light;
     padding: 1rem;
     border-radius: $border-radius;
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
 
     @media screen and (max-width: $breakpoint-medium) {
       display: block;

@@ -5,7 +5,7 @@
   right: 0;
   padding: 10px;
   white-space: nowrap;
-  transition: opacity .5s;
+  transition: opacity 0.5s;
   opacity: 0;
   cursor: default;
 
@@ -18,14 +18,14 @@
     content: '';
     display: block;
     position: absolute;
-    bottom: - (($size / 2) + 1px);
+    bottom: -(($size / 2) + 1px);
     right: 15px;
     width: $size;
     height: $size;
     background-color: $white;
     border-width: 0 2px 2px 0;
     border-style: solid;
-    border-color: rgba(0, 0, 0, .1);
+    border-color: rgba(0, 0, 0, 0.1);
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
   }

@@ -31,7 +31,7 @@
     background-color: $white;
     border-bottom: 1px solid $light-mid-grey;
     border-top-left-radius: $border-radius;
-    animation: slideIn .5s;
+    animation: slideIn 0.5s;
     // This ensures that scrolling works when the mouse is hovering over the
     // sticky header. The styles below target interactive elements within
     // the header.
@@ -210,7 +210,7 @@
   }
 
   &__right {
-    .copy-to-clipboard[type="text"] {
+    .copy-to-clipboard[type='text'] {
       box-shadow: none;
     }
 
@@ -254,7 +254,6 @@
     padding: 32px 10px;
   }
 }
-
 
 .entity-details.bundle .entity-header__title {
   margin-top: 0;

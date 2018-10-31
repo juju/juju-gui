@@ -31,7 +31,6 @@ $invoice-bp: 600px;
     position: relative;
 
     @media (min-width: $invoice-bp) {
-
       .invoice__meta {
         position: relative;
         top: 3rem;
@@ -76,7 +75,6 @@ $invoice-bp: 600px;
       margin-top: 3.5rem;
       padding-top: 2rem;
     }
-
   }
 
   &__address {
@@ -86,7 +84,7 @@ $invoice-bp: 600px;
     & > * {
       display: block;
       width: 100%;
-      margin-bottom: .25rem;
+      margin-bottom: 0.25rem;
     }
 
     @media (min-width: $invoice-bp) {
@@ -104,12 +102,11 @@ $invoice-bp: 600px;
 
       span {
         display: block;
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
         text-align: right;
       }
 
       @media (min-width: $invoice-bp) {
-
         &:first-child {
           flex: 7.5;
         }
@@ -130,19 +127,16 @@ $invoice-bp: 600px;
     }
 
     & + .invoice__meta .u-emphasis-value {
-
       @media (min-width: $invoice-bp) {
-        margin-top: -.75rem;
+        margin-top: -0.75rem;
       }
     }
 
     @media (max-width: $invoice-bp) {
-
       .invoice__label {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
       }
     }
-
 
     @media (min-width: $invoice-bp) {
       margin-top: 0;
@@ -152,7 +146,7 @@ $invoice-bp: 600px;
       left: 0;
 
       .invoice__label {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
       }
 
       & + .invoice__meta {
@@ -175,7 +169,7 @@ $invoice-bp: 600px;
     }
 
     &__model-name {
-      margin-bottom: .25rem;
+      margin-bottom: 0.25rem;
     }
   }
 
@@ -183,7 +177,7 @@ $invoice-bp: 600px;
     position: relative;
 
     @media (min-width: $invoice-bp) {
-      padding-top: .5rem;
+      padding-top: 0.5rem;
     }
   }
 
@@ -193,7 +187,7 @@ $invoice-bp: 600px;
 
   .u-block-children * {
     display: block;
-    margin-bottom: .25rem;
+    margin-bottom: 0.25rem;
   }
 
   .u-emphasis-value {
@@ -211,7 +205,6 @@ $invoice-bp: 600px;
   }
 }
 
-
 .invoice-details-lrg-screen {
   display: none;
 }
@@ -225,7 +218,6 @@ $invoice-bp: 600px;
 }
 
 @media (min-width: 768px) {
-
   .invoice-details-sm-screen {
     display: none;
   }

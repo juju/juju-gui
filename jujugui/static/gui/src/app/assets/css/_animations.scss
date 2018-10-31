@@ -16,14 +16,14 @@
 }
 
 %fade-in {
-  @include fade-in(.3s);
+  @include fade-in(0.3s);
 }
 
 %stagger-fade-in {
-  @include fade-in(.1s);
+  @include fade-in(0.1s);
 
   @for $i from 1 through 99 {
-    $fade-in-stagger-speed: .03s;
+    $fade-in-stagger-speed: 0.03s;
 
     &:nth-child(#{$i}) {
       animation-delay: $fade-in-stagger-speed * $i;

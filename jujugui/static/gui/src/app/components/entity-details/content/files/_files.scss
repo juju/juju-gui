@@ -7,12 +7,12 @@
 }
 
 .p-list-tree {
-  $sp-xx-small: 1rem * .25 !default;
-  $sp-x-small: 1rem * .5 !default;
-  $sp-medium: 1rem !default;;
+  $sp-xx-small: 1rem * 0.25 !default;
+  $sp-x-small: 1rem * 0.5 !default;
+  $sp-medium: 1rem !default;
 
   @mixin list-tree-icon {
-    $icon-size: .9375rem; // 15px
+    $icon-size: 0.9375rem; // 15px
     background: {
       position: center;
       repeat: no-repeat;
@@ -23,7 +23,7 @@
     left: -$sp-medium;
     pointer-events: none;
     position: absolute;
-    top: .4rem;
+    top: 0.4rem;
     width: $icon-size;
   }
 
@@ -34,7 +34,7 @@
 
   &__item {
     margin-top: $sp-xx-small;
-    padding-left: .8rem;
+    padding-left: 0.8rem;
     position: relative;
 
     &::before {
@@ -45,8 +45,8 @@
       left: -$sp-x-small;
       pointer-events: none;
       position: absolute;
-      top: .8rem;
-      width: .625rem;
+      top: 0.8rem;
+      width: 0.625rem;
     }
 
     &--group::after {
@@ -80,11 +80,11 @@
     display: none;
     margin-left: 0;
 
-    &[aria-hidden="false"] {
+    &[aria-hidden='false'] {
       display: block;
     }
 
-    &[aria-hidden="false"]::after {
+    &[aria-hidden='false']::after {
       @include list-tree-icon;
       background-image: $svg-list-tree-close;
       // At this point we need to push this icon above the --group icon.

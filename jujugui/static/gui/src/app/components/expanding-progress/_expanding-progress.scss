@@ -7,10 +7,9 @@ $expanding-progress-height: 10px;
   z-index: index($z-indexed-elements, expanding-progress);
   width: 20%;
   margin: 0 auto;
-  transition: width .7s;
+  transition: width 0.7s;
 
   &.expanding-progress--active {
     width: 100%;
   }
-
 }

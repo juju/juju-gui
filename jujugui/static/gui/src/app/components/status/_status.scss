@@ -9,7 +9,7 @@
   z-index: index($z-indexed-elements, machine-view);
 
   &__content {
-    @include fade-in(.1s);
+    @include fade-in(0.1s);
     overflow: auto;
     position: absolute;
     top: $navbar-height + 10px;
@@ -27,7 +27,7 @@
     height: $size;
     margin-left: 15px;
     border-radius: $size / 2;
-    transition: background-color .3s;
+    transition: background-color 0.3s;
     cursor: pointer;
 
     &--ok {

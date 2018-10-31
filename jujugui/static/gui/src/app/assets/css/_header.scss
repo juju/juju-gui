@@ -21,7 +21,7 @@
     box-sizing: border-box;
     color: $dark-warm-grey;
     display: block;
-    transition: color .3s;
+    transition: color 0.3s;
 
     &:hover,
     &:active,
@@ -70,7 +70,7 @@
     // A delay here means the provider logo will show up at the same time as
     // the breadcrumbs. The breadcrumbs have a delay because they first have
     // to hide the loading model message.
-    @include visible($delay: .5s);
+    @include visible($delay: 0.5s);
 
     &--disabled {
       @include hidden;
@@ -86,7 +86,7 @@
   margin: 10px 0 10px 10px;
   padding: 11px;
   border: 1px solid $color-mid-light;
-  transition: background-color .2s;
+  transition: background-color 0.2s;
   background-color: $canvas-background;
   // scss-lint:disable ImportantRule
   color: $warm-grey !important;
