@@ -44,6 +44,7 @@ $box-shadow-dark: 0 1px 4.85px 0.15px rgba(0, 0, 0, 1);
 // z-indexing
 // Lower in the list, higher in the z
 // sass-lint:disable indentation
+/* prettier-ignore */
 $z-indexed-elements: search-results-list-block__tags,
   environment-drop-message,
   environment-help,
