@@ -2,6 +2,7 @@ $sp-medium: 1rem;
 $sp-large: 2rem;
 
 // The mixin for basic notification styling
+// sass-lint:disable-block no-color-literals
 @mixin notification {
   background-color: $color-x-light;
   border: 0;
@@ -9,10 +10,7 @@ $sp-large: 2rem;
   border-radius: 0.125rem;
   border-style: solid;
   border-top-width: 3px;
-  // sass-lint:disable no-color-literals
-  // sass-lint doesn't recognise rgba func as valid color
   box-shadow: 0 1px 5px 1px rgba($color-x-dark, 0.2);
-  // sass-lint:enable no-color-literals
   font-size: $sp-medium;
   margin-bottom: $sp-large;
   overflow: hidden;
@@ -111,6 +109,7 @@ $sp-large: 2rem;
   }
 }
 
+// sass-lint:disable-block no-ids, id-name-format
 #login-notification {
   .p-notification__blocker {
     z-index: 500;

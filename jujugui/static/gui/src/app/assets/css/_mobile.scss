@@ -1,8 +1,7 @@
 @media only screen and (max-width: 600px) {
   // Hide canvas on small screens
-  // scss-lint:disable IdSelector
-  #viewport { // sass-lint:disable-line no-ids, id-name-format
-    // scss-lint:enable IdSelector
+  // sass-lint:disable-block no-ids, id-name-format
+  #viewport {
     display: none;
   }
 
@@ -294,9 +293,8 @@
   }
 
   // Import and export
-  // scss-lint:disable IdSelector
-  #model-actions-container { // sass-lint:disable-line no-ids, id-name-format
-    // scss-lint:enable IdSelector
+  // sass-lint:disable-block no-ids, id-name-format
+  #model-actions-container {
     bottom: 20px;
     left: 20px;
     position: fixed;
@@ -309,9 +307,8 @@
     }
   }
 
-  // scss-lint:disable IdSelector
-  #zoom-container { // sass-lint:disable-line no-ids, id-name-format
-    // scss-lint:enable IdSelector
+  // sass-lint:disable-block no-ids, id-name-format
+  #zoom-container {
     display: none;
   }
 

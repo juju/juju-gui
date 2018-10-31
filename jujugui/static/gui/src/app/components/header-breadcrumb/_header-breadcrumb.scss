@@ -1,9 +1,8 @@
-// scss-lint:disable IdSelector
-#header-breadcrumb { // sass-lint:disable-line no-ids, id-name-format
+// sass-lint:disable-block no-ids, id-name-format
+#header-breadcrumb {
   float: left;
   margin: 10px 0;
 }
-// scss-lint:enable IdSelector
 
 .header-breadcrumb {
   $breadcrumb-font-size: 23px;
