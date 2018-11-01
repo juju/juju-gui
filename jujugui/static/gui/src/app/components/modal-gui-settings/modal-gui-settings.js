@@ -8,7 +8,6 @@ const SvgIcon = require('../svg-icon/svg-icon');
 
 // Handle global GUI settings to be saved on a storage like the local storage.
 class ModalGUISettings extends React.Component {
-
   constructor(props) {
     super(props);
     const storage = this.props.localStorage;
@@ -73,11 +72,7 @@ class ModalGUISettings extends React.Component {
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span
-            className="close"
-            onClick={props.closeModal}
-            role="button"
-            tabIndex="0">
+          <span className="close" onClick={props.closeModal} role="button" tabIndex="0">
             <SvgIcon name="close_16" size="16" />
           </span>
         </div>
@@ -89,8 +84,9 @@ class ModalGUISettings extends React.Component {
                 id="disable-cookie"
                 name="disable-cookie"
                 onChange={handleChange}
-                type="checkbox" />&nbsp;
-              Disable the EU cookie warning.
+                type="checkbox"
+              />
+              &nbsp; Disable the EU cookie warning.
             </label>
           </p>
           <p>
@@ -100,8 +96,9 @@ class ModalGUISettings extends React.Component {
                 id="force-containers"
                 name="force-containers"
                 onChange={handleChange}
-                type="checkbox" />&nbsp;
-              Enable container control for this provider.
+                type="checkbox"
+              />
+              &nbsp; Enable container control for this provider.
             </label>
           </p>
           <p>
@@ -111,8 +108,9 @@ class ModalGUISettings extends React.Component {
                 id="disable-auto-place"
                 name="disable-auto-place"
                 onChange={handleChange}
-                type="checkbox" />&nbsp;
-              Default to not automatically place units on commit.
+                type="checkbox"
+              />
+              &nbsp; Default to not automatically place units on commit.
             </label>
           </p>
           <p>
@@ -122,14 +120,13 @@ class ModalGUISettings extends React.Component {
                 name="jujushell-url"
                 onChange={handleChange}
                 type="text"
-                value={state['jujushell-url']} />&nbsp;
-              DNS name for the Juju Shell.
+                value={state['jujushell-url']}
+              />
+              &nbsp; DNS name for the Juju Shell.
             </label>
           </p>
           <p>
-            <small>
-              NOTE: You will need to reload for changes to take effect.
-            </small>
+            <small>NOTE: You will need to reload for changes to take effect.</small>
           </p>
           <input
             className="button--positive"
@@ -137,12 +134,13 @@ class ModalGUISettings extends React.Component {
             name="save-settings"
             onClick={this._handleSave.bind(this)}
             type="button"
-            value="Save" />
+            value="Save"
+          />
         </div>
       </div>
     );
   }
-};
+}
 
 ModalGUISettings.propTypes = {
   closeModal: PropTypes.func.isRequired,

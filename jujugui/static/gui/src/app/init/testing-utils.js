@@ -5,15 +5,11 @@ const testUtils = {
   makeContainer: function(ctx, id, visibleContainer) {
     // You must pass a context and it must be a valid object.
     if (arguments.length < 1) {
-      throw (
-        'makeContainer requires a context in order to track containers' +
-          'to cleanup.');
+      throw 'makeContainer requires a context in order to track containers' + 'to cleanup.';
     }
 
     if (typeof ctx !== 'object') {
-      throw (
-        'makeContainer requires a context in order to track containers' +
-          'to cleanup.');
+      throw 'makeContainer requires a context in order to track containers' + 'to cleanup.';
     }
 
     var container = document.createElement('div');
@@ -50,12 +46,7 @@ const testUtils = {
       document.
   */
   makeAppContainer: () => {
-    const elements = [
-      'app',
-      'full-screen-mask',
-      'loading-message',
-      'main'
-    ];
+    const elements = ['app', 'full-screen-mask', 'loading-message', 'main'];
     const container = document.createElement('div');
     container.setAttribute('id', 'test-container');
     container.setAttribute('class', 'container');
@@ -89,7 +80,7 @@ const testUtils = {
     };
 
     this.msg = function(m) {
-      this.onmessage({'data': JSON.stringify(m)});
+      this.onmessage({data: JSON.stringify(m)});
     };
 
     this.last_message = function(back) {
@@ -106,7 +97,6 @@ const testUtils = {
     this.onclose = function() {};
     this.onmessage = function() {};
     this.onopen = function() {};
-
   },
 
   getter: function(attributes, default_) {

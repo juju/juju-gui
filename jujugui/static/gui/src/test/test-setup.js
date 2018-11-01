@@ -24,10 +24,10 @@ Mocha.Suite.prototype.afterEach = function(func) {
     if (!doneCalled) {
       done();
     }
-  }
+  };
   origAfterEach.call(this, newAfterEach);
 };
 
 var assert = chai.assert,
-    expect = chai.expect,
-    should = chai.should();
+  expect = chai.expect,
+  should = chai.should();

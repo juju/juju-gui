@@ -7,24 +7,31 @@ const enzyme = require('enzyme');
 const IconList = require('./icon-list');
 
 describe('IconList', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <IconList
-      applications={options.applications || [{
-        displayName: 'mysql',
-        iconPath: 'mysql.svg',
-        id: 'cs:mysql'
-      }, {
-        displayName: 'wordpress',
-        id: 'cs:wordpress'
-      }, {
-        displayName: 'django',
-        iconPath: 'django.svg',
-        id: 'cs:new-series/django'
-      }]}
-      changeState={options.changeState || sinon.stub()}
-      generatePath={sinon.stub().returns('/charm/path')} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <IconList
+        applications={
+          options.applications || [
+            {
+              displayName: 'mysql',
+              iconPath: 'mysql.svg',
+              id: 'cs:mysql'
+            },
+            {
+              displayName: 'wordpress',
+              id: 'cs:wordpress'
+            },
+            {
+              displayName: 'django',
+              iconPath: 'django.svg',
+              id: 'cs:new-series/django'
+            }
+          ]
+        }
+        changeState={options.changeState || sinon.stub()}
+        generatePath={sinon.stub().returns('/charm/path')}
+      />
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();
@@ -35,15 +42,11 @@ describe('IconList', function() {
           <a
             className="icon-list__link"
             href="/charm/path"
-            onClick={links.at(0).prop('onClick')}>
-            <img
-              alt='mysql'
-              className="icon-list__image"
-              src="mysql.svg" />
+            onClick={links.at(0).prop('onClick')}
+          >
+            <img alt="mysql" className="icon-list__image" src="mysql.svg" />
             <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                mysql
-              </span>
+              <span className="tooltip__inner tooltip__inner--down">mysql</span>
             </span>
           </a>
         </li>
@@ -51,15 +54,15 @@ describe('IconList', function() {
           <a
             className="icon-list__link"
             href="/charm/path"
-            onClick={links.at(1).prop('onClick')}>
+            onClick={links.at(1).prop('onClick')}
+          >
             <img
-              alt='wordpress'
+              alt="wordpress"
               className="icon-list__image"
-              src="static/gui/build/app/assets/images/non-sprites/charm_160.svg" />
+              src="static/gui/build/app/assets/images/non-sprites/charm_160.svg"
+            />
             <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                wordpress
-              </span>
+              <span className="tooltip__inner tooltip__inner--down">wordpress</span>
             </span>
           </a>
         </li>
@@ -67,19 +70,16 @@ describe('IconList', function() {
           <a
             className="icon-list__link"
             href="/charm/path"
-            onClick={links.at(0).prop('onClick')}>
-            <img
-              alt='django'
-              className="icon-list__image"
-              src="django.svg" />
+            onClick={links.at(0).prop('onClick')}
+          >
+            <img alt="django" className="icon-list__image" src="django.svg" />
             <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                django
-              </span>
+              <span className="tooltip__inner tooltip__inner--down">django</span>
             </span>
           </a>
         </li>
-      </ul>);
+      </ul>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -89,10 +89,8 @@ describe('IconList', function() {
     assert.equal(generatePath.callCount, 3);
     const args = generatePath.args;
     assert.deepEqual(args[0], [{profile: null, search: null, store: 'mysql'}]);
-    assert.deepEqual(
-      args[1], [{profile: null, search: null, store: 'wordpress'}]);
+    assert.deepEqual(args[1], [{profile: null, search: null, store: 'wordpress'}]);
     // It was not possible to get the store state for an unknown series.
     assert.deepEqual(args[2], [{profile: null, search: null, store: null}]);
   });
-
 });

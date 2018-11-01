@@ -21,7 +21,8 @@ describe('UnitList', () => {
         service={options.service || service}
         units={options.units || units}
         unitStatus={options.unitStatus}
-        whenChanged={options.whenChanged || sinon.stub()} />
+        whenChanged={options.whenChanged || sinon.stub()}
+      />
     );
     const instance = wrapper.instance();
     instance.refs = refs;
@@ -35,16 +36,20 @@ describe('UnitList', () => {
     };
     service.get.withArgs('subordinate').returns(false);
     service.get.withArgs('id').returns('mysql');
-    units = [{
-      displayName: 'mysql/0',
-      id: 'mysql/0'
-    }, {
-      displayName: 'mysql/1',
-      id: 'mysql/1'
-    }, {
-      displayName: 'mysql/2',
-      id: 'mysql/2'
-    }];
+    units = [
+      {
+        displayName: 'mysql/0',
+        id: 'mysql/0'
+      },
+      {
+        displayName: 'mysql/1',
+        id: 'mysql/1'
+      },
+      {
+        displayName: 'mysql/2',
+        id: 'mysql/2'
+      }
+    ];
     refs = {
       'select-all': {
         setState: sinon.stub(),
@@ -87,13 +92,15 @@ describe('UnitList', () => {
           <OverviewAction
             action={wrapper.find('OverviewAction').prop('action')}
             icon="plus_box_16"
-            title="Scale application" />
+            title="Scale application"
+          />
         </div>
         <div className="unit-list__message">
           No units for this application. Scale to add units.
         </div>
         {undefined}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -103,31 +110,37 @@ describe('UnitList', () => {
     const items = wrapper.find('CheckListItem');
     const expected = (
       <ul className="unit-list__units">
-        {[<CheckListItem
-          aside="2"
-          className="select-all"
-          disabled={false}
-          key="select-all"
-          label="Select all units"
-          ref="select-all"
-          whenChanged={items.at(0).prop('whenChanged')} />,
-        <CheckListItem
-          action={items.at(1).prop('action')}
-          disabled={false}
-          extraInfo={undefined}
-          id="mysql/0"
-          key={units[0].displayName}
-          label={units[0].displayName}
-          whenChanged={items.at(1).prop('whenChanged')} />,
-        <CheckListItem
-          action={items.at(2).prop('action')}
-          disabled={false}
-          extraInfo={undefined}
-          id="mysql/1"
-          key={units[1].displayName}
-          label={units[1].displayName}
-          whenChanged={items.at(2).prop('whenChanged')} />]}
-      </ul>);
+        {[
+          <CheckListItem
+            aside="2"
+            className="select-all"
+            disabled={false}
+            key="select-all"
+            label="Select all units"
+            ref="select-all"
+            whenChanged={items.at(0).prop('whenChanged')}
+          />,
+          <CheckListItem
+            action={items.at(1).prop('action')}
+            disabled={false}
+            extraInfo={undefined}
+            id="mysql/0"
+            key={units[0].displayName}
+            label={units[0].displayName}
+            whenChanged={items.at(1).prop('whenChanged')}
+          />,
+          <CheckListItem
+            action={items.at(2).prop('action')}
+            disabled={false}
+            extraInfo={undefined}
+            id="mysql/1"
+            key={units[1].displayName}
+            label={units[1].displayName}
+            whenChanged={items.at(2).prop('whenChanged')}
+          />
+        ]}
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.unit-list__units'), expected);
   });
 
@@ -141,37 +154,44 @@ describe('UnitList', () => {
     const items = wrapper.find('CheckListItem');
     const expected = (
       <ul className="unit-list__units">
-        {[<CheckListItem
-          aside="1"
-          className="select-all"
-          disabled={false}
-          key="select-all-0"
-          label="hook failed: install"
-          whenChanged={items.at(0).prop('whenChanged')} />,
-        <CheckListItem
-          action={items.at(1).prop('action')}
-          disabled={false}
-          extraInfo={undefined}
-          id="mysql/0"
-          key={units[0].displayName}
-          label={units[0].displayName}
-          whenChanged={items.at(1).prop('whenChanged')} />,
-        <CheckListItem
-          aside="1"
-          className="select-all"
-          disabled={false}
-          key="select-all-1"
-          label="hook failed: config-changed"
-          whenChanged={items.at(2).prop('whenChanged')} />,
-        <CheckListItem
-          action={items.at(3).prop('action')}
-          disabled={false}
-          extraInfo={undefined}
-          id="mysql/1"
-          key={units[1].displayName}
-          label={units[1].displayName}
-          whenChanged={items.at(3).prop('whenChanged')} />]}
-      </ul>);
+        {[
+          <CheckListItem
+            aside="1"
+            className="select-all"
+            disabled={false}
+            key="select-all-0"
+            label="hook failed: install"
+            whenChanged={items.at(0).prop('whenChanged')}
+          />,
+          <CheckListItem
+            action={items.at(1).prop('action')}
+            disabled={false}
+            extraInfo={undefined}
+            id="mysql/0"
+            key={units[0].displayName}
+            label={units[0].displayName}
+            whenChanged={items.at(1).prop('whenChanged')}
+          />,
+          <CheckListItem
+            aside="1"
+            className="select-all"
+            disabled={false}
+            key="select-all-1"
+            label="hook failed: config-changed"
+            whenChanged={items.at(2).prop('whenChanged')}
+          />,
+          <CheckListItem
+            action={items.at(3).prop('action')}
+            disabled={false}
+            extraInfo={undefined}
+            id="mysql/1"
+            key={units[1].displayName}
+            label={units[1].displayName}
+            whenChanged={items.at(3).prop('whenChanged')}
+          />
+        ]}
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.unit-list__units'), expected);
   });
 
@@ -201,26 +221,36 @@ describe('UnitList', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     // Activate the select all toggle.
-    wrapper.find('CheckListItem').at(0).props().whenChanged(true);
+    wrapper
+      .find('CheckListItem')
+      .at(0)
+      .props()
+      .whenChanged(true);
     // Now check that they are all checked.
     assert.equal(instance.refs['CheckListItem-mysql/0'].setState.callCount, 1);
-    assert.deepEqual(
-      instance.refs['CheckListItem-mysql/0'].setState.args[0][0], {checked: true});
+    assert.deepEqual(instance.refs['CheckListItem-mysql/0'].setState.args[0][0], {
+      checked: true
+    });
     assert.equal(instance.refs['CheckListItem-mysql/1'].setState.callCount, 1);
-    assert.deepEqual(
-      instance.refs['CheckListItem-mysql/1'].setState.args[0][0], {checked: true});
+    assert.deepEqual(instance.refs['CheckListItem-mysql/1'].setState.args[0][0], {
+      checked: true
+    });
   });
 
   it('navigates to the unit when a list item is clicked', function() {
     var changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('CheckListItem').at(1).props().action({
-      currentTarget: {
-        getAttribute: function() {
-          return 'mysql/5';
+    wrapper
+      .find('CheckListItem')
+      .at(1)
+      .props()
+      .action({
+        currentTarget: {
+          getAttribute: function() {
+            return 'mysql/5';
+          }
         }
-      }
-    });
+      });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -236,34 +266,40 @@ describe('UnitList', () => {
   it('only displays a remove button for a non-error list', function() {
     const wrapper = renderComponent();
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
-    var buttons = [{
-      title: 'Remove',
-      type: 'neutral',
-      action: buttonItems[0].action,
-      disabled: true
-    }];
+    var buttons = [
+      {
+        title: 'Remove',
+        type: 'neutral',
+        action: buttonItems[0].action,
+        disabled: true
+      }
+    ];
     assert.deepEqual(buttonItems, buttons);
   });
 
   it('displays Resolve and Retry buttons for an error list', function() {
     const wrapper = renderComponent({unitStatus: 'error'});
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
-    var buttons = [{
-      title: 'Resolve',
-      type: 'neutral',
-      action: buttonItems[0].action,
-      disabled: true
-    }, {
-      title: 'Retry',
-      type: 'neutral',
-      action: buttonItems[1].action,
-      disabled: true
-    }, {
-      title: 'Remove',
-      type: 'neutral',
-      action: buttonItems[2].action,
-      disabled: true
-    }];
+    var buttons = [
+      {
+        title: 'Resolve',
+        type: 'neutral',
+        action: buttonItems[0].action,
+        disabled: true
+      },
+      {
+        title: 'Retry',
+        type: 'neutral',
+        action: buttonItems[1].action,
+        disabled: true
+      },
+      {
+        title: 'Remove',
+        type: 'neutral',
+        action: buttonItems[2].action,
+        disabled: true
+      }
+    ];
     assert.deepEqual(buttonItems, buttons);
   });
 
@@ -277,7 +313,10 @@ describe('UnitList', () => {
       destroyUnits,
       envResolved
     });
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
     // Make sure we mark the unit as resolved so that we can remove it.
@@ -291,7 +330,10 @@ describe('UnitList', () => {
       destroyUnits,
       envResolved
     });
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     // Remove is still called to remove from ECS.
     assert.equal(destroyUnits.callCount, 1);
     assert.deepEqual(destroyUnits.args[0][0], [units[0].id, units[2].id]);
@@ -302,20 +344,28 @@ describe('UnitList', () => {
   it('deselects all units after removal', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(instance.refs['CheckListItem-mysql/0'].setState.callCount, 1);
-    assert.deepEqual(
-      instance.refs['CheckListItem-mysql/0'].setState.args[0][0], {checked: false});
+    assert.deepEqual(instance.refs['CheckListItem-mysql/0'].setState.args[0][0], {
+      checked: false
+    });
   });
 
   it('deselects select all after removal', function() {
     refs['select-all'].state.checked = true;
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(instance.refs['select-all'].setState.callCount, 1);
-    assert.deepEqual(
-      instance.refs['select-all'].setState.args[0][0], {checked: false});
+    assert.deepEqual(instance.refs['select-all'].setState.args[0][0], {
+      checked: false
+    });
   });
 
   it('can resolve the selected units', function() {
@@ -324,7 +374,10 @@ describe('UnitList', () => {
     units[1].agent_status = 'running';
     units[2].agent_status = 'running';
     const wrapper = renderComponent({envResolved});
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
     assert.deepEqual(envResolved.args[0][2], false);
@@ -335,7 +388,10 @@ describe('UnitList', () => {
   it('will not resolve pending units', function() {
     const envResolved = sinon.stub();
     const wrapper = renderComponent({envResolved});
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(envResolved.callCount, 0);
   });
 
@@ -348,7 +404,10 @@ describe('UnitList', () => {
       envResolved,
       unitStatus: 'error'
     });
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     assert.equal(envResolved.callCount, 2);
     assert.deepEqual(envResolved.args[0][0], units[0].id);
     assert.deepEqual(envResolved.args[0][2], true);
@@ -356,13 +415,16 @@ describe('UnitList', () => {
     assert.deepEqual(envResolved.args[1][2], true);
   });
 
-  it('won\'t retry pending units', function() {
+  it("won't retry pending units", function() {
     var envResolved = sinon.stub();
     const wrapper = renderComponent({
       envResolved,
       unitStatus: 'error'
     });
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     assert.equal(envResolved.callCount, 0);
   });
 

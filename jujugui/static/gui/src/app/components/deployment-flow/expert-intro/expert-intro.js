@@ -38,9 +38,9 @@ class DeploymentExpertIntro extends React.Component {
     if (this.isBundle) {
       return (
         <div className="deployment-expert-intro__diagram">
-          <EntityContentDiagram
-            diagramUrl={this.props.getDiagramURL(this.props.ddData.id)} />
-        </div>);
+          <EntityContentDiagram diagramUrl={this.props.getDiagramURL(this.props.ddData.id)} />
+        </div>
+      );
     }
   }
 
@@ -50,23 +50,25 @@ class DeploymentExpertIntro extends React.Component {
     if (!entityModel) {
       content = (
         <div className="deployment-expert-intro__not-found">
-          This {this.isBundle ? 'bundle' : 'charm'} could not be found.
-          Visit the&nbsp;
+          This {this.isBundle ? 'bundle' : 'charm'} could not be found. Visit the&nbsp;
           <span
             className="link"
             onClick={this._handleStoreClick.bind(this)}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             store
-          </span>&nbsp;
-          to find more charms and bundles.
-        </div>);
+          </span>
+          &nbsp; to find more charms and bundles.
+        </div>
+      );
     } else {
       const entity = entityModel.toEntity();
       const machineNumber = this.isBundle ? entity.machineCount : 1;
       const price = `From $${entity.price} per month`;
-      const supportedDescription = entity.supportedDescription ?
-        marked(entity.supportedDescription) : 'The author has not provided a description';
+      const supportedDescription = entity.supportedDescription
+        ? marked(entity.supportedDescription)
+        : 'The author has not provided a description';
       content = (
         <div className="deployment-expert-intro">
           <div className="twelve-col">
@@ -74,54 +76,45 @@ class DeploymentExpertIntro extends React.Component {
               <div className="deployment-expert-intro__section-title">
                 You are about to deploy:
               </div>
-              <h2>
-                {entity.displayName}
-              </h2>
+              <h2>{entity.displayName}</h2>
               <div className="six-col">
-                <EntityContentDescription
-                  description={entity.description} />
+                <EntityContentDescription description={entity.description} />
                 {this._generateImage()}
               </div>
               <div className="twelve-col">
-                <div className="deployment-expert-intro__section-title">
-                  you will need:
-                </div>
+                <div className="deployment-expert-intro__section-title">you will need:</div>
                 <ul>
                   <li>
                     Your&nbsp;
-                    <a
-                      href="https://jujucharms.com/docs/stable/credentials"
-                      target="_blank">
+                    <a href="https://jujucharms.com/docs/stable/credentials" target="_blank">
                       cloud credentials
-                    </a>.&nbsp;
+                    </a>
+                    .&nbsp;
                     <span className="deployment-expert-intro__machine-count">
                       {machineNumber}
                     </span>
                     &nbsp;machine-instances will be created at your cloud provider
                   </li>
-                  <li>
-                    A valid credit credit card
-                  </li>
+                  <li>A valid credit credit card</li>
                 </ul>
               </div>
             </div>
             <div className="four-col last-col">
-              <ExpertBlock
-                title="Juju expert partners">
+              <ExpertBlock title="Juju expert partners">
                 <div className="deployment-expert-intro__plan-details">
-                  <h3>
-                    {price}
-                  </h3>
+                  <h3>{price}</h3>
                   <div className="deployment-expert-intro__plan-description">
                     Default plan with essential support
                   </div>
                   <div
                     className="deployment-expert-intro__description"
-                    dangerouslySetInnerHTML={{__html: supportedDescription}}></div>
+                    dangerouslySetInnerHTML={{__html: supportedDescription}}
+                  />
                   <Link
                     changeState={this.props.changeState}
                     clickState={{hash: 'support-level'}}
-                    generatePath={this.props.generatePath}>
+                    generatePath={this.props.generatePath}
+                  >
                     View other support options
                   </Link>
                 </div>
@@ -129,19 +122,20 @@ class DeploymentExpertIntro extends React.Component {
               <ExpertContactCard
                 expert={entity.owner}
                 sendAnalytics={this.props.sendAnalytics}
-                staticURL={this.props.staticURL} />
+                staticURL={this.props.staticURL}
+              />
             </div>
           </div>
-        </div>);
+        </div>
+      );
     }
     return (
-      <DeploymentSection
-        instance="deployment-expert-intro-section">
+      <DeploymentSection instance="deployment-expert-intro-section">
         {content}
       </DeploymentSection>
     );
   }
-};
+}
 
 DeploymentExpertIntro.propTypes = {
   addNotification: PropTypes.func.isRequired,

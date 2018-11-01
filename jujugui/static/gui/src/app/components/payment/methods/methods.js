@@ -40,13 +40,12 @@ class PaymentMethods extends React.Component {
         <div className="payment-methods__no-methods">
           <p>You do not have a payment method.</p>
           <p>
-            <Button
-              action={this._toggleAdd.bind(this)}
-              type="inline-positive">
+            <Button action={this._toggleAdd.bind(this)} type="inline-positive">
               Add payment method
             </Button>
           </p>
-        </div>);
+        </div>
+      );
     }
     const payment = this.props.payment;
     const methods = user.paymentMethods.map(method => {
@@ -55,19 +54,21 @@ class PaymentMethods extends React.Component {
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           key={method.id}
-          payment={payment && shapeup.addReshape({
-            getCountries: payment.getCountries.bind(payment),
-            removePaymentMethod: payment.removePaymentMethod.bind(payment),
-            updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
-          })}
+          payment={
+            payment &&
+            shapeup.addReshape({
+              getCountries: payment.getCountries.bind(payment),
+              removePaymentMethod: payment.removePaymentMethod.bind(payment),
+              updatePaymentMethod: payment.updatePaymentMethod.bind(payment)
+            })
+          }
           paymentMethod={method}
           updateUser={this.props.updateUser}
-          username={this.props.username} />);
+          username={this.props.username}
+        />
+      );
     });
-    return (
-      <ul className="user-profile__list twelve-col">
-        {methods}
-      </ul>);
+    return <ul className="user-profile__list twelve-col">{methods}</ul>;
   }
 
   /**
@@ -80,15 +81,15 @@ class PaymentMethods extends React.Component {
     if (!this.state.cardAddressSame) {
       fields.push('cardAddress');
     }
-    const valid = initUtils.validateForm(fields, this.refs);;
+    const valid = initUtils.validateForm(fields, this.refs);
     if (!valid) {
       return;
     }
     const card = this.refs.cardForm.getValue();
     const paymentUser = this.props.paymentUser;
-    const address = this.state.cardAddressSame ?
-      paymentUser.addresses.length && paymentUser.addresses[0] :
-      this.refs.cardAddress.getValue();
+    const address = this.state.cardAddressSame
+      ? paymentUser.addresses.length && paymentUser.addresses[0]
+      : this.refs.cardAddress.getValue();
     const extra = {
       addressLine1: address.line1 || '',
       addressLine2: address.line2 || '',
@@ -122,7 +123,10 @@ class PaymentMethods extends React.Component {
   */
   _createPaymentMethod(token) {
     const xhr = this.props.payment.createPaymentMethod(
-      this.props.username, token, null, (error, method) => {
+      this.props.username,
+      token,
+      null,
+      (error, method) => {
         if (error) {
           const message = 'Could not create the payment method';
           this.props.addNotification({
@@ -136,7 +140,8 @@ class PaymentMethods extends React.Component {
         this._toggleAdd();
         // Reload the user to get the new payment method.
         this.props.updateUser();
-      });
+      }
+    );
     this.xhrs.push(xhr);
   }
 
@@ -175,7 +180,9 @@ class PaymentMethods extends React.Component {
         getCountries={this.props.payment.getCountries}
         ref="cardAddress"
         showName={false}
-        showPhone={false} />);
+        showPhone={false}
+      />
+    );
   }
 
   /**
@@ -188,17 +195,15 @@ class PaymentMethods extends React.Component {
       return null;
     }
     return (
-      <ExpandingRow
-        classes={{'twelve-col': true}}
-        clickable={false}
-        expanded={true}>
-        <div></div>
+      <ExpandingRow classes={{'twelve-col': true}} clickable={false} expanded={true}>
+        <div />
         <div className="payment-methods__form">
           <div className="payment-methods__form-fields">
             <CardForm
               acl={this.props.acl}
               createCardElement={this.props.stripe.createCardElement}
-              ref="cardForm" />
+              ref="cardForm"
+            />
             <label htmlFor="cardAddressSame">
               <input
                 checked={this.state.cardAddressSame}
@@ -207,40 +212,37 @@ class PaymentMethods extends React.Component {
                 name="cardAddressSame"
                 onChange={this._handleCardSameChange.bind(this)}
                 ref="cardAddressSame"
-                type="checkbox" />
+                type="checkbox"
+              />
               Credit or debit card address is the same as default address.
             </label>
             {this._generateCardAddressFields()}
           </div>
           <div className="twelve-col payment-methods__form-buttons">
-            <Button
-              action={this._toggleAdd.bind(this)}
-              type="inline-neutral">
+            <Button action={this._toggleAdd.bind(this)} type="inline-neutral">
               Cancel
             </Button>
-            <Button
-              action={this._createToken.bind(this)}
-              type="inline-positive">
+            <Button action={this._createToken.bind(this)} type="inline-positive">
               Add
             </Button>
           </div>
         </div>
-      </ExpandingRow>);
+      </ExpandingRow>
+    );
   }
 
   render() {
-    const content = this.state.showAdd ?
-      this._generateAddPaymentMethod() : this._generatePaymentMethods();
+    const content = this.state.showAdd
+      ? this._generateAddPaymentMethod()
+      : this._generatePaymentMethods();
     return (
       <div className="payment__section">
-        <h2 className="payment__title twelve-col">
-          Payment details
-        </h2>
+        <h2 className="payment__title twelve-col">Payment details</h2>
         {content}
       </div>
     );
   }
-};
+}
 
 PaymentMethods.propTypes = {
   acl: PropTypes.object.isRequired,

@@ -36,13 +36,19 @@ describe('bundle exporter', () => {
   });
 
   beforeEach(() => {
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     bundleExporter = new BundleExporter({db});
   });
 
   it('can export the model as a bundle', () => {
     // Mock a topology that can return positions.
-    db.services.add({id: 'mysql', charm: 'precise/mysql-1', series: 'xenial'});
+    db.services.add({
+      id: 'mysql',
+      charm: 'precise/mysql-1',
+      series: 'xenial'
+    });
     db.services.add({
       id: 'wordpress',
       charm: 'precise/wordpress-1',
@@ -58,21 +64,24 @@ describe('bundle exporter', () => {
       id: 'relation-0',
       endpoints: [
         ['mysql', {name: 'db', role: 'server'}],
-        ['wordpress', {name: 'app', role: 'client'}]],
-      'interface': 'db'
+        ['wordpress', {name: 'app', role: 'client'}]
+      ],
+      interface: 'db'
     });
 
     db.environment.set('defaultSeries', 'precise');
 
     // Add the charms so we can resolve them in the export.
-    db.charms.add([{id: 'precise/mysql-1'},
-      {id: 'precise/wordpress-1',
+    db.charms.add([
+      {id: 'precise/mysql-1'},
+      {
+        id: 'precise/wordpress-1',
         options: {
           debug: {
-            'default': 'no'
+            default: 'no'
           },
           username: {
-            'default': 'root'
+            default: 'root'
           }
         }
       }
@@ -107,8 +116,7 @@ describe('bundle exporter', () => {
     assert.equal(result.applications.wordpress.annotations['gui-x'], 100);
     assert.equal(result.applications.wordpress.annotations['gui-y'], 200);
     // Note that ignored wasn't exported.
-    assert.equal(
-      result.applications.wordpress.annotations.ignored, undefined);
+    assert.equal(result.applications.wordpress.annotations.ignored, undefined);
 
     assert.equal(relation[0], 'mysql:db');
     assert.equal(relation[1], 'wordpress:app');
@@ -120,7 +128,7 @@ describe('bundle exporter', () => {
     db.relations.add({
       id: 'wordpress:loadbalancer',
       endpoints: [['wordpress', {name: 'loadbalancer', role: 'peer'}]],
-      'interface': 'reversenginx'
+      interface: 'reversenginx'
     });
     const result = bundleExporter.exportBundle();
     // The service has been exported.
@@ -130,24 +138,23 @@ describe('bundle exporter', () => {
   });
 
   it('properly exports ambiguous relations', () => {
-    db.charms.add([
-      {id: 'hadoop-resourcemanager-14'},
-      {id: 'hadoop-namenode-13'}
-    ]);
+    db.charms.add([{id: 'hadoop-resourcemanager-14'}, {id: 'hadoop-namenode-13'}]);
     db.services.add({
-      id: 'resourcemanager', charm: 'hadoop-resourcemanager-14'});
+      id: 'resourcemanager',
+      charm: 'hadoop-resourcemanager-14'
+    });
     db.services.add({
-      id: 'namenode', charm: 'hadoop-namenode-13'});
+      id: 'namenode',
+      charm: 'hadoop-namenode-13'
+    });
     db.relations.add({
       id: 'relation-0',
-      endpoints: [
-        ['resourcemanager', {role: 'server'}],
-        ['namenode', {role: 'client'}]],
-      'interface': 'db'
+      endpoints: [['resourcemanager', {role: 'server'}], ['namenode', {role: 'client'}]],
+      interface: 'db'
     });
-    assert.deepEqual(bundleExporter.exportBundle().relations, [[
-      'resourcemanager', 'namenode'
-    ]]);
+    assert.deepEqual(bundleExporter.exportBundle().relations, [
+      ['resourcemanager', 'namenode']
+    ]);
   });
 
   it('exports subordinate services with no num_units', () => {
@@ -179,16 +186,18 @@ describe('bundle exporter', () => {
         five: false
       }
     });
-    db.charms.add([{
-      id: 'precise/wordpress-42',
-      options: {
-        one: {'default': '', type: 'string'},
-        two: {'default': 0, type: 'int'},
-        three: {'default': 0, type: 'float'},
-        four: {'default': undefined, type: 'boolean'},
-        five: {'default': true, type: 'boolean'}
+    db.charms.add([
+      {
+        id: 'precise/wordpress-42',
+        options: {
+          one: {default: '', type: 'string'},
+          two: {default: 0, type: 'int'},
+          three: {default: 0, type: 'float'},
+          four: {default: undefined, type: 'boolean'},
+          five: {default: true, type: 'boolean'}
+        }
       }
-    }]);
+    ]);
     const result = bundleExporter.exportBundle();
     assert.strictEqual(result.applications.wordpress.options.one, 'foo');
     assert.strictEqual(result.applications.wordpress.options.two, 2);
@@ -209,16 +218,18 @@ describe('bundle exporter', () => {
         five: true
       }
     });
-    db.charms.add([{
-      id: 'precise/wordpress-42',
-      options: {
-        one: {'default': 'foo', type: 'string'},
-        two: {'default': 0, type: 'int'},
-        three: {'default': 3.14, type: 'float'},
-        four: {'default': undefined, type: 'boolean'},
-        five: {'default': true, type: 'boolean'}
+    db.charms.add([
+      {
+        id: 'precise/wordpress-42',
+        options: {
+          one: {default: 'foo', type: 'string'},
+          two: {default: 0, type: 'int'},
+          three: {default: 3.14, type: 'float'},
+          four: {default: undefined, type: 'boolean'},
+          five: {default: true, type: 'boolean'}
+        }
       }
-    }]);
+    ]);
     const result = bundleExporter.exportBundle();
     assert.isUndefined(result.applications.wordpress.options.one);
     assert.strictEqual(result.applications.wordpress.options.two, 2);
@@ -234,23 +245,25 @@ describe('bundle exporter', () => {
       config: {one: '1', two: '2', three: '3', four: '4', five: true},
       annotations: {'gui-x': 100, 'gui-y': 200}
     });
-    db.charms.add([{id: 'precise/mysql-1'},
-      {id: 'precise/wordpress-1',
+    db.charms.add([
+      {id: 'precise/mysql-1'},
+      {
+        id: 'precise/wordpress-1',
         options: {
           one: {
-            'default': ''
+            default: ''
           },
           two: {
-            'default': null
+            default: null
           },
           three: {
-            'default': undefined
+            default: undefined
           },
           four: {
-            'default': '0'
+            default: '0'
           },
           five: {
-            'default': false
+            default: false
           }
         }
       }
@@ -275,17 +288,20 @@ describe('bundle exporter', () => {
 
   it('can determine simple machine placement for services', () => {
     var machine = {id: '0'};
-    var units = [{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: '0'
-    }];
+    var units = [
+      {
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      }
+    ];
     db.machines.add(machine);
     db.units.add(units, true);
     var placement = bundleExporter._mapServicesToMachines(db.machines);
@@ -298,42 +314,50 @@ describe('bundle exporter', () => {
 
   it('can determine complex machine placement for services', () => {
     var machines = [{id: '0'}, {id: '1'}, {id: '2'}];
-    var units = [{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/1',
-      agent_state: 'started',
-      machine: '1'
-    }, {
-      service: 'apache2',
-      id: 'apache2/0',
-      agent_state: 'started',
-      machine: '1'
-    }, {
-      service: 'wordpress',
-      id: 'wordpress/1',
-      agent_state: 'started',
-      machine: '2'
-    }, {
-      service: 'apache2',
-      id: 'apache2/1',
-      agent_state: 'started',
-      machine: '2'
-    }, {
-      service: 'mysql',
-      id: 'mysql/2',
-      agent_state: 'started',
-      machine: '2'
-    }];
+    var units = [
+      {
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/1',
+        agent_state: 'started',
+        machine: '1'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '1'
+      },
+      {
+        service: 'wordpress',
+        id: 'wordpress/1',
+        agent_state: 'started',
+        machine: '2'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/1',
+        agent_state: 'started',
+        machine: '2'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/2',
+        agent_state: 'started',
+        machine: '2'
+      }
+    ];
     db.machines.add(machines);
     db.units.add(units, true);
     var placement = bundleExporter._mapServicesToMachines(db.machines);
@@ -346,33 +370,41 @@ describe('bundle exporter', () => {
   });
 
   it('can determine container placement for units', () => {
-    var machines = [{
-      id: '0'
-    }, {
-      id: '0/lxc/0',
-      containerType: 'lxc',
-      parentId: '0'
-    }, {
-      id: '0/kvm/0',
-      containerType: 'kvm',
-      parentId: '0'
-    }];
-    var units = [{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'apache2',
-      id: 'apache2/0',
-      agent_state: 'started',
-      machine: '0/kvm/0'
-    }];
+    var machines = [
+      {
+        id: '0'
+      },
+      {
+        id: '0/lxc/0',
+        containerType: 'lxc',
+        parentId: '0'
+      },
+      {
+        id: '0/kvm/0',
+        containerType: 'kvm',
+        parentId: '0'
+      }
+    ];
+    var units = [
+      {
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '0'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '0/kvm/0'
+      }
+    ];
     db.machines.add(machines);
     db.units.add(units, true);
     var placement = bundleExporter._mapServicesToMachines(db.machines);
@@ -392,42 +424,50 @@ describe('bundle exporter', () => {
       {id: '4', hardware: {}, series: 'trusty'},
       {id: '5', hardware: {}, series: 'trusty'}
     ];
-    var units = [{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      agent_state: 'started',
-      machine: '3'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: '3'
-    }, {
-      service: 'mysql',
-      id: 'mysql/1',
-      agent_state: 'started',
-      machine: '4'
-    }, {
-      service: 'apache2',
-      id: 'apache2/0',
-      agent_state: 'started',
-      machine: '4'
-    }, {
-      service: 'wordpress',
-      id: 'wordpress/1',
-      agent_state: 'started',
-      machine: '5'
-    }, {
-      service: 'apache2',
-      id: 'apache2/1',
-      agent_state: 'started',
-      machine: '5'
-    }, {
-      service: 'mysql',
-      id: 'mysql/2',
-      agent_state: 'started',
-      machine: '5'
-    }];
+    var units = [
+      {
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: '3'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '3'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/1',
+        agent_state: 'started',
+        machine: '4'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '4'
+      },
+      {
+        service: 'wordpress',
+        id: 'wordpress/1',
+        agent_state: 'started',
+        machine: '5'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/1',
+        agent_state: 'started',
+        machine: '5'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/2',
+        agent_state: 'started',
+        machine: '5'
+      }
+    ];
     var services = [
       {id: 'wordpress', charm: 'cs:trusty/wordpress-27'},
       {id: 'apache2', charm: 'cs:trusty/apache2-27'},
@@ -453,23 +493,23 @@ describe('bundle exporter', () => {
 
   it('includes machines without series and hardware', () => {
     const machines = [{id: '4'}, {id: '5', constraints: 'foo=bar'}];
-    const units = [{
-      service: 'apache2',
-      id: 'apache2/1',
-      machine: '4'
-    }, {
-      service: 'mysql',
-      id: 'mysql/2',
-      machine: '5'
-    }];
+    const units = [
+      {
+        service: 'apache2',
+        id: 'apache2/1',
+        machine: '4'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/2',
+        machine: '5'
+      }
+    ];
     const services = [
       {id: 'apache2', charm: 'cs:trusty/apache2-27'},
       {id: 'mysql', charm: 'cs:trusty/mysql-27'}
     ];
-    const charms = [
-      {id: 'cs:trusty/apache2-27'},
-      {id: 'cs:trusty/mysql-27'}
-    ];
+    const charms = [{id: 'cs:trusty/apache2-27'}, {id: 'cs:trusty/mysql-27'}];
     db.machines.add(machines);
     db.services.add(services);
     db.charms.add(charms);
@@ -481,21 +521,25 @@ describe('bundle exporter', () => {
 
   it('includes uncommmitted units when determining placement', () => {
     var machine = {id: '0'};
-    var units = [{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      machine: '0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'apache2',
-      id: 'apache2/0',
-      agent_state: 'started',
-      machine: '0'
-    }];
+    var units = [
+      {
+        service: 'wordpress',
+        id: 'wordpress/0',
+        machine: '0'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: '0'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: '0'
+      }
+    ];
     db.machines.add(machine);
     db.units.add(units, true);
     var placement = bundleExporter._mapServicesToMachines(db.machines, true);
@@ -509,22 +553,26 @@ describe('bundle exporter', () => {
 
   it('includes uncommitted machines when determining placement', () => {
     var machine = {id: 'new0', commitStatus: 'uncommitted'};
-    var units = [{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      agent_state: 'started',
-      machine: 'new0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: 'new0'
-    }, {
-      service: 'apache2',
-      id: 'apache2/0',
-      agent_state: 'started',
-      machine: 'new0'
-    }];
+    var units = [
+      {
+        service: 'wordpress',
+        id: 'wordpress/0',
+        agent_state: 'started',
+        machine: 'new0'
+      },
+      {
+        service: 'mysql',
+        id: 'mysql/0',
+        agent_state: 'started',
+        machine: 'new0'
+      },
+      {
+        service: 'apache2',
+        id: 'apache2/0',
+        agent_state: 'started',
+        machine: 'new0'
+      }
+    ];
     db.machines.add(machine);
     db.units.add(units, true);
     var placement = bundleExporter._mapServicesToMachines(db.machines, true);
@@ -535,62 +583,70 @@ describe('bundle exporter', () => {
     });
   });
 
-  it('ignores machines with no units when determining placements',
-    () => {
-      var machine = {id: '0'};
-      db.machines.add(machine);
-      var placement = bundleExporter._mapServicesToMachines(db.machines);
-      assert.deepEqual(placement, {});
-    });
+  it('ignores machines with no units when determining placements', () => {
+    var machine = {id: '0'};
+    db.machines.add(machine);
+    var placement = bundleExporter._mapServicesToMachines(db.machines);
+    assert.deepEqual(placement, {});
+  });
 
   it('annotates services with placement info', () => {
     db.services.add({id: 'mysql', charm: 'precise/mysql-1'});
     db.services.add({id: 'wordpress', charm: 'precise/wordpress-1'});
     db.machines.add({id: '0', hardware: {}});
-    db.units.add([{
-      service: 'wordpress',
-      id: 'wordpress/0',
-      agent_state: 'started',
-      machine: '0'
-    }, {
-      service: 'mysql',
-      id: 'mysql/0',
-      agent_state: 'started',
-      machine: '0'
-    }], true);
-    db.charms.add([{
-      id: 'precise/mysql-1',
-      options: {
-        one: {
-          'default': ''
+    db.units.add(
+      [
+        {
+          service: 'wordpress',
+          id: 'wordpress/0',
+          agent_state: 'started',
+          machine: '0'
         },
-        two: {
-          'default': null
-        },
-        three: {
-          'default': undefined
+        {
+          service: 'mysql',
+          id: 'mysql/0',
+          agent_state: 'started',
+          machine: '0'
+        }
+      ],
+      true
+    );
+    db.charms.add([
+      {
+        id: 'precise/mysql-1',
+        options: {
+          one: {
+            default: ''
+          },
+          two: {
+            default: null
+          },
+          three: {
+            default: undefined
+          }
+        }
+      },
+      {
+        id: 'precise/wordpress-1',
+        options: {
+          one: {
+            default: ''
+          },
+          two: {
+            default: null
+          },
+          three: {
+            default: undefined
+          },
+          four: {
+            default: '0'
+          },
+          five: {
+            default: false
+          }
         }
       }
-    }, {
-      id: 'precise/wordpress-1',
-      options: {
-        one: {
-          'default': ''
-        },
-        two: {
-          'default': null
-        },
-        three: {
-          'default': undefined
-        },
-        four: {
-          'default': '0'
-        },
-        five: {
-          'default': false
-        }
-      }
-    }]);
+    ]);
     const result = bundleExporter.exportBundle();
     assert.deepEqual(result.applications.mysql.to, ['0']);
   });

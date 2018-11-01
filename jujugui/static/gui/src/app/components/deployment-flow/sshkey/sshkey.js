@@ -47,9 +47,11 @@ class DeploymentSSHKey extends React.Component {
   }
 
   _updateButtonState() {
-    const hasValue = !!((this.refs.sshKey && this.refs.sshKey.getValue()) ||
-      (this.refs.githubUsername && this.refs.githubUsername.getValue() ||
-      (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue())));
+    const hasValue = !!(
+      (this.refs.sshKey && this.refs.sshKey.getValue()) ||
+      ((this.refs.githubUsername && this.refs.githubUsername.getValue()) ||
+        (this.refs.launchpadUsername && this.refs.launchpadUsername.getValue()))
+    );
     if (this.state.buttonDisabled === hasValue) {
       this.setState({
         buttonDisabled: !hasValue
@@ -67,19 +69,23 @@ class DeploymentSSHKey extends React.Component {
       const splitKey = sshKey.split(' ');
       if (splitKey.length >= 2) {
         return {
-          'body': splitKey[1],
-          'text': sshKey,
-          'type': splitKey[0],
-          'id': 0 // To conform to the schema of the github api
+          body: splitKey[1],
+          text: sshKey,
+          type: splitKey[0],
+          id: 0 // To conform to the schema of the github api
         };
       }
     }
-    this.setState({error: (
-      <span>
-        Key is invalid. Please ensure you have copied the key correctly.
-        <br />The key should be in the format&nbsp;
-        <code>ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvvy/8OHTchL2XhNxE0Fu5...</code>
-      </span>)});
+    this.setState({
+      error: (
+        <span>
+          Key is invalid. Please ensure you have copied the key correctly.
+          <br />
+          The key should be in the format&nbsp;
+          <code>ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvvy/8OHTchL2XhNxE0Fu5...</code>
+        </span>
+      )
+    });
     return false;
   }
 
@@ -90,8 +96,7 @@ class DeploymentSSHKey extends React.Component {
     @return {Boolean}
   */
   _keyExists(key) {
-    return this.state.SSHkeys.
-      findIndex(knownKey => knownKey.body === key.body) !== -1;
+    return this.state.SSHkeys.findIndex(knownKey => knownKey.body === key.body) !== -1;
   }
 
   /**
@@ -114,12 +119,17 @@ class DeploymentSSHKey extends React.Component {
     }
 
     if (keys.length === 0) {
-      this.setState({error:
-        (<span>No keys found. <a
-          className="link"
-          href="https://github.com/settings/keys"
-          target="_blank">
-          Create an SSH Key</a>.</span>)});
+      this.setState({
+        error: (
+          <span>
+            No keys found.{' '}
+            <a className="link" href="https://github.com/settings/keys" target="_blank">
+              Create an SSH Key
+            </a>
+            .
+          </span>
+        )
+      });
       return;
     }
 
@@ -148,7 +158,7 @@ class DeploymentSSHKey extends React.Component {
     if (source === 'github') {
       const githubUsername = this.refs.githubUsername.getValue();
       githubSSHKeys(
-        new this.props.WebHandler,
+        new this.props.WebHandler(),
         githubUsername,
         this._addGithubKeysCallback.bind(this)
       );
@@ -252,10 +262,9 @@ class DeploymentSSHKey extends React.Component {
                 className="added-keys__key-remove right"
                 onClick={this._removeKey.bind(this, key.id)}
                 role="button"
-                title="Remove key">
-                <SvgIcon
-                  name="close_16"
-                  size="16" />
+                title="Remove key"
+              >
+                <SvgIcon name="close_16" size="16" />
               </span>
             </div>
           </li>
@@ -263,7 +272,7 @@ class DeploymentSSHKey extends React.Component {
       });
       sshKeysList = (
         <ul className="deployment-machines__list clearfix">
-          <li className="deployment-flow__row-header twelve-col" >
+          <li className="deployment-flow__row-header twelve-col">
             <div className="two-col">Type</div>
             <div className="ten-col last-col">Key</div>
           </li>
@@ -284,10 +293,9 @@ class DeploymentSSHKey extends React.Component {
                 className="added-keys__key-remove right"
                 onClick={this._removeLPUsername.bind(this, username)}
                 role="button"
-                title="Remove username">
-                <SvgIcon
-                  name="close_16"
-                  size="16" />
+                title="Remove username"
+              >
+                <SvgIcon name="close_16" size="16" />
               </span>
             </div>
           </li>
@@ -295,9 +303,7 @@ class DeploymentSSHKey extends React.Component {
       });
       lpUsernameList = (
         <ul className="deployment-machines__list clearfix">
-          <li className="deployment-flow__row-header twelve-col last-col">
-            Launchpad Users
-          </li>
+          <li className="deployment-flow__row-header twelve-col last-col">Launchpad Users</li>
           {usernameList}
         </ul>
       );
@@ -332,7 +338,8 @@ class DeploymentSSHKey extends React.Component {
             multiLine={false}
             onKeyUp={this._onKeyUp.bind(this)}
             ref="githubUsername"
-            required={false} />
+            required={false}
+          />
         </div>
       );
     } else if (this.state.addSource === 'manual') {
@@ -345,7 +352,8 @@ class DeploymentSSHKey extends React.Component {
             multiLine={true}
             onKeyUp={this._onKeyUp.bind(this)}
             ref="sshKey"
-            required={false} />
+            required={false}
+          />
         </div>
       );
     } else if (this.state.addSource === 'launchpad') {
@@ -360,7 +368,8 @@ class DeploymentSSHKey extends React.Component {
             ref="launchpadUsername"
             required={false}
             type="text"
-            value={this.props.username} />
+            value={this.props.username}
+          />
         </div>
       );
     }
@@ -379,10 +388,12 @@ class DeploymentSSHKey extends React.Component {
         <Button
           action={this._handleAddMoreKeys.bind(this)}
           disabled={disabled}
-          type="positive">
+          type="positive"
+        >
           {title}
         </Button>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -414,13 +425,16 @@ class DeploymentSSHKey extends React.Component {
   */
   _generateError() {
     if (this.state.error) {
-      const content = (<span><b>Error:</b> {this.state.error}</span>);
+      const content = (
+        <span>
+          <b>Error:</b> {this.state.error}
+        </span>
+      );
       return (
         <span className="deployment-ssh-key__notification">
-          <Notification
-            content={content}
-            type="negative" />
-        </span>);
+          <Notification content={content} type="negative" />
+        </span>
+      );
     }
     return false;
   }
@@ -434,8 +448,7 @@ class DeploymentSSHKey extends React.Component {
 
     let message = (
       <p className="deployment-ssh-key__description">
-        Keys will allow you SSH access to the machines provisioned by Juju
-        for this model.
+        Keys will allow you SSH access to the machines provisioned by Juju for this model.
       </p>
     );
     if (isAzure) {
@@ -445,7 +458,6 @@ class DeploymentSSHKey extends React.Component {
         </p>
       );
     }
-
 
     return (
       <div className="deployment-ssh-key">
@@ -459,7 +471,8 @@ class DeploymentSSHKey extends React.Component {
               label="Source"
               onChange={this._handleSourceChange.bind(this)}
               options={this._generateSourceOptions()}
-              ref="sshSource" />
+              ref="sshSource"
+            />
           </div>
           {this._generateAddKey()}
           {this._generateAddKeyButton()}
@@ -467,7 +480,7 @@ class DeploymentSSHKey extends React.Component {
       </div>
     );
   }
-};
+}
 
 DeploymentSSHKey.propTypes = {
   WebHandler: PropTypes.func.isRequired,

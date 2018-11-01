@@ -7,7 +7,6 @@ const shapeup = require('shapeup');
 
 const Button = require('../../shared/button/button');
 
-
 class ProfileCharmstoreLogin extends React.Component {
   /**
     Calls the bakery to get a charm store macaroon.
@@ -45,37 +44,36 @@ class ProfileCharmstoreLogin extends React.Component {
     return (
       <div className="profile-charmstore-login">
         <div className="profile-charmstore-login__button">
-          <Button
-            action={this._interactiveLogin.bind(this)}
-            type="neutral">
+          <Button action={this._interactiveLogin.bind(this)} type="neutral">
             Login to the charm store
           </Button>
         </div>
-        <h4 className="profile__title">
-          No {this.props.type}
-        </h4>
+        <h4 className="profile__title">No {this.props.type}</h4>
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span
             className="link"
             onClick={this._interactiveLogin.bind(this)}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             login
-          </span>&nbsp;
-          to the&nbsp;
+          </span>
+          &nbsp; to the&nbsp;
           <span
             className="link"
             onClick={this._openStore.bind(this)}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             charm store
-          </span>&nbsp;
-          using an Ubuntu One identity (USSO) to view your charms and bundles.
+          </span>
+          &nbsp; using an Ubuntu One identity (USSO) to view your charms and bundles.
         </p>
-      </div>);
+      </div>
+    );
   }
-};
+}
 
 ProfileCharmstoreLogin.propTypes = {
   addNotification: PropTypes.func.isRequired,

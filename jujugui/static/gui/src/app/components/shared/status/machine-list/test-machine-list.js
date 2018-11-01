@@ -9,15 +9,19 @@ const StatusMachineList = require('./machine-list');
 describe('StatusMachineList', () => {
   let machines;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StatusMachineList
-      generateMachineOnClick={
-        options.generateMachineOnClick || sinon.stub().returns(sinon.stub())}
-      generateMachineURL={
-        options.generateMachineURL || sinon.stub().returns('http://example.com')}
-      machines={options.machines || machines}
-      statusFilter={options.statusFilter} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <StatusMachineList
+        generateMachineOnClick={
+          options.generateMachineOnClick || sinon.stub().returns(sinon.stub())
+        }
+        generateMachineURL={
+          options.generateMachineURL || sinon.stub().returns('http://example.com')
+        }
+        machines={options.machines || machines}
+        statusFilter={options.statusFilter}
+      />
+    );
 
   beforeEach(() => {
     machines = {
@@ -39,9 +43,7 @@ describe('StatusMachineList', () => {
         },
         life: 'alive',
         series: 'xenial',
-        supportedContainers: [
-          'lxd'
-        ],
+        supportedContainers: ['lxd'],
         supportedContainersKnown: true,
         hardwareCharacteristics: {
           arch: 'amd64',
@@ -51,14 +53,14 @@ describe('StatusMachineList', () => {
           'cpu-power': 350,
           'availability-zone': 'ap-southeast-2a'
         },
-        jobs: [
-          'JobHostUnits'
+        jobs: ['JobHostUnits'],
+        addresses: [
+          {
+            value: '13.210.238.155',
+            type: 'ipv4',
+            scope: 'public'
+          }
         ],
-        addresses: [{
-          value: '13.210.238.155',
-          type: 'ipv4',
-          scope: 'public'
-        }],
         hasVote: false,
         wantsVote: false
       }

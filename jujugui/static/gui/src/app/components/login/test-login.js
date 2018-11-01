@@ -10,7 +10,6 @@ const Button = require('../shared/button/button');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 describe('LoginComponent', function() {
-
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
       <Login
@@ -20,7 +19,8 @@ describe('LoginComponent', function() {
         errorMessage={options.errorMessage}
         gisf={options.gisf === undefined ? false : options.gisf}
         loginToAPIs={options.loginToAPIs || sinon.stub()}
-        loginToController={options.loginToController || sinon.stub()} />,
+        loginToController={options.loginToController || sinon.stub()}
+      />,
       {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
@@ -52,47 +52,36 @@ describe('LoginComponent', function() {
           <SvgIcon height="30" name="juju-logo" width="75" />
         </div>
         <div className="login__full-form">
-          <div className="login__env-name">
-            Login
-          </div>
+          <div className="login__env-name">Login</div>
           {undefined}
           <form
             className="login__form"
             onSubmit={wrapper.find('form').prop('onSubmit')}
-            ref="form">
-            <label
-              className="login__label">
+            ref="form"
+          >
+            <label className="login__label">
               Username
-              <input
-                className="login__input"
-                name="username"
-                ref="username"
-                type="text" />
+              <input className="login__input" name="username" ref="username" type="text" />
             </label>
-            <label
-              className="login__label">
+            <label className="login__label">
               Password
-              <input
-                className="login__input"
-                name="password"
-                ref="password"
-                type="password" />
+              <input className="login__input" name="password" ref="password" type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
+            <Button submit={true} type="positive">
               Login
             </Button>
             <USSOLoginLink
               addNotification={sinon.stub()}
               displayType="button"
               loginToController={sinon.stub()}
-              ref="USSOLoginLink" />
+              ref="USSOLoginLink"
+            />
           </form>
         </div>
         <div className="login__message">
           <p>
-            Find your username and password with<br />
+            Find your username and password with
+            <br />
             <code>juju show-controller --show-password</code>
           </p>
           <div className="login__message-link">
@@ -129,10 +118,13 @@ describe('LoginComponent', function() {
     instance.refs.password = {value: 'bar'};
     wrapper.find('form').simulate('submit');
     assert.equal(loginToAPIs.callCount, 1, 'loginToAPIs never called');
-    assert.deepEqual(loginToAPIs.args[0], [{
-      user: 'foo',
-      password: 'bar'
-    }, false]);
+    assert.deepEqual(loginToAPIs.args[0], [
+      {
+        user: 'foo',
+        password: 'bar'
+      },
+      false
+    ]);
   });
 
   it('automatically logs in for gisf via usso', function() {
@@ -145,7 +137,10 @@ describe('LoginComponent', function() {
     });
     const instance = wrapper.instance();
     assert.equal(
-      instance.refs.USSOLoginLink.handleLogin.callCount, 1, 'loginToController not called');
+      instance.refs.USSOLoginLink.handleLogin.callCount,
+      1,
+      'loginToController not called'
+    );
   });
 
   it('eventually fails auto login if controller does not connect', function() {
@@ -158,7 +153,10 @@ describe('LoginComponent', function() {
     });
     const instance = wrapper.instance();
     assert.equal(
-      instance.refs.USSOLoginLink.handleLogin.callCount, 0, 'loginToController not called');
+      instance.refs.USSOLoginLink.handleLogin.callCount,
+      0,
+      'loginToController not called'
+    );
   });
 
   it('can focus on the username field', function() {

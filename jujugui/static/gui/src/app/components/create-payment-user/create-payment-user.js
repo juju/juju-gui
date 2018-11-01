@@ -36,16 +36,9 @@ class CreatePaymentUser extends React.Component {
     @returns {Boolean} Whether the form is valid.
   */
   _validateForm() {
-    let fields = [
-      'emailAddress',
-      'userAddress',
-      'cardForm'
-    ];
+    let fields = ['emailAddress', 'userAddress', 'cardForm'];
     if (this.state.business) {
-      fields = fields.concat([
-        'VATNumber',
-        'businessName'
-      ]);
+      fields = fields.concat(['VATNumber', 'businessName']);
     }
     if (!this.state.billingAddressSame) {
       fields.push('billingAddress');
@@ -68,7 +61,8 @@ class CreatePaymentUser extends React.Component {
     }
     const refs = this.refs;
     const cardAddress = this.refs[
-      `${this.state.cardAddressSame ? 'user' : 'card'}Address`].getValue();
+      `${this.state.cardAddressSame ? 'user' : 'card'}Address`
+    ].getValue();
     const card = refs.cardForm.getValue();
     const extra = {
       name: card.name,
@@ -116,9 +110,9 @@ class CreatePaymentUser extends React.Component {
       name: address.name,
       email: refs.emailAddress.getValue(),
       addresses: [address],
-      vat: business && refs.VATNumber.getValue() || null,
+      vat: (business && refs.VATNumber.getValue()) || null,
       business: business,
-      businessName: business && refs.businessName.getValue() || null,
+      businessName: (business && refs.businessName.getValue()) || null,
       billingAddresses: [billingAddress],
       token: token,
       paymentMethodName: 'Default'
@@ -171,15 +165,15 @@ class CreatePaymentUser extends React.Component {
     }
     return (
       <div className="create-payment-user__card-address-form">
-        <h2 className="create-payment-user__title">
-          Card address
-        </h2>
+        <h2 className="create-payment-user__title">Card address</h2>
         <AddressForm
           addNotification={this.props.addNotification}
           disabled={this.props.acl.isReadOnly()}
           getCountries={this.props.payment.getCountries}
-          ref="cardAddress" />
-      </div>);
+          ref="cardAddress"
+        />
+      </div>
+    );
   }
 
   /**
@@ -193,15 +187,15 @@ class CreatePaymentUser extends React.Component {
     }
     return (
       <div className="create-payment-user__billing-address-form">
-        <h2 className="create-payment-user__title">
-          Billing address
-        </h2>
+        <h2 className="create-payment-user__title">Billing address</h2>
         <AddressForm
           addNotification={this.props.addNotification}
           disabled={this.props.acl.isReadOnly()}
           getCountries={this.props.payment.getCountries}
-          ref="billingAddress" />
-      </div>);
+          ref="billingAddress"
+        />
+      </div>
+    );
   }
 
   /**
@@ -219,8 +213,10 @@ class CreatePaymentUser extends React.Component {
           disabled={this.props.acl.isReadOnly()}
           label="VAT number (optional)"
           ref="VATNumber"
-          required={false} />
-      </div>);
+          required={false}
+        />
+      </div>
+    );
   }
 
   /**
@@ -238,10 +234,14 @@ class CreatePaymentUser extends React.Component {
         label="Business name"
         ref="businessName"
         required={true}
-        validate={[{
-          regex: /\S+/,
-          error: 'This field is required.'
-        }]} />);
+        validate={[
+          {
+            regex: /\S+/,
+            error: 'This field is required.'
+          }
+        ]}
+      />
+    );
   }
 
   /**
@@ -273,8 +273,9 @@ class CreatePaymentUser extends React.Component {
                     id="business"
                     name="formType"
                     onChange={this._setFormType.bind(this)}
-                    type="radio" />
-                    Business use
+                    type="radio"
+                  />
+                  Business use
                 </label>
               </li>
               <li className="create-payment-user__form-type-option">
@@ -284,34 +285,34 @@ class CreatePaymentUser extends React.Component {
                     id="personal"
                     name="formType"
                     onChange={this._setFormType.bind(this)}
-                    type="radio" />
+                    type="radio"
+                  />
                   Personal use
                 </label>
               </li>
             </ul>
             {this._generateVATField()}
-            <h2 className="create-payment-user__title">
-              Your contact details
-            </h2>
+            <h2 className="create-payment-user__title">Your contact details</h2>
             {this._generateBusinessNameField()}
             <GenericInput
               disabled={disabled}
               label="Email address"
               ref="emailAddress"
               required={true}
-              validate={[required]} />
+              validate={[required]}
+            />
             <AddressForm
               addNotification={this.props.addNotification}
               disabled={disabled}
               getCountries={this.props.payment.getCountries}
-              ref="userAddress" />
-            <h2 className="create-payment-user__title">
-              Payment information
-            </h2>
+              ref="userAddress"
+            />
+            <h2 className="create-payment-user__title">Payment information</h2>
             <CardForm
               acl={this.props.acl}
               createCardElement={this.props.stripe.createCardElement}
-              ref="cardForm" />
+              ref="cardForm"
+            />
             <label htmlFor="cardAddressSame">
               <input
                 checked={this.state.cardAddressSame}
@@ -319,7 +320,8 @@ class CreatePaymentUser extends React.Component {
                 name="cardAddressSame"
                 onChange={this._handleCardSameChange.bind(this)}
                 ref="cardAddressSame"
-                type="checkbox" />
+                type="checkbox"
+              />
               Credit or debit card address is the same as above
             </label>
             <label htmlFor="billingAddressSame">
@@ -329,7 +331,8 @@ class CreatePaymentUser extends React.Component {
                 name="billingAddressSame"
                 onChange={this._handleBillingSameChange.bind(this)}
                 ref="billingAddressSame"
-                type="checkbox" />
+                type="checkbox"
+              />
               Billing address is the same as above
             </label>
             {this._generateCardAddressFields()}
@@ -338,7 +341,8 @@ class CreatePaymentUser extends React.Component {
               <Button
                 action={this._handleAddUser.bind(this)}
                 disabled={disabled}
-                type="inline-positive">
+                type="inline-positive"
+              >
                 Add payment details
               </Button>
             </div>
@@ -347,7 +351,7 @@ class CreatePaymentUser extends React.Component {
       </div>
     );
   }
-};
+}
 
 CreatePaymentUser.propTypes = {
   acl: PropTypes.object.isRequired,

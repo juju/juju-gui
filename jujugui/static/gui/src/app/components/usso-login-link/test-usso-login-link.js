@@ -8,17 +8,18 @@ const USSOLoginLink = require('./usso-login-link');
 const Button = require('../shared/button/button');
 
 describe('USSOLoginLink', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <USSOLoginLink
-      addNotification={options.addNotification || sinon.stub()}
-      displayType={options.displayType || 'text'}
-      gisf={options.gisf}
-      loginToController={options.loginToController || sinon.stub()}
-      sendPost={options.sendPost || sinon.stub()}>
-      {options.children}
-    </USSOLoginLink>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <USSOLoginLink
+        addNotification={options.addNotification || sinon.stub()}
+        displayType={options.displayType || 'text'}
+        gisf={options.gisf}
+        loginToController={options.loginToController || sinon.stub()}
+        sendPost={options.sendPost || sinon.stub()}
+      >
+        {options.children}
+      </USSOLoginLink>
+    );
 
   it('can render a text link', () => {
     const wrapper = renderComponent();
@@ -27,10 +28,12 @@ describe('USSOLoginLink', () => {
         <a
           className="usso-login__action"
           onClick={wrapper.find('.usso-login__action').prop('onClick')}
-          target="_blank">
-            Login
+          target="_blank"
+        >
+          Login
         </a>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -64,10 +67,12 @@ describe('USSOLoginLink', () => {
         <Button
           action={wrapper.find('Button').prop('action')}
           extraClasses="usso-login__action"
-          type="positive" >
+          type="positive"
+        >
           Sign up/Log in with USSO
         </Button>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -76,7 +81,13 @@ describe('USSOLoginLink', () => {
       children: 'Scooby Doo',
       displayType: 'button'
     });
-    assert.equal(wrapper.find('Button').children().text(), 'Scooby Doo');
+    assert.equal(
+      wrapper
+        .find('Button')
+        .children()
+        .text(),
+      'Scooby Doo'
+    );
   });
 
   it('can render a text link with custom content', () => {
@@ -90,7 +101,10 @@ describe('USSOLoginLink', () => {
       displayType: 'button',
       loginToController
     });
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(loginToController.callCount, 1);
   });
 });

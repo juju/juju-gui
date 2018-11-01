@@ -7,14 +7,11 @@ const enzyme = require('enzyme');
 const GenericInput = require('./generic-input');
 
 describe('GenericInput', function() {
-
   const renderComponent = (options = {}) => {
-    const value = options.value === undefined ?
-      'default' : options.value;
+    const value = options.value === undefined ? 'default' : options.value;
     const wrapper = enzyme.shallow(
       <GenericInput
-        autocomplete={
-          options.autocomplete === undefined ? false : options.autocomplete}
+        autocomplete={options.autocomplete === undefined ? false : options.autocomplete}
         disabled={options.disabled === undefined ? false : options.disabled}
         hasExternalError={options.hasExternalError}
         inlineErrorIcon={options.inlineErrorIcon}
@@ -27,11 +24,18 @@ describe('GenericInput', function() {
         placeholder={options.placeholder || 'us-central-1'}
         required={options.required === undefined ? true : options.required}
         type={options.type}
-        validate={options.validate === undefined ? [{
-          regex: /\S+/,
-          error: 'This field is required.'
-        }] : options.validate}
-        value={value} />
+        validate={
+          options.validate === undefined
+            ? [
+                {
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }
+              ]
+            : options.validate
+        }
+        value={value}
+      />
     );
     const instance = wrapper.instance();
     instance.refs = {
@@ -52,8 +56,10 @@ describe('GenericInput', function() {
         <label
           className={
             'generic-input__label generic-input__label--value-present ' +
-            'generic-input__label--placeholder-present'}
-          htmlFor="Region">
+            'generic-input__label--placeholder-present'
+          }
+          htmlFor="Region"
+        >
           Region
         </label>
         <input
@@ -70,7 +76,8 @@ describe('GenericInput', function() {
           placeholder="us-central-1"
           ref="field"
           required={true}
-          type="text" />
+          type="text"
+        />
         {undefined}
         {null}
       </div>
@@ -94,8 +101,8 @@ describe('GenericInput', function() {
         onChange={input.prop('onChange')}
         onFocus={input.prop('onFocus')}
         onKeyUp={input.prop('onKeyUp')}
-        ref="field">
-      </div>
+        ref="field"
+      />
     );
     assert.compareJSX(input, expected);
   });
@@ -144,12 +151,11 @@ describe('GenericInput', function() {
     wrapper.update();
     const expected = (
       <ul className="generic-input__errors">
-        {[<li
-          className="generic-input__error"
-          key="This field is required."
-          role="alert">
-          This field is required.
-        </li>]}
+        {[
+          <li className="generic-input__error" key="This field is required." role="alert">
+            This field is required.
+          </li>
+        ]}
       </ul>
     );
     assert.compareJSX(wrapper.find('.generic-input__errors'), expected);
@@ -157,19 +163,19 @@ describe('GenericInput', function() {
 
   it('can validate via a function', () => {
     const wrapper = renderComponent({
-      validate: [{
-        check: value => value === 'spinach',
-        error: 'That username is taken.'
-      }],
+      validate: [
+        {
+          check: value => value === 'spinach',
+          error: 'That username is taken.'
+        }
+      ],
       value: 'spinach'
     });
     const instance = wrapper.instance();
     instance.validate();
     wrapper.update();
     assert.equal(wrapper.find('.generic-input__errors').length, 1);
-    assert.equal(
-      wrapper.find('.generic-input__error').text(),
-      'That username is taken.');
+    assert.equal(wrapper.find('.generic-input__error').text(), 'That username is taken.');
   });
 
   it('can validate when there are no validations set', () => {
@@ -185,7 +191,10 @@ describe('GenericInput', function() {
 
   it('can validate the input when leaving', () => {
     const wrapper = renderComponent({value: ''});
-    wrapper.find('input').props().onBlur();
+    wrapper
+      .find('input')
+      .props()
+      .onBlur();
     wrapper.update();
     assert.equal(wrapper.find('.generic-input__errors').length, 1);
   });
@@ -197,7 +206,10 @@ describe('GenericInput', function() {
 
   it('adds a class to the wrapper element on error', () => {
     const wrapper = renderComponent({value: ''});
-    wrapper.find('input').props().onBlur();
+    wrapper
+      .find('input')
+      .props()
+      .onBlur();
     wrapper.update();
     assert.equal(wrapper.prop('className').includes('has-error'), true);
   });
@@ -207,7 +219,10 @@ describe('GenericInput', function() {
       inlineErrorIcon: true,
       value: ''
     });
-    wrapper.find('input').props().onBlur();
+    wrapper
+      .find('input')
+      .props()
+      .onBlur();
     wrapper.update();
     assert.equal(wrapper.find('SvgIcon').length, 1);
   });
@@ -224,7 +239,10 @@ describe('GenericInput', function() {
     const wrapper = renderComponent({
       onBlur: updateModelName
     });
-    wrapper.find('input').props().onBlur();
+    wrapper
+      .find('input')
+      .props()
+      .onBlur();
     assert.equal(updateModelName.callCount, 1);
   });
 
@@ -233,7 +251,10 @@ describe('GenericInput', function() {
     const wrapper = renderComponent({
       onKeyUp: updateModelName
     });
-    wrapper.find('input').props().onKeyUp();
+    wrapper
+      .find('input')
+      .props()
+      .onKeyUp();
     assert.equal(updateModelName.callCount, 1);
   });
 });

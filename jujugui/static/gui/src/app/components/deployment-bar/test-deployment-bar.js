@@ -11,18 +11,18 @@ const Button = require('../shared/button/button');
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentBar
-      acl={options.acl || acl}
-      changeState={options.changeState || sinon.stub()}
-      currentChangeSet={options.currentChangeSet || {}}
-      generateChangeDescription={options.generateChangeDescription || sinon.stub()}
-      hasEntities={
-        options.hasEntities === undefined ? true : options.hasEntities}
-      modelCommitted={
-        options.modelCommitted === undefined ? false : options.modelCommitted}
-      sendAnalytics={options.sendAnalytics || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentBar
+        acl={options.acl || acl}
+        changeState={options.changeState || sinon.stub()}
+        currentChangeSet={options.currentChangeSet || {}}
+        generateChangeDescription={options.generateChangeDescription || sinon.stub()}
+        hasEntities={options.hasEntities === undefined ? true : options.hasEntities}
+        modelCommitted={options.modelCommitted === undefined ? false : options.modelCommitted}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+      />
+    );
 
   beforeEach(function() {
     previousNotifications = DeploymentBar.prototype.previousNotifications;
@@ -39,17 +39,18 @@ describe('DeploymentBar', function() {
     const wrapper = renderComponent({currentChangeSet});
     var expected = (
       <div className="deployment-bar">
-        <DeploymentBarNotification
-          change={null} />
+        <DeploymentBarNotification change={null} />
         <div className="deployment-bar__deploy">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
-            type="inline-deployment">
+            type="inline-deployment"
+          >
             Deploy changes (2)
           </Button>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -75,8 +76,12 @@ describe('DeploymentBar', function() {
       modelCommitted: true
     });
     assert.equal(
-      wrapper.find('Button').children().text(),
-      'Commit changes (0)');
+      wrapper
+        .find('Button')
+        .children()
+        .text(),
+      'Commit changes (0)'
+    );
   });
 
   it('can display a notification', function() {
@@ -99,7 +104,6 @@ describe('DeploymentBar', function() {
     assert.deepEqual(notification.prop('change'), change);
     assert.equal(generateChangeDescription.args[0][0], 'add-services-change');
   });
-
 
   it('can display a new notification', function() {
     var change = {change: 'add-services-1'};
@@ -183,22 +187,22 @@ describe('DeploymentBar', function() {
       acl,
       currentChangeSet
     });
-    var expected = (
-      <div className="deployment-bar__read-only">
-        Read only
-      </div>);
+    var expected = <div className="deployment-bar__read-only">Read only</div>;
     assert.compareJSX(wrapper.find('.deployment-bar__read-only'), expected);
     assert.equal(wrapper.find('Button').length, 0);
   });
 
-  it('calls the deploy method when the deploy button is pressed', () =>{
+  it('calls the deploy method when the deploy button is pressed', () => {
     const sendAnalytics = sinon.stub();
     const changeState = sinon.stub();
     const wrapper = renderComponent({
       sendAnalytics,
       changeState
     });
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: {deploy: ''}});
     assert.equal(sendAnalytics.callCount, 1);

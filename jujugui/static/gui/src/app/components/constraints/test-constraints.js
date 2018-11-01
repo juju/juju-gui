@@ -9,24 +9,36 @@ const Constraints = require('./constraints');
 describe('Constraints', function() {
   const series = ['precise', 'trusty', 'xenial', 'win8', 'centos7'];
   const seriesOptions = [
-    <option key={'precise'} value={'precise'}>{'precise'}</option>,
-    <option key={'trusty'} value={'trusty'}>{'trusty'}</option>,
-    <option key={'xenial'} value={'xenial'}>{'xenial'}</option>,
-    <option key={'win8'} value={'win8'}>{'win8'}</option>,
-    <option key={'centos7'} value={'centos7'}>{'centos7'}</option>
+    <option key={'precise'} value={'precise'}>
+      {'precise'}
+    </option>,
+    <option key={'trusty'} value={'trusty'}>
+      {'trusty'}
+    </option>,
+    <option key={'xenial'} value={'xenial'}>
+      {'xenial'}
+    </option>,
+    <option key={'win8'} value={'win8'}>
+      {'win8'}
+    </option>,
+    <option key={'centos7'} value={'centos7'}>
+      {'centos7'}
+    </option>
   ];
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Constraints
-      constraints={options.constraints}
-      containerType={options.containerType || ''}
-      currentSeries={options.currentSeries}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      hasUnit={options.hasUnit === undefined ? false : options.hasUnit}
-      providerType={options.providerType || ''}
-      series={series}
-      valuesChanged={options.valuesChanged || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Constraints
+        constraints={options.constraints}
+        containerType={options.containerType || ''}
+        currentSeries={options.currentSeries}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        hasUnit={options.hasUnit === undefined ? false : options.hasUnit}
+        providerType={options.providerType || ''}
+        series={series}
+        valuesChanged={options.valuesChanged || sinon.stub()}
+      />
+    );
 
   it('can render', function() {
     const wrapper = renderComponent({});
@@ -42,8 +54,11 @@ describe('Constraints', function() {
           key="seriesConstraintSelect"
           name="series-constraint"
           onChange={selects.at(0).prop('onChange')}
-          ref="seriesConstraintSelect">
-          <option key="default" value="">Optionally choose a series</option>
+          ref="seriesConstraintSelect"
+        >
+          <option key="default" value="">
+            Optionally choose a series
+          </option>
           {seriesOptions}
         </select>
         {[
@@ -55,12 +70,17 @@ describe('Constraints', function() {
             key="archConstraintSelect"
             name="arch-constraint"
             onChange={selects.at(1).prop('onChange')}
-            ref="archConstraintSelect">
+            ref="archConstraintSelect"
+          >
             <option key="default" value="">
               Optionally choose an architecture
             </option>
-            <option key="amd64" value="amd64">amd64</option>
-            <option key="i386" value="i386">i386</option>
+            <option key="amd64" value="amd64">
+              amd64
+            </option>
+            <option key="i386" value="i386">
+              i386
+            </option>
           </select>,
           <div key="cpu-constraint-div">
             <label className="constraints__label" htmlFor="cpu-constraint">
@@ -74,7 +94,8 @@ describe('Constraints', function() {
               name="cpu-constraint"
               onChange={inputs.at(0).prop('onChange')}
               ref="cpuConstraintInput"
-              type="text" />
+              type="text"
+            />
           </div>,
           <div key="cores-constraint-div">
             <label className="constraints__label" htmlFor="cores-constraint">
@@ -88,7 +109,8 @@ describe('Constraints', function() {
               name="cores-constraint"
               onChange={inputs.at(1).prop('onChange')}
               ref="coresConstraintInput"
-              type="text" />
+              type="text"
+            />
           </div>,
           <div key="mem-constraint-div">
             <label className="constraints__label" htmlFor="mem-constraint">
@@ -102,7 +124,8 @@ describe('Constraints', function() {
               name="mem-constraint"
               onChange={inputs.at(2).prop('onChange')}
               ref="memConstraintInput"
-              type="text" />
+              type="text"
+            />
           </div>,
           <div key="disk-constraint-div">
             <label className="constraints__label" htmlFor="disk-constraint">
@@ -116,10 +139,12 @@ describe('Constraints', function() {
               name="disk-constraint"
               onChange={inputs.at(3).prop('onChange')}
               ref="diskConstraintInput"
-              type="text" />
+              type="text"
+            />
           </div>
         ]}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -227,5 +252,4 @@ describe('Constraints', function() {
       series: 'xenial'
     });
   });
-
 });

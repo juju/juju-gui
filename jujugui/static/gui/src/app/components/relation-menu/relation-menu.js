@@ -27,9 +27,7 @@ const RelationMenu = function(props) {
       return id;
     }
     var type = id.split(':')[1];
-    return endpoint.displayName
-      .replace(/^\(/, '')
-      .replace(/\)$/, '') + ':' + type;
+    return endpoint.displayName.replace(/^\(/, '').replace(/\)$/, '') + ':' + type;
   }
 
   /**
@@ -48,10 +46,7 @@ const RelationMenu = function(props) {
       // Don't need to show an icon.
       return null;
     }
-    return (
-      <SvgIcon
-        name={icon}
-        size="16" />);
+    return <SvgIcon name={icon} size="16" />;
   }
 
   /**
@@ -64,35 +59,27 @@ const RelationMenu = function(props) {
   function _generateRelations(relations) {
     var components = [];
     relations.forEach(relation => {
-      var relationClasses = 'relation-container ' + (
-        relation.hasRelationError() ? 'error' : 'running');
-      var sourceClasses = 'inspect-relation endpoint ' + (
-        relation.sourceHasError() ? 'error' : '');
-      var targetClasses = 'inspect-relation endpoint ' + (
-        relation.targetHasError() ? 'error' : '');
+      var relationClasses =
+        'relation-container ' + (relation.hasRelationError() ? 'error' : 'running');
+      var sourceClasses =
+        'inspect-relation endpoint ' + (relation.sourceHasError() ? 'error' : '');
+      var targetClasses =
+        'inspect-relation endpoint ' + (relation.targetHasError() ? 'error' : '');
       components.push(
-        <li
-          className={relationClasses}
-          data-relationid={relation.id}
-          key={relation.id}>
+        <li className={relationClasses} data-relationid={relation.id} key={relation.id}>
           {_generateIcon(relation)}
-          <span
-            className={sourceClasses}
-            data-endpoint={relation.sourceId}>
+          <span className={sourceClasses} data-endpoint={relation.sourceId}>
             {_getRealServiceName(relation.sourceId, relation)}
-          </span>
-          {' '}-{' '}
-          <span
-            className={targetClasses}
-            data-endpoint={relation.targetId}>
+          </span>{' '}
+          -{' '}
+          <span className={targetClasses} data-endpoint={relation.targetId}>
             {_getRealServiceName(relation.targetId, relation)}
           </span>
           <span className="relation-remove link">
-            <SvgIcon
-              name="delete_16"
-              size="16" />
+            <SvgIcon name="delete_16" size="16" />
           </span>
-        </li>);
+        </li>
+      );
     });
     return components;
   }
@@ -100,9 +87,7 @@ const RelationMenu = function(props) {
   return (
     <div className="menu">
       <div className="triangle">&nbsp;</div>
-      <ul>
-        {_generateRelations(props.relations)}
-      </ul>
+      <ul>{_generateRelations(props.relations)}</ul>
     </div>
   );
 };

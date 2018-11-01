@@ -30,23 +30,22 @@ class ProfileCredentialListDelete extends React.Component {
   }
 
   render() {
-    const buttons = [{
-      title: 'Cancel',
-      action: this.props.onCancel.bind(this),
-      type: 'inline-neutral'
-    }, {
-      title: 'Continue',
-      action: this._deleteCredential.bind(this),
-      type: 'destructive'
-    }];
+    const buttons = [
+      {
+        title: 'Cancel',
+        action: this.props.onCancel.bind(this),
+        type: 'inline-neutral'
+      },
+      {
+        title: 'Continue',
+        action: this._deleteCredential.bind(this),
+        type: 'destructive'
+      }
+    ];
     return (
       <div>
-        <Popup
-          buttons={buttons}
-          title="Remove credentials">
-          <p>
-            Are you sure you want to remove these credentials?
-          </p>
+        <Popup buttons={buttons} title="Remove credentials">
+          <p>Are you sure you want to remove these credentials?</p>
         </Popup>
       </div>
     );

@@ -7,18 +7,19 @@ const enzyme = require('enzyme');
 const BasicTableCell = require('./cell');
 
 describe('BasicTableCell', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <BasicTableCell
-      classes={options.classes}
-      columnSize={options.columnSize || 5}
-      content={options.content}
-      isLastCol={options.isLastCol} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <BasicTableCell
+        classes={options.classes}
+        columnSize={options.columnSize || 5}
+        content={options.content}
+        isLastCol={options.isLastCol}
+      />
+    );
 
   it('can render', () => {
     const wrapper = renderComponent({
-      content: (<span>Content!</span>)
+      content: <span>Content!</span>
     });
     expect(wrapper).toMatchSnapshot();
   });

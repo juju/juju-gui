@@ -10,16 +10,17 @@ const EntityContentDiagram = require('../../entity-details/content/diagram/diagr
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 
 describe('DirectDeploy', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentDirectDeploy
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      ddData={options.ddData}
-      entityModel={options.entityModel}
-      generatePath={options.generatePath || sinon.stub()}
-      getDiagramURL={options.getDiagramURL || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentDirectDeploy
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        ddData={options.ddData}
+        entityModel={options.entityModel}
+        generatePath={options.generatePath || sinon.stub()}
+        getDiagramURL={options.getDiagramURL || sinon.stub()}
+      />
+    );
 
   it('can show a message for an invalid bundle', () => {
     const wrapper = renderComponent({
@@ -27,17 +28,18 @@ describe('DirectDeploy', function() {
     });
     const expected = (
       <div className="deployment-direct-deploy__content">
-        This {'bundle'} could not be found.
-        Visit the&nbsp;
+        This {'bundle'} could not be found. Visit the&nbsp;
         <span
           className="link"
           onClick={wrapper.find('.link').prop('onClick')}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           store
-        </span>&nbsp;
-        to find more charms and bundles.
-      </div>);
+        </span>
+        &nbsp; to find more charms and bundles.
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-direct-deploy__content'), expected);
   });
 
@@ -47,17 +49,18 @@ describe('DirectDeploy', function() {
     });
     const expected = (
       <div className="deployment-direct-deploy__content">
-        This {'charm'} could not be found.
-        Visit the&nbsp;
+        This {'charm'} could not be found. Visit the&nbsp;
         <span
           className="link"
           onClick={wrapper.find('.link').prop('onClick')}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           store
-        </span>&nbsp;
-        to find more charms and bundles.
-      </div>);
+        </span>
+        &nbsp; to find more charms and bundles.
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-direct-deploy__content'), expected);
   });
 
@@ -78,21 +81,16 @@ describe('DirectDeploy', function() {
       <div className="deployment-direct-deploy__content">
         <div className="deployment-direct-deploy__description six-col">
           <h4>You are about to deploy:</h4>
-          <h2 className="deployment-direct-deploy__title">
-            Apache 2
-          </h2>
-          <EntityContentDescription
-            description="Description" />
+          <h2 className="deployment-direct-deploy__title">Apache 2</h2>
+          <EntityContentDescription description="Description" />
           <ul>
             <li>
-              It will run on {1}&nbsp;
-              machine{''} in your cloud.
+              It will run on {1}
+              &nbsp; machine
+              {''} in your cloud.
             </li>
           </ul>
-          <a
-            className="link"
-            href="http://example.com/"
-            target="_blank">
+          <a className="link" href="http://example.com/" target="_blank">
             Learn more about this {'charm'}.
           </a>
         </div>
@@ -103,18 +101,18 @@ describe('DirectDeploy', function() {
                 alt="Apache 2"
                 className="deployment-direct-deploy__image-block-icon"
                 src="http://example.com/icon.svg"
-                width="96" />
+                width="96"
+              />
             </div>
           </div>
           <div className="deployment-direct-deploy__edit-model">
-            <Button
-              action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+            <Button action={wrapper.find('Button').prop('action')} type="inline-neutral">
               Edit model
             </Button>
           </div>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-direct-deploy__content'), expected);
   });
 
@@ -137,38 +135,31 @@ describe('DirectDeploy', function() {
       <div className="deployment-direct-deploy__content">
         <div className="deployment-direct-deploy__description six-col">
           <h4>You are about to deploy:</h4>
-          <h2 className="deployment-direct-deploy__title">
-            Kubernetes core
-          </h2>
-          <EntityContentDescription
-            description="Description" />
+          <h2 className="deployment-direct-deploy__title">Kubernetes core</h2>
+          <EntityContentDescription description="Description" />
           <ul>
             <li>
-              It will run on {4}&nbsp;
-              machine{'s'} in your cloud.
+              It will run on {4}
+              &nbsp; machine
+              {'s'} in your cloud.
             </li>
           </ul>
-          <a
-            className="link"
-            href="http://example.com/"
-            target="_blank">
+          <a className="link" href="http://example.com/" target="_blank">
             Learn more about this {'bundle'}.
           </a>
         </div>
         <div className="six-col last-col no-margin-bottom">
           <div className="deployment-direct-deploy__image">
-            <EntityContentDiagram
-              diagramUrl="imageLink" />
+            <EntityContentDiagram diagramUrl="imageLink" />
           </div>
           <div className="deployment-direct-deploy__edit-model">
-            <Button
-              action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+            <Button action={wrapper.find('Button').prop('action')} type="inline-neutral">
               Edit model
             </Button>
           </div>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-direct-deploy__content'), expected);
   });
 });

@@ -67,18 +67,16 @@ class DeploymentVPC extends React.Component {
     Render the component.
   */
   render() {
-    const vpcLink =
-    'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
+    const vpcLink = 'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
     return (
       <div className="twelve-col no-margin-bottom">
         <p>Juju uses your default VPC – or you can specify one here.</p>
         <p>
-          AWS accounts created since December 2013 have this –&nbsp;
-          older accounts may not.&nbsp;
-          <a
-            className="link"
-            href={vpcLink}
-            target="_blank">Default VPC basics.</a>
+          AWS accounts created since December 2013 have this –&nbsp; older accounts may
+          not.&nbsp;
+          <a className="link" href={vpcLink} target="_blank">
+            Default VPC basics.
+          </a>
         </p>
         <div className="six-col">
           <GenericInput
@@ -88,7 +86,8 @@ class DeploymentVPC extends React.Component {
             onBlur={this._onInputBlur.bind(this)}
             onKeyUp={this._onInputKeyUp.bind(this)}
             ref="vpcId"
-            required={false} />
+            required={false}
+          />
           <label>
             <input
               checked={this.state.force}
@@ -96,15 +95,15 @@ class DeploymentVPC extends React.Component {
               id="vpcIdForce"
               onChange={this._onCheckboxChange.bind(this)}
               onClick={this._onCheckboxClick.bind(this)}
-              type="checkbox" />
-            &nbsp;
-            Always use this ID
+              type="checkbox"
+            />
+            &nbsp; Always use this ID
           </label>
         </div>
       </div>
     );
   }
-};
+}
 
 DeploymentVPC.propTypes = {
   setVPCId: PropTypes.func.isRequired

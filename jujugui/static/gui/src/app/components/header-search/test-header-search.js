@@ -10,10 +10,7 @@ describe('HeaderSearch', function() {
   let appState;
 
   const renderComponent = (options = {}) => {
-    const wrapper = enzyme.shallow(
-      <HeaderSearch
-        appState={options.appState || appState} />
-    );
+    const wrapper = enzyme.shallow(<HeaderSearch appState={options.appState || appState} />);
     const instance = wrapper.instance();
     instance.refs = {
       searchInput: {
@@ -44,15 +41,21 @@ describe('HeaderSearch', function() {
   it('hides the close button when not active', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.header-search__close').prop('className').includes(
-        'hidden'),
-      true);
+      wrapper
+        .find('.header-search__close')
+        .prop('className')
+        .includes('hidden'),
+      true
+    );
   });
 
   it('changes state when the close button is clicked', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    wrapper.find('.header-search__close').props().onClick();
+    wrapper
+      .find('.header-search__close')
+      .props()
+      .onClick();
     assert.equal(instance.refs.searchInput.blur.callCount, 1, 'blurStub not called');
     assert.equal(appState.changeState.callCount, 1, 'changeState not called');
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -67,8 +70,7 @@ describe('HeaderSearch', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     // The input should have the metadata search value
-    assert.equal(
-      wrapper.find('.header-search__input').prop('value'), 'hexo');
+    assert.equal(wrapper.find('.header-search__input').prop('value'), 'hexo');
     // re-render which will get the new state.
     delete appState.current.search;
     wrapper.setProps({appState});
@@ -84,21 +86,22 @@ describe('HeaderSearch', function() {
     appState.current.search = {text: 'hexo'};
     const wrapper = renderComponent();
     // The input should have the metadata search value
-    assert.equal(
-      wrapper.find('.header-search__input').prop('value'), 'hexo');
+    assert.equal(wrapper.find('.header-search__input').prop('value'), 'hexo');
     // re-render which will get the new state.
     wrapper.update();
-    assert.equal(
-      wrapper.find('.header-search__input').prop('value'), 'hexo');
+    assert.equal(wrapper.find('.header-search__input').prop('value'), 'hexo');
   });
 
   it('becomes active when the input is focused', function() {
     const wrapper = renderComponent();
     wrapper.find('.header-search__input').simulate('focus');
     assert.equal(
-      wrapper.find('.header-search').prop('className').includes(
-        'header-search--active'),
-      true);
+      wrapper
+        .find('.header-search')
+        .prop('className')
+        .includes('header-search--active'),
+      true
+    );
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       store: '',
@@ -131,7 +134,10 @@ describe('HeaderSearch', function() {
   it('navigates to the store when the Store button is clicked', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    wrapper.find('.header-search__search--mobile').props().onClick();
+    wrapper
+      .find('.header-search__search--mobile')
+      .props()
+      .onClick();
     assert.equal(instance.refs.searchInput.blur.callCount, 1);
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
@@ -143,16 +149,17 @@ describe('HeaderSearch', function() {
     const preventDefault = sinon.stub();
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    wrapper.find('.header-search__submit').props().onClick({
-      preventDefault: preventDefault
-    });
+    wrapper
+      .find('.header-search__submit')
+      .props()
+      .onClick({
+        preventDefault: preventDefault
+      });
     assert.equal(appState.changeState.callCount, 0);
     assert.equal(instance.refs.searchInput.focus.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     wrapper.update();
-    assert.equal(
-      wrapper.prop('className').includes('header-search--active'),
-      true);
+    assert.equal(wrapper.prop('className').includes('header-search--active'), true);
   });
 
   it('searches when clicking search button if the input is open', function() {
@@ -163,9 +170,12 @@ describe('HeaderSearch', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.setState({active: true});
-    wrapper.find('.header-search__submit').props().onClick({
-      preventDefault: sinon.stub()
-    });
+    wrapper
+      .find('.header-search__submit')
+      .props()
+      .onClick({
+        preventDefault: sinon.stub()
+      });
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       hash: null,
@@ -191,9 +201,12 @@ describe('HeaderSearch', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.setState({active: true});
-    wrapper.find('.header-search__submit').props().onClick({
-      preventDefault: sinon.stub()
-    });
+    wrapper
+      .find('.header-search__submit')
+      .props()
+      .onClick({
+        preventDefault: sinon.stub()
+      });
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       hash: null,
@@ -219,9 +232,12 @@ describe('HeaderSearch', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.setState({active: true});
-    wrapper.find('.header-search__submit').props().onClick({
-      preventDefault: sinon.stub()
-    });
+    wrapper
+      .find('.header-search__submit')
+      .props()
+      .onClick({
+        preventDefault: sinon.stub()
+      });
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       hash: null,

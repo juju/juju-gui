@@ -10,11 +10,13 @@ const GenericInput = require('../generic-input/generic-input');
 describe('CardForm', function() {
   let acl;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <CardForm
-      acl={options.acl || acl}
-      createCardElement={options.createCardElement || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <CardForm
+        acl={options.acl || acl}
+        createCardElement={options.createCardElement || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -29,14 +31,16 @@ describe('CardForm', function() {
           label="Name on card"
           ref="name"
           required={true}
-          validate={[{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }]} />
-        <div
-          className="card-form__card"
-          ref="cardNode"></div>
-      </div>);
+          validate={[
+            {
+              regex: /\S+/,
+              error: 'This field is required.'
+            }
+          ]}
+        />
+        <div className="card-form__card" ref="cardNode" />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

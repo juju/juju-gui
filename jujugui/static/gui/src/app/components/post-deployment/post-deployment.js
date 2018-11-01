@@ -24,12 +24,14 @@ class PostDeployment extends React.Component {
     this.templateTags = {
       details_link: {
         onClick: this._handleViewDetails.bind(this),
-        content: '<span role="button" ' +
+        content:
+          '<span role="button" ' +
           'class="link" ' +
           'data-templatetag="details_link">View details</span>'
       },
       requires_cli_link: {
-        content: '<a ' +
+        content:
+          '<a ' +
           'href="https://jujucharms.com/docs/stable/reference-install" ' +
           'target="_blank">Juju CLI client</a>'
       }
@@ -55,7 +57,7 @@ class PostDeployment extends React.Component {
         const url = urls.URL.fromAnyString(entityURL).toLegacyString();
         getFile(url, GET_STARTED, this._handleFileResponse.bind(this, GET_STARTED));
         getFile(url, POST_DEPLOYMENT, this._handleFileResponse.bind(this, POST_DEPLOYMENT));
-      } catch(e) {
+      } catch (e) {
         // If the bundleURL is a local file then the url parser could fail
         // for a number of reasons. Just carry on if this doesn't parse
         // properly.
@@ -114,9 +116,9 @@ class PostDeployment extends React.Component {
     let renderer = new marked.Renderer();
     renderer.link = (href, title, text) =>
       `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
-    const markdown = marked(
-      this.replaceTemplateTags(frontmatterAndMarkdown.markdown),
-      {renderer: renderer});
+    const markdown = marked(this.replaceTemplateTags(frontmatterAndMarkdown.markdown), {
+      renderer: renderer
+    });
     return markdown;
   }
 
@@ -127,12 +129,13 @@ class PostDeployment extends React.Component {
   */
   _renderPostDeploymentScriptButton() {
     if (this.state[POST_DEPLOYMENT]) {
-      return (<div>
-        <Button
-          action={this._executePostDeploymentScript.bind(this)}>
+      return (
+        <div>
+          <Button action={this._executePostDeploymentScript.bind(this)}>
             Execute post-deployment script
-        </Button>
-      </div>);
+          </Button>
+        </div>
+      );
     }
   }
 
@@ -141,7 +144,9 @@ class PostDeployment extends React.Component {
     as a payload.
   */
   _executePostDeploymentScript() {
-    this.props.changeState({terminal: this.state[POST_DEPLOYMENT].split('\n')});
+    this.props.changeState({
+      terminal: this.state[POST_DEPLOYMENT].split('\n')
+    });
   }
 
   /**
@@ -251,9 +256,7 @@ class PostDeployment extends React.Component {
   }
 
   render() {
-    let classes = [
-      'post-deployment'
-    ];
+    let classes = ['post-deployment'];
     let content = this.state[GET_STARTED];
     if (!content) {
       if (this.state.loading) {
@@ -263,22 +266,19 @@ class PostDeployment extends React.Component {
       }
     }
     return (
-      <Panel
-        extraClasses={classes.join(' ')}
-        instanceName="post-deployment"
-        visible={true}>
+      <Panel extraClasses={classes.join(' ')} instanceName="post-deployment" visible={true}>
         <span
           className="close"
           onClick={this._closePostDeployment.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            name="close_16"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon name="close_16" size="16" />
         </span>
         <div
           dangerouslySetInnerHTML={{__html: content}}
-          onClick={this._handleContentClick.bind(this)} />
+          onClick={this._handleContentClick.bind(this)}
+        />
         {this._renderPostDeploymentScriptButton()}
       </Panel>
     );

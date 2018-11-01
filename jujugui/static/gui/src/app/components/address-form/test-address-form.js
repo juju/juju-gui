@@ -12,20 +12,24 @@ const GenericInput = require('../generic-input/generic-input');
 describe('AddressForm', function() {
   let getCountries, refs;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <AddressForm
-      addNotification={options.addNotification || sinon.stub()}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      getCountries={options.getCountries || getCountries}
-      showName={options.showName === undefined ? true : options.showName}
-      showPhone={options.showPhone === undefined ? true : options.showPhone} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <AddressForm
+        addNotification={options.addNotification || sinon.stub()}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        getCountries={options.getCountries || getCountries}
+        showName={options.showName === undefined ? true : options.showName}
+        showPhone={options.showPhone === undefined ? true : options.showPhone}
+      />
+    );
 
   beforeEach(() => {
-    getCountries = sinon.stub().callsArgWith(0, null, [{
-      name: 'Australia',
-      code: 'AU'
-    }]);
+    getCountries = sinon.stub().callsArgWith(0, null, [
+      {
+        name: 'Australia',
+        code: 'AU'
+      }
+    ]);
     refs = {
       name: {
         getValue: sinon.stub().returns('Geoffrey Spinach')
@@ -59,7 +63,8 @@ describe('AddressForm', function() {
     const expected = (
       <div className="address-form">
         <Spinner />
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -71,48 +76,61 @@ describe('AddressForm', function() {
           <InsetSelect
             disabled={false}
             label="Country"
-            options={[{
-              label: 'Australia',
-              value: 'AU'
-            }]}
+            options={[
+              {
+                label: 'Australia',
+                value: 'AU'
+              }
+            ]}
             ref="country"
-            value="GB" />
+            value="GB"
+          />
           <GenericInput
             disabled={false}
             label="Full name"
             ref="name"
             required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }]}
-            value={undefined} />
+            validate={[
+              {
+                regex: /\S+/,
+                error: 'This field is required.'
+              }
+            ]}
+            value={undefined}
+          />
           <GenericInput
             disabled={false}
             label="Address line 1"
             ref="line1"
             required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }]}
-            value={undefined} />
+            validate={[
+              {
+                regex: /\S+/,
+                error: 'This field is required.'
+              }
+            ]}
+            value={undefined}
+          />
           <GenericInput
             disabled={false}
             label="Address line 2 (optional)"
             ref="line2"
             required={false}
-            value={undefined} />
+            value={undefined}
+          />
           <GenericInput
             disabled={false}
             label="State/province"
             ref="state"
             required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }]}
-            value={undefined} />
+            validate={[
+              {
+                regex: /\S+/,
+                error: 'This field is required.'
+              }
+            ]}
+            value={undefined}
+          />
           <div className="twelve-col u-no-margin--bottom">
             <div className="six-col u-no-margin--bottom">
               <GenericInput
@@ -120,11 +138,14 @@ describe('AddressForm', function() {
                 label="Town/city"
                 ref="city"
                 required={true}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]}
-                value={undefined} />
+                validate={[
+                  {
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }
+                ]}
+                value={undefined}
+              />
             </div>
             <div className="six-col last-col u-no-margin--bottom">
               <GenericInput
@@ -132,11 +153,14 @@ describe('AddressForm', function() {
                 label="Postcode"
                 ref="postcode"
                 required={true}
-                validate={[{
-                  regex: /\S+/,
-                  error: 'This field is required.'
-                }]}
-                value={undefined} />
+                validate={[
+                  {
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }
+                ]}
+                value={undefined}
+              />
             </div>
           </div>
           <div className="twelve-col u-no-margin--bottom">
@@ -145,14 +169,18 @@ describe('AddressForm', function() {
               label="Phone number"
               ref="phoneNumber"
               required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }]}
-              value="" />
+              validate={[
+                {
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }
+              ]}
+              value=""
+            />
           </div>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -195,7 +223,6 @@ describe('AddressForm', function() {
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
-
 
   it('can get the address', function() {
     const wrapper = renderComponent();

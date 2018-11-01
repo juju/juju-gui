@@ -72,8 +72,13 @@ class InspectorChangeVersion extends React.Component {
       this._addFailureNotification(charmId, error);
       return;
     }
-    this.props.modelAPI.setCharm(this.props.service.get('id'), charmId, false, false,
-      this._setCharmCallback.bind(this, charmId));
+    this.props.modelAPI.setCharm(
+      this.props.service.get('id'),
+      charmId,
+      false,
+      false,
+      this._setCharmCallback.bind(this, charmId)
+    );
   }
 
   /**
@@ -126,7 +131,9 @@ class InspectorChangeVersion extends React.Component {
   _getVersions(charmId) {
     this.setState({loading: true});
     this.versionsXhr = this.props.getAvailableVersions(
-      charmId, this._getVersionsCallback.bind(this));
+      charmId,
+      this._getVersionsCallback.bind(this)
+    );
   }
 
   /**
@@ -168,9 +175,8 @@ class InspectorChangeVersion extends React.Component {
     const {versions} = this.state;
     if (!versions || versions.length === 1) {
       components = (
-        <li className="inspector-change-version__none">
-          No other versions found.
-        </li>);
+        <li className="inspector-change-version__none">No other versions found.</li>
+      );
     } else {
       const url = urls.URL.fromLegacyString(this.props.charmId);
       versions.forEach(function(version) {
@@ -188,14 +194,12 @@ class InspectorChangeVersion extends React.Component {
             downgrade={downgrade}
             itemAction={this._viewCharmDetails.bind(this, versionURL)}
             key={version}
-            url={versionURL} />);
+            url={versionURL}
+          />
+        );
       }, this);
     }
-    return (
-      <ul className="inspector-change-version__versions">
-        {components}
-      </ul>
-    );
+    return <ul className="inspector-change-version__versions">{components}</ul>;
   }
 
   render() {
@@ -208,7 +212,8 @@ class InspectorChangeVersion extends React.Component {
             className="inspector-change-version__current-version"
             onClick={this._viewCharmDetails.bind(this, url)}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             {url.path()}
           </div>
         </div>
@@ -216,7 +221,7 @@ class InspectorChangeVersion extends React.Component {
       </div>
     );
   }
-};
+}
 
 InspectorChangeVersion.propTypes = {
   acl: PropTypes.object.isRequired,

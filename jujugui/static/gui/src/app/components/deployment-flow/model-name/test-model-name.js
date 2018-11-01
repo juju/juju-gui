@@ -10,14 +10,16 @@ const GenericInput = require('../../generic-input/generic-input');
 describe('DeploymentModelName', () => {
   let acl;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentModelName
-      acl={options.acl || acl}
-      ddEntity={options.ddEntity}
-      focusName={options.focusName}
-      modelName={options.modelName || 'mymodel'}
-      setModelName={options.setModelName || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentModelName
+        acl={options.acl || acl}
+        ddEntity={options.ddEntity}
+        focusName={options.focusName}
+        modelName={options.modelName || 'mymodel'}
+        setModelName={options.setModelName || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -35,17 +37,23 @@ describe('DeploymentModelName', () => {
           onChange={wrapper.find('GenericInput').prop('onChange')}
           ref="modelName"
           required={true}
-          validate={[{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }, {
-            regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
-            error: 'This field must only contain lowercase ' +
-              'letters, numbers, and hyphens. It must not start or ' +
-              'end with a hyphen.'
-          }]}
-          value="mymodel" />
-      </div>);
+          validate={[
+            {
+              regex: /\S+/,
+              error: 'This field is required.'
+            },
+            {
+              regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
+              error:
+                'This field must only contain lowercase ' +
+                'letters, numbers, and hyphens. It must not start or ' +
+                'end with a hyphen.'
+            }
+          ]}
+          value="mymodel"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

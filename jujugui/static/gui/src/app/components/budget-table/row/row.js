@@ -45,7 +45,9 @@ class BudgetTableRow extends React.Component {
   _getPlans() {
     this.setState({plansLoading: true}, () => {
       const xhr = this.props.listPlansForCharm(
-        this.props.service.get('charm'), this._getPlansCallback.bind(this));
+        this.props.service.get('charm'),
+        this._getPlansCallback.bind(this)
+      );
       this.xhrs.push(xhr);
     });
   }
@@ -111,33 +113,22 @@ class BudgetTableRow extends React.Component {
     var disabled = this.props.acl.isReadOnly();
     var plans = this.state.plans.map((plan, i) => {
       return (
-        <li
-          className="budget-table__plan twelve-col"
-          key={i}>
+        <li className="budget-table__plan twelve-col" key={i}>
           <div className="six-col">
             <h4>{plan.url}</h4>
             <p>{plan.description}</p>
           </div>
-          <div className="two-col">
-            {plan.price}
-          </div>
-          <div className="two-col">
-            Recommended allocation: $550.
-          </div>
+          <div className="two-col">{plan.price}</div>
+          <div className="two-col">Recommended allocation: $550.</div>
           <div className="two-col last-col">
-            <Button
-              action={this._toggle.bind(this)}
-              disabled={disabled}
-              type="neutral">
+            <Button action={this._toggle.bind(this)} disabled={disabled} type="neutral">
               Select plan
             </Button>
           </div>
-        </li>);
+        </li>
+      );
     });
-    return (
-      <ul className="budget-table__plans twelve-col no-margin-bottom">
-        {plans}
-      </ul>);
+    return <ul className="budget-table__plans twelve-col no-margin-bottom">{plans}</ul>;
   }
 
   /**
@@ -147,8 +138,7 @@ class BudgetTableRow extends React.Component {
    @returns {Object} The plan form.
   */
   _generateChangePlan() {
-    if (!this.props.plansEditable ||
-        this.state.plans && this.state.plans.length === 0) {
+    if (!this.props.plansEditable || (this.state.plans && this.state.plans.length === 0)) {
       return;
     }
     return (
@@ -158,10 +148,11 @@ class BudgetTableRow extends React.Component {
         </div>
         {this._generatePlans()}
         <p className="budget-table__plan-notice twelve-col">
-          By setting an allocation and selecting a plan you agree to the
-          plans terms and conditions
+          By setting an allocation and selecting a plan you agree to the plans terms and
+          conditions
         </p>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -178,14 +169,12 @@ class BudgetTableRow extends React.Component {
     return (
       <div className="two-col last-col no-margin-bottom">
         <div className="budget-table__edit">
-          <Button
-            action={this._toggle.bind(this)}
-            disabled={disabled}
-            type="neutral">
+          <Button action={this._toggle.bind(this)} disabled={disabled} type="neutral">
             Change plan
           </Button>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -196,17 +185,13 @@ class BudgetTableRow extends React.Component {
   */
   _generateAllocation() {
     if (this.props.allocationEditable && this.state.editAllocation) {
-      return (
-        <input
-          className="budget-table-row__allocation-input"
-          type="text"
-          value="$1" />);
+      return <input className="budget-table-row__allocation-input" type="text" value="$1" />;
     } else {
       return (
-        <span onClick={
-          this.props.allocationEditable ? this._toggleAllocation : undefined}>
+        <span onClick={this.props.allocationEditable ? this._toggleAllocation : undefined}>
           $1
-        </span>);
+        </span>
+      );
     }
   }
 
@@ -221,12 +206,11 @@ class BudgetTableRow extends React.Component {
     return (
       <div>
         <div className="five-col no-margin-bottom">
-          <img
-            className="budget-table__charm-icon"
-            src={service.get('icon')} />
+          <img className="budget-table__charm-icon" src={service.get('icon')} />
           {service.get('name')}
         </div>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -242,17 +226,12 @@ class BudgetTableRow extends React.Component {
       return (
         <span className="budget-table-row__plan">
           {activePlan.url} ({activePlan.price})
-        </span>);
+        </span>
+      );
     } else if (this.state.plans.length > 0) {
-      return (
-        <span className="budget-table-row__plan">
-          You need to select a plan
-        </span>);
+      return <span className="budget-table-row__plan">You need to select a plan</span>;
     } else {
-      return (
-        <span className="budget-table-row__plan">
-          -
-        </span>);
+      return <span className="budget-table-row__plan">-</span>;
     }
   }
 
@@ -309,15 +288,17 @@ class BudgetTableRow extends React.Component {
     const terms = this._getTermIds();
     if (terms && terms.length > 0) {
       return (
-        <div className={
-          'two-col prepend-five no-margin-bottom budget-table-row__link ' +
-          'budget-table-row__terms-link'}>
-          <Button
-            action={this._toggleTerms.bind(this)}
-            type="base">
+        <div
+          className={
+            'two-col prepend-five no-margin-bottom budget-table-row__link ' +
+            'budget-table-row__terms-link'
+          }
+        >
+          <Button action={this._toggleTerms.bind(this)} type="base">
             Terms
           </Button>
-        </div>);
+        </div>
+      );
     }
   }
 
@@ -328,8 +309,7 @@ class BudgetTableRow extends React.Component {
     @returns {Array} The list of terms for the application.
   */
   _getTermIds() {
-    return this.props.charmsGetById(
-      this.props.service.get('charm')).get('terms') || [];
+    return this.props.charmsGetById(this.props.service.get('charm')).get('terms') || [];
   }
 
   /**
@@ -342,10 +322,7 @@ class BudgetTableRow extends React.Component {
     if (!this.state.showTerms) {
       return;
     }
-    return (
-      <TermsPopup
-        close={this._toggleTerms.bind(this)}
-        terms={this.state.terms} />);
+    return <TermsPopup close={this._toggleTerms.bind(this)} terms={this.state.terms} />;
   }
 
   /**
@@ -362,17 +339,10 @@ class BudgetTableRow extends React.Component {
     const editableWidth = !plansEditable ? 'two-col' : 'one-col';
     return (
       <div className="budget-table-row__plans">
-        <div className="three-col no-margin-bottom">
-          {this._generateSelectedPlan()}
-        </div>
-        <div className={editableWidth + ' no-margin-bottom'}>
-          $1
-        </div>
-        <div className={editableWidth + ' no-margin-bottom'}>
-          {this._generateAllocation()}
-        </div>
-        <div className={
-          'one-col no-margin-bottom' + (plansEditable ? '' : ' last-col')}>
+        <div className="three-col no-margin-bottom">{this._generateSelectedPlan()}</div>
+        <div className={editableWidth + ' no-margin-bottom'}>$1</div>
+        <div className={editableWidth + ' no-margin-bottom'}>{this._generateAllocation()}</div>
+        <div className={'one-col no-margin-bottom' + (plansEditable ? '' : ' last-col')}>
           $1
         </div>
         {this._generateEdit()}
@@ -387,10 +357,7 @@ class BudgetTableRow extends React.Component {
     };
     return (
       <div>
-        <ExpandingRow
-          classes={classes}
-          clickable={false}
-          expanded={this.state.expanded}>
+        <ExpandingRow classes={classes} clickable={false} expanded={this.state.expanded}>
           <div>
             {this._generateSharedFields()}
             {this._generatePlanCols()}
@@ -407,7 +374,7 @@ class BudgetTableRow extends React.Component {
       </div>
     );
   }
-};
+}
 
 BudgetTableRow.propTypes = {
   acl: PropTypes.object.isRequired,

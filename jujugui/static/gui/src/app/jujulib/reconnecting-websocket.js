@@ -47,9 +47,7 @@
 
 'use strict';
 
-
 function ReconnectingWebSocket(url, protocols) {
-
   // These can be altered by calling code.
   this.debug = false;
   this.reconnectInterval = 1000;
@@ -66,17 +64,13 @@ function ReconnectingWebSocket(url, protocols) {
   this.readyState = WebSocket.CONNECTING;
   this.URL = url; // Public API
 
-  this.onopen = function(event) {
-  };
+  this.onopen = function(event) {};
 
-  this.onclose = function(event) {
-  };
+  this.onclose = function(event) {};
 
-  this.onmessage = function(event) {
-  };
+  this.onmessage = function(event) {};
 
-  this.onerror = function(event) {
-  };
+  this.onerror = function(event) {};
 
   function connect(reconnectAttempt) {
     ws = new WebSocket(url, protocols);
@@ -117,8 +111,7 @@ function ReconnectingWebSocket(url, protocols) {
         self.readyState = WebSocket.CONNECTING;
         if (!reconnectAttempt && !timedOut) {
           if (self.debug || ReconnectingWebSocket.debugAll) {
-            console.debug(
-              'ReconnectingWebSocket', 'onclose reconnect', url);
+            console.debug('ReconnectingWebSocket', 'onclose reconnect', url);
           }
           self.onclose(event);
         }
@@ -143,9 +136,7 @@ function ReconnectingWebSocket(url, protocols) {
     };
     ws.disconnect = function(close) {
       if (self.debug || ReconnectingWebSocket.debugAll) {
-        console.debug(
-          'ReconnectingWebSocket',
-          close ? 'close' : 'disconnect', url, event);
+        console.debug('ReconnectingWebSocket', close ? 'close' : 'disconnect', url, event);
       }
       self.reconnect = false;
       if (close) {

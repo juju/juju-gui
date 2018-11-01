@@ -17,7 +17,7 @@ class DeploymentCredentialAdd extends React.Component {
     this.DEFAULT_CLOUD_TYPE = 'gce';
     const info = this._getInfo();
     this.state = {
-      authType: info && info.forms && Object.keys(info.forms)[0] || ''
+      authType: (info && info.forms && Object.keys(info.forms)[0]) || ''
     };
   }
 
@@ -26,8 +26,9 @@ class DeploymentCredentialAdd extends React.Component {
     const newId = nextProps.cloud && nextProps.cloud.cloudType;
     if (newId !== oldId) {
       const info = this._getInfo(nextProps);
-      this.setState(
-        {authType: info && info.forms && Object.keys(info.forms)[0]});
+      this.setState({
+        authType: info && info.forms && Object.keys(info.forms)[0]
+      });
     }
   }
 
@@ -74,16 +75,13 @@ class DeploymentCredentialAdd extends React.Component {
       return;
     }
     const credentialName = this.refs.credentialName.getValue();
-    this.props.sendAnalytics(
-      'Button click',
-      'Add credentials'
-    );
+    this.props.sendAnalytics('Button click', 'Add credentials');
     props.updateCloudCredential(
-      initUtils.generateCloudCredentialName(
-        props.cloud.name, props.user, credentialName),
+      initUtils.generateCloudCredentialName(props.cloud.name, props.user, credentialName),
       this.state.authType,
       this._generateCredentials(),
-      this._updateCloudCredentialCallback.bind(this, credentialName));
+      this._updateCloudCredentialCallback.bind(this, credentialName)
+    );
   }
 
   /**
@@ -140,7 +138,9 @@ class DeploymentCredentialAdd extends React.Component {
         disabled={this.props.acl.isReadOnly()}
         label="Authentication type"
         onChange={this._handleAuthChange.bind(this)}
-        options={authOptions} />);
+        options={authOptions}
+      />
+    );
   }
 
   /**
@@ -150,9 +150,9 @@ class DeploymentCredentialAdd extends React.Component {
     @param {Object} props The component props.
     @returns {Object} The cloud info if available.
   */
-  _getInfo(props=this.props) {
+  _getInfo(props = this.props) {
     const cloud = props.cloud;
-    const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
+    const id = (cloud && cloud.cloudType) || this.DEFAULT_CLOUD_TYPE;
     return initUtils.getCloudProviderDetails(id);
   }
 
@@ -175,17 +175,17 @@ class DeploymentCredentialAdd extends React.Component {
       const required = field.required === undefined ? true : field.required;
       if (field.json) {
         return (
-          <div
-            className="deployment-credential-add__upload"
-            key={field.id}>
+          <div className="deployment-credential-add__upload" key={field.id}>
             <FileField
               accept=".json"
               disabled={isReadOnly}
               key={field.id}
               label={`Upload ${info.title} .json auth-file`}
               ref={field.id}
-              required={required} />
-          </div>);
+              required={required}
+            />
+          </div>
+        );
       }
       return (
         <GenericInput
@@ -197,10 +197,18 @@ class DeploymentCredentialAdd extends React.Component {
           ref={field.id}
           required={required}
           type={field.type}
-          validate={required ? [{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }] : undefined} />);
+          validate={
+            required
+              ? [
+                  {
+                    regex: /\S+/,
+                    error: 'This field is required.'
+                  }
+                ]
+              : undefined
+          }
+        />
+      );
     });
     return (
       <div className="deployment-credential-add__credentials">
@@ -211,27 +219,27 @@ class DeploymentCredentialAdd extends React.Component {
         </div>
         <div className="deployment-credential-add__notice prepend-one five-col last-col">
           <p className="deployment-credential-add__notice-content">
-            <SvgIcon
-              name="general-action-blue"
-              size="16" />
-            Credentials are stored securely on our servers and we will
-            notify you by email whenever they are changed or deleted.
-            You can see where they are used and manage or remove them via
-            the account page.
+            <SvgIcon name="general-action-blue" size="16" />
+            Credentials are stored securely on our servers and we will notify you by email
+            whenever they are changed or deleted. You can see where they are used and manage or
+            remove them via the account page.
           </p>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   render() {
     const props = this.props;
     // If a name was provided then we're editing, not adding.
     const prefix = props.credentialName ? 'Update' : 'Add';
-    let buttons = [{
-      submit: true,
-      title: `${prefix} cloud credential`,
-      type: 'inline-positive'
-    }];
+    let buttons = [
+      {
+        submit: true,
+        title: `${prefix} cloud credential`,
+        type: 'inline-positive'
+      }
+    ];
     if (props.onCancel) {
       buttons.unshift({
         action: props.onCancel,
@@ -242,20 +250,24 @@ class DeploymentCredentialAdd extends React.Component {
     // If no cloud has been selected we set a default so that the disabled
     // form will display correctly as the next step.
     const cloud = props.cloud;
-    const id = cloud && cloud.cloudType || this.DEFAULT_CLOUD_TYPE;
+    const id = (cloud && cloud.cloudType) || this.DEFAULT_CLOUD_TYPE;
     const info = this._getInfo();
-    const title = info && info.title || cloud.name;
-    const credentialNameLabel = id === 'gce' ?
-      'Project ID (credential name)' : 'Credential name';
-    const nameValidators = [{
-      regex: /\S+/,
-      error: 'This field is required.'
-    }, {
-      regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
-      error: 'This field must only contain upper and lowercase ' +
-        'letters, numbers, and hyphens. It must not start or ' +
-        'end with a hyphen.'
-    }];
+    const title = (info && info.title) || cloud.name;
+    const credentialNameLabel =
+      id === 'gce' ? 'Project ID (credential name)' : 'Credential name';
+    const nameValidators = [
+      {
+        regex: /\S+/,
+        error: 'This field is required.'
+      },
+      {
+        regex: /^([a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?)?$/,
+        error:
+          'This field must only contain upper and lowercase ' +
+          'letters, numbers, and hyphens. It must not start or ' +
+          'end with a hyphen.'
+      }
+    ];
     const credentials = props.credentials || [];
     if (credentials.length > 0) {
       nameValidators.push({
@@ -267,25 +279,20 @@ class DeploymentCredentialAdd extends React.Component {
     const signupURL = info && info.signupUrl;
     return (
       <div className="deployment-credential-add twelve-col no-margin-bottom">
-        <h4>
-          {`${credentialName ? 'Update' : 'Create new'} ${title} credential`}
-        </h4>
+        <h4>{`${credentialName ? 'Update' : 'Create new'} ${title} credential`}</h4>
         {credentialName || !signupURL ? null : (
           <div className="twelve-col deployment-credential-add__signup">
-            <a
-              className="deployment-credential-add__link"
-              href={signupURL}
-              target="_blank">
+            <a className="deployment-credential-add__link" href={signupURL} target="_blank">
               Sign up for {title}
               &nbsp;
-              <SvgIcon
-                name="external-link-16"
-                size="12" />
+              <SvgIcon name="external-link-16" size="12" />
             </a>
-          </div>)}
+          </div>
+        )}
         <form
           className="twelve-col no-margin-bottom"
-          onSubmit={this._handleAddCredentials.bind(this)}>
+          onSubmit={this._handleAddCredentials.bind(this)}
+        >
           <div className="six-col last-col">
             <GenericInput
               disabled={props.acl.isReadOnly() || !!credentialName}
@@ -293,22 +300,23 @@ class DeploymentCredentialAdd extends React.Component {
               ref="credentialName"
               required={true}
               validate={nameValidators}
-              value={credentialName} />
+              value={credentialName}
+            />
           </div>
-          <h3 className="deployment-panel__section-title twelve-col">
-            Enter credentials
-          </h3>
+          <h3 className="deployment-panel__section-title twelve-col">Enter credentials</h3>
           {this._generateCredentialsFields()}
-          <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
-            <ButtonRow
-              buttons={buttons} />
+          <div
+            className={
+              'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'
+            }
+          >
+            <ButtonRow buttons={buttons} />
           </div>
         </form>
       </div>
     );
   }
-};
+}
 
 DeploymentCredentialAdd.propTypes = {
   acl: PropTypes.object.isRequired,

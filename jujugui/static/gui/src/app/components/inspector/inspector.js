@@ -53,37 +53,44 @@ class Inspector extends React.Component {
       showHeaderLinks: false
     };
     const stateHistory = appState.history;
-    const prevState = stateHistory[stateHistory.length-2];
+    const prevState = stateHistory[stateHistory.length - 2];
     const previousInspector = prevState.gui && prevState.gui.inspector;
     switch (state.activeComponent) {
       case undefined:
         const backState = {};
         // Handle navigating back from the service details to a previous
         // service's relations.
-        if (previousInspector &&
-            previousInspector.id !== serviceId &&
-            previousInspector.activeComponent === 'relations') {
+        if (
+          previousInspector &&
+          previousInspector.id !== serviceId &&
+          previousInspector.activeComponent === 'relations'
+        ) {
           backState.gui = {
             inspector: {
               id: previousInspector.id,
-              activeComponent: previousInspector.activeComponent}};
+              activeComponent: previousInspector.activeComponent
+            }
+          };
         } else {
           backState.gui = {inspector: null};
         }
         state.activeChild = {
           title: service.get('name'),
           icon: service.get('icon'),
-          component: <ServiceOverview
-            acl={nextProps.acl}
-            addNotification={nextProps.addNotification}
-            changeState={changeState}
-            charm={nextProps.charm}
-            destroyService={nextProps.initUtils.destroyService}
-            modelUUID={nextProps.modelUUID}
-            service={service}
-            serviceRelations={nextProps.serviceRelations}
-            showActivePlan={nextProps.showActivePlan}
-            showPlans={nextProps.showPlans} />,
+          component: (
+            <ServiceOverview
+              acl={nextProps.acl}
+              addNotification={nextProps.addNotification}
+              changeState={changeState}
+              charm={nextProps.charm}
+              destroyService={nextProps.initUtils.destroyService}
+              modelUUID={nextProps.modelUUID}
+              service={service}
+              serviceRelations={nextProps.serviceRelations}
+              showActivePlan={nextProps.showActivePlan}
+              showPlans={nextProps.showPlans}
+            />
+          ),
           backState: backState
         };
         state.showHeaderLinks = true;
@@ -99,7 +106,7 @@ class Inspector extends React.Component {
           icon: service.get('icon'),
           count: units.length,
           headerType: unitStatus,
-          component:
+          component: (
             <UnitList
               acl={nextProps.acl}
               changeState={changeState}
@@ -107,18 +114,22 @@ class Inspector extends React.Component {
               envResolved={nextProps.modelAPI.envResolved}
               service={service}
               units={units}
-              unitStatus={unitStatus} />,
+              unitStatus={unitStatus}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
                 activeComponent: undefined
-              }}}};
+              }
+            }
+          }
+        };
         break;
       case 'unit':
         var unitId = appState.current.gui.inspector.unit;
-        var unit = service.get('units').getById(
-          serviceId + '/' + unitId);
+        var unit = service.get('units').getById(serviceId + '/' + unitId);
         var unitStatus = null;
         var previousComponent;
         var id;
@@ -140,14 +151,17 @@ class Inspector extends React.Component {
                 id: id,
                 activeComponent: 'units',
                 unit: null,
-                unitStatus: unitStatus}}});
+                unitStatus: unitStatus
+              }
+            }
+          });
           return {};
         }
         state.activeChild = {
           title: unit.displayName,
           icon: service.get('icon'),
           headerType: unit.agent_state || 'uncommitted',
-          component:
+          component: (
             <UnitDetails
               acl={nextProps.acl}
               changeState={changeState}
@@ -157,21 +171,27 @@ class Inspector extends React.Component {
               service={service}
               showSSHButtons={nextProps.showSSHButtons && window.juju_config.flags.expert}
               unit={unit}
-              unitStatus={unitStatus} />,
+              unitStatus={unitStatus}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: id,
                 activeComponent: previousComponent || 'units',
                 unit: null,
-                unitStatus: unitStatus}}}};
+                unitStatus: unitStatus
+              }
+            }
+          }
+        };
         break;
       case 'scale':
         const {initUtils} = nextProps;
         state.activeChild = {
           title: 'Scale',
           icon: service.get('icon'),
-          component:
+          component: (
             <ScaleService
               acl={nextProps.acl}
               changeState={changeState}
@@ -181,18 +201,24 @@ class Inspector extends React.Component {
                 reshape: shapeup.reshapeFunc
               }}
               providerType={nextProps.providerType}
-              serviceId={serviceId} />,
+              serviceId={serviceId}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: 'units'}}}};
+                activeComponent: 'units'
+              }
+            }
+          }
+        };
         break;
       case 'config':
         state.activeChild = {
           title: 'Configure',
           icon: service.get('icon'),
-          component:
+          component: (
             <Configuration
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
@@ -203,18 +229,24 @@ class Inspector extends React.Component {
               serviceRelations={nextProps.serviceRelations}
               setConfig={nextProps.modelAPI.setConfig}
               unplaceServiceUnits={nextProps.unplaceServiceUnits}
-              updateServiceUnitsDisplayname={nextProps.updateServiceUnitsDisplayname} />,
+              updateServiceUnitsDisplayname={nextProps.updateServiceUnitsDisplayname}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: undefined}}}};
+                activeComponent: undefined
+              }
+            }
+          }
+        };
         break;
       case 'expose':
         state.activeChild = {
           title: 'Expose',
           icon: service.get('icon'),
-          component:
+          component: (
             <InspectorExpose
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
@@ -224,29 +256,41 @@ class Inspector extends React.Component {
                 unexposeService: modelAPI.unexposeService
               })}
               service={service}
-              units={service.get('units')} />,
+              units={service.get('units')}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: undefined}}}};
+                activeComponent: undefined
+              }
+            }
+          }
+        };
         break;
       case 'relations':
         state.activeChild = {
           title: 'Relations',
           icon: service.get('icon'),
-          component:
+          component: (
             <InspectorRelations
               acl={nextProps.acl}
               changeState={changeState}
               destroyRelations={nextProps.relationUtils.destroyRelations}
               service={service}
-              serviceRelations={nextProps.serviceRelations} />,
+              serviceRelations={nextProps.serviceRelations}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: undefined}}}};
+                activeComponent: undefined
+              }
+            }
+          }
+        };
         break;
       case 'relation':
         var relationIndex = nextProps.appState.current.gui.inspector.relation;
@@ -254,16 +298,18 @@ class Inspector extends React.Component {
         var serviceName = relation.far.serviceName;
         var relationName = relation.far.name;
         state.activeChild = {
-          title: (serviceName + ':' + relationName),
+          title: serviceName + ':' + relationName,
           icon: service.get('icon'),
-          component:
-            <InspectorRelationDetails
-              relation={relation} />,
+          component: <InspectorRelationDetails relation={relation} />,
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: 'relations'}}}};
+                activeComponent: 'relations'
+              }
+            }
+          }
+        };
         break;
       case 'relate-to':
         const spouse = nextProps.appState.current.gui.inspector['relate-to'];
@@ -271,32 +317,45 @@ class Inspector extends React.Component {
           state.activeChild = {
             title: nextProps.services.getById(spouse).get('name'),
             icon: service.get('icon'),
-            component:
+            component: (
               <InspectorRelateToEndpoint
                 backState={{
                   gui: {
                     inspector: {
                       id: serviceId,
-                      activeComponent: 'relations'}}}}
+                      activeComponent: 'relations'
+                    }
+                  }
+                }}
                 changeState={changeState}
                 createRelation={nextProps.relationUtils.createRelation}
                 endpoints={nextProps.relationUtils.getAvailableEndpoints(
-                  service, nextProps.services.getById(spouse))} />,
+                  service,
+                  nextProps.services.getById(spouse)
+                )}
+              />
+            ),
             backState: {
               gui: {
                 inspector: {
                   id: serviceId,
-                  activeComponent: 'relate-to'}}}};
+                  activeComponent: 'relate-to'
+                }
+              }
+            }
+          };
           break;
         }
         state.activeChild = {
           title: 'Relate to',
           icon: service.get('icon'),
-          component:
+          component: (
             <InspectorRelateTo
               application={service}
               changeState={changeState}
-              relatableApplications={nextProps.relatableApplications} />,
+              relatableApplications={nextProps.relatableApplications}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
@@ -311,7 +370,7 @@ class Inspector extends React.Component {
         state.activeChild = {
           title: 'Change version',
           icon: service.get('icon'),
-          component:
+          component: (
             <InspectorChangeVersion
               acl={nextProps.acl}
               addCharm={nextProps.addCharm}
@@ -323,40 +382,58 @@ class Inspector extends React.Component {
                 getCharm: modelAPI.getCharm,
                 setCharm: modelAPI.setCharm
               })}
-              service={service} />,
+              service={service}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: undefined}}}};
+                activeComponent: undefined
+              }
+            }
+          }
+        };
         break;
       case 'resources':
         state.activeChild = {
           title: 'Resources',
           icon: service.get('icon'),
-          component:
+          component: (
             <InspectorResourcesList
               acl={nextProps.acl}
-              resources={nextProps.charm.get('resources')} />,
+              resources={nextProps.charm.get('resources')}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: undefined}}}};
+                activeComponent: undefined
+              }
+            }
+          }
+        };
         break;
       case 'plan':
         state.activeChild = {
           title: 'Plan',
           icon: service.get('icon'),
-          component:
+          component: (
             <InspectorPlan
               acl={nextProps.acl}
-              currentPlan={nextProps.service.get('activePlan')} />,
+              currentPlan={nextProps.service.get('activePlan')}
+            />
+          ),
           backState: {
             gui: {
               inspector: {
                 id: serviceId,
-                activeComponent: undefined}}}};
+                activeComponent: undefined
+              }
+            }
+          }
+        };
         break;
     }
     return state;
@@ -378,14 +455,13 @@ class Inspector extends React.Component {
           icon={this.state.activeChild.icon}
           showLinks={this.state.showHeaderLinks}
           title={this.state.activeChild.title}
-          type={this.state.activeChild.headerType} />
-        <div className="inspector-content">
-          {this.state.activeChild.component}
-        </div>
+          type={this.state.activeChild.headerType}
+        />
+        <div className="inspector-content">{this.state.activeChild.component}</div>
       </div>
     );
   }
-};
+}
 
 Inspector.propTypes = {
   acl: PropTypes.object.isRequired,

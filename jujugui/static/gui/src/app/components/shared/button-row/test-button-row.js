@@ -8,19 +8,18 @@ const ButtonRow = require('./button-row');
 const Button = require('../button/button');
 
 describe('ButtonRow', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ButtonRow
-      buttons={options.buttons || []} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(<ButtonRow buttons={options.buttons || []} />);
 
   it('generates a button', function() {
     var callbackStub = sinon.stub();
-    var buttons = [{
-      title: 'My button',
-      type: 'submit',
-      action: callbackStub
-    }];
+    var buttons = [
+      {
+        title: 'My button',
+        type: 'submit',
+        action: callbackStub
+      }
+    ];
     const wrapper = renderComponent({buttons});
     const expected = (
       <div className="button-row button-row--multiple button-row--count-1">
@@ -29,7 +28,8 @@ describe('ButtonRow', function() {
           disabled={undefined}
           key="My button"
           submit={undefined}
-          type="submit">
+          type="submit"
+        >
           My button
         </Button>
       </div>
@@ -39,15 +39,18 @@ describe('ButtonRow', function() {
 
   it('sets a class when generating multiple buttons', function() {
     var callbackStub = sinon.stub();
-    var buttons = [{
-      title: 'My button',
-      type: 'submit',
-      action: callbackStub
-    }, {
-      title: 'Another button',
-      type: 'submit',
-      action: callbackStub
-    }];
+    var buttons = [
+      {
+        title: 'My button',
+        type: 'submit',
+        action: callbackStub
+      },
+      {
+        title: 'Another button',
+        type: 'submit',
+        action: callbackStub
+      }
+    ];
     const wrapper = renderComponent({buttons});
     const expected = (
       <div className="button-row button-row--multiple button-row--count-2">
@@ -56,7 +59,8 @@ describe('ButtonRow', function() {
           disabled={undefined}
           key="My button"
           submit={undefined}
-          type="submit">
+          type="submit"
+        >
           My button
         </Button>
         <Button
@@ -64,10 +68,12 @@ describe('ButtonRow', function() {
           disabled={undefined}
           key="Another button"
           submit={undefined}
-          type="submit">
+          type="submit"
+        >
           Another button
         </Button>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 });

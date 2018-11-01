@@ -17,22 +17,22 @@ class ExpertStoreCard extends React.Component {
       <ExpertCard
         classes={this.props.classes}
         expert={expert}
-        staticURL={this.props.staticURL}>
+        staticURL={this.props.staticURL}
+      >
         <div className="expert-store-card">
-          <p className="expert-store-card__description">
-            {expert.storeDescription}
-          </p>
+          <p className="expert-store-card__description">{expert.storeDescription}</p>
           <a
             className="button--inline-neutral"
             href="http://jujucharms.com/experts/"
-            target="_blank">
+            target="_blank"
+          >
             Learn about Big Data expertise&hellip;
           </a>
         </div>
       </ExpertCard>
     );
   }
-};
+}
 
 ExpertStoreCard.propTypes = {
   classes: PropTypes.array,

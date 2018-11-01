@@ -46,7 +46,7 @@ const keyBindings = {
     help: 'Center the model overview',
     label: 'Shift + 0'
   },
-  'esc': {
+  esc: {
     fire: 'topo.clearState',
     callback: function() {
       document.dispatchEvent(new Event('hideModals'));
@@ -80,9 +80,10 @@ const activate = () => {
     backspace: 8,
     tab: 9,
     pageup: 33,
-    pagedown: 34};
+    pagedown: 34
+  };
   const code_map = {};
-  Object.keys(key_map).forEach(k => code_map[key_map[k]] = k);
+  Object.keys(key_map).forEach(k => (code_map[key_map[k]] = k));
   const listener = evt => {
     // Normalize key-code
     // This gets triggered by different types of elements some YUI some
@@ -103,21 +104,25 @@ const activate = () => {
       contentEditable = ReactDOM.findDOMNode(evt.target).contentEditable;
     }
     // Don't ignore esc in the search box.
-    if (currentKey === 'esc' &&
-        evt.target.className === 'header-search__input') {
+    if (currentKey === 'esc' && evt.target.className === 'header-search__input') {
       // Remove the focus from the search box.
       evt.target.blur();
       // Target filtering, we want to listen on window
       // but not honor hotkeys when focused on
       // text oriented input fields.
-    } else if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 ||
-               contentEditable === 'true') {
+    } else if (['INPUT', 'TEXTAREA'].indexOf(tagName) !== -1 || contentEditable === 'true') {
       return;
     }
     const symbolic = [];
-    if (evt.ctrlKey) { symbolic.push('C');}
-    if (evt.altKey) { symbolic.push('A');}
-    if (evt.shiftKey) { symbolic.push('S');}
+    if (evt.ctrlKey) {
+      symbolic.push('C');
+    }
+    if (evt.altKey) {
+      symbolic.push('A');
+    }
+    if (evt.shiftKey) {
+      symbolic.push('S');
+    }
     symbolic.push(currentKey);
     const trigger = symbolic.join('-');
     const spec = keyBindings[trigger];
@@ -136,9 +141,13 @@ const activate = () => {
             target.classList.add('hidden');
           }
         }
-        if (spec.focus) { target.focus(); }
+        if (spec.focus) {
+          target.focus();
+        }
       }
-      if (spec.callback) { spec.callback(evt, target); }
+      if (spec.callback) {
+        spec.callback(evt, target);
+      }
       // HACK w/o context/view restriction but right direction
       if (spec.fire) {
         document.dispatchEvent(new Event(spec.fire));

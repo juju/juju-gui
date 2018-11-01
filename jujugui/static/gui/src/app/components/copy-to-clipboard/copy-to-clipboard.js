@@ -36,18 +36,15 @@ class CopyToClipboard extends React.Component {
           readOnly="true"
           ref="input"
           type="text"
-          value={this.props.value} />
-        <button
-          className={className + '__btn'}
-          ref="btn">
-          <SvgIcon
-            name="copy-to-clipboard-16"
-            size="16" />
+          value={this.props.value}
+        />
+        <button className={className + '__btn'} ref="btn">
+          <SvgIcon name="copy-to-clipboard-16" size="16" />
         </button>
       </div>
     );
   }
-};
+}
 
 CopyToClipboard.propTypes = {
   className: PropTypes.string,

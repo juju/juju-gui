@@ -64,32 +64,27 @@ class EntityResources extends React.Component {
     }
     const resourceList = resources.map((resource, i) => {
       return (
-        <li
-          className="entity-files__file"
-          key={resource.Name + i}>
+        <li className="entity-files__file" key={resource.Name + i}>
           {this._generateResource(resource)}
-        </li>);
+        </li>
+      );
     });
     return (
       <div className="entity-resources section" id="files">
         <h3 className="section__title">
-          {resourceList.length}&nbsp;
+          {resourceList.length}
+          &nbsp;
           {initUtils.pluralize('resource', resourceList.length)}
         </h3>
-        <ul className="section__list entity-files__listing">
-          {resourceList}
-        </ul>
-      </div>);
-  }
-
-  render() {
-    return (
-      <div>
-        {this._generateResources()}
+        <ul className="section__list entity-files__listing">{resourceList}</ul>
       </div>
     );
   }
-};
+
+  render() {
+    return <div>{this._generateResources()}</div>;
+  }
+}
 
 EntityResources.propTypes = {
   apiUrl: PropTypes.string.isRequired,

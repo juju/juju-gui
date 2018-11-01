@@ -63,35 +63,33 @@ class EntityContentRelations extends React.Component {
     }
     const relationsList = provides.concat(requires);
     relationsList.forEach((relation, i) => {
-      const classes = classNames(
-        'link section__list-item',
-        {
-          'hidden': !this.state.showAllRelations && i > 1
-        }
-      );
+      const classes = classNames('link section__list-item', {
+        hidden: !this.state.showAllRelations && i > 1
+      });
       const type = this.role === 'requirer' ? 'requires' : 'provides';
       components.push(
         <li
           className={classes}
           key={relation.name}
-          onClick={this._handleRelationClick.bind(
-            this, type, relation.interface)}
+          onClick={this._handleRelationClick.bind(this, type, relation.interface)}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           {relation.name}: {relation.interface}
         </li>
       );
     }, this);
     if (components.length > 2) {
-      const buttonText = this.state.showAllRelations ?
-        'View fewer relations' :
-        'View more relations';
+      const buttonText = this.state.showAllRelations
+        ? 'View fewer relations'
+        : 'View more relations';
       components.push(
         <li className="section__list-item" key="show-more">
           <button
             className="button--inline-neutral"
             onClick={this._handleViewMore.bind(this)}
-            role="button">
+            role="button"
+          >
             {buttonText}
           </button>
         </li>
@@ -105,14 +103,8 @@ class EntityContentRelations extends React.Component {
       <div className="section entity-relations" id="relations">
         <h3 className="section__title">
           Relations&nbsp;
-          <a
-            href={
-              'https://jujucharms.com/docs/stable/' +
-            'charms-relations'}
-            target="_blank">
-            <SvgIcon
-              name="help_16"
-              size="16" />
+          <a href={'https://jujucharms.com/docs/stable/' + 'charms-relations'} target="_blank">
+            <SvgIcon name="help_16" size="16" />
           </a>
         </h3>
         <ul className="section__list" ref="list">
@@ -121,7 +113,7 @@ class EntityContentRelations extends React.Component {
       </div>
     );
   }
-};
+}
 
 EntityContentRelations.propTypes = {
   changeState: PropTypes.func.isRequired,

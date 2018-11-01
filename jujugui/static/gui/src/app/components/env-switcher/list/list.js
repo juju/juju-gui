@@ -48,9 +48,7 @@ class EnvList extends React.Component {
           lastConnected = (
             <span>
               Last accessed&nbsp;
-              <DateDisplay
-                date={model.lastConnection}
-                relative={true} />
+              <DateDisplay date={model.lastConnection} relative={true} />
             </span>
           );
         }
@@ -74,11 +72,10 @@ class EnvList extends React.Component {
             key={model.uuid}
             onClick={this._handleModelClick.bind(this)}
             role="menuitem"
-            tabIndex="0">
+            tabIndex="0"
+          >
             {name}
-            <div className="env-list__last-connected">
-              {lastConnected}
-            </div>
+            <div className="env-list__last-connected">{lastConnected}</div>
           </li>
         );
       });
@@ -122,7 +119,8 @@ class EnvList extends React.Component {
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
         id="environmentSwitcherMenu"
-        role="menubar">
+        role="menubar"
+      >
         {this.generateModelList()}
       </ul>
     );
@@ -145,18 +143,18 @@ class EnvList extends React.Component {
           disabled={!canAddModels}
           switchModel={this.props.switchModel}
           title="Start a new model"
-          type="neutral" />);
+          type="neutral"
+        />
+      );
     }
     return (
-      <Panel
-        instanceName="env-list-panel"
-        visible={true}>
+      <Panel instanceName="env-list-panel" visible={true}>
         {this._generateModels()}
         {createNew}
       </Panel>
     );
   }
-};
+}
 
 EnvList.propTypes = {
   acl: PropTypes.object.isRequired,

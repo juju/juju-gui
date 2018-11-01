@@ -11,15 +11,17 @@ const SvgIcon = require('../../../svg-icon/svg-icon');
 describe('PaymentMethodCard', () => {
   let card;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <PaymentMethodCard
-      addNotification={options.addNotification}
-      card={options.card || card}
-      onPaymentMethodRemoved={options.onPaymentMethodRemoved}
-      removePaymentMethod={options.removePaymentMethod}
-      updatePaymentMethod={options.updatePaymentMethod}
-      username='spinach' />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <PaymentMethodCard
+        addNotification={options.addNotification}
+        card={options.card || card}
+        onPaymentMethodRemoved={options.onPaymentMethodRemoved}
+        removePaymentMethod={options.removePaymentMethod}
+        updatePaymentMethod={options.updatePaymentMethod}
+        username="spinach"
+      />
+    );
 
   beforeEach(() => {
     card = {
@@ -49,27 +51,22 @@ describe('PaymentMethodCard', () => {
         <div className="five-col">
           <div
             className="payment-card-wrapper"
-            onClick={wrapper.find('.payment-card-wrapper').prop('onClick')}>
+            onClick={wrapper.find('.payment-card-wrapper').prop('onClick')}
+          >
             <div className="payment-card-container">
               <div className="payment-card-front">
-                <div className="payment-card-overlay"></div>
-                <div className="payment-card-name">
-                  MR G Spinach
-                </div>
+                <div className="payment-card-overlay" />
+                <div className="payment-card-name">MR G Spinach</div>
               </div>
               <div className="payment-card-back">
-                <div className="payment-card-overlay"></div>
-                <div className="payment-card-number">
-                  xxxx xxxx xxxx {1234}
-                </div>
+                <div className="payment-card-overlay" />
+                <div className="payment-card-number">xxxx xxxx xxxx {1234}</div>
                 <div className="payment-card-bottom">
                   <div className="payment-card-expiry">
                     {3}/{2017}
                   </div>
                   <div className="payment-card-brand">
-                    <SvgIcon
-                      name="card-fancy"
-                      size="40" />
+                    <SvgIcon name="card-fancy" size="40" />
                   </div>
                 </div>
               </div>
@@ -81,12 +78,17 @@ describe('PaymentMethodCard', () => {
             <h4>Card address</h4>
             <p>1 Maple</p>
             <p>St</p>
-            <p>{'Sasquatch'} {'Bunnyhug'}</p>
-            <p>{'North of the Border'} {'90210'}</p>
+            <p>
+              {'Sasquatch'} {'Bunnyhug'}
+            </p>
+            <p>
+              {'North of the Border'} {'90210'}
+            </p>
           </div>
         </div>
         {null}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -97,29 +99,37 @@ describe('PaymentMethodCard', () => {
     });
     const expected = (
       <div className="payment-card-actions">
-        <Button
-          action={sinon.stub()}
-          type="inline-neutral">
+        <Button action={sinon.stub()} type="inline-neutral">
           Update payment details
         </Button>
         <Button
-          action={wrapper.find('Button').at(1).prop('action')}
-          type="inline-neutral">
+          action={wrapper
+            .find('Button')
+            .at(1)
+            .prop('action')}
+          type="inline-neutral"
+        >
           Remove payment details
         </Button>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.payment-card-actions'), expected);
   });
 
   it('can render when flipped', () => {
     const wrapper = renderComponent();
-    wrapper.find('.payment-card-wrapper').props().onClick(
-      {stopPropagation: sinon.stub()});
+    wrapper
+      .find('.payment-card-wrapper')
+      .props()
+      .onClick({stopPropagation: sinon.stub()});
     wrapper.update();
     assert.equal(
-      wrapper.find('.payment-card-wrapper').prop('className').includes(
-        'payment-card-wrapper--flipped'),
-      true);
+      wrapper
+        .find('.payment-card-wrapper')
+        .prop('className')
+        .includes('payment-card-wrapper--flipped'),
+      true
+    );
   });
 
   it('can remove the payment method', () => {
@@ -129,7 +139,11 @@ describe('PaymentMethodCard', () => {
       onPaymentMethodRemoved,
       removePaymentMethod
     });
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(removePaymentMethod.callCount, 1);
     assert.equal(removePaymentMethod.args[0][0], 'spinach');
     assert.equal(removePaymentMethod.args[0][1], 'paymentmethod1');
@@ -143,7 +157,11 @@ describe('PaymentMethodCard', () => {
       addNotification,
       removePaymentMethod
     });
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Unable to remove the payment method',
@@ -158,7 +176,11 @@ describe('PaymentMethodCard', () => {
     const wrapper = renderComponent({
       removePaymentMethod
     });
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

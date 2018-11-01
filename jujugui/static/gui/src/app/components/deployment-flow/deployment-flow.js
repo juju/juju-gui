@@ -93,7 +93,7 @@ class DeploymentFlow extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {hash} = this.props;
-    if (hash && (hash !== prevProps.hash)) {
+    if (hash && hash !== prevProps.hash) {
       this._scrollDeploymentFlow(`#${hash}`);
     }
     const prevApps = prevProps.applications;
@@ -105,9 +105,11 @@ class DeploymentFlow extends React.Component {
     const appDiff = prevApps.filter(a => !currentApps.includes(a));
     // Filter the list for new deploy commands.
     const deployCommandsDiff = Object.keys(newDeployCommands).filter(
-      a => !Object.keys(currentDeployCommands).includes(a));
+      a => !Object.keys(currentDeployCommands).includes(a)
+    );
     const appChanges = prevApps.length !== currentApps.length || appDiff.length > 0;
-    const commandChanges = newDeployCommands.length !== currentDeployCommands.length ||
+    const commandChanges =
+      newDeployCommands.length !== currentDeployCommands.length ||
       deployCommandsDiff.length > 0;
     if (appChanges || commandChanges) {
       this._getAgreements();
@@ -138,7 +140,9 @@ class DeploymentFlow extends React.Component {
             });
             return;
           }
-          this.setState({ddEntity: jujulibConversionUtils.makeEntityModel(data[0])});
+          this.setState({
+            ddEntity: jujulibConversionUtils.makeEntityModel(data[0])
+          });
         });
       });
     });
@@ -149,7 +153,7 @@ class DeploymentFlow extends React.Component {
     @param props {Object} A set of component props.
     @returns {Object} The grouped changes.
   */
-  _getGroupedChanges(props=this.props) {
+  _getGroupedChanges(props = this.props) {
     return changesUtils.getGroupedChanges(props.changes);
   }
 
@@ -182,13 +186,18 @@ class DeploymentFlow extends React.Component {
       case 'cloud':
         completed = hasCloud && hasCredential;
         disabled = !loggedIn;
-        visible = loggedIn && (willCreateModel || !completed) &&
+        visible =
+          loggedIn &&
+          (willCreateModel || !completed) &&
           (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'credential':
         completed = false;
         disabled = !hasCloud;
-        visible = loggedIn && willCreateModel && hasCloud &&
+        visible =
+          loggedIn &&
+          willCreateModel &&
+          hasCloud &&
           (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'ssh-key':
@@ -199,20 +208,20 @@ class DeploymentFlow extends React.Component {
       case 'vpc':
         completed = false;
         disabled = !hasCloud;
-        visible = (
+        visible =
           loggedIn &&
           willCreateModel &&
           hasCloud &&
           hasCredential &&
-          this.state.cloud.name === 'aws') &&
+          this.state.cloud.name === 'aws' &&
           !isExpertFlow;
         break;
       case 'machines':
         const addMachines = groupedChanges._addMachines;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn && addMachines &&
-          Object.keys(addMachines).length > 0 && !isExpertFlow;
+        visible =
+          loggedIn && addMachines && Object.keys(addMachines).length > 0 && !isExpertFlow;
         break;
       case 'services':
         completed = false;
@@ -227,14 +236,17 @@ class DeploymentFlow extends React.Component {
       case 'payment':
         completed = !!this.state.paymentUser;
         disabled = false;
-        visible = loggedIn && this.props.showPay &&
-          (!isExpertFlow || (isExpertFlow && hasBudget));
+        visible =
+          loggedIn && this.props.showPay && (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'agreements':
         const newTerms = this.state.newTerms;
         completed = false;
         disabled = !hasCloud || !hasCredential;
-        visible = loggedIn && newTerms && newTerms.length > 0 &&
+        visible =
+          loggedIn &&
+          newTerms &&
+          newTerms.length > 0 &&
           (!isExpertFlow || (isExpertFlow && hasBudget));
         break;
       case 'deploy':
@@ -384,8 +396,11 @@ class DeploymentFlow extends React.Component {
     returns {Boolean} Whether this should be an expert flow.
   */
   _isExpertFlow() {
-    return this.state.ddEntity && this.state.ddEntity.get('supported') &&
-      this.state.ddEntity.get('plans');
+    return (
+      this.state.ddEntity &&
+      this.state.ddEntity.get('supported') &&
+      this.state.ddEntity.get('plans')
+    );
   }
 
   /**
@@ -412,17 +427,14 @@ class DeploymentFlow extends React.Component {
       return;
     }
     this.setState({deploying: true});
-    this.sendAnalytics(
-      'Button click',
-      'Deploy model'
-    );
+    this.sendAnalytics('Button click', 'Deploy model');
     if (this.props.stats) {
       this.props.stats.increase('deploy');
     }
 
     const args = {
       config: {},
-      cloud: this.state.cloud && this.state.cloud.name || undefined,
+      cloud: (this.state.cloud && this.state.cloud.name) || undefined,
       credential: this.state.credential,
       region: this.state.region
     };
@@ -445,7 +457,8 @@ class DeploymentFlow extends React.Component {
             level: 'error'
           });
         },
-        ecsOptions);
+        ecsOptions
+      );
     }
     if (this.state.lpUsernames.length) {
       this.props.modelAPI.importKeys(
@@ -474,12 +487,14 @@ class DeploymentFlow extends React.Component {
         budget: this.state.budget
       };
     }
-    const deploy = this.props.initUtils.deploy.bind(this,
+    const deploy = this.props.initUtils.deploy.bind(
+      this,
       this._deployCallback.bind(this),
       true,
       this.props.modelName,
       args,
-      slaData);
+      slaData
+    );
     if (this.state.newTerms.length > 0) {
       const terms = this.state.newTerms.map(term => {
         const args = {
@@ -558,19 +573,18 @@ class DeploymentFlow extends React.Component {
     }
     this.setState({loadingTerms: true}, () => {
       // Get the terms the user has not yet agreed to.
-      const xhr = this.props.terms.getAgreementsByTerms(
-        terms, (error, agreements) => {
-          if (error) {
-            this.props.addNotification({
-              title: 'Problem loading terms',
-              message: `Problem loading terms: ${error}`,
-              level: 'error'
-            });
-            console.error('Problem loading terms:', error);
-            return;
-          }
-          this.setState({newTerms: agreements || [], loadingTerms: false});
-        });
+      const xhr = this.props.terms.getAgreementsByTerms(terms, (error, agreements) => {
+        if (error) {
+          this.props.addNotification({
+            title: 'Problem loading terms',
+            message: `Problem loading terms: ${error}`,
+            level: 'error'
+          });
+          console.error('Problem loading terms:', error);
+          return;
+        }
+        this.setState({newTerms: agreements || [], loadingTerms: false});
+      });
       this.xhrs.push(xhr);
     });
   }
@@ -620,12 +634,14 @@ class DeploymentFlow extends React.Component {
     if (this.state.cloudCount <= 1 || !this.state.cloud || this.props.modelCommitted) {
       return;
     }
-    return [{
-      action: this._clearCloud.bind(this),
-      disabled: this.props.acl.isReadOnly(),
-      title: 'Change cloud',
-      type: 'neutral'
-    }];
+    return [
+      {
+        action: this._clearCloud.bind(this),
+        disabled: this.props.acl.isReadOnly(),
+        title: 'Change cloud',
+        type: 'neutral'
+      }
+    ];
   }
 
   /**
@@ -641,7 +657,11 @@ class DeploymentFlow extends React.Component {
     }
     const cloud = this.state.cloud;
     const isAzure = cloud && cloud.cloudType === 'azure';
-    let title = <span>Add public SSH keys <em>(optional)</em></span>;
+    let title = (
+      <span>
+        Add public SSH keys <em>(optional)</em>
+      </span>
+    );
     if (isAzure) {
       title = <span>Add public SSH keys</span>;
     }
@@ -651,15 +671,18 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-ssh-key"
         showCheck={true}
-        title={title}>
+        title={title}
+      >
         <DeploymentSSHKey
           addNotification={this.props.addNotification}
           cloud={cloud}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           setSSHKeys={this._setSSHKeys.bind(this)}
           username={this.props.username}
-          WebHandler={this.props.WebHandler} />
-      </DeploymentSection>);
+          WebHandler={this.props.WebHandler}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -676,11 +699,16 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-vpc">
         <AccordionSection
-          title={<span>Add AWS VPC ID <em>(optional)</em></span>}>
+          title={
+            <span>
+              Add AWS VPC ID <em>(optional)</em>
+            </span>
+          }
+        >
           <DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
         </AccordionSection>
-      </div>);
-
+      </div>
+    );
   }
 
   /**
@@ -700,14 +728,17 @@ class DeploymentFlow extends React.Component {
         completed={status.completed}
         instance="deployment-model-name"
         showCheck={true}
-        title="Set your model name">
+        title="Set your model name"
+      >
         <DeploymentModelName
           acl={this.props.acl}
           ddEntity={this.state.ddEntity}
           focusName={!isExpertFlow}
           modelName={this.props.modelName}
-          setModelName={this.props.setModelName} />
-      </DeploymentSection>);
+          setModelName={this.props.setModelName}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -724,7 +755,8 @@ class DeploymentFlow extends React.Component {
         completed={status.completed}
         instance="deployment-pricing"
         showCheck={true}
-        title="Pricing">
+        title="Pricing"
+      >
         <DeploymentPricing
           addNotification={this.props.addNotification}
           applications={this.props.applications}
@@ -737,8 +769,10 @@ class DeploymentFlow extends React.Component {
           // machineCount is only defined in bundles so if it's not there it is
           // a charm and the count is one.
           machineCount={this.state.ddEntity.get('machineCount') || '1'}
-          setSLA={this._setSLA.bind(this)} />
-      </DeploymentSection>);
+          setSLA={this._setSLA.bind(this)}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -759,13 +793,16 @@ class DeploymentFlow extends React.Component {
         completed={status.completed}
         instance="deployment-expert-budget"
         showCheck={true}
-        title="Set your maximum monthly budget (optional)">
+        title="Set your maximum monthly budget (optional)"
+      >
         <DeploymentExpertBudget
           budget={this.state.budget}
           // 720 is the average number of hours in a month.
-          estimateWithSLA={((hourPrice * machineCount * 720) + estimate).toFixed(2)}
-          setBudget={this._setBudget.bind(this)} />
-      </DeploymentSection>);
+          estimateWithSLA={(hourPrice * machineCount * 720 + estimate).toFixed(2)}
+          setBudget={this._setBudget.bind(this)}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -789,14 +826,10 @@ class DeploymentFlow extends React.Component {
     if (this.props.gisf) {
       args.push('has USSO');
     } else {
-      args.push('doesn\'t have USSO');
+      args.push("doesn't have USSO");
     }
 
-    this.props.sendAnalytics(
-      'Deployment Flow',
-      action,
-      args.join(' - ')
-    );
+    this.props.sendAnalytics('Deployment Flow', action, args.join(' - '));
   }
 
   /**
@@ -838,7 +871,9 @@ class DeploymentFlow extends React.Component {
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}
         loginToController={this.props.loginToController}
-        showLoginLinks={this._shouldShowLoginLinks()} />);
+        showLoginLinks={this._shouldShowLoginLinks()}
+      />
+    );
   }
 
   /**
@@ -860,7 +895,8 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-cloud"
         showCheck={true}
-        title="Choose cloud to deploy to">
+        title="Choose cloud to deploy to"
+      >
         <DeploymentCloud
           acl={this.props.acl}
           addNotification={this.props.addNotification}
@@ -868,8 +904,10 @@ class DeploymentFlow extends React.Component {
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.controllerAPI.listClouds}
           setCloud={this._setCloud.bind(this)}
-          setCloudCount={this._setCloudCount.bind(this)} />
-      </DeploymentSection>);
+          setCloudCount={this._setCloudCount.bind(this)}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -890,7 +928,8 @@ class DeploymentFlow extends React.Component {
         completed={status.completed}
         disabled={status.disabled}
         instance="deployment-credential"
-        showCheck={false}>
+        showCheck={false}
+      >
         <DeploymentCredential
           acl={this.props.acl}
           addNotification={this.props.addNotification}
@@ -907,9 +946,11 @@ class DeploymentFlow extends React.Component {
           sendAnalytics={this.sendAnalytics.bind(this)}
           setCredential={this._setCredential.bind(this)}
           setRegion={this._setRegion.bind(this)}
-          user={this.props.getUserName()} />
+          user={this.props.getUserName()}
+        />
         {this._generateVPCSection()}
-      </DeploymentSection>);
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -931,7 +972,8 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-machines"
         showCheck={false}
-        title="Machines to be provisioned">
+        title="Machines to be provisioned"
+      >
         <DeploymentMachines
           acl={this.props.acl}
           cloud={cloud}
@@ -939,8 +981,10 @@ class DeploymentFlow extends React.Component {
             formatConstraints: initUtils.formatConstraints,
             generateMachineDetails: initUtils.generateMachineDetails
           })}
-          machines={this._getGroupedChanges()._addMachines} />
-      </DeploymentSection>);
+          machines={this._getGroupedChanges()._addMachines}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -956,9 +1000,7 @@ class DeploymentFlow extends React.Component {
     }
     return (
       <div className="deployment-services">
-        <AccordionSection
-          startOpen={this.props.modelCommitted}
-          title="Model changes">
+        <AccordionSection startOpen={this.props.modelCommitted} title="Model changes">
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
@@ -969,9 +1011,11 @@ class DeploymentFlow extends React.Component {
             listPlansForCharm={this.props.plans.listPlansForCharm}
             parseTermId={this._parseTermId.bind(this)}
             showTerms={this.props.terms.showTerms}
-            withPlans={this.props.withPlans} />
+            withPlans={this.props.withPlans}
+          />
         </AccordionSection>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -991,14 +1035,17 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-budget"
         showCheck={true}
-        title="Confirm budget">
+        title="Confirm budget"
+      >
         <DeploymentBudget
           acl={this.props.acl}
           addNotification={this.props.addNotification}
           listBudgets={this.props.plans.listBudgets}
           setBudget={this._setBudget.bind(this)}
-          user={this.props.getUserName()} />
-      </DeploymentSection>);
+          user={this.props.getUserName()}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -1019,7 +1066,8 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         instance="deployment-payment"
         showCheck={true}
-        title="Payment details">
+        title="Payment details"
+      >
         <DeploymentPayment
           acl={props.acl}
           addNotification={props.addNotification}
@@ -1029,8 +1077,10 @@ class DeploymentFlow extends React.Component {
           paymentUser={this.state.paymentUser}
           setPaymentUser={this._setPaymentUser.bind(this)}
           stripe={props.stripe}
-          username={props.profileUsername} />
-      </DeploymentSection>);
+          username={props.profileUsername}
+        />
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -1061,7 +1111,9 @@ class DeploymentFlow extends React.Component {
         disabled={status.disabled}
         onCheckboxChange={this._handleTermsAgreement.bind(this)}
         showTerms={!!isExpertFlow}
-        terms={this.state.newTerms} />);
+        terms={this.state.newTerms}
+      />
+    );
   }
 
   /**
@@ -1081,12 +1133,10 @@ class DeploymentFlow extends React.Component {
     } else {
       deployTitle = deploying ? 'Deploying...' : 'Deploy';
     }
-    const classes = classNames(
-      'inner-wrapper',
-      'deployment-flow__deploy',
-      {'deployment-flow__deploy--cookie-visible': this.props.gtmEnabled &&
-        cookieUtil.shouldShowNotification(document)}
-    );
+    const classes = classNames('inner-wrapper', 'deployment-flow__deploy', {
+      'deployment-flow__deploy--cookie-visible':
+        this.props.gtmEnabled && cookieUtil.shouldShowNotification(document)
+    });
     return (
       <div className="twelve-col">
         <div className={classes}>
@@ -1095,12 +1145,14 @@ class DeploymentFlow extends React.Component {
             <Button
               action={this._handleDeploy.bind(this)}
               disabled={!this._deploymentAllowed()}
-              type="positive">
+              type="positive"
+            >
               {deployTitle}
             </Button>
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -1117,7 +1169,9 @@ class DeploymentFlow extends React.Component {
         generatePath={this.props.generatePath}
         getDiagramURL={this.props.charmstore.getDiagramURL}
         sendAnalytics={this.props.sendAnalytics}
-        staticURL={this.props.staticURL} />);
+        staticURL={this.props.staticURL}
+      />
+    );
   }
 
   /**
@@ -1131,7 +1185,7 @@ class DeploymentFlow extends React.Component {
       return;
     }
     if (state.loadingEntity) {
-      return (<Spinner />);
+      return <Spinner />;
     }
     if (!state.loadingEntity) {
       if (this._isExpertFlow()) {
@@ -1147,7 +1201,9 @@ class DeploymentFlow extends React.Component {
           ddData={props.ddData}
           entityModel={state.ddEntity}
           generatePath={props.generatePath}
-          getDiagramURL={props.charmstore.getDiagramURL} />);
+          getDiagramURL={props.charmstore.getDiagramURL}
+        />
+      );
     }
     return null;
   }
@@ -1161,7 +1217,8 @@ class DeploymentFlow extends React.Component {
     const target = document.querySelector(selector);
     // The deployment flow panel element does the scrolling.
     const deploymentFlow = ReactDOM.findDOMNode(this).querySelector(
-      '.deployment-panel__content');
+      '.deployment-panel__content'
+    );
     if (target && deploymentFlow) {
       // Set the scroll position to the element's top position taking into
       // account the sticky header size.
@@ -1226,7 +1283,7 @@ class DeploymentFlow extends React.Component {
     // If this is the direct deploy then don't try and render any components until
     // after the entity has loaded.
     if (this.state.isDirectDeploy && !this.state.ddEntity) {
-      return (<Spinner />);
+      return <Spinner />;
     } else {
       content = (
         <React.Fragment>
@@ -1243,7 +1300,8 @@ class DeploymentFlow extends React.Component {
           {this._generatePaymentSection()}
           {this._generateDeploySection()}
           {this._generateLogin()}
-        </React.Fragment>);
+        </React.Fragment>
+      );
     }
     return (
       <div className="deployment-flow">
@@ -1252,13 +1310,14 @@ class DeploymentFlow extends React.Component {
           isDirectDeploy={this.state.isDirectDeploy}
           loggedIn={this.props.isLoggedIn()}
           sendAnalytics={this.sendAnalytics.bind(this)}
-          title={this.props.modelName}>
+          title={this.props.modelName}
+        >
           {content}
         </DeploymentPanel>
       </div>
     );
   }
-};
+}
 
 DeploymentFlow.propTypes = {
   WebHandler: PropTypes.func.isRequired,

@@ -46,10 +46,8 @@ class DeploymentBar extends React.Component {
     @returns {String} the label for the deploy button
   */
   _getDeployButtonLabel() {
-    var label = this.props.modelCommitted ? 'Commit changes'
-      : 'Deploy changes';
-    return label + ' (' +
-      Object.keys(this.props.currentChangeSet).length + ')';
+    var label = this.props.modelCommitted ? 'Commit changes' : 'Deploy changes';
+    return label + ' (' + Object.keys(this.props.currentChangeSet).length + ')';
   }
 
   /**
@@ -58,11 +56,7 @@ class DeploymentBar extends React.Component {
     @method _deployAction
   */
   _deployAction() {
-    this.props.sendAnalytics(
-      'Deployment Flow',
-      'Button click',
-      'deploy'
-    );
+    this.props.sendAnalytics('Deployment Flow', 'Button click', 'deploy');
     this.props.changeState({
       gui: {
         deploy: ''
@@ -78,32 +72,30 @@ class DeploymentBar extends React.Component {
   _generateButton() {
     var changeCount = Object.keys(this.props.currentChangeSet).length;
     if (this.props.acl.isReadOnly()) {
-      return (
-        <div className="deployment-bar__read-only">
-          Read only
-        </div>);
+      return <div className="deployment-bar__read-only">Read only</div>;
     }
     return (
       <div className="deployment-bar__deploy">
         <Button
           action={this._deployAction.bind(this)}
           disabled={changeCount === 0}
-          type="inline-deployment">
+          type="inline-deployment"
+        >
           {this._getDeployButtonLabel()}
         </Button>
-      </div>);
+      </div>
+    );
   }
 
   render() {
     return (
       <div className="deployment-bar">
-        <DeploymentBarNotification
-          change={this.state.latestChangeDescription} />
+        <DeploymentBarNotification change={this.state.latestChangeDescription} />
         {this._generateButton()}
       </div>
     );
   }
-};
+}
 
 DeploymentBar.propTypes = {
   acl: PropTypes.object.isRequired,

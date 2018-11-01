@@ -26,7 +26,7 @@ MachineViewColumnGlobals.dropTarget = {
     // Don't try and place the unit if it was dropped on a nested component.
     if (monitor.didDrop()) {
       return;
-    };
+    }
     props.sendAnalytics('Machine View', 'Drop Target', 'Column');
     if (props.droppable) {
       props.dropUnit(monitor.getItem().unit, null, props.type);
@@ -68,18 +68,15 @@ class MachineViewColumn extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'machine-view__column', {
-        'machine-view__column--droppable':
-          this.props.droppable && this.props.canDrop,
-        'machine-view__column--drop': this.props.isOver
-      });
+    return classNames('machine-view__column', {
+      'machine-view__column--droppable': this.props.droppable && this.props.canDrop,
+      'machine-view__column--drop': this.props.isOver
+    });
   }
 
   render() {
     const props = this.props;
-    const propTypes = (
-      MachineViewHeader.DecoratedComponent.propTypes);
+    const propTypes = MachineViewHeader.DecoratedComponent.propTypes;
     return props.connectDropTarget(
       <div className={this._generateClasses()}>
         <MachineViewHeader
@@ -91,19 +88,18 @@ class MachineViewColumn extends React.Component {
           sendAnalytics={props.sendAnalytics}
           title={props.title}
           toggle={props.toggle}
-          type={props.type} />
+          type={props.type}
+        />
         <div className="machine-view__column-content">
           {this.props.children}
           <div className="machine-view__column-drop-target">
-            <SvgIcon
-              name="add_16"
-              size="16" />
+            <SvgIcon name="add_16" size="16" />
           </div>
         </div>
       </div>
     );
   }
-};
+}
 
 MachineViewColumn.propTypes = {
   acl: shapeup.shape({
@@ -112,10 +108,7 @@ MachineViewColumn.propTypes = {
   }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
   canDrop: PropTypes.bool.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   connectDropTarget: PropTypes.func.isRequired,
   dropUnit: PropTypes.func,
   droppable: PropTypes.bool.isRequired,
@@ -128,5 +121,7 @@ MachineViewColumn.propTypes = {
 };
 
 module.exports = ReactDnD.DropTarget(
-  'unit', MachineViewColumnGlobals.dropTarget,
-  MachineViewColumnGlobals.collect)(MachineViewColumn);
+  'unit',
+  MachineViewColumnGlobals.dropTarget,
+  MachineViewColumnGlobals.collect
+)(MachineViewColumn);

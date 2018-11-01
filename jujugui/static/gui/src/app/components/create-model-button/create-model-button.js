@@ -32,13 +32,14 @@ class CreateModelButton extends React.Component {
         <Button
           action={this._createNewModel.bind(this)}
           disabled={disabled}
-          type={this.props.type}>
+          type={this.props.type}
+        >
           {this.props.title}
         </Button>
       </div>
     );
   }
-};
+}
 
 CreateModelButton.propTypes = {
   action: PropTypes.func,

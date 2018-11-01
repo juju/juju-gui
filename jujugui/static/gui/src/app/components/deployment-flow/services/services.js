@@ -11,7 +11,6 @@ const changesUtils = require('../../../init/changes-utils');
 const DeploymentChangeItem = require('../change-item/change-item');
 
 class DeploymentServices extends React.Component {
-
   /**
     Generate the list of extra info markup.
 
@@ -24,14 +23,10 @@ class DeploymentServices extends React.Component {
     for (let key in changes) {
       const items = changes[key].map(change => (
         <li key={change.id}>
-          <DeploymentChangeItem
-            change={change}
-            showTime={false} />
-        </li>));
-      infos[key] = (
-        <ul className="deployment-services__changes">
-          {items}
-        </ul>);
+          <DeploymentChangeItem change={change} showTime={false} />
+        </li>
+      ));
+      infos[key] = <ul className="deployment-services__changes">{items}</ul>;
     }
     return infos;
   }
@@ -47,9 +42,7 @@ class DeploymentServices extends React.Component {
     return (
       <div className="deployment-services__spend prepend-seven">
         Maximum monthly spend:&nbsp;
-        <span className="deployment-services__max">
-          $100
-        </span>
+        <span className="deployment-services__max">$100</span>
       </div>
     );
   }
@@ -62,7 +55,8 @@ class DeploymentServices extends React.Component {
     const currentChangeSet = this.props.getCurrentChangeSet();
     const changes = this.props.changesUtils.sortDescriptionsByApplication(
       currentChangeSet,
-      this.props.changesUtils.generateAllChangeDescriptions(currentChangeSet));
+      this.props.changesUtils.generateAllChangeDescriptions(currentChangeSet)
+    );
     if (!changes || !Object.keys(changes).length) {
       return null;
     }
@@ -78,7 +72,9 @@ class DeploymentServices extends React.Component {
         plansEditable={true}
         services={Object.keys(changes).map(this.props.getServiceByName)}
         showTerms={this.props.showTerms}
-        withPlans={this.props.withPlans} />);
+        withPlans={this.props.withPlans}
+      />
+    );
   }
 
   /**
@@ -98,24 +94,26 @@ class DeploymentServices extends React.Component {
     const machines = changes.map(item => {
       const change = this.props.changesUtils.generateChangeDescription(item);
       return {
-        columns: [{
-          content: (
-            <DeploymentChangeItem
-              change={change}
-              key={change.id}
-              showTime={false} />)
-        }],
+        columns: [
+          {
+            content: <DeploymentChangeItem change={change} key={change.id} showTime={false} />
+          }
+        ],
         key: change.id
       };
     });
     return (
       <div className="v1">
         <BasicTable
-          headers={[{
-            content: 'Machines'
-          }]}
-          rows={machines} />
-      </div>);
+          headers={[
+            {
+              content: 'Machines'
+            }
+          ]}
+          rows={machines}
+        />
+      </div>
+    );
   }
 
   render() {
@@ -127,7 +125,7 @@ class DeploymentServices extends React.Component {
       </div>
     );
   }
-};
+}
 
 DeploymentServices.propTypes = {
   acl: PropTypes.object.isRequired,

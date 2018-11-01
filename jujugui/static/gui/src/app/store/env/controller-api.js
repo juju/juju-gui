@@ -18,79 +18,79 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-window.yui.add('juju-controller-api', function(Y) {
-  const module = Y.juju.environments;
-  const tags = module.tags;
-
-  /**
-   * The API connection to the Juju controller.
-   *
-   * This class handles the WebSocket connection to the controller API backend.
-   *
-   * @class ControllerAPI
-   */
-  function ControllerAPI(config) {
-    // Invoke Base constructor, passing through arguments.
-    ControllerAPI.superclass.constructor.apply(this, arguments);
-  }
-
-  ControllerAPI.NAME = 'controller-api';
-
-  Y.extend(ControllerAPI, module.BaseEnvironment, {
+window.yui.add(
+  'juju-controller-api',
+  function(Y) {
+    const module = Y.juju.environments;
+    const tags = module.tags;
 
     /**
+     * The API connection to the Juju controller.
+     *
+     * This class handles the WebSocket connection to the controller API backend.
+     *
+     * @class ControllerAPI
+     */
+    function ControllerAPI(config) {
+      // Invoke Base constructor, passing through arguments.
+      ControllerAPI.superclass.constructor.apply(this, arguments);
+    }
+
+    ControllerAPI.NAME = 'controller-api';
+
+    Y.extend(ControllerAPI, module.BaseEnvironment, {
+      /**
       Juju controller API client constructor.
 
       @method initializer
     */
-    initializer: function() {
-      // Define the default user name for this environment. It will appear as
-      // predefined value in the login mask.
-      this.defaultUser = 'admin';
-      // pendingLoginResponse is set to true when the login process is running.
-      this.pendingLoginResponse = false;
+      initializer: function() {
+        // Define the default user name for this environment. It will appear as
+        // predefined value in the login mask.
+        this.defaultUser = 'admin';
+        // pendingLoginResponse is set to true when the login process is running.
+        this.pendingLoginResponse = false;
 
-      this._pinger = null;
-      this.after('connectedChange', evt => {
-        if (evt.newVal) {
-          console.log('starting controller pinger');
-          this._pinger = setInterval(
-            this.ping.bind(this), module.PING_INTERVAL * 1000);
-          return;
-        }
-        console.log('stopping controller pinger');
-        clearInterval(this._pinger);
         this._pinger = null;
-      });
-    },
+        this.after('connectedChange', evt => {
+          if (evt.newVal) {
+            console.log('starting controller pinger');
+            this._pinger = setInterval(this.ping.bind(this), module.PING_INTERVAL * 1000);
+            return;
+          }
+          console.log('stopping controller pinger');
+          clearInterval(this._pinger);
+          this._pinger = null;
+        });
+      },
 
-    /**
+      /**
       Juju controller API client destructor.
 
       @method destructor
     */
-    destructor: function() {
-      if (this._pinger) {
-        clearInterval(this._pinger);
-      }
-    },
+      destructor: function() {
+        if (this._pinger) {
+          clearInterval(this._pinger);
+        }
+      },
 
-    /**
-     * See "app.store.env.base.BaseEnvironment.dispatch_result".
-     *
-     * @method dispatch_result
-     * @param {Object} data The JSON contents returned by the API backend.
-     * @return {undefined} Dispatches only.
-     */
-    dispatch_result: function(data) {
-      var tid = data['request-id'];
-      if (tid in this._txn_callbacks) {
-        this._txn_callbacks[tid].call(this, data);
-        delete this._txn_callbacks[tid];
-      }
-    },
+      /**
+       * See "app.store.env.base.BaseEnvironment.dispatch_result".
+       *
+       * @method dispatch_result
+       * @param {Object} data The JSON contents returned by the API backend.
+       * @return {undefined} Dispatches only.
+       */
+      dispatch_result: function(data) {
+        var tid = data['request-id'];
+        if (tid in this._txn_callbacks) {
+          this._txn_callbacks[tid].call(this, data);
+          delete this._txn_callbacks[tid];
+        }
+      },
 
-    /**
+      /**
      * Send a message to the server using the WebSocket connection.
      *
      * @method _send_rpc
@@ -102,115 +102,119 @@ window.yui.add('juju-controller-api', function(Y) {
          backend returns results.
      * @return {undefined} Sends a message to the server only.
      */
-    _send_rpc: function(op, callback) {
-      var facade = op.type;
-      // The facades info is only available after logging in (as the facades
-      // are sent as part of the login response). For this reason, do not
-      // check if the "Admin" facade is supported, but just assume it is,
-      // otherwise even logging in ("Admin.Login") would be impossible.
-      var version = op.version;
-      if (facade !== 'Admin') {
-        version = this.findFacadeVersion(facade, version);
-      }
-      if (version === null && facade === 'Pinger') {
-        // Note that, even if we don't have an available Pinger (which can
-        // happen for instance if the user is not logged in yet) we still need
-        // to ping, in order to avoid disconnections. We don't really care if
-        // the server returns an error: an error it is still WebSocket traffic.
-        version = 1;
-      }
-      if (version === null) {
-        var err = 'api client: operation not supported: ' + JSON.stringify(op);
-        console.error(err);
+      _send_rpc: function(op, callback) {
+        var facade = op.type;
+        // The facades info is only available after logging in (as the facades
+        // are sent as part of the login response). For this reason, do not
+        // check if the "Admin" facade is supported, but just assume it is,
+        // otherwise even logging in ("Admin.Login") would be impossible.
+        var version = op.version;
+        if (facade !== 'Admin') {
+          version = this.findFacadeVersion(facade, version);
+        }
+        if (version === null && facade === 'Pinger') {
+          // Note that, even if we don't have an available Pinger (which can
+          // happen for instance if the user is not logged in yet) we still need
+          // to ping, in order to avoid disconnections. We don't really care if
+          // the server returns an error: an error it is still WebSocket traffic.
+          version = 1;
+        }
+        if (version === null) {
+          var err = 'api client: operation not supported: ' + JSON.stringify(op);
+          console.error(err);
+          if (callback) {
+            callback({error: err});
+          }
+          return;
+        }
+        if (this.ws.readyState !== 1) {
+          console.log(
+            'Websocket is not open, dropping request. ' + 'readyState: ' + this.ws.readyState,
+            op
+          );
+          return;
+        }
+        op.version = version;
+        var tid = (this._counter += 1);
         if (callback) {
-          callback({error: err});
+          this._txn_callbacks[tid] = callback;
         }
-        return;
-      }
-      if (this.ws.readyState !== 1) {
-        console.log(
-          'Websocket is not open, dropping request. ' +
-          'readyState: ' + this.ws.readyState, op);
-        return;
-      }
-      op.version = version;
-      var tid = this._counter += 1;
-      if (callback) {
-        this._txn_callbacks[tid] = callback;
-      }
-      op['request-id'] = tid;
-      if (!op.params) {
-        op.params = {};
-      }
-      var msg = JSON.stringify(op);
-      this.ws.send(msg);
-    },
+        op['request-id'] = tid;
+        if (!op.params) {
+          op.params = {};
+        }
+        var msg = JSON.stringify(op);
+        this.ws.send(msg);
+      },
 
-    /**
-     * React to the results of sending a login message to the server.
-     *
-     * @method handleLogin
-     * @param {Object} data The response returned by the server.
-     * @return {undefined} Nothing.
-     */
-    handleLogin: function(data) {
-      this.pendingLoginResponse = false;
-      this.userIsAuthenticated = !data.error;
-      if (this.userIsAuthenticated) {
-        var response = data.response;
-        // If login succeeded store the facades and user information, and
-        // retrieve model info.
-        var facadeList = response.facades || [];
-        var facades = facadeList.reduce(function(previous, current) {
-          previous[current.name] = current.versions;
-          return previous;
-        }, {});
-        this.setConnectedAttr('facades', facades);
-        var userInfo = response['user-info'];
-        let controllerAccess = userInfo['controller-access'];
-        // This permission's name changed between versions of Juju 2.
-        // The most recent incarnation is "add-model".
-        if (controllerAccess === 'addmodel') {
-          controllerAccess = 'add-model';
-        }
-        this.setConnectedAttr('controllerAccess', controllerAccess);
-        this.setConnectedAttr(
-          'controllerId',
-          tags.parse(tags.CONTROLLER, response['controller-tag']));
-        // Clean up for log out text.
-        this.failedAuthentication = false;
-        // Retrieve maas credentials should they exist.
-        // NB: this assumes that a maas cloud cannot be added to a multi-cloud
-        // controller. If this changes in the future, this code will need to be
-        // called somewhere else. - Makyo 2017-02-16
-        this.getDefaultCloudName((error, name) => {
-          if (error) {
-            console.log('cannot retrieve default cloud name:', error);
-            return;
+      /**
+       * React to the results of sending a login message to the server.
+       *
+       * @method handleLogin
+       * @param {Object} data The response returned by the server.
+       * @return {undefined} Nothing.
+       */
+      handleLogin: function(data) {
+        this.pendingLoginResponse = false;
+        this.userIsAuthenticated = !data.error;
+        if (this.userIsAuthenticated) {
+          var response = data.response;
+          // If login succeeded store the facades and user information, and
+          // retrieve model info.
+          var facadeList = response.facades || [];
+          var facades = facadeList.reduce(function(previous, current) {
+            previous[current.name] = current.versions;
+            return previous;
+          }, {});
+          this.setConnectedAttr('facades', facades);
+          var userInfo = response['user-info'];
+          let controllerAccess = userInfo['controller-access'];
+          // This permission's name changed between versions of Juju 2.
+          // The most recent incarnation is "add-model".
+          if (controllerAccess === 'addmodel') {
+            controllerAccess = 'add-model';
           }
-          if (name !== 'maas') {
-            return;
-          }
-          this.getClouds([name], (error, clouds) => {
-            const err = error || clouds[name].err;
-            if (err) {
-              console.log('cannot retrieve cloud info:', err);
+          this.setConnectedAttr('controllerAccess', controllerAccess);
+          this.setConnectedAttr(
+            'controllerId',
+            tags.parse(tags.CONTROLLER, response['controller-tag'])
+          );
+          // Clean up for log out text.
+          this.failedAuthentication = false;
+          // Retrieve maas credentials should they exist.
+          // NB: this assumes that a maas cloud cannot be added to a multi-cloud
+          // controller. If this changes in the future, this code will need to be
+          // called somewhere else. - Makyo 2017-02-16
+          this.getDefaultCloudName((error, name) => {
+            if (error) {
+              console.log('cannot retrieve default cloud name:', error);
               return;
             }
-            this.set('maasServer', clouds[name].endpoint);
+            if (name !== 'maas') {
+              return;
+            }
+            this.getClouds([name], (error, clouds) => {
+              const err = error || clouds[name].err;
+              if (err) {
+                console.log('cannot retrieve cloud info:', err);
+                return;
+              }
+              this.set('maasServer', clouds[name].endpoint);
+            });
           });
-        });
-      } else {
-        // If the credentials were rejected remove them.
-        this.get('user').controller = null;
-        this.failedAuthentication = true;
-      }
-      document.dispatchEvent(new CustomEvent('login', {
-        detail: {err: data.error || null}
-      }));
-    },
+        } else {
+          // If the credentials were rejected remove them.
+          this.get('user').controller = null;
+          this.failedAuthentication = true;
+        }
+        document.dispatchEvent(
+          new CustomEvent('login', {
+            detail: {err: data.error || null}
+          })
+        );
+      },
 
-    /**
+      /**
       Return a version for the given facade name which is supported by the
       current Juju controller. If a version is provided, return the version
       number itself if supported, or null if that specific version is not
@@ -222,59 +226,66 @@ window.yui.add('juju-controller-api', function(Y) {
       @param {Int} version The optional facade version (for instance 1 or 2).
       @return {Int} The facade version or null if facade is not supported.
     */
-    findFacadeVersion: function(name, version) {
-      var facades = this.get('facades') || {};
-      var versions = facades[name] || [];
-      if (!versions.length) {
+      findFacadeVersion: function(name, version) {
+        var facades = this.get('facades') || {};
+        var versions = facades[name] || [];
+        if (!versions.length) {
+          return null;
+        }
+        if (version === undefined || version === null) {
+          return versions[versions.length - 1];
+        }
+        if (versions.indexOf(version) > -1) {
+          return version;
+        }
         return null;
-      }
-      if (version === undefined || version === null) {
-        return versions[versions.length - 1];
-      }
-      if (versions.indexOf(version) > -1) {
-        return version;
-      }
-      return null;
-    },
+      },
 
-    /**
-     * Attempt to log the user in.  Credentials must have been previously
-     * stored on the environment.
-     *
-     * @method login
-     * @return {undefined} Nothing.
-     */
-    login: function() {
-      // If the user is already authenticated there is nothing to do.
-      if (this.userIsAuthenticated) {
-        document.dispatchEvent(new CustomEvent('login', {
-          detail: {err: null}
-        }));
-        return;
-      }
-      if (this.pendingLoginResponse) {
-        return;
-      }
-      var credentials = this.get('user').controller;
-      if (!credentials.user || !credentials.password) {
-        document.dispatchEvent(new CustomEvent('login', {
-          detail: {err: 'invalid username or password'}
-        }));
-        return;
-      }
-      this._send_rpc({
-        type: 'Admin',
-        request: 'Login',
-        params: {
-          'auth-tag': tags.build(tags.USER, credentials.user),
-          credentials: credentials.password
-        },
-        version: module.ADMIN_FACADE_VERSION
-      }, this.handleLogin);
-      this.pendingLoginResponse = true;
-    },
+      /**
+       * Attempt to log the user in.  Credentials must have been previously
+       * stored on the environment.
+       *
+       * @method login
+       * @return {undefined} Nothing.
+       */
+      login: function() {
+        // If the user is already authenticated there is nothing to do.
+        if (this.userIsAuthenticated) {
+          document.dispatchEvent(
+            new CustomEvent('login', {
+              detail: {err: null}
+            })
+          );
+          return;
+        }
+        if (this.pendingLoginResponse) {
+          return;
+        }
+        var credentials = this.get('user').controller;
+        if (!credentials.user || !credentials.password) {
+          document.dispatchEvent(
+            new CustomEvent('login', {
+              detail: {err: 'invalid username or password'}
+            })
+          );
+          return;
+        }
+        this._send_rpc(
+          {
+            type: 'Admin',
+            request: 'Login',
+            params: {
+              'auth-tag': tags.build(tags.USER, credentials.user),
+              credentials: credentials.password
+            },
+            version: module.ADMIN_FACADE_VERSION
+          },
+          this.handleLogin
+        );
+        this.pendingLoginResponse = true;
+      },
 
-    /**
+      /**
       Log into the Juju API using macaroon authentication if provided.
 
       @method loginWithMacaroon
@@ -284,87 +295,89 @@ window.yui.add('juju-controller-api', function(Y) {
         occurred or null if authentication succeeded.
       @return {undefined} Sends a message to the server only.
     */
-    loginWithMacaroon: function(bakery, callback) {
-      // Ensure we always have a callback.
-      var cback = function(err, response) {
-        this.handleLogin({error: err, response: response});
-        if (callback) {
-          callback(err);
-          return;
-        }
-        if (err) {
-          console.warn('macaroon authentication failed:', err);
-          return;
-        }
-        console.debug('macaroon authentication succeeded');
-      }.bind(this);
+      loginWithMacaroon: function(bakery, callback) {
+        // Ensure we always have a callback.
+        var cback = function(err, response) {
+          this.handleLogin({error: err, response: response});
+          if (callback) {
+            callback(err);
+            return;
+          }
+          if (err) {
+            console.warn('macaroon authentication failed:', err);
+            return;
+          }
+          console.debug('macaroon authentication succeeded');
+        }.bind(this);
 
-      // Define the handler reacting to Juju controller login responses.
-      var handleResponse = function(bakery, macaroons, cback, data) {
-        if (data.error) {
-          // Macaroon authentication failed or macaroons based authentication
-          // not supported by this controller. In the latter case, the
-          // controller was probably not bootstrapped with an identity manager,
-          // for instance by providing the following parameter to bootstrap:
-          // "--config identity-url=https://api.jujucharms.com/identity".
-          cback('authentication failed: ' + data.error);
-          return;
-        }
+        // Define the handler reacting to Juju controller login responses.
+        var handleResponse = function(bakery, macaroons, cback, data) {
+          if (data.error) {
+            // Macaroon authentication failed or macaroons based authentication
+            // not supported by this controller. In the latter case, the
+            // controller was probably not bootstrapped with an identity manager,
+            // for instance by providing the following parameter to bootstrap:
+            // "--config identity-url=https://api.jujucharms.com/identity".
+            cback('authentication failed: ' + data.error);
+            return;
+          }
 
-        var response = data.response;
-        var macaroon = response['discharge-required'];
-        if (macaroon) {
-          // This is a discharge required response.
-          bakery.discharge(macaroon, macaroons => {
-            // Send the login request again including the discharge macaroon.
-            sendLoginRequest(
-              macaroons, handleResponse.bind(this, bakery, macaroons, cback));
-          }, msg => {
-            cback('macaroon discharge failed: ' + msg);
-          });
-          return;
-        }
+          var response = data.response;
+          var macaroon = response['discharge-required'];
+          if (macaroon) {
+            // This is a discharge required response.
+            bakery.discharge(
+              macaroon,
+              macaroons => {
+                // Send the login request again including the discharge macaroon.
+                sendLoginRequest(
+                  macaroons,
+                  handleResponse.bind(this, bakery, macaroons, cback)
+                );
+              },
+              msg => {
+                cback('macaroon discharge failed: ' + msg);
+              }
+            );
+            return;
+          }
 
-        // Macaroon authentication succeeded!
-        const userInfo = response['user-info'];
-        const userTag = userInfo && userInfo.identity;
-        if (!userTag) {
-          // This is a beta version of Juju 2 which does not include user info
-          // in the macaroons based login response. Unfortunately, we did all
-          // of this for nothing.
-          cback('authentication failed: use a proper Juju 2 release');
-          return;
-        }
-        this.get('user').controller = {
-          macaroons: macaroons,
-          user: tags.parse(tags.USER, userTag)
+          // Macaroon authentication succeeded!
+          const userInfo = response['user-info'];
+          const userTag = userInfo && userInfo.identity;
+          if (!userTag) {
+            // This is a beta version of Juju 2 which does not include user info
+            // in the macaroons based login response. Unfortunately, we did all
+            // of this for nothing.
+            cback('authentication failed: use a proper Juju 2 release');
+            return;
+          }
+          this.get('user').controller = {
+            macaroons: macaroons,
+            user: tags.parse(tags.USER, userTag)
+          };
+          cback(null, response);
         };
-        cback(null, response);
-      };
 
+        // Define the function used to send the login request.
+        var sendLoginRequest = function(macaroons, callback) {
+          var request = {
+            type: 'Admin',
+            request: 'Login',
+            version: module.ADMIN_FACADE_VERSION
+          };
+          if (macaroons) {
+            request.params = {macaroons: [macaroons]};
+          }
+          this._send_rpc(request, callback);
+        }.bind(this);
 
-      // Define the function used to send the login request.
-      var sendLoginRequest = function(macaroons, callback) {
-        var request = {
-          type: 'Admin',
-          request: 'Login',
-          version: module.ADMIN_FACADE_VERSION
-        };
-        if (macaroons) {
-          request.params = {macaroons: [macaroons]};
-        }
-        this._send_rpc(request, callback);
-      }.bind(this);
+        // Perform the API call.
+        var macaroons = this.get('user').controller.macaroons;
+        sendLoginRequest(macaroons, handleResponse.bind(this, bakery, macaroons, cback));
+      },
 
-      // Perform the API call.
-      var macaroons = this.get('user').controller.macaroons;
-      sendLoginRequest(
-        macaroons,
-        handleResponse.bind(this, bakery, macaroons, cback)
-      );
-    },
-
-    /**
+      /**
       Define optional operations to be performed before logging out.
       Operations performed:
         - the pinger interval is stopped;
@@ -377,23 +390,23 @@ window.yui.add('juju-controller-api', function(Y) {
       @param {Function} done A callable that must be called by the function and
         that actually closes the connection.
     */
-    cleanup: function(done) {
-      console.log('cleaning up the controller API connection');
-      this.resetConnectedAttrs();
-      done();
-    },
+      cleanup: function(done) {
+        console.log('cleaning up the controller API connection');
+        this.resetConnectedAttrs();
+        done();
+      },
 
-    /**
+      /**
       Send a ping request to the server. The response is ignored.
 
       @method ping
       @return {undefined} Sends a message to the server only.
     */
-    ping: function() {
-      this._send_rpc({type: 'Pinger', request: 'Ping'});
-    },
+      ping: function() {
+        this._send_rpc({type: 'Pinger', request: 'Ping'});
+      },
 
-    /**
+      /**
       Make a WebSocket request to retrieve the list of changes required to
       deploy a bundle, given the bundle YAML content. If the current connection
       is not authenticated, fall back to using the restful bundle service API.
@@ -407,37 +420,40 @@ window.yui.add('juju-controller-api', function(Y) {
         a list of errors (each one being a string describing a possible error)
         and a list of bundle changes.
     */
-    getBundleChanges: function(bundleYAML, _, callback) {
-      if (!this.userIsAuthenticated) {
-        console.log('using bundle service to retrieve bundle changes');
-        this._getBundleChangesFromBundleService(bundleYAML, callback);
-        return;
-      }
-      const handle = data => {
-        if (!callback) {
-          console.log('data returned by Bundle.GetChanges:', data);
+      getBundleChanges: function(bundleYAML, _, callback) {
+        if (!this.userIsAuthenticated) {
+          console.log('using bundle service to retrieve bundle changes');
+          this._getBundleChangesFromBundleService(bundleYAML, callback);
           return;
         }
-        if (data.error) {
-          callback([data.error], []);
-          return;
-        }
-        const response = data.response;
-        if (response.errors && response.errors.length) {
-          callback(response.errors, []);
-          return;
-        }
-        callback([], response.changes);
-      };
-      // Send the request to retrieve bundle changes from Juju.
-      this._send_rpc({
-        type: 'Bundle',
-        request: 'GetChanges',
-        params: {yaml: bundleYAML}
-      }, handle);
-    },
+        const handle = data => {
+          if (!callback) {
+            console.log('data returned by Bundle.GetChanges:', data);
+            return;
+          }
+          if (data.error) {
+            callback([data.error], []);
+            return;
+          }
+          const response = data.response;
+          if (response.errors && response.errors.length) {
+            callback(response.errors, []);
+            return;
+          }
+          callback([], response.changes);
+        };
+        // Send the request to retrieve bundle changes from Juju.
+        this._send_rpc(
+          {
+            type: 'Bundle',
+            request: 'GetChanges',
+            params: {yaml: bundleYAML}
+          },
+          handle
+        );
+      },
 
-    /**
+      /**
       Retrieve bundle changes from the bundle service.
 
       @method _getBundleChangesFromBundleService
@@ -447,19 +463,17 @@ window.yui.add('juju-controller-api', function(Y) {
         a list of errors (each one being a string describing a possible error)
         and a list of bundle changes.
     */
-    _getBundleChangesFromBundleService: function(bundleYAML, callback) {
-      this.get('bundleService').getBundleChangesFromYAML(
-        bundleYAML, (error, changes) => {
+      _getBundleChangesFromBundleService: function(bundleYAML, callback) {
+        this.get('bundleService').getBundleChangesFromYAML(bundleYAML, (error, changes) => {
           if (error) {
             callback([error], []);
             return;
           }
           callback([], changes);
-        }
-      );
-    },
+        });
+      },
 
-    /**
+      /**
       Return information about Juju models, such as their names, series, and
       provider types, by performing a ModelManager.ModelInfo Juju API request.
 
@@ -507,105 +521,108 @@ window.yui.add('juju-controller-api', function(Y) {
         - err: a message describing a specific model error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
-    modelInfo: function(ids, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by model info API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, []);
-          return;
-        }
-        const results = data.response.results;
-        if (results.length !== ids.length) {
-          // Sanity check: this should never happen.
-          callback('unexpected results: ' + JSON.stringify(results), []);
-          return;
-        }
-        const models = results.map((result, index) => {
-          const err = result.error && result.error.message;
-          const id = ids[index];
-          if (err) {
-            return {id: id, err: err};
+      modelInfo: function(ids, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by model info API call:', data);
+            return;
           }
-          result = result.result;
-          let credential = '';
-          const credentialTag = result['cloud-credential-tag'];
-          if (credentialTag) {
-            credential = tags.parse(tags.CREDENTIAL, credentialTag);
+          if (data.error) {
+            callback(data.error, []);
+            return;
           }
-          const machines = result.machines || [];
-          const users = (result.users || []).map(userResult => {
-            const err = userResult.error;
+          const results = data.response.results;
+          if (results.length !== ids.length) {
+            // Sanity check: this should never happen.
+            callback('unexpected results: ' + JSON.stringify(results), []);
+            return;
+          }
+          const models = results.map((result, index) => {
+            const err = result.error && result.error.message;
+            const id = ids[index];
             if (err) {
-              return {err: err.message};
+              return {id: id, err: err};
             }
-            let fullName = userResult.user;
-            const parts = fullName.split('@');
-            let domain = 'local';
-            if (parts.length === 2) {
-              domain = parts[1] === 'external' ? 'Ubuntu SSO' : parts[1];
-            } else {
-              fullName = parts[0] + '@' + domain;
+            result = result.result;
+            let credential = '';
+            const credentialTag = result['cloud-credential-tag'];
+            if (credentialTag) {
+              credential = tags.parse(tags.CREDENTIAL, credentialTag);
             }
-            const displayName = userResult['display-name'] || parts[0];
-            let lastConnection = null;
-            if (userResult['last-connection']) {
-              lastConnection = new Date(userResult['last-connection']);
-            }
+            const machines = result.machines || [];
+            const users = (result.users || []).map(userResult => {
+              const err = userResult.error;
+              if (err) {
+                return {err: err.message};
+              }
+              let fullName = userResult.user;
+              const parts = fullName.split('@');
+              let domain = 'local';
+              if (parts.length === 2) {
+                domain = parts[1] === 'external' ? 'Ubuntu SSO' : parts[1];
+              } else {
+                fullName = parts[0] + '@' + domain;
+              }
+              const displayName = userResult['display-name'] || parts[0];
+              let lastConnection = null;
+              if (userResult['last-connection']) {
+                lastConnection = new Date(userResult['last-connection']);
+              }
+              return {
+                name: fullName,
+                displayName: displayName,
+                domain: domain,
+                lastConnection: lastConnection,
+                access: userResult.access
+              };
+            });
+            const cloudTag = result['cloud-tag'];
+            const cloud = cloudTag ? tags.parse(tags.CLOUD, cloudTag) : '';
+            const sla = result.sla || {};
+            const status = result.status || {};
             return {
-              name: fullName,
-              displayName: displayName,
-              domain: domain,
-              lastConnection: lastConnection,
-              access: userResult.access
+              id: id,
+              name: result.name,
+              series: result['default-series'],
+              provider: result['provider-type'],
+              uuid: result.uuid,
+              agentVersion: result['agent-version'] || '',
+              sla: sla.level || '',
+              slaOwner: sla.owner || '',
+              status: status.status || '',
+              statusInfo: status.info || '',
+              controllerUUID: result['controller-uuid'],
+              owner: tags.parse(tags.USER, result['owner-tag']),
+              credential: credential,
+              credentialName: this._parseCredentialName(credential),
+              region: result['cloud-region'] || null,
+              cloud: cloud,
+              numMachines: machines.length,
+              users: users,
+              life: result.life,
+              isAlive: result.life === 'alive',
+              isController: result.name === 'controller'
             };
           });
-          const cloudTag = result['cloud-tag'];
-          const cloud = cloudTag ? tags.parse(tags.CLOUD, cloudTag) : '';
-          const sla = result.sla || {};
-          const status = result.status || {};
-          return {
-            id: id,
-            name: result.name,
-            series: result['default-series'],
-            provider: result['provider-type'],
-            uuid: result.uuid,
-            agentVersion: result['agent-version'] || '',
-            sla: sla.level || '',
-            slaOwner: sla.owner || '',
-            status: status.status || '',
-            statusInfo: status.info || '',
-            controllerUUID: result['controller-uuid'],
-            owner: tags.parse(tags.USER, result['owner-tag']),
-            credential: credential,
-            credentialName: this._parseCredentialName(credential),
-            region: result['cloud-region'] || null,
-            cloud: cloud,
-            numMachines: machines.length,
-            users: users,
-            life: result.life,
-            isAlive: result.life === 'alive',
-            isController: result.name === 'controller'
-          };
+          callback(null, models);
+        };
+
+        // Send the API request.
+        const entities = ids.map(id => {
+          return {tag: tags.build(tags.MODEL, id)};
         });
-        callback(null, models);
-      };
+        this._send_rpc(
+          {
+            type: 'ModelManager',
+            request: 'ModelInfo',
+            params: {entities: entities}
+          },
+          handler
+        );
+      },
 
-      // Send the API request.
-      const entities = ids.map(id => {
-        return {tag: tags.build(tags.MODEL, id)};
-      });
-      this._send_rpc({
-        type: 'ModelManager',
-        request: 'ModelInfo',
-        params: {entities: entities}
-      }, handler);
-    },
-
-    /**
+      /**
       Return detailed information about Juju models available for current user.
       Under the hood, this call leverages the ModelManager ListModels and
       ModelInfo endpoints.
@@ -653,79 +670,79 @@ window.yui.add('juju-controller-api', function(Y) {
         - err: a message describing a specific model error, or undefined.
       @return {undefined} Sends a message to the server only.
     */
-    listModelsWithInfo: function(callback) {
-      // Ensure we always have a callback.
-      if (!callback) {
-        callback = function(err, models) {
-          console.log('listModelsWithInfo: no callback provided');
-          if (err) {
-            console.log('listModelsWithInfo: API call error:', err);
-          } else {
-            console.log('listModelsWithInfo: API call results:', models);
-          }
-        };
-      }
-      // Retrieve the current user.
-      const credentials = this.get('user').controller;
-      if (!credentials.user) {
-        callback('called without credentials', []);
-        return;
-      }
-      // Perform the API calls.
-      this.listModels(credentials.user, (err, listedModels) => {
-        if (err) {
-          callback(err, []);
+      listModelsWithInfo: function(callback) {
+        // Ensure we always have a callback.
+        if (!callback) {
+          callback = function(err, models) {
+            console.log('listModelsWithInfo: no callback provided');
+            if (err) {
+              console.log('listModelsWithInfo: API call error:', err);
+            } else {
+              console.log('listModelsWithInfo: API call results:', models);
+            }
+          };
+        }
+        // Retrieve the current user.
+        const credentials = this.get('user').controller;
+        if (!credentials.user) {
+          callback('called without credentials', []);
           return;
         }
-        const ids = listedModels.map(model => model.id);
-        this.modelInfo(ids, (err, infoModels) => {
+        // Perform the API calls.
+        this.listModels(credentials.user, (err, listedModels) => {
           if (err) {
             callback(err, []);
             return;
           }
-          const models = infoModels.map(model => {
-            if (model.err) {
-              return {id: model.id, err: model.err};
+          const ids = listedModels.map(model => model.id);
+          this.modelInfo(ids, (err, infoModels) => {
+            if (err) {
+              callback(err, []);
+              return;
             }
-            let lastConnection = null;
-            for (let i = 0; i < model.users.length; i++) {
-              const user = model.users[i];
-              if (user.name === credentials.user) {
-                lastConnection = user.lastConnection;
-                break;
+            const models = infoModels.map(model => {
+              if (model.err) {
+                return {id: model.id, err: model.err};
               }
-            }
-            return {
-              id: model.id,
-              name: model.name,
-              series: model.series,
-              provider: model.provider,
-              uuid: model.uuid,
-              agentVersion: model.agentVersion,
-              sla: model.sla,
-              slaOwner: model.slaOwner,
-              status: model.status,
-              statusInfo: model.statusInfo,
-              controllerUUID: model.controllerUUID,
-              owner: model.owner,
-              credential: model.credential,
-              credentialName: this._parseCredentialName(model.credential),
-              region: model.region,
-              cloud: model.cloud,
-              numMachines: model.numMachines,
-              users: model.users,
-              life: model.life,
-              isAlive: model.isAlive,
-              isController: model.isController,
-              lastConnection: lastConnection
-            };
+              let lastConnection = null;
+              for (let i = 0; i < model.users.length; i++) {
+                const user = model.users[i];
+                if (user.name === credentials.user) {
+                  lastConnection = user.lastConnection;
+                  break;
+                }
+              }
+              return {
+                id: model.id,
+                name: model.name,
+                series: model.series,
+                provider: model.provider,
+                uuid: model.uuid,
+                agentVersion: model.agentVersion,
+                sla: model.sla,
+                slaOwner: model.slaOwner,
+                status: model.status,
+                statusInfo: model.statusInfo,
+                controllerUUID: model.controllerUUID,
+                owner: model.owner,
+                credential: model.credential,
+                credentialName: this._parseCredentialName(model.credential),
+                region: model.region,
+                cloud: model.cloud,
+                numMachines: model.numMachines,
+                users: model.users,
+                life: model.life,
+                isAlive: model.isAlive,
+                isController: model.isController,
+                lastConnection: lastConnection
+              };
+            });
+            callback(null, models);
           });
-          callback(null, models);
         });
-      });
-    },
+      },
 
-    /**
+      /**
       Create a new model within this controller, using the given name, account
       and config.
 
@@ -762,64 +779,67 @@ window.yui.add('juju-controller-api', function(Y) {
         - credential: the name of the credential used to create the model.
       @return {undefined} Sends a message to the server only.
     */
-    createModel: function(name, user, args, callback) {
-      // Define the API callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by CreateModel API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, {});
-          return;
-        }
-        const response = data.response;
-        // Credentials are not required/returned by all clouds.
-        let credential = '';
-        const credentialTag = response['cloud-credential-tag'];
-        if (credentialTag) {
-          credential = tags.parse(tags.CREDENTIAL, credentialTag);
-        }
-        callback(null, {
-          name: response.name,
-          uuid: response.uuid,
-          owner: tags.parse(tags.USER, response['owner-tag']),
-          provider: response['provider-type'],
-          series: response['default-series'],
-          cloud: tags.parse(tags.CLOUD, response['cloud-tag']),
-          region: response['cloud-region'],
-          credential: credential
-        });
-      };
+      createModel: function(name, user, args, callback) {
+        // Define the API callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by CreateModel API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error, {});
+            return;
+          }
+          const response = data.response;
+          // Credentials are not required/returned by all clouds.
+          let credential = '';
+          const credentialTag = response['cloud-credential-tag'];
+          if (credentialTag) {
+            credential = tags.parse(tags.CREDENTIAL, credentialTag);
+          }
+          callback(null, {
+            name: response.name,
+            uuid: response.uuid,
+            owner: tags.parse(tags.USER, response['owner-tag']),
+            provider: response['provider-type'],
+            series: response['default-series'],
+            cloud: tags.parse(tags.CLOUD, response['cloud-tag']),
+            region: response['cloud-region'],
+            credential: credential
+          });
+        };
 
-      // Prepare API call params.
-      if (user.indexOf('@') === -1) {
-        user += '@local';
-      }
-      let cloudTag;
-      if (args.cloud) {
-        cloudTag = tags.build(tags.CLOUD, args.cloud);
-      }
-      let credentialTag;
-      if (args.credential) {
-        credentialTag = tags.build(tags.CREDENTIAL, args.credential);
-      }
-      // Send the API call.
-      this._send_rpc({
-        type: 'ModelManager',
-        request: 'CreateModel',
-        params: {
-          name: name,
-          'owner-tag': tags.build(tags.USER, user),
-          config: args.config || undefined,
-          'cloud-tag': cloudTag,
-          region: args.region || undefined,
-          credential: credentialTag
+        // Prepare API call params.
+        if (user.indexOf('@') === -1) {
+          user += '@local';
         }
-      }, handler);
-    },
+        let cloudTag;
+        if (args.cloud) {
+          cloudTag = tags.build(tags.CLOUD, args.cloud);
+        }
+        let credentialTag;
+        if (args.credential) {
+          credentialTag = tags.build(tags.CREDENTIAL, args.credential);
+        }
+        // Send the API call.
+        this._send_rpc(
+          {
+            type: 'ModelManager',
+            request: 'CreateModel',
+            params: {
+              name: name,
+              'owner-tag': tags.build(tags.USER, user),
+              config: args.config || undefined,
+              'cloud-tag': cloudTag,
+              region: args.region || undefined,
+              credential: credentialTag
+            }
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Destroy the models with the given identifiers.
 
       This method will try to destroy the specified models.
@@ -848,57 +868,60 @@ window.yui.add('juju-controller-api', function(Y) {
           deletion of that model succeeded.
       @return {undefined} Sends a message to the server only.
     */
-    destroyModels: function(ids, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by destroy models API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback([data.error], {});
-          return;
-        }
-        let errors = [];
-        const results = data.response.results.reduce((prev, result, index) => {
-          const id = ids[index];
-          if (result.error) {
-            prev[id] = result.error.message;
-            errors.push(result.error.message);
-          } else {
-            prev[id] = null;
+      destroyModels: function(ids, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by destroy models API call:', data);
+            return;
           }
-          return prev;
-        }, {});
-        callback(!errors.length ? null : errors, results);
-      };
-
-      // Prepare the API request. The keys used in this API call changed from
-      // facade version 3 to 4.
-      let modelsKey = 'models';
-      let tagKey = 'model-tag';
-      const lastFacadeVersion = this.findFacadeVersion('ModelManager');
-      if (lastFacadeVersion !== null && lastFacadeVersion < 4) {
-        modelsKey = 'entities';
-        tagKey = 'tag';
-      }
-      const entities = ids.map(function(id) {
-        return {
-          [tagKey]: tags.build(tags.MODEL, id),
-          // TODO(frankban): allow for selecting not to destroy storage.
-          // This will be available when switching to jujulib.
-          'destroy-storage': true
+          if (data.error) {
+            callback([data.error], {});
+            return;
+          }
+          let errors = [];
+          const results = data.response.results.reduce((prev, result, index) => {
+            const id = ids[index];
+            if (result.error) {
+              prev[id] = result.error.message;
+              errors.push(result.error.message);
+            } else {
+              prev[id] = null;
+            }
+            return prev;
+          }, {});
+          callback(!errors.length ? null : errors, results);
         };
-      });
-      // Send the API request.
-      this._send_rpc({
-        type: 'ModelManager',
-        request: 'DestroyModels',
-        params: {[modelsKey]: entities}
-      }, handler);
-    },
 
-    /**
+        // Prepare the API request. The keys used in this API call changed from
+        // facade version 3 to 4.
+        let modelsKey = 'models';
+        let tagKey = 'model-tag';
+        const lastFacadeVersion = this.findFacadeVersion('ModelManager');
+        if (lastFacadeVersion !== null && lastFacadeVersion < 4) {
+          modelsKey = 'entities';
+          tagKey = 'tag';
+        }
+        const entities = ids.map(function(id) {
+          return {
+            [tagKey]: tags.build(tags.MODEL, id),
+            // TODO(frankban): allow for selecting not to destroy storage.
+            // This will be available when switching to jujulib.
+            'destroy-storage': true
+          };
+        });
+        // Send the API request.
+        this._send_rpc(
+          {
+            type: 'ModelManager',
+            request: 'DestroyModels',
+            params: {[modelsKey]: entities}
+          },
+          handler
+        );
+      },
+
+      /**
       List all models the user can access on the current controller.
 
       @method listModels
@@ -918,42 +941,45 @@ window.yui.add('juju-controller-api', function(Y) {
           connected to;
       @return {undefined} Sends a message to the server only.
     */
-    listModels: function(user, callback) {
-      const handleListModels = data => {
-        if (!callback) {
-          console.log('data returned by ListModels API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, []);
-          return;
-        }
-        const userModels = data.response['user-models'];
-        if (!userModels || !userModels.length) {
-          callback(null, []);
-          return;
-        }
-        const models = userModels.map(value => {
-          const model = value.model;
-          return {
-            id: model.uuid,
-            name: model.name,
-            owner: tags.parse(tags.USER, model['owner-tag']),
-            uuid: model.uuid,
-            lastConnection: value['last-connection']
-          };
-        });
-        callback(null, models);
-      };
+      listModels: function(user, callback) {
+        const handleListModels = data => {
+          if (!callback) {
+            console.log('data returned by ListModels API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error, []);
+            return;
+          }
+          const userModels = data.response['user-models'];
+          if (!userModels || !userModels.length) {
+            callback(null, []);
+            return;
+          }
+          const models = userModels.map(value => {
+            const model = value.model;
+            return {
+              id: model.uuid,
+              name: model.name,
+              owner: tags.parse(tags.USER, model['owner-tag']),
+              uuid: model.uuid,
+              lastConnection: value['last-connection']
+            };
+          });
+          callback(null, models);
+        };
 
-      this._send_rpc({
-        type: 'ModelManager',
-        request: 'ListModels',
-        params: {tag: tags.build(tags.USER, user)}
-      }, handleListModels);
-    },
+        this._send_rpc(
+          {
+            type: 'ModelManager',
+            request: 'ListModels',
+            params: {tag: tags.build(tags.USER, user)}
+          },
+          handleListModels
+        );
+      },
 
-    /**
+      /**
       Return the definitions of all clouds supported by the controller.
 
       @method listClouds
@@ -974,30 +1000,30 @@ window.yui.add('juju-controller-api', function(Y) {
           an object with the following fields: name, endpoint, identityEndpoint
           and storageEndpoint.
     */
-    listClouds: function(callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by Cloud.Clouds API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, {});
-          return;
-        }
-        const results = data.response.clouds || {};
-        const clouds = Object.keys(results).reduce((prev, tag) => {
-          const name = tags.parse(tags.CLOUD, tag);
-          prev[name] = this._parseCloudResult(results[tag]);
-          return prev;
-        }, {});
-        callback(null, clouds);
-      };
-      // Send the API request.
-      this._send_rpc({type: 'Cloud', request: 'Clouds'}, handler);
-    },
+      listClouds: function(callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.Clouds API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error, {});
+            return;
+          }
+          const results = data.response.clouds || {};
+          const clouds = Object.keys(results).reduce((prev, tag) => {
+            const name = tags.parse(tags.CLOUD, tag);
+            prev[name] = this._parseCloudResult(results[tag]);
+            return prev;
+          }, {});
+          callback(null, clouds);
+        };
+        // Send the API request.
+        this._send_rpc({type: 'Cloud', request: 'Clouds'}, handler);
+      },
 
-    /**
+      /**
       Return the definitions of the clouds with the given names.
 
       @method getClouds
@@ -1021,49 +1047,52 @@ window.yui.add('juju-controller-api', function(Y) {
           an object with the following fields: name, endpoint, identityEndpoint
           and storageEndpoint.
     */
-    getClouds: function(names, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by Cloud.Cloud API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, {});
-          return;
-        }
-        const results = data.response.results;
-        if (!results) {
-          callback(null, {});
-          return;
-        }
-        const clouds = results.reduce((prev, result, index) => {
-          const name = names[index];
-          const err = result.error && result.error.message;
-          if (err) {
-            prev[name] = {err: err};
-            return prev;
+      getClouds: function(names, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.Cloud API call:', data);
+            return;
           }
-          prev[name] = this._parseCloudResult(result.cloud);
-          return prev;
-        }, {});
-        callback(null, clouds);
-      };
-      // Send the API request.
-      if (!names.length) {
-        names = [];
-      }
-      const entities = names.map(function(name) {
-        return {tag: tags.build(tags.CLOUD, name)};
-      });
-      this._send_rpc({
-        type: 'Cloud',
-        request: 'Cloud',
-        params: {entities: entities}
-      }, handler);
-    },
+          if (data.error) {
+            callback(data.error, {});
+            return;
+          }
+          const results = data.response.results;
+          if (!results) {
+            callback(null, {});
+            return;
+          }
+          const clouds = results.reduce((prev, result, index) => {
+            const name = names[index];
+            const err = result.error && result.error.message;
+            if (err) {
+              prev[name] = {err: err};
+              return prev;
+            }
+            prev[name] = this._parseCloudResult(result.cloud);
+            return prev;
+          }, {});
+          callback(null, clouds);
+        };
+        // Send the API request.
+        if (!names.length) {
+          names = [];
+        }
+        const entities = names.map(function(name) {
+          return {tag: tags.build(tags.CLOUD, name)};
+        });
+        this._send_rpc(
+          {
+            type: 'Cloud',
+            request: 'Cloud',
+            params: {entities: entities}
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Return the name of the cloud that models will be created in by default in
       this controller.
 
@@ -1073,31 +1102,31 @@ window.yui.add('juju-controller-api', function(Y) {
         for instance (null, 'google') when the operation succeeds or
         ('error message', '') in case of errors.
     */
-    getDefaultCloudName: function(callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by Cloud.DefaultCloud API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, '');
-          return;
-        }
-        const response = data.response;
-        const error = response.error && response.error.message;
-        if (error) {
-          callback(error, '');
-          return;
-        }
-        const name = tags.parse(tags.CLOUD, response.result);
-        callback(null, name);
-      };
-      // Send the API request.
-      this._send_rpc({type: 'Cloud', request: 'DefaultCloud'}, handler);
-    },
+      getDefaultCloudName: function(callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.DefaultCloud API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error, '');
+            return;
+          }
+          const response = data.response;
+          const error = response.error && response.error.message;
+          if (error) {
+            callback(error, '');
+            return;
+          }
+          const name = tags.parse(tags.CLOUD, response.result);
+          callback(null, name);
+        };
+        // Send the API request.
+        this._send_rpc({type: 'Cloud', request: 'DefaultCloud'}, handler);
+      },
 
-    /**
+      /**
       Parse a single cloud result retrieved by requesting endpoints on the
       Cloud facade.
 
@@ -1105,29 +1134,29 @@ window.yui.add('juju-controller-api', function(Y) {
       @param {Object} result The cloud result.
       @returns {Object} the parsed/modified result.
     */
-    _parseCloudResult: result => {
-      let regions = null;
-      if (result.regions) {
-        regions = result.regions.map(region => {
-          return {
-            name: region.name,
-            endpoint: region.endpoint || '',
-            identityEndpoint: region['identity-endpoint'] || '',
-            storageEndpoint: region['storage-endpoint'] || ''
-          };
-        });
-      }
-      return {
-        cloudType: result.type,
-        authTypes: result['auth-types'] || [],
-        endpoint: result.endpoint || '',
-        identityEndpoint: result['identity-endpoint'] || '',
-        storageEndpoint: result['storage-endpoint'] || '',
-        regions: regions
-      };
-    },
+      _parseCloudResult: result => {
+        let regions = null;
+        if (result.regions) {
+          regions = result.regions.map(region => {
+            return {
+              name: region.name,
+              endpoint: region.endpoint || '',
+              identityEndpoint: region['identity-endpoint'] || '',
+              storageEndpoint: region['storage-endpoint'] || ''
+            };
+          });
+        }
+        return {
+          cloudType: result.type,
+          authTypes: result['auth-types'] || [],
+          endpoint: result.endpoint || '',
+          identityEndpoint: result['identity-endpoint'] || '',
+          storageEndpoint: result['storage-endpoint'] || '',
+          regions: regions
+        };
+      },
 
-    /**
+      /**
       Get the credential name for display from the credential id.
 
       @method _parseCredentialName
@@ -1135,15 +1164,15 @@ window.yui.add('juju-controller-api', function(Y) {
         cloud_user@scope_name.
       @returns {String} the credential display name.
     */
-    _parseCredentialName: id => {
-      const parts = id.split('_');
-      if (parts.length === 3) {
-        return parts[2];
-      }
-      return id;
-    },
+      _parseCredentialName: id => {
+        const parts = id.split('_');
+        if (parts.length === 3) {
+          return parts[2];
+        }
+        return id;
+      },
 
-    /**
+      /**
       Returns the names of cloud credentials for a set of users.
 
       @method getCloudCredentialNames
@@ -1163,59 +1192,60 @@ window.yui.add('juju-controller-api', function(Y) {
         If no errors occur, error parameters are null. Otherwise, in case of
         errors, the second argument is an empty array.
     */
-    getCloudCredentialNames: function(userCloudPairs, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log(
-            'data returned by Cloud.UserCredentials API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error, []);
-          return;
-        }
-        const results = data.response.results;
-        if (!results) {
-          callback(null, []);
-          return;
-        }
-        const credentials = results.map(result => {
-          const err = result.error && result.error.message;
-          if (err) {
-            return {err: err};
+      getCloudCredentialNames: function(userCloudPairs, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.UserCredentials API call:', data);
+            return;
           }
-          const credentialTags = result.result || [];
-          const names = credentialTags.map(credentialTag => {
-            return tags.parse(tags.CREDENTIAL, credentialTag);
+          if (data.error) {
+            callback(data.error, []);
+            return;
+          }
+          const results = data.response.results;
+          if (!results) {
+            callback(null, []);
+            return;
+          }
+          const credentials = results.map(result => {
+            const err = result.error && result.error.message;
+            if (err) {
+              return {err: err};
+            }
+            const credentialTags = result.result || [];
+            const names = credentialTags.map(credentialTag => {
+              return tags.parse(tags.CREDENTIAL, credentialTag);
+            });
+            const displayNames = names.map(name => this._parseCredentialName(name));
+            return {
+              names: names,
+              displayNames: displayNames
+            };
           });
-          const displayNames = names.map(
-            name => this._parseCredentialName(name));
+          callback(null, credentials);
+        };
+        // Send the API request.
+        if (!userCloudPairs.length) {
+          userCloudPairs = [];
+        }
+        const userClouds = userCloudPairs.map(userCloud => {
           return {
-            names: names,
-            displayNames: displayNames
+            'user-tag': tags.build(tags.USER, userCloud[0]),
+            'cloud-tag': tags.build(tags.CLOUD, userCloud[1])
           };
         });
-        callback(null, credentials);
-      };
-      // Send the API request.
-      if (!userCloudPairs.length) {
-        userCloudPairs = [];
-      }
-      const userClouds = userCloudPairs.map(userCloud => {
-        return {
-          'user-tag': tags.build(tags.USER, userCloud[0]),
-          'cloud-tag': tags.build(tags.CLOUD, userCloud[1])
-        };
-      });
-      this._send_rpc({
-        type: 'Cloud',
-        request: 'UserCredentials',
-        params: {'user-clouds': userClouds}
-      }, handler);
-    },
+        this._send_rpc(
+          {
+            type: 'Cloud',
+            request: 'UserCredentials',
+            params: {'user-clouds': userClouds}
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Return the specified cloud credentials for each name, minus secrets.
 
       @method getCloudCredentials
@@ -1238,51 +1268,54 @@ window.yui.add('juju-controller-api', function(Y) {
         If no errors occur, error parameters are null. Otherwise, in case of
         errors, the second argument is an empty object.
     */
-    getCloudCredentials: function(names, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log('data returned by Cloud.Credential API call:', data);
-          return;
+      getCloudCredentials: function(names, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.Credential API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error, {});
+            return;
+          }
+          const results = data.response.results;
+          if (!results) {
+            callback(null, {});
+            return;
+          }
+          const credentials = results.reduce((prev, result, index) => {
+            const name = names[index];
+            const entry = result.result || {};
+            prev[name] = {
+              authType: entry['auth-type'] || '',
+              attrs: entry.attrs || {},
+              displayName: this._parseCredentialName(name),
+              redacted: entry.redacted || [],
+              err: result.error && result.error.message
+            };
+            return prev;
+          }, {});
+          callback(null, credentials);
+        };
+        // Send the API request.
+        if (!names.length) {
+          names = [];
         }
-        if (data.error) {
-          callback(data.error, {});
-          return;
-        }
-        const results = data.response.results;
-        if (!results) {
-          callback(null, {});
-          return;
-        }
-        const credentials = results.reduce((prev, result, index) => {
-          const name = names[index];
-          const entry = result.result || {};
-          prev[name] = {
-            authType: entry['auth-type'] || '',
-            attrs: entry.attrs || {},
-            displayName: this._parseCredentialName(name),
-            redacted: entry.redacted || [],
-            err: result.error && result.error.message
-          };
-          return prev;
-        }, {});
-        callback(null, credentials);
-      };
-      // Send the API request.
-      if (!names.length) {
-        names = [];
-      }
-      const entities = names.map(name => {
-        return {tag: tags.build(tags.CREDENTIAL, name)};
-      });
-      this._send_rpc({
-        type: 'Cloud',
-        request: 'Credential',
-        params: {entities: entities}
-      }, handler);
-    },
+        const entities = names.map(name => {
+          return {tag: tags.build(tags.CREDENTIAL, name)};
+        });
+        this._send_rpc(
+          {
+            type: 'Cloud',
+            request: 'Credential',
+            params: {entities: entities}
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Create or update a single cloud credential.
 
       @method updateCloudCredential
@@ -1298,44 +1331,48 @@ window.yui.add('juju-controller-api', function(Y) {
         operation is performed. It will receive an error message or null if the
         credential creation/update succeeded.
     */
-    updateCloudCredential: function(name, authType, attrs, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log(
-            'data returned by Cloud.UpdateCredentials API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error);
-          return;
-        }
-        const results = data.response.results;
-        if (!results || results.length !== 1) {
-          // This should never happen.
-          callback('invalid results from Juju: ' + JSON.stringify(results));
-          return;
-        }
-        const err = results[0].error && results[0].error.message;
-        if (err) {
-          callback(err);
-          return;
-        }
-        callback(null);
-      };
-      // Send the API request.
-      const credentials = [{
-        tag: tags.build(tags.CREDENTIAL, name),
-        credential: {'auth-type': authType || '', attrs: attrs || {}}
-      }];
-      this._send_rpc({
-        type: 'Cloud',
-        request: 'UpdateCredentials',
-        params: {credentials: credentials}
-      }, handler);
-    },
+      updateCloudCredential: function(name, authType, attrs, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.UpdateCredentials API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error);
+            return;
+          }
+          const results = data.response.results;
+          if (!results || results.length !== 1) {
+            // This should never happen.
+            callback('invalid results from Juju: ' + JSON.stringify(results));
+            return;
+          }
+          const err = results[0].error && results[0].error.message;
+          if (err) {
+            callback(err);
+            return;
+          }
+          callback(null);
+        };
+        // Send the API request.
+        const credentials = [
+          {
+            tag: tags.build(tags.CREDENTIAL, name),
+            credential: {'auth-type': authType || '', attrs: attrs || {}}
+          }
+        ];
+        this._send_rpc(
+          {
+            type: 'Cloud',
+            request: 'UpdateCredentials',
+            params: {credentials: credentials}
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Revoke the cloud credential with the given name.
 
       @method revokeCloudCredential
@@ -1346,40 +1383,42 @@ window.yui.add('juju-controller-api', function(Y) {
         operation is performed. It will receive an error message or null if the
         credential revocation succeeded.
     */
-    revokeCloudCredential: function(name, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log(
-            'data returned by Cloud.RevokeCredentials API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error);
-          return;
-        }
-        const results = data.response.results;
-        if (!results || results.length !== 1) {
-          // This should never happen.
-          callback('invalid results from Juju: ' + JSON.stringify(results));
-          return;
-        }
-        const err = results[0].error && results[0].error.message;
-        if (err) {
-          callback(err);
-          return;
-        }
-        callback(null);
-      };
-      // Send the API request.
-      this._send_rpc({
-        type: 'Cloud',
-        request: 'RevokeCredentials',
-        params: {entities: [{tag: tags.build(tags.CREDENTIAL, name)}]}
-      }, handler);
-    },
+      revokeCloudCredential: function(name, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('data returned by Cloud.RevokeCredentials API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error);
+            return;
+          }
+          const results = data.response.results;
+          if (!results || results.length !== 1) {
+            // This should never happen.
+            callback('invalid results from Juju: ' + JSON.stringify(results));
+            return;
+          }
+          const err = results[0].error && results[0].error.message;
+          if (err) {
+            callback(err);
+            return;
+          }
+          callback(null);
+        };
+        // Send the API request.
+        this._send_rpc(
+          {
+            type: 'Cloud',
+            request: 'RevokeCredentials',
+            params: {entities: [{tag: tags.build(tags.CREDENTIAL, name)}]}
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Modify (grant or revoke) user access to the specified model.
 
       @method _modifyModelAccess
@@ -1393,49 +1432,51 @@ window.yui.add('juju-controller-api', function(Y) {
         operation is performed. It will receive an error message or null if the
         access modification succeeded.
     */
-    _modifyModelAccess: function(modelId, users, action, access, callback) {
-      // Decorate the user supplied callback.
-      const handler = data => {
-        if (!callback) {
-          console.log(
-            'Data returned by ModelManager.ModifyModelAccess API call:', data);
-          return;
-        }
-        if (data.error) {
-          callback(data.error);
-          return;
-        }
-        const results = data.response.results;
-        if (!results || results.length !== 1) {
-          // This should never happen.
-          callback('invalid results from Juju: ' + JSON.stringify(results));
-          return;
-        }
-        const err = results[0].error && results[0].error.message;
-        if (err) {
-          callback(err);
-          return;
-        }
-        callback(null);
-      };
-      const modelTag = tags.build(tags.MODEL, modelId);
-      const changes = users.map(username => {
-        return {
-          access: access,
-          action: action,
-          'model-tag': modelTag,
-          'user-tag': tags.build(tags.USER, username)
+      _modifyModelAccess: function(modelId, users, action, access, callback) {
+        // Decorate the user supplied callback.
+        const handler = data => {
+          if (!callback) {
+            console.log('Data returned by ModelManager.ModifyModelAccess API call:', data);
+            return;
+          }
+          if (data.error) {
+            callback(data.error);
+            return;
+          }
+          const results = data.response.results;
+          if (!results || results.length !== 1) {
+            // This should never happen.
+            callback('invalid results from Juju: ' + JSON.stringify(results));
+            return;
+          }
+          const err = results[0].error && results[0].error.message;
+          if (err) {
+            callback(err);
+            return;
+          }
+          callback(null);
         };
-      });
-      // Send the API request.
-      this._send_rpc({
-        type: 'ModelManager',
-        request: 'ModifyModelAccess',
-        params: {changes: changes}
-      }, handler);
-    },
+        const modelTag = tags.build(tags.MODEL, modelId);
+        const changes = users.map(username => {
+          return {
+            access: access,
+            action: action,
+            'model-tag': modelTag,
+            'user-tag': tags.build(tags.USER, username)
+          };
+        });
+        // Send the API request.
+        this._send_rpc(
+          {
+            type: 'ModelManager',
+            request: 'ModifyModelAccess',
+            params: {changes: changes}
+          },
+          handler
+        );
+      },
 
-    /**
+      /**
       Grant users access to the current model.
 
       @method grantModelAccess
@@ -1448,11 +1489,11 @@ window.yui.add('juju-controller-api', function(Y) {
         operation is performed. It will receive an error message or null if the
         access grant succeeded.
     */
-    grantModelAccess: function(modelId, users, access, callback) {
-      this._modifyModelAccess(modelId, users, 'grant', access, callback);
-    },
+      grantModelAccess: function(modelId, users, access, callback) {
+        this._modifyModelAccess(modelId, users, 'grant', access, callback);
+      },
 
-    /**
+      /**
       Revoke users access to the current model.
 
       @method revokeModelAccess
@@ -1465,17 +1506,15 @@ window.yui.add('juju-controller-api', function(Y) {
         operation is performed. It will receive an error message or null if the
         access revocation succeeded.
     */
-    revokeModelAccess: function(modelId, users, access, callback) {
-      this._modifyModelAccess(modelId, users, 'revoke', access, callback);
-    }
+      revokeModelAccess: function(modelId, users, access, callback) {
+        this._modifyModelAccess(modelId, users, 'revoke', access, callback);
+      }
+    });
 
-  });
-
-  Y.namespace('juju').ControllerAPI = ControllerAPI;
-
-}, '0.1.0', {
-  requires: [
-    'base',
-    'juju-env-base'
-  ]
-});
+    Y.namespace('juju').ControllerAPI = ControllerAPI;
+  },
+  '0.1.0',
+  {
+    requires: ['base', 'juju-env-base']
+  }
+);

@@ -49,8 +49,7 @@ class Configuration extends React.Component {
   _handleOnChange() {
     let changed = false;
     const serviceName = this.refs.ServiceName;
-    if (serviceName && this.props.service.get('name') !==
-      serviceName.getValue()) {
+    if (serviceName && this.props.service.get('name') !== serviceName.getValue()) {
       changed = true;
     } else if (this.state.series !== this.originalSeries) {
       changed = true;
@@ -88,8 +87,7 @@ class Configuration extends React.Component {
     @method _openFileDialog
   */
   _importConfig() {
-    initUtils.getYAMLConfig(
-      this.refs.file.files[0], this._applyConfig.bind(this));
+    initUtils.getYAMLConfig(this.refs.file.files[0], this._applyConfig.bind(this));
     // Reset the form so the file can be uploaded again
     this.refs['file-form'].reset();
     this._handleOnChange();
@@ -115,7 +113,9 @@ class Configuration extends React.Component {
         inspector: {
           id: this.props.service.get('id'),
           activeComponent: undefined
-        }}});
+        }
+      }
+    });
   }
 
   /**
@@ -136,8 +136,7 @@ class Configuration extends React.Component {
         // The service already exists so bail out.
         props.addNotification({
           title: 'Invalid application name',
-          message: `An application with the name "${nameValue}" already ` +
-            'exists.',
+          message: `An application with the name "${nameValue}" already ` + 'exists.',
           level: 'error'
         });
         return;
@@ -156,7 +155,8 @@ class Configuration extends React.Component {
     const changedConfig = this._getChangedConfig();
     // If there are no changed values then don't set the config.
     if (Object.keys(changedConfig).length > 0) {
-      props.setConfig(props.service.get('id'),
+      props.setConfig(
+        props.service.get('id'),
         changedConfig,
         this._setConfigCallback.bind(this)
       );
@@ -227,10 +227,7 @@ class Configuration extends React.Component {
     var charmOptions = this.props.charm.get('options');
     // Some charms don't have any options, in this case, just return.
     if (!charmOptions) {
-      return (
-        <div className="inspector-config--no-config">
-          No configuration options.
-        </div>);
+      return <div className="inspector-config--no-config">No configuration options.</div>;
     }
     var configElements = [];
 
@@ -252,7 +249,9 @@ class Configuration extends React.Component {
             label={label}
             onChange={this._handleOnChange.bind(this)}
             option={option}
-            ref={ref} />);
+            ref={ref}
+          />
+        );
       } else {
         configElements.push(
           <StringConfig
@@ -261,7 +260,9 @@ class Configuration extends React.Component {
             key={ref}
             onChange={this._handleOnChange.bind(this)}
             option={option}
-            ref={ref} />);
+            ref={ref}
+          />
+        );
       }
     });
     return configElements;
@@ -279,16 +280,20 @@ class Configuration extends React.Component {
     // If it contains a $ at the end it's a ghost service so we allow them
     // to change the name.
     if (id.match(/\$$/)) {
-      return (<StringConfig
-        config={this.props.service.get('name')}
-        disabled={this.props.acl.isReadOnly()}
-        onChange={this._handleOnChange.bind(this)}
-        option={{
-          key: 'Application name',
-          description: 'Specify a custom application name. The application' +
-            ' name cannot be changed once it has been deployed.'
-        }}
-        ref="ServiceName" />);
+      return (
+        <StringConfig
+          config={this.props.service.get('name')}
+          disabled={this.props.acl.isReadOnly()}
+          onChange={this._handleOnChange.bind(this)}
+          option={{
+            key: 'Application name',
+            description:
+              'Specify a custom application name. The application' +
+              ' name cannot be changed once it has been deployed.'
+          }}
+          ref="ServiceName"
+        />
+      );
     }
     return;
   }
@@ -317,14 +322,19 @@ class Configuration extends React.Component {
     if (unplacedUnitsLength > 0) {
       props.addNotification({
         title: `${unplacedUnitsLength} units unplaced`,
-        message: 'The ' + unplacedUnitsLength + ' placed units for ' +
-          service.get('name') + ' have been unplaced.',
+        message:
+          'The ' +
+          unplacedUnitsLength +
+          ' placed units for ' +
+          service.get('name') +
+          ' have been unplaced.',
         level: 'error'
       });
       props.changeState({
         gui: {
           machines: ''
-        }});
+        }
+      });
     }
   }
 
@@ -344,12 +354,9 @@ class Configuration extends React.Component {
       return;
     }
 
-    const classes = classNames(
-      'inspector-config__select',
-      {
-        'inspector-config__select--changed':
-          this.state.series !== this.originalSeries
-      });
+    const classes = classNames('inspector-config__select', {
+      'inspector-config__select--changed': this.state.series !== this.originalSeries
+    });
     return (
       <div className="inspector-config__series-select">
         <span>Choose Series</span>
@@ -358,17 +365,24 @@ class Configuration extends React.Component {
           disabled={hasRelations}
           onChange={this._handleSeriesChange.bind(this)}
           title={
-            hasRelations ? 'The series for this subordinate has been set ' +
-            'to the application it is related to.' : undefined}
-          value={this.state.series}>
-          {series.map(name =>
-            <option key={name} value={name}>{name}</option>)}
+            hasRelations
+              ? 'The series for this subordinate has been set ' +
+                'to the application it is related to.'
+              : undefined
+          }
+          value={this.state.series}
+        >
+          {series.map(name => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
         </select>
         <span className="inspector-config__series-select-description">
-          Choose the series to deploy. This cannot be
-          changed once the application is deployed.
+          Choose the series to deploy. This cannot be changed once the application is deployed.
         </span>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -378,33 +392,39 @@ class Configuration extends React.Component {
   */
   _generateButtons() {
     const disabled = this.props.acl.isReadOnly();
-    const actionButtons = [{
-      disabled: disabled,
-      title: 'Cancel',
-      type: 'base',
-      action: this._showInspectorIndex.bind(this)
-    }, {
-      disabled: disabled,
-      title: 'Save changes',
-      type: 'neutral',
-      action: this._saveConfig.bind(this)
-    }];
-    const classes = classNames(
-      'inspector-config__buttons',
-      {'inspector-config__buttons--hidden': !this.state.changed});
+    const actionButtons = [
+      {
+        disabled: disabled,
+        title: 'Cancel',
+        type: 'base',
+        action: this._showInspectorIndex.bind(this)
+      },
+      {
+        disabled: disabled,
+        title: 'Save changes',
+        type: 'neutral',
+        action: this._saveConfig.bind(this)
+      }
+    ];
+    const classes = classNames('inspector-config__buttons', {
+      'inspector-config__buttons--hidden': !this.state.changed
+    });
     return (
       <div className={classes}>
         <ButtonRow buttons={actionButtons} />
-      </div>);
+      </div>
+    );
   }
 
   render() {
     var disabled = this.props.acl.isReadOnly();
-    var importButton = [{
-      disabled: disabled,
-      title: 'Import config file',
-      action: this._openFileDialog.bind(this)
-    }];
+    var importButton = [
+      {
+        disabled: disabled,
+        title: 'Import config file',
+        action: this._openFileDialog.bind(this)
+      }
+    ];
     return (
       <div className="inspector-config">
         <div className="inspector-config__fields">
@@ -416,7 +436,8 @@ class Configuration extends React.Component {
               disabled={disabled}
               onChange={this._importConfig.bind(this)}
               ref="file"
-              type="file" />
+              type="file"
+            />
           </form>
           <div className="inspector-config__config-file">
             <ButtonRow buttons={importButton} />
@@ -427,7 +448,7 @@ class Configuration extends React.Component {
       </div>
     );
   }
-};
+}
 
 Configuration.propTypes = {
   acl: PropTypes.object.isRequired,

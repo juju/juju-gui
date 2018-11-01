@@ -10,12 +10,14 @@ const SvgIcon = require('../svg-icon/svg-icon');
 describe('Zoom', function() {
   let topo;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Zoom
-      topo={options.topo || topo}
-      zoomInCanvas={options.zoomInCanvas || sinon.stub()}
-      zoomOutCanvas={options.zoomOutCanvas || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Zoom
+        topo={options.topo || topo}
+        zoomInCanvas={options.zoomInCanvas || sinon.stub()}
+        zoomOutCanvas={options.zoomOutCanvas || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     topo = {
@@ -36,23 +38,20 @@ describe('Zoom', function() {
           className="zoom__in link"
           onClick={wrapper.find('.zoom__in').prop('onClick')}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="zoom-in__icon"
-            name="add_16"
-            size="12" />
+          tabIndex="0"
+        >
+          <SvgIcon className="zoom-in__icon" name="add_16" size="12" />
         </li>
         <li
           className="zoom__out link"
           onClick={wrapper.find('.zoom__out').prop('onClick')}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="zoom-out__icon"
-            name="minus_16"
-            size="12" />
+          tabIndex="0"
+        >
+          <SvgIcon className="zoom-out__icon" name="minus_16" size="12" />
         </li>
-      </ul>);
+      </ul>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

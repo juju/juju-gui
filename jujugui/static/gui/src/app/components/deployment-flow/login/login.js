@@ -15,11 +15,7 @@ class DeploymentLogin extends React.Component {
    @return {Object} The tick markup.
   */
   _generateTick() {
-    return (
-      <SvgIcon
-        className="deployment-login__tick"
-        name="task-done_16"
-        size="16" />);
+    return <SvgIcon className="deployment-login__tick" name="task-done_16" size="16" />;
   }
 
   /**
@@ -32,11 +28,12 @@ class DeploymentLogin extends React.Component {
       <DeploymentSection
         instance="deployment-login"
         showCheck={true}
-        title="You're almost ready to deploy!">
+        title="You're almost ready to deploy!"
+      >
         <div className="deployment-login__content twelve-col">
           <p className="deployment-login__intro">
-            You will need to sign in with an Ubuntu One account to deploy
-            your model with Juju-as-a-Service.
+            You will need to sign in with an Ubuntu One account to deploy your model with
+            Juju-as-a-Service.
           </p>
           <div className="deployment-login__features">
             <div className="six-col">
@@ -66,7 +63,8 @@ class DeploymentLogin extends React.Component {
               callback={this.props.callback}
               displayType="button"
               gisf={this.props.gisf}
-              loginToController={this.props.loginToController}>
+              loginToController={this.props.loginToController}
+            >
               Login
             </USSOLoginLink>
           </div>
@@ -77,12 +75,14 @@ class DeploymentLogin extends React.Component {
               callback={this.props.callback}
               displayType="text"
               gisf={this.props.gisf}
-              loginToController={this.props.loginToController}>
+              loginToController={this.props.loginToController}
+            >
               Sign up
             </USSOLoginLink>
           </div>
         </div>
-      </DeploymentSection>);
+      </DeploymentSection>
+    );
   }
 
   _getLoginLinks() {
@@ -90,17 +90,17 @@ class DeploymentLogin extends React.Component {
       return null;
     }
     return (
-      <DeploymentSection
-        instance="deployment-login-signup">
+      <DeploymentSection instance="deployment-login-signup">
         <span className="deployment-login-signup__message">
-            Sign up to start deploying to your favourite cloud
+          Sign up to start deploying to your favourite cloud
         </span>
         <USSOLoginLink
           addNotification={this.props.addNotification}
           callback={this.props.callback}
           displayType="button"
           gisf={this.props.gisf}
-          loginToController={this.props.loginToController}>
+          loginToController={this.props.loginToController}
+        >
           Sign up
         </USSOLoginLink>
         or&nbsp;
@@ -109,14 +109,14 @@ class DeploymentLogin extends React.Component {
           callback={this.props.callback}
           displayType="text"
           gisf={this.props.gisf}
-          loginToController={this.props.loginToController}>
+          loginToController={this.props.loginToController}
+        >
           log in
         </USSOLoginLink>
         to get started with&nbsp;
-        <a href="http://jujucharms.com/jaas">
-          JAAS
-        </a>
-      </DeploymentSection>);
+        <a href="http://jujucharms.com/jaas">JAAS</a>
+      </DeploymentSection>
+    );
   }
 
   /**
@@ -131,20 +131,20 @@ class DeploymentLogin extends React.Component {
     return (
       <div className="deployment-login__login">
         {this._getLoginLinks()}
-        <DeploymentSection
-          instance="deployment-login-features">
+        <DeploymentSection instance="deployment-login-features">
           <div className="six-col">
             <h3>JAAS gives you Juju, as a service</h3>
             <p>
-              JAAS is the best way to quickly model and deploy your cloud-based
-              applications. Concentrate on your software and the solutions with
-              a fully managed Juju infrastructure.
+              JAAS is the best way to quickly model and deploy your cloud-based applications.
+              Concentrate on your software and the solutions with a fully managed Juju
+              infrastructure.
             </p>
             <p>
               <a
                 className="deployment-login-features__link"
                 href="http://jujucharms.com/jaas"
-                target="_blank">
+                target="_blank"
+              >
                 Learn more about JAAS &rsaquo;
               </a>
             </p>
@@ -154,19 +154,22 @@ class DeploymentLogin extends React.Component {
               <SvgIcon
                 height={Math.round(44 * awsScale)}
                 name="aws-light"
-                width={Math.round(117 * awsScale)} />
+                width={Math.round(117 * awsScale)}
+              />
             </div>
             <div className="deployment-login-features__logo">
               <SvgIcon
                 height={Math.round(23 * gceScale)}
                 name="google-light"
-                width={Math.round(256 * gceScale)} />
+                width={Math.round(256 * gceScale)}
+              />
             </div>
             <div className="deployment-login-features__logo">
               <SvgIcon
                 height={Math.round(24 * azureScale)}
                 name="azure"
-                width={Math.round(204 * azureScale)} />
+                width={Math.round(204 * azureScale)}
+              />
             </div>
           </div>
           <div className="deployment-login-features__items twelve-col">
@@ -203,8 +206,7 @@ class DeploymentLogin extends React.Component {
               </h5>
               <ul className="deployment-login-features__items-list">
                 <li>
-                  All the ops knowledge required to automate the behaviour of
-                  your application
+                  All the ops knowledge required to automate the behaviour of your application
                 </li>
                 <li>Reusable and repeatable workloads</li>
                 <li>Portable solutions across clouds</li>
@@ -220,7 +222,8 @@ class DeploymentLogin extends React.Component {
             </div>
           </div>
         </DeploymentSection>
-      </div>);
+      </div>
+    );
   }
 
   render() {
@@ -230,7 +233,7 @@ class DeploymentLogin extends React.Component {
       return this._generateLogin();
     }
   }
-};
+}
 
 DeploymentLogin.propTypes = {
   addNotification: PropTypes.func.isRequired,

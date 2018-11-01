@@ -49,13 +49,10 @@ class MachineViewMachineUnit extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'machine-view__machine-unit',
-      {
-        'machine-view__machine-unit--draggable': this.props.canDrag,
-        'machine-view__machine-unit--dragged': this.props.isDragging
-      }
-    );
+    return classNames('machine-view__machine-unit', {
+      'machine-view__machine-unit--draggable': this.props.canDrag,
+      'machine-view__machine-unit--dragged': this.props.isDragging
+    });
   }
 
   render() {
@@ -63,11 +60,13 @@ class MachineViewMachineUnit extends React.Component {
     const unit = this.props.unit;
     const agentState = unit.agent_state;
     if (this.props.machineType === 'container') {
-      menuItems = [{
-        label: 'Destroy',
-        action: (!this.props.acl.isReadOnly() &&
-          this.props.removeUnit.bind(null, unit.id)) || null
-      }];
+      menuItems = [
+        {
+          label: 'Destroy',
+          action:
+            (!this.props.acl.isReadOnly() && this.props.removeUnit.bind(null, unit.id)) || null
+        }
+      ];
     }
     // Wrap the returned components in the drag source method.
     return this.props.connectDragSource(
@@ -76,11 +75,12 @@ class MachineViewMachineUnit extends React.Component {
           icon={this.props.icon}
           menuItems={menuItems}
           name={unit.displayName}
-          status={unit.deleted || !agentState ? 'uncommitted' : agentState} />
+          status={unit.deleted || !agentState ? 'uncommitted' : agentState}
+        />
       </div>
     );
   }
-};
+}
 
 MachineViewMachineUnit.propTypes = {
   acl: shapeup.shape({

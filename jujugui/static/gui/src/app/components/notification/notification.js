@@ -51,22 +51,21 @@ class Notification extends React.Component {
       return;
     }
     return (
-      <button
-        className="p-notification__action"
-        onClick={this._dismiss.bind(this)}>
-        <SvgIcon
-          name="close_16"
-          size="16" />
-      </button>);
+      <button className="p-notification__action" onClick={this._dismiss.bind(this)}>
+        <SvgIcon name="close_16" size="16" />
+      </button>
+    );
   }
 
   render() {
-    const content = (<div className={this._generateClasses()}>
-      <p className="p-notification__response">
-        {this.props.content}
-        {this._generateDismiss()}
-      </p>
-    </div>);
+    const content = (
+      <div className={this._generateClasses()}>
+        <p className="p-notification__response">
+          {this.props.content}
+          {this._generateDismiss()}
+        </p>
+      </div>
+    );
     if (this.props.isBlocking && this.props.dismiss) {
       return (
         <div className="p-notification__blocker" onClick={this.props.dismiss}>
@@ -74,15 +73,11 @@ class Notification extends React.Component {
         </div>
       );
     } else if (this.props.isBlocking) {
-      return (
-        <div className="p-notification__blocker">
-          {content}
-        </div>
-      );
+      return <div className="p-notification__blocker">{content}</div>;
     }
     return content;
   }
-};
+}
 
 Notification.propTypes = {
   content: PropTypes.object.isRequired,

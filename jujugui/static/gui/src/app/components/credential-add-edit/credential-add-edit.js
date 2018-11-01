@@ -70,7 +70,9 @@ class CredentialAddEdit extends React.Component {
         controllerIsReady={this.props.controllerIsReady}
         key="deployment-cloud"
         listClouds={this.props.controllerAPI.listClouds}
-        setCloud={this._setCloud.bind(this)} />);
+        setCloud={this._setCloud.bind(this)}
+      />
+    );
   }
 
   /**
@@ -85,17 +87,20 @@ class CredentialAddEdit extends React.Component {
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         cloud={
-          credential && credential.cloud ?
-            this.state.clouds[credential.cloud] : this.state.cloud}
-        credentialName={
-          credential && (credential.name || credential.displayName) || null}
+          credential && credential.cloud
+            ? this.state.clouds[credential.cloud]
+            : this.state.cloud
+        }
+        credentialName={(credential && (credential.name || credential.displayName)) || null}
         credentials={this.props.credentials}
         key="deployment-credential-add"
         onCancel={this.props.onCancel}
         onCredentialUpdated={this.props.onCredentialUpdated}
         sendAnalytics={this.props.sendAnalytics}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
-        user={this.props.username} />);
+        user={this.props.username}
+      />
+    );
   }
 
   /**
@@ -108,12 +113,11 @@ class CredentialAddEdit extends React.Component {
     }
     return (
       <div className="credential-add-edit__choose-cloud">
-        <Button
-          action={this._setCloud.bind(this, null)}
-          type="inline-neutral">
+        <Button action={this._setCloud.bind(this, null)} type="inline-neutral">
           Change cloud
         </Button>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -122,8 +126,7 @@ class CredentialAddEdit extends React.Component {
   */
   _generateContent() {
     if (this.state.loading) {
-      return (
-        <Spinner />);
+      return <Spinner />;
     } else if (this.props.credential) {
       return this._generateCredentialForm();
     } else if (!this.state.cloud) {
@@ -134,18 +137,15 @@ class CredentialAddEdit extends React.Component {
           {this._generateChangeCloud()}
           {this._generateChooseCloud()}
           {this._generateCredentialForm()}
-        </div>);
+        </div>
+      );
     }
   }
 
   render() {
-    return (
-      <div className="credential-add-edit">
-        {this._generateContent()}
-      </div>
-    );
+    return <div className="credential-add-edit">{this._generateContent()}</div>;
   }
-};
+}
 
 CredentialAddEdit.propTypes = {
   acl: PropTypes.object.isRequired,

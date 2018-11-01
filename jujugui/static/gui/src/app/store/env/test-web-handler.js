@@ -33,8 +33,7 @@ const WebHandler = require('./web-handler');
         open: sinon.stub(context, 'open'),
         setRequestHeader: sinon.stub(context, 'setRequestHeader'),
         send: sinon.stub(context, 'send'),
-        removeEventListener: sinon.stub(
-          context, 'removeEventListener')
+        removeEventListener: sinon.stub(context, 'removeEventListener')
       };
     });
 
@@ -88,8 +87,19 @@ const WebHandler = require('./web-handler');
         const data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPostRequest(
-          path, headers, data, 'user', 'passwd', false,
-          function() {return 'progress';}, function() {return 'completed';});
+          path,
+          headers,
+          data,
+          'user',
+          'passwd',
+          false,
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -118,7 +128,14 @@ const WebHandler = require('./web-handler');
         const progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
-          '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+          '/path/',
+          {},
+          'data',
+          'user',
+          'passwd',
+          false,
+          progressCallback
+        );
         assertProgressHandled(progressCallback);
       });
 
@@ -126,11 +143,17 @@ const WebHandler = require('./web-handler');
         const completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPostRequest(
-          '/path/', {}, 'data', 'user', 'passwd', false,
-          function() {}, completedCallback);
+          '/path/',
+          {},
+          'data',
+          'user',
+          'passwd',
+          false,
+          function() {},
+          completedCallback
+        );
         assertCompletedHandled(completedCallback);
       });
-
     });
 
     describe('sendPutRequest', function() {
@@ -140,8 +163,19 @@ const WebHandler = require('./web-handler');
         const data = 'a zip file object';
         // Make a POST request.
         webHandler.sendPutRequest(
-          path, headers, data, 'user', 'passwd', false,
-          function() {return 'progress';}, function() {return 'completed';});
+          path,
+          headers,
+          data,
+          'user',
+          'passwd',
+          false,
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -170,7 +204,14 @@ const WebHandler = require('./web-handler');
         const progressCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
-          '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+          '/path/',
+          {},
+          'data',
+          'user',
+          'passwd',
+          false,
+          progressCallback
+        );
         assertProgressHandled(progressCallback);
       });
 
@@ -178,21 +219,36 @@ const WebHandler = require('./web-handler');
         const completedCallback = sinon.stub();
         // Make a POST request.
         webHandler.sendPutRequest(
-          '/path/', {}, 'data', 'user', 'passwd', false,
-          function() {}, completedCallback);
+          '/path/',
+          {},
+          'data',
+          'user',
+          'passwd',
+          false,
+          function() {},
+          completedCallback
+        );
         assertCompletedHandled(completedCallback);
       });
-
     });
 
     describe('sendGetRequest', function() {
-
       it('opens and sends an XHR request with the proper data', function() {
         const path = '/juju-core/charms?url=local:trusty/django-42';
         // Make a GET request.
         webHandler.sendGetRequest(
-          path, null, 'user', 'passwd', false,
-          function() {return 'progress';}, function() {return 'completed';});
+          path,
+          null,
+          'user',
+          'passwd',
+          false,
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -219,8 +275,7 @@ const WebHandler = require('./web-handler');
       it('handles request progress', function() {
         const progressCallback = sinon.stub();
         // Make a GET request.
-        webHandler.sendGetRequest(
-          '/path/', {}, 'user', 'passwd', false, progressCallback);
+        webHandler.sendGetRequest('/path/', {}, 'user', 'passwd', false, progressCallback);
         assertProgressHandled(progressCallback);
       });
 
@@ -228,23 +283,38 @@ const WebHandler = require('./web-handler');
         const completedCallback = sinon.stub();
         // Make a GET request.
         webHandler.sendGetRequest(
-          '/path/', {}, 'user', 'passwd', false,
-          function() {}, completedCallback);
+          '/path/',
+          {},
+          'user',
+          'passwd',
+          false,
+          function() {},
+          completedCallback
+        );
         assertCompletedHandled(completedCallback);
       });
-
     });
 
     describe('sendPatchRequest', function() {
-
       it('opens and sends an XHR request with the proper data', function() {
         const path = '/juju-core/charms?series=trusty';
         const headers = {'Content-Type': 'application/zip'};
         const data = 'a zip file object';
         // Make a PATCH request.
         webHandler.sendPatchRequest(
-          path, headers, data, 'user', 'passwd', false,
-          function() {return 'progress';}, function() {return 'completed';});
+          path,
+          headers,
+          data,
+          'user',
+          'passwd',
+          false,
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the xhr instance has been used properly.
         assert.strictEqual(mockXhr.addEventListener.callCount, 3);
         // Two events listeners are added, one for request's progress and one
@@ -273,7 +343,14 @@ const WebHandler = require('./web-handler');
         const progressCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
-          '/path/', {}, 'data', 'user', 'passwd', false, progressCallback);
+          '/path/',
+          {},
+          'data',
+          'user',
+          'passwd',
+          false,
+          progressCallback
+        );
         assertProgressHandled(progressCallback);
       });
 
@@ -281,8 +358,15 @@ const WebHandler = require('./web-handler');
         const completedCallback = sinon.stub();
         // Make a PATCH request.
         webHandler.sendPatchRequest(
-          '/path/', {}, 'data', 'user', 'passwd', false,
-          function() {}, completedCallback);
+          '/path/',
+          {},
+          'data',
+          'user',
+          'passwd',
+          false,
+          function() {},
+          completedCallback
+        );
         assertCompletedHandled(completedCallback);
       });
     });
@@ -295,8 +379,7 @@ const WebHandler = require('./web-handler');
     describe('getUrl', function() {
       it('returns a complete URL based on the given credentials', function() {
         const url = webHandler.getUrl('/my/path', 'myuser', 'mypassword');
-        const expectedUrl = 'http://myuser:mypassword@' +
-            window.location.host + '/my/path';
+        const expectedUrl = 'http://myuser:mypassword@' + window.location.host + '/my/path';
         assert.strictEqual(url, expectedUrl);
       });
     });

@@ -13,22 +13,24 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('MachineViewHeader', function() {
   let acl, sendAnalytics;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    // The component is wrapped to handle drag and drop, but we just want to
-    // test the internal component so we access it via DecoratedComponent.
-    <MachineViewHeader.DecoratedComponent
-      acl={options.acl || acl}
-      activeMenuItem={options.activeMenuItem}
-      canDrop={options.canDrop === undefined ? false : options.canDrop}
-      connectDropTarget={jsTestUtils.connectDropTarget}
-      droppable={options.droppable === undefined ? true : options.droppable}
-      isOver={options.isOver === undefined ? false : options.isOver}
-      menuItems={options.menuItems}
-      sendAnalytics={options.sendAnalytics || sendAnalytics}
-      title={options.title || 'Sandbox'}
-      toggle={options.toggle}
-      type={options.type || 'machine'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <MachineViewHeader.DecoratedComponent
+        acl={options.acl || acl}
+        activeMenuItem={options.activeMenuItem}
+        canDrop={options.canDrop === undefined ? false : options.canDrop}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        droppable={options.droppable === undefined ? true : options.droppable}
+        isOver={options.isOver === undefined ? false : options.isOver}
+        menuItems={options.menuItems}
+        sendAnalytics={options.sendAnalytics || sendAnalytics}
+        title={options.title || 'Sandbox'}
+        toggle={options.toggle}
+        type={options.type || 'machine'}
+      />
+    );
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -39,29 +41,24 @@ describe('MachineViewHeader', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__header">
-          Sandbox
+        Sandbox
         {undefined}
         <div className="machine-view__header-drop-target">
-          <div className="machine-view__header-drop-message">
-              Create new {'machine'}
-          </div>
+          <div className="machine-view__header-drop-message">Create new {'machine'}</div>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can render in droppable mode', function() {
     const wrapper = renderComponent({canDrop: true});
-    assert.equal(
-      wrapper.prop('className').includes('machine-view__header--droppable'),
-      true);
+    assert.equal(wrapper.prop('className').includes('machine-view__header--droppable'), true);
   });
 
   it('can render in drop mode', function() {
     const wrapper = renderComponent({isOver: true});
-    assert.equal(
-      wrapper.prop('className').includes('machine-view__header--drop'),
-      true);
+    assert.equal(wrapper.prop('className').includes('machine-view__header--drop'), true);
   });
 
   it('can render with a menu', function() {

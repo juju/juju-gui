@@ -21,15 +21,16 @@ class BudgetTable extends React.Component {
           addNotification={this.props.addNotification}
           allocationEditable={this.props.allocationEditable}
           charmsGetById={this.props.charmsGetById}
-          extraInfo={
-            this.props.extraInfo && this.props.extraInfo[service.get('name')]}
+          extraInfo={this.props.extraInfo && this.props.extraInfo[service.get('name')]}
           key={i}
           listPlansForCharm={this.props.listPlansForCharm}
           parseTermId={this.props.parseTermId}
           plansEditable={this.props.plansEditable}
           service={service}
           showTerms={this.props.showTerms}
-          withPlans={this.props.withPlans} />);
+          withPlans={this.props.withPlans}
+        />
+      );
     });
   }
 
@@ -46,18 +47,10 @@ class BudgetTable extends React.Component {
     const plansEditable = this.props.plansEditable;
     return (
       <div>
-        <div className="three-col">
-          Details
-        </div>
-        <div className={plansEditable ? 'one-col' : 'two-col'}>
-          Usage
-        </div>
-        <div className={plansEditable ? 'one-col' : 'two-col'}>
-          Allocation
-        </div>
-        <div className="one-col last-col">
-          Spend
-        </div>
+        <div className="three-col">Details</div>
+        <div className={plansEditable ? 'one-col' : 'two-col'}>Usage</div>
+        <div className={plansEditable ? 'one-col' : 'two-col'}>Allocation</div>
+        <div className="one-col last-col">Spend</div>
       </div>
     );
   }
@@ -66,16 +59,14 @@ class BudgetTable extends React.Component {
     return (
       <div className="budget-table twelve-col">
         <div className="budget-table__row-header twelve-col">
-          <div className="five-col">
-            Name
-          </div>
+          <div className="five-col">Name</div>
           {this._generatePlanHeaders()}
         </div>
         {this._generateServices()}
       </div>
     );
   }
-};
+}
 
 BudgetTable.propTypes = {
   acl: PropTypes.object.isRequired,

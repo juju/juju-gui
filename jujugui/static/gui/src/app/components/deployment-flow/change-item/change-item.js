@@ -22,11 +22,7 @@ class DeploymentChangeItem extends React.Component {
     } else if (icon.indexOf('.svg') > -1) {
       node = <img alt="" className={className} src={icon} />;
     } else {
-      node = (
-        <SvgIcon
-          className={className}
-          name={icon}
-          size="16" />);
+      node = <SvgIcon className={className} name={icon} size="16" />;
     }
     return node;
   }
@@ -41,10 +37,7 @@ class DeploymentChangeItem extends React.Component {
     if (!this.props.showTime) {
       return;
     }
-    return (
-      <span className="deployment-change-item__time">
-        {this.props.change.time}
-      </span>);
+    return <span className="deployment-change-item__time">{this.props.change.time}</span>;
   }
 
   render() {
@@ -54,15 +47,13 @@ class DeploymentChangeItem extends React.Component {
         <span className="deployment-change-item__change">
           {this._generateIcon(change.icon)}
           {change.description}
-          <span className="deployment-change-item__change-command">
-            {change.command}
-          </span>
+          <span className="deployment-change-item__change-command">{change.command}</span>
         </span>
         {this._generateTime()}
       </div>
     );
   }
-};
+}
 
 DeploymentChangeItem.propTypes = {
   change: PropTypes.object.isRequired,

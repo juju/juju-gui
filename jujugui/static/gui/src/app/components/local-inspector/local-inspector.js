@@ -38,8 +38,7 @@ class LocalInspector extends React.Component {
   */
   _generateState(nextProps) {
     return {
-      activeComponent: nextProps.activeComponent || nextProps.localType ||
-        this.props.localType
+      activeComponent: nextProps.activeComponent || nextProps.localType || this.props.localType
     };
   }
 
@@ -59,7 +58,8 @@ class LocalInspector extends React.Component {
           return (
             <option key={key} value={key}>
               {series[key].name}
-            </option>);
+            </option>
+          );
         });
         component = (
           <div className="local-inspector__content-new">
@@ -68,7 +68,8 @@ class LocalInspector extends React.Component {
               className="local-inspector__series"
               defaultValue="trusty"
               disabled={this.props.acl.isReadOnly()}
-              ref="series">
+              ref="series"
+            >
               {seriesOptions}
             </select>
           </div>
@@ -78,9 +79,7 @@ class LocalInspector extends React.Component {
         component = (
           <div className="local-inspector__content-update">
             <p className="local-inspector__label">Choose applications to upgrade:</p>
-            <ul className="local-inspector__list">
-              {this._generateServiceList()}
-            </ul>
+            <ul className="local-inspector__list">{this._generateServiceList()}</ul>
           </div>
         );
         break;
@@ -109,7 +108,8 @@ class LocalInspector extends React.Component {
               data-id={serviceId}
               disabled={props.acl.isReadOnly()}
               ref={'service-' + serviceId}
-              type="checkbox" />
+              type="checkbox"
+            />
             {service.get('name')}
           </label>
         </li>
@@ -127,7 +127,8 @@ class LocalInspector extends React.Component {
     this.props.changeState({
       gui: {
         inspector: null
-      }});
+      }
+    });
   }
 
   /**
@@ -153,7 +154,13 @@ class LocalInspector extends React.Component {
     });
     if (selectedServices.length > 0) {
       const serviceList = selectedServices.map(serviceId =>
-        this.props.services.getById(serviceId.split('-').splice(1).join('-')));
+        this.props.services.getById(
+          serviceId
+            .split('-')
+            .splice(1)
+            .join('-')
+        )
+      );
       this.props.upgradeServiceUsingLocalCharm(serviceList, this.props.file);
       this._close();
     }
@@ -164,26 +171,32 @@ class LocalInspector extends React.Component {
     var localType = this.props.localType;
     var file = this.props.file;
     var size = (file.size / 1024).toFixed(2);
-    var buttons = [{
-      title: 'Cancel',
-      action: this._close.bind(this),
-      type: 'base'
-    }, {
-      title: 'Upload',
-      action: this.state.activeComponent === 'new' ?
-        this._handleUpload.bind(this) : this._handleUpdate.bind(this),
-      disabled: isReadOnly,
-      type: 'neutral'
-    }];
+    var buttons = [
+      {
+        title: 'Cancel',
+        action: this._close.bind(this),
+        type: 'base'
+      },
+      {
+        title: 'Upload',
+        action:
+          this.state.activeComponent === 'new'
+            ? this._handleUpload.bind(this)
+            : this._handleUpdate.bind(this),
+        disabled: isReadOnly,
+        type: 'neutral'
+      }
+    ];
     return (
       <div className="inspector-view local-inspector">
-        <InspectorHeader
-          backCallback={this._close.bind(this)}
-          title="Local charm" />
+        <InspectorHeader backCallback={this._close.bind(this)} title="Local charm" />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
             <p>File: {file.name}</p>
-            <p>Size: {size}kb</p>
+            <p>
+              Size: {size}
+              kb
+            </p>
           </div>
           <ul className="local-inspector__list">
             <li>
@@ -193,7 +206,8 @@ class LocalInspector extends React.Component {
                   disabled={isReadOnly}
                   name="action"
                   onChange={this._changeActiveComponent.bind(this, 'new')}
-                  type="radio" />
+                  type="radio"
+                />
                 Deploy local
               </label>
             </li>
@@ -203,21 +217,20 @@ class LocalInspector extends React.Component {
                   defaultChecked={localType === 'update'}
                   disabled={isReadOnly}
                   name="action"
-                  onChange={
-                    this._changeActiveComponent.bind(this, 'update')}
-                  type="radio" />
+                  onChange={this._changeActiveComponent.bind(this, 'update')}
+                  type="radio"
+                />
                 Upgrade local
               </label>
             </li>
           </ul>
           {this._generateComponent(this.state.activeComponent)}
         </div>
-        <ButtonRow
-          buttons={buttons} />
+        <ButtonRow buttons={buttons} />
       </div>
     );
   }
-};
+}
 
 LocalInspector.propTypes = {
   acl: PropTypes.object.isRequired,

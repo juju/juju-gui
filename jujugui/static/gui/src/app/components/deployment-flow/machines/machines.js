@@ -34,35 +34,23 @@ class DeploymentMachines extends React.Component {
     const machineList = Object.keys(machineDetails).map(machine => {
       const count = machineDetails[machine];
       return (
-        <li
-          className="deployment-flow__row twelve-col"
-          key={machine}>
-          <div className="eight-col">
-            {machine}
-          </div>
-          <div className="three-col">
-            {cloud}
-          </div>
-          <div className="one-col last-col">
-            {count}
-          </div>
-        </li>);
+        <li className="deployment-flow__row twelve-col" key={machine}>
+          <div className="eight-col">{machine}</div>
+          <div className="three-col">{cloud}</div>
+          <div className="one-col last-col">{count}</div>
+        </li>
+      );
     });
     return (
       <ul className="deployment-machines__list">
         <li className="deployment-flow__row-header twelve-col">
-          <div className="eight-col">
-            Type
-          </div>
-          <div className="three-col">
-            Provider
-          </div>
-          <div className="one-col last-col">
-            Quantity
-          </div>
+          <div className="eight-col">Type</div>
+          <div className="three-col">Provider</div>
+          <div className="one-col last-col">Quantity</div>
         </li>
         {machineList}
-      </ul>);
+      </ul>
+    );
   }
 
   render() {
@@ -74,14 +62,15 @@ class DeploymentMachines extends React.Component {
     return (
       <div>
         <p className="deployment-machines__message">
-          These machines will be provisioned on {cloudName}.&nbsp;
+          These machines will be provisioned on {cloudName}
+          .&nbsp;
           {chargeMessage}
         </p>
         {this._generateMachines()}
       </div>
     );
   }
-};
+}
 
 DeploymentMachines.propTypes = {
   acl: PropTypes.object.isRequired,

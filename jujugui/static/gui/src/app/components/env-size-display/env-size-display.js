@@ -39,12 +39,9 @@ class EnvSizeDisplay extends React.Component {
       return 'env-size-display__list-item is-active';
     }
 
-    return classNames(
-      'env-size-display__list-item',
-      {
-        'is-active': guiState && guiState[section] !== undefined
-      }
-    );
+    return classNames('env-size-display__list-item', {
+      'is-active': guiState && guiState[section] !== undefined
+    });
   }
 
   /**
@@ -58,10 +55,12 @@ class EnvSizeDisplay extends React.Component {
         <a
           className="env-size-display__link"
           data-view="status"
-          onClick={this._changeEnvironmentView.bind(this)}>
+          onClick={this._changeEnvironmentView.bind(this)}
+        >
           status
         </a>
-      </li>);
+      </li>
+    );
   }
 
   render() {
@@ -75,26 +74,32 @@ class EnvSizeDisplay extends React.Component {
             <a
               className="env-size-display__link"
               data-view="application"
-              onClick={this._changeEnvironmentView.bind(this)}>
-              {serviceCount}&nbsp;
+              onClick={this._changeEnvironmentView.bind(this)}
+            >
+              {serviceCount}
+              &nbsp;
               {initUtils.pluralize('application', serviceCount)}
             </a>
           </li>
-          {props.providerType !== 'kubernetes' ? <li className={this._genClasses('machines')}>
-            <a
-              className="env-size-display__link"
-              data-view="machines"
-              onClick={this._changeEnvironmentView.bind(this)}>
-              {machineCount}&nbsp;
-              {initUtils.pluralize('machine', machineCount)}
-            </a>
-          </li>: null}
+          {props.providerType !== 'kubernetes' ? (
+            <li className={this._genClasses('machines')}>
+              <a
+                className="env-size-display__link"
+                data-view="machines"
+                onClick={this._changeEnvironmentView.bind(this)}
+              >
+                {machineCount}
+                &nbsp;
+                {initUtils.pluralize('machine', machineCount)}
+              </a>
+            </li>
+          ) : null}
           {this._generateStatus()}
         </ul>
       </div>
     );
   }
-};
+}
 
 EnvSizeDisplay.propTypes = {
   appState: PropTypes.object.isRequired,

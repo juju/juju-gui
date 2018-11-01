@@ -57,10 +57,7 @@ class ExpandingRow extends React.Component {
     var classes = this.props.classes || {};
     classes['expanding-row--expanded'] = this.state.expanded;
     classes['expanding-row--clickable'] = this.props.clickable;
-    return classNames(
-      'expanding-row',
-      'twelve-col',
-      classes);
+    return classNames('expanding-row', 'twelve-col', classes);
   }
 
   /**
@@ -81,10 +78,12 @@ class ExpandingRow extends React.Component {
   */
   _resize() {
     const expanded = this.state.expanded;
-    this.setState({styles: {
-      height: expanded ? this.refs.inner.offsetHeight + 'px' : '0px',
-      opacity: expanded ? 1 : 0
-    }});
+    this.setState({
+      styles: {
+        height: expanded ? this.refs.inner.offsetHeight + 'px' : '0px',
+        opacity: expanded ? 1 : 0
+      }
+    });
   }
 
   render() {
@@ -92,28 +91,23 @@ class ExpandingRow extends React.Component {
       <li
         className={this._generateClasses()}
         onClick={this.props.clickable ? this._toggle.bind(this) : undefined}
-        style={this.props.style}>
+        style={this.props.style}
+      >
         <div className="expanding-row__initial twelve-col no-margin-bottom">
           {this.props.children[0]}
         </div>
-        <div
-          className="expanding-row__expanded twelve-col"
-          style={this.state.styles}>
-          <div
-            className="twelve-col no-margin-bottom"
-            ref="inner">
+        <div className="expanding-row__expanded twelve-col" style={this.state.styles}>
+          <div className="twelve-col no-margin-bottom" ref="inner">
             {this.props.children[1]}
           </div>
         </div>
-      </li>);
+      </li>
+    );
   }
-};
+}
 
 ExpandingRow.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   classes: PropTypes.object,
   clickable: PropTypes.bool,
   expanded: PropTypes.bool,

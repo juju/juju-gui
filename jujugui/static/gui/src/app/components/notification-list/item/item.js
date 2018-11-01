@@ -24,13 +24,10 @@ class NotificationListItem extends React.Component {
   _generateClasses() {
     var type = this.props.type || 'info';
     var visible = this.state.visible;
-    return classNames(
-      'notification-list-item',
-      'notification-list-item--' + type,
-      {
-        'notification-list-item--visible': visible,
-        'notification-list-item--hidden': !visible
-      });
+    return classNames('notification-list-item', 'notification-list-item--' + type, {
+      'notification-list-item--visible': visible,
+      'notification-list-item--hidden': !visible
+    });
   }
 
   /**
@@ -58,14 +55,14 @@ class NotificationListItem extends React.Component {
           className="notification-list-item__hide"
           onClick={this.hide.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            name="close_16"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon name="close_16" size="16" />
         </span>
-      </li>);
+      </li>
+    );
   }
-};
+}
 
 NotificationListItem.propTypes = {
   message: PropTypes.node,

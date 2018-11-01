@@ -46,10 +46,11 @@ class StatusTable extends React.Component {
         rowColumnClasses={['status-table__column']}
         rows={this.props.rows.sort(this._byKey.bind(this, 0))}
         sort={this._byKey}
-        tableClasses={['status-table']} />
+        tableClasses={['status-table']}
+      />
     );
   }
-};
+}
 
 StatusTable.propTypes = {
   headers: PropTypes.array.isRequired,

@@ -8,15 +8,13 @@ const PropTypes = require('prop-types');
 class VanillaCard extends React.Component {
   _generateHeader() {
     if (this.props.headerContent) {
-      return (<header className="p-card__header">
-        {this.props.headerContent}
-      </header>);
+      return <header className="p-card__header">{this.props.headerContent}</header>;
     }
   }
 
   _generateTitle() {
     if (this.props.title) {
-      return (<h3 className="p-card__title">{this.props.title}</h3>);
+      return <h3 className="p-card__title">{this.props.title}</h3>;
     }
   }
 

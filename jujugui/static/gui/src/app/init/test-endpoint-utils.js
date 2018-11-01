@@ -30,8 +30,7 @@ const createApp = (JujuGUI, config = {}) => {
 // These are nominally based on improv sample.json delta stream with
 // the addition of puppet subordinate relations.
 describe('Relation endpoints logic', () => {
-  let container, db, app, sample_endpoints,
-      sample_env, JujuGUI;
+  let container, db, app, sample_endpoints, sample_env, JujuGUI;
 
   beforeAll(done => {
     YUI(GlobalConfig).use([], Y => {
@@ -55,10 +54,14 @@ describe('Relation endpoints logic', () => {
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
+          setItem: function(name, val) {
+            this.store['name'] = val;
+          },
+          getItem: function(name) {
+            return this.store['name'] || null;
+          }
         };
-      };
+      }();
     };
     const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
@@ -91,23 +94,22 @@ describe('Relation endpoints logic', () => {
     loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mediawiki'),
-        available_svcs = Object.keys(endpointUtils.getEndpoints(
-          service, app.endpointsController));
+      available_svcs = Object.keys(
+        endpointUtils.getEndpoints(service, app.endpointsController)
+      );
     available_svcs.sort();
-    available_svcs.should.eql(
-      ['memcached', 'mysql', 'puppet', 'rsyslog-forwarder-ha']);
+    available_svcs.should.eql(['memcached', 'mysql', 'puppet', 'rsyslog-forwarder-ha']);
   });
 
   it('should find valid targets including subordinates', function() {
     loadDelta(false);
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('memcached'),
-        available = endpointUtils.getEndpoints(service, app.endpointsController),
-        available_svcs;
+      available = endpointUtils.getEndpoints(service, app.endpointsController),
+      available_svcs;
     available_svcs = Object.keys(available);
     available_svcs.sort();
-    available_svcs.should.eql(
-      ['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
+    available_svcs.should.eql(['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
   });
 
   it('should find multi-series subordinates with matching series', function() {
@@ -129,8 +131,7 @@ describe('Relation endpoints logic', () => {
     const available = endpointUtils.getEndpoints(service, app.endpointsController);
     const available_svcs = Object.keys(available);
     available_svcs.sort();
-    available_svcs.should.eql(
-      ['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
+    available_svcs.should.eql(['mediawiki', 'puppet', 'rsyslog-forwarder-ha', 'wordpress']);
   });
 
   it('should match app series if it is a multi-series subordinate', function() {
@@ -159,27 +160,37 @@ describe('Relation endpoints logic', () => {
     // Mysql already has both subordinates related.
     app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mysql'),
-        available = endpointUtils.getEndpoints(service, app.endpointsController),
-        available_svcs = Object.keys(available);
+      available = endpointUtils.getEndpoints(service, app.endpointsController),
+      available_svcs = Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['mediawiki']);
     // mediawiki has two possible relations (read slave or write master)
     // it can establish with mysql.
     available.mediawiki.should.eql([
-      [{name: 'db', service: 'mysql', type: 'mysql'},
-        {name: 'slave', service: 'mediawiki', type: 'mysql'}],
-      [{name: 'db', service: 'mysql', type: 'mysql'},
-        {name: 'db', service: 'mediawiki', type: 'mysql'}]
+      [
+        {name: 'db', service: 'mysql', type: 'mysql'},
+        {name: 'slave', service: 'mediawiki', type: 'mysql'}
+      ],
+      [
+        {name: 'db', service: 'mysql', type: 'mysql'},
+        {name: 'db', service: 'mediawiki', type: 'mysql'}
+      ]
     ]);
 
     // Demonstrate the inverse retrieval of the same.
     available = endpointUtils.getEndpoints(
-      db.services.getById('mediawiki'), app.endpointsController);
+      db.services.getById('mediawiki'),
+      app.endpointsController
+    );
     available.mysql.should.eql([
-      [{name: 'slave', service: 'mediawiki', type: 'mysql'},
-        {name: 'db', service: 'mysql', type: 'mysql'}],
-      [{name: 'db', service: 'mediawiki', type: 'mysql'},
-        {name: 'db', service: 'mysql', type: 'mysql'}]
+      [
+        {name: 'slave', service: 'mediawiki', type: 'mysql'},
+        {name: 'db', service: 'mysql', type: 'mysql'}
+      ],
+      [
+        {name: 'db', service: 'mediawiki', type: 'mysql'},
+        {name: 'db', service: 'mysql', type: 'mysql'}
+      ]
     ]);
   });
 
@@ -202,22 +213,32 @@ describe('Relation endpoints logic', () => {
     var available = endpointUtils.getEndpoints(service, app.endpointsController);
     var available_svcs = Object.keys(available);
     available_svcs.sort();
-    available_svcs.should.eql(
-      ['mediawiki', 'memcached', 'mysql', 'puppetmaster', 'rsyslog',
-        'rsyslog-forwarder-ha', 'wordpress']);
+    available_svcs.should.eql([
+      'mediawiki',
+      'memcached',
+      'mysql',
+      'puppetmaster',
+      'rsyslog',
+      'rsyslog-forwarder-ha',
+      'wordpress'
+    ]);
 
     service = db.services.getById('rsyslog-forwarder-ha');
     available = endpointUtils.getEndpoints(service, app.endpointsController);
     available_svcs = Object.keys(available);
 
     available_svcs.sort();
-    available_svcs.should.eql(
-      ['mediawiki', 'memcached', 'mysql', 'puppet',
-        'puppetmaster', 'rsyslog', 'wordpress']);
+    available_svcs.should.eql([
+      'mediawiki',
+      'memcached',
+      'mysql',
+      'puppet',
+      'puppetmaster',
+      'rsyslog',
+      'wordpress'
+    ]);
   });
-
 });
-
 
 describe('Endpoints map', function() {
   var models, controller, charm;
@@ -244,50 +265,54 @@ describe('Endpoints map', function() {
     charm.set('relations', {
       provides: {
         url: {
-          'interface': 'http',
+          interface: 'http',
           optional: 'false'
         },
         'logging-dir': {
-          'interface': 'logging',
+          interface: 'logging',
           scope: 'container'
         }
       },
       requires: {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           optional: 'false'
         },
         cache: {
-          'interface': 'varnish',
+          interface: 'varnish',
           optional: 'true'
         }
       }
     });
     controller.addServiceToEndpointsMap('wordpress', charm);
-    controller.endpointsMap.should.eql({wordpress: {
-      provides: [
-        {
-          name: 'url',
-          'interface': 'http',
-          optional: 'false'
-        }, {
-          name: 'logging-dir',
-          'interface': 'logging',
-          scope: 'container'
-        }
-      ],
-      requires: [
-        {
-          name: 'db',
-          'interface': 'mysql',
-          optional: 'false'
-        }, {
-          name: 'cache',
-          'interface': 'varnish',
-          optional: 'true'
-        }
-      ]
-    }});
+    controller.endpointsMap.should.eql({
+      wordpress: {
+        provides: [
+          {
+            name: 'url',
+            interface: 'http',
+            optional: 'false'
+          },
+          {
+            name: 'logging-dir',
+            interface: 'logging',
+            scope: 'container'
+          }
+        ],
+        requires: [
+          {
+            name: 'db',
+            interface: 'mysql',
+            optional: 'false'
+          },
+          {
+            name: 'cache',
+            interface: 'varnish',
+            optional: 'true'
+          }
+        ]
+      }
+    });
   });
 
   it('should add a service to the map, requires only', function() {
@@ -295,30 +320,33 @@ describe('Endpoints map', function() {
     charm.set('relations', {
       requires: {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           optional: 'false'
         },
         cache: {
-          'interface': 'varnish',
+          interface: 'varnish',
           optional: 'true'
         }
       }
     });
     controller.addServiceToEndpointsMap('wordpress', charm);
-    controller.endpointsMap.should.eql({wordpress: {
-      provides: [],
-      requires: [
-        {
-          name: 'db',
-          'interface': 'mysql',
-          optional: 'false'
-        }, {
-          name: 'cache',
-          'interface': 'varnish',
-          optional: 'true'
-        }
-      ]
-    }});
+    controller.endpointsMap.should.eql({
+      wordpress: {
+        provides: [],
+        requires: [
+          {
+            name: 'db',
+            interface: 'mysql',
+            optional: 'false'
+          },
+          {
+            name: 'cache',
+            interface: 'varnish',
+            optional: 'true'
+          }
+        ]
+      }
+    });
   });
 
   it('should add a service to the map, provides only', function() {
@@ -326,57 +354,60 @@ describe('Endpoints map', function() {
     charm.set('relations', {
       provides: {
         url: {
-          'interface': 'http',
+          interface: 'http',
           optional: 'false'
         },
         'logging-dir': {
-          'interface': 'logging',
+          interface: 'logging',
           scope: 'container'
         }
       }
     });
     controller.addServiceToEndpointsMap('wordpress', charm);
-    controller.endpointsMap.should.eql({wordpress: {
-      requires: [],
-      provides: [
-        {
-          name: 'url',
-          'interface': 'http',
-          optional: 'false'
-        }, {
-          name: 'logging-dir',
-          'interface': 'logging',
-          scope: 'container'
-        }
-      ]}});
+    controller.endpointsMap.should.eql({
+      wordpress: {
+        requires: [],
+        provides: [
+          {
+            name: 'url',
+            interface: 'http',
+            optional: 'false'
+          },
+          {
+            name: 'logging-dir',
+            interface: 'logging',
+            scope: 'container'
+          }
+        ]
+      }
+    });
   });
 
-  it('should add a service to the map, neither provides nor requires',
-    function() {
-      controller.endpointsMap = {};
-      controller.addServiceToEndpointsMap('wordpress', charm);
-      controller.endpointsMap.should.eql({wordpress: {
+  it('should add a service to the map, neither provides nor requires', function() {
+    controller.endpointsMap = {};
+    controller.addServiceToEndpointsMap('wordpress', charm);
+    controller.endpointsMap.should.eql({
+      wordpress: {
         requires: [],
-        provides: []}});
+        provides: []
+      }
     });
+  });
 
   it('should reset the map', function() {
-    var testmap = {'columbus': 'sailed the ocean blue'};
+    var testmap = {columbus: 'sailed the ocean blue'};
     controller.endpointsMap = testmap;
     controller.endpointsMap.should.eql(testmap);
     controller.reset();
     controller.endpointsMap.should.eql({});
   });
-
 });
 
 describe('Endpoints map handlers', function() {
   let app, container, controller, destroyMe, JujuGUI;
 
   beforeAll(done => {
-    YUI(GlobalConfig).use([
-      'datasource-local'],
-    Y => {
+    YUI(GlobalConfig).use(['datasource-local'], Y => {
       // init.js requires the window to contain the YUI object.
       window.yui = Y;
       // The gui version is required to be set by component-renderers-mixin.js.
@@ -405,84 +436,87 @@ describe('Endpoints map handlers', function() {
     destroyMe = null;
   });
 
-  it('should update endpoints map when pending services are added',
-    function(done) {
-      var applicationName = 'wordpress';
-      var charmUrl = 'cs:precise/wordpress-2';
-      app.db.charms.add({id: charmUrl});
-      var charm = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm);
-      charm.loaded = true;
+  it('should update endpoints map when pending services are added', function(done) {
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charmUrl});
+    var charm = app.db.charms.getById(charmUrl);
+    destroyMe.push(charm);
+    charm.loaded = true;
 
-      const handler = () => {
-        controller.endpointsMap.should.eql({wordpress: {
+    const handler = () => {
+      controller.endpointsMap.should.eql({
+        wordpress: {
           requires: [],
-          provides: []}});
-        // This will hang forever if the endpoint map doesn't update.
-        document.removeEventListener('endpointMapAdded', handler);
-        done();
-      };
-      document.addEventListener('endpointMapAdded', handler);
-      app.db.services.add({
-        id: applicationName,
-        pending: true,
-        loaded: true,
-        charmstore: factory.makeFakeCharmstore(),
-        charm: charmUrl
+          provides: []
+        }
       });
+      // This will hang forever if the endpoint map doesn't update.
+      document.removeEventListener('endpointMapAdded', handler);
+      done();
+    };
+    document.addEventListener('endpointMapAdded', handler);
+    app.db.services.add({
+      id: applicationName,
+      pending: true,
+      loaded: true,
+      charmstore: factory.makeFakeCharmstore(),
+      charm: charmUrl
     });
+  });
 
-  it('should update endpoints map when non-pending services are added',
-    function(done) {
-      var applicationName = 'wordpress';
-      var charmUrl = 'cs:precise/wordpress-2';
-      app.db.charms.add({id: charmUrl});
-      var charm = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm);
-      charm.loaded = true;
+  it('should update endpoints map when non-pending services are added', function(done) {
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charmUrl});
+    var charm = app.db.charms.getById(charmUrl);
+    destroyMe.push(charm);
+    charm.loaded = true;
 
-      const handler = () => {
-        controller.endpointsMap.should.eql({wordpress: {
+    const handler = () => {
+      controller.endpointsMap.should.eql({
+        wordpress: {
           requires: [],
-          provides: []}});
-        // This will hang forever if the endpoint map doesn't update.
-        document.removeEventListener('endpointMapAdded', handler);
-        done();
-      };
-      document.addEventListener('endpointMapAdded', handler);
-      app.db.services.add({
-        id: applicationName,
-        pending: false,
-        loaded: true,
-        charmstore: factory.makeFakeCharmstore(),
-        charm: charmUrl
+          provides: []
+        }
       });
+      // This will hang forever if the endpoint map doesn't update.
+      document.removeEventListener('endpointMapAdded', handler);
+      done();
+    };
+    document.addEventListener('endpointMapAdded', handler);
+    app.db.services.add({
+      id: applicationName,
+      pending: false,
+      loaded: true,
+      charmstore: factory.makeFakeCharmstore(),
+      charm: charmUrl
     });
+  });
 
-  it('updates subordinate value when non-pending services are added',
-    function(done) {
-      var applicationName = 'puppet';
-      var charmUrl = 'cs:precise/puppet-2';
-      app.db.charms.add({id: charmUrl, is_subordinate: true});
-      var charm = app.db.charms.getById(charmUrl);
-      destroyMe.push(charm);
-      charm.loaded = true;
+  it('updates subordinate value when non-pending services are added', function(done) {
+    var applicationName = 'puppet';
+    var charmUrl = 'cs:precise/puppet-2';
+    app.db.charms.add({id: charmUrl, is_subordinate: true});
+    var charm = app.db.charms.getById(charmUrl);
+    destroyMe.push(charm);
+    charm.loaded = true;
 
-      const handler = () => {
-        var svc = app.db.services.getById(applicationName);
-        assert.isTrue(svc.get('subordinate'));
-        destroyMe.push(svc);
-        document.removeEventListener('endpointMapAdded', handler);
-        done();
-      };
-      document.addEventListener('endpointMapAdded', handler);
-      app.db.services.add({
-        id: applicationName,
-        pending: false,
-        loaded: true,
-        charm: charmUrl
-      });
+    const handler = () => {
+      var svc = app.db.services.getById(applicationName);
+      assert.isTrue(svc.get('subordinate'));
+      destroyMe.push(svc);
+      document.removeEventListener('endpointMapAdded', handler);
+      done();
+    };
+    document.addEventListener('endpointMapAdded', handler);
+    app.db.services.add({
+      id: applicationName,
+      pending: false,
+      loaded: true,
+      charm: charmUrl
     });
+  });
 
   it('should remove service from endpoints map when it is deleted', function() {
     var applicationName = 'wordpress';
@@ -508,13 +542,13 @@ describe('Endpoints map handlers', function() {
     app.db.services.add({
       id: applicationName,
       loaded: false,
-      charm: charmUrl});
+      charm: charmUrl
+    });
     controller.endpointsMap = {wordpress: 'foo'};
     app.db.services.reset();
     controller.endpointsMap.should.eql({});
   });
 });
-
 
 describe('Application config handlers', () => {
   let JujuGUI, app, conn, container, destroyMe;
@@ -551,32 +585,32 @@ describe('Application config handlers', () => {
     conn = null;
   });
 
-  it('should not call Application.Get when a pending service is added',
-    function() {
-      var charmUrl = 'cs:precise/wordpress-2';
-      app.db.services.add({
-        id: 'wordpress',
-        pending: true,
-        charm: charmUrl});
-      assert.equal(conn.messages.length, 0);
+  it('should not call Application.Get when a pending service is added', function() {
+    var charmUrl = 'cs:precise/wordpress-2';
+    app.db.services.add({
+      id: 'wordpress',
+      pending: true,
+      charm: charmUrl
     });
+    assert.equal(conn.messages.length, 0);
+  });
 
-  it('should call Application.Get when non-pending services are added',
-    function() {
-      var applicationName = 'wordpress';
-      var charmUrl = 'cs:precise/wordpress-2';
-      var charm = app.db.charms.add({id: charmUrl});
-      destroyMe.push(charm);
-      charm.loaded = true;
-      app.db.services.add({
-        id: applicationName,
-        pending: false,
-        charm: charmUrl});
-      assert.equal(conn.messages.length, 1);
-      var msg = conn.last_message();
-      assert.strictEqual(msg.type, 'Application');
-      assert.strictEqual(msg.request, 'Get');
+  it('should call Application.Get when non-pending services are added', function() {
+    var applicationName = 'wordpress';
+    var charmUrl = 'cs:precise/wordpress-2';
+    var charm = app.db.charms.add({id: charmUrl});
+    destroyMe.push(charm);
+    charm.loaded = true;
+    app.db.services.add({
+      id: applicationName,
+      pending: false,
+      charm: charmUrl
     });
+    assert.equal(conn.messages.length, 1);
+    var msg = conn.last_message();
+    assert.strictEqual(msg.type, 'Application');
+    assert.strictEqual(msg.request, 'Get');
+  });
 
   it('should call Application.Get when a charm changes', function() {
     var applicationName = 'wordpress';
@@ -587,7 +621,8 @@ describe('Application config handlers', () => {
     app.db.services.add({
       id: applicationName,
       pending: false,
-      charm: charmUrl});
+      charm: charmUrl
+    });
     assert.equal(conn.messages.length, 1);
     var msg = conn.last_message();
     assert.strictEqual(msg.type, 'Application');
@@ -602,5 +637,4 @@ describe('Application config handlers', () => {
     assert.strictEqual(msg.type, 'Application');
     assert.strictEqual(msg.request, 'Get');
   });
-
 });

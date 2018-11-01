@@ -1,7 +1,6 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
-
 const parsers = require('./parsers');
 
 describe('parse entities', () => {
@@ -64,9 +63,7 @@ describe('parse entities', () => {
           },
           life: 'alive',
           series: 'xenial',
-          supportedContainers: [
-            'lxd'
-          ],
+          supportedContainers: ['lxd'],
           supportedContainersKnown: true,
           hardwareCharacteristics: {
             arch: 'amd64',
@@ -76,14 +73,14 @@ describe('parse entities', () => {
             'cpu-power': 350,
             'availability-zone': 'ap-southeast-2a'
           },
-          jobs: [
-            'JobHostUnits'
+          jobs: ['JobHostUnits'],
+          addresses: [
+            {
+              value: '13.210.238.155',
+              type: 'ipv4',
+              scope: 'public'
+            }
           ],
-          addresses: [{
-            value: '13.210.238.155',
-            type: 'ipv4',
-            scope: 'public'
-          }],
           hasVote: false,
           wantsVote: false
         }
@@ -93,31 +90,34 @@ describe('parse entities', () => {
           modelUUID: '32c9c2db-0955-459a-8201-539657ef0da1',
           key: 'kubernetes-master:etcd etcd:db',
           id: 1,
-          endpoints: [{
-            applicationName: 'kubernetes-master',
-            relation: {
-              name: 'etcd',
-              role: 'requirer',
-              'interface': 'etcd',
-              optional: false,
-              limit: 1,
-              scope: 'global'
+          endpoints: [
+            {
+              applicationName: 'kubernetes-master',
+              relation: {
+                name: 'etcd',
+                role: 'requirer',
+                interface: 'etcd',
+                optional: false,
+                limit: 1,
+                scope: 'global'
+              }
+            },
+            {
+              applicationName: 'etcd',
+              relation: {
+                name: 'db',
+                role: 'provider',
+                interface: 'etcd',
+                optional: false,
+                limit: 0,
+                scope: 'global'
+              }
             }
-          }, {
-            applicationName: 'etcd',
-            relation: {
-              name: 'db',
-              role: 'provider',
-              'interface': 'etcd',
-              optional: false,
-              limit: 0,
-              scope: 'global'
-            }
-          }]
+          ]
         }
       },
       remoteApplications: {
-        'mysql': {
+        mysql: {
           modelUUID: 'fe1060e8-0a10-424f-8007-d45c69ca04b5',
           name: 'mysql',
           offerUUID: 'efb9f9b7-65f3-4f6f-86a4-58bebf32c1f4',
@@ -141,15 +141,19 @@ describe('parse entities', () => {
           publicAddress: '13.211.141.188',
           privateAddress: '172.31.6.46',
           machineID: '2',
-          ports: [{
-            protocol: 'tcp',
-            number: 2379
-          }],
-          portRanges: [{
-            fromPort: 2379,
-            toPort: 2379,
-            protocol: 'tcp'
-          }],
+          ports: [
+            {
+              protocol: 'tcp',
+              number: 2379
+            }
+          ],
+          portRanges: [
+            {
+              fromPort: 2379,
+              toPort: 2379,
+              protocol: 'tcp'
+            }
+          ],
           subordinate: false,
           workloadStatus: {
             current: 'active',
@@ -222,9 +226,7 @@ describe('parse entities', () => {
           },
           life: 'alive',
           series: 'xenial',
-          'supported-containers': [
-            'lxd'
-          ],
+          'supported-containers': ['lxd'],
           'supported-containers-known': true,
           'hardware-characteristics': {
             arch: 'amd64',
@@ -234,14 +236,14 @@ describe('parse entities', () => {
             'cpu-power': 350,
             'availability-zone': 'ap-southeast-2a'
           },
-          jobs: [
-            'JobHostUnits'
+          jobs: ['JobHostUnits'],
+          addresses: [
+            {
+              value: '13.210.238.155',
+              type: 'ipv4',
+              scope: 'public'
+            }
           ],
-          addresses: [{
-            value: '13.210.238.155',
-            type: 'ipv4',
-            scope: 'public'
-          }],
           'has-vote': false,
           'wants-vote': false
         }
@@ -251,31 +253,34 @@ describe('parse entities', () => {
           'model-uuid': '32c9c2db-0955-459a-8201-539657ef0da1',
           key: 'kubernetes-master:etcd etcd:db',
           id: 1,
-          endpoints: [{
-            'application-name': 'kubernetes-master',
-            relation: {
-              name: 'etcd',
-              role: 'requirer',
-              'interface': 'etcd',
-              optional: false,
-              limit: 1,
-              scope: 'global'
+          endpoints: [
+            {
+              'application-name': 'kubernetes-master',
+              relation: {
+                name: 'etcd',
+                role: 'requirer',
+                interface: 'etcd',
+                optional: false,
+                limit: 1,
+                scope: 'global'
+              }
+            },
+            {
+              'application-name': 'etcd',
+              relation: {
+                name: 'db',
+                role: 'provider',
+                interface: 'etcd',
+                optional: false,
+                limit: 0,
+                scope: 'global'
+              }
             }
-          }, {
-            'application-name': 'etcd',
-            relation: {
-              name: 'db',
-              role: 'provider',
-              'interface': 'etcd',
-              optional: false,
-              limit: 0,
-              scope: 'global'
-            }
-          }]
+          ]
         }
       },
       'remote-applications': {
-        'mysql': {
+        mysql: {
           'model-uuid': 'fe1060e8-0a10-424f-8007-d45c69ca04b5',
           name: 'mysql',
           'offer-uuid': 'efb9f9b7-65f3-4f6f-86a4-58bebf32c1f4',
@@ -299,15 +304,19 @@ describe('parse entities', () => {
           'public-address': '13.211.141.188',
           'private-address': '172.31.6.46',
           'machine-id': '2',
-          ports: [{
-            protocol: 'tcp',
-            number: 2379
-          }],
-          'port-ranges': [{
-            'from-port': 2379,
-            'to-port': 2379,
-            protocol: 'tcp'
-          }],
+          ports: [
+            {
+              protocol: 'tcp',
+              number: 2379
+            }
+          ],
+          'port-ranges': [
+            {
+              'from-port': 2379,
+              'to-port': 2379,
+              protocol: 'tcp'
+            }
+          ],
           subordinate: false,
           'workload-status': {
             current: 'active',
@@ -345,7 +354,8 @@ describe('parse entities', () => {
   it('parses remote applications', () => {
     assert.deepEqual(
       parsers.parseRemoteApplications(response['remote-applications']),
-      parsed.remoteApplications);
+      parsed.remoteApplications
+    );
   });
 
   it('parses units', () => {

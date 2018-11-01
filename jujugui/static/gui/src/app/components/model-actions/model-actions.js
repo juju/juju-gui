@@ -56,41 +56,31 @@ class ModelActions extends React.Component {
   _generateClasses() {
     const props = this.props;
     const currentState = props.appState.current;
-    const isDisabled = (
-      currentState.profile ||
-      currentState.root === 'account' ||
-      props.loadingModel
-    );
-    return classNames(
-      'model-actions', {'model-actions--loading-model': isDisabled});
+    const isDisabled =
+      currentState.profile || currentState.root === 'account' || props.loadingModel;
+    return classNames('model-actions', {
+      'model-actions--loading-model': isDisabled
+    });
   }
 
   render() {
     const props = this.props;
     // Disable sharing if the user is anonymous or we're creating a new
     // model.
-    const sharingEnabled = props.userIsAuthenticated &&
-      props.appState.current.root !== 'new';
+    const sharingEnabled = props.userIsAuthenticated && props.appState.current.root !== 'new';
     let shareAction = null;
     if (sharingEnabled) {
-      const shareClasses = classNames(
-        'model-actions__share',
-        'model-actions__button'
-      );
+      const shareClasses = classNames('model-actions__share', 'model-actions__button');
       shareAction = (
         <span
           className={shareClasses}
           onClick={props.sharingVisibility}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="model-actions__icon"
-            name="share_16"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon className="model-actions__icon" name="share_16" size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Share
-            </span>
+            <span className="tooltip__inner tooltip__inner--up">Share</span>
           </span>
         </span>
       );
@@ -103,17 +93,14 @@ class ModelActions extends React.Component {
           className="model-actions__shell model-actions__button"
           onClick={this._handleTerminalClick.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="model-actions__icon"
-            name="code-snippet_24"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon className="model-actions__icon" name="code-snippet_24" size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Juju shell
-            </span>
+            <span className="tooltip__inner tooltip__inner--up">Juju shell</span>
           </span>
-        </span>);
+        </span>
+      );
     }
     const isReadOnly = props.acl.isReadOnly();
     return (
@@ -123,30 +110,22 @@ class ModelActions extends React.Component {
             className="model-actions__export model-actions__button"
             onClick={this._handleExport.bind(this)}
             role="button"
-            tabIndex="0">
-            <SvgIcon
-              className="model-actions__icon"
-              name="export_16"
-              size="16" />
+            tabIndex="0"
+          >
+            <SvgIcon className="model-actions__icon" name="export_16" size="16" />
             <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Export
-              </span>
+              <span className="tooltip__inner tooltip__inner--up">Export</span>
             </span>
           </span>
           <span
             className="model-actions__import model-actions__button"
             onClick={isReadOnly ? undefined : this._handleImportClick.bind(this)}
             role="button"
-            tabIndex="0">
-            <SvgIcon
-              className="model-actions__icon"
-              name="import_16"
-              size="16" />
+            tabIndex="0"
+          >
+            <SvgIcon className="model-actions__icon" name="import_16" size="16" />
             <span className="tooltip__tooltip--below">
-              <span className="tooltip__inner tooltip__inner--up">
-                Import
-              </span>
+              <span className="tooltip__inner tooltip__inner--up">Import</span>
             </span>
           </span>
           {shareAction}
@@ -157,11 +136,12 @@ class ModelActions extends React.Component {
           className="model-actions__file"
           onChange={isReadOnly ? null : this._handleImportFile.bind(this)}
           ref="file-input"
-          type="file" />
+          type="file"
+        />
       </div>
     );
   }
-};
+}
 
 ModelActions.propTypes = {
   acl: PropTypes.object.isRequired,

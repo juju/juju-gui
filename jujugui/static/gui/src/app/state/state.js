@@ -19,12 +19,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 const ROOT_RESERVED = [
-  'about', 'bigdata', 'docs', 'juju', 'login', 'logout', 'new', 'account'];
+  'about',
+  'bigdata',
+  'docs',
+  'juju',
+  'login',
+  'logout',
+  'new',
+  'account'
+];
 const PROFILE_RESERVED = ['charms', 'issues', 'revenue', 'settings'];
 const PATH_DELIMETERS = new Map([['search', 'q'], ['user', 'u'], ['gui', 'i']]);
 const GUI_PATH_DELIMETERS = [
-  'account', 'applications', 'deploy', 'inspector', 'isv', 'machines',
-  'status'];
+  'account',
+  'applications',
+  'deploy',
+  'inspector',
+  'isv',
+  'machines',
+  'status'
+];
 
 /** Class representing the State of the Juju GUI */
 class State {
@@ -45,7 +59,7 @@ class State {
     }
     // If the baseURL doesn't have a trailing slash then add one.
     const baseURLLength = baseURL.length;
-    if (baseURL[baseURLLength-1] !== '/') {
+    if (baseURL[baseURLLength - 1] !== '/') {
       baseURL += '/';
     }
     this.baseURL = baseURL;
@@ -124,11 +138,10 @@ class State {
     const query = splitURL[2];
     if (query) {
       processed.query = {};
-      query.split('&')
-        .forEach(section => {
-          const parts = section.split('=');
-          processed.query[parts[0]] = parts[1];
-        });
+      query.split('&').forEach(section => {
+        const parts = section.split('=');
+        processed.query[parts[0]] = parts[1];
+      });
     }
     const hash = splitURL[3];
     if (hash) {
@@ -170,7 +183,7 @@ class State {
     @type {Object}
   */
   get current() {
-    return this._appStateHistory[this._appStateHistory.length-1] || {};
+    return this._appStateHistory[this._appStateHistory.length - 1] || {};
   }
 
   /**
@@ -178,7 +191,7 @@ class State {
     @type {Object}
   */
   get previous() {
-    return this._appStateHistory[this._appStateHistory.length-2] || {};
+    return this._appStateHistory[this._appStateHistory.length - 2] || {};
   }
 
   /**
@@ -240,8 +253,7 @@ class State {
       - state: the application state, or as much state as it was
                able to generate
   */
-  dispatch(nullKeys = [], updateState = true,
-    backDispatch = false, stateFromURL = false) {
+  dispatch(nullKeys = [], updateState = true, backDispatch = false, stateFromURL = false) {
     let error, state;
     // We only want to dispatch the state from the URL on application load or
     // when explicitly requested by the developer.
@@ -267,8 +279,7 @@ class State {
       // between the old a new state. We need to null out those sections so that
       // they are removed from the state. This is done by filtering the old keys
       // and removing those that exist in the new keys.
-      nullKeys = this._extractKeys(this.previous).filter(
-        key => stateKeys.indexOf(key) === -1);
+      nullKeys = this._extractKeys(this.previous).filter(key => stateKeys.indexOf(key) === -1);
     }
     // First run all of the 'null state' dispatchers to clear out the old
     // state representations.
@@ -310,7 +321,10 @@ class State {
     function findDispatchers(key, dispatchers) {
       const found = dispatchers[key];
       if (!found) {
-        const newKey = key.split('.').slice(0, -1).join('.');
+        const newKey = key
+          .split('.')
+          .slice(0, -1)
+          .join('.');
         if (newKey !== '') {
           return findDispatchers(newKey, dispatchers);
         } else {
@@ -414,14 +428,16 @@ class State {
       function prune(current) {
         Object.keys(current).forEach(key => {
           const value = current[key];
-          if (value === null ||
-              value === undefined ||
-              (typeof value === 'object' && !isEmptyObject(prune(value)))) {
+          if (
+            value === null ||
+            value === undefined ||
+            (typeof value === 'object' && !isEmptyObject(prune(value)))
+          ) {
             delete current[key];
           }
         });
         return current;
-      };
+      }
       return prune(obj);
     }
 
@@ -436,17 +452,14 @@ class State {
     // a changeState({gui: null}) is called, it will not call the gui
     // cleanup method as the state did not exist to be cleaned up.
     nullKeys = nullKeys.filter(nullKey =>
-      existingKeys.some(existingKey => existingKey.indexOf(nullKey) === 0));
+      existingKeys.some(existingKey => existingKey.indexOf(nullKey) === 0)
+    );
     const purgedState = pruneEmpty(merge({}, mergedState));
 
     this._appStateHistory.push(purgedState);
     this._pushState();
 
-    this.sendAnalytics(
-      'Navigation',
-      'State change',
-      this.location.href
-    );
+    this.sendAnalytics('Navigation', 'State change', this.location.href);
 
     let {error} = this.dispatch(nullKeys, false);
     if (error !== null) {
@@ -499,8 +512,7 @@ class State {
   generateState(url, allowStateModifications = true) {
     // If we have a single part and it's an empty string then we are at '/' and
     // there is nothing to parse so we can return early or it's an invalid path.
-    const invalidParts =
-      parts => !parts || (parts.length === 1 && parts[0] === '');
+    const invalidParts = parts => !parts || (parts.length === 1 && parts[0] === '');
     const invalidStorePath = 'invalid store path.';
     let error = null;
     let state = {};
@@ -702,7 +714,7 @@ class State {
   reset() {
     // Generate a new null changeState
     const newState = {};
-    Object.keys(this.current).map(key => newState[key] = null);
+    Object.keys(this.current).map(key => (newState[key] = null));
     this.changeState(newState);
   }
 
@@ -827,12 +839,12 @@ class State {
     // you have multiple default sections ie) [0, 9, 17] gets sorted as
     // [0, 17, 9]. So we must pass a custom sorter to it so that it sorts
     // numerically.
-    indexes.sort((a, b) => a-b);
+    indexes.sort((a, b) => a - b);
     // Split out and store the sections
     let guiParts = {};
     indexes.forEach((index, arIndex) => {
-      const end = indexes[arIndex+1] || urlParts.length;
-      guiParts[urlParts[index]] = urlParts.slice(index+1, end).join('/');
+      const end = indexes[arIndex + 1] || urlParts.length;
+      guiParts[urlParts[index]] = urlParts.slice(index + 1, end).join('/');
     });
     const inspectorParts = guiParts.inspector;
     if (inspectorParts) {
@@ -899,8 +911,7 @@ class State {
     function addToUserOrProfile(block, state) {
       // If the second part of the path has one of the reserved words
       // from the profile then store it in the profile section
-      if (block.length === 1 ||
-          block[1] && PROFILE_RESERVED.includes(block[1])) {
+      if (block.length === 1 || (block[1] && PROFILE_RESERVED.includes(block[1]))) {
         state.profile = block.join('/');
       } else {
         state.user = block.join('/');
@@ -923,8 +934,10 @@ class State {
         // it may be a user store path.
         if (userBlock.length > 2) {
           // Check if this is a user store path.
-          if (!Number.isNaN(parseInt(userBlock[2], 10)) ||
-            this.seriesList.includes(userBlock[2])) {
+          if (
+            !Number.isNaN(parseInt(userBlock[2], 10)) ||
+            this.seriesList.includes(userBlock[2])
+          ) {
             // Add the user prefix back in if it's a user store path.
             state.store = 'u/' + userBlock.splice(0).join('/');
           }
@@ -944,7 +957,7 @@ class State {
         // if you have multiple default sections ie) [0, 9, 17] gets sorted
         // as [0, 17, 9]. So we must pass a custom sorter to it so that it
         // sorts numerically.
-        indexes.sort((a, b) => a-b);
+        indexes.sort((a, b) => a - b);
         // The first user portion will be the model section.
         // Extract out the model portion of the list and then remove the
         // user delimeter at the beginning.
@@ -1005,6 +1018,6 @@ class State {
     // but we want them to be truthy.
     return state !== undefined && state !== null && state !== false;
   }
-};
+}
 
 module.exports = State;

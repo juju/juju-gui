@@ -12,14 +12,16 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 describe('SearchResultsItem', function() {
   let acl, item, generatePath;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <SearchResultsItem
-      acl={options.acl || acl}
-      addToModel={options.addToModel || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      generatePath={options.generatePath || generatePath}
-      item={options.item || item} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <SearchResultsItem
+        acl={options.acl || acl}
+        addToModel={options.addToModel || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        generatePath={options.generatePath || generatePath}
+        item={options.item || item}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -52,19 +54,20 @@ describe('SearchResultsItem', function() {
         <a
           className="list-block__list--item-main-link"
           href="/u/spinach/apache2"
-          onClick={
-            wrapper.find('.list-block__list--item-main-link').prop('onClick')}></a>
+          onClick={wrapper.find('.list-block__list--item-main-link').prop('onClick')}
+        />
         <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             mysql
-            <span className="special-flag"></span>
+            <span className="special-flag" />
           </h3>
           <ul className="tag-list">
             <li className="tag-list--item">
               <a
                 className="list-block__list--item-link"
                 href="/u/spinach/apache2"
-                onClick={tagLinks.at(0).prop('onClick')}>
+                onClick={tagLinks.at(0).prop('onClick')}
+              >
                 tag1
               </a>
             </li>
@@ -72,7 +75,8 @@ describe('SearchResultsItem', function() {
               <a
                 className="list-block__list--item-link"
                 href="/u/spinach/apache2"
-                onClick={tagLinks.at(1).prop('onClick')}>
+                onClick={tagLinks.at(1).prop('onClick')}
+              >
                 tag2
               </a>
             </li>
@@ -81,21 +85,23 @@ describe('SearchResultsItem', function() {
         <div className="series__column four-col">
           <ul className="list-series">
             {[
-              <li
-                className="list-series__item"
-                key="vivid">
+              <li className="list-series__item" key="vivid">
                 <a
                   className="list-block__list--item-link"
                   href="/u/spinach/apache2"
-                  onClick={seriesLinks.at(0).prop('onClick')}>vivid</a>
+                  onClick={seriesLinks.at(0).prop('onClick')}
+                >
+                  vivid
+                </a>
               </li>,
-              <li
-                className="list-series__item"
-                key="wily">
+              <li className="list-series__item" key="wily">
                 <a
                   className="list-block__list--item-link"
                   href="/u/spinach/apache2"
-                  onClick={seriesLinks.at(1).prop('onClick')}>wily</a>
+                  onClick={seriesLinks.at(1).prop('onClick')}
+                >
+                  wily
+                </a>
               </li>
             ]}
           </ul>
@@ -104,7 +110,8 @@ describe('SearchResultsItem', function() {
           <IconList
             applications={[item]}
             changeState={sinon.stub()}
-            generatePath={sinon.stub()} />
+            generatePath={sinon.stub()}
+          />
         </div>
         <div className="two-col owner__column list-block__column">
           <p className="cell">
@@ -113,7 +120,8 @@ describe('SearchResultsItem', function() {
               className="list-block__list--item-link"
               href="/u/spinach/apache2"
               onClick={wrapper.find('.owner__column a').prop('onClick')}
-              title="See other charms and bundles by test-owner">
+              title="See other charms and bundles by test-owner"
+            >
               {item.owner}
             </a>
           </p>
@@ -123,10 +131,9 @@ describe('SearchResultsItem', function() {
             action={wrapper.find('Button').prop('action')}
             disabled={false}
             extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
-            <SvgIcon
-              name="add-icon"
-              size="16" />
+            type="inline-neutral"
+          >
+            <SvgIcon name="add-icon" size="16" />
           </Button>
         </div>
       </li>
@@ -146,18 +153,20 @@ describe('SearchResultsItem', function() {
     item.type = 'bundle';
     item.series = [];
     item.tags = null;
-    item.applications = [{
-      displayName: 'wordpress',
-      id: 'cs:wordpress',
-      iconPath: 'wordpress.svg'
-    }, {
-      displayName: 'apache2',
-      id: 'cs:apache2',
-      iconPath: 'apache2.svg'
-    }];
+    item.applications = [
+      {
+        displayName: 'wordpress',
+        id: 'cs:wordpress',
+        iconPath: 'wordpress.svg'
+      },
+      {
+        displayName: 'apache2',
+        id: 'cs:apache2',
+        iconPath: 'apache2.svg'
+      }
+    ];
     const wrapper = renderComponent();
-    assert.deepEqual(
-      wrapper.find('IconList').prop('applications'), item.applications);
+    assert.deepEqual(wrapper.find('IconList').prop('applications'), item.applications);
   });
 
   it('can handle clicking on an item', function() {
@@ -180,9 +189,12 @@ describe('SearchResultsItem', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('.list-series__item a').at(0).simulate('click', {
-      preventDefault: preventDefault
-    });
+    wrapper
+      .find('.list-series__item a')
+      .at(0)
+      .simulate('click', {
+        preventDefault: preventDefault
+      });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -190,9 +202,12 @@ describe('SearchResultsItem', function() {
       search: null,
       store: 'u/test-owner/mysql/vivid'
     });
-    wrapper.find('.list-series__item a').at(1).simulate('click', {
-      preventDefault: preventDefault
-    });
+    wrapper
+      .find('.list-series__item a')
+      .at(1)
+      .simulate('click', {
+        preventDefault: preventDefault
+      });
     assert.equal(changeState.callCount, 2);
     assert.equal(preventDefault.callCount, 2);
     assert.deepEqual(changeState.args[1][0], {
@@ -206,9 +221,12 @@ describe('SearchResultsItem', function() {
     var changeState = sinon.stub();
     var preventDefault = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('.tag-list a').at(0).simulate('click', {
-      preventDefault: preventDefault
-    });
+    wrapper
+      .find('.tag-list a')
+      .at(0)
+      .simulate('click', {
+        preventDefault: preventDefault
+      });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -228,9 +246,12 @@ describe('SearchResultsItem', function() {
     const changeState = sinon.stub();
     const preventDefault = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('.owner__column a').at(0).simulate('click', {
-      preventDefault: preventDefault
-    });
+    wrapper
+      .find('.owner__column a')
+      .at(0)
+      .simulate('click', {
+        preventDefault: preventDefault
+      });
     assert.equal(changeState.callCount, 1);
     assert.equal(preventDefault.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
@@ -242,18 +263,38 @@ describe('SearchResultsItem', function() {
   it('gives the correct class names for charm list item', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.series__column').prop('className').includes('four-col'), true);
+      wrapper
+        .find('.series__column')
+        .prop('className')
+        .includes('four-col'),
+      true
+    );
     assert.equal(
-      wrapper.find('.charm-logos__column').prop('className').includes('one-col'), true);
+      wrapper
+        .find('.charm-logos__column')
+        .prop('className')
+        .includes('one-col'),
+      true
+    );
   });
 
   it('gives the correct class names for bundle list item', function() {
     item.type = 'bundle';
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.series__column').prop('className').includes('two-col'), true);
+      wrapper
+        .find('.series__column')
+        .prop('className')
+        .includes('two-col'),
+      true
+    );
     assert.equal(
-      wrapper.find('.charm-logos__column').prop('className').includes('three-col'), true);
+      wrapper
+        .find('.charm-logos__column')
+        .prop('className')
+        .includes('three-col'),
+      true
+    );
   });
 
   it('can deploy an entity', function() {
@@ -263,7 +304,10 @@ describe('SearchResultsItem', function() {
       addToModel,
       changeState
     });
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(changeState.callCount, 1);
     assert.equal(addToModel.callCount, 1);
     assert.deepEqual(addToModel.args[0][0], 'mysql');

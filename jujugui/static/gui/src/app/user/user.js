@@ -35,7 +35,6 @@ function getExpirationDate() {
 
 /** Class representing a user's authorizations in the GUI **/
 class User {
-
   constructor(cfg = {}) {
     // We pass in these values to make test setup easier.
     this.sessionStorage = cfg.sessionStorage || sessionStorage;
@@ -147,8 +146,7 @@ class User {
   */
   _getCredentials(type) {
     this._purgeIfExpired();
-    let credentials = JSON.parse(
-      this.sessionStorage.getItem(type + 'Credentials'));
+    let credentials = JSON.parse(this.sessionStorage.getItem(type + 'Credentials'));
     if (!credentials) {
       credentials = {};
     }
@@ -200,8 +198,7 @@ class User {
     @param {Object} credentials The credentials object to be stored.
   */
   _setCredentials(type, credentials) {
-    this.sessionStorage.setItem(
-      type + 'Credentials', JSON.stringify(credentials));
+    this.sessionStorage.setItem(type + 'Credentials', JSON.stringify(credentials));
   }
 
   /**
@@ -307,6 +304,6 @@ class User {
   clearMacaroons() {
     this.localStorage.clear();
   }
-};
+}
 
 module.exports = User;

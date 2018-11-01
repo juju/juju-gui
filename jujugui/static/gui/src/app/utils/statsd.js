@@ -6,14 +6,13 @@
   A statsd client used to send application metrics.
 */
 class StatsClient {
-
   /**
     Create the statsd client.
 
     @param {String} url The URL of the statsd endpoint where to send metrics.
     @param {String} prefix The stats prefix for all calls.
   */
-  constructor(url, prefix='', flags={}) {
+  constructor(url, prefix = '', flags = {}) {
     this.url = url.replace(/\/?$/, '/');
     this._flags = flags || {};
     this._prefix = prefix;
@@ -27,7 +26,8 @@ class StatsClient {
    */
   _addFlags(name) {
     const flags = Object.keys(this._flags).filter(
-      key => this._flags[key] && key.indexOf('test') === 0);
+      key => this._flags[key] && key.indexOf('test') === 0
+    );
     if (!flags.length) {
       return name;
     }
@@ -42,7 +42,7 @@ class StatsClient {
     @param {String} name The stats name.
     @param {Integer} count The increment amount.
   */
-  increase(name, count=1) {
+  increase(name, count = 1) {
     name = this._addFlags(name);
     this._send(`${name}:${count}|c`);
   }
@@ -66,7 +66,6 @@ class StatsClient {
     xhr.open('POST', this.url);
     xhr.send(data);
   }
-
-};
+}
 
 module.exports = StatsClient;

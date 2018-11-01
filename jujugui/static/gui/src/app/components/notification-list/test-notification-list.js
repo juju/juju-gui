@@ -10,21 +10,26 @@ const NotificationListItem = require('./item/item');
 describe('NotificationList', function() {
   let clock, notifications;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <NotificationList
-      notifications={
-        options.notifications === undefined ? notifications : options.notifications}
-      timeout={options.timeout} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <NotificationList
+        notifications={
+          options.notifications === undefined ? notifications : options.notifications
+        }
+        timeout={options.timeout}
+      />
+    );
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
-    notifications = [{
-      key: '12345',
-      timestamp: '12345',
-      message: 'notification message',
-      level: 'info'
-    }];
+    notifications = [
+      {
+        key: '12345',
+        timestamp: '12345',
+        message: 'notification message',
+        level: 'info'
+      }
+    ];
   });
 
   afterEach(() => {
@@ -41,12 +46,15 @@ describe('NotificationList', function() {
         removeNotification={wrapper.find('NotificationListItem').prop('removeNotification')}
         timeout={undefined}
         timestamp={notifications[0].timestamp}
-        type={notifications[0].level} />];
+        type={notifications[0].level}
+      />
+    ];
     const expected = (
       <ul
         className="notification-list"
         onMouseOut={wrapper.prop('onMouseOut')}
-        onMouseOver={wrapper.prop('onMouseOver')}>
+        onMouseOver={wrapper.prop('onMouseOver')}
+      >
         {items}
       </ul>
     );
@@ -99,14 +107,11 @@ describe('NotificationList', function() {
     const timeout = 10000;
     const wrapper = renderComponent({timeout});
     const instance = wrapper.instance();
-    assert.equal(instance.timeouts.length, 1,
-      'notification timeouts were not populated');
+    assert.equal(instance.timeouts.length, 1, 'notification timeouts were not populated');
     instance._clearTimeouts();
-    assert.equal(instance.timeouts.length, 0,
-      'notification timeouts did not clear');
+    assert.equal(instance.timeouts.length, 0, 'notification timeouts did not clear');
     instance._restartTimeouts();
-    assert.equal(instance.timeouts.length, 1,
-      'notification timeouts were not restarted');
+    assert.equal(instance.timeouts.length, 1, 'notification timeouts were not restarted');
     // Let everything clear out.
     clock.tick(timeout + 10);
   });
@@ -117,7 +122,10 @@ describe('NotificationList', function() {
     assert.equal(items.length, 1);
     assert.equal(items.first().prop('timestamp'), '12345');
     // Hide the notification.
-    items.first().props().removeNotification('12345');
+    items
+      .first()
+      .props()
+      .removeNotification('12345');
     notifications.push({
       key: '222',
       timestamp: '2468',

@@ -11,18 +11,19 @@ const InspectorHeader = require('../inspector/header/header');
 describe('LocalInspector', function() {
   var acl, file, series, services;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <LocalInspector
-      acl={options.acl || acl}
-      changeState={options.changeState || sinon.stub()}
-      file={options.file || file}
-      localType={options.localType || 'new'}
-      series={options.series || series}
-      services={options.services || services}
-      upgradeServiceUsingLocalCharm={
-        options.upgradeServiceUsingLocalCharm || sinon.stub()}
-      uploadLocalCharm={options.uploadLocalCharm || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <LocalInspector
+        acl={options.acl || acl}
+        changeState={options.changeState || sinon.stub()}
+        file={options.file || file}
+        localType={options.localType || 'new'}
+        series={options.series || series}
+        services={options.services || services}
+        upgradeServiceUsingLocalCharm={options.upgradeServiceUsingLocalCharm || sinon.stub()}
+        uploadLocalCharm={options.uploadLocalCharm || sinon.stub()}
+      />
+    );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -38,10 +39,7 @@ describe('LocalInspector', function() {
     getById.withArgs('mysql').returns({id: 'mysql'});
     getById.withArgs('apache2').returns({id: 'apache2'});
     getById.withArgs('gui-test').returns({id: 'gui-test'});
-    var serviceStubs = [
-      {get: sinon.stub()},
-      {get: sinon.stub()}
-    ];
+    var serviceStubs = [{get: sinon.stub()}, {get: sinon.stub()}];
     serviceStubs[0].get.withArgs('id').returns('apache2-2');
     serviceStubs[0].get.withArgs('name').returns('apache2');
     serviceStubs[1].get.withArgs('id').returns('mysql-1');
@@ -55,26 +53,33 @@ describe('LocalInspector', function() {
   it('can display the new service view', function() {
     const wrapper = renderComponent();
     const buttonList = wrapper.find('ButtonRow').prop('buttons');
-    var buttons = [{
-      title: 'Cancel',
-      action: buttonList[0].action,
-      type: 'base'
-    }, {
-      title: 'Upload',
-      action: buttonList[1].action,
-      disabled: false,
-      type: 'neutral'
-    }];
+    var buttons = [
+      {
+        title: 'Cancel',
+        action: buttonList[0].action,
+        type: 'base'
+      },
+      {
+        title: 'Upload',
+        action: buttonList[1].action,
+        disabled: false,
+        type: 'neutral'
+      }
+    ];
     var inputs = wrapper.find('input');
     var expected = (
       <div className="inspector-view local-inspector">
         <InspectorHeader
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
-          title="Local charm" />
+          title="Local charm"
+        />
         <div className="inspector-content local-inspector__section">
           <div className="local-inspector__file">
             <p>File: {'apache2.zip'}</p>
-            <p>Size: {'2.00'}kb</p>
+            <p>
+              Size: {'2.00'}
+              kb
+            </p>
           </div>
           <ul className="local-inspector__list">
             <li>
@@ -84,7 +89,8 @@ describe('LocalInspector', function() {
                   disabled={false}
                   name="action"
                   onChange={inputs.at(0).prop('onChange')}
-                  type="radio" />
+                  type="radio"
+                />
                 Deploy local
               </label>
             </li>
@@ -95,7 +101,8 @@ describe('LocalInspector', function() {
                   disabled={false}
                   name="action"
                   onChange={inputs.at(1).prop('onChange')}
-                  type="radio" />
+                  type="radio"
+                />
                 Upgrade local
               </label>
             </li>
@@ -106,15 +113,20 @@ describe('LocalInspector', function() {
               className="local-inspector__series"
               defaultValue="trusty"
               disabled={false}
-              ref="series">
-              <option key="vivid" value="vivid">Vivid Vervet 15.04</option>
-              <option key="wily" value="wily">Wily Werewolf 15.10</option>
+              ref="series"
+            >
+              <option key="vivid" value="vivid">
+                Vivid Vervet 15.04
+              </option>
+              <option key="wily" value="wily">
+                Wily Werewolf 15.10
+              </option>
             </select>
           </div>
         </div>
-        <ButtonRow
-          buttons={buttons} />
-      </div>);
+        <ButtonRow buttons={buttons} />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -130,7 +142,8 @@ describe('LocalInspector', function() {
                 data-id="apache2-2"
                 disabled={false}
                 ref="service-apache2-2"
-                type="checkbox" />
+                type="checkbox"
+              />
               apache2
             </label>
           </li>
@@ -140,12 +153,14 @@ describe('LocalInspector', function() {
                 data-id="mysql-1"
                 disabled={false}
                 ref="service-mysql-1"
-                type="checkbox" />
+                type="checkbox"
+              />
               mysql
             </label>
           </li>
         </ul>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.local-inspector__content-update'), expected);
   });
 
@@ -153,7 +168,11 @@ describe('LocalInspector', function() {
     const wrapper = renderComponent();
     assert.equal(wrapper.find('.local-inspector__content-new').length, 1);
     assert.equal(wrapper.find('.local-inspector__content-update').length, 0);
-    wrapper.find('input').at(1).props().onChange();
+    wrapper
+      .find('input')
+      .at(1)
+      .props()
+      .onChange();
     wrapper.update();
     assert.equal(wrapper.find('.local-inspector__content-new').length, 0);
     assert.equal(wrapper.find('.local-inspector__content-update').length, 1);
@@ -164,7 +183,10 @@ describe('LocalInspector', function() {
     const wrapper = renderComponent({uploadLocalCharm});
     const instance = wrapper.instance();
     instance.refs = {series: {value: 'wily'}};
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     assert.equal(uploadLocalCharm.callCount, 1);
     assert.equal(uploadLocalCharm.args[0][0], 'wily');
     assert.equal(uploadLocalCharm.args[0][1], file);
@@ -185,27 +207,38 @@ describe('LocalInspector', function() {
       'service-apache2': {checked: true},
       'service-gui-test': {checked: true}
     };
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     assert.equal(upgradeServiceUsingLocalCharm.callCount, 1);
-    assert.deepEqual(upgradeServiceUsingLocalCharm.args[0][0],
-      [{id: 'mysql'}, {id: 'apache2'}, {id: 'gui-test'}]);
+    assert.deepEqual(upgradeServiceUsingLocalCharm.args[0][0], [
+      {id: 'mysql'},
+      {id: 'apache2'},
+      {id: 'gui-test'}
+    ]);
     assert.equal(upgradeServiceUsingLocalCharm.args[0][1], file);
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: null
-      }});
+      }
+    });
   });
 
   it('can cancel the upload', function() {
     var changeState = sinon.spy();
     const wrapper = renderComponent({changeState});
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: null
-      }});
+      }
+    });
   });
 
   it('disables the controls when read only', function() {

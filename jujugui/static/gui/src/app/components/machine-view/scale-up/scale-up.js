@@ -23,16 +23,13 @@ class MachineViewScaleUp extends React.Component {
         return;
       }
       components.push(
-        <li
-          className="machine-view__scale-up-unit"
-          key={service.get('id')}>
+        <li className="machine-view__scale-up-unit" key={service.get('id')}>
           <img
             alt={service.get('name')}
             className="machine-view__scale-up-unit-icon"
-            src={service.get('icon')} />
-          <div
-            className="machine-view__scale-up-unit-name"
-            title={service.get('name')}>
+            src={service.get('icon')}
+          />
+          <div className="machine-view__scale-up-unit-name" title={service.get('name')}>
             {service.get('name')}
           </div>
           <input
@@ -42,13 +39,12 @@ class MachineViewScaleUp extends React.Component {
             placeholder="units"
             ref={'scaleUpUnit-' + service.get('id')}
             step="1"
-            type="number" />
-        </li>);
+            type="number"
+          />
+        </li>
+      );
     });
-    return (
-      <ul className="machine-view__scale-up-units">
-        {components}
-      </ul>);
+    return <ul className="machine-view__scale-up-units">{components}</ul>;
   }
 
   /**
@@ -74,26 +70,27 @@ class MachineViewScaleUp extends React.Component {
   }
 
   render() {
-    var buttons = [{
-      action: this.props.toggleScaleUp,
-      title: 'Cancel',
-      type: 'base'
-    }, {
-      action: this._handleAddUnits.bind(this),
-      disabled: this.props.acl.isReadOnly(),
-      title: 'Add units',
-      type: 'neutral'
-    }];
+    var buttons = [
+      {
+        action: this.props.toggleScaleUp,
+        title: 'Cancel',
+        type: 'base'
+      },
+      {
+        action: this._handleAddUnits.bind(this),
+        disabled: this.props.acl.isReadOnly(),
+        title: 'Add units',
+        type: 'neutral'
+      }
+    ];
     return (
-      <form
-        className="machine-view__scale-up"
-        onSubmit={this._handleAddUnits.bind(this)}>
+      <form className="machine-view__scale-up" onSubmit={this._handleAddUnits.bind(this)}>
         {this._generateServices()}
         <ButtonRow buttons={buttons} />
       </form>
     );
   }
-};
+}
 
 MachineViewScaleUp.propTypes = {
   acl: shapeup.shape({

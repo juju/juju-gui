@@ -23,7 +23,8 @@ class DeploymentSection extends React.Component {
       <div className="deployment-section__actions">
         {this._generateExtra()}
         {this._generateButtons()}
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -37,9 +38,7 @@ class DeploymentSection extends React.Component {
     if (!buttons) {
       return;
     }
-    return (
-      <ButtonRow
-        buttons={this.props.buttons} />);
+    return <ButtonRow buttons={this.props.buttons} />;
   }
 
   /**
@@ -53,10 +52,7 @@ class DeploymentSection extends React.Component {
     if (!extra) {
       return;
     }
-    return (
-      <div className="deployment-section__extra">
-        {extra}
-      </div>);
+    return <div className="deployment-section__extra">{extra}</div>;
   }
 
   /**
@@ -70,10 +66,8 @@ class DeploymentSection extends React.Component {
       return;
     }
     return (
-      <SvgIcon
-        className="deployment-section__title-checkmark"
-        name="complete"
-        size="24" />);
+      <SvgIcon className="deployment-section__title-checkmark" name="complete" size="24" />
+    );
   }
 
   render() {
@@ -83,10 +77,7 @@ class DeploymentSection extends React.Component {
       'deployment-section--completed': this.props.completed
     };
     extra[instance] = !!instance;
-    var classes = classNames(
-      'deployment-section',
-      'twelve-col',
-      extra);
+    var classes = classNames('deployment-section', 'twelve-col', extra);
     return (
       <div className={classes}>
         <div className="inner-wrapper">
@@ -102,28 +93,17 @@ class DeploymentSection extends React.Component {
       </div>
     );
   }
-};
+}
 
 DeploymentSection.propTypes = {
   buttons: PropTypes.array,
-  children: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.object
-  ]),
+  children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   completed: PropTypes.bool,
   disabled: PropTypes.bool,
-  extra: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.object,
-    PropTypes.string
-  ]),
+  extra: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.string]),
   instance: PropTypes.string,
   showCheck: PropTypes.bool,
-  title: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.object,
-    PropTypes.string
-  ])
+  title: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.string])
 };
 
 module.exports = DeploymentSection;

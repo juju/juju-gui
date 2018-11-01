@@ -33,8 +33,9 @@ class EntityContentReadme extends React.Component {
       this.readmeXhr.abort();
     }
     // Remove the readme link components.
-    this._getContainer().querySelectorAll('.readme-link').forEach(
-      link => {
+    this._getContainer()
+      .querySelectorAll('.readme-link')
+      .forEach(link => {
         ReactDOM.unmountComponentAtNode(link);
       });
   }
@@ -62,8 +63,7 @@ class EntityContentReadme extends React.Component {
       this._getReadmeCallback('No readme file.');
     } else {
       const id = entityModel.get('id');
-      this.readmeXhr = this.props.getFile(
-        id, readmeFile, this._getReadmeCallback.bind(this));
+      this.readmeXhr = this.props.getFile(id, readmeFile, this._getReadmeCallback.bind(this));
     }
   }
 
@@ -111,8 +111,7 @@ class EntityContentReadme extends React.Component {
     let renderer = new marked.Renderer();
     renderer.heading = (text, level) => {
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-      if (level === 1 &&
-        entity.displayName.toLowerCase() === text.toLowerCase()) {
+      if (level === 1 && entity.displayName.toLowerCase() === text.toLowerCase()) {
         return '';
       }
       return `<h${level} id="${escapedText}">
@@ -120,24 +119,20 @@ class EntityContentReadme extends React.Component {
           <span class="readme-link" data-id="${escapedText}">link</span>
         </h${level}>`;
     };
-    this.setState(
-      {readme: marked(readme, {renderer: renderer})}, () => {
-        if (this.props.hash) {
-          this.props.scrollCharmbrowser(this._getContainer());
-        }
-        // Set up the components to link to the readme headings.
-        this._getContainer().querySelectorAll('.readme-link').forEach(
-          link => {
-            const id = link.getAttribute('data-id');
-            // The components have to be rendered to the elements due to the
-            // headings having been created by the markdown lib.
-            ReactDOM.render(
-              <HashLink
-                changeState={this.props.changeState}
-                hash={id} />,
-              link);
-          });
-      });
+    this.setState({readme: marked(readme, {renderer: renderer})}, () => {
+      if (this.props.hash) {
+        this.props.scrollCharmbrowser(this._getContainer());
+      }
+      // Set up the components to link to the readme headings.
+      this._getContainer()
+        .querySelectorAll('.readme-link')
+        .forEach(link => {
+          const id = link.getAttribute('data-id');
+          // The components have to be rendered to the elements due to the
+          // headings having been created by the markdown lib.
+          ReactDOM.render(<HashLink changeState={this.props.changeState} hash={id} />, link);
+        });
+    });
   }
 
   render() {
@@ -146,11 +141,12 @@ class EntityContentReadme extends React.Component {
         <div
           className="entity-content__readme-content"
           dangerouslySetInnerHTML={{__html: this.state.readme}}
-          ref="content" />
+          ref="content"
+        />
       </div>
     );
   }
-};
+}
 
 EntityContentReadme.propTypes = {
   addNotification: PropTypes.func.isRequired,

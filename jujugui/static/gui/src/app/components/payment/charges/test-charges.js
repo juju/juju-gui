@@ -13,13 +13,15 @@ const Button = require('../../shared/button/button');
 describe('PaymentCharges', function() {
   let acl, payment;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <PaymentCharges
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      payment={options.payment || payment}
-      username={options.username || 'spinach'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <PaymentCharges
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        payment={options.payment || payment}
+        username={options.username || 'spinach'}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -36,44 +38,36 @@ describe('PaymentCharges', function() {
   });
 
   it('can display charges', function() {
-    payment.getCharges = sinon.stub().callsArgWith(1, null, [{
-      id: 'TEST-12344',
-      statementId: '12344',
-      price: 10000,
-      vat: 2000,
-      currency: 'USD',
-      for: '2016-01-02T15:04:05Z',
-      lineItems: [{
-        name: 'this is line 1',
-        details: 'a bit more details for line 1',
-        usage: 'something',
-        price: '48'
-      }]
-    }]);
+    payment.getCharges = sinon.stub().callsArgWith(1, null, [
+      {
+        id: 'TEST-12344',
+        statementId: '12344',
+        price: 10000,
+        vat: 2000,
+        currency: 'USD',
+        for: '2016-01-02T15:04:05Z',
+        lineItems: [
+          {
+            name: 'this is line 1',
+            details: 'a bit more details for line 1',
+            usage: 'something',
+            price: '48'
+          }
+        ]
+      }
+    ]);
     const wrapper = renderComponent();
     const expected = (
       <div className="payment-charges">
         <div className="payment__section">
-          <h2 className="payment__title twelve-col">
-            Charges
-          </h2>
+          <h2 className="payment__title twelve-col">Charges</h2>
           <ul className="user-profile__list twelve-col">
             <li className="user-profile__list-header twelve-col">
-              <div className="two-col no-margin-bottom">
-                ID
-              </div>
-              <div className="two-col no-margin-bottom">
-                Date
-              </div>
-              <div className="two-col no-margin-bottom">
-                Price
-              </div>
-              <div className="two-col no-margin-bottom">
-                VAT
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                Total
-              </div>
+              <div className="two-col no-margin-bottom">ID</div>
+              <div className="two-col no-margin-bottom">Date</div>
+              <div className="two-col no-margin-bottom">Price</div>
+              <div className="two-col no-margin-bottom">VAT</div>
+              <div className="two-col last-col no-margin-bottom">Total</div>
             </li>
             <ExpandingRow
               classes={{
@@ -81,15 +75,12 @@ describe('PaymentCharges', function() {
                 'user-profile__list-row': true
               }}
               clickable={true}
-              key="TEST-12344">
+              key="TEST-12344"
+            >
               <div>
+                <div className="two-col no-margin-bottom">12344</div>
                 <div className="two-col no-margin-bottom">
-                  12344
-                </div>
-                <div className="two-col no-margin-bottom">
-                  <DateDisplay
-                    date="2016-01-02T15:04:05Z"
-                    relative={true} />
+                  <DateDisplay date="2016-01-02T15:04:05Z" relative={true} />
                 </div>
                 <div className="two-col no-margin-bottom">
                   {100} {'USD'}
@@ -104,7 +95,8 @@ describe('PaymentCharges', function() {
                   <Button
                     action={wrapper.find('Button').prop('action')}
                     disabled={false}
-                    type="inline-neutral">
+                    type="inline-neutral"
+                  >
                     Show receipt
                   </Button>
                 </div>
@@ -114,34 +106,18 @@ describe('PaymentCharges', function() {
                   <h4>Charges for:</h4>
                   <ul className="user-profile__list twelve-col">
                     <li className="user-profile__list-header twelve-col">
-                      <div className="three-col no-margin-bottom">
-                        Name
-                      </div>
-                      <div className="three-col no-margin-bottom">
-                        Details
-                      </div>
-                      <div className="three-col no-margin-bottom">
-                        Usage
-                      </div>
-                      <div className="three-col last-col no-margin-bottom">
-                        Price
-                      </div>
+                      <div className="three-col no-margin-bottom">Name</div>
+                      <div className="three-col no-margin-bottom">Details</div>
+                      <div className="three-col no-margin-bottom">Usage</div>
+                      <div className="three-col last-col no-margin-bottom">Price</div>
                     </li>
-                    <li
-                      className="user-profile__list-row twelve-col"
-                      key="this is line 10">
-                      <div className="three-col no-margin-bottom">
-                        this is line 1
-                      </div>
+                    <li className="user-profile__list-row twelve-col" key="this is line 10">
+                      <div className="three-col no-margin-bottom">this is line 1</div>
                       <div className="three-col no-margin-bottom">
                         a bit more details for line 1
                       </div>
-                      <div className="three-col no-margin-bottom">
-                        something
-                      </div>
-                      <div className="three-col last-col no-margin-bottom">
-                        48
-                      </div>
+                      <div className="three-col no-margin-bottom">something</div>
+                      <div className="three-col last-col no-margin-bottom">48</div>
                     </li>
                   </ul>
                 </div>
@@ -150,7 +126,8 @@ describe('PaymentCharges', function() {
           </ul>
           {null}
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -160,33 +137,31 @@ describe('PaymentCharges', function() {
     const expected = (
       <div className="payment-charges">
         <div className="payment__section">
-          <h2 className="payment__title twelve-col">
-            Charges
-          </h2>
-          <div>
-            You do not have any charges.
-          </div>
+          <h2 className="payment__title twelve-col">Charges</h2>
+          <div>You do not have any charges.</div>
           {null}
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can display when there are no line items', function() {
-    payment.getCharges = sinon.stub().callsArgWith(1, null, [{
-      id: 'TEST-12344',
-      statementId: '12344',
-      price: 10000,
-      vat: 2000,
-      currency: 'USD',
-      for: '2016-01-02T15:04:05Z',
-      lineItems: []
-    }]);
+    payment.getCharges = sinon.stub().callsArgWith(1, null, [
+      {
+        id: 'TEST-12344',
+        statementId: '12344',
+        price: 10000,
+        vat: 2000,
+        currency: 'USD',
+        for: '2016-01-02T15:04:05Z',
+        lineItems: []
+      }
+    ]);
     const wrapper = renderComponent();
     const expected = (
-      <div className="payment-charges__line-items">
-        There are no items for this charge.
-      </div>);
+      <div className="payment-charges__line-items">There are no items for this charge.</div>
+    );
     assert.compareJSX(wrapper.find('.payment-charges__line-items'), expected);
   });
 
@@ -203,17 +178,22 @@ describe('PaymentCharges', function() {
   });
 
   it('can display the popup', function() {
-    payment.getCharges = sinon.stub().callsArgWith(1, null, [{
-      id: 'TEST-12344',
-      statementId: '12344',
-      price: 10000,
-      vat: 2000,
-      currency: 'USD',
-      for: '2016-01-02T15:04:05Z',
-      lineItems: []
-    }]);
+    payment.getCharges = sinon.stub().callsArgWith(1, null, [
+      {
+        id: 'TEST-12344',
+        statementId: '12344',
+        price: 10000,
+        vat: 2000,
+        currency: 'USD',
+        for: '2016-01-02T15:04:05Z',
+        lineItems: []
+      }
+    ]);
     const wrapper = renderComponent();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     wrapper.update();
     const popup = wrapper.find('ReceiptPopup');
     assert.equal(popup.length, 1);

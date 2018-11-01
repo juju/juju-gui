@@ -129,7 +129,9 @@ class EnvSwitcher extends React.Component {
           envs={this.state.envList}
           handleModelClick={this.handleModelClick.bind(this)}
           switchModel={this.props.switchModel}
-          user={this.props.user} />);
+          user={this.props.user}
+        />
+      );
     }
   }
 
@@ -140,14 +142,11 @@ class EnvSwitcher extends React.Component {
     @return {String} The collection of class names.
   */
   _toggleClasses() {
-    return classNames(
-      'env-switcher__toggle',
-      {
-        'editable': !this.props.modelCommitted,
-        'editing': this.state.hasFocus,
-        'is-active': this.state.showEnvList
-      }
-    );
+    return classNames('env-switcher__toggle', {
+      editable: !this.props.modelCommitted,
+      editing: this.state.hasFocus,
+      'is-active': this.state.showEnvList
+    });
   }
 
   /**
@@ -172,7 +171,7 @@ class EnvSwitcher extends React.Component {
     // Regex for checking that a string only contains lowercase letters,
     // numbers, and hyphens and that it does not start or end with a hyphen.
     const regex = /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/;
-    let valid = name && regex.test(name) || false;
+    let valid = (name && regex.test(name)) || false;
     this.setState({
       validName: valid,
       hasFocus: false
@@ -188,11 +187,10 @@ class EnvSwitcher extends React.Component {
   _generateName() {
     if (this.props.modelCommitted) {
       return (
-        <span
-          className="env-switcher__name"
-          ref="name">
+        <span className="env-switcher__name" ref="name">
           {this.props.environmentName}
-        </span>);
+        </span>
+      );
     }
     // If the model is not committed then allow the name to be changed.
     return (
@@ -203,27 +201,29 @@ class EnvSwitcher extends React.Component {
           dangerouslySetInnerHTML={{__html: this.props.environmentName}}
           onBlur={this._handleInputBlur.bind(this)}
           onFocus={this._handleInputFocus.bind(this)}
-          ref="name" />
+          ref="name"
+        />
         <div className="env-switcher__name-error">
-          The model name must only contain lowercase letters, numbers, and
-          hyphens. It must not start or end with a hyphen.
+          The model name must only contain lowercase letters, numbers, and hyphens. It must not
+          start or end with a hyphen.
         </div>
-      </div>);
+      </div>
+    );
   }
 
   render() {
     const toggleEnvList = this._toggleEnvList.bind(this);
-    const classes = classNames(
-      'env-switcher',
-      {'env-switcher--error': !this.state.validName}
-    );
+    const classes = classNames('env-switcher', {
+      'env-switcher--error': !this.state.validName
+    });
     return (
       <div
         aria-label="Model switcher"
         className={classes}
         onClick={this.props.modelCommitted ? toggleEnvList : null}
         role="navigation"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <div className={this._toggleClasses()}>
           {this._generateName()}
           <div
@@ -236,17 +236,16 @@ class EnvSwitcher extends React.Component {
             onClick={toggleEnvList}
             onKeyPress={this._handleKeyToggle.bind(this)}
             role="button"
-            tabIndex="0">
-            <SvgIcon
-              name="chevron_down_16"
-              size="16" />
+            tabIndex="0"
+          >
+            <SvgIcon name="chevron_down_16" size="16" />
           </div>
         </div>
         {this.environmentList()}
       </div>
     );
   }
-};
+}
 
 EnvSwitcher.propTypes = {
   acl: PropTypes.object.isRequired,

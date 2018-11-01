@@ -6,17 +6,8 @@ const bakery = require('macaroon-bakery');
 const newBakery = require('./bakery-utils');
 
 describe('bakery utils', () => {
-  function createNewBakery(
-    config,
-    user,
-    cookieSetter,
-    webHandler) {
-    return newBakery(
-      config || {},
-      user || {},
-      cookieSetter || sinon.stub(),
-      webHandler || {}
-    );
+  function createNewBakery(config, user, cookieSetter, webHandler) {
+    return newBakery(config || {}, user || {}, cookieSetter || sinon.stub(), webHandler || {});
   }
 
   it('returns a new bakery instance', () => {

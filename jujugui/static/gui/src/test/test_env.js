@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const User = require('../app/user/user');
 
 (function() {
-
   describe('Base Environment', function() {
     let environments, juju;
 
@@ -41,21 +40,27 @@ const User = require('../app/user/user');
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
+          setItem: function(name, val) {
+            this.store['name'] = val;
+          },
+          getItem: function(name) {
+            return this.store['name'] || null;
+          }
         };
-      };
+      }();
     };
 
     it('calls "open" on connection if available.', function() {
       const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
-      const conn= {
+      const conn = {
         open: sinon.stub(),
         close: sinon.stub()
       };
       const env = new environments.BaseEnvironment({
-        conn: conn, user: userClass});
+        conn: conn,
+        user: userClass
+      });
       env.connect();
       assert.equal(conn.open.callCount, 1);
       env.destroy();
@@ -69,7 +74,9 @@ const User = require('../app/user/user');
         close: sinon.stub()
       };
       const env = new environments.BaseEnvironment({
-        conn: conn, user: userClass});
+        conn: conn,
+        user: userClass
+      });
       env.connect();
       // Simulate the connection is authenticated.
       env.userIsAuthenticated = true;
@@ -77,8 +84,7 @@ const User = require('../app/user/user');
       env.cleanup = function(done) {
         called = true;
         // The connection is still open.
-        assert.strictEqual(
-          conn.close.callCount, 0, 'connection unexpectedly closed');
+        assert.strictEqual(conn.close.callCount, 0, 'connection unexpectedly closed');
         // Close the connection.
         done();
         // The underlaying WebSocket connection has been closed as well, and
@@ -115,7 +121,9 @@ const User = require('../app/user/user');
           close: sinon.stub()
         };
         baseModel = new environments.BaseEnvironment({
-          conn: conn, user: userClass});
+          conn: conn,
+          user: userClass
+        });
       });
 
       it('sets attributes', () => {
@@ -162,7 +170,6 @@ const User = require('../app/user/user');
         assert.strictEqual(baseModel.get('attr3'), null);
       });
     });
-
   });
 
   describe('tags management', function() {
@@ -197,5 +204,4 @@ const User = require('../app/user/user');
       assert.throws(func, 'invalid tag of type controller: user-dalek');
     });
   });
-
 })();

@@ -93,7 +93,7 @@ describe('Zip utils', function() {
       const revisionEntry = '/foo/revision contents';
       const allEntries = {
         'file1.py': 'file1.py contents',
-        'foo': 'foo contents',
+        foo: 'foo contents',
         '/foo/config.yaml': configEntry,
         '/foo/file2.yaml': '/foo/file2.yaml contents',
         '/foo/metadata.yaml': metadataEntry,
@@ -117,7 +117,7 @@ describe('Zip utils', function() {
       const allEntries = {
         'metadata.yaml': metadataEntry,
         'HACKING.rst': 'HACKING.rst contents',
-        'revision': revisionEntry,
+        revision: revisionEntry,
         'tests/setup.py': 'tests/setup.py contents'
       };
       const expectedEntries = {
@@ -130,7 +130,7 @@ describe('Zip utils', function() {
 
     it('returns an empty object if no entries are found', function() {
       const allEntries = {
-        'mycharm': 'mycharm contents',
+        mycharm: 'mycharm contents',
         'mycharm/hooks': 'mycharm/hooks contents',
         'mycharm/hooks/start': 'mycharm/hooks/start contents'
       };
@@ -142,7 +142,7 @@ describe('Zip utils', function() {
       const metadataEntry = '/mycharm/metadata.yaml contents';
       const readmeEntry = '/mycharm/README contents';
       const allEntries = {
-        'mycharm': 'mycharm contents',
+        mycharm: 'mycharm contents',
         '/mycharm/metadata.yaml': metadataEntry,
         'mycharm/hooks': 'mycharm/hooks contents',
         // Since we already know the charm root is "mycharm/", the config
@@ -151,7 +151,7 @@ describe('Zip utils', function() {
         '/mycharm/README': readmeEntry,
         // Since we already know the charm root is "mycharm/", the revision
         // found in the zip root directory is ignored.
-        'revision': 'revision contents'
+        revision: 'revision contents'
       };
       const expectedEntries = {
         metadata: metadataEntry,

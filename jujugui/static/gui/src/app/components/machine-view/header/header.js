@@ -72,18 +72,16 @@ class MachineViewHeader extends React.Component {
         <ButtonDropdown
           activeItem={this.props.activeMenuItem}
           classes={['machine-view__header-dropdown']}
-          listItems={menuItems} />);
+          listItems={menuItems}
+        />
+      );
     } else if (toggle) {
       var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
       return (
-        <Button
-          action={toggle.action}
-          disabled={toggle.disabled}
-          type='inline-positive'>
-          <SvgIcon
-            name={icon}
-            size="16" />
-        </Button>);
+        <Button action={toggle.action} disabled={toggle.disabled} type="inline-positive">
+          <SvgIcon name={icon} size="16" />
+        </Button>
+      );
     }
   }
 
@@ -94,12 +92,10 @@ class MachineViewHeader extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'machine-view__header', {
-        'machine-view__header--droppable':
-          this.props.droppable && this.props.canDrop,
-        'machine-view__header--drop': this.props.isOver
-      });
+    return classNames('machine-view__header', {
+      'machine-view__header--droppable': this.props.droppable && this.props.canDrop,
+      'machine-view__header--drop': this.props.isOver
+    });
   }
 
   render() {
@@ -108,14 +104,12 @@ class MachineViewHeader extends React.Component {
         {this.props.title}
         {this._generateControl()}
         <div className="machine-view__header-drop-target">
-          <div className="machine-view__header-drop-message">
-            Create new {this.props.type}
-          </div>
+          <div className="machine-view__header-drop-message">Create new {this.props.type}</div>
         </div>
       </div>
     );
   }
-};
+}
 
 MachineViewHeader.propTypes = {
   acl: shapeup.shape({
@@ -135,5 +129,7 @@ MachineViewHeader.propTypes = {
 };
 
 module.exports = ReactDnD.DropTarget(
-  'unit', MachineViewHeaderGlobals.dropTarget,
-  MachineViewHeaderGlobals.collect)(MachineViewHeader);
+  'unit',
+  MachineViewHeaderGlobals.dropTarget,
+  MachineViewHeaderGlobals.collect
+)(MachineViewHeader);

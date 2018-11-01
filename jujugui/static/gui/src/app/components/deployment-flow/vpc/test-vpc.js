@@ -10,10 +10,8 @@ const GenericInput = require('../../generic-input/generic-input');
 describe('DeploymentVPC', function() {
   let setVPCId;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentVPC
-      setVPCId={options.setVPCId || setVPCId} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(<DeploymentVPC setVPCId={options.setVPCId || setVPCId} />);
 
   beforeEach(() => {
     setVPCId = sinon.stub();
@@ -23,7 +21,7 @@ describe('DeploymentVPC', function() {
   // of times and, the last time, with the expected id value and force flag.
   const checkSetVPCIdCalled = (expectedTimes, expectedId, expectedForce) => {
     assert.strictEqual(setVPCId.callCount, expectedTimes, 'call count');
-    const args = setVPCId.args[expectedTimes-1];
+    const args = setVPCId.args[expectedTimes - 1];
     assert.strictEqual(args.length, 2, 'args');
     assert.strictEqual(args[0], expectedId, 'id');
     assert.strictEqual(args[1], expectedForce, 'force');
@@ -31,18 +29,16 @@ describe('DeploymentVPC', function() {
 
   it('renders to show the VPC widgets', function() {
     const wrapper = renderComponent();
-    const vpcLink =
-    'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
+    const vpcLink = 'http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/default-vpc.html';
     const expected = (
       <div className="twelve-col no-margin-bottom">
         <p>Juju uses your default VPC – or you can specify one here.</p>
         <p>
-          AWS accounts created since December 2013 have this –&nbsp;
-          older accounts may not.&nbsp;
-          <a
-            className="link"
-            href={vpcLink}
-            target="_blank">Default VPC basics.</a>
+          AWS accounts created since December 2013 have this –&nbsp; older accounts may
+          not.&nbsp;
+          <a className="link" href={vpcLink} target="_blank">
+            Default VPC basics.
+          </a>
         </p>
         <div className="six-col">
           <GenericInput
@@ -52,7 +48,8 @@ describe('DeploymentVPC', function() {
             onBlur={wrapper.find('GenericInput').prop('onBlur')}
             onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
             ref="vpcId"
-            required={false} />
+            required={false}
+          />
           <label>
             <input
               checked={false}
@@ -60,9 +57,9 @@ describe('DeploymentVPC', function() {
               id="vpcIdForce"
               onChange={wrapper.find('input').prop('onChange')}
               onClick={wrapper.find('input').prop('onClick')}
-              type="checkbox" />
-            &nbsp;
-            Always use this ID
+              type="checkbox"
+            />
+            &nbsp; Always use this ID
           </label>
         </div>
       </div>
@@ -75,7 +72,10 @@ describe('DeploymentVPC', function() {
     const instance = wrapper.instance();
     // Simulate returning a value from the id value field.
     instance.refs = {vpcId: {getValue: () => 'my-id'}};
-    wrapper.find('GenericInput').props().onBlur();
+    wrapper
+      .find('GenericInput')
+      .props()
+      .onBlur();
     // The VPC data has been stored.
     checkSetVPCIdCalled(1, 'my-id', false);
   });
@@ -88,7 +88,10 @@ describe('DeploymentVPC', function() {
     // Simulate forcing a value from the id value field.
     instance.refs = {vpcId: {getValue: () => 'forced-id'}};
     checkbox.props().onChange.call(instance, {target: {checked: true}});
-    wrapper.find('GenericInput').props().onBlur();
+    wrapper
+      .find('GenericInput')
+      .props()
+      .onBlur();
     // The VPC data has been stored.
     checkSetVPCIdCalled(2, 'forced-id', true);
   });

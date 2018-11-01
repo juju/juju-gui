@@ -91,8 +91,9 @@ describe('Profile Bundle List', function() {
         handleDeploy={options.handleDeploy || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         storeUser={options.storeUser || sinon.stub()}
-        user={
-          options.user !== undefined ? options.user : 'lazypower@external'} />);
+        user={options.user !== undefined ? options.user : 'lazypower@external'}
+      />
+    );
   };
 
   it('can render', () => {
@@ -109,11 +110,20 @@ describe('Profile Bundle List', function() {
         Learn about&nbsp;
         <a
           href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
-          target="_blank">
+          target="_blank"
+        >
           writing your own bundle
-        </a>.
-      </p>);
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+        </a>
+        .
+      </p>
+    );
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(0)'),
+      true
+    );
     assert.compareJSX(wrapper.find('.profile-bundle-list__onboarding'), expected);
   });
 

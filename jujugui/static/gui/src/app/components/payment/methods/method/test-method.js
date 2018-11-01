@@ -22,7 +22,8 @@ describe('PaymentMethod', () => {
         payment={options.payment || payment}
         paymentMethod={options.paymentMethod || paymentMethod}
         updateUser={options.updateUser || sinon.stub()}
-        username={options.username || 'spinach'} />
+        username={options.username || 'spinach'}
+      />
     );
     const instance = wrapper.instance();
     instance.refs = refs;
@@ -80,16 +81,20 @@ describe('PaymentMethod', () => {
           card={paymentMethod}
           onPaymentMethodRemoved={sinon.stub()}
           removePaymentMethod={sinon.stub()}
-          updatePaymentMethod={
-            wrapper.find('PaymentMethodCard').prop('updatePaymentMethod')}
-          username="spinach" />
-      </div>);
+          updatePaymentMethod={wrapper.find('PaymentMethodCard').prop('updatePaymentMethod')}
+          username="spinach"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.payment-method'), expected);
   });
 
   it('can show the edit form', () => {
     const wrapper = renderComponent();
-    wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
+    wrapper
+      .find('PaymentMethodCard')
+      .props()
+      .updatePaymentMethod();
     wrapper.update();
     const expected = (
       <div className="payment-method__form">
@@ -100,35 +105,49 @@ describe('PaymentMethod', () => {
           getCountries={sinon.stub()}
           ref="cardAddress"
           showName={false}
-          showPhone={false} />
+          showPhone={false}
+        />
         <div className="twelve-col">
           <GenericInput
             disabled={false}
             label="Expiry MM/YY"
             ref="expiry"
             required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }, {
-              regex: /[\d]{2}\/[\d]{2}/,
-              error: 'The expiry must be in the format MM/YY'
-            }]}
-            value="04/22" />
+            validate={[
+              {
+                regex: /\S+/,
+                error: 'This field is required.'
+              },
+              {
+                regex: /[\d]{2}\/[\d]{2}/,
+                error: 'The expiry must be in the format MM/YY'
+              }
+            ]}
+            value="04/22"
+          />
         </div>
         <div className="twelve-col payment-method__buttons">
           <Button
-            action={wrapper.find('Button').at(0).prop('action')}
-            type="inline-neutral">
+            action={wrapper
+              .find('Button')
+              .at(0)
+              .prop('action')}
+            type="inline-neutral"
+          >
             Cancel
           </Button>
           <Button
-            action={wrapper.find('Button').at(1).prop('action')}
-            type="inline-positive">
+            action={wrapper
+              .find('Button')
+              .at(1)
+              .prop('action')}
+            type="inline-positive"
+          >
             Update
           </Button>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.payment-method__form'), expected);
   });
 
@@ -137,9 +156,16 @@ describe('PaymentMethod', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs.cardAddress.validate = sinon.stub().returns(false);
-    wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
+    wrapper
+      .find('PaymentMethodCard')
+      .props()
+      .updatePaymentMethod();
     wrapper.update();
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(payment.updatePaymentMethod.callCount, 0);
   });
 
@@ -147,9 +173,16 @@ describe('PaymentMethod', () => {
     payment.updatePaymentMethod = sinon.stub().callsArgWith(4, null);
     const updateUser = sinon.stub();
     const wrapper = renderComponent({updateUser});
-    wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
+    wrapper
+      .find('PaymentMethodCard')
+      .props()
+      .updatePaymentMethod();
     wrapper.update();
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(payment.updatePaymentMethod.callCount, 1);
     assert.equal(payment.updatePaymentMethod.args[0][0], 'spinach');
     assert.equal(payment.updatePaymentMethod.args[0][1], 'method1');
@@ -172,9 +205,16 @@ describe('PaymentMethod', () => {
     const addNotification = sinon.stub();
     payment.updatePaymentMethod = sinon.stub().callsArgWith(4, 'Uh oh!');
     const wrapper = renderComponent({addNotification});
-    wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
+    wrapper
+      .find('PaymentMethodCard')
+      .props()
+      .updatePaymentMethod();
     wrapper.update();
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not update the payment method',
@@ -187,9 +227,16 @@ describe('PaymentMethod', () => {
     const abort = sinon.stub();
     payment.updatePaymentMethod = sinon.stub().returns({abort: abort});
     const wrapper = renderComponent();
-    wrapper.find('PaymentMethodCard').props().updatePaymentMethod();
+    wrapper
+      .find('PaymentMethodCard')
+      .props()
+      .updatePaymentMethod();
     wrapper.update();
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

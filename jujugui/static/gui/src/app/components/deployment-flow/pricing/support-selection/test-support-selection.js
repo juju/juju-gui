@@ -8,13 +8,14 @@ const DeploymentSupportSelection = require('./support-selection');
 const DeploymentSupportSelectionPlan = require('./plan/plan');
 
 describe('DeploymentSupportSelection', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentSupportSelection
-      getSLAMachineRates={options.getSLAMachineRates || sinon.stub()}
-      machineCount="3"
-      setSLA={options.setSLA || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentSupportSelection
+        getSLAMachineRates={options.getSLAMachineRates || sinon.stub()}
+        machineCount="3"
+        setSLA={options.setSLA || sinon.stub()}
+      />
+    );
 
   it('can render', () => {
     const data = {
@@ -37,32 +38,30 @@ describe('DeploymentSupportSelection', () => {
           machineCount={3}
           onSelect={plans.at(0).prop('onSelect')}
           selected={false}
-          title="Essential" />
+          title="Essential"
+        />
         <DeploymentSupportSelectionPlan
           classes={[]}
-          features={[
-            '10x5 phone support',
-            '2hr critical response'
-          ]}
+          features={['10x5 phone support', '2hr critical response']}
           hourPrice="0.055"
           key="Standard"
           machineCount={3}
           onSelect={plans.at(1).prop('onSelect')}
           selected={false}
-          title="Standard" />
+          title="Standard"
+        />
         <DeploymentSupportSelectionPlan
           classes={['last-col']}
-          features={[
-            '24x7 phone support',
-            '1hr critical response'
-          ]}
+          features={['24x7 phone support', '1hr critical response']}
           hourPrice="0.110"
           key="Advanced"
           machineCount={3}
           onSelect={plans.at(2).prop('onSelect')}
           selected={false}
-          title="Advanced" />
-      </div>);
+          title="Advanced"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -90,8 +89,12 @@ describe('DeploymentSupportSelection', () => {
     assert.equal(instance.state.selectedPlan, 'standard');
     wrapper.update();
     assert.equal(
-      wrapper.find('DeploymentSupportSelectionPlan').at(1).prop('selected'),
-      true);
+      wrapper
+        .find('DeploymentSupportSelectionPlan')
+        .at(1)
+        .prop('selected'),
+      true
+    );
     assert.deepEqual(setSLA.args[0], [{name: 'standard', hourPrice: '0.055'}]);
   });
 });

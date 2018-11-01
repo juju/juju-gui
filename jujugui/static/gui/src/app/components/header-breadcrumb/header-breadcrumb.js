@@ -47,8 +47,10 @@ class HeaderBreadcrumb extends React.Component {
           modelCommitted={this.props.modelCommitted}
           setModelName={this.props.setModelName}
           switchModel={this.props.switchModel}
-          user={this.props.user} />
-      </li>);
+          user={this.props.user}
+        />
+      </li>
+    );
   }
 
   /**
@@ -122,11 +124,7 @@ class HeaderBreadcrumb extends React.Component {
     const profileUrl = props.appState.generatePath({profile: username});
     return (
       <li className="header-breadcrumb__list-item">
-        <a
-          className={linkClasses}
-          href={profileUrl}
-          onClick={onClick}
-          title={username}>
+        <a className={linkClasses} href={profileUrl} onClick={onClick} title={username}>
           {username}
         </a>
       </li>
@@ -143,14 +141,15 @@ class HeaderBreadcrumb extends React.Component {
         <ul
           className="header-breadcrumb__list"
           // This attribute is required by uitests.
-          data-username={user && user.displayName}>
+          data-username={user && user.displayName}
+        >
           {userItem}
           {this._renderEnvSwitcher()}
         </ul>
       </div>
     );
   }
-};
+}
 
 HeaderBreadcrumb.propTypes = {
   acl: PropTypes.object.isRequired,

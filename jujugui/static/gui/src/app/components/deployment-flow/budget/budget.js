@@ -130,7 +130,8 @@ class DeploymentBudget extends React.Component {
       return (
         <div className="deployment-budget__loading">
           <Spinner />
-        </div>);
+        </div>
+      );
     }
     var disabled = this.props.acl.isReadOnly();
     var classes = {
@@ -142,55 +143,47 @@ class DeploymentBudget extends React.Component {
         <ExpandingRow
           classes={classes}
           clickable={false}
-          expanded={this.state.increaseExpanded}>
+          expanded={this.state.increaseExpanded}
+        >
           <div>
             <div className="four-col">
               <InsetSelect
                 disabled={disabled}
                 label="Budget"
                 onChange={this._handleBudgetChange.bind(this)}
-                options={this._generateBudgetOptions()} />
+                options={this._generateBudgetOptions()}
+              />
             </div>
             <div className="three-col">
               <span className="deployment-budget__increase-button">
                 <Button
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
-                  type="base">
+                  type="base"
+                >
                   Increase budget
                 </Button>
               </span>
             </div>
-            <BudgetChart
-              budgets={this.state.budgets} />
+            <BudgetChart budgets={this.state.budgets} />
           </div>
           <div>
             <div className="deployment-budget__increase-form">
               <h4>Increase budget</h4>
-              <div className="two-col">
-                Credit limit: $100
-              </div>
-              <div className="ten-col last-col">
-                Available credit: $500
-              </div>
-              <div className="one-col">
-                Increase
-              </div>
+              <div className="two-col">Credit limit: $100</div>
+              <div className="ten-col last-col">Available credit: $500</div>
+              <div className="one-col">Increase</div>
               <div className="three-col">
                 <GenericInput
                   disabled={true}
                   label="Budget"
                   placeholder="Personal ($100)"
-                  required={false} />
+                  required={false}
+                />
               </div>
-              <div className="one-col">
-                to
-              </div>
+              <div className="one-col">to</div>
               <div className="three-col last-col">
-                <GenericInput
-                  disabled={true}
-                  label="New budget amount"
-                  required={false} />
+                <GenericInput disabled={true} label="New budget amount" required={false} />
               </div>
               <div>
                 <div className="eight-col">
@@ -200,7 +193,8 @@ class DeploymentBudget extends React.Component {
                   <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
-                    type="base">
+                    type="base"
+                  >
                     Cancel
                   </Button>
                 </div>
@@ -208,7 +202,8 @@ class DeploymentBudget extends React.Component {
                   <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
-                    type="neutral">
+                    type="neutral"
+                  >
                     Confirm
                   </Button>
                 </div>
@@ -219,7 +214,7 @@ class DeploymentBudget extends React.Component {
       </div>
     );
   }
-};
+}
 
 DeploymentBudget.propTypes = {
   acl: PropTypes.object.isRequired,

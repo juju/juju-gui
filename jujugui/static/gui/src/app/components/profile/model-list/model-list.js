@@ -31,8 +31,10 @@ class ProfileModelList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const props = this.props;
-    if (props.userInfo.profile !== nextProps.userInfo.profile ||
-      props.facadesExist !== nextProps.facadesExist) {
+    if (
+      props.userInfo.profile !== nextProps.userInfo.profile ||
+      props.facadesExist !== nextProps.facadesExist
+    ) {
       this._fetchModels(nextProps.facadesExist);
     }
   }
@@ -80,18 +82,22 @@ class ProfileModelList extends React.Component {
   */
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
-    this.props.destroyModel(modelUUID, (errors, data) => {
-      if (errors) {
-        errors.forEach(error => {
-          this.props.addNotification({
-            title: 'Error destroying model',
-            message: error,
-            level: 'error'
+    this.props.destroyModel(
+      modelUUID,
+      (errors, data) => {
+        if (errors) {
+          errors.forEach(error => {
+            this.props.addNotification({
+              title: 'Error destroying model',
+              message: error,
+              level: 'error'
+            });
           });
-        });
-      }
-      this._fetchModels(this.props.facadesExist);
-    }, false);
+        }
+        this._fetchModels(this.props.facadesExist);
+      },
+      false
+    );
   }
 
   /**
@@ -99,26 +105,28 @@ class ProfileModelList extends React.Component {
     @param {Object} model The model data.
   */
   _showConfirmation(model) {
-    const buttons = [{
-      title: 'Cancel',
-      action: () => this.setState({notification: null}),
-      type: 'inline-neutral'
-    }, {
-      title: 'Destroy',
-      action: this._confirmDestroy.bind(this, model.uuid),
-      type: 'destructive'
-    }];
+    const buttons = [
+      {
+        title: 'Cancel',
+        action: () => this.setState({notification: null}),
+        type: 'inline-neutral'
+      },
+      {
+        title: 'Destroy',
+        action: this._confirmDestroy.bind(this, model.uuid),
+        type: 'destructive'
+      }
+    ];
     const message =
       `Are you sure you want to destroy ${model.name}?` +
       ' All the applications, units and storage used by the model will be' +
       ' destroyed. This action cannot be undone.';
     this.setState({
       notification: (
-        <Popup
-          buttons={buttons}
-          title="Destroy model">
+        <Popup buttons={buttons} title="Destroy model">
           <p>{message}</p>
-        </Popup>)
+        </Popup>
+      )
     });
   }
 
@@ -157,11 +165,7 @@ class ProfileModelList extends React.Component {
     @return {Object} The model list as JSX.
   */
   _generateModels() {
-    const icons = new Map([
-      ['read', 'show_16'],
-      ['write', 'edit_16'],
-      ['admin', 'user_16']
-    ]);
+    const icons = new Map([['read', 'show_16'], ['write', 'edit_16'], ['admin', 'user_16']]);
     const profileUsername = this.props.userInfo.profile;
     const models = this.state.models || [];
     return (
@@ -191,7 +195,8 @@ class ProfileModelList extends React.Component {
               name: model.name,
               id: model.id,
               owner
-            })}>
+            })}
+          >
             {model.name}
           </a>
         );
@@ -207,22 +212,16 @@ class ProfileModelList extends React.Component {
             <span className="tooltip__tooltip">
               <span className="tooltip__inner tooltip__inner--down">{profileUser.access}</span>
             </span>
-            <SvgIcon
-              name={icons.get(profileUser.access)}
-              size="16" />
+            <SvgIcon name={icons.get(profileUser.access)} size="16" />
           </span>
         );
         const dateContent = (
-          <DateDisplay
-            date={model.lastConnection || '--'}
-            relative={true} />
+          <DateDisplay date={model.lastConnection || '--'} relative={true} />
         );
         const destroyContent =
           userIsAdmin && !model.isController ? (
             <a onClick={this._destroyModel.bind(this, model, bdRef)}>
-              <SvgIcon
-                name="delete_16"
-                size="16" />
+              <SvgIcon name="delete_16" size="16" />
             </a>
           ) : null;
         let expandedContent;
@@ -232,7 +231,8 @@ class ProfileModelList extends React.Component {
               className="profile-model-list__link u-no-padding--bottom"
               onClick={this._handleCredentialClick.bind(this, model.credential)}
               role="button"
-              tabIndex="0">
+              tabIndex="0"
+            >
               {model.credentialName}
             </a>
           );
@@ -245,17 +245,22 @@ class ProfileModelList extends React.Component {
           columns: [
             {
               content: nameContent
-            }, {
+            },
+            {
               content: username,
               classes: ['u-hide--small']
-            }, {
+            },
+            {
               content: regionContent
-            }, {
+            },
+            {
               content: accessContent
-            }, {
+            },
+            {
               content: dateContent,
               classes: ['u-hide--small']
-            }, {
+            },
+            {
               content: destroyContent
             }
           ],
@@ -309,7 +314,8 @@ class ProfileModelList extends React.Component {
       return (
         <div className="profile-model-list">
           <Spinner />
-        </div>);
+        </div>
+      );
     }
     const rowData = this._generateModels();
     return (
@@ -322,29 +328,37 @@ class ProfileModelList extends React.Component {
           <CreateModelButton
             changeState={this.props.changeState}
             switchModel={this.props.switchModel}
-            title="Start a new model" />
+            title="Start a new model"
+          />
         </div>
         {!rowData.length ? null : (
           <BasicTable
             headers={[
               {
                 content: 'Name'
-              }, {
+              },
+              {
                 content: 'Owner'
-              }, {
+              },
+              {
                 content: 'Machines, cloud/region'
-              }, {
+              },
+              {
                 content: ''
-              }, {
+              },
+              {
                 content: 'Last accessed'
-              }, {
+              },
+              {
                 content: ''
               }
             ]}
-            rows={rowData} />
+            rows={rowData}
+          />
         )}
         {this._generateNotification()}
-      </div>);
+      </div>
+    );
   }
 }
 

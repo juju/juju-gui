@@ -8,24 +8,20 @@ const Tour = require('./tour');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('Tour', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Tour
-      close={options.close || sinon.stub()}
-      endTour={options.endTour || sinon.stub()}
-      staticURL={options.staticURL || '/static/'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Tour
+        close={options.close || sinon.stub()}
+        endTour={options.endTour || sinon.stub()}
+        staticURL={options.staticURL || '/static/'}
+      />
+    );
 
   it('renders', () => {
     const wrapper = renderComponent();
     const expected = (
-      <span
-        className="back-to-help"
-        onClick={wrapper.find('.back-to-help').prop('onClick')}>
-        <SvgIcon
-          className="back-to-help__icon"
-          name="chevron_down_16"
-          size="16" />
+      <span className="back-to-help" onClick={wrapper.find('.back-to-help').prop('onClick')}>
+        <SvgIcon className="back-to-help__icon" name="chevron_down_16" size="16" />
         Back to GUI help
       </span>
     );

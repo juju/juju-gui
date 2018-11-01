@@ -39,7 +39,8 @@ module.exports = function enhanceWithClickOutside(WrappedComponent) {
           ref={c => {
             this.__wrappedComponent = c;
             this.__domNode = ReactDOM.findDOMNode(c);
-          }} />
+          }}
+        />
       );
     }
   }

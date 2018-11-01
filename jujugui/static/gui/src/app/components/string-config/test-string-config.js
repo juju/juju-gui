@@ -10,12 +10,14 @@ const StringConfigInput = require('./input/input');
 describe('StringConfig', function() {
   let option;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StringConfig
-      config={options.config === undefined ? 'the value' : options.config}
-      disabled={options.disabled}
-      option={options.option || option} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <StringConfig
+        config={options.config === undefined ? 'the value' : options.config}
+        disabled={options.disabled}
+        option={options.option || option}
+      />
+    );
 
   beforeEach(() => {
     option = {
@@ -30,19 +32,24 @@ describe('StringConfig', function() {
     var typeString = ` (${option.type})`;
     var expected = (
       <div className="string-config">
-        <span className="string-config__label">{option.key}{typeString}</span>
+        <span className="string-config__label">
+          {option.key}
+          {typeString}
+        </span>
         <div className="string-config--value">
           <StringConfigInput
             config="the value"
             disabled={false}
             ref="editableInput"
-            setValue={wrapper.find('StringConfigInput').prop('setValue')} />
+            setValue={wrapper.find('StringConfigInput').prop('setValue')}
+          />
         </div>
         <span
           className="string-config--description"
-          dangerouslySetInnerHTML={{__html: option.description}}>
-        </span>
-      </div>);
+          dangerouslySetInnerHTML={{__html: option.description}}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -68,9 +75,12 @@ describe('StringConfig', function() {
     instance._setValue('different value');
     wrapper.update();
     assert.equal(
-      wrapper.find('.string-config--value').prop('className').includes(
-        'string-config--changed'),
-      true);
+      wrapper
+        .find('.string-config--value')
+        .prop('className')
+        .includes('string-config--changed'),
+      true
+    );
   });
 
   it('correctly compares existing numbers', function() {
@@ -79,9 +89,12 @@ describe('StringConfig', function() {
     instance._setValue('123');
     wrapper.update();
     assert.equal(
-      wrapper.find('.string-config--value').prop('className').includes(
-        'string-config--changed'),
-      false);
+      wrapper
+        .find('.string-config--value')
+        .prop('className')
+        .includes('string-config--changed'),
+      false
+    );
   });
 
   it('can handle empty strings with newlines', function() {
@@ -90,9 +103,12 @@ describe('StringConfig', function() {
     instance._setValue('\n');
     wrapper.update();
     assert.equal(
-      wrapper.find('.string-config--value').prop('className').includes(
-        'string-config--changed'),
-      false);
+      wrapper
+        .find('.string-config--value')
+        .prop('className')
+        .includes('string-config--changed'),
+      false
+    );
     assert.equal(instance.getValue(), '');
   });
 
@@ -102,9 +118,12 @@ describe('StringConfig', function() {
     instance._setValue('0\n');
     wrapper.update();
     assert.equal(
-      wrapper.find('.string-config--value').prop('className').includes(
-        'string-config--changed'),
-      false);
+      wrapper
+        .find('.string-config--value')
+        .prop('className')
+        .includes('string-config--changed'),
+      false
+    );
     assert.equal(instance.getValue(), '0');
   });
 });

@@ -8,17 +8,19 @@ const Button = require('../../shared/button/button');
 const ProfileCharmstoreLogin = require('./charmstore-login');
 
 describe('ProfileCharmstoreLogin ', function() {
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ProfileCharmstoreLogin
-      addNotification={options.addNotification || sinon.stub()}
-      bakery={options.bakery || {}}
-      changeState={options.changeState || sinon.stub()}
-      charmstore={{
-        getMacaroon: options.getMacaroon || sinon.stub()
-      }}
-      storeUser={options.storeUser || sinon.stub()}
-      type={options.type || 'charms'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ProfileCharmstoreLogin
+        addNotification={options.addNotification || sinon.stub()}
+        bakery={options.bakery || {}}
+        changeState={options.changeState || sinon.stub()}
+        charmstore={{
+          getMacaroon: options.getMacaroon || sinon.stub()
+        }}
+        storeUser={options.storeUser || sinon.stub()}
+        type={options.type || 'charms'}
+      />
+    );
 
   it('can render for a charm', () => {
     const wrapper = renderComponent();
@@ -26,47 +28,55 @@ describe('ProfileCharmstoreLogin ', function() {
     const expected = (
       <div className="profile-charmstore-login">
         <div className="profile-charmstore-login__button">
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            type="neutral">
+          <Button action={wrapper.find('Button').prop('action')} type="neutral">
             Login to the charm store
           </Button>
         </div>
-        <h4 className="profile__title">
-          No {'charms'}
-        </h4>
+        <h4 className="profile__title">No {'charms'}</h4>
         <p className="profile-charmstore-login__notice">
           You must&nbsp;
           <span
             className="link"
             onClick={links.at(0).prop('onClick')}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             login
-          </span>&nbsp;
-          to the&nbsp;
+          </span>
+          &nbsp; to the&nbsp;
           <span
             className="link"
             onClick={links.at(1).prop('onClick')}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             charm store
-          </span>&nbsp;
-          using an Ubuntu One identity (USSO) to view your charms and bundles.
+          </span>
+          &nbsp; using an Ubuntu One identity (USSO) to view your charms and bundles.
         </p>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can render for a bundle', () => {
     const wrapper = renderComponent({type: 'bundles'});
-    assert.equal(wrapper.find('.profile__title').html().includes('No bundles'), true);
+    assert.equal(
+      wrapper
+        .find('.profile__title')
+        .html()
+        .includes('No bundles'),
+      true
+    );
   });
 
   it('can log in', () => {
     const bakery = {
       storage: {
-        get: sinon.stub().withArgs('charmstore').returns(null)
+        get: sinon
+          .stub()
+          .withArgs('charmstore')
+          .returns(null)
       }
     };
     const getMacaroon = sinon.stub().callsArgWith(0, null, 'new macaroon');
@@ -76,7 +86,11 @@ describe('ProfileCharmstoreLogin ', function() {
       getMacaroon,
       storeUser
     });
-    wrapper.find('.link').at(0).props().onClick();
+    wrapper
+      .find('.link')
+      .at(0)
+      .props()
+      .onClick();
     assert.equal(getMacaroon.callCount, 1);
     assert.equal(storeUser.callCount, 1);
   });
@@ -84,7 +98,10 @@ describe('ProfileCharmstoreLogin ', function() {
   it('can log in when there is an existing macaroon', () => {
     const bakery = {
       storage: {
-        get: sinon.stub().withArgs('charmstore').returns('fake macaroon')
+        get: sinon
+          .stub()
+          .withArgs('charmstore')
+          .returns('fake macaroon')
       }
     };
     const getMacaroon = sinon.stub();
@@ -94,7 +111,11 @@ describe('ProfileCharmstoreLogin ', function() {
       getMacaroon,
       storeUser
     });
-    wrapper.find('.link').at(0).props().onClick();
+    wrapper
+      .find('.link')
+      .at(0)
+      .props()
+      .onClick();
     assert.equal(getMacaroon.callCount, 0);
     assert.equal(storeUser.callCount, 1);
     assert.equal(bakery.storage.get.callCount, 1);
@@ -104,7 +125,10 @@ describe('ProfileCharmstoreLogin ', function() {
     const addNotification = sinon.stub();
     const bakery = {
       storage: {
-        get: sinon.stub().withArgs('charmstore').returns(null)
+        get: sinon
+          .stub()
+          .withArgs('charmstore')
+          .returns(null)
       }
     };
     const getMacaroon = sinon.stub().callsArgWith(0, 'Uh oh!', null);
@@ -115,7 +139,11 @@ describe('ProfileCharmstoreLogin ', function() {
       getMacaroon,
       storeUser
     });
-    wrapper.find('.link').at(0).props().onClick();
+    wrapper
+      .find('.link')
+      .at(0)
+      .props()
+      .onClick();
     assert.equal(getMacaroon.callCount, 1);
     assert.equal(storeUser.callCount, 0);
     assert.equal(addNotification.callCount, 1);
@@ -131,7 +159,11 @@ describe('ProfileCharmstoreLogin ', function() {
     const wrapper = renderComponent({
       changeState
     });
-    wrapper.find('.link').at(1).props().onClick();
+    wrapper
+      .find('.link')
+      .at(1)
+      .props()
+      .onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       profile: null,

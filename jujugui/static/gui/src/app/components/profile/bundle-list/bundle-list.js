@@ -72,7 +72,9 @@ class ProfileBundleList extends React.Component {
               loading: false
             });
           },
-          'bundle'));
+          'bundle'
+        )
+      );
     });
   }
 
@@ -121,7 +123,7 @@ class ProfileBundleList extends React.Component {
     let content;
     const props = this.props;
     if (this.state.loading) {
-      content = (<Spinner />);
+      content = <Spinner />;
     } else if (props.isActiveUsersProfile && !(this.state.data || []).length) {
       if (!props.user) {
         content = (
@@ -129,10 +131,14 @@ class ProfileBundleList extends React.Component {
             addNotification={props.addNotification}
             bakery={props.bakery}
             changeState={props.changeState}
-            charmstore={shapeup.fromShape(props.charmstore,
-              ProfileCharmstoreLogin.propTypes.charmstore)}
+            charmstore={shapeup.fromShape(
+              props.charmstore,
+              ProfileCharmstoreLogin.propTypes.charmstore
+            )}
             storeUser={props.storeUser}
-            type="bundles" />);
+            type="bundles"
+          />
+        );
       } else {
         content = (
           <React.Fragment>
@@ -141,11 +147,14 @@ class ProfileBundleList extends React.Component {
               Learn about&nbsp;
               <a
                 href="https://jujucharms.com/docs/stable/charms-bundles#creating-a-bundle"
-                target="_blank">
+                target="_blank"
+              >
                 writing your own bundle
-              </a>.
+              </a>
+              .
             </p>
-          </React.Fragment>);
+          </React.Fragment>
+        );
       }
     } else {
       const rows = (this.state.data || []).map(bundle => {
@@ -166,68 +175,69 @@ class ProfileBundleList extends React.Component {
         const modelName = props.getModelName();
         const title = `Add to ${modelName || 'model'}`;
         return {
-          columns: [{
-            content: (
-              <a
-                href={`${props.baseURL}${path}`}
-                onClick={this._navigateToBundle.bind(this, path)}>
-                {bundle.name}
-              </a>)
-          }, {
-            content: (
-              <IconList
-                applications={applications}
-                changeState={props.changeState}
-                generatePath={props.generatePath} />)
-          }, {
-            content: bundle.machineCount,
-            classes: ['u-align-text--right']
-          }, {
-            content: bundle.unitCount,
-            classes: ['u-align-text--right']
-          }, {
-            content: version,
-            classes: ['u-align-text--right']
-          }],
+          columns: [
+            {
+              content: (
+                <a
+                  href={`${props.baseURL}${path}`}
+                  onClick={this._navigateToBundle.bind(this, path)}
+                >
+                  {bundle.name}
+                </a>
+              )
+            },
+            {
+              content: (
+                <IconList
+                  applications={applications}
+                  changeState={props.changeState}
+                  generatePath={props.generatePath}
+                />
+              )
+            },
+            {
+              content: bundle.machineCount,
+              classes: ['u-align-text--right']
+            },
+            {
+              content: bundle.unitCount,
+              classes: ['u-align-text--right']
+            },
+            {
+              content: version,
+              classes: ['u-align-text--right']
+            }
+          ],
           expandedContent: (
             <React.Fragment>
               <td>
                 <span className="profile-bundle-list__meta">
                   <a
                     href={`${props.baseURL}${path}`}
-                    onClick={this._navigateToBundle.bind(this, path)}>
+                    onClick={this._navigateToBundle.bind(this, path)}
+                  >
                     {bundle.name}
                   </a>
                   {bundle.description ? (
-                    <span className="entity__desc u-hide--small">
-                      {bundle.description}
-                    </span>
+                    <span className="entity__desc u-hide--small">{bundle.description}</span>
                   ) : null}
                 </span>
                 {getDiagramURL ? (
-                  <EntityContentDiagram
-                    diagramUrl={getDiagramURL(bundle.id)} />) : null}
+                  <EntityContentDiagram diagramUrl={getDiagramURL(bundle.id)} />
+                ) : null}
               </td>
               <td>
                 {bundle.bugUrl ? (
-                  <a
-                    href={bundle.bugUrl}
-                    onClick={e => e.stopPropagation}
-                    target="_blank">
+                  <a href={bundle.bugUrl} onClick={e => e.stopPropagation} target="_blank">
                     Bugs
                   </a>
                 ) : null}
                 {bundle.homepage ? (
-                  <a
-                    href={bundle.homepage}
-                    onClick={e => e.stopPropagation}
-                    target="_blank">
+                  <a href={bundle.homepage} onClick={e => e.stopPropagation} target="_blank">
                     Homepage
                   </a>
                 ) : null}
-                {bundle.bugUrl || bundle.homepage ? (
-                  <hr />
-                ) : null}
+                {bundle.bugUrl || bundle.homepage ? <hr /> : null}
                 <span className="entity__permissions">
                   Writeable:
                   {props.generatePermissions(bundle.perm.write, props)}
@@ -237,23 +247,17 @@ class ProfileBundleList extends React.Component {
                   {props.generatePermissions(bundle.perm.read, props)}
                 </span>
               </td>
-              <td className="u-align-text--right">
-                {bundle.machineCount}
-              </td>
-              <td className="u-align-text--right">
-                {bundle.unitCount}
-              </td>
+              <td className="u-align-text--right">{bundle.machineCount}</td>
+              <td className="u-align-text--right">{bundle.unitCount}</td>
               <td className="entity__release u-align-text--right">
-                <span>
-                  {version}
-                </span>
+                <span>{version}</span>
                 <button
                   className="p-button--positive"
                   disabled={this.props.acl.isReadOnly()}
                   onClick={e => props.handleDeploy(e, bundle.id, this.props)}
-                  tooltip={
-                    `Add this ${bundle.entityType} to
-                      ${this.modelName ? 'your current' : 'a new'} model`}>
+                  tooltip={`Add this ${bundle.entityType} to
+                      ${this.modelName ? 'your current' : 'a new'} model`}
+                >
                   {title}
                 </button>
               </td>
@@ -267,30 +271,35 @@ class ProfileBundleList extends React.Component {
         <React.Fragment>
           {this._generateTitle()}
           <BasicTable
-            headers={[{
-              content: 'Name'
-            }, {
-              content: ''
-            }, {
-              content: 'Machines',
-              classes: ['u-align-text--right']
-            }, {
-              content: 'Units',
-              classes: ['u-align-text--right']
-            }, {
-              content: 'Release',
-              classes: ['u-align-text--right']
-            }]}
+            headers={[
+              {
+                content: 'Name'
+              },
+              {
+                content: ''
+              },
+              {
+                content: 'Machines',
+                classes: ['u-align-text--right']
+              },
+              {
+                content: 'Units',
+                classes: ['u-align-text--right']
+              },
+              {
+                content: 'Release',
+                classes: ['u-align-text--right']
+              }
+            ]}
             rows={rows}
-            sort={this._byName.bind(this)} />
-        </React.Fragment>);
+            sort={this._byName.bind(this)}
+          />
+        </React.Fragment>
+      );
     }
-    return (
-      <div className="profile-bundle-list">
-        {content}
-      </div>);
+    return <div className="profile-bundle-list">{content}</div>;
   }
-};
+}
 
 ProfileBundleList.propTypes = {
   acl: shapeup.shape({

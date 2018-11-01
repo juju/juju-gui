@@ -78,33 +78,36 @@ class DeploymentPlanTable extends React.Component {
       const plan = this.state.plans[app.charm] || {};
       const metered = Object.keys(plan.metrics || {}).join(', ');
       rows.push({
-        columns: [{
-          content: (
-            <div>
-              <img
-                alt={app.name}
-                className="deployment-plan-table__charm-icon"
-                src={app.icon} />
-              <span className="deployment-plan-table__charm-name">
-                {app.name}
-              </span>
-            </div>)
-        }, {
-          content: (
-            <div>
-              <p className="deployment-plan-table__plan-description">
-                {plan.description || '--'}
-              </p>
-            </div>)
-        }, {
-          content: (
-            <span className="deployment-plan-table__metered">
-              {metered}
-            </span>)
-        }, {
-          content: plan.price || '--',
-          classes: ['u-align--right']
-        }],
+        columns: [
+          {
+            content: (
+              <div>
+                <img
+                  alt={app.name}
+                  className="deployment-plan-table__charm-icon"
+                  src={app.icon}
+                />
+                <span className="deployment-plan-table__charm-name">{app.name}</span>
+              </div>
+            )
+          },
+          {
+            content: (
+              <div>
+                <p className="deployment-plan-table__plan-description">
+                  {plan.description || '--'}
+                </p>
+              </div>
+            )
+          },
+          {
+            content: <span className="deployment-plan-table__metered">{metered}</span>
+          },
+          {
+            content: plan.price || '--',
+            classes: ['u-align--right']
+          }
+        ],
         key: app.id
       });
     });
@@ -117,24 +120,30 @@ class DeploymentPlanTable extends React.Component {
         <BasicTable
           headerClasses={['deployment-plan-table__header-row']}
           headerColumnClasses={['deployment-plan-table__header-column']}
-          headers={[{
-            content: 'Applications'
-          }, {
-            content: 'Plan'
-          }, {
-            content: 'Metered'
-          }, {
-            content: 'Price',
-            classes: ['u-align--right']
-          }]}
+          headers={[
+            {
+              content: 'Applications'
+            },
+            {
+              content: 'Plan'
+            },
+            {
+              content: 'Metered'
+            },
+            {
+              content: 'Price',
+              classes: ['u-align--right']
+            }
+          ]}
           rowClasses={['deployment-plan-table__row']}
           rowColumnClasses={['deployment-plan-table__column']}
           rows={this._generateRows()}
-          tableClasses={['no-margin-bottom']} />
+          tableClasses={['no-margin-bottom']}
+        />
       </div>
     );
   }
-};
+}
 
 DeploymentPlanTable.propTypes = {
   addNotification: PropTypes.func.isRequired,

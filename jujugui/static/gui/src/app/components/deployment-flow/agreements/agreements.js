@@ -33,10 +33,7 @@ class DeploymentAgreements extends React.Component {
     if (!this.state.showTerms) {
       return null;
     }
-    return (
-      <TermsPopup
-        close={this._toggleTerms.bind(this)}
-        terms={this.props.terms} />);
+    return <TermsPopup close={this._toggleTerms.bind(this)} terms={this.props.terms} />;
   }
 
   /**
@@ -50,11 +47,10 @@ class DeploymentAgreements extends React.Component {
     const terms = this.props.terms;
     if (terms && terms.length) {
       return (
-        <Button
-          action={this._toggleTerms.bind(this)}
-          type="inline-base">
+        <Button action={this._toggleTerms.bind(this)} type="inline-base">
           View terms
-        </Button>);
+        </Button>
+      );
     }
   }
 
@@ -65,7 +61,8 @@ class DeploymentAgreements extends React.Component {
       'deployment-flow__deploy-option',
       {
         'deployment-flow__deploy-option--disabled': this.props.disabled
-      });
+      }
+    );
     return (
       <div className={classes}>
         <input
@@ -73,10 +70,9 @@ class DeploymentAgreements extends React.Component {
           disabled={disabled}
           id="terms"
           onChange={this.props.onCheckboxChange}
-          type="checkbox" />
-        <label
-          className="deployment-flow__deploy-label"
-          htmlFor="terms">
+          type="checkbox"
+        />
+        <label className="deployment-flow__deploy-label" htmlFor="terms">
           I agree to all terms.
           {this._generateTermsLink()}
         </label>
@@ -84,7 +80,7 @@ class DeploymentAgreements extends React.Component {
       </div>
     );
   }
-};
+}
 
 DeploymentAgreements.propTypes = {
   acl: PropTypes.object.isRequired,

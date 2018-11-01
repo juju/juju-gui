@@ -1,7 +1,6 @@
 /* Copyright (C) 2018 Canonical Ltd. */
 'use strict';
 
-
 const utils = {};
 /**
   Normalised statuses for use with the status components.
@@ -15,11 +14,7 @@ utils.STATUSES = {
 /**
   The order of priority for displaying a status.
 */
-utils.STATUS_ORDER = [
-  utils.STATUSES.ERROR,
-  utils.STATUSES.PENDING,
-  utils.STATUSES.OK
-];
+utils.STATUS_ORDER = [utils.STATUSES.ERROR, utils.STATUSES.PENDING, utils.STATUSES.OK];
 
 /**
   Get the highest status from a list of statuses.
@@ -44,8 +39,8 @@ utils.getHighestStatus = statuses => {
   @param status {String} The raw value.
   @returns {String} The normalised status ('ok', 'error' or 'pending').
 */
-utils.normaliseStatus = value => {
-  switch(value) {
+(utils.normaliseStatus = value => {
+  switch (value) {
     case 'active':
     case 'idle':
     case 'started':
@@ -64,26 +59,25 @@ utils.normaliseStatus = value => {
     default:
       return utils.STATUSES.OK;
   }
-},
-
-/**
+}),
+  /**
   Return an element class name suitable for the given value.
   @param {String} prefix The class prefix.
   @param {String} value The provided value.
   @returns {String} The class name ('ok', 'error' or '').
 */
-utils.getStatusClass = (prefix, value) => {
-  if (!value) {
-    // If there is no value then ignore it. This might be the case when an
-    // entity's state property only has a value for pending/error states.
-    return '';
-  }
-  if (!Array.isArray(value)) {
-    value = [value];
-  }
-  const normalised = value.map(val => utils.normaliseStatus(val));
-  return prefix + utils.getHighestStatus(normalised);
-};
+  (utils.getStatusClass = (prefix, value) => {
+    if (!value) {
+      // If there is no value then ignore it. This might be the case when an
+      // entity's state property only has a value for pending/error states.
+      return '';
+    }
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
+    const normalised = value.map(val => utils.normaliseStatus(val));
+    return prefix + utils.getHighestStatus(normalised);
+  });
 
 /**
   Filter units by those that have been committed.

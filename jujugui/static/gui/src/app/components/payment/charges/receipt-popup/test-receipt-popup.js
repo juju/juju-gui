@@ -7,14 +7,15 @@ const enzyme = require('enzyme');
 const ReceiptPopup = require('./receipt-popup');
 
 describe('ReceiptPopup', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ReceiptPopup
-      addNotification={options.addNotification || sinon.stub()}
-      chargeId={options.chargeId || 'charge123'}
-      close={options.close || sinon.stub()}
-      getReceipt={options.getReceipt || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ReceiptPopup
+        addNotification={options.addNotification || sinon.stub()}
+        chargeId={options.chargeId || 'charge123'}
+        close={options.close || sinon.stub()}
+        getReceipt={options.getReceipt || sinon.stub()}
+      />
+    );
 
   it('can display the loading spinner', function() {
     const wrapper = renderComponent();
@@ -25,8 +26,12 @@ describe('ReceiptPopup', function() {
     const getReceipt = sinon.stub().callsArgWith(1, null, '<html>...</html>');
     const wrapper = renderComponent({getReceipt});
     assert.equal(
-      wrapper.find('iframe').prop('src').includes('%3Chtml%3E...%3C%2Fhtml%3E'),
-      true);
+      wrapper
+        .find('iframe')
+        .prop('src')
+        .includes('%3Chtml%3E...%3C%2Fhtml%3E'),
+      true
+    );
   });
 
   it('can handle errors when getting the receipt', function() {

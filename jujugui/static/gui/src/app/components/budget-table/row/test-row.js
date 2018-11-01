@@ -11,33 +11,38 @@ const Button = require('../../shared/button/button');
 describe('BudgetTableRow', function() {
   var acl, addNotification, listPlansForCharm, parseTermId, service;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <BudgetTableRow
-      acl={options.acl || acl}
-      addNotification={options.addNotification || addNotification}
-      allocationEditable={options.allocationEditable}
-      charmsGetById={options.charmsGetById}
-      extraInfo={options.extraInfo}
-      listPlansForCharm={options.listPlansForCharm || listPlansForCharm}
-      parseTermId={options.parseTermId}
-      plansEditable={options.plansEditable}
-      service={options.service || service}
-      showTerms={options.showTerms}
-      withPlans={options.withPlans === undefined ? true : options.withPlans} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <BudgetTableRow
+        acl={options.acl || acl}
+        addNotification={options.addNotification || addNotification}
+        allocationEditable={options.allocationEditable}
+        charmsGetById={options.charmsGetById}
+        extraInfo={options.extraInfo}
+        listPlansForCharm={options.listPlansForCharm || listPlansForCharm}
+        parseTermId={options.parseTermId}
+        plansEditable={options.plansEditable}
+        service={options.service || service}
+        showTerms={options.showTerms}
+        withPlans={options.withPlans === undefined ? true : options.withPlans}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     addNotification = sinon.stub();
-    listPlansForCharm = sinon.stub().callsArgWith(1, null, [{
-      url: 'plan 1',
-      description: 'The basic support plan',
-      price: '$5'
-    }, {
-      url: 'plan 2',
-      description: 'The expensive support plan',
-      price: '$1,000,000'
-    }]);
+    listPlansForCharm = sinon.stub().callsArgWith(1, null, [
+      {
+        url: 'plan 1',
+        description: 'The basic support plan',
+        price: '$5'
+      },
+      {
+        url: 'plan 2',
+        description: 'The expensive support plan',
+        price: '$1,000,000'
+      }
+    ]);
     parseTermId = sinon.stub().returns();
     parseTermId.withArgs('apache2-terms').returns({
       name: 'apache2-terms',
@@ -94,13 +99,12 @@ describe('BudgetTableRow', function() {
             'twelve-col': true
           }}
           clickable={false}
-          expanded={false}>
+          expanded={false}
+        >
           <div>
             <div>
               <div className="five-col no-margin-bottom">
-                <img
-                  className="budget-table__charm-icon"
-                  src="landscape.svg" />
+                <img className="budget-table__charm-icon" src="landscape.svg" />
                 Landscape
               </div>
             </div>
@@ -108,26 +112,21 @@ describe('BudgetTableRow', function() {
               <div className="three-col no-margin-bottom">
                 <span className="budget-table-row__plan">You need to select a plan</span>
               </div>
-              <div className="two-col no-margin-bottom">
-                $1
-              </div>
+              <div className="two-col no-margin-bottom">$1</div>
               <div className="two-col no-margin-bottom">
                 <span onClick={undefined}>$1</span>
               </div>
-              <div className="one-col no-margin-bottom last-col">
-                $1
-              </div>
+              <div className="one-col no-margin-bottom last-col">$1</div>
               {undefined}
             </div>
             <div className="twelve-col no-margin-bottom budget-table-row__extra" />
             {undefined}
           </div>
-          <div className="budget-table-row__change-plan-wrapper">
-            {undefined}
-          </div>
+          <div className="budget-table-row__change-plan-wrapper">{undefined}</div>
         </ExpandingRow>
         {undefined}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -138,12 +137,13 @@ describe('BudgetTableRow', function() {
 
   it('can display extra info', function() {
     const wrapper = renderComponent({
-      extraInfo: (<span>extra</span>)
+      extraInfo: <span>extra</span>
     });
     var expected = (
       <div className="twelve-col no-margin-bottom budget-table-row__extra">
         <span>extra</span>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.budget-table-row__extra'), expected);
   });
 
@@ -172,7 +172,10 @@ describe('BudgetTableRow', function() {
     };
     const wrapper = renderComponent({service});
     const expected = (
-      <span className="budget-table-row__plan">{'plan 1'} ({'$5'})</span>);
+      <span className="budget-table-row__plan">
+        {'plan 1'} ({'$5'})
+      </span>
+    );
     assert.compareJSX(wrapper.find('.budget-table-row__plan'), expected);
   });
 
@@ -199,13 +202,10 @@ describe('BudgetTableRow', function() {
     var expected = (
       <div className="budget-table-row__change-plan-wrapper">
         <div className="budget-table-row__change-plan">
-          <div className={
-            'budget-table__current twelve-col no-margin-bottom'}>
+          <div className={'budget-table__current twelve-col no-margin-bottom'}>
             <div>
               <div className="five-col no-margin-bottom">
-                <img
-                  className="budget-table__charm-icon"
-                  src="landscape.svg" />
+                <img className="budget-table__charm-icon" src="landscape.svg" />
                 Landscape
               </div>
             </div>
@@ -217,17 +217,17 @@ describe('BudgetTableRow', function() {
                   <h4>plan 1</h4>
                   <p>The basic support plan</p>
                 </div>
-                <div className="two-col">
-                  $5
-                </div>
-                <div className="two-col">
-                  Recommended allocation: $550.
-                </div>
+                <div className="two-col">$5</div>
+                <div className="two-col">Recommended allocation: $550.</div>
                 <div className="two-col last-col">
                   <Button
-                    action={wrapper.find('Button').at(1).prop('action')}
+                    action={wrapper
+                      .find('Button')
+                      .at(1)
+                      .prop('action')}
                     disabled={false}
-                    type="neutral">
+                    type="neutral"
+                  >
                     Select plan
                   </Button>
                 </div>
@@ -237,17 +237,17 @@ describe('BudgetTableRow', function() {
                   <h4>plan 2</h4>
                   <p>The expensive support plan</p>
                 </div>
-                <div className="two-col">
-                  $1,000,000
-                </div>
-                <div className="two-col">
-                  Recommended allocation: $550.
-                </div>
+                <div className="two-col">$1,000,000</div>
+                <div className="two-col">Recommended allocation: $550.</div>
                 <div className="two-col last-col">
                   <Button
-                    action={wrapper.find('Button').at(2).prop('action')}
+                    action={wrapper
+                      .find('Button')
+                      .at(2)
+                      .prop('action')}
                     disabled={false}
-                    type="neutral">
+                    type="neutral"
+                  >
                     Select plan
                   </Button>
                 </div>
@@ -255,21 +255,28 @@ describe('BudgetTableRow', function() {
             ]}
           </ul>
           <p className="budget-table__plan-notice twelve-col">
-            By setting an allocation and selecting a plan you agree to the
-            plans terms and conditions
+            By setting an allocation and selecting a plan you agree to the plans terms and
+            conditions
           </p>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.budget-table-row__change-plan-wrapper'), expected);
-    assert.compareJSX(wrapper.find('.budget-table__edit'), (
+    assert.compareJSX(
+      wrapper.find('.budget-table__edit'),
       <div className="budget-table__edit">
         <Button
-          action={wrapper.find('Button').at(0).prop('action')}
+          action={wrapper
+            .find('Button')
+            .at(0)
+            .prop('action')}
           disabled={false}
-          type="neutral">
+          type="neutral"
+        >
           Change plan
         </Button>
-      </div>));
+      </div>
+    );
   });
 
   it('can disable controls when read only', function() {
@@ -278,9 +285,27 @@ describe('BudgetTableRow', function() {
       acl,
       plansEditable: true
     });
-    assert.equal(wrapper.find('Button').at(0).prop('disabled'), true);
-    assert.equal(wrapper.find('Button').at(1).prop('disabled'), true);
-    assert.equal(wrapper.find('Button').at(2).prop('disabled'), true);
+    assert.equal(
+      wrapper
+        .find('Button')
+        .at(0)
+        .prop('disabled'),
+      true
+    );
+    assert.equal(
+      wrapper
+        .find('Button')
+        .at(1)
+        .prop('disabled'),
+      true
+    );
+    assert.equal(
+      wrapper
+        .find('Button')
+        .at(2)
+        .prop('disabled'),
+      true
+    );
   });
 
   it('will abort the request when unmounting', function() {
@@ -308,15 +333,20 @@ describe('BudgetTableRow', function() {
     const showTerms = sinon.stub();
     const wrapper = renderComponent({charmsGetById, parseTermId, showTerms});
     const expected = (
-      <div className={
-        'two-col prepend-five no-margin-bottom budget-table-row__link ' +
-        'budget-table-row__terms-link'}>
+      <div
+        className={
+          'two-col prepend-five no-margin-bottom budget-table-row__link ' +
+          'budget-table-row__terms-link'
+        }
+      >
         <Button
           action={wrapper.find('.budget-table-row__terms-link Button').prop('action')}
-          type="base">
+          type="base"
+        >
           Terms
         </Button>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.budget-table-row__terms-link'), expected);
   });
 
@@ -378,7 +408,10 @@ describe('BudgetTableRow', function() {
       content: 'Apache2 terms.'
     });
     const wrapper = renderComponent({charmsGetById, parseTermId, showTerms});
-    wrapper.find('.budget-table-row__terms-link Button').props().action();
+    wrapper
+      .find('.budget-table-row__terms-link Button')
+      .props()
+      .action();
     wrapper.update();
     const popup = wrapper.find('TermsPopup');
     assert.equal(popup.length, 1);
@@ -405,7 +438,10 @@ describe('BudgetTableRow', function() {
     });
     const showTerms = sinon.stub().callsArgWith(2, 'uh oh!', null);
     const wrapper = renderComponent({charmsGetById, parseTermId, showTerms});
-    wrapper.find('.budget-table-row__terms-link Button').props().action();
+    wrapper
+      .find('.budget-table-row__terms-link Button')
+      .props()
+      .action();
     wrapper.update();
     assert.equal(addNotification.callCount, 2);
     assert.deepEqual(addNotification.args[0][0], {

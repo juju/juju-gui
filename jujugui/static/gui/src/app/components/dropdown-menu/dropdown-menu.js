@@ -12,7 +12,6 @@ const Panel = require('../shared/panel/panel');
   Creates a dropdown menu with the supplied children as items.
 */
 class DropdownMenu extends React.Component {
-
   /**
     When the menu is shown, clicking anywhere but the menu will close
     the menu.
@@ -23,26 +22,19 @@ class DropdownMenu extends React.Component {
   }
 
   render() {
-    const instanceName = classNames(
-      'dropdown-menu',
-      this.props.classes
-    );
+    const instanceName = classNames('dropdown-menu', this.props.classes);
     return (
       <Panel instanceName={instanceName} visible={true}>
-        <ul className="dropdown-menu__list">
-          {this.props.children}
-        </ul>
+        <ul className="dropdown-menu__list">{this.props.children}</ul>
       </Panel>
     );
   }
-};
+}
 
 DropdownMenu.propTypes = {
   // The children need to be <li>.
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node])
+    .isRequired,
   classes: PropTypes.array,
   handleClickOutside: PropTypes.func
 };

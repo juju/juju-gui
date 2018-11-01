@@ -45,8 +45,7 @@ class Sharing extends React.Component {
   */
   _getModelUserInfo() {
     this.setState({loadingUsers: true}, () => {
-      const xhr = this.props.getModelUserInfo(
-        this._getModelUserInfoCallback.bind(this));
+      const xhr = this.props.getModelUserInfo(this._getModelUserInfoCallback.bind(this));
       this.xhrs.push(xhr);
     });
   }
@@ -114,13 +113,16 @@ class Sharing extends React.Component {
     const username = this.refs.username.getValue();
     const access = this.refs.access.getValue();
     this.setState({sending: true});
-    this.props.grantModelAccess(username, access,
+    this.props.grantModelAccess(
+      username,
+      access,
       // Wrap the ModelAccessCallback to set the state that modify the add
       // button depending on success.
       function(error) {
         const success = this._modifyModelAccessCallback(error);
         this.setState({sent: success});
-      }.bind(this));
+      }.bind(this)
+    );
   }
 
   /**
@@ -134,8 +136,11 @@ class Sharing extends React.Component {
     // downgrades it to the next level at the moment (as of 2.0). So if you
     // want a user to have no access, you have to specify 'read'. Because:
     // admin -> write -> read -> no access.
-    this.props.revokeModelAccess(user.name, 'read',
-      this._modifyModelAccessCallback.bind(this));
+    this.props.revokeModelAccess(
+      user.name,
+      'read',
+      this._modifyModelAccessCallback.bind(this)
+    );
   }
 
   /**
@@ -161,12 +166,8 @@ class Sharing extends React.Component {
         return (
           <div className="sharing__user" key={user.name}>
             <div className="sharing__user-details">
-              <div className="sharing__user-name">
-                {user.displayName}
-              </div>
-              <div className="sharing__user-display-name">
-                {user.err}
-              </div>
+              <div className="sharing__user-name">{user.displayName}</div>
+              <div className="sharing__user-display-name">{user.err}</div>
             </div>
           </div>
         );
@@ -176,9 +177,7 @@ class Sharing extends React.Component {
         lastConnection = (
           <span>
             last connection:&nbsp;
-            <DateDisplay
-              date={user.lastConnection}
-              relative={true} />
+            <DateDisplay date={user.lastConnection} relative={true} />
           </span>
         );
       }
@@ -187,12 +186,8 @@ class Sharing extends React.Component {
         const revokeUserAccess = this._revokeModelAccess.bind(this, user);
         revokeMarkup = (
           <div className="sharing__user-revoke">
-            <Button
-              action={revokeUserAccess}
-              tooltip="Remove user">
-              <SvgIcon
-                name="close_16"
-                size="16" />
+            <Button action={revokeUserAccess} tooltip="Remove user">
+              <SvgIcon name="close_16" size="16" />
             </Button>
           </div>
         );
@@ -200,19 +195,11 @@ class Sharing extends React.Component {
       return (
         <div className="sharing__user" key={user.name}>
           <div className="sharing__user-details">
-            <div className="sharing__user-name">
-              {user.displayName}
-            </div>
-            <div className="sharing__user-display-name">
-              {user.domain} user
-            </div>
-            <div className="sharing__user-last-connection">
-              {lastConnection}
-            </div>
+            <div className="sharing__user-name">{user.displayName}</div>
+            <div className="sharing__user-display-name">{user.domain} user</div>
+            <div className="sharing__user-last-connection">{lastConnection}</div>
           </div>
-          <div className="sharing__user-access">
-            {user.access}
-          </div>
+          <div className="sharing__user-access">{user.access}</div>
           {revokeMarkup}
         </div>
       );
@@ -233,21 +220,27 @@ class Sharing extends React.Component {
     if (!this.props.canShareModel) {
       return;
     }
-    const accessOptions = [{
-      label: 'Read',
-      value: 'read'
-    }, {
-      label: 'Write',
-      value: 'write'
-    }, {
-      label: 'Admin',
-      value: 'admin'
-    }];
+    const accessOptions = [
+      {
+        label: 'Read',
+        value: 'read'
+      },
+      {
+        label: 'Write',
+        value: 'write'
+      },
+      {
+        label: 'Admin',
+        value: 'admin'
+      }
+    ];
     const error = this.state.inviteError ? (
       <div className="sharing__invite--error">
         <b>Error:</b> {this.state.inviteError}
       </div>
-    ) : undefined;
+    ) : (
+      undefined
+    );
     return (
       <div className="sharing__invite">
         <div className="sharing__invite--header">Add a user</div>
@@ -259,17 +252,13 @@ class Sharing extends React.Component {
               onKeyUp={this._handleUsernameInputChange.bind(this)}
               placeholder="Username"
               ref="username"
-              required={true} />
+              required={true}
+            />
           </div>
           <div className="sharing__invite--access">
-            <InsetSelect
-              label="Access"
-              options={accessOptions}
-              ref="access" />
+            <InsetSelect label="Access" options={accessOptions} ref="access" />
           </div>
-          <div className="sharing__invite--grant-button">
-            {this.generateAddButton()}
-          </div>
+          <div className="sharing__invite--grant-button">{this.generateAddButton()}</div>
           {error}
         </form>
       </div>
@@ -283,14 +272,17 @@ class Sharing extends React.Component {
   */
   generateAddButton() {
     if (this.state.sending) {
-      return (<Button
-        disabled={true}
-        ref="grantButton"
-        submit={true}
-        tooltip="Add user"
-        type="positive">
-        Add
-      </Button>);
+      return (
+        <Button
+          disabled={true}
+          ref="grantButton"
+          submit={true}
+          tooltip="Add user"
+          type="positive"
+        >
+          Add
+        </Button>
+      );
     } else if (this.state.sent) {
       // We want the button to transition back to it's resting state after a
       // set amount of time, so make a closure then trigger it after 1.5s.
@@ -300,25 +292,29 @@ class Sharing extends React.Component {
         };
       })();
       setTimeout(sent, 1500);
-      return (<Button
-        disabled={!this.state.canAdd}
-        ref="grantButton"
-        submit={true}
-        tooltip="Add user"
-        type="positive">
-        <SvgIcon
-          name="tick_16"
-          size="16" />
-      </Button>);
+      return (
+        <Button
+          disabled={!this.state.canAdd}
+          ref="grantButton"
+          submit={true}
+          tooltip="Add user"
+          type="positive"
+        >
+          <SvgIcon name="tick_16" size="16" />
+        </Button>
+      );
     } else {
-      return (<Button
-        disabled={!this.state.canAdd}
-        ref="grantButton"
-        submit={true}
-        tooltip="Add user"
-        type="positive">
-        Add
-      </Button>);
+      return (
+        <Button
+          disabled={!this.state.canAdd}
+          ref="grantButton"
+          submit={true}
+          tooltip="Add user"
+          type="positive"
+        >
+          Add
+        </Button>
+      );
     }
   }
 
@@ -329,30 +325,21 @@ class Sharing extends React.Component {
   render() {
     return (
       <div>
-        <Popup
-          className="sharing__popup"
-          close={this.props.closeHandler}
-          title="Share">
+        <Popup className="sharing__popup" close={this.props.closeHandler} title="Share">
           {this._generateInvite()}
           <div className="sharing__users-header">
             <div className="sharing__users-header-user">User</div>
             <div className="sharing__users-header-access">Access</div>
           </div>
-          <div className="sharing__users">
-            {this._generateUsersWithAccess()}
-          </div>
-          <Button
-            action={this.props.closeHandler}
-            extraClasses="right"
-            type="inline-neutral">
+          <div className="sharing__users">{this._generateUsersWithAccess()}</div>
+          <Button action={this.props.closeHandler} extraClasses="right" type="inline-neutral">
             Done
           </Button>
         </Popup>
       </div>
     );
   }
-};
-
+}
 
 Sharing.propTypes = {
   addNotification: PropTypes.func,

@@ -20,7 +20,8 @@ describe('Profile Header', function() {
             isCurrent: true,
             profile: 'spinach'
           }
-        } />
+        }
+      />
     );
 
   beforeEach(() => {

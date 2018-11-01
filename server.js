@@ -24,7 +24,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 process.chdir(__dirname);
 
 var server = require('./lib/server.js'),
-    config = require('./config').config.server;
+  config = require('./config').config.server;
 
 var port = config.port || process.env.PORT || 8888;
 

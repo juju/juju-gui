@@ -23,7 +23,6 @@ const User = require('../app/user/user');
 const utils = require('../app/init/testing-utils');
 
 (function() {
-
   describe('Juju API utilities', function() {
     var environments;
 
@@ -41,14 +40,8 @@ const utils = require('../app/init/testing-utils');
     it('provides a way to retrieve a name from an endpoint', function() {
       // Test both an endpoint with a name and one without, as may occur in
       // hand-crafted bundles.
-      var endpointA = [
-        'foo',
-        {name: 'bar'}
-      ];
-      var endpointB = [
-        'bar',
-        {}
-      ];
+      var endpointA = ['foo', {name: 'bar'}];
+      var endpointB = ['bar', {}];
       assert.equal('foo:bar', environments.endpointToName(endpointA));
       assert.equal('bar', environments.endpointToName(endpointB));
     });
@@ -64,20 +57,19 @@ const utils = require('../app/init/testing-utils');
 
     it('provides a way to lowercase the keys of an object', function() {
       var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
-          expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
-          result = environments.lowerObjectKeys(obj);
+        expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
+        result = environments.lowerObjectKeys(obj);
       assert.deepEqual(expected, result);
     });
 
     it('provides a way to convert object values to strings', function() {
       var obj = {key1: 42, key2: false, key3: null, key4: 'foo'},
-          expected = {key1: '42', key2: 'false', key3: null, key4: 'foo'},
-          result = environments.stringifyObjectValues(obj);
+        expected = {key1: '42', key2: 'false', key3: null, key4: 'foo'},
+        result = environments.stringifyObjectValues(obj);
       assert.deepEqual(expected, result);
     });
 
     describe('parsePlacement', function() {
-
       it('returns null if there is nothing to parse', function() {
         var placement = environments.parsePlacement('');
         assert.strictEqual(placement, null);
@@ -97,9 +89,7 @@ const utils = require('../app/init/testing-utils');
         var placement = environments.parsePlacement('42');
         assert.deepEqual(placement, {scope: '#', directive: '42'});
       });
-
     });
-
   });
 
   describe('Juju API', function() {
@@ -122,17 +112,24 @@ const utils = require('../app/init/testing-utils');
         return new function() {
           return {
             store: {},
-            setItem: function(name, val) { this.store['name'] = val; },
-            getItem: function(name) { return this.store['name'] || null; }
+            setItem: function(name, val) {
+              this.store['name'] = val;
+            },
+            getItem: function(name) {
+              return this.store['name'] || null;
+            }
           };
-        };
+        }();
       };
       const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       ecs = new EnvironmentChangeSet({});
       env = new juju.environments.GoEnvironment({
-        conn: conn, user: userClass, ecs: ecs, modelUUID: 'uuid'
+        conn: conn,
+        user: userClass,
+        ecs: ecs,
+        modelUUID: 'uuid'
       });
       env.connect();
       env.set('facades', {
@@ -155,9 +152,15 @@ const utils = require('../app/init/testing-utils');
     });
 
     afterEach(function() {
-      cleanups.forEach(function(action) {action();});
-      if (env && env.destroy) {env.destroy();}
-      if (conn && conn.destroy) {conn.destroy();}
+      cleanups.forEach(function(action) {
+        action();
+      });
+      if (env && env.destroy) {
+        env.destroy();
+      }
+      if (conn && conn.destroy) {
+        conn.destroy();
+      }
     });
 
     var noopHandleLogin = function() {
@@ -216,9 +219,8 @@ const utils = require('../app/init/testing-utils');
     });
 
     describe('findFacadeVersion', function() {
-
       beforeEach(function() {
-        env.set('facades', {'Test': [0, 1]});
+        env.set('facades', {Test: [0, 1]});
       });
 
       afterEach(function() {});
@@ -247,19 +249,17 @@ const utils = require('../app/init/testing-utils');
       it('returns null if a facade version is not supported', function() {
         assert.strictEqual(env.findFacadeVersion('BadWolf', 42), null);
       });
-
     });
 
     describe('prepareConstraints', function() {
-
       it('converts a constraints string to an object', function() {
         // XXX Due to https://bugs.launchpad.net/juju/+bug/1755580
         // the prepareConstraints method converts cpu-cores to cores. See
         // the method for more information.
         var constraints = env.prepareConstraints('tags=foo,bar cpu-cores=4');
         assert.deepEqual(constraints, {
-          'cores': 4,
-          'tags': ['foo', 'bar']
+          cores: 4,
+          tags: ['foo', 'bar']
         });
       });
 
@@ -267,15 +267,24 @@ const utils = require('../app/init/testing-utils');
         // XXX Due to https://bugs.launchpad.net/juju/+bug/1755580
         // the prepareConstraints method converts cpu-cores to cores. See
         // the method for more information.
-        var constraints = env.prepareConstraints(
-          {'root-disk': '800', 'cpu-cores': '4', mem: '2000'});
-        assert.deepEqual(
-          constraints, {'root-disk': 800, 'cores': 4, mem: 2000});
+        var constraints = env.prepareConstraints({
+          'root-disk': '800',
+          'cpu-cores': '4',
+          mem: '2000'
+        });
+        assert.deepEqual(constraints, {
+          'root-disk': 800,
+          cores: 4,
+          mem: 2000
+        });
       });
 
       it('removes integer constraints with invalid values', function() {
-        var constraints = env.prepareConstraints(
-          {'cpu-power': 'four kquad', 'cpu-cores': 'tons', mem: 2000});
+        var constraints = env.prepareConstraints({
+          'cpu-power': 'four kquad',
+          'cpu-cores': 'tons',
+          mem: 2000
+        });
         assert.deepEqual(constraints, {mem: 2000});
       });
 
@@ -295,12 +304,14 @@ const utils = require('../app/init/testing-utils');
           'cpu-cores': 4,
           'cpu-power': null
         });
-        assert.deepEqual(constraints, {'cores': 4});
+        assert.deepEqual(constraints, {cores: 4});
       });
 
       it('removes unexpected constraints', function() {
-        var constraints = env.prepareConstraints(
-          {arch: 'i386', invalid: 'not-a-constraint'});
+        var constraints = env.prepareConstraints({
+          arch: 'i386',
+          invalid: 'not-a-constraint'
+        });
         assert.deepEqual(constraints, {arch: 'i386'});
       });
 
@@ -325,8 +336,9 @@ const utils = require('../app/init/testing-utils');
       });
 
       it('converts tags with spaces', function() {
-        var constraints = env.prepareConstraints(
-          {tags: 'first tag, second   tag'});
+        var constraints = env.prepareConstraints({
+          tags: 'first tag, second   tag'
+        });
         assert.deepEqual(constraints, {tags: ['first-tag', 'second-tag']});
       });
 
@@ -338,24 +350,19 @@ const utils = require('../app/init/testing-utils');
       });
 
       it('parses units on integer constraints', function() {
-        let constraints = env.prepareConstraints(
-          {'root-disk': '3m', mem: '5G'});
-        assert.equal(constraints['root-disk'], 3,
-          'Mebi unit not parsed properly');
-        assert.equal(constraints.mem, 5120,
-          'Gibi unit not parsed properly');
-        constraints = env.prepareConstraints(
-          {'root-disk': '4T', mem: '2p'});
-        assert.equal(constraints['root-disk'], 4194304,
-          'Tebi unit not parsed properly');
-        assert.equal(constraints.mem, 2147483648,
-          'Pebi unit not parsed properly');
+        let constraints = env.prepareConstraints({
+          'root-disk': '3m',
+          mem: '5G'
+        });
+        assert.equal(constraints['root-disk'], 3, 'Mebi unit not parsed properly');
+        assert.equal(constraints.mem, 5120, 'Gibi unit not parsed properly');
+        constraints = env.prepareConstraints({'root-disk': '4T', mem: '2p'});
+        assert.equal(constraints['root-disk'], 4194304, 'Tebi unit not parsed properly');
+        assert.equal(constraints.mem, 2147483648, 'Pebi unit not parsed properly');
       });
-
     });
 
     describe('login', function() {
-
       it('sends the correct login message', function() {
         noopHandleLogin();
         env.login();
@@ -389,9 +396,11 @@ const utils = require('../app/init/testing-utils');
         env.login();
         // Assume login to be the first request.
         conn.msg({'request-id': 1, error: 'Invalid user or password'});
-        assert.deepEqual(
-          env.get('user').controller,
-          {user: '', password: '', macaroons: null});
+        assert.deepEqual(env.get('user').controller, {
+          user: '',
+          password: '',
+          macaroons: null
+        });
         assert.isTrue(env.failedAuthentication);
       });
 
@@ -450,15 +459,14 @@ const utils = require('../app/init/testing-utils');
       it('calls currentModelInfo and watchAll after login', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1,
+        conn.msg({
+          'request-id': 1,
           response: {
-            facades: [
-              {name: 'Client', versions: [0]},
-              {name: 'ModelManager', versions: [2]}
-            ],
+            facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [2]}],
             'user-info': {},
             'model-tag': 'model-my-model'
-          }});
+          }
+        });
         var currentModelInfoMessage = conn.last_message(2);
         // ModelInfo is the second request.
         var currentModelInfoExpected = {
@@ -488,15 +496,17 @@ const utils = require('../app/init/testing-utils');
       it('stores user information', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1,
+        conn.msg({
+          'request-id': 1,
           response: {
-            facades: [
-              {name: 'Client', versions: [0]},
-              {name: 'ModelManager', versions: [2]}
-            ],
+            facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [2]}],
             'model-tag': 'model-42',
-            'user-info': {'controller-access': 'login', 'model-access': 'read'}
-          }});
+            'user-info': {
+              'controller-access': 'login',
+              'model-access': 'read'
+            }
+          }
+        });
         assert.strictEqual(env.get('controllerAccess'), 'login');
         assert.strictEqual(env.get('modelAccess'), 'read');
       });
@@ -504,18 +514,17 @@ const utils = require('../app/init/testing-utils');
       it('stores user information (legacy addmodel)', function() {
         env.login();
         // Assume login to be the first request.
-        conn.msg({'request-id': 1,
+        conn.msg({
+          'request-id': 1,
           response: {
-            facades: [
-              {name: 'Client', versions: [0]},
-              {name: 'ModelManager', versions: [2]}
-            ],
+            facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [2]}],
             'model-tag': 'model-42',
             'user-info': {
               'controller-access': 'addmodel',
               'model-access': 'admin'
             }
-          }});
+          }
+        });
         assert.strictEqual(env.get('controllerAccess'), 'add-model');
         assert.strictEqual(env.get('modelAccess'), 'admin');
       });
@@ -615,8 +624,7 @@ const utils = require('../app/init/testing-utils');
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
         var requestId = assertRequest(conn.last_message());
         conn.msg({'request-id': requestId, response: {}});
-        assert.strictEqual(
-          error, 'authentication failed: use a proper Juju 2 release');
+        assert.strictEqual(error, 'authentication failed: use a proper Juju 2 release');
       });
 
       it('succeeds after discharge', function() {
@@ -632,8 +640,7 @@ const utils = require('../app/init/testing-utils');
           response: {'discharge-required': 'discharge-required-macaroon'}
         });
         assert.strictEqual(conn.messages.length, 2, 'unexpected msg number');
-        requestId = assertRequest(
-          conn.last_message(), ['macaroon', 'discharge']);
+        requestId = assertRequest(conn.last_message(), ['macaroon', 'discharge']);
         conn.msg({
           'request-id': requestId,
           response: {
@@ -658,20 +665,17 @@ const utils = require('../app/init/testing-utils');
 
       it('succeeds with already stored macaroons', function() {
         env.get('user').controller = {
-          macaroons: ['already stored', 'macaroons']};
+          macaroons: ['already stored', 'macaroons']
+        };
         env.loginWithMacaroon(makeBakery(), callback);
         assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
-        const requestId = assertRequest(
-          conn.last_message(), ['already stored', 'macaroons']);
+        const requestId = assertRequest(conn.last_message(), ['already stored', 'macaroons']);
         conn.msg({
           'request-id': requestId,
           response: {
             'model-tag': 'model-42',
             'user-info': {identity: 'user-dalek'},
-            facades: [
-              {name: 'Client', versions: [0]},
-              {name: 'ModelManager', versions: [2]}
-            ]
+            facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [2]}]
           }
         });
         assert.strictEqual(error, null);
@@ -684,7 +688,6 @@ const utils = require('../app/init/testing-utils');
           ModelManager: [2]
         });
       });
-
     });
 
     describe('redirectInfo', function() {
@@ -755,8 +758,7 @@ const utils = require('../app/init/testing-utils');
       };
       // Assume currentModelInfo to be the first request.
       conn.msg({'request-id': 1, error: 'bad wolf'});
-      assert.strictEqual(
-        err, 'error retrieving current model information: bad wolf');
+      assert.strictEqual(err, 'error retrieving current model information: bad wolf');
       // Restore the original "console.error".
       console.error = original;
     });
@@ -1017,13 +1019,19 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('successfully adds units to an application', function(done) {
-      env.add_unit('django', 2, null, function(data) {
-        assert.strictEqual(data.applicationName, 'django');
-        assert.strictEqual(data.numUnits, 2);
-        assert.deepEqual(data.result, ['django/2', 'django/3']);
-        assert.strictEqual(data.err, undefined);
-        done();
-      }, {immediate: true});
+      env.add_unit(
+        'django',
+        2,
+        null,
+        function(data) {
+          assert.strictEqual(data.applicationName, 'django');
+          assert.strictEqual(data.numUnits, 2);
+          assert.deepEqual(data.result, ['django/2', 'django/3']);
+          assert.strictEqual(data.err, undefined);
+          done();
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -1059,11 +1067,15 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('successfully removes units from an application', function(done) {
-      env.remove_units(['django/2', 'django/3'], function(data) {
-        assert.deepEqual(['django/2', 'django/3'], data.unit_names);
-        assert.isUndefined(data.err);
-        done();
-      }, {immediate: true});
+      env.remove_units(
+        ['django/2', 'django/3'],
+        function(data) {
+          assert.deepEqual(['django/2', 'django/3'], data.unit_names);
+          assert.isUndefined(data.err);
+          done();
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -1072,11 +1084,15 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('handles failures removing units', function(done) {
-      env.remove_units(['django/2'], function(data) {
-        assert.deepEqual(['django/2'], data.unit_names);
-        assert.strictEqual('unit django/2 does not exist', data.err);
-        done();
-      }, {immediate: true});
+      env.remove_units(
+        ['django/2'],
+        function(data) {
+          assert.deepEqual(['django/2'], data.unit_names);
+          assert.strictEqual('unit django/2 does not exist', data.err);
+          done();
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -1101,15 +1117,19 @@ const utils = require('../app/init/testing-utils');
         var mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
-          'a zip file', 'trusty',
-          function() {return 'progress';},
-          function() {return 'completed';});
+          'a zip file',
+          'trusty',
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the web handler's sendPostRequest method has been called with
         // the correct charm endpoint
         var lastArguments = mockWebHandler.sendPostRequest.lastCall.args;
-        assert.strictEqual(
-          lastArguments[0],
-          '/model/this-is-a-uuid/charms?series=trusty'); // Path.
+        assert.strictEqual(lastArguments[0], '/model/this-is-a-uuid/charms?series=trusty'); // Path.
       });
 
       it('prevents non authorized users from sending files', function(done) {
@@ -1128,9 +1148,15 @@ const utils = require('../app/init/testing-utils');
         const mockWebHandler = {sendPostRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.uploadLocalCharm(
-          'a zip file', 'trusty',
-          function() {return 'progress';},
-          function() {return 'completed';});
+          'a zip file',
+          'trusty',
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the web handler's sendPostRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendPostRequest.callCount, 1);
@@ -1138,34 +1164,33 @@ const utils = require('../app/init/testing-utils');
         assert.strictEqual(lastArguments.length, 7);
         assert.strictEqual(
           lastArguments[0],
-          '/juju-core/model/this-is-a-uuid/charms?series=trusty'); // Path.
-        assert.deepEqual(
-          lastArguments[1], {'Content-Type': 'application/zip'}); // Headers.
+          '/juju-core/model/this-is-a-uuid/charms?series=trusty'
+        ); // Path.
+        assert.deepEqual(lastArguments[1], {
+          'Content-Type': 'application/zip'
+        }); // Headers.
         assert.strictEqual(lastArguments[2], 'a zip file'); // Zip file object.
         assert.strictEqual(lastArguments[3], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[4], 'password'); // Password.
-        assert.strictEqual(
-          lastArguments[5](), 'progress'); // Progress callback.
-        assert.strictEqual(
-          lastArguments[6](), 'completed'); // Completed callback.
+        assert.strictEqual(lastArguments[5](), 'progress'); // Progress callback.
+        assert.strictEqual(lastArguments[6](), 'completed'); // Completed callback.
       });
-
     });
 
     describe('getLocalCharmFileUrl', function() {
       it('uses the stored webHandler to retrieve the file URL', function() {
         const mockWebHandler = {getUrl: sinon.stub().returns('myurl')};
         env.set('webHandler', mockWebHandler);
-        const url = env.getLocalCharmFileUrl(
-          'local:trusty/django-42', 'icon.svg');
+        const url = env.getLocalCharmFileUrl('local:trusty/django-42', 'icon.svg');
         assert.strictEqual(url, 'myurl');
         // Ensure the web handler's getUrl method has been called with the
         // expected arguments.
         assert.strictEqual(mockWebHandler.getUrl.callCount, 1);
         const lastArguments = mockWebHandler.getUrl.lastCall.args;
         assert.lengthOf(lastArguments, 3);
-        const expected = '/juju-core/model/this-is-a-uuid/charms?' +
-            'url=local:trusty/django-42&file=icon.svg';
+        const expected =
+          '/juju-core/model/this-is-a-uuid/charms?' +
+          'url=local:trusty/django-42&file=icon.svg';
         assert.strictEqual(lastArguments[0], expected);
         assert.strictEqual(lastArguments[1], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
@@ -1183,8 +1208,8 @@ const utils = require('../app/init/testing-utils');
         assert.strictEqual(mockWebHandler.getUrl.callCount, 1);
         const lastArguments = mockWebHandler.getUrl.lastCall.args;
         assert.strictEqual(lastArguments.length, 3);
-        const expected = '/juju-core/model/this-is-a-uuid/charms?' +
-            'url=local:trusty/django-2&icon=1';
+        const expected =
+          '/juju-core/model/this-is-a-uuid/charms?' + 'url=local:trusty/django-2&icon=1';
         assert.strictEqual(lastArguments[0], expected);
         assert.strictEqual(lastArguments[1], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[2], 'password'); // Password.
@@ -1192,59 +1217,63 @@ const utils = require('../app/init/testing-utils');
     });
 
     describe('listLocalCharmFiles', function() {
-
       it('uses the stored webHandler to retrieve the contet', function() {
         const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.listLocalCharmFiles(
           'local:trusty/django-42',
-          function() {return 'progress';},
-          function() {return 'completed';});
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
         const lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
-        const expected = '/juju-core/model/this-is-a-uuid/charms' +
-            '?url=local:trusty/django-42';
+        const expected =
+          '/juju-core/model/this-is-a-uuid/charms' + '?url=local:trusty/django-42';
         assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
         assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
-        assert.strictEqual(
-          lastArguments[4](), 'progress'); // Progress callback.
-        assert.strictEqual(
-          lastArguments[5](), 'completed'); // Completed callback.
+        assert.strictEqual(lastArguments[4](), 'progress'); // Progress callback.
+        assert.strictEqual(lastArguments[5](), 'completed'); // Completed callback.
       });
-
     });
 
     describe('getLocalCharmFileContents', function() {
-
       it('uses the stored webHandler to retrieve the contents', function() {
         const mockWebHandler = {sendGetRequest: sinon.stub()};
         env.set('webHandler', mockWebHandler);
         env.getLocalCharmFileContents(
-          'local:trusty/django-42', 'hooks/install',
-          function() {return 'progress';},
-          function() {return 'completed';});
+          'local:trusty/django-42',
+          'hooks/install',
+          function() {
+            return 'progress';
+          },
+          function() {
+            return 'completed';
+          }
+        );
         // Ensure the web handler's sendGetRequest method has been called with
         // the expected arguments.
         assert.strictEqual(mockWebHandler.sendGetRequest.callCount, 1);
         const lastArguments = mockWebHandler.sendGetRequest.lastCall.args;
         assert.lengthOf(lastArguments, 6);
-        const expected = '/juju-core/model/this-is-a-uuid/charms?' +
-            'url=local:trusty/django-42&file=hooks/install';
+        const expected =
+          '/juju-core/model/this-is-a-uuid/charms?' +
+          'url=local:trusty/django-42&file=hooks/install';
         assert.strictEqual(lastArguments[0], expected);
         assert.deepEqual(lastArguments[1], {}); // Headers.
         assert.strictEqual(lastArguments[2], 'user-user@local'); // User name.
         assert.strictEqual(lastArguments[3], 'password'); // Password.
-        assert.strictEqual(
-          lastArguments[4](), 'progress'); // Progress callback.
-        assert.strictEqual(
-          lastArguments[5](), 'completed'); // Completed callback.
+        assert.strictEqual(lastArguments[4](), 'progress'); // Progress callback.
+        assert.strictEqual(lastArguments[5](), 'completed'); // Completed callback.
       });
-
     });
 
     it('sends the correct expose message', function() {
@@ -1262,9 +1291,13 @@ const utils = require('../app/init/testing-utils');
 
     it('successfully exposes an application', function() {
       var applicationName;
-      env.expose('mysql', function(data) {
-        applicationName = data.applicationName;
-      }, {immediate: true});
+      env.expose(
+        'mysql',
+        function(data) {
+          applicationName = data.applicationName;
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -1276,14 +1309,18 @@ const utils = require('../app/init/testing-utils');
     it('handles failed expose calls', function() {
       var applicationName;
       var err;
-      env.expose('mysql', function(data) {
-        applicationName = data.applicationName;
-        err = data.err;
-      }, {immediate: true});
+      env.expose(
+        'mysql',
+        function(data) {
+          applicationName = data.applicationName;
+          err = data.err;
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
-        error: 'application \"mysql\" not found'
+        error: 'application "mysql" not found'
       });
       assert.equal(applicationName, 'mysql');
       assert.equal(err, 'application "mysql" not found');
@@ -1305,10 +1342,14 @@ const utils = require('../app/init/testing-utils');
     it('successfully unexposes an application', function() {
       var err;
       var applicationName;
-      env.unexpose('mysql', function(data) {
-        err = data.err;
-        applicationName = data.applicationName;
-      }, {immediate: true});
+      env.unexpose(
+        'mysql',
+        function(data) {
+          err = data.err;
+          applicationName = data.applicationName;
+        },
+        {immediate: true}
+      );
       // Mimic response, assuming Application.Unexpose to be the first request.
       conn.msg({
         'request-id': 1,
@@ -1321,14 +1362,18 @@ const utils = require('../app/init/testing-utils');
     it('handles failed unexpose calls', function() {
       var err;
       var applicationName;
-      env.unexpose('mysql', function(data) {
-        err = data.err;
-        applicationName = data.applicationName;
-      }, {immediate: true});
+      env.unexpose(
+        'mysql',
+        function(data) {
+          err = data.err;
+          applicationName = data.applicationName;
+        },
+        {immediate: true}
+      );
       // Mimic response, assuming Application.Unexpose to be the first request.
       conn.msg({
         'request-id': 1,
-        error: 'application \"mysql\" not found'
+        error: 'application "mysql" not found'
       });
       assert.equal(err, 'application "mysql" not found');
       assert.equal(applicationName, 'mysql');
@@ -1337,10 +1382,15 @@ const utils = require('../app/init/testing-utils');
     it('successfully adds a charm', function() {
       let err, url;
       const charmstore = {};
-      env.addCharm('wily/django-42', charmstore, function(data) {
-        err = data.err;
-        url = data.url;
-      }, {immediate: true});
+      env.addCharm(
+        'wily/django-42',
+        charmstore,
+        function(data) {
+          err = data.err;
+          url = data.url;
+        },
+        {immediate: true}
+      );
       const expectedMessage = {
         type: 'Client',
         version: 1,
@@ -1362,10 +1412,15 @@ const utils = require('../app/init/testing-utils');
           callback(null, `macaroon for adding ${url}`);
         }
       };
-      env.addCharm('trusty/django-0', charmstore, function(data) {
-        err = data.err;
-        url = data.url;
-      }, {immediate: true});
+      env.addCharm(
+        'trusty/django-0',
+        charmstore,
+        function(data) {
+          err = data.err;
+          url = data.url;
+        },
+        {immediate: true}
+      );
       // Mimic responses.
       conn.msg({
         'request-id': 1,
@@ -1373,22 +1428,25 @@ const utils = require('../app/init/testing-utils');
         'error-code': 'unauthorized access'
       });
       conn.msg({'request-id': 2, response: {}});
-      const expectedMessages = [{
-        type: 'Client',
-        version: 1,
-        request: 'AddCharm',
-        params: {url: 'trusty/django-0'},
-        'request-id': 1
-      }, {
-        type: 'Client',
-        request: 'AddCharmWithAuthorization',
-        version: 1,
-        params: {
-          macaroon: 'macaroon for adding trusty/django-0',
-          url: 'trusty/django-0'
+      const expectedMessages = [
+        {
+          type: 'Client',
+          version: 1,
+          request: 'AddCharm',
+          params: {url: 'trusty/django-0'},
+          'request-id': 1
         },
-        'request-id': 2
-      }];
+        {
+          type: 'Client',
+          request: 'AddCharmWithAuthorization',
+          version: 1,
+          params: {
+            macaroon: 'macaroon for adding trusty/django-0',
+            url: 'trusty/django-0'
+          },
+          'request-id': 2
+        }
+      ];
       assert.deepEqual(expectedMessages, conn.messages);
       assert.strictEqual(url, 'trusty/django-0');
       assert.strictEqual(err, undefined);
@@ -1401,10 +1459,15 @@ const utils = require('../app/init/testing-utils');
           callback(null, `macaroon for adding ${url}`);
         }
       };
-      env.addCharm('trusty/django-0', charmstore, function(data) {
-        err = data.err;
-        url = data.url;
-      }, {immediate: true});
+      env.addCharm(
+        'trusty/django-0',
+        charmstore,
+        function(data) {
+          err = data.err;
+          url = data.url;
+        },
+        {immediate: true}
+      );
       // Mimic responses.
       conn.msg({
         'request-id': 1,
@@ -1423,10 +1486,15 @@ const utils = require('../app/init/testing-utils');
           callback('macaraq bad wolf', null);
         }
       };
-      env.addCharm('trusty/django-0', charmstore, function(data) {
-        err = data.err;
-        url = data.url;
-      }, {immediate: true});
+      env.addCharm(
+        'trusty/django-0',
+        charmstore,
+        function(data) {
+          err = data.err;
+          url = data.url;
+        },
+        {immediate: true}
+      );
       // Mimic responses.
       conn.msg({
         'request-id': 1,
@@ -1439,10 +1507,15 @@ const utils = require('../app/init/testing-utils');
 
     it('handles failed addCharm calls', function() {
       var err, url;
-      env.addCharm('wily/django-42', null, function(data) {
-        err = data.err;
-        url = data.url;
-      }, {immediate: true});
+      env.addCharm(
+        'wily/django-42',
+        null,
+        function(data) {
+          err = data.err;
+          url = data.url;
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({'request-id': 1, error: 'bad wolf'});
       assert.strictEqual(url, 'wily/django-42');
@@ -1462,38 +1535,45 @@ const utils = require('../app/init/testing-utils');
       });
       it('uploads resources', done => {
         // Perform the request.
-        const resources = [
-          {Name: 'res1', File: 'res1.tgz'},
-          {Name: 'res2', File: 'res2.tgz'}
-        ];
-        env._addPendingResources({
-          applicationName: 'wordpress',
-          charmURL: 'wordpress-42',
-          channel: 'stable',
-          resources: resources
-        }, (err, ids) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(ids, {res1: 'id-res-1', res2: 'id-res-2'});
-          assert.strictEqual(conn.messages.length, 1);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            type: 'Resources',
-            version: 7,
-            request: 'AddPendingResources',
-            params: {
-              tag: 'application-wordpress',
-              url: 'wordpress-42',
-              channel: 'stable',
-              resources: [{
-                Name: 'res1', File: 'res1.tgz', Origin: 'store'
-              }, {
-                Name: 'res2', File: 'res2.tgz', Origin: 'store'
-              }]
-            },
-            'request-id': 1
-          });
-          done();
-        });
+        const resources = [{Name: 'res1', File: 'res1.tgz'}, {Name: 'res2', File: 'res2.tgz'}];
+        env._addPendingResources(
+          {
+            applicationName: 'wordpress',
+            charmURL: 'wordpress-42',
+            channel: 'stable',
+            resources: resources
+          },
+          (err, ids) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(ids, {res1: 'id-res-1', res2: 'id-res-2'});
+            assert.strictEqual(conn.messages.length, 1);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              type: 'Resources',
+              version: 7,
+              request: 'AddPendingResources',
+              params: {
+                tag: 'application-wordpress',
+                url: 'wordpress-42',
+                channel: 'stable',
+                resources: [
+                  {
+                    Name: 'res1',
+                    File: 'res1.tgz',
+                    Origin: 'store'
+                  },
+                  {
+                    Name: 'res2',
+                    File: 'res2.tgz',
+                    Origin: 'store'
+                  }
+                ]
+              },
+              'request-id': 1
+            });
+            done();
+          }
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -1503,32 +1583,39 @@ const utils = require('../app/init/testing-utils');
 
       it('uploads a single resource', done => {
         // Perform the request.
-        env._addPendingResources({
-          applicationName: 'hap',
-          charmURL: 'cs:xenial/haproxy-47',
-          channel: 'beta',
-          resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
-        }, (err, ids) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(ids, {myres: 'id-res-1'});
-          assert.strictEqual(conn.messages.length, 1);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            type: 'Resources',
-            version: 7,
-            request: 'AddPendingResources',
-            params: {
-              tag: 'application-hap',
-              url: 'cs:xenial/haproxy-47',
-              channel: 'beta',
-              resources: [{
-                Name: 'myres', File: 'myres.tar.bz2', Origin: 'store'
-              }]
-            },
-            'request-id': 1
-          });
-          done();
-        });
+        env._addPendingResources(
+          {
+            applicationName: 'hap',
+            charmURL: 'cs:xenial/haproxy-47',
+            channel: 'beta',
+            resources: [{Name: 'myres', File: 'myres.tar.bz2'}]
+          },
+          (err, ids) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(ids, {myres: 'id-res-1'});
+            assert.strictEqual(conn.messages.length, 1);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              type: 'Resources',
+              version: 7,
+              request: 'AddPendingResources',
+              params: {
+                tag: 'application-hap',
+                url: 'cs:xenial/haproxy-47',
+                channel: 'beta',
+                resources: [
+                  {
+                    Name: 'myres',
+                    File: 'myres.tar.bz2',
+                    Origin: 'store'
+                  }
+                ]
+              },
+              'request-id': 1
+            });
+            done();
+          }
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -1538,31 +1625,38 @@ const utils = require('../app/init/testing-utils');
 
       it('uploads resources with origin', done => {
         // Perform the request.
-        env._addPendingResources({
-          applicationName: 'haproxy',
-          charmURL: 'xenial/haproxy-47',
-          resources: [{Name: 'myres', File: 'myres.tar.bz2', Origin: 'Vulcan'}]
-        }, (err, ids) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(ids, {myres: 'id-res-vulcan'});
-          assert.strictEqual(conn.messages.length, 1);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            type: 'Resources',
-            version: 7,
-            request: 'AddPendingResources',
-            params: {
-              tag: 'application-haproxy',
-              url: 'xenial/haproxy-47',
-              channel: 'stable',
-              resources: [{
-                Name: 'myres', File: 'myres.tar.bz2', Origin: 'Vulcan'
-              }]
-            },
-            'request-id': 1
-          });
-          done();
-        });
+        env._addPendingResources(
+          {
+            applicationName: 'haproxy',
+            charmURL: 'xenial/haproxy-47',
+            resources: [{Name: 'myres', File: 'myres.tar.bz2', Origin: 'Vulcan'}]
+          },
+          (err, ids) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(ids, {myres: 'id-res-vulcan'});
+            assert.strictEqual(conn.messages.length, 1);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              type: 'Resources',
+              version: 7,
+              request: 'AddPendingResources',
+              params: {
+                tag: 'application-haproxy',
+                url: 'xenial/haproxy-47',
+                channel: 'stable',
+                resources: [
+                  {
+                    Name: 'myres',
+                    File: 'myres.tar.bz2',
+                    Origin: 'Vulcan'
+                  }
+                ]
+              },
+              'request-id': 1
+            });
+            done();
+          }
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -1615,43 +1709,52 @@ const utils = require('../app/init/testing-utils');
 
       it('fails when invalid resources are provided', done => {
         // Perform the request.
-        env._addPendingResources({
-          applicationName: 'wordpress',
-          charmURL: 'wordpress-42',
-          resources: [{File: 'bad'}]
-        }, (err, ids) => {
-          assert.equal(err, 'resource without name: [{"File":"bad"}]');
-          assert.deepEqual(ids, {});
-          done();
-        });
+        env._addPendingResources(
+          {
+            applicationName: 'wordpress',
+            charmURL: 'wordpress-42',
+            resources: [{File: 'bad'}]
+          },
+          (err, ids) => {
+            assert.equal(err, 'resource without name: [{"File":"bad"}]');
+            assert.deepEqual(ids, {});
+            done();
+          }
+        );
       });
 
       it('handles global failures while adding resources', done => {
         // Perform the request.
-        env._addPendingResources({
-          applicationName: 'redis',
-          charmURL: 'redis-0',
-          resources: [{Name: 'red', File: 'red.tgz'}]
-        }, (err, ids) => {
-          assert.strictEqual(err, 'bad wolf');
-          assert.deepEqual(ids, {});
-          done();
-        });
+        env._addPendingResources(
+          {
+            applicationName: 'redis',
+            charmURL: 'redis-0',
+            resources: [{Name: 'red', File: 'red.tgz'}]
+          },
+          (err, ids) => {
+            assert.strictEqual(err, 'bad wolf');
+            assert.deepEqual(ids, {});
+            done();
+          }
+        );
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
 
       it('handles local failures while adding resources', done => {
         // Perform the request.
-        env._addPendingResources({
-          applicationName: 'redis',
-          charmURL: 'redis-0',
-          resources: [{Name: 'red', File: 'red.tgz'}]
-        }, (err, ids) => {
-          assert.strictEqual(err, 'bad wolf');
-          assert.deepEqual(ids, {});
-          done();
-        });
+        env._addPendingResources(
+          {
+            applicationName: 'redis',
+            charmURL: 'redis-0',
+            resources: [{Name: 'red', File: 'red.tgz'}]
+          },
+          (err, ids) => {
+            assert.strictEqual(err, 'bad wolf');
+            assert.deepEqual(ids, {});
+            done();
+          }
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -1661,22 +1764,24 @@ const utils = require('../app/init/testing-utils');
 
       it('handles unexpected failures while adding resources', done => {
         // Perform the request.
-        env._addPendingResources({
-          applicationName: 'redis',
-          charmURL: 'redis-0',
-          resources: [{Name: 'red', File: 'red.tgz'}]
-        }, (err, ids) => {
-          assert.strictEqual(err, 'unexpected response: {"pending-ids":[]}');
-          assert.deepEqual(ids, {});
-          done();
-        });
+        env._addPendingResources(
+          {
+            applicationName: 'redis',
+            charmURL: 'redis-0',
+            resources: [{Name: 'red', File: 'red.tgz'}]
+          },
+          (err, ids) => {
+            assert.strictEqual(err, 'unexpected response: {"pending-ids":[]}');
+            assert.deepEqual(ids, {});
+            done();
+          }
+        );
         // Mimic response.
         conn.msg({'request-id': 1, response: {'pending-ids': []}});
       });
     });
 
     describe('setCharm', function() {
-
       it('sends message to change the charm version', function() {
         var applicationName = 'rethinkdb';
         var charmUrl = 'trusty/rethinkdb-1';
@@ -1701,35 +1806,44 @@ const utils = require('../app/init/testing-utils');
         // Trigger the message.
         conn.msg(expected);
         assert.equal(cb.callCount, 1);
-        assert.deepEqual(cb.lastCall.args, [{
-          err: undefined,
-          applicationName: applicationName,
-          charmUrl: charmUrl
-        }]);
+        assert.deepEqual(cb.lastCall.args, [
+          {
+            err: undefined,
+            applicationName: applicationName,
+            charmUrl: charmUrl
+          }
+        ]);
       });
-
     });
 
     it('successfully deploys an application', function() {
-      env.deploy({
-        charmURL: 'precise/mysql',
-        applicationName: 'mysql',
-        series: 'trusty',
-        numUnits: 1
-      }, null, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mysql',
+          applicationName: 'mysql',
+          series: 'trusty',
+          numUnits: 1
+        },
+        null,
+        {immediate: true}
+      );
       msg = conn.last_message();
       const expected = {
         type: 'Application',
         request: 'Deploy',
         version: 7,
-        params: {applications: [{
-          application: 'mysql',
-          constraints: {},
-          'charm-url': 'precise/mysql',
-          'num-units': 1,
-          series: 'trusty',
-          resources: {}
-        }]},
+        params: {
+          applications: [
+            {
+              application: 'mysql',
+              constraints: {},
+              'charm-url': 'precise/mysql',
+              'num-units': 1,
+              series: 'trusty',
+              resources: {}
+            }
+          ]
+        },
         'request-id': 1
       };
       assert.deepEqual(expected, msg);
@@ -1741,22 +1855,30 @@ const utils = require('../app/init/testing-utils');
         type: 'Application',
         request: 'Deploy',
         version: 7,
-        params: {applications: [{
-          application: 'wiki',
-          // Configuration values are sent as strings.
-          config: {debug: 'true', logo: 'example.com/mylogo.png'},
-          constraints: {},
-          'charm-url': 'precise/mediawiki',
-          'num-units': 0,
-          resources: {}
-        }]},
+        params: {
+          applications: [
+            {
+              application: 'wiki',
+              // Configuration values are sent as strings.
+              config: {debug: 'true', logo: 'example.com/mylogo.png'},
+              constraints: {},
+              'charm-url': 'precise/mediawiki',
+              'num-units': 0,
+              resources: {}
+            }
+          ]
+        },
         'request-id': 1
       };
-      env.deploy({
-        charmURL: 'precise/mediawiki',
-        applicationName: 'wiki',
-        config: config
-      }, null, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mediawiki',
+          applicationName: 'wiki',
+          config: config
+        },
+        null,
+        {immediate: true}
+      );
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1767,21 +1889,29 @@ const utils = require('../app/init/testing-utils');
         type: 'Application',
         request: 'Deploy',
         version: 7,
-        params: {applications: [{
-          application: 'mysql',
-          constraints: {},
-          'config-yaml': configRaw,
-          'charm-url': 'precise/mysql',
-          'num-units': 0,
-          resources: {}
-        }]},
+        params: {
+          applications: [
+            {
+              application: 'mysql',
+              constraints: {},
+              'config-yaml': configRaw,
+              'charm-url': 'precise/mysql',
+              'num-units': 0,
+              resources: {}
+            }
+          ]
+        },
         'request-id': 1
       };
-      env.deploy({
-        charmURL: 'precise/mysql',
-        applicationName: 'mysql',
-        configRaw: configRaw
-      }, null, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mysql',
+          applicationName: 'mysql',
+          configRaw: configRaw
+        },
+        null,
+        {immediate: true}
+      );
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1793,22 +1923,30 @@ const utils = require('../app/init/testing-utils');
         type: 'Application',
         request: 'Deploy',
         version: 7,
-        params: {applications: [{
-          application: 'wiki',
-          'config-yaml': configRaw,
-          constraints: {},
-          'charm-url': 'precise/mediawiki',
-          'num-units': 0,
-          resources: {}
-        }]},
+        params: {
+          applications: [
+            {
+              application: 'wiki',
+              'config-yaml': configRaw,
+              constraints: {},
+              'charm-url': 'precise/mediawiki',
+              'num-units': 0,
+              resources: {}
+            }
+          ]
+        },
         'request-id': 1
       };
-      env.deploy({
-        charmURL: 'precise/mediawiki',
-        applicationName: 'wiki',
-        config: config,
-        configRaw: configRaw
-      }, null, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mediawiki',
+          applicationName: 'wiki',
+          config: config,
+          configRaw: configRaw
+        },
+        null,
+        {immediate: true}
+      );
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1822,15 +1960,19 @@ const utils = require('../app/init/testing-utils');
         'root-disk': '8000',
         tags: 'tag1,tag2'
       };
-      env.deploy({
-        charmURL: 'xenial/mediawiki',
-        applicationName: 'mediawiki',
-        numUnits: 1,
-        constraints: constraints
-      }, null, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'xenial/mediawiki',
+          applicationName: 'mediawiki',
+          numUnits: 1,
+          constraints: constraints
+        },
+        null,
+        {immediate: true}
+      );
       msg = conn.last_message();
       assert.deepEqual(msg.params.applications[0].constraints, {
-        'cores': 1,
+        cores: 1,
         'cpu-power': 0,
         mem: 512,
         arch: 'i386',
@@ -1845,37 +1987,49 @@ const utils = require('../app/init/testing-utils');
         type: 'Application',
         request: 'Deploy',
         version: 7,
-        params: {applications: [{
-          application: 'wiki',
-          constraints: {},
-          'charm-url': 'precise/mediawiki',
-          'num-units': 7,
-          resources: resources
-        }]},
+        params: {
+          applications: [
+            {
+              application: 'wiki',
+              constraints: {},
+              'charm-url': 'precise/mediawiki',
+              'num-units': 7,
+              resources: resources
+            }
+          ]
+        },
         'request-id': 1
       };
-      env.deploy({
-        charmURL: 'precise/mediawiki',
-        applicationName: 'wiki',
-        numUnits: 7,
-        resources: resources
-      }, null, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mediawiki',
+          applicationName: 'wiki',
+          numUnits: 7,
+          resources: resources
+        },
+        null,
+        {immediate: true}
+      );
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
 
     it('deploys an application storing charm data', function(done) {
-      env.deploy({
-        charmURL: 'precise/mysql',
-        applicationName: 'mysql',
-        series: 'trusty',
-        numUnits: 1
-      }, (err, applicationName, charmURL) => {
-        assert.strictEqual(err, null);
-        assert.strictEqual(applicationName, 'mysql');
-        assert.strictEqual(charmURL, 'precise/mysql');
-        done();
-      }, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mysql',
+          applicationName: 'mysql',
+          series: 'trusty',
+          numUnits: 1
+        },
+        (err, applicationName, charmURL) => {
+          assert.strictEqual(err, null);
+          assert.strictEqual(applicationName, 'mysql');
+          assert.strictEqual(charmURL, 'precise/mysql');
+          done();
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -1884,17 +2038,21 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('handles failed application deployments', function(done) {
-      env.deploy({
-        charmURL: 'precise/mysql',
-        applicationName: 'mysql',
-        series: 'trusty',
-        numUnits: 1
-      }, (err, applicationName, charmURL) => {
-        assert.strictEqual(err, 'bad wolf');
-        assert.strictEqual(applicationName, '');
-        assert.strictEqual(charmURL, '');
-        done();
-      }, {immediate: true});
+      env.deploy(
+        {
+          charmURL: 'precise/mysql',
+          applicationName: 'mysql',
+          series: 'trusty',
+          numUnits: 1
+        },
+        (err, applicationName, charmURL) => {
+          assert.strictEqual(err, 'bad wolf');
+          assert.strictEqual(applicationName, '');
+          assert.strictEqual(charmURL, '');
+          done();
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -1911,10 +2069,14 @@ const utils = require('../app/init/testing-utils');
           type: 'Application',
           version: 7,
           request: 'SetMetricCredentials',
-          params: {creds: [{
-            application: 'django',
-            'metrics-credentials': 'macaroon-content'
-          }]},
+          params: {
+            creds: [
+              {
+                application: 'django',
+                'metrics-credentials': 'macaroon-content'
+              }
+            ]
+          },
           'request-id': 1
         });
         done();
@@ -1948,20 +2110,23 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('adds a machine with the given series and constraints', function() {
-      var constraints = {'cores': 4, 'mem': 4000};
-      env.addMachines([{series: 'trusty', constraints: constraints}], null,
-        {immediate: true});
+      var constraints = {cores: 4, mem: 4000};
+      env.addMachines([{series: 'trusty', constraints: constraints}], null, {
+        immediate: true
+      });
       var expectedMsg = {
         'request-id': 1,
         type: 'Client',
         version: 1,
         request: 'AddMachines',
         params: {
-          params: [{
-            jobs: [machineJobs.HOST_UNITS],
-            series: 'trusty',
-            constraints: constraints
-          }]
+          params: [
+            {
+              jobs: [machineJobs.HOST_UNITS],
+              series: 'trusty',
+              constraints: constraints
+            }
+          ]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
@@ -1975,50 +2140,60 @@ const utils = require('../app/init/testing-utils');
         version: 1,
         request: 'AddMachines',
         params: {
-          params: [{
-            jobs: [machineJobs.HOST_UNITS],
-            'container-type': 'lxc'
-          }]
+          params: [
+            {
+              jobs: [machineJobs.HOST_UNITS],
+              'container-type': 'lxc'
+            }
+          ]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
     });
 
     it('adds a saucy container to a specific machine', function() {
-      env.addMachines(
-        [{containerType: 'lxc', parentId: '42', series: 'saucy'}],
-        null, {immediate: true});
+      env.addMachines([{containerType: 'lxc', parentId: '42', series: 'saucy'}], null, {
+        immediate: true
+      });
       var expectedMsg = {
         'request-id': 1,
         type: 'Client',
         version: 1,
         request: 'AddMachines',
         params: {
-          params: [{
-            jobs: [machineJobs.HOST_UNITS],
-            'container-type': 'lxc',
-            'parent-id': '42',
-            series: 'saucy'
-          }]
+          params: [
+            {
+              jobs: [machineJobs.HOST_UNITS],
+              'container-type': 'lxc',
+              'parent-id': '42',
+              series: 'saucy'
+            }
+          ]
         }
       };
       assert.deepEqual(conn.last_message(), expectedMsg);
     });
 
     it('adds multiple machines/containers', function() {
-      env.addMachines([
-        {},
-        {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
-        {containerType: 'kvm'},
-        {containerType: 'lxc', parentId: '1'}
-      ], null, {immediate: true});
+      env.addMachines(
+        [
+          {},
+          {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
+          {containerType: 'kvm'},
+          {containerType: 'lxc', parentId: '1'}
+        ],
+        null,
+        {immediate: true}
+      );
       var expectedMachineParams = [
         {jobs: [machineJobs.HOST_UNITS]},
         {jobs: [machineJobs.MANAGE_ENVIRON], series: 'precise'},
         {jobs: [machineJobs.HOST_UNITS], 'container-type': 'kvm'},
-        {jobs: [machineJobs.HOST_UNITS],
+        {
+          jobs: [machineJobs.HOST_UNITS],
           'container-type': 'lxc',
-          'parent-id': '1'}
+          'parent-id': '1'
+        }
       ];
       var expectedMsg = {
         'request-id': 1,
@@ -2037,27 +2212,32 @@ const utils = require('../app/init/testing-utils');
 
     it('handles successful addMachines server responses', function() {
       var response;
-      env.addMachines([{}, {containerType: 'lxc'}], function(data) {
-        response = data;
-      }, {immediate: true});
+      env.addMachines(
+        [{}, {containerType: 'lxc'}],
+        function(data) {
+          response = data;
+        },
+        {immediate: true}
+      );
       // Mimic the server AddMachines response.
       conn.msg({
         'request-id': 1,
         response: {machines: [{machine: '42'}, {machine: '2/lxc/1'}]}
       });
       assert.isUndefined(response.err);
-      var expectedMachines = [
-        {name: '42', err: null},
-        {name: '2/lxc/1', err: null}
-      ];
+      var expectedMachines = [{name: '42', err: null}, {name: '2/lxc/1', err: null}];
       assert.deepEqual(response.machines, expectedMachines);
     });
 
     it('handles addMachines server failures', function() {
       var response;
-      env.addMachines([{}], function(data) {
-        response = data;
-      }, {immediate: true});
+      env.addMachines(
+        [{}],
+        function(data) {
+          response = data;
+        },
+        {immediate: true}
+      );
       // Mimic the server AddMachines response.
       conn.msg({
         'request-id': 1,
@@ -2070,16 +2250,23 @@ const utils = require('../app/init/testing-utils');
 
     it('handles addMachines errors adding a specific machine', function() {
       var response;
-      env.addMachines([{}, {}, {parentId: '42'}], function(data) {
-        response = data;
-      }, {immediate: true});
+      env.addMachines(
+        [{}, {}, {parentId: '42'}],
+        function(data) {
+          response = data;
+        },
+        {immediate: true}
+      );
       // Mimic the server AddMachines response.
       conn.msg({
         'request-id': 1,
         response: {
           machines: [
             {machine: '', error: {code: '', message: 'bad wolf'}},
-            {machine: '', error: {code: '47', message: 'machine 42 not found'}}
+            {
+              machine: '',
+              error: {code: '47', message: 'machine 42 not found'}
+            }
           ]
         }
       });
@@ -2124,8 +2311,9 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('removes multiple machines/containers', function() {
-      env.destroyMachines(['1', '47', '42/lxc/0'], null, null,
-        {immediate: true});
+      env.destroyMachines(['1', '47', '42/lxc/0'], null, null, {
+        immediate: true
+      });
       assertDestroyMachinesRequestSent(['1', '47', '42/lxc/0'], false);
     });
 
@@ -2136,9 +2324,14 @@ const utils = require('../app/init/testing-utils');
 
     it('handles successful destroyMachines server responses', function() {
       var response;
-      env.destroyMachines(['42', '1/lxc/2'], false, function(data) {
-        response = data;
-      }, {immediate: true});
+      env.destroyMachines(
+        ['42', '1/lxc/2'],
+        false,
+        function(data) {
+          response = data;
+        },
+        {immediate: true}
+      );
       // Mimic the server DestroyMachines response.
       conn.msg({'request-id': 1, response: {}});
       assert.isUndefined(response.err);
@@ -2147,9 +2340,14 @@ const utils = require('../app/init/testing-utils');
 
     it('handles destroyMachines server failures', function() {
       var response;
-      env.destroyMachines(['1'], false, function(data) {
-        response = data;
-      }, {immediate: true});
+      env.destroyMachines(
+        ['1'],
+        false,
+        function(data) {
+          response = data;
+        },
+        {immediate: true}
+      );
       // Mimic the server DestroyMachines response.
       conn.msg({'request-id': 1, error: 'bad wolf', response: {}});
       assert.strictEqual(response.err, 'bad wolf');
@@ -2170,8 +2368,9 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('sends the correct Annotations.Set message', function() {
-      env.update_annotations('apache', 'application', {'mykey': 'myvalue'},
-        null, {immediate: true});
+      env.update_annotations('apache', 'application', {mykey: 'myvalue'}, null, {
+        immediate: true
+      });
       var lastMessage = conn.last_message();
       var expected = {
         type: 'Annotations',
@@ -2179,10 +2378,12 @@ const utils = require('../app/init/testing-utils');
         request: 'Set',
         'request-id': 1,
         params: {
-          annotations: [{
-            entity: 'application-apache',
-            annotations: {mykey: 'myvalue'}
-          }]
+          annotations: [
+            {
+              entity: 'application-apache',
+              annotations: {mykey: 'myvalue'}
+            }
+          ]
         }
       };
       assert.deepEqual(expected, lastMessage);
@@ -2190,37 +2391,47 @@ const utils = require('../app/init/testing-utils');
 
     it('correctly sends all the annotation values as strings', function() {
       var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
-          expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
-      env.update_annotations('apache', 'application', annotations,
-        null, {immediate: true});
+        expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
+      env.update_annotations('apache', 'application', annotations, null, {
+        immediate: true
+      });
       var msg = conn.last_message();
       var pairs = msg.params.annotations[0].annotations;
       assert.deepEqual(expected, pairs);
     });
 
     it('sends correct multiple update_annotations messages', function() {
-      env.update_annotations('apache', 'application', {
-        'key1': 'value1',
-        'key2': 'value2'
-      }, null, {immediate: true});
+      env.update_annotations(
+        'apache',
+        'application',
+        {
+          key1: 'value1',
+          key2: 'value2'
+        },
+        null,
+        {immediate: true}
+      );
       var expectedMessage = {
         type: 'Annotations',
         version: 2,
         request: 'Set',
         'request-id': 1,
         params: {
-          annotations: [{
-            entity: 'application-apache',
-            annotations: {'key1': 'value1', 'key2': 'value2'}
-          }]
+          annotations: [
+            {
+              entity: 'application-apache',
+              annotations: {key1: 'value1', key2: 'value2'}
+            }
+          ]
         }
       };
       assert.deepEqual([expectedMessage], conn.messages);
     });
 
     it('sends the correct message to remove annotations', function() {
-      env.remove_annotations('apache', 'application', ['key1', 'key2'],
-        null, {immediate: true});
+      env.remove_annotations('apache', 'application', ['key1', 'key2'], null, {
+        immediate: true
+      });
       var lastMessage = conn.last_message();
       var expected = {
         type: 'Annotations',
@@ -2228,10 +2439,12 @@ const utils = require('../app/init/testing-utils');
         request: 'Set',
         'request-id': 1,
         params: {
-          annotations: [{
-            entity: 'application-apache',
-            annotations: {'key1': '', 'key2': ''}
-          }]
+          annotations: [
+            {
+              entity: 'application-apache',
+              annotations: {key1: '', key2: ''}
+            }
+          ]
         }
       };
       assert.deepEqual(expected, lastMessage);
@@ -2240,8 +2453,8 @@ const utils = require('../app/init/testing-utils');
     it('successfully retrieves annotations', function() {
       var annotations;
       var expected = {
-        'key1': 'value1',
-        'key2': 'value2'
+        key1: 'value1',
+        key2: 'value2'
       };
       env.get_annotations('mysql', 'application', function(data) {
         annotations = data.results;
@@ -2258,24 +2471,7 @@ const utils = require('../app/init/testing-utils');
 
     it('successfully sets annotation', function() {
       var err;
-      env.update_annotations('mysql', 'application', {'mykey': 'myvalue'},
-        function(data) {
-          err = data.err;
-        });
-      // Mimic response.
-      conn.msg({
-        'request-id': 1,
-        response: {results: [{}]}
-      });
-      assert.isUndefined(err);
-    });
-
-    it('successfully sets multiple annotations', function() {
-      var err;
-      env.update_annotations('mysql', 'application', {
-        'key1': 'value1',
-        'key2': 'value2'
-      }, function(data) {
+      env.update_annotations('mysql', 'application', {mykey: 'myvalue'}, function(data) {
         err = data.err;
       });
       // Mimic response.
@@ -2286,12 +2482,38 @@ const utils = require('../app/init/testing-utils');
       assert.isUndefined(err);
     });
 
-    it('successfully removes annotations', function() {
+    it('successfully sets multiple annotations', function() {
       var err;
-      env.remove_annotations('mysql', 'application', ['key1', 'key2'],
+      env.update_annotations(
+        'mysql',
+        'application',
+        {
+          key1: 'value1',
+          key2: 'value2'
+        },
         function(data) {
           err = data.err;
-        }, {immediate: true});
+        }
+      );
+      // Mimic response.
+      conn.msg({
+        'request-id': 1,
+        response: {results: [{}]}
+      });
+      assert.isUndefined(err);
+    });
+
+    it('successfully removes annotations', function() {
+      var err;
+      env.remove_annotations(
+        'mysql',
+        'application',
+        ['key1', 'key2'],
+        function(data) {
+          err = data.err;
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2330,11 +2552,17 @@ const utils = require('../app/init/testing-utils');
 
     it('handles errors from setting annotations', function() {
       var err;
-      env.update_annotations('haproxy', 'application', {
-        'key': 'value'
-      }, function(data) {
-        err = data.err;
-      }, {immediate: true});
+      env.update_annotations(
+        'haproxy',
+        'application',
+        {
+          key: 'value'
+        },
+        function(data) {
+          err = data.err;
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2345,11 +2573,17 @@ const utils = require('../app/init/testing-utils');
 
     it('handles internal errors from setting annotations', function() {
       var err;
-      env.update_annotations('haproxy', 'application', {
-        'key': 'value'
-      }, function(data) {
-        err = data.err;
-      }, {immediate: true});
+      env.update_annotations(
+        'haproxy',
+        'application',
+        {
+          key: 'value'
+        },
+        function(data) {
+          err = data.err;
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2360,10 +2594,15 @@ const utils = require('../app/init/testing-utils');
 
     it('correctly handles errors from removing annotations', function() {
       var err;
-      env.remove_annotations('haproxy', 'application', ['key1', 'key2'],
+      env.remove_annotations(
+        'haproxy',
+        'application',
+        ['key1', 'key2'],
         function(data) {
           err = data.err;
-        }, {immediate: true});
+        },
+        {immediate: true}
+      );
       // Mimic response.
       conn.msg({
         'request-id': 1,
@@ -2428,7 +2667,7 @@ const utils = require('../app/init/testing-utils');
       // Mimic response.
       conn.msg({
         'request-id': 1,
-        error: 'app \"yoursql\" not found',
+        error: 'app "yoursql" not found',
         response: {
           Application: 'yoursql'
         }
@@ -2438,7 +2677,7 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('can set an application config', function() {
-      var settings = {'cfg-key': 'cfg-val', 'unchanged': 'bar'};
+      var settings = {'cfg-key': 'cfg-val', unchanged: 'bar'};
       var callback = null;
       env.set_config('mysql', settings, callback, {immediate: true});
       msg = conn.last_message();
@@ -2450,7 +2689,7 @@ const utils = require('../app/init/testing-utils');
           application: 'mysql',
           settings: {
             'cfg-key': 'cfg-val',
-            'unchanged': 'bar'
+            unchanged: 'bar'
           }
         },
         'request-id': msg['request-id']
@@ -2460,10 +2699,15 @@ const utils = require('../app/init/testing-utils');
 
     it('handles failures while setting application configuration', function() {
       var err, applicationName;
-      env.set_config('yoursql', {}, function(evt) {
-        err = evt.err;
-        applicationName = evt.applicationName;
-      }, {immediate: true});
+      env.set_config(
+        'yoursql',
+        {},
+        function(evt) {
+          err = evt.err;
+          applicationName = evt.applicationName;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       conn.msg({
         'request-id': msg['request-id'],
@@ -2476,9 +2720,14 @@ const utils = require('../app/init/testing-utils');
     it('handles successful set config', function() {
       var dataReturned;
       var settings = {key1: 'value1', key2: 'value2', key3: 'value3'};
-      env.set_config('django', settings, function(evt) {
-        dataReturned = evt;
-      }, {immediate: true});
+      env.set_config(
+        'django',
+        settings,
+        function(evt) {
+          dataReturned = evt;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       conn.msg({
         'request-id': msg['request-id'],
@@ -2491,9 +2740,13 @@ const utils = require('../app/init/testing-utils');
 
     it('can destroy an application', function() {
       var applicationName = '';
-      env.destroyApplication('mysql', function(evt) {
-        applicationName = evt.applicationName;
-      }, {immediate: true});
+      env.destroyApplication(
+        'mysql',
+        function(evt) {
+          applicationName = evt.applicationName;
+        },
+        {immediate: true}
+      );
       var expected = {
         type: 'Application',
         version: 7,
@@ -2509,10 +2762,14 @@ const utils = require('../app/init/testing-utils');
 
     it('handles failures while destroying applications', function() {
       var err, applicationName;
-      env.destroyApplication('yoursql', function(evt) {
-        err = evt.err;
-        applicationName = evt.applicationName;
-      }, {immediate: true});
+      env.destroyApplication(
+        'yoursql',
+        function(evt) {
+          err = evt.err;
+          applicationName = evt.applicationName;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       conn.msg({
         'request-id': msg['request-id'],
@@ -2542,9 +2799,14 @@ const utils = require('../app/init/testing-utils');
       var jujuEndpoints = {};
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB, function(ev) {
-        result = ev.result;
-      }, {immediate: true});
+      env.add_relation(
+        endpointA,
+        endpointB,
+        function(ev) {
+          result = ev.result;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       jujuEndpoints.haproxy = {
         name: 'reverseproxy',
@@ -2568,17 +2830,22 @@ const utils = require('../app/init/testing-utils');
       assert.equal(result['interface'], 'http');
       assert.equal(result.scope, 'global');
       endpoints = result.endpoints;
-      assert.deepEqual(endpoints[0], {'haproxy': {'name': 'reverseproxy'}});
-      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
+      assert.deepEqual(endpoints[0], {haproxy: {name: 'reverseproxy'}});
+      assert.deepEqual(endpoints[1], {wordpress: {name: 'website'}});
     });
 
     it('handles failed relation adding', function() {
       var evt;
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.add_relation(endpointA, endpointB, function(ev) {
-        evt = ev;
-      }, {immediate: true});
+      env.add_relation(
+        endpointA,
+        endpointB,
+        function(ev) {
+          evt = ev;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       conn.msg({
         'request-id': msg['request-id'],
@@ -2615,10 +2882,15 @@ const utils = require('../app/init/testing-utils');
       var endpoint_a, endpoint_b;
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB, function(ev) {
-        endpoint_a = ev.endpoint_a;
-        endpoint_b = ev.endpoint_b;
-      }, {immediate: true});
+      env.remove_relation(
+        endpointA,
+        endpointB,
+        function(ev) {
+          endpoint_a = ev.endpoint_a;
+          endpoint_b = ev.endpoint_b;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       conn.msg({
         'request-id': msg['request-id'],
@@ -2632,11 +2904,16 @@ const utils = require('../app/init/testing-utils');
       var endpoint_a, endpoint_b, err;
       endpointA = ['yoursql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
-      env.remove_relation(endpointA, endpointB, function(ev) {
-        endpoint_a = ev.endpoint_a;
-        endpoint_b = ev.endpoint_b;
-        err = ev.err;
-      }, {immediate: true});
+      env.remove_relation(
+        endpointA,
+        endpointB,
+        function(ev) {
+          endpoint_a = ev.endpoint_a;
+          endpoint_b = ev.endpoint_b;
+          err = ev.err;
+        },
+        {immediate: true}
+      );
       msg = conn.last_message();
       conn.msg({
         'request-id': msg['request-id'],
@@ -2661,7 +2938,7 @@ const utils = require('../app/init/testing-utils');
         type: 'Charms',
         version: 3,
         request: 'CharmInfo',
-        params: {'url': 'cs:precise/wordpress-10'},
+        params: {url: 'cs:precise/wordpress-10'},
         'request-id': 1
       };
       assert.deepEqual(expected, lastMessage);
@@ -2738,12 +3015,12 @@ const utils = require('../app/init/testing-utils');
       var options = response.config;
       var expectedOptions = {
         debug: {
-          'default': options.debug.default,
+          default: options.debug.default,
           description: options.debug.description,
           type: options.debug.type
         },
         engine: {
-          'default': options.engine.default,
+          default: options.engine.default,
           description: options.engine.description,
           type: options.engine.type
         }
@@ -2753,7 +3030,7 @@ const utils = require('../app/init/testing-utils');
       var peer = meta.peers.loadbalancer;
       var expectedPeers = {
         loadbalancer: {
-          'interface': peer.interface,
+          interface: peer.interface,
           limit: peer.limit,
           name: peer.name,
           role: peer.role,
@@ -2765,7 +3042,7 @@ const utils = require('../app/init/testing-utils');
       var provide = meta.provides.website;
       var expectedProvides = {
         website: {
-          'interface': provide.interface,
+          interface: provide.interface,
           limit: provide.limit,
           name: provide.name,
           role: provide.role,
@@ -2778,7 +3055,7 @@ const utils = require('../app/init/testing-utils');
       var require2 = meta.requires.db;
       var expectedRequires = {
         cache: {
-          'interface': require1.interface,
+          interface: require1.interface,
           limit: require1.limit,
           name: require1.name,
           role: require1.role,
@@ -2786,7 +3063,7 @@ const utils = require('../app/init/testing-utils');
           scope: require1.scope
         },
         db: {
-          'interface': require2.interface,
+          interface: require2.interface,
           limit: require2.limit,
           name: require2.name,
           role: require2.role,
@@ -2796,7 +3073,7 @@ const utils = require('../app/init/testing-utils');
       };
       env.get_charm('cs:precise/wordpress-10', function(data) {
         var err = data.err,
-            result = data.result;
+          result = data.result;
         // Ensure the result is correctly generated.
         assert.strictEqual(err, undefined, 'error');
         assert.deepEqual(result.config, {options: expectedOptions}, 'config');
@@ -2810,8 +3087,7 @@ const utils = require('../app/init/testing-utils');
         assert.equal(result.name, meta.name, 'name');
         assert.equal(result.subordinate, meta.subordinate, 'subordinate');
         assert.equal(result.summary, meta.summary, 'summary');
-        assert.equal(
-          result.minJujuVersion, meta['min-juju-version'], 'min-juju-version');
+        assert.equal(result.minJujuVersion, meta['min-juju-version'], 'min-juju-version');
         assert.deepEqual(result.tags, meta.tags, 'tags');
         assert.deepEqual(result.series, meta.series, 'series');
         assert.deepEqual(result.terms, meta.terms, 'terms');
@@ -2910,7 +3186,7 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('updates an application settings', function(done) {
-      var args = {settings: {'opt1': 'val1', 'opt2': 42}};
+      var args = {settings: {opt1: 'val1', opt2: 42}};
       env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.applicationName, 'django');
@@ -2922,7 +3198,7 @@ const utils = require('../app/init/testing-utils');
           request: 'Update',
           params: {
             application: 'django',
-            settings: {'opt1': 'val1', 'opt2': '42'}
+            settings: {opt1: 'val1', opt2: '42'}
           },
           'request-id': 1
         });
@@ -2933,7 +3209,7 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('updates an application constraints', function(done) {
-      var args = {constraints: {'cpu-cores': '4', 'mem': 2000}};
+      var args = {constraints: {'cpu-cores': '4', mem: 2000}};
       env.updateApplication('django', args, function(data) {
         assert.strictEqual(data.err, undefined);
         assert.strictEqual(data.applicationName, 'django');
@@ -2945,7 +3221,7 @@ const utils = require('../app/init/testing-utils');
           request: 'Update',
           params: {
             application: 'django',
-            constraints: {'cores': 4, 'mem': 2000}
+            constraints: {cores: 4, mem: 2000}
           },
           'request-id': 1
         });
@@ -2983,8 +3259,8 @@ const utils = require('../app/init/testing-utils');
         url: 'cs:trusty/django-47',
         forceUnits: true,
         forceSeries: true,
-        settings: {'opt1': 'val1', 'opt2': true},
-        constraints: {'cores': 8},
+        settings: {opt1: 'val1', opt2: true},
+        constraints: {cores: 8},
         minUnits: 3
       };
       env.updateApplication('django', args, function(data) {
@@ -3006,7 +3282,7 @@ const utils = require('../app/init/testing-utils');
             'charm-url': args.url,
             'force-charm-url': true,
             'force-series': true,
-            settings: {'opt1': 'val1', 'opt2': 'true'},
+            settings: {opt1: 'val1', opt2: 'true'},
             constraints: args.constraints,
             'min-units': 3
           },
@@ -3067,21 +3343,23 @@ const utils = require('../app/init/testing-utils');
       assert.strictEqual(callback.calledOnce, true, 'callback not');
       assert.strictEqual(env._allWatcherId, null);
       // The request has been properly sent.
-      assert.deepEqual({
-        'request-id': 1,
-        type: 'AllWatcher',
-        version: 0,
-        request: 'Stop',
-        id: 42,
-        params: {}
-      }, conn.last_message());
+      assert.deepEqual(
+        {
+          'request-id': 1,
+          type: 'AllWatcher',
+          version: 0,
+          request: 'Stop',
+          id: 42,
+          params: {}
+        },
+        conn.last_message()
+      );
     });
 
     it('fires "_rpc_response" message after an RPC response', function(done) {
       // We don't want the real response, we just want to be sure the event is
       // fired.
-      document.removeEventListener(
-        '_rpc_response', env._handleRpcResponseBound);
+      document.removeEventListener('_rpc_response', env._handleRpcResponseBound);
       const handler = evt => {
         document.removeEventListener('_rpc_response', handler);
         done();
@@ -3094,7 +3372,9 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('fires "delta" when handling an RPC response', function(done) {
-      var callbackData = {response: {deltas: [['application', 'deploy', {}]]}};
+      var callbackData = {
+        response: {deltas: [['application', 'deploy', {}]]}
+      };
       const handler = () => {
         document.removeEventListener('delta', handler);
         done();
@@ -3104,7 +3384,9 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('translates the type of each change in the delta', function(done) {
-      var callbackData = {response: {deltas: [['application', 'deploy', {}]]}};
+      var callbackData = {
+        response: {deltas: [['application', 'deploy', {}]]}
+      };
       const handler = evt => {
         document.removeEventListener('delta', handler);
         const change = evt.detail.data.result[0];
@@ -3134,15 +3416,18 @@ const utils = require('../app/init/testing-utils');
         const change = evt.detail.data.result.map(function(delta) {
           return delta[0];
         });
-        assert.deepEqual([
-          'applicationInfo',
-          'relationInfo',
-          'unitInfo',
-          'machineInfo',
-          'annotationInfo',
-          'remoteapplicationInfo',
-          'foobarInfo'
-        ], change);
+        assert.deepEqual(
+          [
+            'applicationInfo',
+            'relationInfo',
+            'unitInfo',
+            'machineInfo',
+            'annotationInfo',
+            'remoteapplicationInfo',
+            'foobarInfo'
+          ],
+          change
+        );
         done();
       };
       document.addEventListener('delta', handler);
@@ -3194,21 +3479,10 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('provides provider features for all supported providers', function() {
-      var providers = [
-        'all',
-        'azure',
-        'ec2',
-        'joyent',
-        'lxd',
-        'maas',
-        'openstack',
-        'manual'
-      ];
+      var providers = ['all', 'azure', 'ec2', 'joyent', 'lxd', 'maas', 'openstack', 'manual'];
       var providerFeatures = Y.juju.environments.providerFeatures;
       providers.forEach(function(provider) {
-        assert.equal(
-          Array.isArray(providerFeatures[provider].supportedContainerTypes),
-          true);
+        assert.equal(Array.isArray(providerFeatures[provider].supportedContainerTypes), true);
       });
     });
 
@@ -3222,19 +3496,24 @@ const utils = require('../app/init/testing-utils');
 
       it('adds a single key', function(done) {
         // Perform the request.
-        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, [null]);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            'request-id': 1,
-            type: 'KeyManager',
-            request: 'AddKeys',
-            version: 77,
-            params: {user: 'who', 'ssh-keys': ['ssh-rsa key1']}
-          });
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'who',
+          ['ssh-rsa key1'],
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, [null]);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              'request-id': 1,
+              type: 'KeyManager',
+              request: 'AddKeys',
+              version: 77,
+              params: {user: 'who', 'ssh-keys': ['ssh-rsa key1']}
+            });
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3246,22 +3525,27 @@ const utils = require('../app/init/testing-utils');
 
       it('adds multiple keys', function(done) {
         // Perform the request.
-        env.addKeys('who', ['ssh-rsa key1', 'ssh-rsa key2'], (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, [null, null]);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            'request-id': 1,
-            type: 'KeyManager',
-            request: 'AddKeys',
-            version: 77,
-            params: {
-              user: 'who',
-              'ssh-keys': ['ssh-rsa key1', 'ssh-rsa key2']
-            }
-          });
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'who',
+          ['ssh-rsa key1', 'ssh-rsa key2'],
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, [null, null]);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              'request-id': 1,
+              type: 'KeyManager',
+              request: 'AddKeys',
+              version: 77,
+              params: {
+                user: 'who',
+                'ssh-keys': ['ssh-rsa key1', 'ssh-rsa key2']
+              }
+            });
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3273,29 +3557,44 @@ const utils = require('../app/init/testing-utils');
 
       it('adds no keys', function(done) {
         // Perform the request.
-        env.addKeys('who', [], (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'who',
+          [],
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
       });
 
       it('handles errors when no user is provided', function(done) {
         // Perform the request.
-        env.addKeys('', ['ssh-rsa key1'], (err, errors) => {
-          assert.strictEqual(err, 'no user provided');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          '',
+          ['ssh-rsa key1'],
+          (err, errors) => {
+            assert.strictEqual(err, 'no user provided');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
       });
 
       it('handles request failures while adding keys', function(done) {
         // Perform the request.
-        env.addKeys('who', ['ssh-rsa key1'], (err, errors) => {
-          assert.strictEqual(err, 'bad wolf');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'who',
+          ['ssh-rsa key1'],
+          (err, errors) => {
+            assert.strictEqual(err, 'bad wolf');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
@@ -3303,11 +3602,16 @@ const utils = require('../app/init/testing-utils');
       it('handles API failures while adding keys', function(done) {
         // Perform the request.
         const keys = ['ssh-rsa key1', 'ssh-rsa key2', 'ssh-rsa key3'];
-        env.addKeys('dalek', keys, (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, [null, 'bad wolf', null]);
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'dalek',
+          keys,
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, [null, 'bad wolf', null]);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3319,11 +3623,16 @@ const utils = require('../app/init/testing-utils');
 
       it('fails for unexpected results', function(done) {
         // Perform the request.
-        env.addKeys('cyberman', ['ssh-rsa key1'], (err, errors) => {
-          assert.strictEqual(err, 'unexpected results: [{},{}]');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'cyberman',
+          ['ssh-rsa key1'],
+          (err, errors) => {
+            assert.strictEqual(err, 'unexpected results: [{},{}]');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3333,11 +3642,16 @@ const utils = require('../app/init/testing-utils');
 
       it('fails for no results', function(done) {
         // Perform the request.
-        env.addKeys('rose', ['ssh-rsa key1'], (err, errors) => {
-          assert.strictEqual(err, 'unexpected results: []');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.addKeys(
+          'rose',
+          ['ssh-rsa key1'],
+          (err, errors) => {
+            assert.strictEqual(err, 'unexpected results: []');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3356,19 +3670,24 @@ const utils = require('../app/init/testing-utils');
 
       it('imports a single key', function(done) {
         // Perform the request.
-        env.importKeys('who', ['gh:who'], (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, [null]);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            'request-id': 1,
-            type: 'KeyManager',
-            request: 'ImportKeys',
-            version: 77,
-            params: {user: 'who', 'ssh-keys': ['gh:who']}
-          });
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'who',
+          ['gh:who'],
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, [null]);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              'request-id': 1,
+              type: 'KeyManager',
+              request: 'ImportKeys',
+              version: 77,
+              params: {user: 'who', 'ssh-keys': ['gh:who']}
+            });
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3380,22 +3699,27 @@ const utils = require('../app/init/testing-utils');
 
       it('imports multiple keys', function(done) {
         // Perform the request.
-        env.importKeys('who', ['gh:rose', 'lp:dalek'], (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, [null, null]);
-          const msg = conn.last_message();
-          assert.deepEqual(msg, {
-            'request-id': 1,
-            type: 'KeyManager',
-            request: 'ImportKeys',
-            version: 77,
-            params: {
-              user: 'who',
-              'ssh-keys': ['gh:rose', 'lp:dalek']
-            }
-          });
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'who',
+          ['gh:rose', 'lp:dalek'],
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, [null, null]);
+            const msg = conn.last_message();
+            assert.deepEqual(msg, {
+              'request-id': 1,
+              type: 'KeyManager',
+              request: 'ImportKeys',
+              version: 77,
+              params: {
+                user: 'who',
+                'ssh-keys': ['gh:rose', 'lp:dalek']
+              }
+            });
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3407,29 +3731,44 @@ const utils = require('../app/init/testing-utils');
 
       it('imports no keys', function(done) {
         // Perform the request.
-        env.importKeys('who', [], (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'who',
+          [],
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
       });
 
       it('handles errors when no user is provided', function(done) {
         // Perform the request.
-        env.importKeys('', ['gh:who'], (err, errors) => {
-          assert.strictEqual(err, 'no user provided');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          '',
+          ['gh:who'],
+          (err, errors) => {
+            assert.strictEqual(err, 'no user provided');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
       });
 
       it('handles request failures while importing keys', function(done) {
         // Perform the request.
-        env.importKeys('who', ['gh:who'], (err, errors) => {
-          assert.strictEqual(err, 'bad wolf');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'who',
+          ['gh:who'],
+          (err, errors) => {
+            assert.strictEqual(err, 'bad wolf');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({'request-id': 1, error: 'bad wolf'});
       });
@@ -3437,11 +3776,16 @@ const utils = require('../app/init/testing-utils');
       it('handles API failures while importing keys', function(done) {
         // Perform the request.
         const ids = ['gh:rose', 'bb:cyberman', 'lp:dalek'];
-        env.importKeys('dalek', ids, (err, errors) => {
-          assert.strictEqual(err, null);
-          assert.deepEqual(errors, [null, 'bad wolf', null]);
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'dalek',
+          ids,
+          (err, errors) => {
+            assert.strictEqual(err, null);
+            assert.deepEqual(errors, [null, 'bad wolf', null]);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3453,11 +3797,16 @@ const utils = require('../app/init/testing-utils');
 
       it('fails for unexpected results', function(done) {
         // Perform the request.
-        env.importKeys('cyberman', ['gh:who'], (err, errors) => {
-          assert.strictEqual(err, 'unexpected results: [{},{}]');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'cyberman',
+          ['gh:who'],
+          (err, errors) => {
+            assert.strictEqual(err, 'unexpected results: [{},{}]');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3467,11 +3816,16 @@ const utils = require('../app/init/testing-utils');
 
       it('fails for no results', function(done) {
         // Perform the request.
-        env.importKeys('rose', ['gh:who'], (err, errors) => {
-          assert.strictEqual(err, 'unexpected results: []');
-          assert.deepEqual(errors, []);
-          done();
-        }, {immediate: true});
+        env.importKeys(
+          'rose',
+          ['gh:who'],
+          (err, errors) => {
+            assert.strictEqual(err, 'unexpected results: []');
+            assert.deepEqual(errors, []);
+            done();
+          },
+          {immediate: true}
+        );
         // Mimic response.
         conn.msg({
           'request-id': 1,
@@ -3502,9 +3856,13 @@ const utils = require('../app/init/testing-utils');
         // Mimic response.
         conn.msg({
           'request-id': 1,
-          response: {results: [{
-            result: ['ssh-rsa key1', 'ssh-rsa key2']
-          }]}
+          response: {
+            results: [
+              {
+                result: ['ssh-rsa key1', 'ssh-rsa key2']
+              }
+            ]
+          }
         });
       });
 
@@ -3529,9 +3887,13 @@ const utils = require('../app/init/testing-utils');
         // Mimic response.
         conn.msg({
           'request-id': 1,
-          response: {results: [{
-            result: ['fingerprint']
-          }]}
+          response: {
+            results: [
+              {
+                result: ['fingerprint']
+              }
+            ]
+          }
         });
       });
 
@@ -3549,8 +3911,7 @@ const utils = require('../app/init/testing-utils');
       it('handles API failures while retrieving keys', function(done) {
         // Perform the request.
         env.listKeys('dalek', false, (err, keys) => {
-          assert.strictEqual(
-            err, 'cannot list keys: bad wolf');
+          assert.strictEqual(err, 'cannot list keys: bad wolf');
           assert.deepEqual(keys, []);
           done();
         });
@@ -3591,11 +3952,12 @@ const utils = require('../app/init/testing-utils');
     });
 
     describe('fullStatus', function() {
-
       it('succeeds', function(done) {
         // Snapshots could help here!
-        const response = '{"request-id":1,"response":{"model":{"name":"default","cloud-tag":"cloud-localhost","region":"localhost","version":"2.3-alpha1.1","available-version":"","model-status":{"status":"available","info":"","data":{},"since":"2017-07-24T17:35:58.284859958Z","kind":"","version":"","life":""},"meter-status":{"color":"","message":""},"sla":"unsupported"},"machines":{"1":{"agent-status":{"status":"started","info":"","data":{},"since":"2017-07-27T09:06:38.403313203Z","kind":"","version":"2.3-alpha1.1","life":""},"instance-status":{"status":"running","info":"Running","data":{},"since":"2017-07-27T09:05:31.888249394Z","kind":"","version":"","life":""},"dns-name":"10.56.39.236","ip-addresses":["10.56.39.236"],"instance-id":"juju-39bb4b-1","series":"xenial","id":"1","network-interfaces":{"eth0":{"ip-addresses":["10.56.39.236"],"mac-address":"00:16:3e:f8:e2:66","is-up":true},"lxdbr0":{"ip-addresses":["10.0.253.1"],"mac-address":"62:f5:69:49:6e:eb","is-up":true}},"containers":{"1/lxd/0":{"agent-status":{"status":"down","info":"agent is not communicating with the server","data":{},"since":"2017-07-27T10:11:50.03607208Z","kind":"","version":"","life":""},"instance-status":{"status":"provisioning error","info":"LXD does not have a uid/gid allocation. In this mode, only privileged containers are supported.","data":{},"since":"2017-07-27T10:11:50.03607208Z","kind":"","version":"","life":""},"dns-name":"","instance-id":"pending","series":"xenial","id":"1/lxd/0","containers":{},"constraints":"","hardware":"","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false},"2":{"agent-status":{"status":"started","info":"","data":{},"since":"2017-07-27T09:06:35.343625024Z","kind":"","version":"2.3-alpha1.1","life":""},"instance-status":{"status":"running","info":"Running","data":{},"since":"2017-07-27T09:05:58.513416815Z","kind":"","version":"","life":""},"dns-name":"10.56.39.67","ip-addresses":["10.56.39.67"],"instance-id":"juju-39bb4b-2","series":"trusty","id":"2","network-interfaces":{"eth0":{"ip-addresses":["10.56.39.67"],"mac-address":"00:16:3e:ae:ab:f4","is-up":true}},"containers":{},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false}},"applications":{"mysql":{"charm":"cs:mysql-57","series":"xenial","exposed":false,"life":"","relations":{"cluster":["mysql"],"db":["wordpress"]},"can-upgrade-to":"","subordinate-to":[],"units":{"mysql/0":{"agent-status":{"status":"idle","info":"","data":{},"since":"2017-07-27T14:24:37.091302286Z","kind":"","version":"2.3-alpha1.1","life":""},"workload-status":{"status":"active","info":"Ready","data":{},"since":"2017-07-27T09:09:26.605041846Z","kind":"","version":"","life":""},"workload-version":"5.7.19","machine":"1","opened-ports":["3306/tcp"],"public-address":"10.56.39.236","charm":"","subordinates":null,"leader":true}},"meter-statuses":null,"status":{"status":"active","info":"Ready","data":{},"since":"2017-07-27T09:09:26.605041846Z","kind":"","version":"","life":""},"workload-version":"5.7.19"},"wordpress":{"charm":"cs:trusty/wordpress-5","series":"trusty","exposed":false,"life":"","relations":{"db":["mysql"],"loadbalancer":["wordpress"],"website":["haproxy"]},"can-upgrade-to":"","subordinate-to":[],"units":{"wordpress/0":{"agent-status":{"status":"idle","info":"","data":{},"since":"2017-07-27T14:25:15.698979271Z","kind":"","version":"2.3-alpha1.1","life":""},"workload-status":{"status":"active","info":"","data":{},"since":"2017-07-27T09:11:53.345976498Z","kind":"","version":"","life":""},"workload-version":"","machine":"2","opened-ports":["80/tcp"],"public-address":"10.56.39.67","charm":"","subordinates":null,"leader":true}},"meter-statuses":null,"status":{"status":"active","info":"","data":{},"since":"2017-07-27T09:11:53.345976498Z","kind":"","version":"","life":""},"workload-version":""}},"remote-applications":{"haproxy":{"application-url":"local:admin/controller.haproxy","application-name":"haproxy","endpoints":[{"name":"reverseproxy","role":"requirer","interface":"http","limit":0,"scope":"global"}],"life":"","relations":{"reverseproxy":["wordpress"]},"status":{"status":"unknown","info":"waiting for remote connection","data":{},"since":"2017-07-27T10:55:55.481908354Z","kind":"","version":"","life":""}}},"relations":[{"id":4,"key":"haproxy:reverseproxy wordpress:website","interface":"http","scope":"global","endpoints":[{"application":"wordpress","name":"website","role":"provider","subordinate":false},{"application":"haproxy","name":"reverseproxy","role":"requirer","subordinate":false}]},{"id":1,"key":"mysql:cluster","interface":"mysql-ha","scope":"global","endpoints":[{"application":"mysql","name":"cluster","role":"peer","subordinate":false}]},{"id":3,"key":"wordpress:db mysql:db","interface":"mysql","scope":"global","endpoints":[{"application":"mysql","name":"db","role":"provider","subordinate":false},{"application":"wordpress","name":"db","role":"requirer","subordinate":false}]},{"id":2,"key":"wordpress:loadbalancer","interface":"reversenginx","scope":"global","endpoints":[{"application":"wordpress","name":"loadbalancer","role":"peer","subordinate":false}]}]}}'; // eslint-disable-line max-len
-        const expected = '{"model":{"name":"default","cloud":"localhost","region":"localhost","version":"2.3-alpha1.1","availableVersion":"","sla":"unsupported","status":{"status":"available","info":"","life":"","since":"2017-07-24T17:35:58.284Z"}},"machines":{"1":{"id":"1","instanceID":"juju-39bb4b-1","series":"xenial","dnsName":"10.56.39.236","ipAddresses":["10.56.39.236"],"networkInterfaces":{"eth0":{"ipAddresses":["10.56.39.236"],"macAddress":"00:16:3e:f8:e2:66","isUp":true},"lxdbr0":{"ipAddresses":["10.0.253.1"],"macAddress":"62:f5:69:49:6e:eb","isUp":true}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"started","info":"","life":"","since":"2017-07-27T09:06:38.403Z"},"instance":{"status":"running","info":"Running","life":"","since":"2017-07-27T09:05:31.888Z"},"containers":{"1/lxd/0":{"id":"1/lxd/0","instanceID":"pending","series":"xenial","dnsName":"","networkInterfaces":{},"constraints":"","hardware":"","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"down","info":"agent is not communicating with the server","life":"","since":"2017-07-27T10:11:50.036Z"},"instance":{"status":"provisioning error","info":"LXD does not have a uid/gid allocation. In this mode, only privileged containers are supported.","life":"","since":"2017-07-27T10:11:50.036Z"},"containers":{}}}},"2":{"id":"2","instanceID":"juju-39bb4b-2","series":"trusty","dnsName":"10.56.39.67","ipAddresses":["10.56.39.67"],"networkInterfaces":{"eth0":{"ipAddresses":["10.56.39.67"],"macAddress":"00:16:3e:ae:ab:f4","isUp":true}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"started","info":"","life":"","since":"2017-07-27T09:06:35.343Z"},"instance":{"status":"running","info":"Running","life":"","since":"2017-07-27T09:05:58.513Z"},"containers":{}}},"applications":{"mysql":{"charm":{"name":"mysql","schema":"cs","user":"","series":"","revision":57},"series":"xenial","exposed":false,"life":"","relations":{"cluster":["mysql"],"db":["wordpress"]},"canUpgradeTo":null,"subordinateTo":[],"workloadVersion":"5.7.19","units":{"mysql/0":{"workloadVersion":"5.7.19","machine":"1","ports":["3306/tcp"],"publicAddress":"10.56.39.236","isLeader":true,"agent":{"status":"idle","info":"","life":"","since":"2017-07-27T14:24:37.091Z"},"workload":{"status":"active","info":"Ready","life":"","since":"2017-07-27T09:09:26.605Z"}}},"leaderStatus":{"status":"active","info":"Ready","life":"","since":"2017-07-27T09:09:26.605Z"}},"wordpress":{"charm":{"name":"wordpress","schema":"cs","user":"","series":"trusty","revision":5},"series":"trusty","exposed":false,"life":"","relations":{"db":["mysql"],"loadbalancer":["wordpress"],"website":["haproxy"]},"canUpgradeTo":null,"subordinateTo":[],"workloadVersion":"","units":{"wordpress/0":{"workloadVersion":"","machine":"2","ports":["80/tcp"],"publicAddress":"10.56.39.67","isLeader":true,"agent":{"status":"idle","info":"","life":"","since":"2017-07-27T14:25:15.698Z"},"workload":{"status":"active","info":"","life":"","since":"2017-07-27T09:11:53.345Z"}}},"leaderStatus":{"status":"active","info":"","life":"","since":"2017-07-27T09:11:53.345Z"}}},"remoteApplications":{"haproxy":{"url":"local:admin/controller.haproxy","name":"haproxy","endpoints":[{"name":"reverseproxy","role":"requirer","interface":"http","limit":0,"scope":"global"}],"life":"","relations":{"reverseproxy":["wordpress"]},"status":{"status":"unknown","info":"waiting for remote connection","life":"","since":"2017-07-27T10:55:55.481Z"}}},"relations":[{"id":4,"key":"haproxy:reverseproxy wordpress:website","interface":"http","scope":"global","endpoints":[{"application":"wordpress","name":"website","role":"provider","subordinate":false},{"application":"haproxy","name":"reverseproxy","role":"requirer","subordinate":false}]},{"id":1,"key":"mysql:cluster","interface":"mysql-ha","scope":"global","endpoints":[{"application":"mysql","name":"cluster","role":"peer","subordinate":false}]},{"id":3,"key":"wordpress:db mysql:db","interface":"mysql","scope":"global","endpoints":[{"application":"mysql","name":"db","role":"provider","subordinate":false},{"application":"wordpress","name":"db","role":"requirer","subordinate":false}]},{"id":2,"key":"wordpress:loadbalancer","interface":"reversenginx","scope":"global","endpoints":[{"application":"wordpress","name":"loadbalancer","role":"peer","subordinate":false}]}]}'; // eslint-disable-line max-len
+        const response =
+          '{"request-id":1,"response":{"model":{"name":"default","cloud-tag":"cloud-localhost","region":"localhost","version":"2.3-alpha1.1","available-version":"","model-status":{"status":"available","info":"","data":{},"since":"2017-07-24T17:35:58.284859958Z","kind":"","version":"","life":""},"meter-status":{"color":"","message":""},"sla":"unsupported"},"machines":{"1":{"agent-status":{"status":"started","info":"","data":{},"since":"2017-07-27T09:06:38.403313203Z","kind":"","version":"2.3-alpha1.1","life":""},"instance-status":{"status":"running","info":"Running","data":{},"since":"2017-07-27T09:05:31.888249394Z","kind":"","version":"","life":""},"dns-name":"10.56.39.236","ip-addresses":["10.56.39.236"],"instance-id":"juju-39bb4b-1","series":"xenial","id":"1","network-interfaces":{"eth0":{"ip-addresses":["10.56.39.236"],"mac-address":"00:16:3e:f8:e2:66","is-up":true},"lxdbr0":{"ip-addresses":["10.0.253.1"],"mac-address":"62:f5:69:49:6e:eb","is-up":true}},"containers":{"1/lxd/0":{"agent-status":{"status":"down","info":"agent is not communicating with the server","data":{},"since":"2017-07-27T10:11:50.03607208Z","kind":"","version":"","life":""},"instance-status":{"status":"provisioning error","info":"LXD does not have a uid/gid allocation. In this mode, only privileged containers are supported.","data":{},"since":"2017-07-27T10:11:50.03607208Z","kind":"","version":"","life":""},"dns-name":"","instance-id":"pending","series":"xenial","id":"1/lxd/0","containers":{},"constraints":"","hardware":"","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false},"2":{"agent-status":{"status":"started","info":"","data":{},"since":"2017-07-27T09:06:35.343625024Z","kind":"","version":"2.3-alpha1.1","life":""},"instance-status":{"status":"running","info":"Running","data":{},"since":"2017-07-27T09:05:58.513416815Z","kind":"","version":"","life":""},"dns-name":"10.56.39.67","ip-addresses":["10.56.39.67"],"instance-id":"juju-39bb4b-2","series":"trusty","id":"2","network-interfaces":{"eth0":{"ip-addresses":["10.56.39.67"],"mac-address":"00:16:3e:ae:ab:f4","is-up":true}},"containers":{},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"has-vote":false,"wants-vote":false}},"applications":{"mysql":{"charm":"cs:mysql-57","series":"xenial","exposed":false,"life":"","relations":{"cluster":["mysql"],"db":["wordpress"]},"can-upgrade-to":"","subordinate-to":[],"units":{"mysql/0":{"agent-status":{"status":"idle","info":"","data":{},"since":"2017-07-27T14:24:37.091302286Z","kind":"","version":"2.3-alpha1.1","life":""},"workload-status":{"status":"active","info":"Ready","data":{},"since":"2017-07-27T09:09:26.605041846Z","kind":"","version":"","life":""},"workload-version":"5.7.19","machine":"1","opened-ports":["3306/tcp"],"public-address":"10.56.39.236","charm":"","subordinates":null,"leader":true}},"meter-statuses":null,"status":{"status":"active","info":"Ready","data":{},"since":"2017-07-27T09:09:26.605041846Z","kind":"","version":"","life":""},"workload-version":"5.7.19"},"wordpress":{"charm":"cs:trusty/wordpress-5","series":"trusty","exposed":false,"life":"","relations":{"db":["mysql"],"loadbalancer":["wordpress"],"website":["haproxy"]},"can-upgrade-to":"","subordinate-to":[],"units":{"wordpress/0":{"agent-status":{"status":"idle","info":"","data":{},"since":"2017-07-27T14:25:15.698979271Z","kind":"","version":"2.3-alpha1.1","life":""},"workload-status":{"status":"active","info":"","data":{},"since":"2017-07-27T09:11:53.345976498Z","kind":"","version":"","life":""},"workload-version":"","machine":"2","opened-ports":["80/tcp"],"public-address":"10.56.39.67","charm":"","subordinates":null,"leader":true}},"meter-statuses":null,"status":{"status":"active","info":"","data":{},"since":"2017-07-27T09:11:53.345976498Z","kind":"","version":"","life":""},"workload-version":""}},"remote-applications":{"haproxy":{"application-url":"local:admin/controller.haproxy","application-name":"haproxy","endpoints":[{"name":"reverseproxy","role":"requirer","interface":"http","limit":0,"scope":"global"}],"life":"","relations":{"reverseproxy":["wordpress"]},"status":{"status":"unknown","info":"waiting for remote connection","data":{},"since":"2017-07-27T10:55:55.481908354Z","kind":"","version":"","life":""}}},"relations":[{"id":4,"key":"haproxy:reverseproxy wordpress:website","interface":"http","scope":"global","endpoints":[{"application":"wordpress","name":"website","role":"provider","subordinate":false},{"application":"haproxy","name":"reverseproxy","role":"requirer","subordinate":false}]},{"id":1,"key":"mysql:cluster","interface":"mysql-ha","scope":"global","endpoints":[{"application":"mysql","name":"cluster","role":"peer","subordinate":false}]},{"id":3,"key":"wordpress:db mysql:db","interface":"mysql","scope":"global","endpoints":[{"application":"mysql","name":"db","role":"provider","subordinate":false},{"application":"wordpress","name":"db","role":"requirer","subordinate":false}]},{"id":2,"key":"wordpress:loadbalancer","interface":"reversenginx","scope":"global","endpoints":[{"application":"wordpress","name":"loadbalancer","role":"peer","subordinate":false}]}]}}';
+        const expected =
+          '{"model":{"name":"default","cloud":"localhost","region":"localhost","version":"2.3-alpha1.1","availableVersion":"","sla":"unsupported","status":{"status":"available","info":"","life":"","since":"2017-07-24T17:35:58.284Z"}},"machines":{"1":{"id":"1","instanceID":"juju-39bb4b-1","series":"xenial","dnsName":"10.56.39.236","ipAddresses":["10.56.39.236"],"networkInterfaces":{"eth0":{"ipAddresses":["10.56.39.236"],"macAddress":"00:16:3e:f8:e2:66","isUp":true},"lxdbr0":{"ipAddresses":["10.0.253.1"],"macAddress":"62:f5:69:49:6e:eb","isUp":true}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"started","info":"","life":"","since":"2017-07-27T09:06:38.403Z"},"instance":{"status":"running","info":"Running","life":"","since":"2017-07-27T09:05:31.888Z"},"containers":{"1/lxd/0":{"id":"1/lxd/0","instanceID":"pending","series":"xenial","dnsName":"","networkInterfaces":{},"constraints":"","hardware":"","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"down","info":"agent is not communicating with the server","life":"","since":"2017-07-27T10:11:50.036Z"},"instance":{"status":"provisioning error","info":"LXD does not have a uid/gid allocation. In this mode, only privileged containers are supported.","life":"","since":"2017-07-27T10:11:50.036Z"},"containers":{}}}},"2":{"id":"2","instanceID":"juju-39bb4b-2","series":"trusty","dnsName":"10.56.39.67","ipAddresses":["10.56.39.67"],"networkInterfaces":{"eth0":{"ipAddresses":["10.56.39.67"],"macAddress":"00:16:3e:ae:ab:f4","isUp":true}},"constraints":"","hardware":"arch=amd64 cores=0 mem=0M","jobs":["JobHostUnits"],"hasVote":false,"wantsVote":false,"agent":{"status":"started","info":"","life":"","since":"2017-07-27T09:06:35.343Z"},"instance":{"status":"running","info":"Running","life":"","since":"2017-07-27T09:05:58.513Z"},"containers":{}}},"applications":{"mysql":{"charm":{"name":"mysql","schema":"cs","user":"","series":"","revision":57},"series":"xenial","exposed":false,"life":"","relations":{"cluster":["mysql"],"db":["wordpress"]},"canUpgradeTo":null,"subordinateTo":[],"workloadVersion":"5.7.19","units":{"mysql/0":{"workloadVersion":"5.7.19","machine":"1","ports":["3306/tcp"],"publicAddress":"10.56.39.236","isLeader":true,"agent":{"status":"idle","info":"","life":"","since":"2017-07-27T14:24:37.091Z"},"workload":{"status":"active","info":"Ready","life":"","since":"2017-07-27T09:09:26.605Z"}}},"leaderStatus":{"status":"active","info":"Ready","life":"","since":"2017-07-27T09:09:26.605Z"}},"wordpress":{"charm":{"name":"wordpress","schema":"cs","user":"","series":"trusty","revision":5},"series":"trusty","exposed":false,"life":"","relations":{"db":["mysql"],"loadbalancer":["wordpress"],"website":["haproxy"]},"canUpgradeTo":null,"subordinateTo":[],"workloadVersion":"","units":{"wordpress/0":{"workloadVersion":"","machine":"2","ports":["80/tcp"],"publicAddress":"10.56.39.67","isLeader":true,"agent":{"status":"idle","info":"","life":"","since":"2017-07-27T14:25:15.698Z"},"workload":{"status":"active","info":"","life":"","since":"2017-07-27T09:11:53.345Z"}}},"leaderStatus":{"status":"active","info":"","life":"","since":"2017-07-27T09:11:53.345Z"}}},"remoteApplications":{"haproxy":{"url":"local:admin/controller.haproxy","name":"haproxy","endpoints":[{"name":"reverseproxy","role":"requirer","interface":"http","limit":0,"scope":"global"}],"life":"","relations":{"reverseproxy":["wordpress"]},"status":{"status":"unknown","info":"waiting for remote connection","life":"","since":"2017-07-27T10:55:55.481Z"}}},"relations":[{"id":4,"key":"haproxy:reverseproxy wordpress:website","interface":"http","scope":"global","endpoints":[{"application":"wordpress","name":"website","role":"provider","subordinate":false},{"application":"haproxy","name":"reverseproxy","role":"requirer","subordinate":false}]},{"id":1,"key":"mysql:cluster","interface":"mysql-ha","scope":"global","endpoints":[{"application":"mysql","name":"cluster","role":"peer","subordinate":false}]},{"id":3,"key":"wordpress:db mysql:db","interface":"mysql","scope":"global","endpoints":[{"application":"mysql","name":"db","role":"provider","subordinate":false},{"application":"wordpress","name":"db","role":"requirer","subordinate":false}]},{"id":2,"key":"wordpress:loadbalancer","interface":"reversenginx","scope":"global","endpoints":[{"application":"wordpress","name":"loadbalancer","role":"peer","subordinate":false}]}]}';
         // Perform the request.
         env.fullStatus((err, status) => {
           assert.strictEqual(err, null);
@@ -3664,13 +4026,15 @@ const utils = require('../app/init/testing-utils');
           version: 1,
           request: 'Offer',
           params: {
-            offers: [{
-              applicationname: 'django',
-              endpoints: ['web', 'cache'],
-              applicationurl: 'local:/u/mydjango',
-              allowedusers: ['user-dalek', 'user-cyberman'],
-              applicationdescription: 'my description'
-            }]
+            offers: [
+              {
+                applicationname: 'django',
+                endpoints: ['web', 'cache'],
+                applicationurl: 'local:/u/mydjango',
+                allowedusers: ['user-dalek', 'user-cyberman'],
+                applicationdescription: 'my description'
+              }
+            ]
           },
           'request-id': 1
         });
@@ -3679,8 +4043,13 @@ const utils = require('../app/init/testing-utils');
 
       // Perform the request.
       env.offer(
-        'django', ['web', 'cache'], 'local:/u/mydjango', ['dalek', 'cyberman'],
-        'my description', callback);
+        'django',
+        ['web', 'cache'],
+        'local:/u/mydjango',
+        ['dalek', 'cyberman'],
+        'my description',
+        callback
+      );
 
       // Mimic response.
       conn.msg({
@@ -3705,13 +4074,15 @@ const utils = require('../app/init/testing-utils');
           version: 1,
           request: 'Offer',
           params: {
-            offers: [{
-              applicationname: 'haproxy',
-              endpoints: ['proxy'],
-              applicationurl: 'local:/u/user@local/myenv/haproxy',
-              allowedusers: ['user-public'],
-              applicationdescription: ''
-            }]
+            offers: [
+              {
+                applicationname: 'haproxy',
+                endpoints: ['proxy'],
+                applicationurl: 'local:/u/user@local/myenv/haproxy',
+                allowedusers: ['user-public'],
+                applicationdescription: ''
+              }
+            ]
           },
           'request-id': 1
         });
@@ -3741,16 +4112,25 @@ const utils = require('../app/init/testing-utils');
 
       // Perform the request.
       env.offer(
-        'django', ['web', 'cache'], 'local:/u/mydjango', ['dalek'],
-        'my description', callback);
+        'django',
+        ['web', 'cache'],
+        'local:/u/mydjango',
+        ['dalek'],
+        'my description',
+        callback
+      );
 
       // Mimic response.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{error: {
-            message: 'bad wolf'
-          }}]
+          results: [
+            {
+              error: {
+                message: 'bad wolf'
+              }
+            }
+          ]
         }
       });
     });
@@ -3766,8 +4146,13 @@ const utils = require('../app/init/testing-utils');
 
       // Perform the request.
       env.offer(
-        'django', ['web', 'cache'], 'local:/u/mydjango', ['dalek'],
-        'my description', callback);
+        'django',
+        ['web', 'cache'],
+        'local:/u/mydjango',
+        ['dalek'],
+        'my description',
+        callback
+      );
 
       // Mimic response.
       conn.msg({
@@ -3788,19 +4173,22 @@ const utils = require('../app/init/testing-utils');
           assert.strictEqual(info.description, 'django is good');
           assert.strictEqual(info.url, url);
           assert.strictEqual(info.sourceModel, 'default');
-          assert.deepEqual(info.endpoints, [{
-            name: 'ceph',
-            role: 'requirer',
-            interface: 'ceph-client',
-            limit: 1,
-            scope: 'global'
-          }, {
-            name: 'ha',
-            role: 'requirer',
-            interface: 'hacluster',
-            limit: 1,
-            scope: 'container'
-          }]);
+          assert.deepEqual(info.endpoints, [
+            {
+              name: 'ceph',
+              role: 'requirer',
+              interface: 'ceph-client',
+              limit: 1,
+              scope: 'global'
+            },
+            {
+              name: 'ha',
+              role: 'requirer',
+              interface: 'hacluster',
+              limit: 1,
+              scope: 'container'
+            }
+          ]);
           assert.strictEqual(info.icon, 'i am an svg icon');
           const msg = conn.last_message();
           assert.deepEqual(msg, {
@@ -3815,29 +4203,36 @@ const utils = require('../app/init/testing-utils');
         // Mimic response.
         conn.msg({
           'request-id': 1,
-          response: {results: [{
-            result: {
-              'model-tag': 'model-01234-56789',
-              name: 'django',
-              description: 'django is good',
-              'application-url': url,
-              'source-model-label': 'default',
-              endpoints: [{
-                name: 'ceph',
-                role: 'requirer',
-                interface: 'ceph-client',
-                limit: 1,
-                scope: 'global'
-              }, {
-                name: 'ha',
-                role: 'requirer',
-                interface: 'hacluster',
-                limit: 1,
-                scope: 'container'
-              }],
-              icon: btoa('i am an svg icon')
-            }
-          }]}
+          response: {
+            results: [
+              {
+                result: {
+                  'model-tag': 'model-01234-56789',
+                  name: 'django',
+                  description: 'django is good',
+                  'application-url': url,
+                  'source-model-label': 'default',
+                  endpoints: [
+                    {
+                      name: 'ceph',
+                      role: 'requirer',
+                      interface: 'ceph-client',
+                      limit: 1,
+                      scope: 'global'
+                    },
+                    {
+                      name: 'ha',
+                      role: 'requirer',
+                      interface: 'hacluster',
+                      limit: 1,
+                      scope: 'container'
+                    }
+                  ],
+                  icon: btoa('i am an svg icon')
+                }
+              }
+            ]
+          }
         });
       });
 
@@ -3855,8 +4250,7 @@ const utils = require('../app/init/testing-utils');
       it('handles API failures while getting info', function(done) {
         // Perform the request.
         env.remoteApplicationInfo('default.django', (err, info) => {
-          assert.strictEqual(
-            err, 'cannot get remote application info: bad wolf');
+          assert.strictEqual(err, 'cannot get remote application info: bad wolf');
           assert.deepEqual(info, {});
           done();
         });
@@ -3938,9 +4332,11 @@ const utils = require('../app/init/testing-utils');
           version: 1,
           request: 'ListOffers',
           params: {
-            filters: [{
-              'filter-terms': []
-            }]
+            filters: [
+              {
+                'filter-terms': []
+              }
+            ]
           },
           'request-id': 1
         });
@@ -3951,41 +4347,52 @@ const utils = require('../app/init/testing-utils');
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: [
-              {result: {
-                applicationname: 'mydjango',
-                applicationurl: 'local:/u/who/my-env/django',
-                charmname: 'django',
-                endpoints: [{
-                  name: 'website',
-                  interface: 'http',
-                  role: 'provider',
-                  limit: 0,
-                  scope: 'global'
-                }]
-              }},
-              {error: 'bad wolf'},
-              {result: {
-                applicationname: 'haproxy',
-                applicationurl: 'local:/u/dalek/ha',
-                charmname: 'cs:haproxy',
-                endpoints: [{
-                  name: 'cache',
-                  interface: 'http',
-                  role: 'requirer',
-                  limit: 0,
-                  scope: 'global'
-                }, {
-                  name: 'webproxy',
-                  interface: 'proxy',
-                  role: 'provider',
-                  limit: 1,
-                  scope: 'global'
-                }]
-              }}
-            ]
-          }]
+          results: [
+            {
+              result: [
+                {
+                  result: {
+                    applicationname: 'mydjango',
+                    applicationurl: 'local:/u/who/my-env/django',
+                    charmname: 'django',
+                    endpoints: [
+                      {
+                        name: 'website',
+                        interface: 'http',
+                        role: 'provider',
+                        limit: 0,
+                        scope: 'global'
+                      }
+                    ]
+                  }
+                },
+                {error: 'bad wolf'},
+                {
+                  result: {
+                    applicationname: 'haproxy',
+                    applicationurl: 'local:/u/dalek/ha',
+                    charmname: 'cs:haproxy',
+                    endpoints: [
+                      {
+                        name: 'cache',
+                        interface: 'http',
+                        role: 'requirer',
+                        limit: 0,
+                        scope: 'global'
+                      },
+                      {
+                        name: 'webproxy',
+                        interface: 'proxy',
+                        role: 'provider',
+                        limit: 1,
+                        scope: 'global'
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
         }
       });
     });
@@ -4034,28 +4441,33 @@ const utils = require('../app/init/testing-utils');
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              applicationname: 'django',
-              applicationurl: url,
-              applicationdescription: 'these are the voyages',
-              sourcelabel: 'aws',
-              sourceenviron: 'model-uuid',
-              endpoints: [{
-                name: 'cache',
-                interface: 'http',
-                role: 'requirer',
-                limit: 0,
-                scope: 'global'
-              }, {
-                name: 'webproxy',
-                interface: 'proxy',
-                role: 'provider',
-                limit: 1,
-                scope: 'global'
-              }]
+          results: [
+            {
+              result: {
+                applicationname: 'django',
+                applicationurl: url,
+                applicationdescription: 'these are the voyages',
+                sourcelabel: 'aws',
+                sourceenviron: 'model-uuid',
+                endpoints: [
+                  {
+                    name: 'cache',
+                    interface: 'http',
+                    role: 'requirer',
+                    limit: 0,
+                    scope: 'global'
+                  },
+                  {
+                    name: 'webproxy',
+                    interface: 'proxy',
+                    role: 'provider',
+                    limit: 1,
+                    scope: 'global'
+                  }
+                ]
+              }
             }
-          }]
+          ]
         }
       });
     });
@@ -4085,9 +4497,11 @@ const utils = require('../app/init/testing-utils');
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            error: {message: 'bad wolf'}
-          }]
+          results: [
+            {
+              error: {message: 'bad wolf'}
+            }
+          ]
         }
       });
     });
@@ -4149,23 +4563,26 @@ const utils = require('../app/init/testing-utils');
         conn.msg({
           'request-id': 1,
           response: {
-            results: [{
-              result: {
-                user: 'dalek',
-                'display-name': 'Dalek',
-                'last-connection': '2000-01-01T00:00:00Z',
-                access: 'admin',
-                err: null
+            results: [
+              {
+                result: {
+                  user: 'dalek',
+                  'display-name': 'Dalek',
+                  'last-connection': '2000-01-01T00:00:00Z',
+                  access: 'admin',
+                  err: null
+                }
+              },
+              {
+                result: {
+                  user: 'rose@external',
+                  'display-name': '',
+                  'last-connection': '',
+                  access: 'write',
+                  err: null
+                }
               }
-            }, {
-              result: {
-                user: 'rose@external',
-                'display-name': '',
-                'last-connection': '',
-                access: 'write',
-                err: null
-              }
-            }]
+            ]
           }
         });
       });
@@ -4193,13 +4610,14 @@ const utils = require('../app/init/testing-utils');
         conn.msg({
           'request-id': 1,
           response: {
-            results: [{
-              error: {message: 'bad wolf'}
-            }]
+            results: [
+              {
+                error: {message: 'bad wolf'}
+              }
+            ]
           }
         });
       });
     });
   });
-
 })();

@@ -29,7 +29,9 @@ var _box = {};
 // Internal descriptor generator.
 function positionProp(name) {
   return {
-    get: function() {return this['_' + name];},
+    get: function() {
+      return this['_' + name];
+    },
     set: function(value) {
       this['p' + name] = this['_' + name];
       this['_' + name] = parseFloat(value);
@@ -45,19 +47,25 @@ Object.defineProperties(_box, {
   h: positionProp('h'),
 
   pos: {
-    get: function() { return {x: this.x, y: this.y, w: this.w, h: this.h};},
+    get: function() {
+      return {x: this.x, y: this.y, w: this.w, h: this.h};
+    },
     set: function(value) {
       Object.assign(this, {x: value.x, y: value.y, w: value.w, h: value.h});
     }
   },
 
   translateStr: {
-    get: function() { return 'translate(' + this.x + ',' + this.y + ')';}
+    get: function() {
+      return 'translate(' + this.x + ',' + this.y + ')';
+    }
   },
 
   model: {
     get: function() {
-      if (!this._modelName) { return null;}
+      if (!this._modelName) {
+        return null;
+      }
       return this.topology.serviceForBox(this);
     },
     set: function(value) {
@@ -68,19 +76,29 @@ Object.defineProperties(_box, {
     }
   },
   modelId: {
-    get: function() { return this._modelName + '-' + this.id;}
+    get: function() {
+      return this._modelName + '-' + this.id;
+    }
   },
   node: {
-    get: function() { return this.module.getServiceNode(this.id);}
+    get: function() {
+      return this.module.getServiceNode(this.id);
+    }
   },
   topology: {
-    get: function() { return this.module.topo || this.module.get('component');}
+    get: function() {
+      return this.module.topo || this.module.get('component');
+    }
   },
   xy: {
-    get: function() { return [this.x, this.y];}
+    get: function() {
+      return [this.x, this.y];
+    }
   },
   wh: {
-    get: function() { return [this.w, this.h];}
+    get: function() {
+      return [this.w, this.h];
+    }
   },
 
   /*
@@ -107,12 +125,10 @@ Object.defineProperties(_box, {
     get: function() {
       var margins = this.margins;
       return [
-        (this.w / 2) + (margins &&
-                        (margins.left * this.w / 2 -
-                         margins.right * this.w / 2) || 0),
-        (this.h / 2) - (margins &&
-                        (margins.bottom * this.h / 2 -
-                         margins.top * this.h / 2) || 0)
+        this.w / 2 +
+          ((margins && (margins.left * this.w) / 2 - (margins.right * this.w) / 2) || 0),
+        this.h / 2 -
+          ((margins && (margins.bottom * this.h) / 2 - (margins.top * this.h) / 2) || 0)
       ];
     }
   },
@@ -139,15 +155,21 @@ Object.defineProperties(_box, {
     configurable: true,
     value: function(point, transform) {
       transform = transform || {
-        translate: function() { return [0, 0]; },
-        scale: function() { return 1; }
+        translate: function() {
+          return [0, 0];
+        },
+        scale: function() {
+          return 1;
+        }
       };
       var tr = transform.translate(),
-          s = transform.scale();
+        s = transform.scale();
 
-      return Math.pow(((point[0] - tr[0]) / s - (this.x + this.w / 2)), 2) +
-             Math.pow(((point[1] - tr[1]) / s - (this.y + this.w / 2)), 2) <=
-             Math.pow(this.w / 2, 2);
+      return (
+        Math.pow((point[0] - tr[0]) / s - (this.x + this.w / 2), 2) +
+          Math.pow((point[1] - tr[1]) / s - (this.y + this.w / 2), 2) <=
+        Math.pow(this.w / 2, 2)
+      );
     }
   },
 
@@ -167,33 +189,27 @@ Object.defineProperties(_box, {
 
       if (environmentUtils.snapToPoles) {
         return {
-          top: [
-            this.x + (this.w / 2),
-            this.y + (margins && (margins.top * this.h) || 0)
-          ],
+          top: [this.x + this.w / 2, this.y + ((margins && margins.top * this.h) || 0)],
           right: [
-            this.x + this.w - (margins && (margins.right * this.w) || 0),
-            this.y + (this.h / 2) - (
-              margins && (margins.bottom * this.h / 2 -
-                            margins.top * this.h / 2) || 0)
+            this.x + this.w - ((margins && margins.right * this.w) || 0),
+            this.y +
+              this.h / 2 -
+              ((margins && (margins.bottom * this.h) / 2 - (margins.top * this.h) / 2) || 0)
           ],
           bottom: [
-            this.x + (this.w / 2),
-            this.y + this.h - (margins && (margins.bottom * this.h) || 0)
+            this.x + this.w / 2,
+            this.y + this.h - ((margins && margins.bottom * this.h) || 0)
           ],
           left: [
-            this.x + (margins && (margins.left * this.w) || 0),
-            this.y + (this.h / 2) - (
-              margins && (margins.bottom * this.h / 2 -
-                            margins.top * this.h / 2) || 0)
+            this.x + ((margins && margins.left * this.w) || 0),
+            this.y +
+              this.h / 2 -
+              ((margins && (margins.bottom * this.h) / 2 - (margins.top * this.h) / 2) || 0)
           ]
         };
       } else {
         return {
-          center: [
-            this.x + (this.w / 2),
-            this.y + (this.h / 2)
-          ]
+          center: [this.x + this.w / 2, this.y + this.h / 2]
         };
       }
     }
@@ -201,8 +217,7 @@ Object.defineProperties(_box, {
 
   _distance: {
     value: function(xy1, xy2) {
-      return Math.sqrt(Math.pow(xy1[0] - xy2[0], 2) +
-                       Math.pow(xy1[1] - xy2[1], 2));
+      return Math.sqrt(Math.pow(xy1[0] - xy2[0], 2) + Math.pow(xy1[1] - xy2[1], 2));
     }
   },
 
@@ -213,9 +228,9 @@ Object.defineProperties(_box, {
   getNearestConnector: {
     value: function(box_or_xy) {
       var connectors = this.connectors,
-          result = null,
-          shortest_d = Infinity,
-          source = box_or_xy;
+        result = null,
+        shortest_d = Infinity,
+        source = box_or_xy;
 
       if (box_or_xy.xy !== undefined) {
         source = box_or_xy.xy;
@@ -241,9 +256,9 @@ Object.defineProperties(_box, {
   getConnectorPair: {
     value: function(other_box) {
       var sc = this.connectors,
-          oc = other_box.connectors,
-          result = null,
-          shortest_d = Infinity;
+        oc = other_box.connectors,
+        result = null,
+        shortest_d = Infinity;
 
       Object.keys(sc).forEach(key => {
         const ep1 = sc[key];
@@ -292,23 +307,21 @@ environmentUtils.toBoundingBoxes = function(module, services, existing, env) {
       delete result[key];
     }
   });
-  services.each(
-    function(service) {
-      var id = service.get('id');
-      if (result[id] !== undefined) {
-        result[id].model = service;
-      } else {
-        result[id] = new BoundingBox(module, service);
-      }
-      if (!service.get('icon') && service.get('charm')) {
-        var icon;
-        var charmId = service.get('charm');
-        icon = utils.getIconPath(charmId, null, env);
-        service.set('icon', icon);
-      }
-      result[id].icon = service.get('icon');
+  services.each(function(service) {
+    var id = service.get('id');
+    if (result[id] !== undefined) {
+      result[id].model = service;
+    } else {
+      result[id] = new BoundingBox(module, service);
     }
-  );
+    if (!service.get('icon') && service.get('charm')) {
+      var icon;
+      var charmId = service.get('charm');
+      icon = utils.getIconPath(charmId, null, env);
+      service.set('icon', icon);
+    }
+    result[id].icon = service.get('icon');
+  });
   return result;
 };
 
@@ -316,24 +329,28 @@ environmentUtils.getEffectiveViewportSize = function(primary, minwidth, minheigh
   // Attempt to get the viewport height minus the navbar at top and
   // control bar at the bottom.
   var containerHeight,
-      bottomNavbar = document.querySelector('.bottom-navbar'),
-      navbar = document.querySelector('.header-banner'),
-      viewport = document.querySelector('#viewport'),
-      result = {height: minheight || 0, width: minwidth || 0};
+    bottomNavbar = document.querySelector('.bottom-navbar'),
+    navbar = document.querySelector('.header-banner'),
+    viewport = document.querySelector('#viewport'),
+    result = {height: minheight || 0, width: minwidth || 0};
   if (primary) {
     containerHeight = document.documentElement.clientHeight;
   } else {
     const body = document.body;
     const html = document.documentElement;
-    containerHeight = Math.max(body.scrollHeight, body.offsetHeight,
-      html.clientHeight, html.scrollHeight, html.offsetHeight);
+    containerHeight = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
   }
   // If all elements are present and the viewport is not set to display none
-  const viewportHeight = viewport && window.getComputedStyle(
-    viewport).getPropertyValue('width');
+  const viewportHeight =
+    viewport && window.getComputedStyle(viewport).getPropertyValue('width');
   if (containerHeight && navbar && viewport && viewportHeight !== 'auto') {
-    result.height = containerHeight -
-        (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
+    result.height = containerHeight - (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0);
 
     result.width = Math.floor(parseFloat(viewportHeight));
 

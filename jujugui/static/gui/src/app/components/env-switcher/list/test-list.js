@@ -10,16 +10,18 @@ const EnvList = require('./list');
 describe('EnvList', function() {
   const acl = {canAddModels: sinon.stub().returns(true)};
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EnvList
-      acl={options.acl || acl}
-      changeState={options.changeState || sinon.stub()}
-      environmentName={options.environmentName || 'model-name-1'}
-      envs={options.envs || []}
-      handleModelClick={options.handleModelClick || sinon.stub()}
-      switchModel={options.switchModel || sinon.stub()}
-      user={options.user || {username: 'who@external', displayName: 'who'}} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EnvList
+        acl={options.acl || acl}
+        changeState={options.changeState || sinon.stub()}
+        environmentName={options.environmentName || 'model-name-1'}
+        envs={options.envs || []}
+        handleModelClick={options.handleModelClick || sinon.stub()}
+        switchModel={options.switchModel || sinon.stub()}
+        user={options.user || {username: 'who@external', displayName: 'who'}}
+      />
+    );
 
   it('renders a list of models', function() {
     const models = [
@@ -45,23 +47,26 @@ describe('EnvList', function() {
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
         id="environmentSwitcherMenu"
-        role="menubar">
+        role="menubar"
+      >
         <li
           className="env-list__environment"
           data-id={models[0].uuid}
           data-name={models[0].name}
           data-owner={models[0].owner}
           key={models[0].uuid}
-          onClick={wrapper.find('.env-list__environment').at(0).prop('onClick')}
+          onClick={wrapper
+            .find('.env-list__environment')
+            .at(0)
+            .prop('onClick')}
           role="menuitem"
-          tabIndex="0">
+          tabIndex="0"
+        >
           model-name-1
           <div className="env-list__last-connected">
             <span>
               Last accessed&nbsp;
-              <DateDisplay
-                date={models[0].lastConnection}
-                relative={true} />
+              <DateDisplay date={models[0].lastConnection} relative={true} />
             </span>
           </div>
         </li>
@@ -71,20 +76,23 @@ describe('EnvList', function() {
           data-name={models[1].name}
           data-owner={models[1].owner}
           key={models[1].uuid}
-          onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
+          onClick={wrapper
+            .find('.env-list__environment')
+            .at(1)
+            .prop('onClick')}
           role="menuitem"
-          tabIndex="0">
+          tabIndex="0"
+        >
           dalek/model-name-2
           <div className="env-list__last-connected">
             <span>
               Last accessed&nbsp;
-              <DateDisplay
-                date={models[1].lastConnection}
-                relative={true} />
+              <DateDisplay date={models[1].lastConnection} relative={true} />
             </span>
           </div>
         </li>
-      </ul>);
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.env-list'), expected);
   });
 
@@ -122,7 +130,8 @@ describe('EnvList', function() {
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
         id="environmentSwitcherMenu"
-        role="menubar">
+        role="menubar"
+      >
         {[
           <li
             className="env-list__environment"
@@ -130,16 +139,18 @@ describe('EnvList', function() {
             data-name={models[0].name}
             data-owner={models[0].owner}
             key={models[0].uuid}
-            onClick={wrapper.find('.env-list__environment').at(3).prop('onClick')}
+            onClick={wrapper
+              .find('.env-list__environment')
+              .at(3)
+              .prop('onClick')}
             role="menuitem"
-            tabIndex="0">
+            tabIndex="0"
+          >
             {'model-name-1'}
             <div className="env-list__last-connected">
               <span>
                 Last accessed&nbsp;
-                <DateDisplay
-                  date={models[0].lastConnection}
-                  relative={true} />
+                <DateDisplay date={models[0].lastConnection} relative={true} />
               </span>
             </div>
           </li>,
@@ -149,16 +160,18 @@ describe('EnvList', function() {
             data-name={models[1].name}
             data-owner={models[1].owner}
             key={models[1].uuid}
-            onClick={wrapper.find('.env-list__environment').at(2).prop('onClick')}
+            onClick={wrapper
+              .find('.env-list__environment')
+              .at(2)
+              .prop('onClick')}
             role="menuitem"
-            tabIndex="0">
+            tabIndex="0"
+          >
             {'model-name-3'}
             <div className="env-list__last-connected">
               <span>
                 Last accessed&nbsp;
-                <DateDisplay
-                  date={models[1].lastConnection}
-                  relative={true} />
+                <DateDisplay date={models[1].lastConnection} relative={true} />
               </span>
             </div>
           </li>,
@@ -168,16 +181,18 @@ describe('EnvList', function() {
             data-name={models[2].name}
             data-owner={models[2].owner}
             key={models[2].uuid}
-            onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
+            onClick={wrapper
+              .find('.env-list__environment')
+              .at(1)
+              .prop('onClick')}
             role="menuitem"
-            tabIndex="0">
+            tabIndex="0"
+          >
             {'dalek/model-name-2'}
             <div className="env-list__last-connected">
               <span>
                 Last accessed&nbsp;
-                <DateDisplay
-                  date={models[2].lastConnection}
-                  relative={true} />
+                <DateDisplay date={models[2].lastConnection} relative={true} />
               </span>
             </div>
           </li>,
@@ -187,16 +202,19 @@ describe('EnvList', function() {
             data-name={models[3].name}
             data-owner={models[3].owner}
             key={models[3].uuid}
-            onClick={wrapper.find('.env-list__environment').at(0).prop('onClick')}
+            onClick={wrapper
+              .find('.env-list__environment')
+              .at(0)
+              .prop('onClick')}
             role="menuitem"
-            tabIndex="0">
+            tabIndex="0"
+          >
             {'dalek/model-name-4'}
-            <div className="env-list__last-connected">
-              {'Never accessed'}
-            </div>
+            <div className="env-list__last-connected">{'Never accessed'}</div>
           </li>
         ]}
-      </ul>);
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.env-list'), expected);
   });
 
@@ -223,46 +241,54 @@ describe('EnvList', function() {
         aria-labelledby="environmentSwitcherToggle"
         className="env-list"
         id="environmentSwitcherMenu"
-        role="menubar">
-        {[<li
-          className="env-list__environment"
-          data-id="model-uuid-1"
-          data-name="model-name-1"
-          data-owner="who"
-          key="model-uuid-1"
-          onClick={wrapper.find('.env-list__environment').at(0).prop('onClick')}
-          role="menuitem"
-          tabIndex="0">
-          who/model-name-1
-          <div className="env-list__last-connected">
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={models[0].lastConnection}
-                relative={true} />
-            </span>
-          </div>
-        </li>,
-        <li
-          className="env-list__environment"
-          data-id="model-uuid-2"
-          data-name="model-name-2"
-          data-owner="dalek"
-          key="model-uuid-2"
-          onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
-          role="menuitem"
-          tabIndex="0">
-          dalek/model-name-2
-          <div className="env-list__last-connected">
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={models[1].lastConnection}
-                relative={true} />
-            </span>
-          </div>
-        </li>]}
-      </ul>);
+        role="menubar"
+      >
+        {[
+          <li
+            className="env-list__environment"
+            data-id="model-uuid-1"
+            data-name="model-name-1"
+            data-owner="who"
+            key="model-uuid-1"
+            onClick={wrapper
+              .find('.env-list__environment')
+              .at(0)
+              .prop('onClick')}
+            role="menuitem"
+            tabIndex="0"
+          >
+            who/model-name-1
+            <div className="env-list__last-connected">
+              <span>
+                Last accessed&nbsp;
+                <DateDisplay date={models[0].lastConnection} relative={true} />
+              </span>
+            </div>
+          </li>,
+          <li
+            className="env-list__environment"
+            data-id="model-uuid-2"
+            data-name="model-name-2"
+            data-owner="dalek"
+            key="model-uuid-2"
+            onClick={wrapper
+              .find('.env-list__environment')
+              .at(1)
+              .prop('onClick')}
+            role="menuitem"
+            tabIndex="0"
+          >
+            dalek/model-name-2
+            <div className="env-list__last-connected">
+              <span>
+                Last accessed&nbsp;
+                <DateDisplay date={models[1].lastConnection} relative={true} />
+              </span>
+            </div>
+          </li>
+        ]}
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.env-list'), expected);
   });
 
@@ -291,7 +317,10 @@ describe('EnvList', function() {
     const handleModelClick = sinon.stub();
     const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
     const wrapper = renderComponent({envs: models, handleModelClick});
-    wrapper.find('CreateModelButton').props().action();
+    wrapper
+      .find('CreateModelButton')
+      .props()
+      .action();
     assert.equal(handleModelClick.callCount, 1);
   });
 

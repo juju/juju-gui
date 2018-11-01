@@ -40,26 +40,22 @@ class Zoom extends React.Component {
           className="zoom__in link"
           onClick={this._zoomIn.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="zoom-in__icon"
-            name="add_16"
-            size="12" />
+          tabIndex="0"
+        >
+          <SvgIcon className="zoom-in__icon" name="add_16" size="12" />
         </li>
         <li
           className="zoom__out link"
           onClick={this._zoomOut.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="zoom-out__icon"
-            name="minus_16"
-            size="12" />
+          tabIndex="0"
+        >
+          <SvgIcon className="zoom-out__icon" name="minus_16" size="12" />
         </li>
       </ul>
     );
   }
-};
+}
 
 Zoom.propTypes = {
   scaleJump: PropTypes.number,
@@ -67,7 +63,7 @@ Zoom.propTypes = {
 };
 
 Zoom.defaultProps = {
-  scaleJump: .2
+  scaleJump: 0.2
 };
 
 module.exports = Zoom;

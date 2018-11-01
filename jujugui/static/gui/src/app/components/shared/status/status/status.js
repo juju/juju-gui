@@ -8,8 +8,7 @@ const shapeup = require('shapeup');
 const StatusApplicationList = require('../application-list/application-list');
 const StatusModel = require('../model/model');
 const StatusMachineList = require('../machine-list/machine-list');
-const StatusRemoteApplicationList = require(
-  '../remote-application-list/remote-application-list');
+const StatusRemoteApplicationList = require('../remote-application-list/remote-application-list');
 const StatusRelationList = require('../relation-list/relation-list');
 const StatusUnitList = require('../unit-list/unit-list');
 const Panel = require('../../panel/panel');
@@ -49,15 +48,16 @@ class Status extends React.Component {
     });
     Object.keys(units).forEach(key => {
       const unit = units[key];
-      statuses.push(utils.getHighestStatus(
-        [unit.agentStatus.current, unit.workloadStatus.current]));
+      statuses.push(
+        utils.getHighestStatus([unit.agentStatus.current, unit.workloadStatus.current])
+      );
     });
     Object.keys(machines).map(key => {
       const machine = machines[key];
       statuses.push(machine.agentStatus.current);
     });
     const highest = utils.getHighestStatus(statuses);
-    if (highest && (this.state.highestStatus !== highest)) {
+    if (highest && this.state.highestStatus !== highest) {
       this.setState({highestStatus: highest});
     }
   }
@@ -90,7 +90,9 @@ class Status extends React.Component {
         counts={counts}
         highestStatus={this.state.highestStatus}
         model={model}
-        statusFilter={this.state.statusFilter} />);
+        statusFilter={this.state.statusFilter}
+      />
+    );
   }
 
   /**
@@ -105,7 +107,9 @@ class Status extends React.Component {
     return (
       <StatusRemoteApplicationList
         remoteApplications={remoteApplications}
-        statusFilter={this.state.statusFilter} />);
+        statusFilter={this.state.statusFilter}
+      />
+    );
   }
 
   /**
@@ -126,7 +130,9 @@ class Status extends React.Component {
         getIconPath={this.props.getIconPath}
         onCharmClick={this.props.navigateToCharm}
         statusFilter={this.state.statusFilter}
-        units={this.props.valueStore.units} />);
+        units={this.props.valueStore.units}
+      />
+    );
   }
 
   /**
@@ -147,7 +153,9 @@ class Status extends React.Component {
         getIconPath={this.props.getIconPath}
         onMachineClick={this.props.navigateToMachine}
         statusFilter={this.state.statusFilter}
-        units={units} />);
+        units={units}
+      />
+    );
   }
 
   /**
@@ -164,7 +172,9 @@ class Status extends React.Component {
         generateMachineOnClick={this.props.generateMachineOnClick}
         generateMachineURL={this.props.generateMachineURL}
         machines={machines}
-        statusFilter={this.state.statusFilter} />);
+        statusFilter={this.state.statusFilter}
+      />
+    );
   }
 
   /**
@@ -183,7 +193,9 @@ class Status extends React.Component {
         getIconPath={this.props.getIconPath}
         onApplicationClick={this.props.navigateToApplication}
         relations={relations}
-        statusFilter={this.state.statusFilter} />);
+        statusFilter={this.state.statusFilter}
+      />
+    );
   }
 
   render() {
@@ -205,16 +217,12 @@ class Status extends React.Component {
       );
     }
     return (
-      <Panel
-        instanceName="status-view"
-        visible={true}>
-        <div className="status-view__content">
-          {content}
-        </div>
+      <Panel instanceName="status-view" visible={true}>
+        <div className="status-view__content">{content}</div>
       </Panel>
     );
   }
-};
+}
 
 Status.propTypes = {
   generateApplicationOnClick: PropTypes.func.isRequired,

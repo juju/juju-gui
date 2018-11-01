@@ -11,7 +11,7 @@ const topoUtils = require('./utils');
 const zipUtils = require('../zip-utils');
 
 class ServiceModule {
-  constructor(options={}) {
+  constructor(options = {}) {
     this.name = 'ServiceModule';
     this.useTransitions = options.useTransitions || false;
     this.DRAG_START = 1;
@@ -152,8 +152,7 @@ class ServiceModule {
     var env = topo.env;
 
     var visibleServices = db.services.visible();
-    environmentUtils.toBoundingBoxes(
-      this, visibleServices, topo.service_boxes, env);
+    environmentUtils.toBoundingBoxes(this, visibleServices, topo.service_boxes, env);
     // Store the size of the visibleServices model list because it gets
     // reset below.
     var serviceCount = visibleServices.size();
@@ -161,9 +160,11 @@ class ServiceModule {
     visibleServices.reset();
 
     // Nodes are mapped by modelId tuples.
-    this.node = vis.selectAll('.service').data(
-      Object.keys(topo.service_boxes).map(k => topo.service_boxes[k]),
-      function(d) {return d.modelId;});
+    this.node = vis
+      .selectAll('.service')
+      .data(Object.keys(topo.service_boxes).map(k => topo.service_boxes[k]), function(d) {
+        return d.modelId;
+      });
     // It takes a few update cycles to add the services to the database so
     // this checks to make sure we only center once we have some services to
     // center on.
@@ -190,7 +191,7 @@ class ServiceModule {
       return;
     }
     var self = this,
-        topo = this.topo;
+      topo = this.topo;
 
     // Apply Position Annotations
     // This is done after the services_boxes
@@ -199,11 +200,12 @@ class ServiceModule {
     var movedNodes = 0;
     node.each(function(d) {
       var service = d.model,
-          annotations = service.get('annotations'),
-          x, y;
+        annotations = service.get('annotations'),
+        x,
+        y;
 
       // Set widths and heights.
-      d.subordinate ? d.w = d.h = 130 : d.w = d.h = 190;
+      d.subordinate ? (d.w = d.h = 130) : (d.w = d.h = 190);
 
       // If there are no annotations or the service is being dragged
       if (!annotations || d.inDrag) {
@@ -220,7 +222,7 @@ class ServiceModule {
       }
       x = parseFloat(x);
       y = parseFloat(y);
-      if ((x !== d.x) || (y !== d.y)) {
+      if (x !== d.x || y !== d.y) {
         // Only update position if we're not already in a drag state (the
         // current drag supercedes any previous annotations).
         if (!d.inDrag) {
@@ -237,59 +239,68 @@ class ServiceModule {
 
     // Mark subordinates as such.  This is needed for when a new service
     // is created.
-    node.filter(function(d) {
-      return d.subordinate;
-    })
+    node
+      .filter(function(d) {
+        return d.subordinate;
+      })
       .classed('subordinate', true);
 
     // Size the node for drawing.
     node.attr({
-      'width': function(box) {
+      width: function(box) {
         return box.w;
       },
-      'height': function(box) {
+      height: function(box) {
         return box.h;
       }
     });
-    node.select('.service-block')
-      .attr({
-        'cx': function(d) { return d.subordinate ? 65 : 95; },
-        'cy': function(d) { return d.subordinate ? 65 : 95; },
-        'r': function(d) { return d.subordinate ? 60 : 90; }
-      });
-    node.select('.service-block__halo')
-      .attr({
-        'cx': function(d) { return d.subordinate ? 65 : 95; },
-        'cy': function(d) { return d.subordinate ? 65 : 95; },
-        'r': function(d) { return d.subordinate ? 80 : 110; }
-      });
-    node.select('.service-icon')
-      .attr('transform', function(d) {
-        return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)';
-      });
-    node.select('.relation-button')
-      .attr('transform', function(d) {
-        return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
-      });
+    node.select('.service-block').attr({
+      cx: function(d) {
+        return d.subordinate ? 65 : 95;
+      },
+      cy: function(d) {
+        return d.subordinate ? 65 : 95;
+      },
+      r: function(d) {
+        return d.subordinate ? 60 : 90;
+      }
+    });
+    node.select('.service-block__halo').attr({
+      cx: function(d) {
+        return d.subordinate ? 65 : 95;
+      },
+      cy: function(d) {
+        return d.subordinate ? 65 : 95;
+      },
+      r: function(d) {
+        return d.subordinate ? 80 : 110;
+      }
+    });
+    node.select('.service-icon').attr('transform', function(d) {
+      return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)';
+    });
+    node.select('.relation-button').attr('transform', function(d) {
+      return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
+    });
 
     var rerenderRelations = false;
     node.select('.service-block').each(function(d) {
       var curr_node = d3.select(this),
-          parent_node = d3.select(this.parentNode),
-          is_pending = false,
-          is_uncommitted = false,
-          is_erroring = false;
+        parent_node = d3.select(this.parentNode),
+        is_pending = false,
+        is_uncommitted = false,
+        is_erroring = false;
 
       // The stroke attributes need to be set for when the service first
       // appears on the canvas. Just setting the class is not sufficient.
       if (d.subordinate) {
         curr_node.attr({
-          'stroke': '#888888',
+          stroke: '#888888',
           'stroke-width': 1
         });
-      } else if ((d.pending || d.deleted)) {
+      } else if (d.pending || d.deleted) {
         curr_node.attr({
-          'stroke': '#19b6ee',
+          stroke: '#19b6ee',
           'stroke-width': 3
         });
         is_uncommitted = true;
@@ -299,8 +310,7 @@ class ServiceModule {
       } else {
         var units = d.units._items;
         units.forEach(function(unit) {
-          if (unit.agent_state === 'installing'
-              || unit.agent_state === 'pending') {
+          if (unit.agent_state === 'installing' || unit.agent_state === 'pending') {
             is_pending = true;
           } else if (unit.agent_state === 'error') {
             is_erroring = true;
@@ -313,30 +323,34 @@ class ServiceModule {
 
       // Add the current state class
       if (is_erroring) {
-        parent_node.classed('is-erroring', true)
+        parent_node
+          .classed('is-erroring', true)
           .classed('is-pending', false)
           .classed('is-uncommitted', false)
           .classed('is-running', false);
       } else if (is_pending) {
-        parent_node.classed('is-pending', true)
+        parent_node
+          .classed('is-pending', true)
           .classed('is-erroring', false)
           .classed('is-uncommitted', false)
           .classed('is-running', false);
       } else if (is_uncommitted) {
-        parent_node.classed('is-uncommitted', true)
+        parent_node
+          .classed('is-uncommitted', true)
           .classed('is-erroring', false)
           .classed('is-pending', false)
           .classed('is-running', false);
       } else {
-        parent_node.classed('is-running', true)
+        parent_node
+          .classed('is-running', true)
           .classed('is-erroring', false)
           .classed('is-uncommitted', false)
           .classed('is-pending', false);
       }
 
       curr_node.attr({
-        'width': d.w,
-        'height': d.h
+        width: d.w,
+        height: d.h
       });
     });
 
@@ -345,11 +359,15 @@ class ServiceModule {
     }
 
     // Draw a subordinate relation indicator.
-    var subRelationIndicator = node.filter(function(d) {
-      return d3.select(this)
-        .select('.sub-rel-block').empty() &&
-        d.subordinate;
-    })
+    var subRelationIndicator = node
+      .filter(function(d) {
+        return (
+          d3
+            .select(this)
+            .select('.sub-rel-block')
+            .empty() && d.subordinate
+        );
+      })
       .insert('g', ':first-child')
       .attr('class', 'sub-rel-block')
       .attr('transform', function(d) {
@@ -358,83 +376,92 @@ class ServiceModule {
         return 'translate(' + [d.w - 5, d.h / 2 - 26] + ')';
       });
 
-    subRelationIndicator.append('line')
+    subRelationIndicator
+      .append('line')
       .attr({
-        'x1': 0,
-        'y1': 30,
-        'x2': 20,
-        'y2': 30
+        x1: 0,
+        y1: 30,
+        x2: 20,
+        y2: 30
       })
       .attr('stroke-width', 1)
       .attr('stroke', '#888888');
-    subRelationIndicator.append('circle')
+    subRelationIndicator
+      .append('circle')
       .attr({
-        'cx': 0,
-        'cy': 30,
-        'r': 4
+        cx: 0,
+        cy: 30,
+        r: 4
       })
       .attr('fill', '#888888');
-    subRelationIndicator.append('circle')
+    subRelationIndicator
+      .append('circle')
       .attr({
-        'cx': 35,
-        'cy': 30,
-        'r': 15
+        cx: 35,
+        cy: 30,
+        r: 15
       })
       .attr('stroke-width', 1.1) // Extra .1 fix for antialiased jittery edges
       .attr('stroke', '#888888')
       .attr('fill', '#f5f5f5');
-    subRelationIndicator.append('text').append('tspan')
+    subRelationIndicator
+      .append('text')
+      .append('tspan')
       .attr({
-        'class': 'sub-rel-count',
-        'x': 30,
-        'y': 45 * 0.8
+        class: 'sub-rel-count',
+        x: 30,
+        y: 45 * 0.8
       });
 
     // The following are sizes in pixels of the SVG assets used to
     // render a service, and are used to in calculating the vertical
     // positioning of text down along the service block.
     var service_height = 224,
-        name_size = 22,
-        charm_label_size = 16,
-        name_padding = 26,
-        charm_label_padding = 150;
+      name_size = 22,
+      charm_label_size = 16,
+      name_padding = 26,
+      charm_label_padding = 150;
 
-    node.select('.name')
-      .attr({'style': function(d) {
+    node.select('.name').attr({
+      style: function(d) {
         // Programmatically size the font.
         // Number derived from service assets:
         // font-size 22px when asset is 224px.
-        return 'font-size:' + d.h *
-              (name_size / service_height) + 'px';
+        return 'font-size:' + d.h * (name_size / service_height) + 'px';
       },
-      'x': function(d) { return d.w / 2; },
-      'y': function(d) {
+      x: function(d) {
+        return d.w / 2;
+      },
+      y: function(d) {
         // Number derived from service assets:
         // padding-top 26px when asset is 224px.
-        return d.h * (name_padding / service_height) + d.h *
-          (name_size / service_height) / 2;
+        return (
+          d.h * (name_padding / service_height) + (d.h * (name_size / service_height)) / 2
+        );
       }
-      });
+    });
 
-    node.select('.name').text(
-      function(d) {
-        return self.truncateServiceName(d);
-      });
+    node.select('.name').text(function(d) {
+      return self.truncateServiceName(d);
+    });
 
     node.select('.charm-label').attr({
-      'style': function(d) {
+      style: function(d) {
         // Programmatically size the font.
         // Number derived from service assets:
         // font-size 16px when asset is 224px.
-        return 'font-size:' + d.h *
-            (charm_label_size / service_height) + 'px';
+        return 'font-size:' + d.h * (charm_label_size / service_height) + 'px';
       },
-      'x': function(d) { return d.w / 2;},
-      'y': function(d) {
+      x: function(d) {
+        return d.w / 2;
+      },
+      y: function(d) {
         // Number derived from service assets:
         // padding-top: 118px when asset is 224px.
-        return d.h * (charm_label_padding / service_height) - d.h *
-              (charm_label_size / service_height) / 2;
+        return (
+          d.h * (charm_label_padding / service_height) -
+          (d.h * (charm_label_size / service_height)) / 2
+        );
       }
     });
 
@@ -466,7 +493,7 @@ class ServiceModule {
   getContainer(context) {
     context = context ? context : this;
     const container = context.topo.container;
-    return container.getDOMNode && container.getDOMNode() || container;
+    return (container.getDOMNode && container.getDOMNode()) || container;
   }
 
   /**
@@ -480,8 +507,7 @@ class ServiceModule {
   _delegate(event, handler, target) {
     const container = this.getContainer(this);
     container.addEventListener(event, evt => {
-      if (evt.target.classList.contains(target) ||
-        evt.target.closest(`.${target}`)) {
+      if (evt.target.classList.contains(target) || evt.target.closest(`.${target}`)) {
         handler(evt);
       }
     });
@@ -523,19 +549,16 @@ class ServiceModule {
     services.forEach(function(service) {
       var box = topo.service_boxes[service.get('id')];
       if (box) {
-        vertices.push([
-          box.x,
-          box.y
-        ]);
+        vertices.push([box.x, box.y]);
       }
     });
     this.findCentroid(vertices);
   }
 
   /**
-    * Ignore a drag event.
-    * @method _ignore
-    */
+   * Ignore a drag event.
+   * @method _ignore
+   */
   _ignore(e) {
     // This used to be an e.halt() which also stops event propogation but
     // that prevented listening to any drag events above the canvas.
@@ -556,8 +579,7 @@ class ServiceModule {
 
     // Do not attach the event to the ghost nodes
     if (!d3.select(node).classed('pending')) {
-      node.addEventListener(
-        'touchstart', this._touchstartServiceTap, this, topo);
+      node.addEventListener('touchstart', this._touchstartServiceTap, this, topo);
     }
   }
 
@@ -572,7 +594,7 @@ class ServiceModule {
     // To execute the serviceClick method under the same context as
     // click we call it under the touch target context
     var node = e.currentTarget,
-        box = d3.select(node).datum();
+      box = d3.select(node).datum();
     // If we're dragging with two fingers, ignore this as a tap and let
     // drag take over.
     if (e.touches.length > 1) {
@@ -660,9 +682,11 @@ class ServiceModule {
     var node = this.getServiceNode(id);
     if (node) {
       var box = d3.select(node).datum();
-      document.dispatchEvent(new CustomEvent('topo.panToPoint', {
-        detail: [{point: [box.x, box.y]}]
-      }));
+      document.dispatchEvent(
+        new CustomEvent('topo.panToPoint', {
+          detail: [{point: [box.x, box.y]}]
+        })
+      );
     }
   }
 
@@ -742,23 +766,29 @@ class ServiceModule {
   }
 
   serviceMouseEnter(box, context) {
-    document.dispatchEvent(new CustomEvent('topo.hoverService', {
-      detail: {id: box.id}
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.hoverService', {
+        detail: {id: box.id}
+      })
+    );
     var rect = this.closest('.service');
     if (!topoUtils.hasSVGClass(rect, 'selectable-service')) {
       return;
     }
-    document.dispatchEvent(new CustomEvent('topo.snapToService', {
-      detail: [{service: box, rect: rect}]
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.snapToService', {
+        detail: [{service: box, rect: rect}]
+      })
+    );
   }
 
   serviceMouseLeave(box, context) {
     var topo = context.topo;
-    document.dispatchEvent(new CustomEvent('topo.hoverService', {
-      detail: {id: null}
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.hoverService', {
+        detail: {id: null}
+      })
+    );
     context.unhoverServices();
 
     const container = context.getContainer(context);
@@ -837,11 +867,15 @@ class ServiceModule {
       Array.prototype.forEach.call(files, function(file) {
         // In order to support the user dragging and dropping multiple files
         // of mixed types we handle each file individually.
-        var ext = file.name.split('.').slice(-1).toString();
+        var ext = file.name
+          .split('.')
+          .slice(-1)
+          .toString();
 
-        if ((file.type === 'application/zip' ||
-             file.type === 'application/x-zip-compressed') &&
-            ext === 'zip') {
+        if (
+          (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') &&
+          ext === 'zip'
+        ) {
           self._extractCharmMetadata.call(self, file, topo, env, db);
         } else {
           // To support easier development of the GUI without having
@@ -875,7 +909,8 @@ class ServiceModule {
         inspector: {
           id: null,
           localType: 'new'
-        }}
+        }
+      }
     });
   }
 
@@ -893,7 +928,8 @@ class ServiceModule {
     zipUtils.getEntries(
       file,
       this._findCharmEntries.bind(this, file, topo, env, db),
-      this._zipExtractionError.bind(this, db, topo, file));
+      this._zipExtractionError.bind(this, db, topo, file)
+    );
   }
 
   /**
@@ -914,8 +950,11 @@ class ServiceModule {
     if (!entries.metadata) {
       db.notifications.add({
         title: 'Import failed',
-        message: 'Import from "' + file.name + '" failed. Invalid charm ' +
-            'file, missing metadata.yaml',
+        message:
+          'Import from "' +
+          file.name +
+          '" failed. Invalid charm ' +
+          'file, missing metadata.yaml',
         level: 'error'
       });
       // Hide the file drop overlay.
@@ -940,7 +979,8 @@ class ServiceModule {
     zipUtils.readCharmEntries(
       entries,
       this._checkForExistingServices.bind(this, file, topo, env, db),
-      this._zipExtractionError.bind(this, db, topo, file));
+      this._zipExtractionError.bind(this, db, topo, file)
+    );
   }
 
   /**
@@ -980,8 +1020,7 @@ class ServiceModule {
   _zipExtractionError(db, topo, file, error) {
     db.notifications.add({
       title: 'Import failed',
-      message: 'Import from "' + file.name + '" failed. See console for ' +
-          'error object',
+      message: 'Import from "' + file.name + '" failed. See console for ' + 'error object',
       level: 'error'
     });
     console.error(error);
@@ -1005,7 +1044,8 @@ class ServiceModule {
         inspector: {
           id: null,
           localType: 'update'
-        }}
+        }
+      }
     });
   }
 
@@ -1025,12 +1065,11 @@ class ServiceModule {
     var ghostAttributes = {coordinates: []};
     // The following magic number 71 is the height of the header and is
     // required to position the service in the proper y position.
-    var dropXY = [evt.clientX, (evt.clientY - 71)];
+    var dropXY = [evt.clientX, evt.clientY - 71];
 
     // Take the x,y offset (translation) of the topology view into account.
     dropXY.forEach((_, index) => {
-      ghostAttributes.coordinates[index] =
-          (dropXY[index] - translation[index]) / scale;
+      ghostAttributes.coordinates[index] = (dropXY[index] - translation[index]) / scale;
     });
     if (dragData.dataType === 'token-drag-and-drop') {
       // The entiy (charm or bundle) data was JSON encoded because the
@@ -1044,10 +1083,14 @@ class ServiceModule {
         // Add the icon url to the ghost attributes for the ghost icon
         ghostAttributes.icon = dragData.iconSrc;
         var charm = new window.models.Charm(entityData);
-        document.dispatchEvent(new CustomEvent('initiateDeploy', {'detail': {
-          charm: charm,
-          ghostAttributes: ghostAttributes
-        }}));
+        document.dispatchEvent(
+          new CustomEvent('initiateDeploy', {
+            detail: {
+              charm: charm,
+              ghostAttributes: ghostAttributes
+            }
+          })
+        );
       } else {
         this.topo.db.notifications.add({
           title: 'Processing File',
@@ -1063,8 +1106,10 @@ class ServiceModule {
             }
             topo.bundleImporter.importBundleYAML(
               bundleYAML,
-              urls.URL.fromLegacyString(entityData.id).path());
-          }.bind(this));
+              urls.URL.fromLegacyString(entityData.id).path()
+            );
+          }.bind(this)
+        );
       }
     }
   }
@@ -1121,28 +1166,34 @@ class ServiceModule {
   serviceAddRelMouseDown(box, context) {
     var evt = d3.event;
     var topo = context.topo;
-    context.longClickTimer = window.setTimeout((d, e) => {
-      // Provide some leeway for accidental dragging.
-      if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) /
-              2 > 5) {
-        return;
-      }
+    context.longClickTimer = window.setTimeout(
+      (d, e) => {
+        // Provide some leeway for accidental dragging.
+        if ((Math.abs(box.x - box.px) + Math.abs(box.y - box.py)) / 2 > 5) {
+          return;
+        }
 
-      if (!context.allowBuildRelation(topo, box.model)) {
-        return;
-      }
+        if (!context.allowBuildRelation(topo, box.model)) {
+          return;
+        }
 
-      // Sometimes mouseover is fired after the mousedown, so ensure
-      // we have the correct event in d3.event for d3.mouse().
-      d3.event = e;
-      if (!topo.buildingRelation) {
-        // Start the process of adding a relation if not already building a
-        // relation
-        document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
-          detail: [{service: box}]
-        }));
-      }
-    }, 250, box, evt);
+        // Sometimes mouseover is fired after the mousedown, so ensure
+        // we have the correct event in d3.event for d3.mouse().
+        d3.event = e;
+        if (!topo.buildingRelation) {
+          // Start the process of adding a relation if not already building a
+          // relation
+          document.dispatchEvent(
+            new CustomEvent('topo.addRelationDragStart', {
+              detail: [{service: box}]
+            })
+          );
+        }
+      },
+      250,
+      box,
+      evt
+    );
   }
 
   /**
@@ -1240,9 +1291,11 @@ class ServiceModule {
 
     if (topo.buildingRelation) {
       if (box) {
-        document.dispatchEvent(new CustomEvent('topo.addRelationDrag', {
-          detail: [{box: box}]
-        }));
+        document.dispatchEvent(
+          new CustomEvent('topo.addRelationDrag', {
+            detail: [{box: box}]
+          })
+        );
         return;
       } else {
         topo.buildingRelation = false;
@@ -1263,7 +1316,8 @@ class ServiceModule {
     }
 
     if (includeTransition) {
-      selection = selection.transition()
+      selection = selection
+        .transition()
         .duration(500)
         .ease('elastic');
     }
@@ -1282,9 +1336,11 @@ class ServiceModule {
     }
     document.dispatchEvent(new Event('topo.cancelRelationBuild'));
     // Update relation lines for just this service.
-    document.dispatchEvent(new CustomEvent('topo.serviceMoved', {
-      detail: [{service: box}]
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.serviceMoved', {
+        detail: [{service: box}]
+      })
+    );
   }
 
   /**
@@ -1295,9 +1351,9 @@ class ServiceModule {
     */
   update() {
     var self = this,
-        topo = this.topo,
-        width = topo.getWidth(),
-        height = topo.getHeight();
+      topo = this.topo,
+      width = topo.getWidth(),
+      height = topo.getHeight();
 
     // So that we only attach these events once regardless of how many
     // times this module is rendered.
@@ -1313,10 +1369,17 @@ class ServiceModule {
     }
 
     if (!this.dragBehavior) {
-      this.dragBehavior = d3.behavior.drag()
-        .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
-        .on('drag', function(d) { self.drag.call(this, d, self);})
-        .on('dragend', function(d) { self.dragend.call(this, d, self);});
+      this.dragBehavior = d3.behavior
+        .drag()
+        .on('dragstart', function(d) {
+          self.dragstart.call(this, d, self);
+        })
+        .on('drag', function(d) {
+          self.drag.call(this, d, self);
+        })
+        .on('dragend', function(d) {
+          self.dragend.call(this, d, self);
+        });
     }
 
     //Process any changed data.
@@ -1326,7 +1389,8 @@ class ServiceModule {
     // labels for service and charm.
     var node = this.node;
     // Pass the wheel events to the canvas so that it can be zoomed.
-    node.on('mousewheel.zoom', topo.handleZoom.bind(topo))
+    node
+      .on('mousewheel.zoom', topo.handleZoom.bind(topo))
       .on('wheel.zoom', topo.handleZoom.bind(topo));
 
     // Rerun the pack layout.
@@ -1339,7 +1403,7 @@ class ServiceModule {
       const boundingBox = topo.service_boxes[key];
       // Ensure each box has position attributes set.
       var annotations = boundingBox.annotations,
-          addToVertices = 0;
+        addToVertices = 0;
       if (annotations['gui-x'] && boundingBox.x === undefined) {
         boundingBox.x = annotations['gui-x'];
         addToVertices += 1;
@@ -1355,18 +1419,18 @@ class ServiceModule {
 
     // new_service_boxes are those w/o current x/y pos and no
     // annotations.
-    var new_service_boxes = Object.keys(topo.service_boxes).map(
-      k => topo.service_boxes[k]).filter(function(boundingBox) {
-      // In the case where a model has been removed from the database
-      // and update runs before exit, boundingBox.model will be empty;
-      // these can automatically be ignored.
-      if (boundingBox.model) {
-        var annotations = boundingBox.model.get('annotations');
-        return (isNaN(boundingBox.x) &&
-                !(annotations && annotations['gui-x']));
-      }
-      return false;
-    });
+    var new_service_boxes = Object.keys(topo.service_boxes)
+      .map(k => topo.service_boxes[k])
+      .filter(function(boundingBox) {
+        // In the case where a model has been removed from the database
+        // and update runs before exit, boundingBox.model will be empty;
+        // these can automatically be ignored.
+        if (boundingBox.model) {
+          var annotations = boundingBox.model.get('annotations');
+          return isNaN(boundingBox.x) && !(annotations && annotations['gui-x']);
+        }
+        return false;
+      });
 
     if (new_service_boxes.length > 0) {
       // If the there is only one new service and it's pending (as in, it was
@@ -1375,10 +1439,11 @@ class ServiceModule {
       // service is actually created.  Otherwise, rely on our pack layout (as
       // in the case of opening an unannotated environment for the first
       // time).
-      if (new_service_boxes.length === 1 &&
-          new_service_boxes[0].model.get('pending') &&
-          (new_service_boxes[0].x === undefined ||
-          new_service_boxes[0].y === undefined)) {
+      if (
+        new_service_boxes.length === 1 &&
+        new_service_boxes[0].model.get('pending') &&
+        (new_service_boxes[0].x === undefined || new_service_boxes[0].y === undefined)
+      ) {
         // Get a coordinate outside the cluster of existing services.
         var coords = topo.servicePointOutside();
         // Set the coordinates on both the box model and the service
@@ -1386,26 +1451,30 @@ class ServiceModule {
         new_service_boxes[0].x = coords[0];
         new_service_boxes[0].y = coords[1];
         // Set the centroid to the new service's position
-        document.dispatchEvent(new CustomEvent('topo.panToPoint', {
-          detail: [{point: coords}]
-        }));
+        document.dispatchEvent(
+          new CustomEvent('topo.panToPoint', {
+            detail: [{point: coords}]
+          })
+        );
       } else {
-        d3.layout.pack()
-        // Set the size of the visualization to the size of the
-        // viewport (unscaledPack discards this, but it is
-        // convention).
+        d3.layout
+          .pack()
+          // Set the size of the visualization to the size of the
+          // viewport (unscaledPack discards this, but it is
+          // convention).
           .size([width, height])
-        // Set the value function for the size of each child node
-        // to the number of units within that node.
-          .value(function(d) { return Math.max(d.unit_count, 1); })
-        // Set the padding space around each node.
+          // Set the value function for the size of each child node
+          // to the number of units within that node.
+          .value(function(d) {
+            return Math.max(d.unit_count, 1);
+          })
+          // Set the padding space around each node.
           .padding(300)
-        // Set a sensible radius to prevent nodes from overlapping.
+          // Set a sensible radius to prevent nodes from overlapping.
           .radius(50)
-        // Run the pack layout on the new service boxes.
+          // Run the pack layout on the new service boxes.
           .nodes({children: new_service_boxes});
-        if (new_service_boxes.length <
-          Object.keys(topo.service_boxes).length) {
+        if (new_service_boxes.length < Object.keys(topo.service_boxes).length) {
           // If we have new services that do not have x/y coords and are
           // not pending, then they've likely been created from the CLI.
           // In this case, to avoid placing them overlaying any existing
@@ -1444,21 +1513,26 @@ class ServiceModule {
 
     // enter
     node
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr({
         'pointer-events': 'all', // IE needs this.
-        'class': function(d) {
+        class: function(d) {
           return (d.subordinate ? 'subordinate ' : '') + 'service';
-        }})
+        }
+      })
       .call(this.dragBehavior)
       .call(self.createServiceNode, self)
-      .attr('transform', function(d) { return d.translateStr; });
+      .attr('transform', function(d) {
+        return d.translateStr;
+      });
 
     // Update all nodes.
     self.updateServiceNodes(node);
 
     // Remove old nodes.
-    node.exit()
+    node
+      .exit()
       .each(function(d) {
         delete topo.service_boxes[d.id];
       })
@@ -1489,12 +1563,16 @@ class ServiceModule {
   */
   findCentroid(vertices) {
     const centroid = topoUtils.centroid(vertices);
-    document.dispatchEvent(new CustomEvent('topo.panToPoint', {
-      detail: [{
-        point: centroid,
-        center: true
-      }]
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.panToPoint', {
+        detail: [
+          {
+            point: centroid,
+            center: true
+          }
+        ]
+      })
+    );
   }
 
   /**
@@ -1510,7 +1588,7 @@ class ServiceModule {
     var node = this.node.filter(function(d, i) {
       return d.id === id;
     });
-    return node && node[0][0] || null;
+    return (node && node[0][0]) || null;
   }
 
   /**
@@ -1551,13 +1629,20 @@ class ServiceModule {
       staticURL += '/';
     }
     var basePath = `${staticURL}static/gui/build/app`;
-    node.attr({'data-name': function(d) { return d.name; }});
+    node.attr({
+      'data-name': function(d) {
+        return d.name;
+      }
+    });
 
     // Draw a relation button.
-    var relationButton = node.filter(function(d) {
-      return d3.select(this)
-        .select('.relation-button').empty();
-    })
+    var relationButton = node
+      .filter(function(d) {
+        return d3
+          .select(this)
+          .select('.relation-button')
+          .empty();
+      })
       .insert('g', ':first-child')
       .attr('class', 'relation-button')
       .attr('transform', function(d) {
@@ -1566,24 +1651,27 @@ class ServiceModule {
         return 'translate(' + [d.subordinate ? 65 : 95, 30] + ')';
       });
 
-    relationButton.append('line')
+    relationButton
+      .append('line')
       .attr({
-        'x1': 0,
-        'y1': 0,
-        'x2': 0,
-        'y2': 30
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 30
       })
       .attr('stroke-width', 1)
       .attr('stroke', '#888888');
-    relationButton.append('circle')
+    relationButton
+      .append('circle')
       .attr({
-        'cx': 0,
-        'cy': 34,
-        'r': 4
+        cx: 0,
+        cy: 34,
+        r: 4
       })
       .attr('fill', '#888888');
 
-    relationButton.append('circle')
+    relationButton
+      .append('circle')
       .classed('relation-button__link', true)
       .attr({
         cx: 0,
@@ -1594,17 +1682,22 @@ class ServiceModule {
         'stroke-width': 1.1
       })
       .on('mousedown', function(d) {
-        document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
-          detail: [{service: d}]
-        }));
+        document.dispatchEvent(
+          new CustomEvent('topo.addRelationDragStart', {
+            detail: [{service: d}]
+          })
+        );
       })
       .on('click', function(d) {
-        document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
-          detail: [{service: d}]
-        }));
+        document.dispatchEvent(
+          new CustomEvent('topo.addRelationDragStart', {
+            detail: [{service: d}]
+          })
+        );
       });
 
-    relationButton.append('image')
+    relationButton
+      .append('image')
       .classed('relation-button__image', true)
       .attr({
         'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
@@ -1613,32 +1706,34 @@ class ServiceModule {
         transform: 'translate(-8, -8)'
       });
 
-    node.append('circle')
+    node
+      .append('circle')
       .attr({
         cx: function(d) {
-          return (d.subordinate ? 65 : 95);
+          return d.subordinate ? 65 : 95;
         },
         cy: function(d) {
-          return (d.subordinate ? 65 : 95);
+          return d.subordinate ? 65 : 95;
         },
         r: function(d) {
-          return (d.subordinate ? 80 : 110);
+          return d.subordinate ? 80 : 110;
         },
         fill: 'transparent',
         'stroke-dasharray': '5, 5'
       })
       .classed('service-block__halo', true);
 
-    node.append('circle')
+    node
+      .append('circle')
       .attr({
         cx: function(d) {
-          return (d.subordinate ? 65 : 95);
+          return d.subordinate ? 65 : 95;
         },
         cy: function(d) {
-          return (d.subordinate ? 65 : 95);
+          return d.subordinate ? 65 : 95;
         },
         r: function(d) {
-          return (d.subordinate ? 60 : 90);
+          return d.subordinate ? 60 : 90;
         },
         fill: '#f5f5f5',
         'stroke-width': 1,
@@ -1646,7 +1741,8 @@ class ServiceModule {
       })
       .classed('service-block', true);
 
-    node.append('image')
+    node
+      .append('image')
       .classed('service-icon', true)
       .attr({
         'xlink:href': function(d) {
@@ -1655,9 +1751,11 @@ class ServiceModule {
         width: 96,
         height: 96,
         transform: function(d) {
-          return (d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)');
+          return d.subordinate ? 'translate(17, 17)' : 'translate(47, 47)';
         },
-        'clip-path': function(d) { return 'url(#clip-mask)'; }
+        'clip-path': function(d) {
+          return 'url(#clip-mask)';
+        }
       });
 
     // Manually attach the touchstart event (see method for details)
@@ -1691,10 +1789,18 @@ class ServiceModule {
       highlight = service.get('highlight');
       hide = service.get('hide');
       name = service.get('id');
-      if (fade) { actions.fade.push(name); }
-      if (highlight) { actions.highlight.push(name); }
-      if (hide) { actions.hide.push(name); }
-      if (!fade && !highlight && !hide) { actions.show.push(name); }
+      if (fade) {
+        actions.fade.push(name);
+      }
+      if (highlight) {
+        actions.highlight.push(name);
+      }
+      if (hide) {
+        actions.hide.push(name);
+      }
+      if (!fade && !highlight && !hide) {
+        actions.show.push(name);
+      }
     });
     if (actions.fade.length > 0) {
       // If any services are highlighted we need to make sure we unhighlight
@@ -1705,7 +1811,6 @@ class ServiceModule {
       this.fade({serviceNames: actions.fade});
     }
     if (actions.highlight.length > 0) {
-
       this.show({serviceNames: actions.highlight});
       this.highlight({serviceName: actions.highlight});
     }
@@ -1735,8 +1840,7 @@ class ServiceModule {
     // Get related services and add to serviceNames.
     if (evt.highlightRelated) {
       var service = topo.service_boxes[serviceNames[0]].model;
-      var relationData = relationUtils.getRelationDataForService(
-        topo.db, service);
+      var relationData = relationUtils.getRelationDataForService(topo.db, service);
       relationData.forEach(function(relation) {
         serviceNames.push(relation.far.service);
       });
@@ -1765,8 +1869,7 @@ class ServiceModule {
     // Get related services and add to serviceNames.
     if (evt.unhighlightRelated) {
       var service = topo.service_boxes[serviceNames[0]].model;
-      var relationData = relationUtils.getRelationDataForService(
-        topo.db, service);
+      var relationData = relationUtils.getRelationDataForService(topo.db, service);
       relationData.forEach(function(relation) {
         serviceNames.push(relation.far.service);
       });
@@ -1823,7 +1926,6 @@ class ServiceModule {
     selection.classed(topoUtils.getVisibilityClasses('fade'));
   }
 
-
   /**
     Given a list of service names, return a D3 selection of those service
     blocks.
@@ -1833,10 +1935,9 @@ class ServiceModule {
   */
   selectionFromServiceNames(serviceNames) {
     var topo = this.topo;
-    return topo.vis.selectAll('.service')
-      .filter(function(d) {
-        return serviceNames.indexOf(d.id) > -1;
-      });
+    return topo.vis.selectAll('.service').filter(function(d) {
+      return serviceNames.indexOf(d.id) > -1;
+    });
   }
 
   /**
@@ -1870,7 +1971,8 @@ class ServiceModule {
           unit: null,
           unitStatus: null
         }
-      }});
+      }
+    });
   }
 
   /*
@@ -1885,6 +1987,6 @@ class ServiceModule {
     topo.detachContainer();
     createServiceInspector(service);
   }
-};
+}
 
 module.exports = ServiceModule;

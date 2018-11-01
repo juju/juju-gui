@@ -12,7 +12,7 @@ const utils = require('./utils');
  * @class EndpointsController
  */
 class EndpointsController {
-  constructor(config={}) {
+  constructor(config = {}) {
     this.db = config.db;
     this.modelController = config.modelController;
     this._subscriptions = [];
@@ -21,35 +21,32 @@ class EndpointsController {
   }
 
   /**
-     * Bind events for endpoint processing.
-     *
-     * @method bind
-     * @return {undefined} Nothing.
-     */
+   * Bind events for endpoint processing.
+   *
+   * @method bind
+   * @return {undefined} Nothing.
+   */
   bind() {
     var db = this.db;
 
     // Event handlers for endpoint management.
+    this._subscriptions.push(db.services.after('add', this.serviceAddHandler, this));
+    this._subscriptions.push(db.services.after('remove', this.serviceRemoveHandler, this));
     this._subscriptions.push(
-      db.services.after('add', this.serviceAddHandler, this));
+      db.services.after('*:pendingChange', this.serviceChangeHandler, this)
+    );
     this._subscriptions.push(
-      db.services.after('remove', this.serviceRemoveHandler, this));
-    this._subscriptions.push(
-      db.services.after('*:pendingChange', this.serviceChangeHandler,
-        this));
-    this._subscriptions.push(
-      db.services.after('*:charmChange', this.serviceChangeHandler,
-        this));
-    this._subscriptions.push(
-      db.services.after('reset', this.reset, this));
+      db.services.after('*:charmChange', this.serviceChangeHandler, this)
+    );
+    this._subscriptions.push(db.services.after('reset', this.reset, this));
   }
 
   /**
-     * Unbind events for endpoint processing.
-     *
-     * @method unbind
-     * @return {undefined} Nothing.
-     */
+   * Unbind events for endpoint processing.
+   *
+   * @method unbind
+   * @return {undefined} Nothing.
+   */
   unbind() {
     this._subscriptions.forEach(sub => {
       sub.detach();
@@ -58,21 +55,21 @@ class EndpointsController {
   }
 
   /**
-     * Destroy this controller
-     *
-     * @method destructor
-     * @return {undefined} Nothing.
-     */
+   * Destroy this controller
+   *
+   * @method destructor
+   * @return {undefined} Nothing.
+   */
   destructor() {
     this.unbind();
   }
 
   /**
-     * Reset the endpoints map.
-     *
-     * @method reset
-     * @return {undefined} Nothing.
-     */
+   * Reset the endpoints map.
+   *
+   * @method reset
+   * @return {undefined} Nothing.
+   */
   reset() {
     this.endpointsMap = {};
   }
@@ -91,68 +88,68 @@ class EndpointsController {
     // If the service is not a ghost (that is, 'pending' is false),
     // process it.
     var mController = this.modelController,
-        servicePromise = mController.getServiceWithCharm(
-          service.get('id')),
-        self = this;
+      servicePromise = mController.getServiceWithCharm(service.get('id')),
+      self = this;
 
-    servicePromise.then(function(data) {
-      data.service.set('subordinate', data.charm.get('is_subordinate'));
-      self.addServiceToEndpointsMap(
-        data.service.get('id'), data.charm);
-    }, function(err) {
-      console.warn('Unable to fetch service information', err);
-    });
+    servicePromise.then(
+      function(data) {
+        data.service.set('subordinate', data.charm.get('is_subordinate'));
+        self.addServiceToEndpointsMap(data.service.get('id'), data.charm);
+      },
+      function(err) {
+        console.warn('Unable to fetch service information', err);
+      }
+    );
   }
 
   /**
-     * Handle event for a service being added to the services modellist.
-     *
-     * @method serviceAddHandler
-     * @param {Object} evt The event, containing a model object.
-     * @return {undefined} Nothing.
-     */
+   * Handle event for a service being added to the services modellist.
+   *
+   * @method serviceAddHandler
+   * @param {Object} evt The event, containing a model object.
+   * @return {undefined} Nothing.
+   */
   serviceAddHandler(evt) {
     this.handleServiceEvent(evt.model);
   }
 
   /**
-     * Handle event for a service transitioning from a ghost to a corporeal
-     * object as indicated by the 'pending' attribute becoming false.  Also
-     * handles changes in the service's charm.
-     *
-     * @method serviceChangeHandler
-     * @param {Object} evt The event, containing the service as the target.
-     * @return {undefined} Nothing.
-     */
+   * Handle event for a service transitioning from a ghost to a corporeal
+   * object as indicated by the 'pending' attribute becoming false.  Also
+   * handles changes in the service's charm.
+   *
+   * @method serviceChangeHandler
+   * @param {Object} evt The event, containing the service as the target.
+   * @return {undefined} Nothing.
+   */
   serviceChangeHandler(evt) {
     this.handleServiceEvent(evt.target);
   }
 
   /**
-     * Handle event for a service removal.
-     *
-     * @method serviceRemoveHandler
-     * @param {Object} evt The event, containing the service as the target.
-     * @return {undefined} Nothing.
-     */
+   * Handle event for a service removal.
+   *
+   * @method serviceRemoveHandler
+   * @param {Object} evt The event, containing the service as the target.
+   * @return {undefined} Nothing.
+   */
   serviceRemoveHandler(evt) {
     var svcName = evt.model.get('id');
     delete this.endpointsMap[svcName];
   }
 
   /**
-     * Flatten the relation metadata.
-     *
-     * @method flatten
-     * @param {Object} meta The relation metadata.
-     * @return {List} A list of objects, where each entry is a hash with a
-     *   'name' key and the key value pairs from the metadata.
-     */
+   * Flatten the relation metadata.
+   *
+   * @method flatten
+   * @param {Object} meta The relation metadata.
+   * @return {List} A list of objects, where each entry is a hash with a
+   *   'name' key and the key value pairs from the metadata.
+   */
   flatten(meta) {
     var result = [];
     var rel;
     if (utils.isValue(meta)) {
-
       Object.keys(meta).forEach(ko => {
         const vo = meta[ko];
         rel = {};
@@ -167,19 +164,17 @@ class EndpointsController {
   }
 
   /**
-     * Add the service and charm to the endpoints map.
-     *
-     * @method addServiceToEndpointsMap
-     * @param {String} svcName The name of the service.
-     * @param {Object} charm The charm for the service.
-     * @return {undefined} Nothing.
-     */
+   * Add the service and charm to the endpoints map.
+   *
+   * @method addServiceToEndpointsMap
+   * @param {String} svcName The name of the service.
+   * @param {Object} charm The charm for the service.
+   * @return {undefined} Nothing.
+   */
   addServiceToEndpointsMap(svcName, charm) {
     this.endpointsMap[svcName] = {};
-    this.endpointsMap[svcName].provides =
-          this.flatten(charm.get('provides'));
-    this.endpointsMap[svcName].requires =
-          this.flatten(charm.get('requires'));
+    this.endpointsMap[svcName].provides = this.flatten(charm.get('provides'));
+    this.endpointsMap[svcName].requires = this.flatten(charm.get('requires'));
     // this was added to be able to test that the endpoint
     // was successful with the new promises
     /**
@@ -189,6 +184,6 @@ class EndpointsController {
       */
     document.dispatchEvent(new Event('endpointMapAdded'));
   }
-};
+}
 
 module.exports = EndpointsController;

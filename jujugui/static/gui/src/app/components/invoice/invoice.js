@@ -14,11 +14,14 @@ class Invoice extends React.Component {
     super();
     this.xhrs = [];
     this.state = {
-      data: [{
-        id: 1
-      }, {
-        id: 2
-      }],
+      data: [
+        {
+          id: 1
+        },
+        {
+          id: 2
+        }
+      ],
       loading: false
     };
   }
@@ -26,24 +29,29 @@ class Invoice extends React.Component {
   render() {
     let content;
     if (this.state.loading) {
-      content = (<Spinner />);
+      content = <Spinner />;
     } else {
-      const rows = (this.state.data).map((invoice, index) => {
+      const rows = this.state.data.map((invoice, index) => {
         return {
           key: `${index}`,
-          columns: [{
-            content: 'Ubuntu Advantage Essential',
-            columnSize: 3
-          }, {
-            content: '$0.09 per machine-hour',
-            columnSize: 3
-          }, {
-            content: '28,499 hours',
-            columnSize: 3
-          }, {
-            content: '$32,888',
-            columnSize: 3
-          }]
+          columns: [
+            {
+              content: 'Ubuntu Advantage Essential',
+              columnSize: 3
+            },
+            {
+              content: '$0.09 per machine-hour',
+              columnSize: 3
+            },
+            {
+              content: '28,499 hours',
+              columnSize: 3
+            },
+            {
+              content: '$32,888',
+              columnSize: 3
+            }
+          ]
         };
       });
       content = (
@@ -52,7 +60,8 @@ class Invoice extends React.Component {
             <img
               alt="Juju logo"
               className="invoice__logo"
-              src="https://assets.ubuntu.com/v1/dc0fe093-juju-logo.svg" />
+              src="https://assets.ubuntu.com/v1/dc0fe093-juju-logo.svg"
+            />
 
             <h1 className="invoice__heading">Invoice</h1>
 
@@ -67,7 +76,6 @@ class Invoice extends React.Component {
           </header>
 
           <div className="invoice__info">
-
             <div className="invoice__address">
               <span>Paolo Roleto</span>
               <span>Currency Analytics Ltd</span>
@@ -98,10 +106,14 @@ class Invoice extends React.Component {
                 <span className="invoice__value u-btn-mar">280000000</span>
 
                 <span className="invoice__value">USD</span>
-                <span className="invoice__value u-btn-mar"><strong>$2,564.94</strong></span>
+                <span className="invoice__value u-btn-mar">
+                  <strong>$2,564.94</strong>
+                </span>
 
                 <span className="invoice__value">GB 123456789</span>
-                <span className="invoice__value"><strong>$512.75</strong></span>
+                <span className="invoice__value">
+                  <strong>$512.75</strong>
+                </span>
                 <span className="invoice__value">£394.90</span>
               </div>
             </div>
@@ -109,17 +121,11 @@ class Invoice extends React.Component {
             <div className="invoice__rel-wrap clearfix">
               <div className="invoice__summary">
                 <div className="u-btn-mar">
-                  <span className="invoice__label">
-                    Services during the period
-                  </span>
-                  <span className="invoice__value">
-                    1st December 2017 - 31st January 2018
-                  </span>
+                  <span className="invoice__label">Services during the period</span>
+                  <span className="invoice__value">1st December 2017 - 31st January 2018</span>
                 </div>
                 <div className="u-btn-mar">
-                  <span className="invoice__label">
-                    Questions?
-                  </span>
+                  <span className="invoice__label">Questions?</span>
                   <span className="invoice__value">
                     <a href="mailto:accountsrecievable@canonical.com">
                       accountsrecievable@canonical.com
@@ -144,7 +150,9 @@ class Invoice extends React.Component {
             <h3 className="u-btn-mar invoice-details__title">Details</h3>
             <div className="invoice-details-sm-screen">
               <div className="invoice__billing-package">
-                <p><strong>Ubuntu Advantage Essential</strong></p>
+                <p>
+                  <strong>Ubuntu Advantage Essential</strong>
+                </p>
                 <p>$0.09 per machine hour</p>
                 <p className="invoice__billing-package__model-name">Model: fx-staging-ldn</p>
                 <div className="invoice__meta">
@@ -166,7 +174,9 @@ class Invoice extends React.Component {
                 </div>
               </div>
               <div className="invoice__billing-package">
-                <p><strong>Ubuntu Advantage Advanced</strong></p>
+                <p>
+                  <strong>Ubuntu Advantage Advanced</strong>
+                </p>
                 <p>$0.09 per machine hour</p>
                 <p>Model: fx-staging-ldn</p>
                 <div className="invoice__meta">
@@ -194,29 +204,36 @@ class Invoice extends React.Component {
               <BasicTable
                 headerClasses={['profile__entity-table-header-row']}
                 headerColumnClasses={['profile__entity-table-header-column']}
-                headers={[{
-                  content: 'Item',
-                  columnSize: 3
-                }, {
-                  content: 'Unit price',
-                  columnSize: 3
-                }, {
-                  content: 'Quantity',
-                  columnSize: 3
-                }, {
-                  content: 'Amount',
-                  columnSize: 3
-                }]}
+                headers={[
+                  {
+                    content: 'Item',
+                    columnSize: 3
+                  },
+                  {
+                    content: 'Unit price',
+                    columnSize: 3
+                  },
+                  {
+                    content: 'Quantity',
+                    columnSize: 3
+                  },
+                  {
+                    content: 'Amount',
+                    columnSize: 3
+                  }
+                ]}
                 rowClasses={['profile__entity-table-row']}
                 rowColumnClasses={['profile__entity-table-column']}
-                rows={rows} />
+                rows={rows}
+              />
             </div>
             <hr />
             <div className="u-btn-mar">
               <img
                 alt="Canonical logo"
                 src="https://assets.ubuntu.com/v1/5d6da5c4-logo-canonical-aubergine.svg"
-                width="120" />
+                width="120"
+              />
             </div>
 
             <div className="invoice__footer">
@@ -241,14 +258,11 @@ class Invoice extends React.Component {
               </div>
             </div>
           </div>
-        </div>);
+        </div>
+      );
     }
-    return (
-      <React.Fragment>
-        {content}
-      </React.Fragment>
-    );
+    return <React.Fragment>{content}</React.Fragment>;
   }
-};
+}
 
 module.exports = Invoice;

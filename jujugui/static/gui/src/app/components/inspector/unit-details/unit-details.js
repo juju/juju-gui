@@ -24,7 +24,9 @@ class UnitDetails extends React.Component {
           activeComponent: this.props.previousComponent || 'units',
           unitStatus: this.props.unitStatus,
           unit: null
-        }}});
+        }
+      }
+    });
   }
 
   /**
@@ -66,28 +68,22 @@ class UnitDetails extends React.Component {
       return;
     }
     const createItem = (label, href) => {
-      let link = (<span>{label}</span>);
+      let link = <span>{label}</span>;
       if (href) {
         link = (
-          <a
-            className="unit-details__address-link"
-            href={href}
-            target="_blank">
+          <a className="unit-details__address-link" href={href} target="_blank">
             {label}
-          </a>);
+          </a>
+        );
       }
       return (
-        <li
-          className="unit-details__action-list-item"
-          key={label}>
+        <li className="unit-details__action-list-item" key={label}>
           {link}
-        </li>);
+        </li>
+      );
     };
     if (!portRanges || !portRanges.length) {
-      return (
-        <ul className="unit-details__action-list">
-          {createItem(address, '')}
-        </ul>);
+      return <ul className="unit-details__action-list">{createItem(address, '')}</ul>;
     }
     const items = portRanges.map(portRange => {
       if (portRange.single) {
@@ -104,10 +100,7 @@ class UnitDetails extends React.Component {
       const label = `${address}:${range}/${portRange.protocol}`;
       return createItem(label, '');
     });
-    return (
-      <ul className="unit-details__action-list">
-        {items}
-      </ul>);
+    return <ul className="unit-details__action-list">{items}</ul>;
   }
 
   /**
@@ -118,21 +111,14 @@ class UnitDetails extends React.Component {
   */
   _generateList(items) {
     const list = items.map((item, i) => (
-      <li
-        className="twelve-col unit-details__list-item"
-        key={item.label + item.value + i}>
+      <li className="twelve-col unit-details__list-item" key={item.label + item.value + i}>
         <div className="four-col prepend-one no-margin-bottom unit-details__label">
           {item.label}
         </div>
-        <div className="seven-col last-col no-margin-bottom">
-          {item.value}
-        </div>
+        <div className="seven-col last-col no-margin-bottom">{item.value}</div>
       </li>
     ));
-    return (
-      <ul className="twelve-col unit-details__list">
-        {list}
-      </ul>);
+    return <ul className="twelve-col unit-details__list">{list}</ul>;
   }
 
   /**
@@ -174,17 +160,22 @@ class UnitDetails extends React.Component {
   */
   _generateAddressList() {
     const {unit} = this.props;
-    const privateList = this._generateAddresses(
-      unit.private_address, unit.portRanges, true);
+    const privateList = this._generateAddresses(unit.private_address, unit.portRanges, true);
     const publicList = this._generateAddresses(
-      unit.public_address, unit.portRanges, this.props.service.get('exposed'));
-    let addresses = [{
-      label: 'Public',
-      value: publicList || 'none'
-    }, {
-      label: 'IP(s)',
-      value: privateList || 'none'
-    }];
+      unit.public_address,
+      unit.portRanges,
+      this.props.service.get('exposed')
+    );
+    let addresses = [
+      {
+        label: 'Public',
+        value: publicList || 'none'
+      },
+      {
+        label: 'IP(s)',
+        value: privateList || 'none'
+      }
+    ];
     return this._generateList(addresses);
   }
 
@@ -201,14 +192,18 @@ class UnitDetails extends React.Component {
     if (unit.agent_state !== 'error' || !props.showSSHButtons) {
       return [];
     }
-    return [{
-      title: 'Tail logs',
-      state: this._generateSshToUnitState(
-        [`sudo tail -f /var/log/juju/unit-${unit.urlName}.log`])
-    }, {
-      title: 'Debug hooks',
-      state: this._generateDebugHooksState()
-    }];
+    return [
+      {
+        title: 'Tail logs',
+        state: this._generateSshToUnitState([
+          `sudo tail -f /var/log/juju/unit-${unit.urlName}.log`
+        ])
+      },
+      {
+        title: 'Debug hooks',
+        state: this._generateDebugHooksState()
+      }
+    ];
   }
 
   /**
@@ -219,19 +214,21 @@ class UnitDetails extends React.Component {
     if (!this.props.showSSHButtons) {
       return null;
     }
-    const actions = [{
-      title: 'SSH to unit',
-      state: this._generateSshToUnitState(
-        [`cd /var/lib/juju/agents/unit-${this.props.unit.urlName}/charm`])
-    }].concat(this._generateErrorButtons());
+    const actions = [
+      {
+        title: 'SSH to unit',
+        state: this._generateSshToUnitState([
+          `cd /var/lib/juju/agents/unit-${this.props.unit.urlName}/charm`
+        ])
+      }
+    ].concat(this._generateErrorButtons());
     const links = actions.map(action => (
-      <li
-        className="unit-details__action-list-item"
-        key={action.title}>
+      <li className="unit-details__action-list-item" key={action.title}>
         <Link
           changeState={this.props.changeState}
           clickState={action.state}
-          generatePath={this.props.generatePath}>
+          generatePath={this.props.generatePath}
+        >
           {action.title}
         </Link>
       </li>
@@ -239,17 +236,13 @@ class UnitDetails extends React.Component {
     return (
       <div className="unit-details__section twelve-col unit-details__terminal-actions">
         <div className="five-col no-margin-bottom">
-          <SvgIcon
-            className="machine__ssh-icon"
-            name="code-snippet_24"
-            size="20" />
+          <SvgIcon className="machine__ssh-icon" name="code-snippet_24" size="20" />
         </div>
         <div className="seven-col last-col no-margin-bottom">
-          <ul className="unit-details__action-list">
-            {links}
-          </ul>
+          <ul className="unit-details__action-list">{links}</ul>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   render() {
@@ -257,29 +250,29 @@ class UnitDetails extends React.Component {
     return (
       <div className="unit-details">
         <div className="unit-details__section twelve-col unit-details__statuses">
-          <h5 className="unit-details__title">
-            Status
-          </h5>
+          <h5 className="unit-details__title">Status</h5>
           {this._generateStatuses()}
         </div>
         <div className="unit-details__section twelve-col">
-          <h5 className="unit-details__title">
-            Adresses
-          </h5>
+          <h5 className="unit-details__title">Adresses</h5>
           {this._generateAddressList()}
         </div>
         {this._generateTerminalActions()}
         <div className="twelve-col no-margin-bottom">
-          <ButtonRow buttons={[{
-            disabled: props.acl.isReadOnly(),
-            title: 'Remove',
-            action: this._handleRemoveUnit.bind(this)
-          }]} />
+          <ButtonRow
+            buttons={[
+              {
+                disabled: props.acl.isReadOnly(),
+                title: 'Remove',
+                action: this._handleRemoveUnit.bind(this)
+              }
+            ]}
+          />
         </div>
       </div>
     );
   }
-};
+}
 
 UnitDetails.propTypes = {
   acl: PropTypes.object.isRequired,

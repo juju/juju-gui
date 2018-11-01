@@ -11,13 +11,15 @@ describe('Status', function() {
   let changeState, generatePath, model, valueStore;
   const propTypes = Status.propTypes;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Status
-      changeState={options.changeState || changeState}
-      generatePath={options.generatePath || generatePath}
-      model={shapeup.fromShape(options.model || model, propTypes.model)}
-      valueStore={options.valueStore || valueStore} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Status
+        changeState={options.changeState || changeState}
+        generatePath={options.generatePath || generatePath}
+        model={shapeup.fromShape(options.model || model, propTypes.model)}
+        valueStore={options.valueStore || valueStore}
+      />
+    );
 
   beforeEach(() => {
     changeState = sinon.stub();
@@ -42,11 +44,13 @@ describe('Status', function() {
   it('can navigate to charms from the app list', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    instance._navigateToCharm(
-      'u/who/django/xenial/42', {preventDefault: sinon.stub()});
+    instance._navigateToCharm('u/who/django/xenial/42', {
+      preventDefault: sinon.stub()
+    });
     assert.equal(changeState.callCount, 1);
-    assert.deepEqual(
-      changeState.args[0][0], {store: 'u/who/django/xenial/42'});
+    assert.deepEqual(changeState.args[0][0], {
+      store: 'u/who/django/xenial/42'
+    });
   });
 
   it('can navigate to apps from the relation list', () => {

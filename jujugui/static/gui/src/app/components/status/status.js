@@ -11,7 +11,6 @@ const SharedStatus = require('../shared/status/status/status');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
-
   /**
     Generate the state to navigate to an application.
     @param appId {String} The id of the application to display.
@@ -113,8 +112,7 @@ class Status extends React.Component {
     @returns {String} The charm url.
   */
   _generateCharmURL(charmId) {
-    return this.props.generatePath(
-      this._generateCharmClickState(charmId));
+    return this.props.generatePath(this._generateCharmClickState(charmId));
   }
 
   /**
@@ -123,8 +121,7 @@ class Status extends React.Component {
     @returns {String} The machine url.
   */
   _generateMachineURL(machineId) {
-    return this.props.generatePath(
-      this._generateMachineClickState(machineId));
+    return this.props.generatePath(this._generateMachineClickState(machineId));
   }
 
   /**
@@ -133,8 +130,7 @@ class Status extends React.Component {
     @returns {String} The application url.
   */
   _generateApplicationURL(applicationName) {
-    return this.props.generatePath(
-      this._generateApplicationClickState(applicationName));
+    return this.props.generatePath(this._generateApplicationClickState(applicationName));
   }
 
   /**
@@ -143,8 +139,7 @@ class Status extends React.Component {
     @returns {String} The unit url.
   */
   _generateUnitURL(unitId) {
-    return this.props.generatePath(
-      this._generateUnitClickState(unitId));
+    return this.props.generatePath(this._generateUnitClickState(unitId));
   }
 
   /**
@@ -154,7 +149,9 @@ class Status extends React.Component {
   */
   _generateApplicationOnClick(applicationName) {
     return this.props.changeState.bind(
-      this, this._generateApplicationClickState(applicationName));
+      this,
+      this._generateApplicationClickState(applicationName)
+    );
   }
 
   /**
@@ -163,8 +160,7 @@ class Status extends React.Component {
     @returns {Function} A function to call on click.
   */
   _generateUnitOnClick(unitId) {
-    return this.props.changeState.bind(
-      this, this._generateUnitClickState(unitId));
+    return this.props.changeState.bind(this, this._generateUnitClickState(unitId));
   }
 
   /**
@@ -173,8 +169,7 @@ class Status extends React.Component {
     @returns {Function} A function to call on click.
   */
   _generateMachineOnClick(machineId) {
-    return this.props.changeState.bind(
-      this, this._generateMachineClickState(machineId));
+    return this.props.changeState.bind(this, this._generateMachineClickState(machineId));
   }
 
   /**
@@ -187,7 +182,6 @@ class Status extends React.Component {
   }
 
   render() {
-
     return (
       <div className="v1">
         <SharedStatus
@@ -203,11 +197,12 @@ class Status extends React.Component {
           navigateToApplication={this._navigateToApplication.bind(this)}
           navigateToCharm={this._navigateToCharm.bind(this)}
           navigateToMachine={this._navigateToMachine.bind(this)}
-          valueStore={this.props.valueStore} />
+          valueStore={this.props.valueStore}
+        />
       </div>
     );
   }
-};
+}
 
 Status.propTypes = {
   changeState: PropTypes.func.isRequired,

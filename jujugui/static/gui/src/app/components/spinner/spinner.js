@@ -11,6 +11,6 @@ class Spinner extends React.PureComponent {
       </div>
     );
   }
-};
+}
 
 module.exports = Spinner;

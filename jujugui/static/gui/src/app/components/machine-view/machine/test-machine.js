@@ -15,44 +15,60 @@ const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewMachine', function() {
-  let acl, applications, dbAPI, parseMachineDetails, genericConstraints,
-      machineAPI, machineUnitACL, modelAPI, parseConstraints;
+  let acl,
+    applications,
+    dbAPI,
+    parseMachineDetails,
+    genericConstraints,
+    machineAPI,
+    machineUnitACL,
+    modelAPI,
+    parseConstraints;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    // The component is wrapped to handle drag and drop, but we just want to
-    // test the internal component so we access it via DecoratedComponent.
-    <MachineViewMachine.DecoratedComponent
-      acl={acl}
-      canDrop={options.canDrop === undefined ? false : options.canDrop}
-      changeState={
-        options.changeState === undefined ? null : options.changeState}
-      connectDropTarget={jsTestUtils.connectDropTarget}
-      dbAPI={options.dbAPI || dbAPI}
-      dropUnit={options.dropUnit || sinon.stub()}
-      genericConstraints={options.genericConstraints}
-      isOver={options.isOver === undefined ? false : options.isOver}
-      machineAPI={options.machineAPI || machineAPI}
-      modelAPI={options.modelAPI || modelAPI}
-      parseConstraints={options.parseConstraints || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      showConstraints={
-        options.showConstraints === undefined ? true : options.showConstraints}
-      showSSHButton={
-        options.showSSHButton === undefined ? false : options.showSSHButton}
-      type={options.type || 'machine'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <MachineViewMachine.DecoratedComponent
+        acl={acl}
+        canDrop={options.canDrop === undefined ? false : options.canDrop}
+        changeState={options.changeState === undefined ? null : options.changeState}
+        connectDropTarget={jsTestUtils.connectDropTarget}
+        dbAPI={options.dbAPI || dbAPI}
+        dropUnit={options.dropUnit || sinon.stub()}
+        genericConstraints={options.genericConstraints}
+        isOver={options.isOver === undefined ? false : options.isOver}
+        machineAPI={options.machineAPI || machineAPI}
+        modelAPI={options.modelAPI || modelAPI}
+        parseConstraints={options.parseConstraints || sinon.stub()}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        showConstraints={
+          options.showConstraints === undefined ? true : options.showConstraints
+        }
+        showSSHButton={options.showSSHButton === undefined ? false : options.showSSHButton}
+        type={options.type || 'machine'}
+      />
+    );
 
   beforeEach(function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
-    machineUnitACL = acl.reshape(
-      MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
-    parseMachineDetails = sinon.stub().returns([{
-      label: 'mem',
-      value: '1.00GB'
-    }]);
+    machineUnitACL = acl.reshape(MachineViewMachineUnit.DecoratedComponent.propTypes.acl);
+    parseMachineDetails = sinon.stub().returns([
+      {
+        label: 'mem',
+        value: '1.00GB'
+      }
+    ]);
     parseConstraints = sinon.stub().returns({mem: '2048'});
     genericConstraints = [
-      'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+      'cpu-power',
+      'cores',
+      'cpu-cores',
+      'mem',
+      'arch',
+      'tags',
+      'root-disk'
+    ];
     applications = {
       getById: sinon.stub().returns({
         get: function(val) {
@@ -82,15 +98,18 @@ describe('MachineViewMachine', function() {
       series: 'wily'
     };
     const units = {
-      filterByMachine: sinon.stub().returns([{
-        agent_state: 'started',
-        displayName: 'wordpress/0',
-        id: 'wordpress/0'
-      }, {
-        agent_state: 'started',
-        displayName: 'wordpress/1',
-        id: 'wordpress/1'
-      }])
+      filterByMachine: sinon.stub().returns([
+        {
+          agent_state: 'started',
+          displayName: 'wordpress/0',
+          id: 'wordpress/0'
+        },
+        {
+          agent_state: 'started',
+          displayName: 'wordpress/1',
+          id: 'wordpress/1'
+        }
+      ])
     };
     dbAPI = {
       applications: applications,
@@ -118,10 +137,12 @@ describe('MachineViewMachine', function() {
       <div>
         <Machine
           classes={['machine-view__machine', 'machine-view__machine--machine']}
-          hardware={[{
-            label: 'mem',
-            value: '1.00GB'
-          }]}
+          hardware={[
+            {
+              label: 'mem',
+              value: '1.00GB'
+            }
+          ]}
           isContainer={false}
           machine={{
             name: 'new0',
@@ -133,7 +154,8 @@ describe('MachineViewMachine', function() {
           menuItems={null}
           onClick={wrapper.find('Machine').prop('onClick')}
           sshAction={undefined}
-          sshLabel={undefined}>
+          sshLabel={undefined}
+        >
           <ul className="machine-view__machine-units machine__units">
             <MachineViewMachineUnit
               acl={machineUnitACL}
@@ -143,9 +165,11 @@ describe('MachineViewMachine', function() {
               removeUnit={sinon.stub()}
               sendAnalytics={sinon.stub()}
               unit={{
-                'agent_state': 'started',
-                'displayName': 'wordpress/0',
-                'id': 'wordpress/0'}} />
+                agent_state: 'started',
+                displayName: 'wordpress/0',
+                id: 'wordpress/0'
+              }}
+            />
             <MachineViewMachineUnit
               acl={machineUnitACL}
               icon="icon.svg"
@@ -154,17 +178,18 @@ describe('MachineViewMachine', function() {
               removeUnit={sinon.stub()}
               sendAnalytics={sinon.stub()}
               unit={{
-                'agent_state': 'started',
-                'displayName': 'wordpress/1',
-                'id': 'wordpress/1'}} />
+                agent_state: 'started',
+                displayName: 'wordpress/1',
+                id: 'wordpress/1'
+              }}
+            />
           </ul>
           <div className="machine-view__machine-drop-target">
-            <div className="machine-view__machine-drop-message">
-              Add to {'new0'}
-            </div>
+            <div className="machine-view__machine-drop-message">Add to {'new0'}</div>
           </div>
         </Machine>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -174,24 +199,36 @@ describe('MachineViewMachine', function() {
       isOver: true
     });
     assert.equal(
-      wrapper.find('Machine').prop('classes').includes('machine-view__machine--drop'),
-      true);
+      wrapper
+        .find('Machine')
+        .prop('classes')
+        .includes('machine-view__machine--drop'),
+      true
+    );
   });
 
   it('can display a machine as uncommitted', function() {
     machineAPI.machine.commitStatus = 'uncommitted';
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('Machine').prop('classes').includes('machine-view__machine--uncommitted'),
-      true);
+      wrapper
+        .find('Machine')
+        .prop('classes')
+        .includes('machine-view__machine--uncommitted'),
+      true
+    );
   });
 
   it('can display a deleted machine as uncommitted', function() {
     machineAPI.machine.deleted = true;
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('Machine').prop('classes').includes('machine-view__machine--uncommitted'),
-      true);
+      wrapper
+        .find('Machine')
+        .prop('classes')
+        .includes('machine-view__machine--uncommitted'),
+      true
+    );
   });
 
   it('can pass ssh action props', function() {
@@ -206,17 +243,20 @@ describe('MachineViewMachine', function() {
 
   it('can hide units', function() {
     const units = {
-      filterByMachine: sinon.stub().returns([{
-        deleted: false,
-        displayName: 'mysql/0',
-        id: 'mysql/0',
-        service: 'mysql'
-      }, {
-        deleted: false,
-        displayName: 'wordpress/1',
-        id: 'wordpress/1',
-        service: 'wordpress'
-      }])
+      filterByMachine: sinon.stub().returns([
+        {
+          deleted: false,
+          displayName: 'mysql/0',
+          id: 'mysql/0',
+          service: 'mysql'
+        },
+        {
+          deleted: false,
+          displayName: 'wordpress/1',
+          id: 'wordpress/1',
+          service: 'wordpress'
+        }
+      ])
     };
     const wordpress = {
       get: function(val) {
@@ -271,12 +311,15 @@ describe('MachineViewMachine', function() {
             removeUnit={sinon.stub()}
             sendAnalytics={sinon.stub()}
             unit={{
-              'deleted': false,
-              'displayName': 'wordpress/1',
-              'id': 'wordpress/1',
-              'service': 'wordpress'}} />
+              deleted: false,
+              displayName: 'wordpress/1',
+              id: 'wordpress/1',
+              service: 'wordpress'
+            }}
+          />
         ]}
-      </ul>);
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.machine-view__machine-units'), expected);
   });
 
@@ -302,9 +345,11 @@ describe('MachineViewMachine', function() {
           removeUnit={sinon.stub()}
           sendAnalytics={sinon.stub()}
           unit={{
-            'agent_state': 'started',
-            'displayName': 'wordpress/0',
-            'id': 'wordpress/0'}} />
+            agent_state: 'started',
+            displayName: 'wordpress/0',
+            id: 'wordpress/0'
+          }}
+        />
         <MachineViewMachineUnit
           acl={machineUnitACL}
           icon="icon.svg"
@@ -313,16 +358,22 @@ describe('MachineViewMachine', function() {
           removeUnit={sinon.stub()}
           sendAnalytics={sinon.stub()}
           unit={{
-            'agent_state': 'started',
-            'displayName': 'wordpress/1',
-            'id': 'wordpress/1'}} />
-      </ul>);
+            agent_state: 'started',
+            displayName: 'wordpress/1',
+            id: 'wordpress/1'
+          }}
+        />
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.machine-view__machine-units'), expected);
   });
 
   it('can destroy a machine', function() {
     const wrapper = renderComponent();
-    wrapper.find('Machine').prop('menuItems')[0].action();
+    wrapper
+      .find('Machine')
+      .prop('menuItems')[0]
+      .action();
     const destroyMachines = modelAPI.destroyMachines;
     assert.equal(destroyMachines.callCount, 1);
     assert.deepEqual(destroyMachines.args[0][0], ['new0']);
@@ -334,15 +385,18 @@ describe('MachineViewMachine', function() {
     };
     machineAPI.machine = machine;
     const wrapper = renderComponent({type: 'container'});
-    wrapper.find('DragSource(MachineViewMachineUnit)').at(0).props().removeUnit();
+    wrapper
+      .find('DragSource(MachineViewMachineUnit)')
+      .at(0)
+      .props()
+      .removeUnit();
     assert.equal(machineAPI.removeUnit.callCount, 1);
   });
 
   it('can disable the destroy when ready only', function() {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => true}));
     const wrapper = renderComponent();
-    assert.strictEqual(
-      wrapper.find('Machine').prop('menuItems')[0].action, null);
+    assert.strictEqual(wrapper.find('Machine').prop('menuItems')[0].action, null);
   });
 
   it('can display a form to update constraints', function() {
@@ -359,14 +413,15 @@ describe('MachineViewMachine', function() {
       parseConstraints,
       showConstraints: true
     });
-    wrapper.find('Machine').prop('menuItems')[1].action();
+    wrapper
+      .find('Machine')
+      .prop('menuItems')[1]
+      .action();
     wrapper.update();
     const buttons = wrapper.find('ButtonRow').prop('buttons');
     const expected = (
       <div className="add-machine__constraints">
-        <h4 className="add-machine__title">
-          Update constraints
-        </h4>
+        <h4 className="add-machine__title">Update constraints</h4>
         <Constraints
           constraints={{mem: '2048'}}
           currentSeries={machine.series}
@@ -374,20 +429,26 @@ describe('MachineViewMachine', function() {
           hasUnit={true}
           providerType="aws"
           series={['wily']}
-          valuesChanged={wrapper.find('Constraints').prop('valuesChanged')} />
+          valuesChanged={wrapper.find('Constraints').prop('valuesChanged')}
+        />
         <ButtonRow
-          buttons={[{
-            title: 'Cancel',
-            action: buttons[0].action,
-            type: 'base'
-          }, {
-            title: 'Update',
-            action: buttons[1].action,
-            type: 'neutral',
-            disabled: false
-          }]}
-          key="buttons" />
-      </div>);
+          buttons={[
+            {
+              title: 'Cancel',
+              action: buttons[0].action,
+              type: 'base'
+            },
+            {
+              title: 'Update',
+              action: buttons[1].action,
+              type: 'neutral',
+              disabled: false
+            }
+          ]}
+          key="buttons"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.add-machine__constraints'), expected);
   });
 
@@ -405,14 +466,20 @@ describe('MachineViewMachine', function() {
       parseConstraints,
       showConstraints: true
     });
-    wrapper.find('Machine').prop('menuItems')[1].action();
+    wrapper
+      .find('Machine')
+      .prop('menuItems')[1]
+      .action();
     wrapper.update();
     const instance = wrapper.instance();
     instance._updateConstraints({
       arch: 'i386',
       series: 'zesty'
     });
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     const updateMachineConstraints = modelAPI.updateMachineConstraints;
     const updateMachineSeries = modelAPI.updateMachineSeries;
     assert.equal(updateMachineConstraints.callCount, 1);

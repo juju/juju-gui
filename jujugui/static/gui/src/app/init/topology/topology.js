@@ -24,7 +24,7 @@ const Component = require('../../d3-components/d3-components');
  * @class Topology
  */
 class Topology extends Component {
-  constructor(options={}) {
+  constructor(options = {}) {
     super();
     this.DRAG_ENDING = 3;
     this.minZoom = options.minZoom || 0.25;
@@ -100,7 +100,7 @@ class Topology extends Component {
   */
   getContainer() {
     const container = this.container;
-    return container.getDOMNode && container.getDOMNode() || container;
+    return (container.getDOMNode && container.getDOMNode()) || container;
   }
 
   /**
@@ -135,16 +135,15 @@ class Topology extends Component {
     @method handleZoom
   */
   handleZoom() {
-    this.zoomPlane[0][0].dispatchEvent(
-      new WheelEvent(d3.event.type, d3.event));
+    this.zoomPlane[0][0].dispatchEvent(new WheelEvent(d3.event.type, d3.event));
   }
 
   renderOnce() {
     var svg,
-        vis,
-        width = this.getWidth(),
-        height = this.getHeight(),
-        container = this.getContainer();
+      vis,
+      width = this.getWidth(),
+      height = this.getHeight(),
+      container = this.getContainer();
 
     if (this._templateRendered) {
       return;
@@ -160,20 +159,21 @@ class Topology extends Component {
     var canvas = d3.select(container);
     var base = canvas.select('.topology-canvas');
     if (base.empty()) {
-      base = canvas.append('div')
-        .classed('topology-canvas', true);
+      base = canvas.append('div').classed('topology-canvas', true);
     }
 
     // Cache the canvas element for style modifications.
     this.canvas = container.querySelector('.topology-canvas');
 
-    svg = base.append('svg:svg')
+    svg = base
+      .append('svg:svg')
       .attr('width', width)
       .attr('height', height)
       .attr('class', 'the-canvas');
     this.svg = svg;
 
-    this.zoomPlane = svg.append('rect')
+    this.zoomPlane = svg
+      .append('rect')
       .attr('class', 'zoom-plane')
       .attr('width', width)
       .attr('height', height)
@@ -192,7 +192,8 @@ class Topology extends Component {
       /*eslint-disable max-len*/
       // We want the plus service to be visible when the canvas loads, so set
       // a default transform position.
-      vis.html('<g class="plus-service included-plus" transform="translate(100,250)">' +
+      vis.html(
+        '<g class="plus-service included-plus" transform="translate(100,250)">' +
           '<circle cx="64" cy="64" r="80" stroke="#888888" stroke-width="1" fill="transparent" stroke-dasharray="5, 5" class="plus-service__halo" id="yui_3_11_0_1_1444041610389_7098"></circle>' +
           '<path class="plus-service__inner-circle" fill="#FAFBFB" d="M63.5 126.5c-34.738 0-63-28.262-63-63s28.262-63 63-63 63 28.262 63 63-28.262 63-63 63z"/>' +
           '<path fill="#CECDCD" d="M63.5 1C97.962 1 126 29.038 126 63.5S97.962 126 63.5 126 1 97.962 1 63.5 29.038 1 63.5 1m0-1C28.43 0 0 28.43 0 63.5S28.43 127 63.5 127 127 98.57 127 63.5 98.57 0 63.5 0z"/>' +
@@ -200,41 +201,51 @@ class Topology extends Component {
           '<g fill="none" stroke="#FFF" stroke-width="2" stroke-miterlimit="10">' +
           '<path d="M63.5 54.5v18M72.5 63.5h-18"/>' +
           '</g>' +
-          '</g>');
+          '</g>'
+      );
       /*eslint-enable max-len*/
       var plusIndicator = vis.select('.included-plus');
       var self = this;
-      plusIndicator.on('click', function() {
-        if (d3.event.defaultPrevented) {
-          // Don't allow the click if the element is being dragged.
-          return;
-        }
-        self.state.changeState({
-          store: ''
-        });
-        // Pass the wheel events to the canvas so that it can be zoomed.
-      }).on('mousewheel.zoom', this.handleZoom.bind(this))
+      plusIndicator
+        .on('click', function() {
+          if (d3.event.defaultPrevented) {
+            // Don't allow the click if the element is being dragged.
+            return;
+          }
+          self.state.changeState({
+            store: ''
+          });
+          // Pass the wheel events to the canvas so that it can be zoomed.
+        })
+        .on('mousewheel.zoom', this.handleZoom.bind(this))
         .on('wheel.zoom', this.handleZoom.bind(this));
-      var plusDrag = d3.behavior.drag()
-        .on('drag', function(d) {
-          var plus = d3.select(this);
-          var oldCoords = plus.attr('transform')
-            .split('(')[1]
-            .split(')')[0]
-            .split(',');
-          plus
-            .attr('transform',
-              'translate('
-                + [d3.event.dx + parseInt(oldCoords[0], 10),
-                  d3.event.dy + parseInt(oldCoords[1], 10)] + ')');
-        });
+      var plusDrag = d3.behavior.drag().on('drag', function(d) {
+        var plus = d3.select(this);
+        var oldCoords = plus
+          .attr('transform')
+          .split('(')[1]
+          .split(')')[0]
+          .split(',');
+        plus.attr(
+          'transform',
+          'translate(' +
+            [
+              d3.event.dx + parseInt(oldCoords[0], 10),
+              d3.event.dy + parseInt(oldCoords[1], 10)
+            ] +
+            ')'
+        );
+      });
       plusIndicator.call(plusDrag);
     }
 
     // The service icon mask for displaying as circles.
-    vis.append('circle')
+    vis
+      .append('circle')
       .attr({
-        id: function(d) { return 'service-icon-mask'; },
+        id: function(d) {
+          return 'service-icon-mask';
+        },
         cx: 48,
         cy: 48,
         r: 43,
@@ -242,22 +253,24 @@ class Topology extends Component {
       })
       .style('pointer-events', 'none');
 
-    var clip = vis.append('clipPath')
-      .attr({
-        id: function(d) { return 'clip-mask'; }
-      });
+    var clip = vis.append('clipPath').attr({
+      id: function(d) {
+        return 'clip-mask';
+      }
+    });
 
-    clip.append('use')
-      .attr({
-        'xlink:href': function(d) { return '#service-icon-mask'; }
-      });
+    clip.append('use').attr({
+      'xlink:href': function(d) {
+        return '#service-icon-mask';
+      }
+    });
     return this;
   }
 
   computeScales() {
     var self = this,
-        width = this.getWidth(),
-        height = this.getHeight();
+      width = this.getWidth(),
+      height = this.getHeight();
 
     if (!this.xScale) {
       this.xScale = d3.scale.linear();
@@ -265,22 +278,27 @@ class Topology extends Component {
       this.zoom = d3.behavior.zoom();
     }
     // Update the pan/zoom behavior manager.
-    this.xScale.domain([-width / 2, width / 2])
+    this.xScale
+      .domain([-width / 2, width / 2])
       .range([0, width])
       .clamp(true)
       .nice();
-    this.yScale.domain([-height / 2, height / 2])
+    this.yScale
+      .domain([-height / 2, height / 2])
       .range([height, 0])
       .clamp(true)
       .nice();
 
-    this.zoom.x(this.xScale)
+    this.zoom
+      .x(this.xScale)
       .y(this.yScale)
       .scaleExtent([this.minZoom, this.maxZoom])
       .on('zoom', evt => {
-        document.dispatchEvent(new CustomEvent('topo.zoom', {
-          detail: [d3.event]
-        }));
+        document.dispatchEvent(
+          new CustomEvent('topo.zoom', {
+            detail: [d3.event]
+          })
+        );
         // If the canvas has actually been moved then set the flag.
         self.zoomed = true;
       })
@@ -310,8 +328,8 @@ class Topology extends Component {
   */
   servicePointOutside(includeVertices) {
     // Existing service boxes are those with x/y attributes set.
-    var existingBoxes = Object.keys(
-      this.service_boxes).map(k => this.service_boxes[k])
+    var existingBoxes = Object.keys(this.service_boxes)
+      .map(k => this.service_boxes[k])
       .filter(function(box) {
         return box.x !== undefined && !isNaN(box.center[0]);
       });
@@ -345,11 +363,15 @@ class Topology extends Component {
       // This must always have {immediate: true} so that we don't require that
       // positional annotations have to be committed.
       this.env.update_annotations(
-        box.id, 'application', {'gui-x': box.x, 'gui-y': box.y}, null,
-        {immediate: true});
+        box.id,
+        'application',
+        {'gui-x': box.x, 'gui-y': box.y},
+        null,
+        {immediate: true}
+      );
       box.inDrag = this.DRAG_ENDING;
     }
   }
-};
+}
 
 module.exports = Topology;

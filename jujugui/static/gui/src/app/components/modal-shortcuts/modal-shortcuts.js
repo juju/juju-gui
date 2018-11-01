@@ -9,7 +9,6 @@ const hotkeys = require('../../init/hotkeys');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 class ModalShortcuts extends React.Component {
-
   handleClickOutside() {
     this.props.closeModal();
   }
@@ -21,8 +20,10 @@ class ModalShortcuts extends React.Component {
     let bindings = [];
     Object.keys(hotkeys.keyBindings).forEach(key => {
       const binding = hotkeys.keyBindings[key];
-      if (binding.help && (binding.condition === undefined ||
-        binding.condition.call(this) === true)) {
+      if (
+        binding.help &&
+        (binding.condition === undefined || binding.condition.call(this) === true)
+      ) {
         bindings.push({
           key: key,
           label: binding.label || key,
@@ -42,15 +43,12 @@ class ModalShortcuts extends React.Component {
   _generateList() {
     const bindings = this._generateBindings();
     const components = bindings.map(binding => {
-      return(
+      return (
         <div key={binding.label}>
-          <div className="two-col">
-            {binding.label}
-          </div>
-          <div className="four-col last-col">
-            {binding.help}
-          </div>
-        </div>);
+          <div className="two-col">{binding.label}</div>
+          <div className="four-col last-col">{binding.help}</div>
+        </div>
+      );
     });
     return components;
   }
@@ -60,30 +58,20 @@ class ModalShortcuts extends React.Component {
       <div className="modal">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Keyboard Shortcuts</h2>
-          <span
-            className="close"
-            onClick={this.props.closeModal}
-            role="button"
-            tabIndex="0">
-            <SvgIcon
-              name="close_16"
-              size="16" />
+          <span className="close" onClick={this.props.closeModal} role="button" tabIndex="0">
+            <SvgIcon name="close_16" size="16" />
           </span>
         </div>
         <div className="twelve-col">
-          <div className="content">
-            {this._generateList()}
-          </div>
+          <div className="content">{this._generateList()}</div>
         </div>
         <div className="twelve-col">
-          <div className="content">
-            Juju GUI version {this.props.guiVersion}
-          </div>
+          <div className="content">Juju GUI version {this.props.guiVersion}</div>
         </div>
       </div>
     );
   }
-};
+}
 
 ModalShortcuts.propTypes = {
   closeModal: PropTypes.func.isRequired,

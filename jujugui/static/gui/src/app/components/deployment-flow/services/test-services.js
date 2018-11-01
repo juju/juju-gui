@@ -10,19 +10,20 @@ const DeploymentServices = require('./services');
 describe('DeploymentServices', function() {
   let acl, changesUtils;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentServices
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      changesUtils={options.changesUtils || changesUtils}
-      charmsGetById={options.charmsGetById || sinon.stub()}
-      getCurrentChangeSet={options.getCurrentChangeSet || sinon.stub()}
-      getServiceByName={options.getServiceByName || sinon.stub()}
-      listPlansForCharm={options.listPlansForCharm || sinon.stub()}
-      parseTermId={options.parseTermId || sinon.stub()}
-      showTerms={options.showTerms || sinon.stub()}
-      withPlans={options.withPlans} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentServices
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        changesUtils={options.changesUtils || changesUtils}
+        charmsGetById={options.charmsGetById || sinon.stub()}
+        getCurrentChangeSet={options.getCurrentChangeSet || sinon.stub()}
+        getServiceByName={options.getServiceByName || sinon.stub()}
+        listPlansForCharm={options.listPlansForCharm || sinon.stub()}
+        parseTermId={options.parseTermId || sinon.stub()}
+        showTerms={options.showTerms || sinon.stub()}
+        withPlans={options.withPlans} />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -30,7 +31,9 @@ describe('DeploymentServices', function() {
       generateAllChangeDescriptions: sinon.stub(),
       generateChangeDescription: sinon.stub(),
       sortDescriptionsByApplication: sinon.stub().returns(
-        JSON.parse('{"kibana":[{"id":"service-131","icon":"https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg","description":" kibana will be added to the model.","time":"1:28 pm"},{"id":"addUnits-655","icon":"changes-units-added","description":" 1 kibana unit will be added.","time":"1:28 pm"}],"elasticsearch":[{"id":"setConfig-169","icon":"changes-config-changed","description":"Configuration values will be changed for elasticsearch.","time":"1:28 pm"}]}') // eslint-disable-line max-len
+        JSON.parse(
+          '{"kibana":[{"id":"service-131","icon":"https://api.jujucharms.com/charmstore/v5/trusty/kibana-15/icon.svg","description":" kibana will be added to the model.","time":"1:28 pm"},{"id":"addUnits-655","icon":"changes-units-added","description":" 1 kibana unit will be added.","time":"1:28 pm"}],"elasticsearch":[{"id":"setConfig-169","icon":"changes-config-changed","description":"Configuration values will be changed for elasticsearch.","time":"1:28 pm"}]}'
+        ) // eslint-disable-line max-len
       )
     });
   });
@@ -53,10 +56,7 @@ describe('DeploymentServices', function() {
   });
 
   it('can render with machines and no services', function() {
-    const machineChanges = [
-      {id: 'machine0'},
-      {id: 'machine1'}
-    ];
+    const machineChanges = [{id: 'machine0'}, {id: 'machine1'}];
     changesUtils.generateChangeDescription.onFirstCall().returns(machineChanges[0]);
     changesUtils.generateChangeDescription.onSecondCall().returns(machineChanges[1]);
     changesUtils.sortDescriptionsByApplication.returns(null);

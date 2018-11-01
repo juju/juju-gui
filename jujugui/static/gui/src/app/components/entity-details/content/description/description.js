@@ -18,9 +18,7 @@ const EntityContentDescription = props => {
     heading = (
       <h2 className="entity-content__header" id="description">
         Description
-        <HashLink
-          changeState={props.changeState}
-          hash="description" />
+        <HashLink changeState={props.changeState} hash="description" />
       </h2>
     );
   }
@@ -29,8 +27,8 @@ const EntityContentDescription = props => {
       {heading}
       <div
         className="entity-content__description-content"
-        dangerouslySetInnerHTML={{__html: htmlDescription}}>
-      </div>
+        dangerouslySetInnerHTML={{__html: htmlDescription}}
+      />
     </div>
   );
 };

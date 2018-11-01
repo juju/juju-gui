@@ -10,13 +10,15 @@ const DeploymentMachines = require('./machines');
 describe('DeploymentMachines', function() {
   let acl, initUtils, machines;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentMachines
-      acl={options.acl || acl}
-      cloud={options.cloud === undefined ? {name: 'My cloud'} : options.cloud}
-      initUtils={options.initUtils || initUtils}
-      machines={options.machines || machines} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentMachines
+        acl={options.acl || acl}
+        cloud={options.cloud === undefined ? {name: 'My cloud'} : options.cloud}
+        initUtils={options.initUtils || initUtils}
+        machines={options.machines || machines}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -27,10 +29,14 @@ describe('DeploymentMachines', function() {
     machines = {
       machine1: {
         command: {
-          args: [[{
-            constraints: {},
-            series: 'xenial'
-          }]],
+          args: [
+            [
+              {
+                constraints: {},
+                series: 'xenial'
+              }
+            ]
+          ],
           options: {
             modelId: 'machine1'
           }
@@ -39,15 +45,19 @@ describe('DeploymentMachines', function() {
       },
       machine2: {
         command: {
-          args: [[{
-            constraints: {
-              cores: 2,
-              'cpu-power': 3,
-              'root-disk': 4096,
-              mem: 1024
-            },
-            series: null
-          }]],
+          args: [
+            [
+              {
+                constraints: {
+                  cores: 2,
+                  'cpu-power': 3,
+                  'root-disk': 4096,
+                  mem: 1024
+                },
+                series: null
+              }
+            ]
+          ],
           options: {
             modelId: 'machine2'
           }
@@ -56,14 +66,18 @@ describe('DeploymentMachines', function() {
       },
       machine3: {
         command: {
-          args: [[{
-            constraints: {
-              cores: 2,
-              'cpu-power': 3,
-              'root-disk': 4096,
-              mem: 1024
-            }
-          }]],
+          args: [
+            [
+              {
+                constraints: {
+                  cores: 2,
+                  'cpu-power': 3,
+                  'root-disk': 4096,
+                  mem: 1024
+                }
+              }
+            ]
+          ],
           options: {
             modelId: 'machine3'
           }
@@ -72,15 +86,19 @@ describe('DeploymentMachines', function() {
       },
       machine4: {
         command: {
-          args: [[{
-            constraints: {
-              cores: 2,
-              'cpu-power': 3,
-              'root-disk': 4096,
-              mem: 1024
-            },
-            series: 'trusty'
-          }]],
+          args: [
+            [
+              {
+                constraints: {
+                  cores: 2,
+                  'cpu-power': 3,
+                  'root-disk': 4096,
+                  mem: 1024
+                },
+                series: 'trusty'
+              }
+            ]
+          ],
           options: {
             modelId: 'machine4'
           }
@@ -89,10 +107,14 @@ describe('DeploymentMachines', function() {
       },
       machine5: {
         command: {
-          args: [[{
-            constraints: {},
-            series: null
-          }]],
+          args: [
+            [
+              {
+                constraints: {},
+                series: null
+              }
+            ]
+          ],
           options: {
             modelId: 'machine5'
           }
@@ -103,91 +125,63 @@ describe('DeploymentMachines', function() {
   });
 
   it('can render', function() {
-    initUtils.generateMachineDetails.onCall(0).returns(
-      'xenial, (constraints not set)');
-    initUtils.generateMachineDetails.onCall(1).returns(
-      'cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
-    initUtils.generateMachineDetails.onCall(2).returns(
-      'trusty, cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
-    initUtils.generateMachineDetails.onCall(3).returns(
-      '(constraints not set)');
-    initUtils.generateMachineDetails.onCall(4).returns(
-      'cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
+    initUtils.generateMachineDetails.onCall(0).returns('xenial, (constraints not set)');
+    initUtils.generateMachineDetails
+      .onCall(1)
+      .returns('cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
+    initUtils.generateMachineDetails
+      .onCall(2)
+      .returns('trusty, cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
+    initUtils.generateMachineDetails.onCall(3).returns('(constraints not set)');
+    initUtils.generateMachineDetails
+      .onCall(4)
+      .returns('cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB');
     const wrapper = renderComponent();
     var expected = (
       <div>
         <p className="deployment-machines__message">
-          These machines will be provisioned on {'My cloud'}.&nbsp;
+          These machines will be provisioned on {'My cloud'}
+          .&nbsp;
           {'You may incur charges from your cloud provider.'}
         </p>
         <ul className="deployment-machines__list">
           <li className="deployment-flow__row-header twelve-col">
-            <div className="eight-col">
-              Type
-            </div>
-            <div className="three-col">
-              Provider
-            </div>
-            <div className="one-col last-col">
-              Quantity
-            </div>
+            <div className="eight-col">Type</div>
+            <div className="three-col">Provider</div>
+            <div className="one-col last-col">Quantity</div>
           </li>
           {[
-            <li
-              className="deployment-flow__row twelve-col"
-              key="xenial (constraints not set)">
-              <div className="eight-col">
-                xenial, (constraints not set)
-              </div>
-              <div className="three-col">
-                My cloud
-              </div>
-              <div className="one-col last-col">
-                {1}
-              </div>
+            <li className="deployment-flow__row twelve-col" key="xenial (constraints not set)">
+              <div className="eight-col">xenial, (constraints not set)</div>
+              <div className="three-col">My cloud</div>
+              <div className="one-col last-col">{1}</div>
             </li>,
-            <li
-              className="deployment-flow__row twelve-col"
-              key="2x0.03GHz, 1024, 4096">
+            <li className="deployment-flow__row twelve-col" key="2x0.03GHz, 1024, 4096">
               <div className="eight-col">
                 cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB
               </div>
-              <div className="three-col">
-                My cloud
-              </div>
-              <div className="one-col last-col">
-                {2}
-              </div>
+              <div className="three-col">My cloud</div>
+              <div className="one-col last-col">{2}</div>
             </li>,
             <li
               className="deployment-flow__row twelve-col"
-              key="trusty, 2x0.03GHz, 1024, 4096">
+              key="trusty, 2x0.03GHz, 1024, 4096"
+            >
               <div className="eight-col">
                 trusty, cores: 2, CPU: 0.03GHz, mem: 1.00GB, disk: 4.00GB
               </div>
-              <div className="three-col">
-                My cloud
-              </div>
-              <div className="one-col last-col">
-                {1}
-              </div>
+              <div className="three-col">My cloud</div>
+              <div className="one-col last-col">{1}</div>
             </li>,
-            <li
-              className="deployment-flow__row twelve-col"
-              key="(constraints not set)">
-              <div className="eight-col">
-                (constraints not set)
-              </div>
-              <div className="three-col">
-                My cloud
-              </div>
-              <div className="one-col last-col">
-                {1}
-              </div>
+            <li className="deployment-flow__row twelve-col" key="(constraints not set)">
+              <div className="eight-col">(constraints not set)</div>
+              <div className="three-col">My cloud</div>
+              <div className="one-col last-col">{1}</div>
             </li>
           ]}
         </ul>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -195,9 +189,11 @@ describe('DeploymentMachines', function() {
     const wrapper = renderComponent({cloud: {name: 'localhost'}});
     var expected = (
       <p className="deployment-machines__message">
-        These machines will be provisioned on {'localhost'}.&nbsp;
+        These machines will be provisioned on {'localhost'}
+        .&nbsp;
         {''}
-      </p>);
+      </p>
+    );
     assert.compareJSX(wrapper.find('.deployment-machines__message'), expected);
   });
 
@@ -205,9 +201,11 @@ describe('DeploymentMachines', function() {
     const wrapper = renderComponent({cloud: null});
     var expected = (
       <p className="deployment-machines__message">
-        These machines will be provisioned on {'the cloud'}.&nbsp;
+        These machines will be provisioned on {'the cloud'}
+        .&nbsp;
         {'You may incur charges from your cloud provider.'}
-      </p>);
+      </p>
+    );
     assert.compareJSX(wrapper.find('.deployment-machines__message'), expected);
   });
 });

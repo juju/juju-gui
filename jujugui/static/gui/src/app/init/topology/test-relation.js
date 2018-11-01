@@ -8,12 +8,10 @@ describe('topology relation module', function() {
   var cleanups, view, container, locateRelativePointOnCanvas, topo, models;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(
-      ['juju-models'],
-      function(Y) {
-        models = Y.namespace('juju.models');
-        done();
-      });
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -73,24 +71,24 @@ describe('topology relation module', function() {
     assert.equal(stubUpdate.calledOnce, true, 'Update was not called');
   });
 
-  it('fires "changeState" topo event for clicking a relation endpoint',
-    function() {
-      const state = {
-        changeState: sinon.stub()
-      };
-      var topo = {
-        state: state
-      };
-      view.topo = topo;
-      const relation = document.createElement('div');
-      relation.setAttribute('data-endpoint', 'one:two');
-      view.inspectRelationClick.call(relation, undefined, view);
-      assert.equal(state.changeState.callCount, 1);
-      assert.deepEqual(state.changeState.args[0][0], {
-        gui: {
-          inspector: {id: 'one'}
-        }});
+  it('fires "changeState" topo event for clicking a relation endpoint', function() {
+    const state = {
+      changeState: sinon.stub()
+    };
+    var topo = {
+      state: state
+    };
+    view.topo = topo;
+    const relation = document.createElement('div');
+    relation.setAttribute('data-endpoint', 'one:two');
+    view.inspectRelationClick.call(relation, undefined, view);
+    assert.equal(state.changeState.callCount, 1);
+    assert.deepEqual(state.changeState.args[0][0], {
+      gui: {
+        inspector: {id: 'one'}
+      }
     });
+  });
 
   describe('updateRelationVisibility', function() {
     it('is called on update', function() {
@@ -100,8 +98,7 @@ describe('topology relation module', function() {
       cleanups.push(decorate.restore);
       var update = sinon.stub(view, 'updateLinks');
       cleanups.push(update.restore);
-      var updateSubs = sinon.stub(
-        view, 'updateSubordinateRelationsCount');
+      var updateSubs = sinon.stub(view, 'updateSubordinateRelationsCount');
       cleanups.push(updateSubs.restore);
       view.topo = {
         db: {
@@ -120,19 +117,24 @@ describe('topology relation module', function() {
       var show = sinon.stub(view, 'show');
       cleanups.concat([fade.restore, hide.restore, show.restore]);
       var serviceList = new models.ServiceList();
-      serviceList.add([{
-        id: 'foo1',
-        fade: true
-      }, {
-        id: 'foo2',
-        hide: true
-      }, {
-        id: 'foo3'
-      }, {
-        id: 'foo4',
-        fade: true,
-        hide: true
-      }]);
+      serviceList.add([
+        {
+          id: 'foo1',
+          fade: true
+        },
+        {
+          id: 'foo2',
+          hide: true
+        },
+        {
+          id: 'foo3'
+        },
+        {
+          id: 'foo4',
+          fade: true,
+          hide: true
+        }
+      ]);
       view.topo = {
         db: {
           services: serviceList
@@ -170,11 +172,20 @@ describe('topology relation module', function() {
     it('calls addRelationEnd if relation is not ambiguous', function() {
       stubThemAll(this);
       view.addRelationStart_possibleEndpoints = {
-        'mysql': [[{
-          name: 'db', service: 'wordpress', type: 'mysql'
-        }, {
-          name: 'db', service: 'mysql', type: 'mysql'
-        }]]
+        mysql: [
+          [
+            {
+              name: 'db',
+              service: 'wordpress',
+              type: 'mysql'
+            },
+            {
+              name: 'db',
+              service: 'mysql',
+              type: 'mysql'
+            }
+          ]
+        ]
       };
       view.ambiguousAddRelationCheck({id: 'mysql'}, view);
       assert.equal(addRelationEnd.callCount, 1);
@@ -187,23 +198,44 @@ describe('topology relation module', function() {
     it('calls the util methods to show ambiguous select menu', function() {
       stubThemAll(this);
       view.addRelationStart_possibleEndpoints = {
-        'postgresql': [[{
-          service: 'python-django', name: 'pgsql', type: 'pgsql'
-        }, {
-          service: 'postgresql', name: 'db-admin', type: 'pgsql'
-        }], [{
-          service: 'python-django', name: 'pgsql', type: 'pgsql'
-        }, {
-          service: 'postgresql', name: 'db', type: 'pgsql'
-        }], [{
-          service: 'python-django',
-          name: 'django-settings',
-          type: 'directory-path'
-        }, {
-          service: 'postgresql',
-          name: 'persistent-storage',
-          type: 'directory-path'
-        }]]
+        postgresql: [
+          [
+            {
+              service: 'python-django',
+              name: 'pgsql',
+              type: 'pgsql'
+            },
+            {
+              service: 'postgresql',
+              name: 'db-admin',
+              type: 'pgsql'
+            }
+          ],
+          [
+            {
+              service: 'python-django',
+              name: 'pgsql',
+              type: 'pgsql'
+            },
+            {
+              service: 'postgresql',
+              name: 'db',
+              type: 'pgsql'
+            }
+          ],
+          [
+            {
+              service: 'python-django',
+              name: 'django-settings',
+              type: 'directory-path'
+            },
+            {
+              service: 'postgresql',
+              name: 'persistent-storage',
+              type: 'directory-path'
+            }
+          ]
+        ]
       };
       view.ambiguousAddRelationCheck({id: 'postgresql'}, view);
       assert.equal(addRelationEnd.callCount, 0);
@@ -212,32 +244,64 @@ describe('topology relation module', function() {
       assert.equal(relSelect.callCount, 1);
       assert.equal(posMenu.callCount, 1);
       // The endpoints need to be sorted alphabetically
-      assert.deepEqual(getDisplayName.lastCall.args[0], [[{
-        service: 'python-django', name: 'pgsql', type: 'pgsql'
-      }, {
-        service: 'postgresql', name: 'db-admin', type: 'pgsql'
-      }], [{
-        service: 'python-django', name: 'pgsql', type: 'pgsql'
-      }, {
-        service: 'postgresql', name: 'db', type: 'pgsql'
-      }], [{
-        service: 'python-django',
-        name: 'django-settings',
-        type: 'directory-path'
-      }, {
-        service: 'postgresql',
-        name: 'persistent-storage',
-        type: 'directory-path'
-      }]]);
+      assert.deepEqual(getDisplayName.lastCall.args[0], [
+        [
+          {
+            service: 'python-django',
+            name: 'pgsql',
+            type: 'pgsql'
+          },
+          {
+            service: 'postgresql',
+            name: 'db-admin',
+            type: 'pgsql'
+          }
+        ],
+        [
+          {
+            service: 'python-django',
+            name: 'pgsql',
+            type: 'pgsql'
+          },
+          {
+            service: 'postgresql',
+            name: 'db',
+            type: 'pgsql'
+          }
+        ],
+        [
+          {
+            service: 'python-django',
+            name: 'django-settings',
+            type: 'directory-path'
+          },
+          {
+            service: 'postgresql',
+            name: 'persistent-storage',
+            type: 'directory-path'
+          }
+        ]
+      ]);
     });
 
     it('shows correct name for ghost and deployed services', function() {
-      var endpoints = [[{
-        name: 'db', service: '97813654$', type: 'mysql'
-      }, {
-        name: 'db', service: 'mysql', type: 'mysql'
-      }]];
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+      var endpoints = [
+        [
+          {
+            name: 'db',
+            service: '97813654$',
+            type: 'mysql'
+          },
+          {
+            name: 'db',
+            service: 'mysql',
+            type: 'mysql'
+          }
+        ]
+      ];
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
       db.services.add({
         id: '97813654$',
         displayName: '(wordpress)'
@@ -250,41 +314,67 @@ describe('topology relation module', function() {
         db: db
       };
       var newEndpoints = view._getServiceDisplayName(endpoints, topo);
-      assert.deepEqual(newEndpoints, [[{
-        name: 'db',
-        service: '97813654$',
-        type: 'mysql',
-        displayName: 'wordpress'
-      }, {
-        name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
-      }]]);
+      assert.deepEqual(newEndpoints, [
+        [
+          {
+            name: 'db',
+            service: '97813654$',
+            type: 'mysql',
+            displayName: 'wordpress'
+          },
+          {
+            name: 'db',
+            service: 'mysql',
+            type: 'mysql',
+            displayName: 'mysql'
+          }
+        ]
+      ]);
     });
 
     it('renders the ambiguous relation menu', function() {
-      var endpoints = [[{
-        name: 'db',
-        service: '97813654$',
-        type: 'mysql',
-        displayName: 'wordpress'
-      }, {
-        name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
-      }], [{
-        name: 'db',
-        service: '97813654$',
-        type: 'mysql',
-        displayName: 'wordpress'
-      }, {
-        name: 'db', service: 'mysql', type: 'mysql', displayName: 'mysql'
-      }]];
+      var endpoints = [
+        [
+          {
+            name: 'db',
+            service: '97813654$',
+            type: 'mysql',
+            displayName: 'wordpress'
+          },
+          {
+            name: 'db',
+            service: 'mysql',
+            type: 'mysql',
+            displayName: 'mysql'
+          }
+        ],
+        [
+          {
+            name: 'db',
+            service: '97813654$',
+            type: 'mysql',
+            displayName: 'wordpress'
+          },
+          {
+            name: 'db',
+            service: 'mysql',
+            type: 'mysql',
+            displayName: 'mysql'
+          }
+        ]
+      ];
       const menuNode = document.createElement('div');
       menuNode.setAttribute('id', 'ambiguous-relation-menu');
       const menuContent = document.createElement('div');
       menuContent.setAttribute('id', 'ambiguous-relation-menu-content');
       menuNode.appendChild(menuContent);
       container.appendChild(menuNode);
-      var menu = view._renderAmbiguousRelationMenu.call({
-        getContainer: sinon.stub().returns(container)
-      }, endpoints);
+      var menu = view._renderAmbiguousRelationMenu.call(
+        {
+          getContainer: sinon.stub().returns(container)
+        },
+        endpoints
+      );
       assert.isNotNull(menu.querySelector('.menu'));
       assert.equal(menu.querySelectorAll('li').length, 2);
     });
@@ -295,9 +385,11 @@ describe('topology relation module', function() {
         querySelector: sinon.stub().returns({
           addEventListener: addEventListener
         }),
-        querySelectorAll: sinon.stub().returns([{
-          addEventListener: addEventListener
-        }])
+        querySelectorAll: sinon.stub().returns([
+          {
+            addEventListener: addEventListener
+          }
+        ])
       };
       view._attachAmbiguousReleationSelect(menu);
       assert.equal(addEventListener.callCount, 2);
@@ -335,5 +427,4 @@ describe('topology relation module', function() {
       assert.equal(topo.active_context, 'context');
     });
   });
-
 });

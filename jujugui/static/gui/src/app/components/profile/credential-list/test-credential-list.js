@@ -21,30 +21,38 @@ describe('ProfileCredentialList', () => {
       google: {cloudType: 'gce'}
     };
 
-    credentialData = [{
-      names: ['aws_foo@external_cred1', 'aws_foo@external_testcred'],
-      displayNames: ['cred1', 'testcred']
-    }, {
-      names: ['azure_foo@external_cred1'],
-      displayNames: ['cred1']
-    }, {
-      names: ['google_foo@external_admin'],
-      displayNames: ['admin']
-    }];
+    credentialData = [
+      {
+        names: ['aws_foo@external_cred1', 'aws_foo@external_testcred'],
+        displayNames: ['cred1', 'testcred']
+      },
+      {
+        names: ['azure_foo@external_cred1'],
+        displayNames: ['cred1']
+      },
+      {
+        names: ['google_foo@external_admin'],
+        displayNames: ['admin']
+      }
+    ];
 
-    modelData = [{
-      owner: 'foo@external',
-      credential: credentialData[0].names[0],
-      name: 'testmodel1'
-    }, {
-      owner: 'foo@external',
-      credential: credentialData[1].names[0],
-      name: 'testmodel2'
-    }, {
-      owner: 'bar@external',
-      credential: 'some other credential',
-      name: 'sharedmodel1'
-    }];
+    modelData = [
+      {
+        owner: 'foo@external',
+        credential: credentialData[0].names[0],
+        name: 'testmodel1'
+      },
+      {
+        owner: 'foo@external',
+        credential: credentialData[1].names[0],
+        name: 'testmodel2'
+      },
+      {
+        owner: 'bar@external',
+        credential: 'some other credential',
+        name: 'sharedmodel1'
+      }
+    ];
     controllerAPI = {
       listClouds: callback => callback(null, cloudData),
       getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
@@ -62,20 +70,24 @@ describe('ProfileCredentialList', () => {
         controllerAPI={options.controllerAPI || controllerAPI}
         controllerIsReady={options.controllerIsReady || sinon.stub()}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
-        username={options.username || 'foo@external'} />);
+        username={options.username || 'foo@external'}
+      />
+    );
     return component;
   }
 
-  const shallowRenderComponent = (options = {}) => enzyme.shallow(
-    <ProfileCredentialList
-      acl={acl}
-      addNotification={options.addNotification || sinon.stub()}
-      controllerAPI={options.controllerAPI || controllerAPI}
-      controllerIsReady={options.controllerIsReady || sinon.stub()}
-      credential="azure_foo@external_cred1"
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      username={options.username || 'foo@external'} />
-  );
+  const shallowRenderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ProfileCredentialList
+        acl={acl}
+        addNotification={options.addNotification || sinon.stub()}
+        controllerAPI={options.controllerAPI || controllerAPI}
+        controllerIsReady={options.controllerIsReady || sinon.stub()}
+        credential="azure_foo@external_cred1"
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        username={options.username || 'foo@external'}
+      />
+    );
 
   /**
     Some tasks are done async in the component. This method checks to see when
@@ -114,18 +126,24 @@ describe('ProfileCredentialList', () => {
       assert.equal(component.state.loading, false);
       // Check that the map has the proper values.
       const map = component.state.credentialMap;
-      assert.deepEqual(
-        map.get('aws_foo@external_cred1'),
-        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
-      assert.deepEqual(
-        map.get('aws_foo@external_testcred'),
-        {cloud: 'aws', displayName: 'testcred'});
-      assert.deepEqual(
-        map.get('azure_foo@external_cred1'),
-        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
-      assert.deepEqual(
-        map.get('google_foo@external_admin'),
-        {cloud: 'google', displayName: 'admin'});
+      assert.deepEqual(map.get('aws_foo@external_cred1'), {
+        cloud: 'aws',
+        displayName: 'cred1',
+        models: ['testmodel1']
+      });
+      assert.deepEqual(map.get('aws_foo@external_testcred'), {
+        cloud: 'aws',
+        displayName: 'testcred'
+      });
+      assert.deepEqual(map.get('azure_foo@external_cred1'), {
+        cloud: 'azure',
+        displayName: 'cred1',
+        models: ['testmodel2']
+      });
+      assert.deepEqual(map.get('google_foo@external_admin'), {
+        cloud: 'google',
+        displayName: 'admin'
+      });
       removeComponent(component);
       done();
     });
@@ -144,18 +162,24 @@ describe('ProfileCredentialList', () => {
       assert.equal(component.state.loading, false);
       // Check that the map has the proper values.
       const map = component.state.credentialMap;
-      assert.deepEqual(
-        map.get('aws_foo@external_cred1'),
-        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
-      assert.deepEqual(
-        map.get('aws_foo@external_testcred'),
-        {cloud: 'aws', displayName: 'testcred'});
-      assert.deepEqual(
-        map.get('azure_foo@external_cred1'),
-        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
-      assert.deepEqual(
-        map.get('google_foo@external_admin'),
-        {cloud: 'google', displayName: 'admin'});
+      assert.deepEqual(map.get('aws_foo@external_cred1'), {
+        cloud: 'aws',
+        displayName: 'cred1',
+        models: ['testmodel1']
+      });
+      assert.deepEqual(map.get('aws_foo@external_testcred'), {
+        cloud: 'aws',
+        displayName: 'testcred'
+      });
+      assert.deepEqual(map.get('azure_foo@external_cred1'), {
+        cloud: 'azure',
+        displayName: 'cred1',
+        models: ['testmodel2']
+      });
+      assert.deepEqual(map.get('google_foo@external_admin'), {
+        cloud: 'google',
+        displayName: 'admin'
+      });
       removeComponent(component);
       done();
     });
@@ -210,7 +234,10 @@ describe('ProfileCredentialList', () => {
     const wrapper = shallowRenderComponent();
     const instance = wrapper.instance();
     return instance._getClouds().then(() => {
-      wrapper.find('Button').props().action();
+      wrapper
+        .find('Button')
+        .props()
+        .action();
       wrapper.update();
       expect(wrapper).toMatchSnapshot();
     });

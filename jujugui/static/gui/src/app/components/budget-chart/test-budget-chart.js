@@ -7,10 +7,8 @@ const enzyme = require('enzyme');
 const BudgetChart = require('./budget-chart');
 
 describe('BudgetChart', function() {
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <BudgetChart
-      budgets={options.budgets || null} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(<BudgetChart budgets={options.budgets || null} />);
 
   it('can render', function() {
     var budgets = {
@@ -23,39 +21,30 @@ describe('BudgetChart', function() {
     var expected = (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">
-          <div className="budget-chart__chart-limit">
-          </div>
-          <div
-            className="budget-chart__chart-new"
-            style={{width: '0%'}}>
-          </div>
+          <div className="budget-chart__chart-limit" />
+          <div className="budget-chart__chart-new" style={{width: '0%'}} />
           <div
             className="budget-chart__chart-existing"
             style={{
               left: '0%',
               width: '25%'
-            }}>
-          </div>
+            }}
+          />
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--new'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--new'} />
           New allocations: <strong>${0}</strong>
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--existing'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--existing'} />
           Existing allocations: <strong>${20}</strong>
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--limit'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--limit'} />
           Budget limit: <strong>${80}</strong>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -64,40 +53,30 @@ describe('BudgetChart', function() {
     var expected = (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">
-          <div className="budget-chart__chart-limit">
-          </div>
-          <div
-            className="budget-chart__chart-new"
-            style={{width: '0%'}}>
-          </div>
+          <div className="budget-chart__chart-limit" />
+          <div className="budget-chart__chart-new" style={{width: '0%'}} />
           <div
             className="budget-chart__chart-existing"
             style={{
               left: '0%',
               width: '0%'
-            }}>
-          </div>
+            }}
+          />
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--new'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--new'} />
           New allocations: <strong>${0}</strong>
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--existing'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--existing'} />
           Existing allocations: <strong>${0}</strong>
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--limit'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--limit'} />
           Budget limit: <strong>${0}</strong>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
-
 });

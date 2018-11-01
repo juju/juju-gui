@@ -18,7 +18,6 @@
 
 'use strict';
 
-
 /**
   Fetch SSH keys from a user's GitHub account.
 
@@ -31,25 +30,26 @@ const githubSSHKeys = (handler, username, callback) => {
     let data = null;
     try {
       data = JSON.parse(response.currentTarget.response);
-    } catch(e) {
-      callback(`cannot retrieve SSH keys from GitHub: invalid response: ${e}`,
-        null);
+    } catch (e) {
+      callback(`cannot retrieve SSH keys from GitHub: invalid response: ${e}`, null);
       return;
     }
 
     // If there's an error, set it to the message from GitHub
-    const error = response.currentTarget.status !== 200 ?
-      `cannot retrieve SSH keys from GitHub: ${data.message}` : null;
+    const error =
+      response.currentTarget.status !== 200
+        ? `cannot retrieve SSH keys from GitHub: ${data.message}`
+        : null;
 
     // If there's no error, pull the key into its respective parts for use by
     // the callback.
     if (error === null) {
       data = data.map(item => {
         return {
-          'id': item.id,
-          'type': item.key.split(' ')[0],
-          'body': item.key.split(' ')[1],
-          'text': item.key
+          id: item.id,
+          type: item.key.split(' ')[0],
+          body: item.key.split(' ')[1],
+          text: item.key
         };
       });
     }
@@ -64,8 +64,8 @@ const githubSSHKeys = (handler, username, callback) => {
     null,
     false,
     null,
-    wrap);
-
+    wrap
+  );
 };
 
 module.exports = githubSSHKeys;

@@ -30,12 +30,7 @@ class HeaderLogo extends React.Component {
     @return {Object} The SvgIcon component of the Juju logo.
   */
   _svg() {
-    return (
-      <SvgIcon
-        className="svg-icon"
-        height="35"
-        name="juju-logo"
-        width="90" />);
+    return <SvgIcon className="svg-icon" height="35" name="juju-logo" width="90" />;
   }
 
   render() {
@@ -44,11 +39,13 @@ class HeaderLogo extends React.Component {
         href={this.props.homePath}
         onClick={this._showProfile.bind(this)}
         role="button"
-        title="Home">
+        title="Home"
+      >
         {this._svg()}
-      </a>);
+      </a>
+    );
   }
-};
+}
 
 HeaderLogo.propTypes = {
   gisf: PropTypes.bool.isRequired,

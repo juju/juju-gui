@@ -9,17 +9,19 @@ const Button = require('./button');
 describe('Button', function() {
   let evt;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Button
-      action={options.action}
-      disabled={options.disabled}
-      extraClasses={options.extraClasses}
-      submit={options.submit}
-      tooltip={options.tooltip}
-      type={options.type}>
-      {options.children}
-    </Button>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Button
+        action={options.action}
+        disabled={options.disabled}
+        extraClasses={options.extraClasses}
+        submit={options.submit}
+        tooltip={options.tooltip}
+        type={options.type}
+      >
+        {options.children}
+      </Button>
+    );
 
   beforeEach(() => {
     evt = {

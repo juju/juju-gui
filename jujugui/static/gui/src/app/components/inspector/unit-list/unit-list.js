@@ -26,7 +26,9 @@ class UnitList extends React.Component {
         inspector: {
           id: this.props.service.get('id'),
           activeComponent: 'scale'
-        }}});
+        }
+      }
+    });
   }
 
   /**
@@ -42,13 +44,16 @@ class UnitList extends React.Component {
     var refs = this.refs;
     var setChecked = (key, groups) => {
       groups[key].units.forEach(unit => {
-        refs['CheckListItem-' + unit.id].setState({
-          checked: checked
-        }, () => {
-          // After the state has been updated then update the active unit
-          // count to enable/disable the buttons.
-          this._updateActiveCount();
-        });
+        refs['CheckListItem-' + unit.id].setState(
+          {
+            checked: checked
+          },
+          () => {
+            // After the state has been updated then update the active unit
+            // count to enable/disable the buttons.
+            this._updateActiveCount();
+          }
+        );
       });
     };
     if (checked === undefined) {
@@ -140,12 +145,13 @@ class UnitList extends React.Component {
     var unitList = [
       <CheckListItem
         aside={group.count + ''}
-        className='select-all'
+        className="select-all"
         disabled={this.props.acl.isReadOnly()}
         key={key}
         label={group.label}
         ref={key}
-        whenChanged={this._selectAllUnits.bind(this, key)} />
+        whenChanged={this._selectAllUnits.bind(this, key)}
+      />
     ];
     group.units.forEach(unit => {
       var ref = 'CheckListItem-' + unit.id;
@@ -158,7 +164,9 @@ class UnitList extends React.Component {
           key={unit.displayName}
           label={unit.displayName}
           ref={ref}
-          whenChanged={this._updateActiveCount.bind(this)} />);
+          whenChanged={this._updateActiveCount.bind(this)}
+        />
+      );
     });
     return unitList;
   }
@@ -215,7 +223,8 @@ class UnitList extends React.Component {
       return (
         <div className="unit-list__message">
           No units for this application. Scale to add units.
-        </div>);
+        </div>
+      );
     }
     var components = [];
     var groups = this._generateGroups();
@@ -223,10 +232,7 @@ class UnitList extends React.Component {
       var group = groups[key];
       components = components.concat(this._generateUnitList(group));
     }, this);
-    return (
-      <ul className="unit-list__units">
-        {components}
-      </ul>);
+    return <ul className="unit-list__units">{components}</ul>;
   }
 
   /**
@@ -244,7 +250,7 @@ class UnitList extends React.Component {
         }
       }
     });
-    this.setState({'activeCount': activeCount});
+    this.setState({activeCount: activeCount});
   }
 
   /**
@@ -258,8 +264,7 @@ class UnitList extends React.Component {
       return;
     }
     var buttons = [];
-    var disabled = this.state.activeCount === 0 ||
-      this.props.acl.isReadOnly();
+    var disabled = this.state.activeCount === 0 || this.props.acl.isReadOnly();
     if (this.props.unitStatus === 'error') {
       buttons.push({
         title: 'Resolve',
@@ -280,9 +285,7 @@ class UnitList extends React.Component {
       action: this._handleUpdateUnits.bind(this, 'remove'),
       disabled: disabled
     });
-    return (
-      <ButtonRow
-        buttons={buttons} />);
+    return <ButtonRow buttons={buttons} />;
   }
 
   /**
@@ -294,8 +297,11 @@ class UnitList extends React.Component {
   _generateScaleService() {
     // Don't show the scale service if we're viewing a status list (e.g.
     // errors) or if the service is a subordinate.
-    if (this.props.unitStatus || this.props.service.get('subordinate') ||
-        this.props.acl.isReadOnly()) {
+    if (
+      this.props.unitStatus ||
+      this.props.service.get('subordinate') ||
+      this.props.acl.isReadOnly()
+    ) {
       return;
     }
     return (
@@ -303,8 +309,10 @@ class UnitList extends React.Component {
         <OverviewAction
           action={this._navigate.bind(this)}
           icon="plus_box_16"
-          title="Scale application" />
-      </div>);
+          title="Scale application"
+        />
+      </div>
+    );
   }
 
   render() {
@@ -316,7 +324,7 @@ class UnitList extends React.Component {
       </div>
     );
   }
-};
+}
 
 UnitList.propTypes = {
   acl: PropTypes.object.isRequired,

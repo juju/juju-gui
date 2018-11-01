@@ -47,7 +47,7 @@ class Maraca {
   */
   _watcherListener(evt) {
     const data = evt.detail;
-    if (!data.response || ! data.response.deltas) {
+    if (!data.response || !data.response.deltas) {
       // Ignore megawatcher responses that don't have deltas.
       return;
     }

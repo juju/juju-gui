@@ -11,7 +11,6 @@ const bakery = require('macaroon-bakery');
   storage in order to persist macaroons.
 */
 const UserStore = class UserStore {
-
   /**
     Creates the user store.
 
@@ -32,7 +31,6 @@ const UserStore = class UserStore {
   clear() {
     this._user.clearMacaroons();
   }
-
 };
 
 /**
@@ -68,26 +66,43 @@ const newBakery = (config, user, cookieSetter, webHandler) => {
     // Add to the page a notification about accepting the pop up window
     // for logging into USSO.
     const url = error.Info.VisitURL;
-    document.dispatchEvent(new CustomEvent('loginNotification', {
-      detail: url
-    }));
+    document.dispatchEvent(
+      new CustomEvent('loginNotification', {
+        detail: url
+      })
+    );
     // Open the pop up (default behavior for the time being).
     window.open(url, 'Login');
   };
 
   const nonInteractiveVisit = error => {
     const JSON_CONTENT_TYPE = 'application/json';
-    const acceptHeaders = {'Accept': JSON_CONTENT_TYPE};
+    const acceptHeaders = {Accept: JSON_CONTENT_TYPE};
     const contentHeaders = {'Content-Type': JSON_CONTENT_TYPE};
     const login = function(response) {
       const method = error.jujugui;
       const data = JSON.stringify({login: config.auth});
       return webHandler.sendPostRequest(
-        method, contentHeaders, data, null, null, false, null, null);
+        method,
+        contentHeaders,
+        data,
+        null,
+        null,
+        false,
+        null,
+        null
+      );
     };
 
     return webHandler.sendGetRequest(
-      error.Info.VisitURL, acceptHeaders, null, null, false, null, login);
+      error.Info.VisitURL,
+      acceptHeaders,
+      null,
+      null,
+      false,
+      null,
+      login
+    );
   };
 
   const params = {storage: storage};
@@ -96,9 +111,11 @@ const newBakery = (config, user, cookieSetter, webHandler) => {
     params.visitPage = interactiveVisit;
     params.onSuccess = () => {
       // Remove the pop up notification from the page.
-      document.dispatchEvent(new CustomEvent('loginNotification', {
-        detail: null
-      }));
+      document.dispatchEvent(
+        new CustomEvent('loginNotification', {
+          detail: null
+        })
+      );
     };
   } else {
     params.visitPage = nonInteractiveVisit;

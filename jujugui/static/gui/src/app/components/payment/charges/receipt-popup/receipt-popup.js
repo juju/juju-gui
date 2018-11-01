@@ -62,21 +62,19 @@ class ReceiptPopup extends React.Component {
         <div className="receipt-popup__container">
           <iframe
             height="100%"
-            src={
-              `data:text/html;charset=utf-8,${encodeURIComponent(receipt)}`}
-            width="100%">
-          </iframe>
-        </div>);
+            src={`data:text/html;charset=utf-8,${encodeURIComponent(receipt)}`}
+            width="100%"
+          />
+        </div>
+      );
     }
     return (
-      <Popup
-        className="receipt-popup"
-        close={this.props.close}
-        type="wide">
+      <Popup className="receipt-popup" close={this.props.close} type="wide">
         {content}
-      </Popup>);
+      </Popup>
+    );
   }
-};
+}
 
 ReceiptPopup.propTypes = {
   addNotification: PropTypes.func.isRequired,

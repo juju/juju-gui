@@ -35,10 +35,7 @@ class InspectorRelateTo extends React.Component {
   generateItemList() {
     var applications = this.props.relatableApplications;
     if (applications.length === 0) {
-      return (
-        <div className="unit-list__message">
-          No relatable endpoints available.
-        </div>);
+      return <div className="unit-list__message">No relatable endpoints available.</div>;
     }
     return applications.map((application, index) => {
       var data = application.getAttrs();
@@ -49,23 +46,23 @@ class InspectorRelateTo extends React.Component {
           key={data.id + index}
           onClick={this._relateToItemAction.bind(this)}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           <img className="inspector-view__item-icon" src={data.icon} />
           {data.name}
-        </li>);
+        </li>
+      );
     });
   }
 
   render() {
     return (
       <div className="inspector-relate-to">
-        <ul className="inspector-view__list">
-          {this.generateItemList()}
-        </ul>
+        <ul className="inspector-view__list">{this.generateItemList()}</ul>
       </div>
     );
   }
-};
+}
 
 InspectorRelateTo.propTypes = {
   application: PropTypes.object.isRequired,

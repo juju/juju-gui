@@ -13,20 +13,22 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 describe('Machine', () => {
   let machine, units;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Machine
-      classes={options.classes}
-      hardware={options.hardware}
-      isContainer={options.isContainer}
-      machine={options.machine || machine}
-      menuItems={options.menuItems}
-      onClick={options.onClick}
-      sshAction={options.sshAction}
-      sshLabel={options.sshLabel}
-      units={options.units}>
-      {options.children}
-    </Machine>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Machine
+        classes={options.classes}
+        hardware={options.hardware}
+        isContainer={options.isContainer}
+        machine={options.machine || machine}
+        menuItems={options.menuItems}
+        onClick={options.onClick}
+        sshAction={options.sshAction}
+        sshLabel={options.sshLabel}
+        units={options.units}
+      >
+        {options.children}
+      </Machine>
+    );
 
   beforeEach(() => {
     machine = {
@@ -36,75 +38,63 @@ describe('Machine', () => {
       series: 'spotty',
       status: 'chillaxing'
     };
-    units = [{
-      icon: 'smalldata.svg',
-      id: 'new0/0',
-      name: 'new0/0',
-      status: 'upper-middle'
-    }];
+    units = [
+      {
+        icon: 'smalldata.svg',
+        id: 'new0/0',
+        name: 'new0/0',
+        status: 'upper-middle'
+      }
+    ];
   });
 
   it('can render for a machine', () => {
     const wrapper = renderComponent({
-      hardware: [{
-        label: 'disk',
-        value: 'floppy'
-      }, {
-        label: 'memory',
-        value: 'goldfish-like'
-      }],
-      menuItems: [{
-        label: 'Delete',
-        action: sinon.stub()
-      }],
+      hardware: [
+        {
+          label: 'disk',
+          value: 'floppy'
+        },
+        {
+          label: 'memory',
+          value: 'goldfish-like'
+        }
+      ],
+      menuItems: [
+        {
+          label: 'Delete',
+          action: sinon.stub()
+        }
+      ],
       units
     });
     const expected = (
-      <div
-        className="machine machine--machine"
-        onClick={undefined}
-        role="button"
-        tabIndex="0">
+      <div className="machine machine--machine" onClick={undefined} role="button" tabIndex="0">
         <ButtonDropdown
           classes={['machine__dropdown']}
-          listItems={[{
-            label: 'Delete',
-            action: sinon.stub()
-          }]} />
+          listItems={[
+            {
+              label: 'Delete',
+              action: sinon.stub()
+            }
+          ]}
+        />
         <ul className="machine__details">
           <li className="machine__detail">
-            <span className="machine__name">
-              new0
-            </span>
+            <span className="machine__name">new0</span>
             chillaxing
           </li>
-          <li className="machine__detail">
-            antarctica-east
-          </li>
-          <li className="machine__detail">
-            spotty
-          </li>
+          <li className="machine__detail">antarctica-east</li>
+          <li className="machine__detail">spotty</li>
         </ul>
         <ul className="machine__hardware">
-          <li
-            className="machine__hardware-item"
-            key="diskfloppy0">
-            <span className="machine__hardware-item-label">
-              {'disk'}:
-            </span>
-            <span className="machine__hardware-item-value">
-              floppy
-            </span>
+          <li className="machine__hardware-item" key="diskfloppy0">
+            <span className="machine__hardware-item-label">{'disk'}:</span>
+            <span className="machine__hardware-item-value">floppy</span>
           </li>
-          <li
-            className="machine__hardware-item"
-            key="memorygoldfish-like1">
-            <span className="machine__hardware-item-label">
-              {'memory'}:
-            </span>
-            <span className="machine__hardware-item-value">
-              goldfish-like
-            </span>
+          <li className="machine__hardware-item" key="memorygoldfish-like1">
+            <span className="machine__hardware-item-label">{'memory'}:</span>
+            <span className="machine__hardware-item-value">goldfish-like</span>
           </li>
         </ul>
         <ul className="machine__units">
@@ -113,9 +103,11 @@ describe('Machine', () => {
             key="new0/0"
             menuItems={null}
             name="new0/0"
-            status="upper-middle" />
+            status="upper-middle"
+          />
         </ul>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -125,10 +117,12 @@ describe('Machine', () => {
       units
     });
     assert.equal(wrapper.prop('className').includes('machine--container'), true);
-    assert.deepEqual(wrapper.find('MachineUnit').prop('menuItems'), [{
-      label: 'Destroy',
-      action: wrapper.find('MachineUnit').prop('menuItems')[0].action
-    }]);
+    assert.deepEqual(wrapper.find('MachineUnit').prop('menuItems'), [
+      {
+        label: 'Destroy',
+        action: wrapper.find('MachineUnit').prop('menuItems')[0].action
+      }
+    ]);
   });
 
   it('can render without hardware', () => {
@@ -153,16 +147,12 @@ describe('Machine', () => {
     });
     const expected = (
       <li className="machine__detail machine__terminal-action">
-        <SvgIcon
-          className="machine__ssh-icon"
-          name="code-snippet_24"
-          size="16" />
-        <Button
-          action={sinon.stub()}
-          type="inline-base link machine__ssh-action">
+        <SvgIcon className="machine__ssh-icon" name="code-snippet_24" size="16" />
+        <Button action={sinon.stub()} type="inline-base link machine__ssh-action">
           1.1.1.1
         </Button>
-      </li>);
+      </li>
+    );
     assert.compareJSX(wrapper.find('.machine__terminal-action'), expected);
   });
 
@@ -181,7 +171,7 @@ describe('Machine', () => {
 
   it('can display children', () => {
     const wrapper = renderComponent({
-      children: (<span className="kids">content</span>)
+      children: <span className="kids">content</span>
     });
     assert.equal(wrapper.find('.kids').length, 1);
   });

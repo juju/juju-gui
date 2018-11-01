@@ -10,14 +10,16 @@ const ScaleService = require('./scale-service');
 describe('ScaleService', function() {
   let acl, initUtils;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ScaleService
-      acl={options.acl || acl}
-      changeState={options.changeState || sinon.stub()}
-      initUtils={options.initUtils || initUtils}
-      serviceId={options.serviceId || '123'} />,
-    {disableLifecycleMethods: true}
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ScaleService
+        acl={options.acl || acl}
+        changeState={options.changeState || sinon.stub()}
+        initUtils={options.initUtils || initUtils}
+        serviceId={options.serviceId || '123'}
+      />,
+      {disableLifecycleMethods: true}
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -30,24 +32,39 @@ describe('ScaleService', function() {
   it('hides the constraints on initial rendering', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.scale-service--constraints').prop('className').includes('hidden'),
-      true);
+      wrapper
+        .find('.scale-service--constraints')
+        .prop('className')
+        .includes('hidden'),
+      true
+    );
   });
 
   it('hides and shows constraints based on deployment option', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.scale-service--constraints').prop('className').includes('hidden'),
-      true);
-    wrapper.find('#auto-place-units').at(0).simulate('change', {
-      currentTarget: {
-        id: 'auto-place-units'
-      }
-    });
+      wrapper
+        .find('.scale-service--constraints')
+        .prop('className')
+        .includes('hidden'),
+      true
+    );
+    wrapper
+      .find('#auto-place-units')
+      .at(0)
+      .simulate('change', {
+        currentTarget: {
+          id: 'auto-place-units'
+        }
+      });
     wrapper.update();
     assert.equal(
-      wrapper.find('.scale-service--constraints').prop('className').includes('hidden'),
-      false);
+      wrapper
+        .find('.scale-service--constraints')
+        .prop('className')
+        .includes('hidden'),
+      false
+    );
   });
 
   it('creates and autoplaces units if constraints is open', function() {
@@ -62,19 +79,25 @@ describe('ScaleService', function() {
     });
 
     // Open the constraints and set their values.
-    wrapper.find('#auto-place-units').at(0).simulate('change', {
-      currentTarget: {
-        id: 'auto-place-units'
-      }
-    });
+    wrapper
+      .find('#auto-place-units')
+      .at(0)
+      .simulate('change', {
+        currentTarget: {
+          id: 'auto-place-units'
+        }
+      });
 
-    wrapper.find('Constraints').props().valuesChanged({
-      arch: '',
-      'cpu-power': 'c p u',
-      'cpu-cores': 'c o r e s',
-      mem: 'r a m',
-      'root-disk': 'd i s k'
-    });
+    wrapper
+      .find('Constraints')
+      .props()
+      .valuesChanged({
+        arch: '',
+        'cpu-power': 'c p u',
+        'cpu-cores': 'c o r e s',
+        mem: 'r a m',
+        'root-disk': 'd i s k'
+      });
 
     // Submit the scale-service form.
     wrapper.find('form').simulate('submit');
@@ -96,7 +119,8 @@ describe('ScaleService', function() {
         inspector: {
           id: '123',
           activeComponent: 'units'
-        }}
+        }
+      }
     });
   });
 
@@ -140,5 +164,4 @@ describe('ScaleService', function() {
     assert.equal(wrapper.find('Constraints').prop('disabled'), true);
     assert.equal(wrapper.find('ButtonRow').prop('buttons')[0].disabled, true);
   });
-
 });

@@ -11,23 +11,25 @@ describe('HeaderBreadcrumb', () => {
   let appState;
   const acl = {};
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <HeaderBreadcrumb
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      appState={options.appState || appState}
-      changeState={options.changeState || sinon.stub()}
-      listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
-      loadingModel={options.loadingModel}
-      modelCommitted={options.modelCommitted}
-      modelName={options.modelName}
-      modelOwner={options.modelOwner}
-      setModelName={options.setModelName || sinon.stub()}
-      showEnvSwitcher={options.showEnvSwitcher}
-      showProfile={options.showProfile || sinon.stub()}
-      switchModel={options.switchModel || sinon.stub()}
-      user={options.user} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <HeaderBreadcrumb
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        appState={options.appState || appState}
+        changeState={options.changeState || sinon.stub()}
+        listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
+        loadingModel={options.loadingModel}
+        modelCommitted={options.modelCommitted}
+        modelName={options.modelName}
+        modelOwner={options.modelOwner}
+        setModelName={options.setModelName || sinon.stub()}
+        showEnvSwitcher={options.showEnvSwitcher}
+        showProfile={options.showProfile || sinon.stub()}
+        switchModel={options.switchModel || sinon.stub()}
+        user={options.user}
+      />
+    );
 
   beforeEach(function() {
     appState = {
@@ -55,7 +57,8 @@ describe('HeaderBreadcrumb', () => {
               className="header-breadcrumb--link"
               href="/u/who"
               onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
-              title="who">
+              title="who"
+            >
               who
             </a>
           </li>
@@ -69,7 +72,8 @@ describe('HeaderBreadcrumb', () => {
               modelCommitted={true}
               setModelName={sinon.stub()}
               switchModel={sinon.stub()}
-              user={{username: 'who@external', displayName: 'who'}} />
+              user={{username: 'who@external', displayName: 'who'}}
+            />
           </li>
         </ul>
       </div>
@@ -90,7 +94,8 @@ describe('HeaderBreadcrumb', () => {
         className="header-breadcrumb--link"
         href="/u/rose"
         onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
-        title="rose">
+        title="rose"
+      >
         rose
       </a>
     );
@@ -112,7 +117,8 @@ describe('HeaderBreadcrumb', () => {
         className="header-breadcrumb--link"
         href="/u/cyberman"
         onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
-        title="cyberman">
+        title="cyberman"
+      >
         cyberman
       </a>
     );
@@ -148,13 +154,18 @@ describe('HeaderBreadcrumb', () => {
       showProfile
     });
     assert.equal(
-      wrapper.find('.header-breadcrumb--link').prop('className').includes(
-        'profile-disabled'),
-      true);
+      wrapper
+        .find('.header-breadcrumb--link')
+        .prop('className')
+        .includes('profile-disabled'),
+      true
+    );
     // Manually call the onClick handler and make sure it doesn't navigate
     // to show the profile.
-    wrapper.find('.header-breadcrumb--link').props().onClick(
-      {preventDefault: sinon.stub()});
+    wrapper
+      .find('.header-breadcrumb--link')
+      .props()
+      .onClick({preventDefault: sinon.stub()});
     assert.equal(showProfile.callCount, 0, 'showProfile called');
   });
 
@@ -168,7 +179,10 @@ describe('HeaderBreadcrumb', () => {
       showProfile
     });
     checkProfileCalled(
-      wrapper.find('.header-breadcrumb--link').prop('onClick'), showProfile, 'who');
+      wrapper.find('.header-breadcrumb--link').prop('onClick'),
+      showProfile,
+      'who'
+    );
   });
 
   it('calls the profile view when the model owner link is clicked', () => {
@@ -181,7 +195,10 @@ describe('HeaderBreadcrumb', () => {
       showProfile
     });
     checkProfileCalled(
-      wrapper.find('.header-breadcrumb--link').prop('onClick'), showProfile, 'dalek');
+      wrapper.find('.header-breadcrumb--link').prop('onClick'),
+      showProfile,
+      'dalek'
+    );
   });
 
   // Check that the link to go to the profile view has been called.
@@ -207,7 +224,11 @@ describe('HeaderBreadcrumb', () => {
     });
     const className = 'header-breadcrumb--loading-model';
     assert.equal(
-      wrapper.find('.header-breadcrumb').prop('className').includes(className),
-      true);
+      wrapper
+        .find('.header-breadcrumb')
+        .prop('className')
+        .includes(className),
+      true
+    );
   });
 });

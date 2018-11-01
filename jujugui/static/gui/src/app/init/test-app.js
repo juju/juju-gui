@@ -7,46 +7,54 @@ const enzyme = require('enzyme');
 const App = require('./app');
 
 describe('App', () => {
-  let applicationConfig, appState, bundleImporter, charmstore, controllerAPI,
-      db, modelAPI, topology;
+  let applicationConfig,
+    appState,
+    bundleImporter,
+    charmstore,
+    controllerAPI,
+    db,
+    modelAPI,
+    topology;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <App
-      acl={options.acl || {}}
-      addToModel={options.addToModel || sinon.stub()}
-      applicationConfig={options.applicationConfig || applicationConfig}
-      appState={options.appState || appState}
-      bakery={options.bakery || {}}
-      bundleImporter={options.bundleImporter || bundleImporter}
-      charmstore={options.charmstore || charmstore}
-      controllerAPI={options.controllerAPI || controllerAPI}
-      db={options.db || db}
-      deployService={options.deployService || sinon.stub()}
-      endpointsController={options.endpointsController || {}}
-      getUser={options.getUser || sinon.stub()}
-      getUserInfo={options.getUserInfo || sinon.stub()}
-      gisf={options.gisf || {}}
-      identity={options.identity || {}}
-      loginToAPIs={options.loginToAPIs || sinon.stub()}
-      maasServer={options.maasServer}
-      modelAPI={options.modelAPI || modelAPI}
-      modelUUID={options.modelUUID || 'abc123'}
-      payment={options.payment || {}}
-      plans={options.plans || {}}
-      rates={options.rates || {}}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      setModelUUID={options.setModelUUID || sinon.stub()}
-      setPageTitle={options.setPageTitle || sinon.stub()}
-      stats={options.stats || {}}
-      storeUser={options.storeUser || sinon.stub()}
-      stripe={options.stripe || {}}
-      switchEnv={options.switchEnv || sinon.stub()}
-      switchModel={options.switchModel || sinon.stub()}
-      terms={options.terms || {}}
-      topology={options.topology || topology}
-      user={options.user || {}}
-      valueStore={options.valueStore || {}} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <App
+        acl={options.acl || {}}
+        addToModel={options.addToModel || sinon.stub()}
+        applicationConfig={options.applicationConfig || applicationConfig}
+        appState={options.appState || appState}
+        bakery={options.bakery || {}}
+        bundleImporter={options.bundleImporter || bundleImporter}
+        charmstore={options.charmstore || charmstore}
+        controllerAPI={options.controllerAPI || controllerAPI}
+        db={options.db || db}
+        deployService={options.deployService || sinon.stub()}
+        endpointsController={options.endpointsController || {}}
+        getUser={options.getUser || sinon.stub()}
+        getUserInfo={options.getUserInfo || sinon.stub()}
+        gisf={options.gisf || {}}
+        identity={options.identity || {}}
+        loginToAPIs={options.loginToAPIs || sinon.stub()}
+        maasServer={options.maasServer}
+        modelAPI={options.modelAPI || modelAPI}
+        modelUUID={options.modelUUID || 'abc123'}
+        payment={options.payment || {}}
+        plans={options.plans || {}}
+        rates={options.rates || {}}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        setModelUUID={options.setModelUUID || sinon.stub()}
+        setPageTitle={options.setPageTitle || sinon.stub()}
+        stats={options.stats || {}}
+        storeUser={options.storeUser || sinon.stub()}
+        stripe={options.stripe || {}}
+        switchEnv={options.switchEnv || sinon.stub()}
+        switchModel={options.switchModel || sinon.stub()}
+        terms={options.terms || {}}
+        topology={options.topology || topology}
+        user={options.user || {}}
+        valueStore={options.valueStore || {}}
+      />
+    );
 
   beforeEach(() => {
     applicationConfig = {
@@ -65,7 +73,10 @@ describe('App', () => {
     controllerAPI = {
       findFacadeVersion: sinon.stub(),
       destroyModels: sinon.stub(),
-      get: sinon.stub().withArgs('connected').returns(true),
+      get: sinon
+        .stub()
+        .withArgs('connected')
+        .returns(true),
       listModelsWithInfo: sinon.stub(),
       loginWithMacaroon: sinon.stub()
     };
@@ -121,9 +132,11 @@ describe('App', () => {
     it('renders drop UI', () => {
       const wrapper = renderComponent();
       assert.equal(wrapper.find('ExpandingProgress').length, 0);
-      document.dispatchEvent(new CustomEvent('showDragOverNotification', {
-        detail: true
-      }));
+      document.dispatchEvent(
+        new CustomEvent('showDragOverNotification', {
+          detail: true
+        })
+      );
       wrapper.update();
       assert.equal(topology.fadeHelpIndicator.callCount, 1);
       assert.strictEqual(topology.fadeHelpIndicator.args[0][0], true);
@@ -137,9 +150,11 @@ describe('App', () => {
       instance._showDragOverNotification(true);
       wrapper.update();
       assert.equal(wrapper.find('ExpandingProgress').length, 1);
-      document.dispatchEvent(new CustomEvent('showDragOverNotification', {
-        detail: false
-      }));
+      document.dispatchEvent(
+        new CustomEvent('showDragOverNotification', {
+          detail: false
+        })
+      );
       wrapper.update();
       assert.equal(topology.fadeHelpIndicator.callCount, 2);
       assert.strictEqual(topology.fadeHelpIndicator.args[1][0], false);
@@ -149,7 +164,10 @@ describe('App', () => {
 
   describe('_controllerIsReady', () => {
     it('reports true when the controller API is ready', () => {
-      controllerAPI.get = sinon.stub().withArgs('connected').returns(true);
+      controllerAPI.get = sinon
+        .stub()
+        .withArgs('connected')
+        .returns(true);
       controllerAPI.userIsAuthenticated = true;
       const wrapper = renderComponent({controllerAPI});
       const instance = wrapper.instance();

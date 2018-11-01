@@ -8,8 +8,7 @@ const User = require('../user/user');
 const utils = require('./testing-utils');
 
 describe('BundleImporter', () => {
-  let bundleImporter, charmstore, db, getBundleChanges,
-      modelAPI, models, yui;
+  let bundleImporter, charmstore, db, getBundleChanges, modelAPI, models, yui;
 
   beforeAll(done => {
     YUI(GlobalConfig).use([], Y => {
@@ -29,14 +28,20 @@ describe('BundleImporter', () => {
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
+          setItem: function(name, val) {
+            this.store['name'] = val;
+          },
+          getItem: function(name) {
+            return this.store['name'] || null;
+          }
         };
-      };
+      }();
     };
     const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     modelAPI = new yui.juju.environments.GoEnvironment({
       user: userClass,
       ecs: new EnvironmentChangeSet({
@@ -71,8 +76,7 @@ describe('BundleImporter', () => {
   describe('importBundleYAML', () => {
     it('calls fetchDryRun with yaml', () => {
       const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
-      const notify = sinon.stub(
-        bundleImporter.db.notifications, 'add');
+      const notify = sinon.stub(bundleImporter.db.notifications, 'add');
       bundleImporter.importBundleYAML('foo: bar', 'cs:~foo/bundle/bar');
       assert.equal(fetch.callCount, 1);
       const args = fetch.lastCall.args;
@@ -90,11 +94,9 @@ describe('BundleImporter', () => {
   });
 
   describe('importBundleFile', () => {
-
     it('sets up and loads the FileReader', () => {
       const asText = sinon.stub();
-      const generate = sinon.stub(
-        bundleImporter, '_generateFileReader').returns({
+      const generate = sinon.stub(bundleImporter, '_generateFileReader').returns({
         onload: '',
         readAsText: asText
       });
@@ -114,7 +116,9 @@ describe('BundleImporter', () => {
       it('calls fetchDryRun if yaml file', () => {
         const fetch = sinon.stub(bundleImporter, 'fetchDryRun');
         const yamlFile = {name: 'path/to/file.yaml'};
-        bundleImporter._fileReaderOnload(yamlFile, {target: {result: 'foo'}});
+        bundleImporter._fileReaderOnload(yamlFile, {
+          target: {result: 'foo'}
+        });
         assert.equal(fetch.callCount, 1);
         const args = fetch.lastCall.args;
         assert.equal(args.length, 3);
@@ -155,7 +159,6 @@ describe('BundleImporter', () => {
   });
 
   describe('fetchDryRun', () => {
-
     it('calls to modelAPI to get bundle changes from a YAML', () => {
       const yaml = '{"services":{}}';
       //sinon.spy(bundleImporter, '_handleFetchDryRun');
@@ -203,8 +206,7 @@ describe('BundleImporter', () => {
 
     it('has a callback which calls to import the dry run', () => {
       const yaml = 'foo';
-      const dryRun = sinon.stub(
-        bundleImporter, 'importBundleDryRun');
+      const dryRun = sinon.stub(bundleImporter, 'importBundleDryRun');
       const changes = [{foo: 'bar'}];
       bundleImporter.fetchDryRun(yaml, 'filename');
       const callback = getBundleChanges.lastCall.args[2];
@@ -255,18 +257,31 @@ describe('BundleImporter', () => {
     });
 
     it('properly sorts a recordSet', () => {
-      const data = utils.loadFixture(
-        'data/wordpress-bundle-recordset.json', true);
+      const data = utils.loadFixture('data/wordpress-bundle-recordset.json', true);
       const sorted = bundleImporter._sortDryRunRecords(data);
       const order = [
-        'addCharm-0', 'deploy-1', 'setAnnotations-2',
-        'addCharm-3', 'deploy-4', 'setAnnotations-5',
-        'addCharm-6', 'deploy-7', 'expose-8', 'deploy-99', 'setAnnotations-9',
-        'addMachines-10', 'addMachines-11',
-        'addRelation-11', 'addRelation-12',
-        'addUnit-13', 'addMachines-16',
-        'addUnit-14', 'addMachines-17',
-        'addUnit-15', 'addUnit-16', 'addUnit-17'
+        'addCharm-0',
+        'deploy-1',
+        'setAnnotations-2',
+        'addCharm-3',
+        'deploy-4',
+        'setAnnotations-5',
+        'addCharm-6',
+        'deploy-7',
+        'expose-8',
+        'deploy-99',
+        'setAnnotations-9',
+        'addMachines-10',
+        'addMachines-11',
+        'addRelation-11',
+        'addRelation-12',
+        'addUnit-13',
+        'addMachines-16',
+        'addUnit-14',
+        'addMachines-17',
+        'addUnit-15',
+        'addUnit-16',
+        'addUnit-17'
       ];
       sorted.forEach(function(record, index) {
         assert.equal(record.id, order[index]);
@@ -274,12 +289,9 @@ describe('BundleImporter', () => {
     });
 
     it('stops but does not fail if unknown record type', () => {
-      const sortedRecords = [
-        {method: 'badMethod'}
-      ];
+      const sortedRecords = [{method: 'badMethod'}];
       const execute = sinon.stub(bundleImporter, '_executeRecord');
-      const notification = sinon.stub(
-        bundleImporter.db.notifications, 'add');
+      const notification = sinon.stub(bundleImporter.db.notifications, 'add');
       bundleImporter._executeDryRun(sortedRecords);
       const args = execute.lastCall.args;
       execute.restore();
@@ -292,15 +304,13 @@ describe('BundleImporter', () => {
   });
 
   describe('Changeset execution', () => {
-
     it('sets up the correct model (v5 Integration)', done => {
       let getCanonicalIdCount = 0;
       charmstore.getCanonicalId = (entityId, callback) => {
         getCanonicalIdCount += 1;
         callback(null, entityId);
       };
-      const data = utils.loadFixture(
-        'data/wordpress-bundle-recordset.json', true);
+      const data = utils.loadFixture('data/wordpress-bundle-recordset.json', true);
       const handler = () => {
         document.removeEventListener('topo.bundleImportComplete', handler);
         // Cleans up internals.
@@ -322,8 +332,7 @@ describe('BundleImporter', () => {
         assert.equal(db.services.item(0).get('config').default_retries, 42);
         assert.equal(db.units.item(0).service, db.services.item(0).get('id'));
         assert.equal(db.units.item(0).displayName, 'haproxy/0');
-        assert.equal(db.services.item(1).get('charm'),
-          'cs:precise/wordpress-27');
+        assert.equal(db.services.item(1).get('charm'), 'cs:precise/wordpress-27');
         assert.equal(db.units.item(1).service, db.services.item(1).get('id'));
         assert.equal(db.units.item(1).displayName, 'wordpress/0');
         assert.equal(db.services.item(2).get('charm'), 'cs:precise/mysql-51');
@@ -349,10 +358,12 @@ describe('BundleImporter', () => {
         ];
         assert.equal(
           db.relations.item(0).get('id'),
-          `pending-$deploy-1:reverseproxy${id[0]}$deploy-4:website${id[1]}`);
+          `pending-$deploy-1:reverseproxy${id[0]}$deploy-4:website${id[1]}`
+        );
         assert.equal(
           db.relations.item(1).get('id'),
-          `pending-$deploy-4:db${id[1]}$deploy-7:db${id[2]}`);
+          `pending-$deploy-4:db${id[1]}$deploy-7:db${id[2]}`
+        );
         // Expose
         assert.equal(db.services.item(0).get('exposed'), false);
         assert.equal(db.services.item(1).get('exposed'), false);
@@ -366,12 +377,13 @@ describe('BundleImporter', () => {
     });
 
     it('handles conflicts with existing service names', done => {
-      db.services.add(new yui.juju.models.Service({
-        id: 'haproxy',
-        charm: 'cs:precise/haproxy-35'
-      }));
-      const data = utils.loadFixture(
-        'data/wordpress-bundle-recordset.json', true);
+      db.services.add(
+        new yui.juju.models.Service({
+          id: 'haproxy',
+          charm: 'cs:precise/haproxy-35'
+        })
+      );
+      const data = utils.loadFixture('data/wordpress-bundle-recordset.json', true);
       const handler = () => {
         document.removeEventListener('topo.bundleImportComplete', handler);
         assert.equal(db.services.item(0).get('name'), 'haproxy');
@@ -383,8 +395,7 @@ describe('BundleImporter', () => {
     });
 
     it('sets up the correct model (v3 colocation)', () => {
-      const data = utils.loadFixture(
-        'data/wordpress-bundle-v3-recordset.json', true);
+      const data = utils.loadFixture('data/wordpress-bundle-v3-recordset.json', true);
       bundleImporter.importBundleDryRun(data);
       assert.equal(db.services.size(), 2, 'incorrect number of services');
       assert.equal(db.units.size(), 2, 'incorrect number of units');
@@ -463,5 +474,4 @@ describe('BundleImporter', () => {
       assert.deepEqual(actualConfig, expectedConfig);
     });
   });
-
 });

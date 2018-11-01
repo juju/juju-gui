@@ -7,11 +7,10 @@
   @return {Integer} The hash of the string.
  */
 function generateHash(value) {
-  return value.split('').reduce(
-    (hash, character) => {
-      hash = ((hash << 5) - hash) + character.charCodeAt(0);
-      return hash & hash;
-    }, 0);
+  return value.split('').reduce((hash, character) => {
+    hash = (hash << 5) - hash + character.charCodeAt(0);
+    return hash & hash;
+  }, 0);
 }
 
 /**
@@ -24,9 +23,7 @@ function generateHash(value) {
   @return {String} The calculated DOM id.
  */
 function generateSafeDOMId(value, parentId = '') {
-  return (
-    'e-' + value.replace(/\W/g, '_') + '-' +
-      generateHash(value + parentId));
+  return 'e-' + value.replace(/\W/g, '_') + '-' + generateHash(value + parentId);
 }
 
 /**
@@ -45,8 +42,10 @@ function getRelationDataForService(db, application, withApplication) {
     const withApplicationName = withApplication.get('id');
     relationsArray = relationsArray.filter(relation => {
       const rel = relation.getAttrs();
-      if (rel.endpoints[0][0] === withApplicationName ||
-        rel.endpoints[1][0] === withApplicationName) {
+      if (
+        rel.endpoints[0][0] === withApplicationName ||
+        rel.endpoints[1][0] === withApplicationName
+      ) {
         return relation;
       }
     });
@@ -93,7 +92,7 @@ function getRelationDataForService(db, application, withApplication) {
     rel.elementId = generateSafeDOMId(rel.relation_id);
     return rel;
   });
-};
+}
 
 /**
   Takes two string endpoints and splits it into usable parts.
@@ -116,18 +115,21 @@ function parseEndpointStrings(db, endpoints) {
     }
     result.service = db.services.getById(result.name);
     if (result.service) {
-      result.charm = db.charms.getById(
-        result.service.get('charm'));
+      result.charm = db.charms.getById(result.service.get('charm'));
       if (!result.charm) {
-        console.warn('Failed to load charm',
-          result.charm, db.charms.size(), db.charms.get('id'));
+        console.warn(
+          'Failed to load charm',
+          result.charm,
+          db.charms.size(),
+          db.charms.get('id')
+        );
       }
     } else {
       console.warn('failed to resolve service', result.name);
     }
     return result;
   });
-};
+}
 
 /**
   Loops through the charm endpoint data to determine whether we have a
@@ -150,7 +152,7 @@ function findEndpointMatch(endpoints) {
     const requiringEndpoint = endpoints[!providedIndex + 0];
     const requires = Object.assign({}, requiringEndpoint.charm.get('requires'));
     if (!provides['juju-info']) {
-      provides['juju-info'] = {'interface': 'juju-info', scope: 'container'};
+      provides['juju-info'] = {interface: 'juju-info', scope: 'container'};
     }
     // Restrict candidate types as tightly as possible.
     let candidateProvideTypes, candidateRequireTypes;
@@ -169,11 +171,13 @@ function findEndpointMatch(endpoints) {
       candidateRequireTypes.forEach(requireType => {
         const provideMatch = provides[provideType];
         const requireMatch = requires[requireType];
-        if (provideMatch &&
-            requireMatch &&
-            provideMatch['interface'] === requireMatch['interface']) {
+        if (
+          provideMatch &&
+          requireMatch &&
+          provideMatch['interface'] === requireMatch['interface']
+        ) {
           matches.push({
-            'interface': provideMatch['interface'],
+            interface: provideMatch['interface'],
             scope: provideMatch.scope || requireMatch.scope,
             provides: providingEndpoint,
             requires: requiringEndpoint,
@@ -192,8 +196,7 @@ function findEndpointMatch(endpoints) {
     // It's only a problem if there's more than one explicit relation.
     // Otherwise, filter out the implicit relations and just return the
     // explicit relation.
-    const explicitRelations = matches.filter(
-      rel => rel['provideType'] !== 'juju-info');
+    const explicitRelations = matches.filter(rel => rel['provideType'] !== 'juju-info');
     if (explicitRelations.length === 0) {
       const message = 'No explicitly specified relations are available.';
       console.error(message, endpoints);
@@ -212,7 +215,7 @@ function findEndpointMatch(endpoints) {
     result.requires.type = result.requireType;
   }
   return result;
-};
+}
 
 /**
   Decorate a relation with some related/derived data.
@@ -230,15 +233,14 @@ function DecoratedRelation(relation, source, target) {
   const decorated = {
     source: source,
     target: target,
-    sourceId: (hasRelations ? (endpoints[0][0] + ':' +
-        endpoints[0][1].name) : ''),
-    targetId: (hasRelations ? (endpoints[1][0] + ':' +
-        endpoints[1][1].name) : ''),
+    sourceId: hasRelations ? endpoints[0][0] + ':' + endpoints[0][1].name : '',
+    targetId: hasRelations ? endpoints[1][0] + ':' + endpoints[1][1].name : '',
     compositeId:
-        (source.modelId +
-        (hasRelations ? ':' + endpoints[0][1].name : '') + '-' +
-        target.modelId +
-        (hasRelations ? ':' + endpoints[1][1].name : ''))
+      source.modelId +
+      (hasRelations ? ':' + endpoints[0][1].name : '') +
+      '-' +
+      target.modelId +
+      (hasRelations ? ':' + endpoints[1][1].name : '')
   };
   /**
     Test whether or not any of the units within the service have any errors
@@ -248,8 +250,8 @@ function DecoratedRelation(relation, source, target) {
   */
   decorated._endpointHasError = function(service) {
     // Find the endpoints pertinent to each end of the service.
-    const endpoint = this.endpoints[0][0] === service.id ?
-      this.endpoints[0] : this.endpoints[1];
+    const endpoint =
+      this.endpoints[0][0] === service.id ? this.endpoints[0] : this.endpoints[1];
     // Search the units belonging to the source service for pertinent units
     // in error.
     // Repeat the search for the target service's units.  This relies
@@ -265,13 +267,13 @@ function DecoratedRelation(relation, source, target) {
       // Now we need to determine if the error is relation-related.
       // First check the agent_state_data field.
       if (agentStateData && agentStateData.hook) {
-        relationError = (agentStateData.hook.indexOf(relationName) === 0);
+        relationError = agentStateData.hook.indexOf(relationName) === 0;
       }
       // Next check the agent_state_info field. In error situations, this
       // field may have a message like 'hook failed: "foobar-relation-joined"'
       // so we just need to see if the relation name is a substring.
       if (!relationError && agentStateInfo) {
-        relationError = (agentStateInfo.indexOf(relationName) >= 0);
+        relationError = agentStateInfo.indexOf(relationName) >= 0;
       }
       return unit.agent_state === 'error' && relationError;
     });
@@ -303,7 +305,7 @@ function DecoratedRelation(relation, source, target) {
   Object.assign(decorated, relation.getAttrs());
   decorated.isSubordinate = isSubordinateRelation(decorated);
   return decorated;
-};
+}
 
 function isSubordinateRelation(relation) {
   // Pending relations that are currently in the process of being created
@@ -313,8 +315,7 @@ function isSubordinateRelation(relation) {
   const target = relation.target;
   let subordinateModel = true;
   if (target && source) {
-    subordinateModel = target.model.get('subordinate') ||
-        source.model.get('subordinate');
+    subordinateModel = target.model.get('subordinate') || source.model.get('subordinate');
   }
   // Relation types of juju-info may have a relation scope of container
   // without necessarily being an actual subordinate relation by virtue of
@@ -322,7 +323,7 @@ function isSubordinateRelation(relation) {
   // make sure that at least one of the services is a subordinate *and* the
   // scope is container (which may be inverted, e.g.: puppet and puppetmaster)
   return subordinateModel && relation.scope === 'container';
-};
+}
 
 const _relationCollection = {};
 
@@ -400,14 +401,13 @@ function toRelationCollections(relations) {
     if (collections[key]) {
       collections[key].relations.push(relation);
     } else {
-      collections[key] = new RelationCollection(
-        relation.source, relation.target, [relation]);
+      collections[key] = new RelationCollection(relation.source, relation.target, [relation]);
     }
   });
   // Dump just the collections; the keys are not needed for the data that
   // is used in the view, which only expects an array of relationships.
   return Object.keys(collections).map(key => collections[key]);
-};
+}
 
 /**
   Destory a list of relations.
@@ -421,7 +421,7 @@ function destroyRelations(db, env, relations, callback) {
     const endpoints = db.relations.getById(relationId).get('endpoints');
     env.remove_relation(endpoints[0], endpoints[1], callback);
   });
-};
+}
 
 /**
   Create a relation.
@@ -431,10 +431,10 @@ function destroyRelations(db, env, relations, callback) {
   @param {Function} callback A function to call after removal.
 */
 function createRelation(db, env, endpoints, callback) {
-  const endpointData = parseEndpointStrings(
-    db, [endpoints[0][0], endpoints[1][0]]);
+  const endpointData = parseEndpointStrings(db, [endpoints[0][0], endpoints[1][0]]);
   const match = findEndpointMatch(endpointData);
-  const relationId = `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
+  const relationId =
+    `pending-${endpoints[0][0]}:${endpoints[0][1].name}` +
     `${endpoints[1][0]}:${endpoints[1][1].name}`;
   const application1 = endpointData[0].service;
   const application2 = endpointData[1].service;
@@ -457,8 +457,7 @@ function createRelation(db, env, endpoints, callback) {
     if (subordinate.get('series') !== appSeries) {
       // If the scope isn't container then the series doesn't matter.
       if (match.scope === 'container') {
-        const existingRelations = getRelationDataForService(
-          db, subordinate);
+        const existingRelations = getRelationDataForService(db, subordinate);
         // If there is an existing relation then we don't want to update the
         // relation otherwise it will not match the existing application.
         if (existingRelations.length === 0) {
@@ -472,7 +471,8 @@ function createRelation(db, env, endpoints, callback) {
           // adding the relation.
           db.notifications.add({
             title: 'Subordinate series does not match',
-            message: 'Subordinates can only have a container scoped ' +
+            message:
+              'Subordinates can only have a container scoped ' +
               'relation between applications with the same series. ' +
               'This subordinate already has a relation to an application ' +
               'with a different series.',
@@ -485,25 +485,23 @@ function createRelation(db, env, endpoints, callback) {
   }
   db.relations.add({
     relation_id: relationId,
-    'interface': match.interface,
+    interface: match.interface,
     endpoints: endpoints,
     pending: true,
     scope: match.scope || 'global',
     display_name: 'pending'
   });
-  env.add_relation(
-    endpoints[0], endpoints[1],
-    e => {
-      db.relations.remove(db.relations.getById(relationId));
-      db.relations.create({
-        relation_id: e.result.id,
-        type: e.result['interface'],
-        endpoints: endpoints,
-        pending: false,
-        scope: e.result.scope
-      });
+  env.add_relation(endpoints[0], endpoints[1], e => {
+    db.relations.remove(db.relations.getById(relationId));
+    db.relations.create({
+      relation_id: e.result.id,
+      type: e.result['interface'],
+      endpoints: endpoints,
+      pending: false,
+      scope: e.result.scope
     });
-};
+  });
+}
 
 /**
   Returns an array of relation types for the passed applications
@@ -519,24 +517,36 @@ function createRelation(db, env, endpoints, callback) {
   @returns {Array} The relations that are compatible.
 */
 function getAvailableEndpoints(
-  endpointsController, db, getEndpoints, applicationFrom, applicationTo, existingData = null) {
+  endpointsController,
+  db,
+  getEndpoints,
+  applicationFrom,
+  applicationTo,
+  existingData = null
+) {
   // Get the endpoints that are possible to relate to.
-  const relatableEndpoints = getEndpoints(
-    applicationFrom, endpointsController)[applicationTo.get('id')];
+  const relatableEndpoints = getEndpoints(applicationFrom, endpointsController)[
+    applicationTo.get('id')
+  ];
 
-  let existing = (existingData !== null) ? existingData :
-    getRelationDataForService(db, applicationTo, applicationFrom);
+  let existing =
+    existingData !== null
+      ? existingData
+      : getRelationDataForService(db, applicationTo, applicationFrom);
 
   if (existing.length === 0) {
     return relatableEndpoints;
   }
   // Filter out the existing relations
-  return relatableEndpoints.filter(relation =>
-    !existing.some(existingRelation =>
-      relation[0].name === existingRelation.far.name ||
-      relation[1].name === existingRelation.near.name
-    ));
-};
+  return relatableEndpoints.filter(
+    relation =>
+      !existing.some(
+        existingRelation =>
+          relation[0].name === existingRelation.far.name ||
+          relation[1].name === existingRelation.near.name
+      )
+  );
+}
 
 /**
   Returns a list of relatable applications
@@ -546,10 +556,8 @@ function getAvailableEndpoints(
   @returns {Array} The service objects that can related to the application.
 */
 function getRelatableApplications(db, endpoints) {
-  return Object.keys(endpoints)
-    .map(appName => db.services.getById(appName));
-};
-
+  return Object.keys(endpoints).map(appName => db.services.getById(appName));
+}
 
 module.exports = {
   generateHash,

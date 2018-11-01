@@ -7,24 +7,21 @@ const enzyme = require('enzyme');
 const ExpertBlock = require('../expert-block/expert-block');
 
 describe('ExpertBlock', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ExpertBlock
-      classes={options.classes}
-      title={options.title || 'Expert Title'}>
-      <span>Content</span>
-    </ExpertBlock>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ExpertBlock classes={options.classes} title={options.title || 'Expert Title'}>
+        <span>Content</span>
+      </ExpertBlock>
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
       <div className="expert-block">
-        <div className="expert-block__top-title">
-          Expert Title
-        </div>
+        <div className="expert-block__top-title">Expert Title</div>
         <span>Content</span>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

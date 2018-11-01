@@ -7,26 +7,25 @@ const enzyme = require('enzyme');
 const Link = require('./link');
 
 describe('Link', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Link
-      changeState={options.changeState || sinon.stub()}
-      classes={options.classes || null}
-      clickState={options.clickState || {state: 'new'}}
-      generatePath={options.generatePath || sinon.stub().returns('/new/state')}>
-      Link content
-    </Link>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Link
+        changeState={options.changeState || sinon.stub()}
+        classes={options.classes || null}
+        clickState={options.clickState || {state: 'new'}}
+        generatePath={options.generatePath || sinon.stub().returns('/new/state')}
+      >
+        Link content
+      </Link>
+    );
 
   it('can generate a link', () => {
     const wrapper = renderComponent();
     const expected = (
-      <a
-        className="link"
-        href="/new/state"
-        onClick={wrapper.prop('onClick')}>
+      <a className="link" href="/new/state" onClick={wrapper.prop('onClick')}>
         Link content
-      </a>);
+      </a>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

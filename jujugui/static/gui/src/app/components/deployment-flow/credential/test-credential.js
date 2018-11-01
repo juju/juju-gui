@@ -14,21 +14,23 @@ const DeploymentCredentialAdd = require('./add/add');
 describe('DeploymentCredential', function() {
   var acl, controllerAPI, sendAnalytics, cloud, credentials, regions, credentialNames, user;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentCredential
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      cloud={options.cloud === undefined ? cloud : options.cloud}
-      controllerAPI={controllerAPI}
-      controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
-      credential={options.credential}
-      editable={options.editable === undefined ? true : options.editable}
-      region={options.region}
-      sendAnalytics={options.sendAnalytics || sendAnalytics}
-      setCredential={options.setCredential || sinon.stub()}
-      setRegion={options.setRegion || sinon.stub()}
-      user={options.user === undefined ? user : options.user} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentCredential
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        cloud={options.cloud === undefined ? cloud : options.cloud}
+        controllerAPI={controllerAPI}
+        controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
+        credential={options.credential}
+        editable={options.editable === undefined ? true : options.editable}
+        region={options.region}
+        sendAnalytics={options.sendAnalytics || sendAnalytics}
+        setCredential={options.setCredential || sinon.stub()}
+        setRegion={options.setRegion || sinon.stub()}
+        user={options.user === undefined ? user : options.user}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -57,7 +59,8 @@ describe('DeploymentCredential', function() {
         <div className="deployment-credential__loading">
           <Spinner />
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -69,7 +72,8 @@ describe('DeploymentCredential', function() {
         <ExpandingRow
           classes={{'no-margin-bottom': true, 'twelve-col': true}}
           clickable={false}
-          expanded={true}>
+          expanded={true}
+        >
           {undefined}
           <DeploymentCredentialAdd
             acl={acl}
@@ -77,13 +81,16 @@ describe('DeploymentCredential', function() {
             cloud={cloud}
             credentials={[]}
             onCancel={null}
-            onCredentialUpdated={
-              wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
+            onCredentialUpdated={wrapper
+              .find('DeploymentCredentialAdd')
+              .prop('onCredentialUpdated')}
             sendAnalytics={sendAnalytics}
             updateCloudCredential={sinon.stub()}
-            user={user} />
+            user={user}
+          />
         </ExpandingRow>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -111,16 +118,23 @@ describe('DeploymentCredential', function() {
           <InsetSelect
             disabled={false}
             label="Credential"
-            onChange={wrapper.find('InsetSelect').at(0).prop('onChange')}
-            options={[{
-              label: 'default',
-              value: 'lxd_admin@local_default'
-            }, {
-              label: 'Add credential...',
-              value: 'add-credential'
-            }]}
+            onChange={wrapper
+              .find('InsetSelect')
+              .at(0)
+              .prop('onChange')}
+            options={[
+              {
+                label: 'default',
+                value: 'lxd_admin@local_default'
+              },
+              {
+                label: 'Add credential...',
+                value: 'add-credential'
+              }
+            ]}
             ref="credential"
-            value={undefined} />
+            value={undefined}
+          />
         </div>
         <div className="four-col deployment-credential__form-region">
           <InsetSelect
@@ -131,9 +145,11 @@ describe('DeploymentCredential', function() {
               {label: 'Default', value: ''},
               {label: 'test-region', value: 'test-region'}
             ]}
-            value={undefined} />
+            value={undefined}
+          />
         </div>
-      </form>);
+      </form>
+    );
     assert.compareJSX(wrapper.find('.deployment-credential__form'), expected);
   });
 
@@ -176,18 +192,21 @@ describe('DeploymentCredential', function() {
           disabled={false}
           label="Region"
           onChange={sinon.stub()}
-          options={[
-            {label: 'Default', value: ''}
-          ]}
-          value={undefined} />
-      </div>);
+          options={[{label: 'Default', value: ''}]}
+          value={undefined}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-credential__form-region'), expected);
   });
 
   it('can navigate to the add credentials form', function() {
     const wrapper = renderComponent();
     assert.equal(wrapper.find('DeploymentCredentialAdd').length, 0);
-    wrapper.find('InsetSelect').at(0).simulate('change', 'add-credential');
+    wrapper
+      .find('InsetSelect')
+      .at(0)
+      .simulate('change', 'add-credential');
     wrapper.update();
     assert.equal(wrapper.find('DeploymentCredentialAdd').length, 1);
   });
@@ -195,7 +214,10 @@ describe('DeploymentCredential', function() {
   it('clears the credential when displaying the form', function() {
     var setCredential = sinon.stub();
     const wrapper = renderComponent({setCredential});
-    wrapper.find('InsetSelect').at(0).simulate('change', 'add-credential');
+    wrapper
+      .find('InsetSelect')
+      .at(0)
+      .simulate('change', 'add-credential');
     assert.equal(setCredential.callCount, 2);
     assert.equal(setCredential.args[1][0], null);
   });
@@ -218,12 +240,8 @@ describe('DeploymentCredential', function() {
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], credential);
     assert.equal(sendAnalytics.callCount, 2);
-    assert.deepEqual(sendAnalytics.args[0], [
-      'Select cloud',
-      undefined,
-      'has credentials']);
-    assert.deepEqual(sendAnalytics.args[1],
-      ['Button click', 'Cancel add credential']);
+    assert.deepEqual(sendAnalytics.args[0], ['Select cloud', undefined, 'has credentials']);
+    assert.deepEqual(sendAnalytics.args[1], ['Button click', 'Cancel add credential']);
   });
 
   it('can handle errors when getting credential names', () => {

@@ -9,14 +9,16 @@ const EnvSizeDisplay = require('./env-size-display');
 describe('EnvSizeDisplay', () => {
   let appState;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EnvSizeDisplay
-      appState={options.appState || appState}
-      machineCount={options.machineCount || 4}
-      providerType={options.providerType || 'gce'}
-      serviceCount={options.serviceCount || 3}
-      showStatus={options.showStatus === undefined ? true : options.showStatus} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EnvSizeDisplay
+        appState={options.appState || appState}
+        machineCount={options.machineCount || 4}
+        providerType={options.providerType || 'gce'}
+        serviceCount={options.serviceCount || 3}
+        showStatus={options.showStatus === undefined ? true : options.showStatus}
+      />
+    );
 
   beforeEach(() => {
     appState = {
@@ -31,12 +33,8 @@ describe('EnvSizeDisplay', () => {
 
   it('shows applications and machines count', () => {
     const wrapper = renderComponent();
-    assert.equal(
-      wrapper.find('a[data-view="application"]').text(),
-      '3 applications');
-    assert.equal(
-      wrapper.find('a[data-view="machines"]').text(),
-      '4 machines');
+    assert.equal(wrapper.find('a[data-view="application"]').text(), '3 applications');
+    assert.equal(wrapper.find('a[data-view="machines"]').text(), '4 machines');
   });
 
   it('highlights active tab on initial render', () => {

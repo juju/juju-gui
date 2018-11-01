@@ -7,17 +7,15 @@ const enzyme = require('enzyme');
 const ProfileNavigation = require('./navigation');
 
 describe('Profile Navigation', function() {
-  const sectionsMap = new Map([
-    ['models', {label: 'Models'}],
-    ['charms', {label: 'Charms'}]
-  ]);
+  const sectionsMap = new Map([['models', {label: 'Models'}], ['charms', {label: 'Charms'}]]);
 
   const renderComponent = (options = {}) =>
     enzyme.shallow(
       <ProfileNavigation
         activeSection={options.activeSection || 'bundles'}
         changeState={options.changeState || sinon.stub()}
-        sectionsMap={sectionsMap} />
+        sectionsMap={sectionsMap}
+      />
     );
 
   it('can render', () => {

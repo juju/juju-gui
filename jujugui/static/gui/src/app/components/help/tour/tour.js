@@ -14,28 +14,21 @@ class Tour extends React.PureComponent {
     const basePath = `${staticURL}/static/gui/build/app/assets/images/non-sprites/tour`;
     return (
       <div>
-        <span
-          className="back-to-help"
-          onClick={this.props.endTour.bind(this)}>
-          <SvgIcon
-            className="back-to-help__icon"
-            name="chevron_down_16"
-            size="16" />
+        <span className="back-to-help" onClick={this.props.endTour.bind(this)}>
+          <SvgIcon className="back-to-help__icon" name="chevron_down_16" size="16" />
           Back to GUI help
         </span>
-        <Lightbox
-          close={this.props.close.bind(this)}
-          extraClasses={['tour']}>
+        <Lightbox close={this.props.close.bind(this)} extraClasses={['tour']}>
           <div className="tour__slide">
             <img
               className="tour__slide-image"
               src={`${basePath}/welcome@1x.png`}
-              srcSet={`${basePath}/welcome@2x.png 2x`} />
+              srcSet={`${basePath}/welcome@2x.png 2x`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                Welcome to JAAS. You've arrived at the empty canvas.
-                 Click on the green button to visit the store and start building
-                 your application.
+                Welcome to JAAS. You've arrived at the empty canvas. Click on the green button
+                to visit the store and start building your application.
               </p>
             </div>
           </div>
@@ -47,11 +40,12 @@ class Tour extends React.PureComponent {
               srcSet={`
 ${basePath}/store@2x.png 2x,
 ${basePath}/store-mobile@1x.png 347w,
-`} />
+`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                Browse the store to find charms for the applications you use and
-                pre-configured bundles that build the solutions you need.
+                Browse the store to find charms for the applications you use and pre-configured
+                bundles that build the solutions you need.
               </p>
             </div>
           </div>
@@ -63,14 +57,14 @@ ${basePath}/store-mobile@1x.png 347w,
               srcSet={`
 ${basePath}/relations@2x.png 2x,
 ${basePath}/relations-mobile@1x.png 335w,
-`} />
+`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                Juju relations allow individual applications to share information,
-                request resources, and coordinate operations.
-                To create one, select one of the applications and grab the 'connect'
-                symbol that appears above it. Then drag it to the other
-                applications to make the relation.
+                Juju relations allow individual applications to share information, request
+                resources, and coordinate operations. To create one, select one of the
+                applications and grab the 'connect' symbol that appears above it. Then drag it
+                to the other applications to make the relation.
               </p>
             </div>
           </div>
@@ -82,11 +76,12 @@ ${basePath}/relations-mobile@1x.png 335w,
               srcSet={`
 ${basePath}/inspector@2x.png 2x,
 ${basePath}/inspector-mobile@1x.png 307w,
-`} />
+`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                The inspector shows a list of all the applications in your model.
-                Use it to scale, expose, and configure your applications.
+                The inspector shows a list of all the applications in your model. Use it to
+                scale, expose, and configure your applications.
               </p>
             </div>
           </div>
@@ -98,13 +93,13 @@ ${basePath}/inspector-mobile@1x.png 307w,
               srcSet={`
 ${basePath}/machine-app-view@2x.png 2x,
 ${basePath}/machine-app-view-mobile@1x.png 431w,
-`} />
+`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                Use the inspector to switch between application view,
-                where you can see a visual representation of your workload,
-                and machine view, where you can see and manage all of the instances
-                your model is using.
+                Use the inspector to switch between application view, where you can see a
+                visual representation of your workload, and machine view, where you can see and
+                manage all of the instances your model is using.
               </p>
             </div>
           </div>
@@ -116,11 +111,12 @@ ${basePath}/machine-app-view-mobile@1x.png 431w,
               srcSet={`
 ${basePath}/deploy@2x.png 2x,
 ${basePath}/deploy-mobile@1x.png 341w,
-`} />
+`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                Ready to deploy your workload? Click the blue Deploy button shown
-                on the bottom right.
+                Ready to deploy your workload? Click the blue Deploy button shown on the bottom
+                right.
               </p>
             </div>
           </div>
@@ -132,15 +128,15 @@ ${basePath}/deploy-mobile@1x.png 341w,
               srcSet={`
 ${basePath}/post-deploy@2x.png 2x,
 ${basePath}/post-deploy-mobile@1x.png 375w,
-`} />
+`}
+            />
             <div className="tour__slide-description clearfix">
               <p className="ten-col">
-                Creating instances, deploying applications, and performing
-                configuration can sometimes take several minutes. Pending units
-                are outlined in <span className="u-pending">orange</span> &mdash;
-                These are still in progress.
-                Your model will be fully up and running once all application icons
-                are outlined in grey.
+                Creating instances, deploying applications, and performing configuration can
+                sometimes take several minutes. Pending units are outlined in{' '}
+                <span className="u-pending">orange</span> &mdash; These are still in progress.
+                Your model will be fully up and running once all application icons are outlined
+                in grey.
               </p>
             </div>
           </div>

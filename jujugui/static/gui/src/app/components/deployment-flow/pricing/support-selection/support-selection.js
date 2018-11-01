@@ -39,31 +39,29 @@ class DeploymentSupportSelection extends React.Component {
   _generateCards() {
     const state = this.state;
     if (!state.slaMachineRates) {
-      return (<Spinner />);
+      return <Spinner />;
     }
     const slaMachineRates = state.slaMachineRates;
-    const plans = [{
-      features: ['8hx5d ticked'],
-      hourPrice: slaMachineRates.essential,
-      name: 'Essential',
-      key: 'essential'
-    }, {
-      features: [
-        '10x5 phone support',
-        '2hr critical response'
-      ],
-      hourPrice: slaMachineRates.standard,
-      name: 'Standard',
-      key: 'standard'
-    }, {
-      features: [
-        '24x7 phone support',
-        '1hr critical response'
-      ],
-      hourPrice: slaMachineRates.advanced,
-      name: 'Advanced',
-      key: 'advanced'
-    }];
+    const plans = [
+      {
+        features: ['8hx5d ticked'],
+        hourPrice: slaMachineRates.essential,
+        name: 'Essential',
+        key: 'essential'
+      },
+      {
+        features: ['10x5 phone support', '2hr critical response'],
+        hourPrice: slaMachineRates.standard,
+        name: 'Standard',
+        key: 'standard'
+      },
+      {
+        features: ['24x7 phone support', '1hr critical response'],
+        hourPrice: slaMachineRates.advanced,
+        name: 'Advanced',
+        key: 'advanced'
+      }
+    ];
     return plans.map((plan, i) => {
       const classes = [];
       if (i === plans.length - 1) {
@@ -78,18 +76,18 @@ class DeploymentSupportSelection extends React.Component {
           machineCount={parseInt(this.props.machineCount, 10)}
           onSelect={this._handlePlanSelect.bind(this, plan.key)}
           selected={plan.name.toLowerCase() === this.state.selectedPlan}
-          title={plan.name} />);
+          title={plan.name}
+        />
+      );
     });
   }
 
   render() {
     return (
-      <div className="deployment-support-selection equal-height">
-        {this._generateCards()}
-      </div>
+      <div className="deployment-support-selection equal-height">{this._generateCards()}</div>
     );
   }
-};
+}
 
 DeploymentSupportSelection.propTypes = {
   getSLAMachineRates: PropTypes.func.isRequired,

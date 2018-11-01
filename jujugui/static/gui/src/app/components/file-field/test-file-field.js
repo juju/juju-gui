@@ -7,14 +7,15 @@ const enzyme = require('enzyme');
 const FileField = require('./file-field');
 
 describe('FileField', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <FileField
-      accept={options.accept || '.json'}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      label={options.label || 'Dingo'}
-      required={options.required === undefined ? true : options.required} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <FileField
+        accept={options.accept || '.json'}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        label={options.label || 'Dingo'}
+        required={options.required === undefined ? true : options.required}
+      />
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();
@@ -28,14 +29,14 @@ describe('FileField', function() {
           onChange={wrapper.find('input').prop('onChange')}
           ref="field"
           required={true}
-          type="file" />
-        <label
-          className="file-field__label"
-          htmlFor="Dingo">
+          type="file"
+        />
+        <label className="file-field__label" htmlFor="Dingo">
           Dingo
         </label>
         {null}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -73,12 +74,13 @@ describe('FileField', function() {
     wrapper.update();
     var expected = (
       <ul className="file-field__errors">
-        {[<li
-          className="file-field__error"
-          key="required">
-          This field is required.
-        </li>]}
-      </ul>);
+        {[
+          <li className="file-field__error" key="required">
+            This field is required.
+          </li>
+        ]}
+      </ul>
+    );
     assert.equal(wrapper.prop('className').includes('error'), true);
     assert.compareJSX(wrapper.find('.file-field__errors'), expected);
   });
@@ -87,16 +89,20 @@ describe('FileField', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = {field: {files: []}};
-    wrapper.find('input').props().onChange();
+    wrapper
+      .find('input')
+      .props()
+      .onChange();
     wrapper.update();
     var expected = (
       <ul className="file-field__errors">
-        {[<li
-          className="file-field__error"
-          key="required">
-          This field is required.
-        </li>]}
-      </ul>);
+        {[
+          <li className="file-field__error" key="required">
+            This field is required.
+          </li>
+        ]}
+      </ul>
+    );
     assert.equal(wrapper.prop('className').includes('error'), true);
     assert.compareJSX(wrapper.find('.file-field__errors'), expected);
   });
@@ -107,11 +113,10 @@ describe('FileField', function() {
     instance.setState({contents: 'foo'});
     wrapper.update();
     const expected = (
-      <label
-        className="file-field__label"
-        htmlFor="Dingo">
+      <label className="file-field__label" htmlFor="Dingo">
         File stored.
-      </label>);
+      </label>
+    );
     assert.compareJSX(wrapper.find('.file-field__label'), expected);
   });
 

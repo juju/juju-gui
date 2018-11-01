@@ -33,47 +33,51 @@ const utils = require('../init/utils');
  * @submodule models.bundle
  */
 
-window.yui.add('juju-bundle-models', function(Y) {
-
-  var models = Y.namespace('juju.models');
-
-  /**
-   * Model to represent the Bundles from the Charmworld API.
-   *
-   * @class Bundle
-   * @extends {Y.Model}
-   *
-   */
-  models.Bundle = Y.Base.create('browser-bundle', Y.Model, [
-    models.EntityExtension
-  ], {
+window.yui.add(
+  'juju-bundle-models',
+  function(Y) {
+    var models = Y.namespace('juju.models');
 
     /**
-     * Initializer
+     * Model to represent the Bundles from the Charmworld API.
      *
-     * @method initializer
-     * @param {Object} cfg The configuration object.
+     * @class Bundle
+     * @extends {Y.Model}
+     *
      */
-    initializer: function(cfg) {
-      // Map this to a name that we can change as the timeframes change
-      // without having to update all users of the code.
-      if (cfg && cfg.downloads_in_past_30_days) {
-        this.set('recent_download_count', cfg.downloads_in_past_30_days);
-      }
+    models.Bundle = Y.Base.create(
+      'browser-bundle',
+      Y.Model,
+      [models.EntityExtension],
+      {
+        /**
+         * Initializer
+         *
+         * @method initializer
+         * @param {Object} cfg The configuration object.
+         */
+        initializer: function(cfg) {
+          // Map this to a name that we can change as the timeframes change
+          // without having to update all users of the code.
+          if (cfg && cfg.downloads_in_past_30_days) {
+            this.set('recent_download_count', cfg.downloads_in_past_30_days);
+          }
 
-      this.loaded = false;
-      this.on('load', function() { this.loaded = true; });
-      // Because of a bug in Y.Attribute https://github.com/yui/yui3/issues/1859
-      // Attribute setters are not called when values are passed in in the
-      // constructors. This checks if a value is being passed in via the
-      // constructor and calls the setter manually.
-      var id = cfg && cfg.id;
-      if (id) {
-        this.idSetter(id);
-      }
-    },
+          this.loaded = false;
+          this.on('load', function() {
+            this.loaded = true;
+          });
+          // Because of a bug in Y.Attribute https://github.com/yui/yui3/issues/1859
+          // Attribute setters are not called when values are passed in in the
+          // constructors. This checks if a value is being passed in via the
+          // constructor and calls the setter manually.
+          var id = cfg && cfg.id;
+          if (id) {
+            this.idSetter(id);
+          }
+        },
 
-    /**
+        /**
 
      Parse a combined name-email string of the form
      "Full Name <email.example.com>".
@@ -85,15 +89,15 @@ window.yui.add('juju-bundle-models', function(Y) {
      @param {String} Name + email string.
      @return {Array} [name, emailAddress]
     */
-    parseNameEmail: function(author) {
-      var parts = /^([^<]+?) <(.+)>$/.exec(author);
-      if (!parts) {
-        parts = [null, author, 'n/a'];
-      }
-      return [parts[1], parts[2]];
-    },
+        parseNameEmail: function(author) {
+          var parts = /^([^<]+?) <(.+)>$/.exec(author);
+          if (!parts) {
+            parts = [null, author, 'n/a'];
+          }
+          return [parts[1], parts[2]];
+        },
 
-    /**
+        /**
       Populate data about bundled applications; provides display data for each
       service.
       @method parseBundleServices
@@ -101,22 +105,22 @@ window.yui.add('juju-bundle-models', function(Y) {
         contains service names as keys to their service objects.
       @return {Object} a service display object.
     */
-    parseBundleServices: function(applications) {
-      var parsedServices = [];
-      for (var name in applications) {
-        var service = applications[name],
-            id = service.charm.replace(/^cs:/, '');
-        parsedServices.push({
-          id: id,
-          iconPath: utils.getIconPath(id, false),
-          url: '', // XXX implement once determined how to handle links
-          displayName: name.replace('-', ' ')
-        });
-      }
-      return parsedServices;
-    },
+        parseBundleServices: function(applications) {
+          var parsedServices = [];
+          for (var name in applications) {
+            var service = applications[name],
+              id = service.charm.replace(/^cs:/, '');
+            parsedServices.push({
+              id: id,
+              iconPath: utils.getIconPath(id, false),
+              url: '', // XXX implement once determined how to handle links
+              displayName: name.replace('-', ' ')
+            });
+          }
+          return parsedServices;
+        },
 
-    /**
+        /**
 
      Extract the recent commits into a format we can use nicely.  Output matches
      the analogous function for charms.
@@ -125,29 +129,28 @@ window.yui.add('juju-bundle-models', function(Y) {
      @param {Array} List of change objects.
      @return {Array} Commit objects.
     */
-    extractRecentCommits: function(changes) {
-      var commits = [];
+        extractRecentCommits: function(changes) {
+          var commits = [];
 
-      if (changes) {
-        changes.forEach(function(change) {
+          if (changes) {
+            changes.forEach(function(change) {
+              var author_parts = this.parseNameEmail(change.authors[0]);
+              var date = new Date(change.created * 1000);
+              commits.push({
+                author: {
+                  name: author_parts[0],
+                  email: author_parts[1]
+                },
+                date: date,
+                message: change.message,
+                revno: change.revno
+              });
+            }, this);
+          }
+          return commits;
+        },
 
-          var author_parts = this.parseNameEmail(change.authors[0]);
-          var date = new Date(change.created * 1000);
-          commits.push({
-            author: {
-              name: author_parts[0],
-              email: author_parts[1]
-            },
-            date: date,
-            message: change.message,
-            revno: change.revno
-          });
-        }, this);
-      }
-      return commits;
-    },
-
-    /**
+        /**
       Called when the id value is set. It parses the id and sets the `stateId`
       value to match what the value will be for the id's passed in from the
       state metadata.
@@ -156,23 +159,26 @@ window.yui.add('juju-bundle-models', function(Y) {
       @param {String} id The bundles id
       @return {String} The id that was passed in.
     */
-    idSetter: function(id) {
-      if (id === undefined) { return id; }
-      var charmersIndex = id.indexOf('~charmers');
-      var stateId = '';
-      if (charmersIndex !== -1) {
-        // Remove the ~charmers/ from the url
-        stateId = id.substring(charmersIndex + 10);
-      } else {
-        stateId = id;
-      }
-      stateId = 'bundle/' + stateId;
-      this.set('stateId', stateId);
-      // We want to set this attribute to it's actual ID;
-      return id;
-    }
-  }, {
-    /**
+        idSetter: function(id) {
+          if (id === undefined) {
+            return id;
+          }
+          var charmersIndex = id.indexOf('~charmers');
+          var stateId = '';
+          if (charmersIndex !== -1) {
+            // Remove the ~charmers/ from the url
+            stateId = id.substring(charmersIndex + 10);
+          } else {
+            stateId = id;
+          }
+          stateId = 'bundle/' + stateId;
+          this.set('stateId', stateId);
+          // We want to set this attribute to it's actual ID;
+          return id;
+        }
+      },
+      {
+        /**
       Static to indicate the type of entity so that other code
       does not need to 'guess' by the entities content
 
@@ -181,15 +187,15 @@ window.yui.add('juju-bundle-models', function(Y) {
       @default 'bundle'
       @static
     */
-    entityType: 'bundle',
-    ATTRS: {
-      id: {
-        'setter': function(id) {
-          // This is called like this because of a bug in YUI see initializer.
-          this.idSetter(id);
-        }
-      },
-      /**
+        entityType: 'bundle',
+        ATTRS: {
+          id: {
+            setter: function(id) {
+              // This is called like this because of a bug in YUI see initializer.
+              this.idSetter(id);
+            }
+          },
+          /**
         This id is set from the setter of the real id. It is supposed to match
         the id which is passed in from the state object.
 
@@ -197,10 +203,10 @@ window.yui.add('juju-bundle-models', function(Y) {
         @type {String}
         @default undefined
       */
-      stateId: {},
-      name: {},
-      description: {},
-      /**
+          stateId: {},
+          name: {},
+          description: {},
+          /**
         For charms the api returns is_approved and we want to share that
         across our templates. This maps to the promulgated api data from the
         bundle results.
@@ -209,153 +215,151 @@ window.yui.add('juju-bundle-models', function(Y) {
         @default false
         @type {Boolean}
        */
-      is_approved: {
-        /**
+          is_approved: {
+            /**
           Reach into the promulgated attr
 
           @method getter
          */
-        getter: function(val) {
-          var promulgated = this.get('promulgated');
-          // Set the value from the promulgated flag otherwise use the provided
-          // value. The promulgated flag may not be used anymore, but it has
-          // been left here for backwards compatibility.
-          return promulgated === undefined ? val : promulgated;
-        }
-      },
-      owner: {},
-      permanent_url: {},
-      promulgated: false,
-      title: {},
-      basket_name: {},
-      basket_revision: {
-        /**
+            getter: function(val) {
+              var promulgated = this.get('promulgated');
+              // Set the value from the promulgated flag otherwise use the provided
+              // value. The promulgated flag may not be used anymore, but it has
+              // been left here for backwards compatibility.
+              return promulgated === undefined ? val : promulgated;
+            }
+          },
+          owner: {},
+          permanent_url: {},
+          promulgated: false,
+          title: {},
+          basket_name: {},
+          basket_revision: {
+            /**
          Validate the basket_revision.  Must be number.
 
          @method validator
 
          */
-        validator: function(val) {
-          return !isNaN(val);
-        }
-      },
-      /**
+            validator: function(val) {
+              return !isNaN(val);
+            }
+          },
+          /**
         The url which can be used by the deployer to deploy the bundle file.
 
         @attribute deployerFileUrl
         @default undefined
         @type {String}
       */
-      deployerFileUrl: {},
+          deployerFileUrl: {},
 
-      /**
+          /**
         A collection of files in the bundle.
 
         @attribute files
         @default undefined
         @type {Array}
       */
-      files: {},
+          files: {},
 
-      /**
+          /**
         @attribute downloads
         @default 0
         @type {Integer}
 
        */
-      downloads: {
-        value: 0
-      },
+          downloads: {
+            value: 0
+          },
 
-      relations: {
-        /**
+          relations: {
+            /**
           The relations are parsed as a map containing the relations. This
           converts it to an array to make it easier to work with and to match
           the old apiv3 functionality.
 
           @method setter
         */
-        setter: function(value) {
-          var relations = [];
-          Object.keys(value).forEach(function(key) {
-            relations.push(value[key]);
-          });
-          return relations;
-        }
-      },
-      series: {},
-      /**
+            setter: function(value) {
+              var relations = [];
+              Object.keys(value).forEach(function(key) {
+                relations.push(value[key]);
+              });
+              return relations;
+            }
+          },
+          series: {},
+          /**
         The applications used in this bundle.
 
         @attribute applications
         @default undefined
         @type {Object}
       */
-      applications: {},
-      price: {
-        setter: val => parseInt(val, 10)
-      },
+          applications: {},
+          price: {
+            setter: val => parseInt(val, 10)
+          },
 
-      /**
-       * @attribute serviceCount
-       * @default 0
-       * @type {Number}
-       *
-       */
-      serviceCount: {
-        'getter': function() {
-          if (this.get('applications')) {
-            return Object.keys(this.get('applications')).length;
+          /**
+           * @attribute serviceCount
+           * @default 0
+           * @type {Number}
+           *
+           */
+          serviceCount: {
+            getter: function() {
+              if (this.get('applications')) {
+                return Object.keys(this.get('applications')).length;
+              }
+            }
+          },
+
+          /**
+           * Determine the number of units the bundle will use.
+           *
+           * Each service includes one unit by default. If a num_units is defined
+           * in the service then that is added instead of the single default.
+           *
+           * @attribute unitCount
+           * @default 0
+           * @type {Number}
+           *
+           */
+          unitCount: {
+            getter: function() {
+              var count = 0;
+              const applications = this.get('applications');
+              Object.keys(applications).forEach(key => {
+                const service = applications[key];
+                if (service.num_units) {
+                  count += service.num_units;
+                } else {
+                  count += 1;
+                }
+              });
+              return count;
+            }
+          },
+
+          /**
+           * Determine the number of machines the bundle will use.
+           *
+           * @attribute machineCount
+           * @default 0
+           * @type {Number}
+           *
+           */
+          machineCount: {
+            value: 0
           }
         }
-      },
-
-      /**
-       * Determine the number of units the bundle will use.
-       *
-       * Each service includes one unit by default. If a num_units is defined
-       * in the service then that is added instead of the single default.
-       *
-       * @attribute unitCount
-       * @default 0
-       * @type {Number}
-       *
-       */
-      unitCount: {
-        'getter': function() {
-          var count = 0;
-          const applications = this.get('applications');
-          Object.keys(applications).forEach(key => {
-            const service = applications[key];
-            if (service.num_units) {
-              count += service.num_units;
-            } else {
-              count += 1;
-            }
-          });
-          return count;
-        }
-      },
-
-      /**
-       * Determine the number of machines the bundle will use.
-       *
-       * @attribute machineCount
-       * @default 0
-       * @type {Number}
-       *
-       */
-      machineCount: {
-        value: 0
       }
-    }
-  });
-
-
-}, '0.0.1', {
-  requires: [
-    'model',
-    'model-list',
-    'entity-extension'
-  ]
-});
+    );
+  },
+  '0.0.1',
+  {
+    requires: ['model', 'model-list', 'entity-extension']
+  }
+);

@@ -22,8 +22,8 @@ describe('Configuration', function() {
         serviceRelations={options.serviceRelations || []}
         setConfig={options.setConfig || sinon.stub()}
         unplaceServiceUnits={options.unplaceServiceUnits || sinon.stub()}
-        updateServiceUnitsDisplayname={
-          options.updateServiceUnitsDisplayname || sinon.stub()} />
+        updateServiceUnitsDisplayname={options.updateServiceUnitsDisplayname || sinon.stub()}
+      />
     );
     const instance = wrapper.instance();
     instance.refs = {
@@ -71,8 +71,7 @@ describe('Configuration', function() {
     serviceGet.withArgs('id').returns('cs:trusty/ghost');
     serviceGet.withArgs('name').returns('ghost');
     serviceGet.withArgs('series').returns('trusty');
-    serviceGet.withArgs('config').returns(
-      {option1: option1key, option2: option2key});
+    serviceGet.withArgs('config').returns({option1: option1key, option2: option2key});
     service = {
       get: serviceGet,
       set: sinon.stub()
@@ -107,15 +106,24 @@ describe('Configuration', function() {
     const hiddenClass = 'inspector-config__buttons--hidden';
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.inspector-config__buttons').prop('className').includes(
-        hiddenClass),
-      true);
-    wrapper.find('BooleanConfig').props().onChange();
+      wrapper
+        .find('.inspector-config__buttons')
+        .prop('className')
+        .includes(hiddenClass),
+      true
+    );
+    wrapper
+      .find('BooleanConfig')
+      .props()
+      .onChange();
     wrapper.update();
     assert.equal(
-      wrapper.find('.inspector-config__buttons').prop('className').includes(
-        hiddenClass),
-      false);
+      wrapper
+        .find('.inspector-config__buttons')
+        .prop('className')
+        .includes(hiddenClass),
+      false
+    );
   });
 
   it('can handle changes with null values', function() {
@@ -123,12 +131,18 @@ describe('Configuration', function() {
     const instance = wrapper.instance();
     instance.refs['Config-option1'].getValue.returns(null);
     instance.refs['Config-option2'].getValue.returns(null);
-    wrapper.find('BooleanConfig').props().onChange();
+    wrapper
+      .find('BooleanConfig')
+      .props()
+      .onChange();
     wrapper.update();
     assert.equal(
-      wrapper.find('.inspector-config__buttons').prop('className').includes(
-        'inspector-config__buttons--hidden'),
-      false);
+      wrapper
+        .find('.inspector-config__buttons')
+        .prop('className')
+        .includes('inspector-config__buttons--hidden'),
+      false
+    );
   });
 
   it('renders message when no config available', function() {
@@ -136,9 +150,8 @@ describe('Configuration', function() {
     service.get.withArgs('config').returns({});
     const wrapper = renderComponent();
     const expected = (
-      <div className="inspector-config--no-config">
-        No configuration options.
-      </div>);
+      <div className="inspector-config--no-config">No configuration options.</div>
+    );
     assert.compareJSX(wrapper.find('.inspector-config--no-config'), expected);
   });
 
@@ -150,9 +163,18 @@ describe('Configuration', function() {
       getServiceByName: sinon.stub().returns(null),
       setConfig
     });
-    wrapper.find('StringConfig').props().onChange();
-    wrapper.find('BooleanConfig').props().onChange();
-    wrapper.find('.inspector-config__buttons ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('StringConfig')
+      .props()
+      .onChange();
+    wrapper
+      .find('BooleanConfig')
+      .props()
+      .onChange();
+    wrapper
+      .find('.inspector-config__buttons ButtonRow')
+      .prop('buttons')[1]
+      .action();
     assert.equal(setConfig.callCount, 1);
     var args = setConfig.args[0];
     assert.strictEqual(args.length, 3);
@@ -164,7 +186,9 @@ describe('Configuration', function() {
         inspector: {
           id: 'cs:trusty/ghost',
           activeComponent: undefined
-        }}});
+        }
+      }
+    });
   });
 
   it('can change the service name for ghost services', function() {
@@ -175,8 +199,15 @@ describe('Configuration', function() {
       updateServiceUnitsDisplayname: updateUnit
     });
     service.get.withArgs('id').returns('abc123$');
-    wrapper.find('StringConfig').at(0).props().onChange();
-    wrapper.find('.inspector-config__buttons ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('StringConfig')
+      .at(0)
+      .props()
+      .onChange();
+    wrapper
+      .find('.inspector-config__buttons ButtonRow')
+      .prop('buttons')[1]
+      .action();
     assert.equal(service.set.callCount, 1);
     assert.deepEqual(service.set.args[0], ['name', 'mysql2']);
     // Calls to update then unit names.
@@ -199,15 +230,22 @@ describe('Configuration', function() {
           disabled={false}
           onChange={wrapper.find('.inspector-config__select').prop('onChange')}
           title={undefined}
-          value='trusty'>
-          {[<option key="precise" value="precise">precise</option>,
-            <option key="trusty" value="trusty">trusty</option>]}
+          value="trusty"
+        >
+          {[
+            <option key="precise" value="precise">
+              precise
+            </option>,
+            <option key="trusty" value="trusty">
+              trusty
+            </option>
+          ]}
         </select>
         <span className="inspector-config__series-select-description">
-          Choose the series to deploy. This cannot be
-          changed once the application is deployed.
+          Choose the series to deploy. This cannot be changed once the application is deployed.
         </span>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-config__series-select'), expected);
   });
 
@@ -253,7 +291,8 @@ describe('Configuration', function() {
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         machines: ''
-      }});
+      }
+    });
   });
 
   it('stops setting changes if service name already exists', function() {
@@ -266,8 +305,15 @@ describe('Configuration', function() {
       getServiceByName,
       updateUnit
     });
-    wrapper.find('StringConfig').at(0).props().onChange();
-    wrapper.find('.inspector-config__buttons ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('StringConfig')
+      .at(0)
+      .props()
+      .onChange();
+    wrapper
+      .find('.inspector-config__buttons ButtonRow')
+      .prop('buttons')[1]
+      .action();
     // Make sure it emits a notification if the name exists.
     assert.equal(addNotification.callCount, 1);
     // Make sure the service name and config wasn't updated.
@@ -287,7 +333,10 @@ describe('Configuration', function() {
       updateUnit
     });
     const save = wrapper.find('.inspector-config__buttons ButtonRow').prop('buttons')[1];
-    const stringConfig = wrapper.find('StringConfig').at(0).props();
+    const stringConfig = wrapper
+      .find('StringConfig')
+      .at(0)
+      .props();
     const instance = wrapper.instance();
     instance.refs.ServiceName.getValue.returns('');
     stringConfig.onChange();
@@ -322,21 +371,29 @@ describe('Configuration', function() {
   it('can handle cancelling the changes', function() {
     var changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('.inspector-config__buttons ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('.inspector-config__buttons ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
         inspector: {
           id: 'cs:trusty/ghost',
           activeComponent: undefined
-        }}});
+        }
+      }
+    });
   });
 
   it('can open the file dialog when the button is clicked', function() {
     var changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
     const instance = wrapper.instance();
-    wrapper.find('.inspector-config__config-file ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('.inspector-config__config-file ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(instance.refs.file.click.callCount, 1);
   });
 
@@ -375,8 +432,20 @@ describe('Configuration', function() {
     acl.isReadOnly = sinon.stub().returns(true);
     service.get.withArgs('id').returns('abc123$');
     const wrapper = renderComponent();
-    assert.strictEqual(wrapper.find('StringConfig').at(0).prop('disabled'), true);
-    assert.strictEqual(wrapper.find('StringConfig').at(1).prop('disabled'), true);
+    assert.strictEqual(
+      wrapper
+        .find('StringConfig')
+        .at(0)
+        .prop('disabled'),
+      true
+    );
+    assert.strictEqual(
+      wrapper
+        .find('StringConfig')
+        .at(1)
+        .prop('disabled'),
+      true
+    );
     assert.strictEqual(wrapper.find('BooleanConfig').prop('disabled'), true);
     assert.strictEqual(wrapper.find('input').prop('disabled'), true);
   });

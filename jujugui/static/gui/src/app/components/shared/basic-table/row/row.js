@@ -25,8 +25,10 @@ class BasicTableRow extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {expandedContentExpanded} = this.props;
-    if (expandedContentExpanded !== undefined &&
-      expandedContentExpanded !== this.state.expanded) {
+    if (
+      expandedContentExpanded !== undefined &&
+      expandedContentExpanded !== this.state.expanded
+    ) {
       this.setState({expanded: expandedContentExpanded});
     }
   }
@@ -65,7 +67,9 @@ class BasicTableRow extends React.Component {
       <a
         className="basic-table__row-link"
         href={clickURL}
-        onClick={onClick && this._handleRowClick.bind(this, onClick)} />);
+        onClick={onClick && this._handleRowClick.bind(this, onClick)}
+      />
+    );
   }
 
   /**
@@ -87,7 +91,9 @@ class BasicTableRow extends React.Component {
         content={column.content}
         isHeader={isHeader}
         key={index}
-        link={this._generateAnchor()} />);
+        link={this._generateAnchor()}
+      />
+    );
   }
 
   /**
@@ -108,9 +114,7 @@ class BasicTableRow extends React.Component {
   */
   _isRowClickable() {
     const {rowClickable} = this.props;
-    return (
-      rowClickable !== undefined ? rowClickable : !!this.props.expandedContent
-    );
+    return rowClickable !== undefined ? rowClickable : !!this.props.expandedContent;
   }
 
   render() {
@@ -124,13 +128,10 @@ class BasicTableRow extends React.Component {
     });
     const onClick = this._isRowClickable() ? this._toggleExpanded.bind(this) : null;
     return (
-      <tr
-        className={classes}
-        onClick={onClick}
-        role="button"
-        tabIndex="0">
+      <tr className={classes} onClick={onClick} role="button" tabIndex="0">
         {this._generateContent()}
-      </tr>);
+      </tr>
+    );
   }
 }
 
@@ -143,11 +144,12 @@ BasicTableRow.propTypes = {
   classes: PropTypes.array,
   // A function to call when a row is clicked.
   clickURL: PropTypes.string,
-  columns: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.node,
-    // The extra classes to apply to the column.
-    classes: PropTypes.arrayOf(PropTypes.string)
-  }).isRequired
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      content: PropTypes.node,
+      // The extra classes to apply to the column.
+      classes: PropTypes.arrayOf(PropTypes.string)
+    }).isRequired
   ).isRequired,
   // Content to be displayed when the row is toggled.
   expandedContent: PropTypes.any,

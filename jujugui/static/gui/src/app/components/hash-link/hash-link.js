@@ -19,16 +19,12 @@ class HashLink extends React.Component {
 
   render() {
     return (
-      <div
-        className="hash-link"
-        onClick={this._handleClick.bind(this)}>
-        <SvgIcon
-          name="anchor_16"
-          size="16" />
+      <div className="hash-link" onClick={this._handleClick.bind(this)}>
+        <SvgIcon name="anchor_16" size="16" />
       </div>
     );
   }
-};
+}
 
 HashLink.propTypes = {
   changeState: PropTypes.func.isRequired,

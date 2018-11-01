@@ -23,31 +23,39 @@ function generateScript(isBundle, isDD) {
     id = 'django-cluster';
   }
   const dataDD = isDD ? 'data-dd' : '';
-  return '<script ' +
+  return (
+    '<script ' +
     'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
-    '<div class="juju-card" '+dataDD+' data-id="'+id+'"></div>';
+    '<div class="juju-card" ' +
+    dataDD +
+    ' data-id="' +
+    id +
+    '"></div>'
+  );
 }
 
 describe('EntityContent', function() {
   let charmstore, mockEntity;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EntityContent
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      charmstore={options.charmstore || charmstore}
-      clearLightbox={options.clearLightbox || sinon.stub()}
-      displayLightbox={options.displayLightbox || sinon.stub()}
-      entityModel={options.entityModel || mockEntity}
-      flags={options.flags}
-      hash={options.hash || 'readme'}
-      hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
-      plans={options.plans}
-      scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      showTerms={options.showTerms || sinon.stub()}
-      staticURL={options.staticURL || 'http://example.com'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EntityContent
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        charmstore={options.charmstore || charmstore}
+        clearLightbox={options.clearLightbox || sinon.stub()}
+        displayLightbox={options.displayLightbox || sinon.stub()}
+        entityModel={options.entityModel || mockEntity}
+        flags={options.flags}
+        hash={options.hash || 'readme'}
+        hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
+        plans={options.plans}
+        scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        showTerms={options.showTerms || sinon.stub()}
+        staticURL={options.staticURL || 'http://example.com'}
+      />
+    );
 
   beforeEach(function() {
     mockEntity = jsTestUtils.makeEntity();
@@ -77,16 +85,20 @@ describe('EntityContent', function() {
               <EntityContentDescription
                 changeState={sinon.stub()}
                 description={description}
-                includeHeading={true} />
+                includeHeading={true}
+              />
               <div className="entity-content__terms">
                 <div className="entity-content__metadata">
-                  <h4 className="entity-content__metadata-title">
-                    Tags:
-                  </h4>&nbsp;
+                  <h4 className="entity-content__metadata-title">Tags:</h4>
+                  &nbsp;
                   <a
                     className="link link--cold"
                     data-id="database"
-                    onClick={wrapper.find('.link').at(0).prop('onClick')}>
+                    onClick={wrapper
+                      .find('.link')
+                      .at(0)
+                      .prop('onClick')}
+                  >
                     database
                   </a>
                 </div>
@@ -97,13 +109,10 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 getFile={sinon.stub()}
                 hash="readme"
-                scrollCharmbrowser={sinon.stub()} />
-              <div
-                className="entity-content__configuration"
-                id="configuration">
-                <h3 className="entity-content__header">
-                  Configuration
-                </h3>
+                scrollCharmbrowser={sinon.stub()}
+              />
+              <div className="entity-content__configuration" id="configuration">
+                <h3 className="entity-content__header">Configuration</h3>
                 <dl>
                   <EntityContentConfigOption
                     option={{
@@ -111,29 +120,30 @@ describe('EntityContent', function() {
                       description: 'Your username',
                       name: 'username',
                       type: 'string'
-                    }} />
+                    }}
+                  />
                   <EntityContentConfigOption
                     option={{
                       default: 'abc123',
                       description: 'Your password',
                       name: 'password',
                       type: 'string'
-                    }} />
+                    }}
+                  />
                 </dl>
               </div>
             </div>
             <div className="four-col last-col">
               {null}
               <div className="section section__contribute">
-                <h3 className="section__title">
-                  Contribute
-                </h3>
+                <h3 className="section__title">Contribute</h3>
                 <ul className="section__list">
                   <li className="section__list-item">
                     <a
                       className="link link--cold"
                       href="https://bugs.launchpad.net/charms/+source/django"
-                      target="_blank">
+                      target="_blank"
+                    >
                       Submit a bug
                     </a>
                   </li>
@@ -143,31 +153,29 @@ describe('EntityContent', function() {
               <EntityResources
                 apiUrl={charmstore.url}
                 entityId={mockEntity.get('id')}
-                resources={[{resource: 'one'}]} />
+                resources={[{resource: 'one'}]}
+              />
               <EntityContentRelations
                 changeState={sinon.stub()}
-                relations={mockEntity.get('relations')} />
-              <EntityFiles
-                apiUrl={charmstore.url}
-                entityModel={mockEntity} />
+                relations={mockEntity.get('relations')}
+              />
+              <EntityFiles apiUrl={charmstore.url} entityModel={mockEntity} />
               <div className="entity-content__card section clearfix">
-                <h3 className="section__title">
-                  Embed this charm
-                </h3>
+                <h3 className="section__title">Embed this charm</h3>
                 <p>
                   Add this card to your website by copying the code below.&nbsp;
                   <a
                     className="entity-content__card-cta"
                     href="https://jujucharms.com/community/cards"
-                    target="_blank">
+                    target="_blank"
+                  >
                     Learn more
-                  </a>.
+                  </a>
+                  .
                 </p>
-                <CopyToClipboard
-                  className="copy-to-clipboard"
-                  value={script} />
+                <CopyToClipboard className="copy-to-clipboard" value={script} />
                 <h4>Preview</h4>
-                <div className="juju-card" data-id="trusty/django-123"></div>
+                <div className="juju-card" data-id="trusty/django-123" />
               </div>
             </div>
           </div>
@@ -183,8 +191,12 @@ describe('EntityContent', function() {
     });
     assert.equal(wrapper.find('.juju-card').prop('data-dd'), true);
     assert.equal(
-      wrapper.find('.copy-to-clipboard').prop('value').includes('data-dd'),
-      true);
+      wrapper
+        .find('.copy-to-clipboard')
+        .prop('value')
+        .includes('data-dd'),
+      true
+    );
   });
 
   it('can display a charm with terms', function() {
@@ -205,20 +217,17 @@ describe('EntityContent', function() {
     const links = terms.find('.link');
     const expected = (
       <div className="entity-content__metadata">
-        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
-        <a
-          className="link link--cold"
-          key="terms1"
-          onClick={links.at(0).prop('onClick')}>
-            terms1
-        </a>{', '}
-        <a
-          className="link link--cold"
-          key="terms2"
-          onClick={links.at(1).prop('onClick')}>
-            terms2
+        <h4 className="entity-content__metadata-title">Terms:</h4>
+        &nbsp;
+        <a className="link link--cold" key="terms1" onClick={links.at(0).prop('onClick')}>
+          terms1
         </a>
-      </div>);
+        {', '}
+        <a className="link link--cold" key="terms2" onClick={links.at(1).prop('onClick')}>
+          terms2
+        </a>
+      </div>
+    );
     assert.compareJSX(terms, expected);
   });
 
@@ -236,14 +245,21 @@ describe('EntityContent', function() {
     const wrapper = renderComponent({
       showTerms
     });
-    wrapper.find('.entity-content__metadata').at(1).find('.link').at(1).simulate('click');
+    wrapper
+      .find('.entity-content__metadata')
+      .at(1)
+      .find('.link')
+      .at(1)
+      .simulate('click');
     wrapper.update();
     const popup = wrapper.find('TermsPopup');
     assert.equal(popup.length, 1);
-    assert.deepEqual(popup.prop('terms'), [{
-      name: 'terms2',
-      revision: 10
-    }]);
+    assert.deepEqual(popup.prop('terms'), [
+      {
+        name: 'terms2',
+        revision: 10
+      }
+    ]);
   });
 
   it('can display a spinner when loading terms', function() {
@@ -255,15 +271,20 @@ describe('EntityContent', function() {
     });
     const expected = (
       <div className="entity-content__metadata">
-        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
+        <h4 className="entity-content__metadata-title">Terms:</h4>
+        &nbsp;
         <Spinner />
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.entity-content__metadata').at(1), expected);
   });
 
   it('can handle errors when loading terms', function() {
     mockEntity.set('terms', ['term1', 'term2']);
-    const showTerms = sinon.stub().onFirstCall().callsArgWith(2, 'Uh oh', null);
+    const showTerms = sinon
+      .stub()
+      .onFirstCall()
+      .callsArgWith(2, 'Uh oh', null);
     const addNotification = sinon.stub();
     renderComponent({
       addNotification,
@@ -294,28 +315,21 @@ describe('EntityContent', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="section section__contribute">
-        <h3 className="section__title">
-          Contribute
-        </h3>
+        <h3 className="section__title">Contribute</h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a
-              className="link link--cold"
-              href="http://example.com/bugs"
-              target="_blank">
+            <a className="link link--cold" href="http://example.com/bugs" target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a
-              className="link link--cold"
-              href="http://example.com/"
-              target="_blank">
+            <a className="link link--cold" href="http://example.com/" target="_blank">
               Project homepage
             </a>
           </li>
         </ul>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.section__contribute'), expected);
   });
 
@@ -339,148 +353,114 @@ describe('EntityContent', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="section section__contribute">
-        <h3 className="section__title">
-          Contribute
-        </h3>
+        <h3 className="section__title">Contribute</h3>
         <ul className="section__list">
           <li className="section__list-item">
-            <a
-              className="link link--cold"
-              href="http://example.com/bugs"
-              target="_blank">
+            <a className="link link--cold" href="http://example.com/bugs" target="_blank">
               Submit a bug
             </a>
           </li>
           <li className="section__list-item">
-            <a
-              className="link link--cold"
-              href="http://example.com/"
-              target="_blank">
+            <a className="link link--cold" href="http://example.com/" target="_blank">
               Project homepage
             </a>
           </li>
         </ul>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.section__contribute'), expected);
   });
 
-  it('doesn\'t show relations when they don\'t exist', function() {
+  it("doesn't show relations when they don't exist", function() {
     mockEntity.set('relations', {requires: {}, provides: {}});
     const wrapper = renderComponent();
     assert.equal(wrapper.find('EntityContentRelations').length, 0);
   });
 
   it('can display plans', function() {
-    const plans = [{
-      url: 'plan1',
-      price: 'test/price1',
-      description: 'description1'
-    }, {
-      url: 'plan2',
-      price: 'price2;',
-      description: 'description2'
-    }, {
-      url: 'plan3',
-      price: 'test/price3;price3b',
-      description: 'description3'
-    }];
+    const plans = [
+      {
+        url: 'plan1',
+        price: 'test/price1',
+        description: 'description1'
+      },
+      {
+        url: 'plan2',
+        price: 'price2;',
+        description: 'description2'
+      },
+      {
+        url: 'plan3',
+        price: 'test/price3;price3b',
+        description: 'description3'
+      }
+    ];
     mockEntity.set('options', null);
     const wrapper = renderComponent({
       hasPlans: true,
       plans
     });
     const expected = (
-      <div
-        className="row entity-content__plans"
-        id="plans">
+      <div className="row entity-content__plans" id="plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
             <div className="equal-height">
               {[
-                <div
-                  className="entity-content__plan four-col"
-                  key="plan10">
+                <div className="entity-content__plan four-col" key="plan10">
                   <div className="entity-content__plan-content">
-                    <h3 className="entity-content__plan-title">
-                      plan1
-                    </h3>
+                    <h3 className="entity-content__plan-title">plan1</h3>
                     <ul className="entity-content__plan-price">
-                      {[<li
-                        className="entity-content__plan-price-item"
-                        key="testprice10">
-                        <span className="entity-content__plan-price-amount">
-                          test
-                        </span>
-                        <span className="entity-content__plan-price-quantity">
-                          / {'price1'}
-                        </span>
-                      </li>]}
+                      {[
+                        <li className="entity-content__plan-price-item" key="testprice10">
+                          <span className="entity-content__plan-price-amount">test</span>
+                          <span className="entity-content__plan-price-quantity">
+                            / {'price1'}
+                          </span>
+                        </li>
+                      ]}
                     </ul>
-                    <p className="entity-content__plan-description">
-                      description1
-                    </p>
+                    <p className="entity-content__plan-description">description1</p>
                   </div>
                 </div>,
-                <div
-                  className="entity-content__plan four-col"
-                  key="plan21">
+                <div className="entity-content__plan four-col" key="plan21">
                   <div className="entity-content__plan-content">
-                    <h3 className="entity-content__plan-title">
-                      plan2
-                    </h3>
+                    <h3 className="entity-content__plan-title">plan2</h3>
                     <ul className="entity-content__plan-price">
-                      {[<li
-                        className="entity-content__plan-price-item"
-                        key="price20">
-                        <span className="entity-content__plan-price-amount">
-                          price2
-                        </span>
-                        {undefined}
-                      </li>]}
+                      {[
+                        <li className="entity-content__plan-price-item" key="price20">
+                          <span className="entity-content__plan-price-amount">price2</span>
+                          {undefined}
+                        </li>
+                      ]}
                     </ul>
-                    <p className="entity-content__plan-description">
-                      description2
-                    </p>
+                    <p className="entity-content__plan-description">description2</p>
                   </div>
                 </div>,
-                <div
-                  className="entity-content__plan four-col last-col"
-                  key="plan32">
+                <div className="entity-content__plan four-col last-col" key="plan32">
                   <div className="entity-content__plan-content">
-                    <h3 className="entity-content__plan-title">
-                      plan3
-                    </h3>
+                    <h3 className="entity-content__plan-title">plan3</h3>
                     <ul className="entity-content__plan-price">
-                      <li
-                        className="entity-content__plan-price-item"
-                        key="testprice30">
-                        <span className="entity-content__plan-price-amount">
-                          test
-                        </span>
+                      <li className="entity-content__plan-price-item" key="testprice30">
+                        <span className="entity-content__plan-price-amount">test</span>
                         <span className="entity-content__plan-price-quantity">
                           / {'price3'}
                         </span>
                       </li>
-                      <li
-                        className="entity-content__plan-price-item"
-                        key="price3b1">
-                        <span className="entity-content__plan-price-amount">
-                          price3b
-                        </span>
+                      <li className="entity-content__plan-price-item" key="price3b1">
+                        <span className="entity-content__plan-price-amount">price3b</span>
                         {undefined}
                       </li>
                     </ul>
-                    <p className="entity-content__plan-description">
-                      description3
-                    </p>
+                    <p className="entity-content__plan-description">description3</p>
                   </div>
                 </div>
               ]}
             </div>
           </div>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.entity-content__plans'), expected);
   });
 

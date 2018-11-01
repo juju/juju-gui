@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-
 const keysim = require('keysim');
 const hotkeys = require('./hotkeys');
 const utils = require('./testing-utils');

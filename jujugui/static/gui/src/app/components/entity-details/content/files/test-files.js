@@ -11,15 +11,18 @@ const jsTestUtils = require('../../../../utils/component-test-utils');
 describe('EntityFiles', function() {
   let mockEntity;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EntityFiles
-      apiUrl={options.apiUrl || 'http://example.com/'}
-      entityModel={options.entityModel} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EntityFiles
+        apiUrl={options.apiUrl || 'http://example.com/'}
+        entityModel={options.entityModel}
+      />
+    );
 
   beforeEach(function() {
-    mockEntity = jsTestUtils.makeEntity(
-      false, {files: ['foo.zip', 'bar/foo.txt']});
+    mockEntity = jsTestUtils.makeEntity(false, {
+      files: ['foo.zip', 'bar/foo.txt']
+    });
   });
 
   afterEach(function() {
@@ -39,7 +42,8 @@ describe('EntityFiles', function() {
           className="link link--cold"
           href={archiveUrl + '/foo.zip'}
           target="_blank"
-          title="foo.zip">
+          title="foo.zip"
+        >
           foo.zip
         </a>
       </li>,
@@ -47,27 +51,33 @@ describe('EntityFiles', function() {
         className="p-list-tree__item p-list-tree__item--group"
         key="/bar"
         tabIndex="0"
-        title="/bar">
+        title="/bar"
+      >
         <button
           aria-controls="/bar"
           aria-expanded="false"
           className="p-list-tree__toggle"
           id="/bar-toggle"
           onClick={wrapper.find('button').prop('onClick')}
-          role="tab">/bar</button>
+          role="tab"
+        >
+          /bar
+        </button>
         <ul
           aria-hidden="true"
           aria-labelledby="/bar-toggle"
           className="p-list-tree"
           id="/bar"
-          role="tabpanel">
+          role="tabpanel"
+        >
           {[
             <li className="p-list-tree__item" key="foo.txt">
               <a
                 className="link link--cold"
                 href={archiveUrl + '/bar/foo.txt'}
                 target="_blank"
-                title="foo.txt">
+                title="foo.txt"
+              >
                 foo.txt
               </a>
             </li>
@@ -77,14 +87,8 @@ describe('EntityFiles', function() {
     ];
     var expected = (
       <div className="entity-files section" id="files">
-        <h3 className="section__title">
-          Files
-        </h3>
-        <ul
-          aria-multiselectable="true"
-          className="p-list-tree"
-          ref="files"
-          role="tablist">
+        <h3 className="section__title">Files</h3>
+        <ul aria-multiselectable="true" className="p-list-tree" ref="files" role="tablist">
           {fileItems}
         </ul>
         <ul className="section__list">
@@ -93,7 +97,8 @@ describe('EntityFiles', function() {
               className="button--inline-neutral entity-files__link"
               href="https://code.launchpad.net/django/code"
               ref="codeLink"
-              target="_blank">
+              target="_blank"
+            >
               View code
             </a>
           </li>
@@ -101,7 +106,8 @@ describe('EntityFiles', function() {
             <a
               className="button--inline-neutral entity-files__link"
               href={archiveUrl}
-              target="_blank">
+              target="_blank"
+            >
               Download .zip
             </a>
           </li>
@@ -138,7 +144,13 @@ describe('EntityFiles', function() {
       apiUrl,
       entityModel: mockEntity
     });
-    assert.equal(wrapper.find('.link').at(0).prop('href'), expectedURL);
+    assert.equal(
+      wrapper
+        .find('.link')
+        .at(0)
+        .prop('href'),
+      expectedURL
+    );
   };
 
   it('renders file URLs correctly for promulgated bundles', function() {
@@ -146,35 +158,29 @@ describe('EntityFiles', function() {
   });
 
   it('renders file URLs correctly for promulgated charms', function() {
-    checkFileURL(
-      'charm', 'cs:xenial/wordpress', '/xenial/wordpress/archive/foo.zip');
+    checkFileURL('charm', 'cs:xenial/wordpress', '/xenial/wordpress/archive/foo.zip');
   });
 
   it('renders file URLs correctly for user owned bundles', function() {
     checkFileURL(
-      'bundle', 'cs:~who/bundle/django-47',
-      '/~who/bundle/django-47/archive/foo.zip');
+      'bundle',
+      'cs:~who/bundle/django-47',
+      '/~who/bundle/django-47/archive/foo.zip'
+    );
   });
 
   it('renders file URLs correctly for user owned charms', function() {
-    checkFileURL(
-      'charm', 'cs:~dalek/redis-0', '/~dalek/redis-0/archive/foo.zip');
+    checkFileURL('charm', 'cs:~dalek/redis-0', '/~dalek/redis-0/archive/foo.zip');
   });
 
   it('properly builds a tree structure from file paths', function() {
     // Since there's recursion logic in this function, test it
     // directly for easier debugging.
     var component = new EntityFiles();
-    var files = [
-      '/foo/bar/baz.zip',
-      '/foo/bar/slo.tar.gz',
-      '/foo/da.txt',
-      '/a.txt',
-      '/b.txt'
-    ];
+    var files = ['/foo/bar/baz.zip', '/foo/bar/slo.tar.gz', '/foo/da.txt', '/a.txt', '/b.txt'];
     var expectedTree = {
-      'foo': {
-        'bar': {
+      foo: {
+        bar: {
           'baz.zip': null,
           'slo.tar.gz': null
         },

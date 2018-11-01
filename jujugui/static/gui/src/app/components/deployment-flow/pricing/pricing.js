@@ -18,28 +18,26 @@ const DeploymentPricing = props => {
         addNotification={props.addNotification}
         applications={props.applications}
         charms={props.charms}
-        listPlansForCharm={props.listPlansForCharm} />
+        listPlansForCharm={props.listPlansForCharm}
+      />
       <div className="twelve-col">
         <div className="six-col deployment-pricing__secondary-text">
           Monthly cost is determined by price plan, support level, and by usage.
         </div>
         <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
           Estimated application cost:
-          <span className="deployment-pricing__estimated-price-number">
-            ${props.estimate}
-          </span>
+          <span className="deployment-pricing__estimated-price-number">${props.estimate}</span>
         </div>
       </div>
-      <div
-        className="twelve-col no-margin-bottom"
-        id="support-level">
+      <div className="twelve-col no-margin-bottom" id="support-level">
         <div className="six-col deployment-pricing__support-title">
           Choose your level of support
         </div>
         <div className="six-col last-col u-align--right deployment-pricing__estimated-price">
           <a
             href="https://www.ubuntu.com/support/plans-and-pricing#ua-support"
-            target="_blank">
+            target="_blank"
+          >
             Support details
           </a>
         </div>
@@ -47,13 +45,15 @@ const DeploymentPricing = props => {
       <DeploymentSupportSelection
         getSLAMachineRates={props.getSLAMachineRates}
         machineCount={props.machineCount}
-        setSLA={props.setSLA} />
+        setSLA={props.setSLA}
+      />
       <div className="twelve-col no-margin-bottom">
         <div className="six-col no-margin-bottom deployment-pricing__secondary-text">
           <strong>
             Estimated costs based on {props.machineCount} {machineLabel}.
-          </strong> Support is billed monthly. You can upgrade the level at any time, and
-          downgrade at the end of a month.
+          </strong>{' '}
+          Support is billed monthly. You can upgrade the level at any time, and downgrade at
+          the end of a month.
         </div>
         <div className="six-col last-col u-align--right no-margin-bottom">
           <Link
@@ -63,7 +63,8 @@ const DeploymentPricing = props => {
                 deploy: ''
               }
             }}
-            generatePath={props.generatePath}>
+            generatePath={props.generatePath}
+          >
             Unsupported version
           </Link>
         </div>

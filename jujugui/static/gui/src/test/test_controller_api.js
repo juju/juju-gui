@@ -39,10 +39,14 @@ describe('Controller API', function() {
     return new function() {
       return {
         store: {},
-        setItem: function(name, val) { this.store['name'] = val; },
-        getItem: function(name) { return this.store['name'] || null; }
+        setItem: function(name, val) {
+          this.store['name'] = val;
+        },
+        getItem: function(name) {
+          return this.store['name'] || null;
+        }
       };
-    };
+    }();
   };
 
   beforeEach(function() {
@@ -50,7 +54,8 @@ describe('Controller API', function() {
     user.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
     controllerAPI = new juju.ControllerAPI({
-      conn: conn, user: user
+      conn: conn,
+      user: user
     });
     controllerAPI.connect();
     controllerAPI.set('facades', {
@@ -69,9 +74,15 @@ describe('Controller API', function() {
   });
 
   afterEach(function() {
-    cleanups.forEach(function(action) {action();});
-    if (controllerAPI && controllerAPI.destroy) {controllerAPI.destroy();}
-    if (conn && conn.destroy) {conn.destroy();}
+    cleanups.forEach(function(action) {
+      action();
+    });
+    if (controllerAPI && controllerAPI.destroy) {
+      controllerAPI.destroy();
+    }
+    if (conn && conn.destroy) {
+      conn.destroy();
+    }
   });
 
   var noopHandleLogin = function() {
@@ -84,7 +95,7 @@ describe('Controller API', function() {
 
   describe('findFacadeVersion', function() {
     beforeEach(function() {
-      controllerAPI.set('facades', {'Test': [0, 1]});
+      controllerAPI.set('facades', {Test: [0, 1]});
     });
 
     afterEach(function() {});
@@ -186,7 +197,6 @@ describe('Controller API', function() {
   });
 
   describe('login', function() {
-
     beforeEach(function() {
       controllerAPI.userIsAuthenticated = false;
     });
@@ -208,7 +218,9 @@ describe('Controller API', function() {
     it('sends the correct login message for external users', () => {
       noopHandleLogin();
       controllerAPI.get('user').controller = {
-        user: 'who@external', password: 'pswd'};
+        user: 'who@external',
+        password: 'pswd'
+      };
       controllerAPI.login();
       const lastMessage = conn.last_message();
       const expected = {
@@ -225,9 +237,11 @@ describe('Controller API', function() {
       controllerAPI.login();
       // Assume login to be the first request.
       conn.msg({'request-id': 1, error: 'Invalid user or password'});
-      assert.deepEqual(
-        controllerAPI.get('user').controller,
-        {user: '', password: '', macaroons: null});
+      assert.deepEqual(controllerAPI.get('user').controller, {
+        user: '',
+        password: '',
+        macaroons: null
+      });
       assert.isTrue(controllerAPI.failedAuthentication);
     });
 
@@ -294,30 +308,28 @@ describe('Controller API', function() {
     it('stores user information', function() {
       controllerAPI.login();
       // Assume login to be the first request.
-      conn.msg({'request-id': 1,
+      conn.msg({
+        'request-id': 1,
         response: {
-          facades: [
-            {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [4]}
-          ],
+          facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [4]}],
           'controller-tag': 'controller-42',
           'user-info': {'controller-access': 'add-model', 'model-access': ''}
-        }});
+        }
+      });
       assert.strictEqual(controllerAPI.get('controllerAccess'), 'add-model');
     });
 
     it('stores user information (legacy addmodel)', function() {
       controllerAPI.login();
       // Assume login to be the first request.
-      conn.msg({'request-id': 1,
+      conn.msg({
+        'request-id': 1,
         response: {
-          facades: [
-            {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [4]}
-          ],
+          facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [4]}],
           'controller-tag': 'controller-42',
           'user-info': {'controller-access': 'addmodel', 'model-access': ''}
-        }});
+        }
+      });
       assert.strictEqual(controllerAPI.get('controllerAccess'), 'add-model');
     });
   });
@@ -416,8 +428,7 @@ describe('Controller API', function() {
       assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
       var requestId = assertRequest(conn.last_message());
       conn.msg({'request-id': requestId, response: {}});
-      assert.strictEqual(
-        error, 'authentication failed: use a proper Juju 2 release');
+      assert.strictEqual(error, 'authentication failed: use a proper Juju 2 release');
     });
 
     it('succeeds after discharge', function() {
@@ -433,8 +444,7 @@ describe('Controller API', function() {
         response: {'discharge-required': 'discharge-required-macaroon'}
       });
       assert.strictEqual(conn.messages.length, 2, 'unexpected msg number');
-      requestId = assertRequest(
-        conn.last_message(), ['macaroon', 'discharge']);
+      requestId = assertRequest(conn.last_message(), ['macaroon', 'discharge']);
       conn.msg({
         'request-id': requestId,
         response: {
@@ -459,20 +469,17 @@ describe('Controller API', function() {
 
     it('succeeds with already stored macaroons', function() {
       controllerAPI.get('user').controller = {
-        macaroons: ['already stored', 'macaroons']};
+        macaroons: ['already stored', 'macaroons']
+      };
       controllerAPI.loginWithMacaroon(makeBakery(), callback);
       assert.strictEqual(conn.messages.length, 1, 'unexpected msg number');
-      const requestId = assertRequest(
-        conn.last_message(), ['already stored', 'macaroons']);
+      const requestId = assertRequest(conn.last_message(), ['already stored', 'macaroons']);
       conn.msg({
         'request-id': requestId,
         response: {
           'user-info': {identity: 'user-dalek'},
           'controller-tag': 'controller-42',
-          facades: [
-            {name: 'Client', versions: [0]},
-            {name: 'ModelManager', versions: [4]}
-          ]
+          facades: [{name: 'Client', versions: [0]}, {name: 'ModelManager', versions: [4]}]
         }
       });
       assert.strictEqual(error, null);
@@ -485,7 +492,6 @@ describe('Controller API', function() {
         ModelManager: [4]
       });
     });
-
   });
 
   describe('websocket connection', function() {
@@ -637,9 +643,9 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 4,
           request: 'DestroyModels',
-          params: {models: [
-            {'model-tag': 'model-default', 'destroy-storage': true}
-          ]},
+          params: {
+            models: [{'model-tag': 'model-default', 'destroy-storage': true}]
+          },
           'request-id': 1
         });
         done();
@@ -663,9 +669,9 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 3,
           request: 'DestroyModels',
-          params: {entities: [
-            {tag: 'model-default', 'destroy-storage': true}
-          ]},
+          params: {
+            entities: [{tag: 'model-default', 'destroy-storage': true}]
+          },
           'request-id': 1
         });
         done();
@@ -688,10 +694,12 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 4,
           request: 'DestroyModels',
-          params: {models: [
-            {'model-tag': 'model-test-1', 'destroy-storage': true},
-            {'model-tag': 'model-test-2', 'destroy-storage': true}
-          ]},
+          params: {
+            models: [
+              {'model-tag': 'model-test-1', 'destroy-storage': true},
+              {'model-tag': 'model-test-2', 'destroy-storage': true}
+            ]
+          },
           'request-id': 1
         });
         done();
@@ -717,11 +725,13 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({
         'request-id': 1,
-        response: {results: [
-          {error: {message: 'bad wolf'}},
-          {},
-          {error: {message: 'end of the universe'}}
-        ]}
+        response: {
+          results: [
+            {error: {message: 'bad wolf'}},
+            {},
+            {error: {message: 'end of the universe'}}
+          ]
+        }
       });
     });
 
@@ -786,8 +796,7 @@ describe('Controller API', function() {
         assert.strictEqual(result.life, 'alive');
         assert.strictEqual(result.owner, 'admin@local');
         assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(
-          result.isController, false, 'unexpected controller model');
+        assert.strictEqual(result.isController, false, 'unexpected controller model');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
@@ -802,39 +811,46 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'trusty',
-              name: 'admin',
-              'provider-type': 'lxd',
-              uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
-              'agent-version': '42.47.0',
-              sla: {level: 'essential', owner: 'rose'},
-              status: {status: 'available', info: 'status info'},
-              'controller-uuid': '5bea955d-7a43-47d3-89dd',
-              'cloud-credential-tag': 'cloudcred-aws_who@external_who',
-              'cloud-region': 'gallifrey',
-              'cloud-tag': 'cloud-aws',
-              machines: [1, 2, 3],
-              users: [{
-                user: 'who@external',
-                'display-name': 'doctor who',
-                'last-connection': '2000-01-01T00:00:00Z',
-                access: 'admin'
-              }, {
-                error: {message: 'bad wolf'}
-              }, {
-                user: 'admin',
-                'display-name': 'Admin',
-                access: 'read'
-              }, {
-                user: 'dalek@skaro',
-                access: 'write'
-              }],
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
+          results: [
+            {
+              result: {
+                'default-series': 'trusty',
+                name: 'admin',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
+                'agent-version': '42.47.0',
+                sla: {level: 'essential', owner: 'rose'},
+                status: {status: 'available', info: 'status info'},
+                'controller-uuid': '5bea955d-7a43-47d3-89dd',
+                'cloud-credential-tag': 'cloudcred-aws_who@external_who',
+                'cloud-region': 'gallifrey',
+                'cloud-tag': 'cloud-aws',
+                machines: [1, 2, 3],
+                users: [
+                  {
+                    user: 'who@external',
+                    'display-name': 'doctor who',
+                    'last-connection': '2000-01-01T00:00:00Z',
+                    access: 'admin'
+                  },
+                  {
+                    error: {message: 'bad wolf'}
+                  },
+                  {
+                    user: 'admin',
+                    'display-name': 'Admin',
+                    access: 'read'
+                  },
+                  {
+                    user: 'dalek@skaro',
+                    access: 'write'
+                  }
+                ],
+                life: 'alive',
+                'owner-tag': 'user-admin@local'
+              }
             }
-          }]
+          ]
         }
       });
     });
@@ -844,26 +860,27 @@ describe('Controller API', function() {
       const id = '5bea955d-7a43-47d3-89dd-b02c923e';
       controllerAPI.modelInfo([id], (err, models) => {
         const result = models[0];
-        assert.strictEqual(
-          result.isController, true, 'unexpected regular model');
+        assert.strictEqual(result.isController, true, 'unexpected regular model');
         done();
       });
       // Mimic response.
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'trusty',
-              name: 'controller',
-              'provider-type': 'lxd',
-              uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
-              'controller-uuid': '5bea955d-7a43-47d3-89dd',
-              'cloud-tag': 'cloud-aws',
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
+          results: [
+            {
+              result: {
+                'default-series': 'trusty',
+                name: 'controller',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-7a43-47d3-89dd-b02c923e',
+                'controller-uuid': '5bea955d-7a43-47d3-89dd',
+                'cloud-tag': 'cloud-aws',
+                life: 'alive',
+                'owner-tag': 'user-admin@local'
+              }
             }
-          }]
+          ]
         }
       });
     });
@@ -895,8 +912,7 @@ describe('Controller API', function() {
         assert.strictEqual(result1.life, 'alive');
         assert.strictEqual(result1.owner, 'admin@local');
         assert.strictEqual(result1.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result1.isController, false,
-          'unexpected controller model');
+        assert.strictEqual(result1.isController, false, 'unexpected controller model');
         const result2 = models[1];
         assert.strictEqual(result2.id, id2);
         assert.strictEqual(result2.name, 'model2');
@@ -917,17 +933,15 @@ describe('Controller API', function() {
         assert.strictEqual(result2.life, 'dying');
         assert.strictEqual(result2.owner, 'dalek@skaro');
         assert.strictEqual(result2.isAlive, false, 'unexpected alive model');
-        assert.strictEqual(result2.isController, false,
-          'unexpected controller model');
+        assert.strictEqual(result2.isController, false, 'unexpected controller model');
         assert.equal(conn.messages.length, 1);
         assert.deepEqual(conn.last_message(), {
           type: 'ModelManager',
           version: 4,
           request: 'ModelInfo',
-          params: {entities: [
-            {tag: 'model-' + id1},
-            {tag: 'model-' + id2}
-          ]},
+          params: {
+            entities: [{tag: 'model-' + id1}, {tag: 'model-' + id2}]
+          },
           'request-id': 1
         });
         done();
@@ -937,32 +951,35 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'default-series': 'trusty',
-              name: 'model1',
-              'provider-type': 'lxd',
-              uuid: id1,
-              'controller-uuid': id1,
-              'cloud-region': 'east',
-              'cloud-tag': 'cloud-lxd',
-              machines: [1],
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
+          results: [
+            {
+              result: {
+                'default-series': 'trusty',
+                name: 'model1',
+                'provider-type': 'lxd',
+                uuid: id1,
+                'controller-uuid': id1,
+                'cloud-region': 'east',
+                'cloud-tag': 'cloud-lxd',
+                machines: [1],
+                life: 'alive',
+                'owner-tag': 'user-admin@local'
+              }
+            },
+            {
+              result: {
+                'default-series': 'xenial',
+                name: 'model2',
+                'provider-type': 'aws',
+                uuid: id2,
+                'controller-uuid': '5bea955d-7a43-c2',
+                'cloud-credential-tag': 'cloudcred-dalek',
+                'cloud-tag': 'cloud-aws',
+                life: 'dying',
+                'owner-tag': 'user-dalek@skaro'
+              }
             }
-          }, {
-            result: {
-              'default-series': 'xenial',
-              name: 'model2',
-              'provider-type': 'aws',
-              uuid: id2,
-              'controller-uuid': '5bea955d-7a43-c2',
-              'cloud-credential-tag': 'cloudcred-dalek',
-              'cloud-tag': 'cloud-aws',
-              life: 'dying',
-              'owner-tag': 'user-dalek@skaro'
-            }
-          }]
+          ]
         }
       });
     });
@@ -993,9 +1010,11 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            error: {message: 'bad wolf'}
-          }]
+          results: [
+            {
+              error: {message: 'bad wolf'}
+            }
+          ]
         }
       });
     });
@@ -1010,13 +1029,14 @@ describe('Controller API', function() {
       // Mimic response.
       conn.msg({'request-id': 1, response: {results: []}});
     });
-
   });
 
   describe('listModelsWithInfo', function() {
     it('info for a single model', done => {
       controllerAPI.get('user').controller = {
-        user: 'who@external', password: 'tardis'};
+        user: 'who@external',
+        password: 'tardis'
+      };
       // Perform the request.
       controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, null);
@@ -1065,10 +1085,8 @@ describe('Controller API', function() {
         assert.strictEqual(result.life, 'alive');
         assert.strictEqual(result.owner, 'admin@local');
         assert.strictEqual(result.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result.isController, false,
-          'unexpected controller model');
-        assert.deepEqual(
-          result.lastConnection, new Date('2000-01-01T00:00:00Z'));
+        assert.strictEqual(result.isController, false, 'unexpected controller model');
+        assert.deepEqual(result.lastConnection, new Date('2000-01-01T00:00:00Z'));
         assert.equal(conn.messages.length, 2);
         assert.deepEqual(conn.messages[0], {
           type: 'ModelManager',
@@ -1091,60 +1109,71 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          'user-models': [{
-            model: {
-              name: 'admin',
-              'owner-tag': 'user-who',
-              uuid: '5bea955d-1'
-            },
-            'last-connection': 'today'
-          }]
+          'user-models': [
+            {
+              model: {
+                name: 'admin',
+                'owner-tag': 'user-who',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
+            }
+          ]
         }
       });
       // Mimic second response to ModelManager.ModelInfo.
       conn.msg({
         'request-id': 2,
         response: {
-          results: [{
-            result: {
-              'default-series': 'trusty',
-              name: 'admin',
-              'provider-type': 'lxd',
-              uuid: '5bea955d-1',
-              'agent-version': '2.0.0',
-              sla: {level: 'advanced', owner: 'cyberman'},
-              status: {status: 'error', info: 'bad wolf'},
-              'controller-uuid': '5bea955d-c',
-              'cloud-credential-tag': 'cloudcred-aws_who@external_who',
-              'cloud-region': 'gallifrey',
-              'cloud-tag': 'cloud-aws',
-              machines: [{}, {}],
-              users: [{
-                user: 'who@external',
-                'display-name': 'doctor who',
-                'last-connection': '2000-01-01T00:00:00Z',
-                access: 'admin'
-              }, {
-                error: {message: 'bad wolf'}
-              }, {
-                user: 'admin',
-                'display-name': 'Admin',
-                access: 'read'
-              }, {
-                user: 'dalek@skaro',
-                access: 'write'
-              }],
-              life: 'alive',
-              'owner-tag': 'user-admin@local'
+          results: [
+            {
+              result: {
+                'default-series': 'trusty',
+                name: 'admin',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-1',
+                'agent-version': '2.0.0',
+                sla: {level: 'advanced', owner: 'cyberman'},
+                status: {status: 'error', info: 'bad wolf'},
+                'controller-uuid': '5bea955d-c',
+                'cloud-credential-tag': 'cloudcred-aws_who@external_who',
+                'cloud-region': 'gallifrey',
+                'cloud-tag': 'cloud-aws',
+                machines: [{}, {}],
+                users: [
+                  {
+                    user: 'who@external',
+                    'display-name': 'doctor who',
+                    'last-connection': '2000-01-01T00:00:00Z',
+                    access: 'admin'
+                  },
+                  {
+                    error: {message: 'bad wolf'}
+                  },
+                  {
+                    user: 'admin',
+                    'display-name': 'Admin',
+                    access: 'read'
+                  },
+                  {
+                    user: 'dalek@skaro',
+                    access: 'write'
+                  }
+                ],
+                life: 'alive',
+                'owner-tag': 'user-admin@local'
+              }
             }
-          }]
+          ]
         }
       });
     });
 
     it('info for multiple models', done => {
-      controllerAPI.get('user').controller =
-        {user: 'dalek@external', password: 'exterminate'};
+      controllerAPI.get('user').controller = {
+        user: 'dalek@external',
+        password: 'exterminate'
+      };
       // Perform the request.
       controllerAPI.listModelsWithInfo((err, models) => {
         assert.strictEqual(err, null);
@@ -1165,8 +1194,7 @@ describe('Controller API', function() {
         assert.strictEqual(result1.life, 'dead');
         assert.strictEqual(result1.owner, 'dalek@local');
         assert.strictEqual(result1.isAlive, false, 'unexpected alive model');
-        assert.strictEqual(result1.isController, false,
-          'unexpected admin model');
+        assert.strictEqual(result1.isController, false, 'unexpected admin model');
         assert.strictEqual(result1.lastConnection, null);
         const result2 = models[1];
         assert.strictEqual(result2.err, undefined);
@@ -1184,8 +1212,7 @@ describe('Controller API', function() {
         assert.strictEqual(result2.life, 'alive');
         assert.strictEqual(result2.owner, 'who@local');
         assert.strictEqual(result2.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result2.isController, false,
-          'unexpected controller model');
+        assert.strictEqual(result2.isController, false, 'unexpected controller model');
         assert.strictEqual(result2.lastConnection, null);
         const result3 = models[2];
         assert.strictEqual(result3.err, undefined);
@@ -1203,8 +1230,7 @@ describe('Controller API', function() {
         assert.strictEqual(result3.life, 'alive');
         assert.strictEqual(result3.owner, 'cyberman@local');
         assert.strictEqual(result3.isAlive, true, 'unexpected zombie model');
-        assert.strictEqual(result3.isController, false,
-          'unexpected controller model');
+        assert.strictEqual(result3.isController, false, 'unexpected controller model');
         assert.strictEqual(result3.lastConnection, null);
         assert.equal(conn.messages.length, 2);
         assert.deepEqual(conn.messages[0], {
@@ -1218,11 +1244,13 @@ describe('Controller API', function() {
           type: 'ModelManager',
           version: 4,
           request: 'ModelInfo',
-          params: {entities: [
-            {tag: 'model-5bea955d-1'},
-            {tag: 'model-5bea955d-c'},
-            {tag: 'model-5bea955d-3'}
-          ]},
+          params: {
+            entities: [
+              {tag: 'model-5bea955d-1'},
+              {tag: 'model-5bea955d-c'},
+              {tag: 'model-5bea955d-3'}
+            ]
+          },
           'request-id': 2
         });
         done();
@@ -1232,71 +1260,79 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          'user-models': [{
-            model: {
-              name: 'default',
-              'owner-tag': 'user-dalek',
-              uuid: '5bea955d-1'
+          'user-models': [
+            {
+              model: {
+                name: 'default',
+                'owner-tag': 'user-dalek',
+                uuid: '5bea955d-1'
+              }
+            },
+            {
+              model: {
+                name: 'admin',
+                'owner-tag': 'user-who',
+                uuid: '5bea955d-c'
+              }
+            },
+            {
+              model: {
+                name: 'mymodel',
+                'owner-tag': 'user-cyberman',
+                uuid: '5bea955d-3'
+              }
             }
-          }, {
-            model: {
-              name: 'admin',
-              'owner-tag': 'user-who',
-              uuid: '5bea955d-c'
-            }
-          }, {
-            model: {
-              name: 'mymodel',
-              'owner-tag': 'user-cyberman',
-              uuid: '5bea955d-3'
-            }
-          }]
+          ]
         }
       });
       // Mimic second response to ModelManager.ModelInfo.
       conn.msg({
         'request-id': 2,
         response: {
-          results: [{
-            result: {
-              'default-series': 'xenial',
-              name: 'default',
-              'provider-type': 'lxd',
-              uuid: '5bea955d-1',
-              'controller-uuid': '5bea955d-c',
-              'cloud-region': 'localhost',
-              'cloud-credential-tag': 'cloudcred-admin',
-              'cloud-tag': 'cloud-lxd',
-              machines: [{}, {}, {}, {}],
-              life: 'dead',
-              'owner-tag': 'user-dalek@local'
+          results: [
+            {
+              result: {
+                'default-series': 'xenial',
+                name: 'default',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-1',
+                'controller-uuid': '5bea955d-c',
+                'cloud-region': 'localhost',
+                'cloud-credential-tag': 'cloudcred-admin',
+                'cloud-tag': 'cloud-lxd',
+                machines: [{}, {}, {}, {}],
+                life: 'dead',
+                'owner-tag': 'user-dalek@local'
+              }
+            },
+            {
+              result: {
+                'default-series': 'trusty',
+                name: 'admin',
+                'provider-type': 'lxd',
+                uuid: '5bea955d-c',
+                'controller-uuid': '5bea955d-c',
+                'cloud-tag': 'cloud-lxd',
+                machines: [],
+                life: 'alive',
+                'owner-tag': 'user-who@local'
+              }
+            },
+            {
+              result: {
+                'default-series': 'precise',
+                name: 'mymodel',
+                'provider-type': 'aws',
+                uuid: '5bea955d-3',
+                'controller-uuid': '5bea955d-c',
+                'cloud-region': 'east',
+                'cloud-credential-tag': 'cloudcred-admin-aws',
+                'cloud-tag': 'cloud-aws',
+                life: 'alive',
+                'owner-tag': 'user-cyberman@local'
+              }
             }
-          }, {
-            result: {
-              'default-series': 'trusty',
-              name: 'admin',
-              'provider-type': 'lxd',
-              uuid: '5bea955d-c',
-              'controller-uuid': '5bea955d-c',
-              'cloud-tag': 'cloud-lxd',
-              machines: [],
-              life: 'alive',
-              'owner-tag': 'user-who@local'
-            }
-          }, {
-            result: {
-              'default-series': 'precise',
-              name: 'mymodel',
-              'provider-type': 'aws',
-              uuid: '5bea955d-3',
-              'controller-uuid': '5bea955d-c',
-              'cloud-region': 'east',
-              'cloud-credential-tag': 'cloudcred-admin-aws',
-              'cloud-tag': 'cloud-aws',
-              life: 'alive',
-              'owner-tag': 'user-cyberman@local'
-            }
-          }]
+          ]
         }
       });
     });
@@ -1335,14 +1371,16 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          'user-models': [{
-            model: {
-              name: 'default',
-              'owner-tag': 'user-dalek',
-              uuid: '5bea955d-1'
-            },
-            'last-connection': 'today'
-          }]
+          'user-models': [
+            {
+              model: {
+                name: 'default',
+                'owner-tag': 'user-dalek',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
+            }
+          ]
         }
       });
       // Mimic second response to ModelManager.ModelInfo.
@@ -1364,23 +1402,27 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          'user-models': [{
-            model: {
-              name: 'default',
-              'owner-tag': 'user-dalek',
-              uuid: '5bea955d-1'
-            },
-            'last-connection': 'today'
-          }]
+          'user-models': [
+            {
+              model: {
+                name: 'default',
+                'owner-tag': 'user-dalek',
+                uuid: '5bea955d-1'
+              },
+              'last-connection': 'today'
+            }
+          ]
         }
       });
       // Mimic second response to ModelManager.ModelInfo.
       conn.msg({
         'request-id': 2,
         response: {
-          results: [{
-            error: {message: 'bad wolf'}
-          }]
+          results: [
+            {
+              error: {message: 'bad wolf'}
+            }
+          ]
         }
       });
     });
@@ -1562,21 +1604,24 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          'user-models': [{
-            model: {
-              name: 'model1',
-              'owner-tag': 'user-who',
-              uuid: 'unique1'
+          'user-models': [
+            {
+              model: {
+                name: 'model1',
+                'owner-tag': 'user-who',
+                uuid: 'unique1'
+              },
+              'last-connection': 'today'
             },
-            'last-connection': 'today'
-          }, {
-            model: {
-              name: 'model2',
-              'owner-tag': 'user-rose',
-              uuid: 'unique2'
-            },
-            'last-connection': 'yesterday'
-          }]
+            {
+              model: {
+                name: 'model2',
+                'owner-tag': 'user-rose',
+                uuid: 'unique2'
+              },
+              'last-connection': 'yesterday'
+            }
+          ]
         }
       });
     });
@@ -1608,38 +1653,43 @@ describe('Controller API', function() {
       controllerAPI.listClouds((err, clouds) => {
         assert.strictEqual(err, null);
         const expected = {
-          'lxd': {
+          lxd: {
             cloudType: 'lxd',
             authTypes: ['empty'],
             endpoint: 'https://1.2.3.4/lxd-api',
             identityEndpoint: 'https://1.2.3.4/lxd-identity',
             storageEndpoint: 'https://1.2.3.4/lxd-storage',
-            regions: [{
-              name: 'localhost',
-              endpoint: 'https://1.2.3.4/lxd-api-region1',
-              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
-              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
-            }]
+            regions: [
+              {
+                name: 'localhost',
+                endpoint: 'https://1.2.3.4/lxd-api-region1',
+                identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+                storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+              }
+            ]
           },
-          'google': {
+          google: {
             cloudType: 'gce',
             authTypes: ['userpass', 'oauth2'],
             endpoint: 'https://1.2.3.4/google-api',
             identityEndpoint: 'https://1.2.3.4/google-identity',
             storageEndpoint: 'https://1.2.3.4/google-storage',
-            regions: [{
-              name: 'federation space',
-              endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
-              identityEndpoint: 'https://1.2.3.4/lxd-identity-region2',
-              storageEndpoint: 'https://1.2.3.4/lxd-storage-region2'
-            }, {
-              name: 'dominion',
-              endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
-              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
-              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
-            }]
+            regions: [
+              {
+                name: 'federation space',
+                endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+                identityEndpoint: 'https://1.2.3.4/lxd-identity-region2',
+                storageEndpoint: 'https://1.2.3.4/lxd-storage-region2'
+              },
+              {
+                name: 'dominion',
+                endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+                identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+                storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+              }
+            ]
           },
-          'guimaas': {
+          guimaas: {
             cloudType: 'maas',
             authTypes: ['oauth1'],
             endpoint: 'http://maas.jujugui.org/MAAS',
@@ -1670,12 +1720,14 @@ describe('Controller API', function() {
               endpoint: 'https://1.2.3.4/lxd-api',
               'identity-endpoint': 'https://1.2.3.4/lxd-identity',
               'storage-endpoint': 'https://1.2.3.4/lxd-storage',
-              regions: [{
-                name: 'localhost',
-                endpoint: 'https://1.2.3.4/lxd-api-region1',
-                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
-                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
-              }]
+              regions: [
+                {
+                  name: 'localhost',
+                  endpoint: 'https://1.2.3.4/lxd-api-region1',
+                  'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                  'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+                }
+              ]
             },
             'cloud-google': {
               type: 'gce',
@@ -1683,22 +1735,25 @@ describe('Controller API', function() {
               endpoint: 'https://1.2.3.4/google-api',
               'identity-endpoint': 'https://1.2.3.4/google-identity',
               'storage-endpoint': 'https://1.2.3.4/google-storage',
-              regions: [{
-                name: 'federation space',
-                endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
-                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region2',
-                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region2'
-              }, {
-                name: 'dominion',
-                endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
-                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
-                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
-              }]
+              regions: [
+                {
+                  name: 'federation space',
+                  endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+                  'identity-endpoint': 'https://1.2.3.4/lxd-identity-region2',
+                  'storage-endpoint': 'https://1.2.3.4/lxd-storage-region2'
+                },
+                {
+                  name: 'dominion',
+                  endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+                  'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                  'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+                }
+              ]
             },
             'cloud-guimaas': {
-              'type': 'maas',
+              type: 'maas',
               'auth-types': ['oauth1'],
-              'endpoint': 'http://maas.jujugui.org/MAAS'
+              endpoint: 'http://maas.jujugui.org/MAAS'
             }
           }
         }
@@ -1734,36 +1789,41 @@ describe('Controller API', function() {
       controllerAPI.getClouds(['lxd', 'google', 'no-such'], (err, clouds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(clouds, {
-          'lxd': {
+          lxd: {
             cloudType: 'lxd',
             authTypes: ['empty'],
             endpoint: 'https://1.2.3.4/lxd-api',
             identityEndpoint: 'https://1.2.3.4/lxd-identity',
             storageEndpoint: 'https://1.2.3.4/lxd-storage',
-            regions: [{
-              name: 'localhost',
-              endpoint: 'https://1.2.3.4/lxd-api-region1',
-              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
-              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
-            }]
+            regions: [
+              {
+                name: 'localhost',
+                endpoint: 'https://1.2.3.4/lxd-api-region1',
+                identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+                storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+              }
+            ]
           },
-          'google': {
+          google: {
             cloudType: 'gce',
             authTypes: ['userpass', 'oauth2'],
             endpoint: 'https://1.2.3.4/google-api',
             identityEndpoint: 'https://1.2.3.4/google-identity',
             storageEndpoint: 'https://1.2.3.4/google-storage',
-            regions: [{
-              name: 'federation space',
-              endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
-              identityEndpoint: 'https://1.2.3.4/lxd-identity-region2',
-              storageEndpoint: 'https://1.2.3.4/lxd-storage-region2'
-            }, {
-              name: 'dominion',
-              endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
-              identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
-              storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
-            }]
+            regions: [
+              {
+                name: 'federation space',
+                endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+                identityEndpoint: 'https://1.2.3.4/lxd-identity-region2',
+                storageEndpoint: 'https://1.2.3.4/lxd-storage-region2'
+              },
+              {
+                name: 'dominion',
+                endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+                identityEndpoint: 'https://1.2.3.4/lxd-identity-region1',
+                storageEndpoint: 'https://1.2.3.4/lxd-storage-region1'
+              }
+            ]
           },
           'no-such': {err: 'no such cloud'}
         });
@@ -1773,11 +1833,9 @@ describe('Controller API', function() {
           type: 'Cloud',
           request: 'Cloud',
           version: 1,
-          params: {entities: [
-            {tag: 'cloud-lxd'},
-            {tag: 'cloud-google'},
-            {tag: 'cloud-no-such'}
-          ]}
+          params: {
+            entities: [{tag: 'cloud-lxd'}, {tag: 'cloud-google'}, {tag: 'cloud-no-such'}]
+          }
         });
         done();
       });
@@ -1785,42 +1843,51 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            cloud: {
-              type: 'lxd',
-              'auth-types': ['empty'],
-              endpoint: 'https://1.2.3.4/lxd-api',
-              'identity-endpoint': 'https://1.2.3.4/lxd-identity',
-              'storage-endpoint': 'https://1.2.3.4/lxd-storage',
-              regions: [{
-                name: 'localhost',
-                endpoint: 'https://1.2.3.4/lxd-api-region1',
-                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
-                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
-              }]
+          results: [
+            {
+              cloud: {
+                type: 'lxd',
+                'auth-types': ['empty'],
+                endpoint: 'https://1.2.3.4/lxd-api',
+                'identity-endpoint': 'https://1.2.3.4/lxd-identity',
+                'storage-endpoint': 'https://1.2.3.4/lxd-storage',
+                regions: [
+                  {
+                    name: 'localhost',
+                    endpoint: 'https://1.2.3.4/lxd-api-region1',
+                    'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                    'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+                  }
+                ]
+              }
+            },
+            {
+              cloud: {
+                type: 'gce',
+                'auth-types': ['userpass', 'oauth2'],
+                endpoint: 'https://1.2.3.4/google-api',
+                'identity-endpoint': 'https://1.2.3.4/google-identity',
+                'storage-endpoint': 'https://1.2.3.4/google-storage',
+                regions: [
+                  {
+                    name: 'federation space',
+                    endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
+                    'identity-endpoint': 'https://1.2.3.4/lxd-identity-region2',
+                    'storage-endpoint': 'https://1.2.3.4/lxd-storage-region2'
+                  },
+                  {
+                    name: 'dominion',
+                    endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
+                    'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
+                    'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
+                  }
+                ]
+              }
+            },
+            {
+              error: {message: 'no such cloud'}
             }
-          }, {
-            cloud: {
-              type: 'gce',
-              'auth-types': ['userpass', 'oauth2'],
-              endpoint: 'https://1.2.3.4/google-api',
-              'identity-endpoint': 'https://1.2.3.4/google-identity',
-              'storage-endpoint': 'https://1.2.3.4/google-storage',
-              regions: [{
-                name: 'federation space',
-                endpoint: 'https://1.2.3.4/lxd-api-alpha-beta-quadrants',
-                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region2',
-                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region2'
-              }, {
-                name: 'dominion',
-                endpoint: 'https://1.2.3.4/lxd-api-gamma-quadrant',
-                'identity-endpoint': 'https://1.2.3.4/lxd-identity-region1',
-                'storage-endpoint': 'https://1.2.3.4/lxd-storage-region1'
-              }]
-            }
-          }, {
-            error: {message: 'no such cloud'}
-          }]
+          ]
         }
       });
     });
@@ -1898,7 +1965,6 @@ describe('Controller API', function() {
   });
 
   describe('getCloudCredentialNames', function() {
-
     it('retrieves names for cloud credentials', function(done) {
       // Perform the request.
       const pairs = [
@@ -1908,26 +1974,32 @@ describe('Controller API', function() {
       ];
       controllerAPI.getCloudCredentialNames(pairs, (err, results) => {
         assert.strictEqual(err, null);
-        assert.deepEqual(results, [{
-          names: ['ldx_spinach@local_name1', 'ldx_spinach@local_name2'],
-          displayNames: ['name1', 'name2']
-        }, {
-          err: 'bad wolf'
-        }, {
-          names: ['google_spinach@local_name3'],
-          displayNames: ['name3']
-        }]);
+        assert.deepEqual(results, [
+          {
+            names: ['ldx_spinach@local_name1', 'ldx_spinach@local_name2'],
+            displayNames: ['name1', 'name2']
+          },
+          {
+            err: 'bad wolf'
+          },
+          {
+            names: ['google_spinach@local_name3'],
+            displayNames: ['name3']
+          }
+        ]);
         const msg = conn.last_message();
         assert.deepEqual(msg, {
           'request-id': 1,
           type: 'Cloud',
           request: 'UserCredentials',
           version: 1,
-          params: {'user-clouds': [
-            {'user-tag': 'user-who@gallifrey', 'cloud-tag': 'cloud-lxd'},
-            {'user-tag': 'user-dalek@skaro', 'cloud-tag': 'cloud-google'},
-            {'user-tag': 'user-rose@earth', 'cloud-tag': 'cloud-google'}
-          ]}
+          params: {
+            'user-clouds': [
+              {'user-tag': 'user-who@gallifrey', 'cloud-tag': 'cloud-lxd'},
+              {'user-tag': 'user-dalek@skaro', 'cloud-tag': 'cloud-google'},
+              {'user-tag': 'user-rose@earth', 'cloud-tag': 'cloud-google'}
+            ]
+          }
         });
         done();
       });
@@ -1935,16 +2007,20 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: [
-              'cloudcred-ldx_spinach@local_name1',
-              'cloudcred-ldx_spinach@local_name2'
-            ]
-          }, {
-            error: {message: 'bad wolf'}
-          }, {
-            result: ['cloudcred-google_spinach@local_name3']
-          }]
+          results: [
+            {
+              result: [
+                'cloudcred-ldx_spinach@local_name1',
+                'cloudcred-ldx_spinach@local_name2'
+              ]
+            },
+            {
+              error: {message: 'bad wolf'}
+            },
+            {
+              result: ['cloudcred-google_spinach@local_name3']
+            }
+          ]
         }
       });
     });
@@ -1976,11 +2052,7 @@ describe('Controller API', function() {
   describe('getCloudCredentials', function() {
     it('retrieves the requested credentials by name', function(done) {
       // Perform the request.
-      const names = [
-        'google_spinach@local_cred1',
-        'aws_spinach@local_cred2',
-        'no-such'
-      ];
+      const names = ['google_spinach@local_cred1', 'aws_spinach@local_cred2', 'no-such'];
       controllerAPI.getCloudCredentials(names, (err, creds) => {
         assert.strictEqual(err, null);
         assert.deepEqual(creds, {
@@ -2016,11 +2088,13 @@ describe('Controller API', function() {
           type: 'Cloud',
           request: 'Credential',
           version: 1,
-          params: {entities: [
-            {tag: 'cloudcred-google_spinach@local_cred1'},
-            {tag: 'cloudcred-aws_spinach@local_cred2'},
-            {tag: 'cloudcred-no-such'}
-          ]}
+          params: {
+            entities: [
+              {tag: 'cloudcred-google_spinach@local_cred1'},
+              {tag: 'cloudcred-aws_spinach@local_cred2'},
+              {tag: 'cloudcred-no-such'}
+            ]
+          }
         });
         done();
       });
@@ -2028,23 +2102,27 @@ describe('Controller API', function() {
       conn.msg({
         'request-id': 1,
         response: {
-          results: [{
-            result: {
-              'auth-type': 'jsonfile',
-              attrs: {
-                type: 'service_account',
-                project_id: 'juju-42',
-                private_key_id: 'my-private-key-id'
-              },
-              redacted: ['secret', 'confidential']
+          results: [
+            {
+              result: {
+                'auth-type': 'jsonfile',
+                attrs: {
+                  type: 'service_account',
+                  project_id: 'juju-42',
+                  private_key_id: 'my-private-key-id'
+                },
+                redacted: ['secret', 'confidential']
+              }
+            },
+            {
+              result: {
+                'auth-type': 'oauth2'
+              }
+            },
+            {
+              error: {message: 'no such credentials'}
             }
-          }, {
-            result: {
-              'auth-type': 'oauth2'
-            }
-          }, {
-            error: {message: 'no such credentials'}
-          }]
+          ]
         }
       });
     });
@@ -2086,10 +2164,14 @@ describe('Controller API', function() {
           type: 'Cloud',
           request: 'UpdateCredentials',
           version: 1,
-          params: {credentials: [{
-            tag: 'cloudcred-' + name,
-            credential: {'auth-type': authType, attrs: attrs}
-          }]}
+          params: {
+            credentials: [
+              {
+                tag: 'cloudcred-' + name,
+                credential: {'auth-type': authType, attrs: attrs}
+              }
+            ]
+          }
         });
         done();
       });
@@ -2161,9 +2243,13 @@ describe('Controller API', function() {
           type: 'Cloud',
           request: 'RevokeCredentials',
           version: 1,
-          params: {entities: [{
-            tag: 'cloudcred-banna'
-          }]}
+          params: {
+            entities: [
+              {
+                tag: 'cloudcred-banna'
+              }
+            ]
+          }
         });
         done();
       });
@@ -2240,14 +2326,14 @@ describe('Controller API', function() {
           params: {
             changes: [
               {
-                'access': 'read',
-                'action': 'grant',
+                access: 'read',
+                action: 'grant',
                 'model-tag': 'model-uuid-1234',
                 'user-tag': 'user-dalek'
               },
               {
-                'access': 'read',
-                'action': 'grant',
+                access: 'read',
+                action: 'grant',
                 'model-tag': 'model-uuid-1234',
                 'user-tag': 'user-drwho@external'
               }
@@ -2328,14 +2414,14 @@ describe('Controller API', function() {
           params: {
             changes: [
               {
-                'access': 'read',
-                'action': 'revoke',
+                access: 'read',
+                action: 'revoke',
                 'model-tag': 'model-uuid-1234',
                 'user-tag': 'user-dalek'
               },
               {
-                'access': 'read',
-                'action': 'revoke',
+                access: 'read',
+                action: 'revoke',
                 'model-tag': 'model-uuid-1234',
                 'user-tag': 'user-drwho@external'
               }
@@ -2376,7 +2462,7 @@ describe('Controller API', function() {
 
     it('fails for unexpected results revoking user access', function(done) {
       controllerAPI.revokeModelAccess('uuid-1234', ['dalek'], 'read', err => {
-      // Perform the request.
+        // Perform the request.
         assert.strictEqual(err, 'invalid results from Juju: [{},{}]');
         done();
       });
@@ -2400,5 +2486,4 @@ describe('Controller API', function() {
       });
     });
   });
-
 });

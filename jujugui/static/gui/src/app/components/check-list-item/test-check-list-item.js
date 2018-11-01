@@ -7,19 +7,20 @@ const enzyme = require('enzyme');
 const CheckListItem = require('./check-list-item');
 
 describe('CheckListItem', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <CheckListItem
-      action={options.action}
-      aside={options.aside}
-      checked={options.checked}
-      className={options.className}
-      disabled={options.disabled}
-      extraInfo={options.extraInfo}
-      id={options.id}
-      label={options.label || 'a-label'}
-      whenChanged={options.whenChanged || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <CheckListItem
+        action={options.action}
+        aside={options.aside}
+        checked={options.checked}
+        className={options.className}
+        disabled={options.disabled}
+        extraInfo={options.extraInfo}
+        id={options.id}
+        label={options.label || 'a-label'}
+        whenChanged={options.whenChanged || sinon.stub()}
+      />
+    );
 
   it('renders ui based on props', () => {
     const wrapper = renderComponent({
@@ -35,28 +36,28 @@ describe('CheckListItem', () => {
         data-id="apache/2"
         onClick={undefined}
         role="button"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <label htmlFor="a-label-item">
           <div
             className="check-list-item__hit-area"
-            onClick={wrapper.find('.check-list-item__hit-area').prop('onClick')}>
+            onClick={wrapper.find('.check-list-item__hit-area').prop('onClick')}
+          >
             <input
               checked={false}
               disabled={false}
               id="a-label-item"
               onChange={wrapper.find('input').prop('onChange')}
               onClick={wrapper.find('input').prop('onClick')}
-              type="checkbox" />
+              type="checkbox"
+            />
           </div>
-          <span className="check-list-item__label">
-              a-label
-          </span>
+          <span className="check-list-item__label">a-label</span>
           {undefined}
-          <span className="check-list-item__aside">
-              3
-          </span>
+          <span className="check-list-item__aside">3</span>
         </label>
-      </li>);
+      </li>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -65,11 +66,10 @@ describe('CheckListItem', () => {
       extraInfo: 'Current workload status'
     });
     const expected = (
-      <span
-        className="check-list-item__extra-info"
-        title="Current workload status">
-          Current workload status
-      </span>);
+      <span className="check-list-item__extra-info" title="Current workload status">
+        Current workload status
+      </span>
+    );
     assert.compareJSX(wrapper.find('.check-list-item__extra-info'), expected);
   });
 
@@ -114,8 +114,9 @@ describe('CheckListItem', () => {
   it('can toggle the checkbox from the hit area', () => {
     const wrapper = renderComponent({action: sinon.stub()});
     assert.equal(wrapper.find('input').prop('checked'), false);
-    wrapper.find('.check-list-item__hit-area').simulate('click',
-      {stopPropagation: sinon.stub()});
+    wrapper
+      .find('.check-list-item__hit-area')
+      .simulate('click', {stopPropagation: sinon.stub()});
     wrapper.update();
     assert.equal(wrapper.find('input').prop('checked'), true);
   });

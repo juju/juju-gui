@@ -7,18 +7,19 @@ const enzyme = require('enzyme');
 const InspectorHeader = require('./header');
 
 describe('InspectorHeader', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <InspectorHeader
-      backCallback={options.backCallback || sinon.stub()}
-      changeState={options.changeState}
-      charmId={options.charmId}
-      hasGetStarted={options.hasGetStarted}
-      icon={options.icon}
-      showLinks={options.showLinks}
-      title="Juju GUI"
-      type={options.type} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <InspectorHeader
+        backCallback={options.backCallback || sinon.stub()}
+        changeState={options.changeState}
+        charmId={options.charmId}
+        hasGetStarted={options.hasGetStarted}
+        icon={options.icon}
+        showLinks={options.showLinks}
+        title="Juju GUI"
+        type={options.type}
+      />
+    );
 
   it('displays the provided title', () => {
     const wrapper = renderComponent();
@@ -28,9 +29,9 @@ describe('InspectorHeader', () => {
   it('adds a class based on the provided type', () => {
     const wrapper = renderComponent({type: 'error'});
     assert.equal(
-      wrapper.prop('className').includes(
-        'inspector-header inspector-header--type-error'),
-      true);
+      wrapper.prop('className').includes('inspector-header inspector-header--type-error'),
+      true
+    );
   });
 
   it('does not add a type class if it is not provided', () => {
@@ -40,8 +41,7 @@ describe('InspectorHeader', () => {
 
   it('displays the provided icon', () => {
     const wrapper = renderComponent({icon: 'icon.svg'});
-    assert.equal(
-      wrapper.find('.inspector-header__service-icon').prop('src'), 'icon.svg');
+    assert.equal(wrapper.find('.inspector-header__service-icon').prop('src'), 'icon.svg');
   });
 
   it('calls supplied callable when clicked', () => {
@@ -65,16 +65,13 @@ describe('InspectorHeader', () => {
     const expected = (
       <ul className="inspector-header__inline-list">
         <li className="inspector-header__list-item">
-          <a onClick={links.at(0).prop('onClick')}>
-            Charm details
-          </a>
+          <a onClick={links.at(0).prop('onClick')}>Charm details</a>
         </li>
-        <li className='inspector-header__list-item'>
-          <a onClick={links.at(1).prop('onClick')}>
-            Get started
-          </a>
+        <li className="inspector-header__list-item">
+          <a onClick={links.at(1).prop('onClick')}>Get started</a>
         </li>
-      </ul>);
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.inspector-header__inline-list'), expected);
   });
 
@@ -95,13 +92,19 @@ describe('InspectorHeader', () => {
       hasGetStarted: true,
       showLinks: true
     });
-    wrapper.find('.inspector-header__list-item a').at(1).props().onClick({
-      preventDefault: sinon.stub(),
-      stopPropagation: sinon.stub()
-    });
-    assert.deepEqual(changeState.args[0], [{
-      postDeploymentPanel: charmId
-    }]);
+    wrapper
+      .find('.inspector-header__list-item a')
+      .at(1)
+      .props()
+      .onClick({
+        preventDefault: sinon.stub(),
+        stopPropagation: sinon.stub()
+      });
+    assert.deepEqual(changeState.args[0], [
+      {
+        postDeploymentPanel: charmId
+      }
+    ]);
   });
 
   it('clicking the Charm Details link changes state to show the details', () => {
@@ -112,12 +115,18 @@ describe('InspectorHeader', () => {
       hasGetStarted: true,
       showLinks: true
     });
-    wrapper.find('.inspector-header__list-item a').at(0).props().onClick({
-      preventDefault: sinon.stub(),
-      stopPropagation: sinon.stub()
-    });
-    assert.deepEqual(changeState.args[0], [{
-      store: 'u/hatch/ghost'
-    }]);
+    wrapper
+      .find('.inspector-header__list-item a')
+      .at(0)
+      .props()
+      .onClick({
+        preventDefault: sinon.stub(),
+        stopPropagation: sinon.stub()
+      });
+    assert.deepEqual(changeState.args[0], [
+      {
+        store: 'u/hatch/ghost'
+      }
+    ]);
   });
 });

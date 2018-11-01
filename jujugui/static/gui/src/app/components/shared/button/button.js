@@ -46,12 +46,13 @@ class Button extends React.Component {
         className={this._generateClasses()}
         onClick={this._handleClick.bind(this)}
         title={this.props.tooltip}
-        type={this.props.submit ? 'submit' : 'button'}>
+        type={this.props.submit ? 'submit' : 'button'}
+      >
         {this.props.children}
       </button>
     );
   }
-};
+}
 
 Button.propTypes = {
   action: PropTypes.func,

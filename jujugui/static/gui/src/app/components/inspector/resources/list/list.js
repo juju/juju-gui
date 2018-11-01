@@ -14,27 +14,19 @@ class InspectorResourcesList extends React.Component {
     const resources = this.props.resources;
     const resourceList = resources.map((resource, i) => {
       return (
-        <li
-          className="inspector-resources-list__resource"
-          key={resource.Name + i}>
+        <li className="inspector-resources-list__resource" key={resource.Name + i}>
           <p>{resource.Name}</p>
           <p>{resource.Description}</p>
-        </li>);
+        </li>
+      );
     });
-    return (
-      <ul className="inspector-resources-list__list">
-        {resourceList}
-      </ul>);
+    return <ul className="inspector-resources-list__list">{resourceList}</ul>;
   }
 
   render() {
-    return (
-      <div className="inspector-resources-list">
-        {this._generateResources()}
-      </div>
-    );
+    return <div className="inspector-resources-list">{this._generateResources()}</div>;
   }
-};
+}
 
 InspectorResourcesList.propTypes = {
   acl: PropTypes.object.isRequired,

@@ -7,11 +7,8 @@ const enzyme = require('enzyme');
 const StatusLabel = require('./label');
 
 describe('StatusTable', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StatusLabel
-      status={options.status || 'pending'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(<StatusLabel status={options.status || 'pending'} />);
 
   it('renders', () => {
     const wrapper = renderComponent({status: 'available'});

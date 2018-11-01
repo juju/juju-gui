@@ -25,7 +25,8 @@ class InspectorChangeVersionItem extends React.Component {
         className="inspector-current-version__item"
         onClick={props.itemAction}
         role="button"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <span className="inspector-current-version__title" title={path}>
           version {props.url.revision}
         </span>
@@ -33,13 +34,14 @@ class InspectorChangeVersionItem extends React.Component {
           action={props.buttonAction}
           disabled={props.acl.isReadOnly()}
           key={path}
-          type='inline-neutral'>
+          type="inline-neutral"
+        >
           {this._generateButtonLabel()}
         </Button>
       </li>
     );
   }
-};
+}
 
 InspectorChangeVersionItem.propTypes = {
   acl: PropTypes.object.isRequired,

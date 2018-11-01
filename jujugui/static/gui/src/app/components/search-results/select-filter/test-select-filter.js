@@ -9,23 +9,28 @@ const SearchResultsSelectFilter = require('./select-filter');
 describe('SearchResultsSelectFilter', function() {
   let items;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <SearchResultsSelectFilter
-      changeState={options.changeState || sinon.stub()}
-      currentValue={options.currentValue || null}
-      filter={options.filter || 'sort'}
-      items={options.items || items}
-      label={options.label || 'Sort by'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <SearchResultsSelectFilter
+        changeState={options.changeState || sinon.stub()}
+        currentValue={options.currentValue || null}
+        filter={options.filter || 'sort'}
+        items={options.items || items}
+        label={options.label || 'Sort by'}
+      />
+    );
 
   beforeEach(() => {
-    items = [{
-      label: 'Most popular',
-      value: '-downloads'
-    }, {
-      label: 'Least popular',
-      value: 'downloads'
-    }];
+    items = [
+      {
+        label: 'Most popular',
+        value: '-downloads'
+      },
+      {
+        label: 'Least popular',
+        value: 'downloads'
+      }
+    ];
   });
 
   it('can render a select filter', function() {
@@ -33,13 +38,16 @@ describe('SearchResultsSelectFilter', function() {
     const expected = (
       <div className="list-block__sort">
         {'Sort by'}:
-        <select
-          defaultValue={null}
-          onChange={wrapper.find('select').prop('onChange')}>
-          <option key="-downloads" value="-downloads">Most popular</option>
-          <option key="downloads" value="downloads">Least popular</option>
+        <select defaultValue={null} onChange={wrapper.find('select').prop('onChange')}>
+          <option key="-downloads" value="-downloads">
+            Most popular
+          </option>
+          <option key="downloads" value="downloads">
+            Least popular
+          </option>
         </select>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

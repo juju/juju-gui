@@ -25,10 +25,7 @@ class InspectorConfirm extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'inspector-confirm',
-      this.props.open ? 'inspector-confirm--open' : ''
-    );
+    return classNames('inspector-confirm', this.props.open ? 'inspector-confirm--open' : '');
   }
 
   /**
@@ -38,12 +35,9 @@ class InspectorConfirm extends React.Component {
     @returns {String} The collection of class names.
   */
   _messageClasses() {
-    return classNames(
-      'inspector-confirm__message',
-      {
-        hidden: !this.props.message
-      }
-    );
+    return classNames('inspector-confirm__message', {
+      hidden: !this.props.message
+    });
   }
 
   render() {
@@ -53,21 +47,16 @@ class InspectorConfirm extends React.Component {
     const buttons = this.props.buttons;
     let buttonRow;
     if (buttons && buttons.length > 0) {
-      buttonRow = (
-        <ButtonRow
-          buttons={this.props.buttons} />
-      );
+      buttonRow = <ButtonRow buttons={this.props.buttons} />;
     }
     return (
       <div className={this._generateClasses()}>
-        <p className={this._messageClasses()}>
-          {this.props.message}
-        </p>
+        <p className={this._messageClasses()}>{this.props.message}</p>
         {buttonRow}
       </div>
     );
   }
-};
+}
 
 InspectorConfirm.propTypes = {
   buttons: PropTypes.array.isRequired,

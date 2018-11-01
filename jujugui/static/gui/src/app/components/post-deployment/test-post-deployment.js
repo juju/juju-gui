@@ -15,7 +15,8 @@ describe('PostDeployment', () => {
       <PostDeployment
         changeState={options.changeState || sinon.stub()}
         charmstore={options.charmstore || charmstore}
-        entityURLs={options.entityURLs || ['test']} />
+        entityURLs={options.entityURLs || ['test']}
+      />
     );
   };
 
@@ -29,16 +30,18 @@ describe('PostDeployment', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance._handleFileResponse(
-      'content', null, '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>');
+      'content',
+      null,
+      '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+    );
     wrapper.update();
     const expected = (
       <div
-        dangerouslySetInnerHTML={
-          {
-            __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
-          }
-        }
-        onClick={wrapper.find('div').prop('onClick')} />
+        dangerouslySetInnerHTML={{
+          __html: '<h1>Test Name</h1><p>{details_link}{requires_cli_link}</p>'
+        }}
+        onClick={wrapper.find('div').prop('onClick')}
+      />
     );
     assert.compareJSX(wrapper.find('div'), expected);
   });
@@ -63,7 +66,8 @@ describe('PostDeployment', () => {
     const wrapper = renderComponent({
       charmstore: {
         getFile: getFileStub
-      }});
+      }
+    });
     wrapper.setProps({entityURLs: ['elasticsearch-cluster/bundle/17']});
     assert.equal(getFileStub.callCount, 4);
     assert.equal(getFileStub.args[2][0], 'cs:bundle/elasticsearch-cluster-17');
@@ -87,11 +91,18 @@ describe('PostDeployment', () => {
     const wrapper = renderComponent({script: true, changeState: changeState});
     const instance = wrapper.instance();
     instance._handleFileResponse('getstarted.md', null, 'markdown');
-    instance._handleFileResponse('post-deployment.sh', null, `commands
+    instance._handleFileResponse(
+      'post-deployment.sh',
+      null,
+      `commands
     on multiple
-    lines`);
+    lines`
+    );
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     // sinon.callsArgWith passes the same file each time it's called, so we
     // expect the markdown content, here.
     assert.deepEqual(changeState.args[0][0], {
@@ -103,10 +114,7 @@ describe('PostDeployment', () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
 
-    const rawMetadata = '---\n' +
-      'stop: hammertime\n' +
-      'jump_up: and_get_down\n' +
-      '---\n';
+    const rawMetadata = '---\n' + 'stop: hammertime\n' + 'jump_up: and_get_down\n' + '---\n';
 
     const parsedMetadata = instance.extractFrontmatter(rawMetadata);
     assert.deepEqual(parsedMetadata.metadata, {
@@ -115,14 +123,11 @@ describe('PostDeployment', () => {
     });
   });
 
-  it('doesn\'t extract bad metadata in markdown head', () => {
+  it("doesn't extract bad metadata in markdown head", () => {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
 
-    const rawMetadata = '---\n' +
-      'stop hammertime\n' +
-      'jump_up: and_get_down\n' +
-      '---\n';
+    const rawMetadata = '---\n' + 'stop hammertime\n' + 'jump_up: and_get_down\n' + '---\n';
 
     const parsedMetadata = instance.extractFrontmatter(rawMetadata);
     assert.deepEqual(parsedMetadata.metadata, {
@@ -137,11 +142,14 @@ describe('PostDeployment', () => {
     const rawMarkdown = '{details_link} A WORD {requires_cli_link}';
     const replaceTemplateTags = instance.replaceTemplateTags(rawMarkdown);
 
-    assert.deepEqual(replaceTemplateTags, '<span role="button" \
+    assert.deepEqual(
+      replaceTemplateTags,
+      '<span role="button" \
 class="link" \
 data-templatetag="details_link">View details</span> A WORD <a \
 href="https://jujucharms.com/docs/stable/reference-install" \
-target="_blank">Juju CLI client</a>');
+target="_blank">Juju CLI client</a>'
+    );
   });
 
   it('replaces templateTags in markdown', () => {
@@ -150,7 +158,10 @@ target="_blank">Juju CLI client</a>');
     const instance = wrapper.instance();
     instance._handleContentClick({
       target: {
-        getAttribute: sinon.stub().withArgs('data-templatetag').returns('details_link')
+        getAttribute: sinon
+          .stub()
+          .withArgs('data-templatetag')
+          .returns('details_link')
       }
     });
     assert.equal(changeState.callCount, 1);

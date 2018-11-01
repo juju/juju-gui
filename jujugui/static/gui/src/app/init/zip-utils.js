@@ -70,7 +70,7 @@ var findCharmEntries = function(allEntries) {
   var nameAttrMap = {
     'config.yaml': 'config',
     'metadata.yaml': 'metadata',
-    'revision': 'revision'
+    revision: 'revision'
   };
   Object.keys(allEntries).forEach(function(entry) {
     var pathInfo = splitPath(entry);

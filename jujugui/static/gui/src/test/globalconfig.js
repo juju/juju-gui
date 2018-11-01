@@ -10,15 +10,19 @@ window.GlobalConfig = {
   root: 'app/assets/javascripts/yui/',
   groups: {
     app: {
-        //combine: true,
-        base: "/dev/combo?app/",
-        comboBase: "/dev/combo?",
-        root: 'app/',
-        filter: 'raw',
-        modules: {},
-    },
+      //combine: true,
+      base: '/dev/combo?app/',
+      comboBase: '/dev/combo?',
+      root: 'app/',
+      filter: 'raw',
+      modules: {}
+    }
   },
-  test_url: window.location.protocol + '//' + window.location.host + "/base/jujugui/static/gui/src/test/"
+  test_url:
+    window.location.protocol +
+    '//' +
+    window.location.host +
+    '/base/jujugui/static/gui/src/test/'
 };
 window.MODULES = [
   'juju-charm-models',

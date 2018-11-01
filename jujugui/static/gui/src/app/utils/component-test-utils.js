@@ -64,23 +64,27 @@ const jsTestUtils = {
   */
   superStringify: function superStringify(obj, showFn) {
     var seen = [];
-    return JSON.stringify(obj, function(k, v) {
-      if (v !== null && typeof v === 'object') {
-        // Handle cyclical dependencies.
-        var seenIndex = seen.indexOf(v);
-        if (seenIndex > -1) {
-          return;
+    return JSON.stringify(
+      obj,
+      function(k, v) {
+        if (v !== null && typeof v === 'object') {
+          // Handle cyclical dependencies.
+          var seenIndex = seen.indexOf(v);
+          if (seenIndex > -1) {
+            return;
+          }
+          seen.push(v);
         }
-        seen.push(v);
-      }
-      if (v === undefined) {
-        return 'undefined';
-      }
-      if (showFn && typeof v === 'function') {
-        return '' + v;
-      }
-      return v;
-    }, 4);
+        if (v === undefined) {
+          return 'undefined';
+        }
+        if (showFn && typeof v === 'function') {
+          return '' + v;
+        }
+        return v;
+      },
+      4
+    );
   },
 
   /**
@@ -119,33 +123,43 @@ const jsTestUtils = {
       produced is a charm or a bundle. Optional.
     @param {Object} attrs Any attribute values to set.
    */
-  makeEntity: function(isBundle=false, attrs={}) {
+  makeEntity: function(isBundle = false, attrs = {}) {
     let presets;
-    const revisions = [{
-      authors: [{
-        email: 'charles.butler@canonical.com',
-        name: 'Charles Butler'
-      }],
-      date: '2015-06-16T17:09:35Z',
-      message: 'Fix the django 1.8 with postgresql test.',
-      revno: 40
-    }, {
-      authors: [{
-        email: 'tim.van.steenburgh@canonical.com',
-        name: 'Tim Van Steenburgh'
-      }],
-      date: '2015-06-12T14:02:06Z',
-      message: 'Remove charmhelpers.contrib (not used)',
-      revno: 39
-    }, {
-      authors: [{
-        email: 'charles.butler@canonical.com',
-        name: 'Charles Butler'
-      }],
-      date: '2015-05-22T19:35:18Z',
-      message: 'Run migrate if django is modern enough.',
-      revno: 38
-    }];
+    const revisions = [
+      {
+        authors: [
+          {
+            email: 'charles.butler@canonical.com',
+            name: 'Charles Butler'
+          }
+        ],
+        date: '2015-06-16T17:09:35Z',
+        message: 'Fix the django 1.8 with postgresql test.',
+        revno: 40
+      },
+      {
+        authors: [
+          {
+            email: 'tim.van.steenburgh@canonical.com',
+            name: 'Tim Van Steenburgh'
+          }
+        ],
+        date: '2015-06-12T14:02:06Z',
+        message: 'Remove charmhelpers.contrib (not used)',
+        revno: 39
+      },
+      {
+        authors: [
+          {
+            email: 'charles.butler@canonical.com',
+            name: 'Charles Butler'
+          }
+        ],
+        date: '2015-05-22T19:35:18Z',
+        message: 'Run migrate if django is modern enough.',
+        revno: 38
+      }
+    ];
     if (isBundle) {
       presets = {
         name: 'django-cluster',
@@ -193,13 +207,20 @@ const jsTestUtils = {
         url: 'http://example.com/django',
         code_source: {location: 'lp:django/code'},
         downloads: 1000,
-        channels: [{
-          name: 'stable', current: true
-        }, {
-          name: 'beta', current: false
-        }, {
-          name: 'candidate', current: true
-        }],
+        channels: [
+          {
+            name: 'stable',
+            current: true
+          },
+          {
+            name: 'beta',
+            current: false
+          },
+          {
+            name: 'candidate',
+            current: true
+          }
+        ],
         owner: 'test-owner',
         promulgated: true,
         id: 'cs:django',
@@ -269,10 +290,7 @@ const jsTestUtils = {
       name: 'demo',
       units: {
         toArray: function() {
-          return [
-            {agent_state: 'uncommitted'},
-            {agent_state: 'pending'}
-          ];
+          return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
         }
       }
     };
@@ -330,35 +348,39 @@ const jsTestUtils = {
         for (_key in expected.props) {
           if (expected.props.hasOwnProperty(_key)) {
             expected_props.push(_key);
-          };
+          }
         }
 
-        assert.deepEqual(output_props, expected_props,
+        assert.deepEqual(
+          output_props,
+          expected_props,
           `${source} > prop list is different\
   \noutput:\t${output_props.join('\n\t\t')}\
-  \nexpected:\t${expected_props.join('\n\t\t')}`);
+  \nexpected:\t${expected_props.join('\n\t\t')}`
+        );
 
         assert.isDefined(expected.props, `${source} > no expected props`);
-        for(let _key in output.props) {
+        for (let _key in output.props) {
           if (output.props.hasOwnProperty(_key)) {
-            assert.isDefined(expected.props[_key],
-              `${source} > ${_key} is not defined`);
+            assert.isDefined(expected.props[_key], `${source} > ${_key} is not defined`);
             assert.equal(
-              typeof(output.props[_key]),
-              typeof(expected.props[_key]),
+              typeof output.props[_key],
+              typeof expected.props[_key],
               `${source} > ${_key} > type of \
-  '${typeof(output.props[_key])}' does \
-  not equal '${typeof(expected.props[_key])}'`
+  '${typeof output.props[_key]}' does \
+  not equal '${typeof expected.props[_key]}'`
             );
           }
         }
         if (output.props.children) {
           if (Array.isArray(output.props.children)) {
-            for(let i = 0, ii = output.props.children.length; i < ii; i += 1) {
-              if (output.props &&
+            for (let i = 0, ii = output.props.children.length; i < ii; i += 1) {
+              if (
+                output.props &&
                 output.props.children &&
                 expected.props &&
-                expected.props.children) {
+                expected.props.children
+              ) {
                 this.specificDeepEqual(
                   output.props.children[i],
                   expected.props.children[i],

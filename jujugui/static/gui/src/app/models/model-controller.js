@@ -26,7 +26,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
   @constructor
 */
 class ModelController {
-
   /**
     Inits promise object stores.
 
@@ -65,7 +64,6 @@ class ModelController {
     return promise;
   }
 
-
   /**
     Returns a promise for a fully populated charm model.
 
@@ -78,28 +76,27 @@ class ModelController {
     const env = this.env;
     const charmstore = this.charmstore;
 
-    return this._getPromise(
-      charmId, this._charmPromises,
-      (resolve, reject) => {
-        var charm = db.charms.getById(charmId);
-        if (charm && charm.loaded) {
-          resolve(charm);
-        } else {
-          charm = db.charms.add({url: charmId}).load(env,
-            // If views are bound to the charm model, firing "update" is
-            // unnecessary, and potentially even mildly harmful.
-            (err, data) => {
-              const charm = db.charms.getById(charmId);
-              if (charmId.indexOf('local:') === -1) {
-                charm.populateFileList(
-                  charmstore.getEntity.bind(charmstore), () => {
-                    db.fireEvent('update');
-                    resolve(charm);
-                  });
-              }
-            });
-        }
-      });
+    return this._getPromise(charmId, this._charmPromises, (resolve, reject) => {
+      var charm = db.charms.getById(charmId);
+      if (charm && charm.loaded) {
+        resolve(charm);
+      } else {
+        charm = db.charms.add({url: charmId}).load(
+          env,
+          // If views are bound to the charm model, firing "update" is
+          // unnecessary, and potentially even mildly harmful.
+          (err, data) => {
+            const charm = db.charms.getById(charmId);
+            if (charmId.indexOf('local:') === -1) {
+              charm.populateFileList(charmstore.getEntity.bind(charmstore), () => {
+                db.fireEvent('update');
+                resolve(charm);
+              });
+            }
+          }
+        );
+      }
+    });
   }
 
   /**
@@ -111,37 +108,35 @@ class ModelController {
   */
   getService(serviceId) {
     var db = this.db,
-        env = this.env;
+      env = this.env;
 
-    return this._getPromise(
-      serviceId, this._servicePromises,
-      function(resolve, reject) {
-        // `this` points to the serviceList
-        var service = db.services.getById(serviceId);
-        // If the service and all data has already been loaded, or if the
-        // service is pending, resolve.
-        if (service && (service.get('loaded') || service.get('pending'))) {
-          resolve(service);
-          return;
-        }
-        if (!service || !service.get('loaded')) {
-          env.getApplicationConfig(serviceId, function(result) {
-            if (result.err) {
-              // The service doesn't exist
-              reject(result);
-            } else {
-              var service = db.services.getById(result.applicationName);
-              service.setAttrs({
-                config: result.result.config,
-                constraints: result.result.constraints,
-                loaded: true,
-                series: result.result.series
-              });
-              resolve(service);
-            }
-          });
-        }
-      });
+    return this._getPromise(serviceId, this._servicePromises, function(resolve, reject) {
+      // `this` points to the serviceList
+      var service = db.services.getById(serviceId);
+      // If the service and all data has already been loaded, or if the
+      // service is pending, resolve.
+      if (service && (service.get('loaded') || service.get('pending'))) {
+        resolve(service);
+        return;
+      }
+      if (!service || !service.get('loaded')) {
+        env.getApplicationConfig(serviceId, function(result) {
+          if (result.err) {
+            // The service doesn't exist
+            reject(result);
+          } else {
+            var service = db.services.getById(result.applicationName);
+            service.setAttrs({
+              config: result.result.config,
+              constraints: result.result.constraints,
+              loaded: true,
+              series: result.result.series
+            });
+            resolve(service);
+          }
+        });
+      }
+    });
   }
 
   /**
@@ -154,17 +149,14 @@ class ModelController {
   getServiceWithCharm(serviceId) {
     var mController = this;
 
-    return this._getPromise(
-      serviceId, this._serviceCharmPromises,
-      function(resolve, reject) {
-        mController.getService(serviceId).then(function(service) {
-          mController.getCharm(service.get('charm')).then(function(charm) {
-            resolve({service: service, charm: charm});
-          }, reject);
+    return this._getPromise(serviceId, this._serviceCharmPromises, function(resolve, reject) {
+      mController.getService(serviceId).then(function(service) {
+        mController.getCharm(service.get('charm')).then(function(charm) {
+          resolve({service: service, charm: charm});
         }, reject);
-      });
+      }, reject);
+    });
   }
-
-};
+}
 
 module.exports = ModelController;

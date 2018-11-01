@@ -12,12 +12,14 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('AddedServicesListItem', function() {
   let mockService, serviceModule;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <AddedServicesListItem
-      changeState={options.changeState || sinon.stub()}
-      service={options.service || mockService}
-      serviceModule={options.serviceModule || serviceModule} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <AddedServicesListItem
+        changeState={options.changeState || sinon.stub()}
+        service={options.service || mockService}
+        serviceModule={options.serviceModule || serviceModule}
+      />
+    );
 
   beforeEach(function() {
     mockService = jsTestUtils.makeModel();
@@ -40,32 +42,38 @@ describe('AddedServicesListItem', function() {
         onMouseEnter={wrapper.prop('onMouseEnter')}
         onMouseLeave={wrapper.prop('onMouseLeave')}
         role="button"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <img className="inspector-view__item-icon" src="icon.gif" />
-        <span className="inspector-view__item-count">2</span>
-        {' '}
-        <span className="inspector-view__item-name">
-          demo
-        </span>
+        <span className="inspector-view__item-count">2</span>{' '}
+        <span className="inspector-view__item-name">demo</span>
         <span className="inspector-view__status-block">
-          <span className="inspector-view__status--pending">
-            1
-          </span>
+          <span className="inspector-view__status--pending">1</span>
         </span>
-      </li>);
+      </li>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('only shows the status icon for pending, uncommitted, error', function() {
-    var statuses = [{
-      name: 'started', icon: false
-    }, {
-      name: 'uncommitted', icon: true
-    }, {
-      name: 'pending', icon: true
-    }, {
-      name: 'error', icon: true
-    }];
+    var statuses = [
+      {
+        name: 'started',
+        icon: false
+      },
+      {
+        name: 'uncommitted',
+        icon: true
+      },
+      {
+        name: 'pending',
+        icon: true
+      },
+      {
+        name: 'error',
+        icon: true
+      }
+    ];
 
     // Generate what the icon should look like depending on the value in
     // the statuses array.
@@ -88,16 +96,18 @@ describe('AddedServicesListItem', function() {
             units: {
               toArray: function() {
                 return [{agent_state: status.name}];
-              }}};
+              }
+            }
+          };
         },
         get: function() {
           return false;
-        }};
+        }
+      };
       const wrapper = renderComponent({service});
       const expected = (
-        <span className="inspector-view__status-block">
-          {statusIcon(status)}
-        </span>);
+        <span className="inspector-view__status-block">{statusIcon(status)}</span>
+      );
       assert.compareJSX(wrapper.find('.inspector-view__status-block'), expected);
     });
   });
@@ -113,16 +123,16 @@ describe('AddedServicesListItem', function() {
           units: {
             toArray: function() {
               return [{agent_state: 'unknown-state'}];
-            }}};
+            }
+          }
+        };
       },
       get: function() {
         return false;
-      }};
+      }
+    };
     const wrapper = renderComponent({service});
-    const expected = (
-      <span className="inspector-view__status-block">
-        {undefined}
-      </span>);
+    const expected = <span className="inspector-view__status-block">{undefined}</span>;
     assert.compareJSX(wrapper.find('.inspector-view__status-block'), expected);
   });
 
@@ -137,11 +147,14 @@ describe('AddedServicesListItem', function() {
           units: {
             toArray: function() {
               return [{agent_state: 'pending'}, {agent_state: 'error'}];
-            }}};
+            }
+          }
+        };
       },
       get: function() {
         return false;
-      }};
+      }
+    };
     const wrapper = renderComponent({service});
     assert.equal(wrapper.find('.inspector-view__status--error').length, 1);
   });
@@ -157,11 +170,14 @@ describe('AddedServicesListItem', function() {
           units: {
             toArray: function() {
               return [{agent_state: 'uncommitted'}, {agent_state: 'pending'}];
-            }}};
+            }
+          }
+        };
       },
       get: function() {
         return false;
-      }};
+      }
+    };
     const wrapper = renderComponent({service});
     assert.equal(wrapper.find('.inspector-view__status--pending').length, 1);
   });
@@ -177,11 +193,14 @@ describe('AddedServicesListItem', function() {
           units: {
             toArray: function() {
               return [];
-            }}};
+            }
+          }
+        };
       },
       get: function() {
         return false;
-      }};
+      }
+    };
     const changeState = sinon.stub();
     const wrapper = renderComponent({
       changeState,
@@ -215,8 +234,11 @@ describe('AddedServicesListItem', function() {
           units: {
             toArray: function() {
               return [];
-            }}};
-      }};
+            }
+          }
+        };
+      }
+    };
     const wrapper = renderComponent({
       service
     });
@@ -238,8 +260,11 @@ describe('AddedServicesListItem', function() {
           units: {
             toArray: function() {
               return [];
-            }}};
-      }};
+            }
+          }
+        };
+      }
+    };
     const wrapper = renderComponent({
       service
     });

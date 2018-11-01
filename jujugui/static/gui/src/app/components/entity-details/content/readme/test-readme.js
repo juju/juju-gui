@@ -19,8 +19,10 @@ describe('EntityContentReadme', function() {
         entityModel={options.entityModel || mockEntity}
         getFile={options.getFile || sinon.stub()}
         hash={options.hash}
-        scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()} />,
-      {disableLifecycleMethods: true});
+        scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
+      />,
+      {disableLifecycleMethods: true}
+    );
     const instance = wrapper.instance();
     // Stub the method for getting the container node so that the component
     // works in the shallow renderer.
@@ -55,8 +57,10 @@ describe('EntityContentReadme', function() {
         <div
           className="entity-content__readme-content"
           dangerouslySetInnerHTML={{__html: '<p>Readme</p>'}}
-          ref="content" />
-      </div>);
+          ref="content"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -75,8 +79,12 @@ describe('EntityContentReadme', function() {
   it('can display a message if there is no readme file', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.entity-content__readme-content').html().includes(
-        'No readme.'), true);
+      wrapper
+        .find('.entity-content__readme-content')
+        .html()
+        .includes('No readme.'),
+      true
+    );
   });
 
   it('displays a message if there is an error getting the file', function() {
@@ -90,8 +98,12 @@ describe('EntityContentReadme', function() {
     assert.equal(getFile.args[0][0], 'cs:django');
     assert.equal(getFile.args[0][1], 'Readme.md');
     assert.equal(
-      wrapper.find('.entity-content__readme-content').html().includes(
-        'No readme.'), true);
+      wrapper
+        .find('.entity-content__readme-content')
+        .html()
+        .includes('No readme.'),
+      true
+    );
   });
 
   it('can scroll to an element after loading the readme', () => {

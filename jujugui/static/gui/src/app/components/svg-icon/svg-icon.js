@@ -37,10 +37,7 @@ class SvgIcon extends React.PureComponent {
   */
   _generateClasses() {
     var className = this.props.className;
-    return classNames(
-      'svg-icon',
-      className ? className : ''
-    );
+    return classNames('svg-icon', className ? className : '');
   }
 
   /**
@@ -71,28 +68,20 @@ class SvgIcon extends React.PureComponent {
       <svg
         className={this._generateClasses()}
         style={this._generateStyles()}
-        viewBox={this._generateViewbox()}>
+        viewBox={this._generateViewbox()}
+      >
         <use xlinkHref={'#' + this.props.name} />
       </svg>
     );
   }
-};
+}
 
 SvgIcon.propTypes = {
   className: PropTypes.string,
-  height: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   name: PropTypes.string.isRequired,
-  size: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
-  width: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ])
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 module.exports = SvgIcon;

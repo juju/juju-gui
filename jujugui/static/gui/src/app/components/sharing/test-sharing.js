@@ -15,16 +15,17 @@ const SvgIcon = require('../svg-icon/svg-icon');
 describe('Sharing', () => {
   let users, getModelUserInfo;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Sharing
-      addNotification={options.addNotification || sinon.stub()}
-      canShareModel={
-        options.canShareModel === undefined ? false : options.canShareModel}
-      closeHandler={options.closeHandler || sinon.stub()}
-      getModelUserInfo={options.getModelUserInfo || getModelUserInfo}
-      grantModelAccess={options.grantModelAccess || sinon.stub()}
-      revokeModelAccess={options.revokeModelAccess || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Sharing
+        addNotification={options.addNotification || sinon.stub()}
+        canShareModel={options.canShareModel === undefined ? false : options.canShareModel}
+        closeHandler={options.closeHandler || sinon.stub()}
+        getModelUserInfo={options.getModelUserInfo || getModelUserInfo}
+        grantModelAccess={options.grantModelAccess || sinon.stub()}
+        revokeModelAccess={options.revokeModelAccess || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     users = [
@@ -34,13 +35,15 @@ describe('Sharing', () => {
         domain: 'Ubuntu SSO',
         lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT'),
         access: 'admin'
-      }, {
+      },
+      {
         name: 'rose',
         displayName: 'Rose',
         domain: 'local',
         lastConnection: null,
         access: 'write'
-      }, {
+      },
+      {
         name: 'dalek',
         displayName: 'Dalek',
         lastConnection: null,
@@ -59,19 +62,19 @@ describe('Sharing', () => {
         <Popup
           className="sharing__popup"
           close={wrapper.find('Popup').prop('close')}
-          title="Share">
+          title="Share"
+        >
           {undefined}
           <div className="sharing__users-header">
             <div className="sharing__users-header-user">User</div>
             <div className="sharing__users-header-access">Access</div>
           </div>
-          <div className="sharing__users">
-            {undefined}
-          </div>
+          <div className="sharing__users">{undefined}</div>
           <Button
             action={wrapper.find('Button').prop('action')}
             extraClasses="right"
-            type="inline-neutral">
+            type="inline-neutral"
+          >
             Done
           </Button>
         </Popup>
@@ -89,56 +92,39 @@ describe('Sharing', () => {
     const wrapper = renderComponent();
     const expected = (
       <div className="sharing__users">
-        {[<div className="sharing__user" key="drwho@external">
-          <div className="sharing__user-details">
-            <div className="sharing__user-name">
-              drwho
+        {[
+          <div className="sharing__user" key="drwho@external">
+            <div className="sharing__user-details">
+              <div className="sharing__user-name">drwho</div>
+              <div className="sharing__user-display-name">{'Ubuntu SSO'} user</div>
+              <div className="sharing__user-last-connection">
+                <span>
+                  last connection:&nbsp;
+                  <DateDisplay date={users[0].lastConnection} relative={true} />
+                </span>
+              </div>
             </div>
-            <div className="sharing__user-display-name">
-              {'Ubuntu SSO'} user
+            <div className="sharing__user-access">admin</div>
+            {undefined}
+          </div>,
+          <div className="sharing__user" key="rose">
+            <div className="sharing__user-details">
+              <div className="sharing__user-name">Rose</div>
+              <div className="sharing__user-display-name">{'local'} user</div>
+              <div className="sharing__user-last-connection">never connected</div>
             </div>
-            <div className="sharing__user-last-connection">
-              <span>
-                last connection:&nbsp;
-                <DateDisplay
-                  date={users[0].lastConnection}
-                  relative={true} />
-              </span>
-            </div>
-          </div>
-          <div className="sharing__user-access">
-            admin
-          </div>
-          {undefined}
-        </div>,
-        <div className="sharing__user" key="rose">
-          <div className="sharing__user-details">
-            <div className="sharing__user-name">
-              Rose
-            </div>
-            <div className="sharing__user-display-name">
-              {'local'} user
-            </div>
-            <div className="sharing__user-last-connection">
-              never connected
+            <div className="sharing__user-access">write</div>
+            {undefined}
+          </div>,
+          <div className="sharing__user" key="dalek">
+            <div className="sharing__user-details">
+              <div className="sharing__user-name">Dalek</div>
+              <div className="sharing__user-display-name">exterminate!</div>
             </div>
           </div>
-          <div className="sharing__user-access">
-            write
-          </div>
-          {undefined}
-        </div>,
-        <div className="sharing__user" key="dalek">
-          <div className="sharing__user-details">
-            <div className="sharing__user-name">
-              Dalek
-            </div>
-            <div className="sharing__user-display-name">
-              exterminate!
-            </div>
-          </div>
-        </div>]}
-      </div>);
+        ]}
+      </div>
+    );
     assert.compareJSX(wrapper.find('.sharing__users'), expected);
   });
 
@@ -161,16 +147,20 @@ describe('Sharing', () => {
 
   it('can render the invitation form', () => {
     const wrapper = renderComponent({canShareModel: true});
-    const expectedOptions = [{
-      label: 'Read',
-      value: 'read'
-    }, {
-      label: 'Write',
-      value: 'write'
-    }, {
-      label: 'Admin',
-      value: 'admin'
-    }];
+    const expectedOptions = [
+      {
+        label: 'Read',
+        value: 'read'
+      },
+      {
+        label: 'Write',
+        value: 'write'
+      },
+      {
+        label: 'Admin',
+        value: 'admin'
+      }
+    ];
     const expected = (
       <div className="sharing__invite">
         <div className="sharing__invite--header">Add a user</div>
@@ -182,13 +172,11 @@ describe('Sharing', () => {
               onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
               placeholder="Username"
               ref="username"
-              required={true} />
+              required={true}
+            />
           </div>
           <div className="sharing__invite--access">
-            <InsetSelect
-              label="Access"
-              options={expectedOptions}
-              ref="access" />
+            <InsetSelect label="Access" options={expectedOptions} ref="access" />
           </div>
           <div className="sharing__invite--grant-button">
             <Button
@@ -196,7 +184,8 @@ describe('Sharing', () => {
               ref="grantButton"
               submit={true}
               tooltip="Add user"
-              type="positive">
+              type="positive"
+            >
               Add
             </Button>
           </div>
@@ -220,8 +209,7 @@ describe('Sharing', () => {
       access: {getValue: sinon.stub().returns('read')}
     };
     wrapper.find('form').simulate('submit');
-    assert.equal(grantModelAccess.called, true,
-      'grantModelAccess was not called');
+    assert.equal(grantModelAccess.called, true, 'grantModelAccess was not called');
     assert.deepEqual(grantModelAccess.args[0][0], 'chekov');
     assert.deepEqual(grantModelAccess.args[0][1], 'read');
     assert.isFunction(grantModelAccess.args[0][2]);
@@ -237,19 +225,24 @@ describe('Sharing', () => {
     const expected = (
       <div className="sharing__user-revoke">
         <Button
-          action={wrapper.find('.sharing__user-revoke Button').at(0).prop('action')}
-          tooltip="Remove user">
-          <SvgIcon
-            name="close_16"
-            size="16" />
+          action={wrapper
+            .find('.sharing__user-revoke Button')
+            .at(0)
+            .prop('action')}
+          tooltip="Remove user"
+        >
+          <SvgIcon name="close_16" size="16" />
         </Button>
       </div>
     );
     assert.compareJSX(wrapper.find('.sharing__user-revoke').at(0), expected);
     // Verify that the button triggers the API call as expected.
-    wrapper.find('.sharing__user-revoke Button').at(0).props().action();
-    assert.equal(revokeModelAccess.called, true,
-      'revokeModelAccess was not called');
+    wrapper
+      .find('.sharing__user-revoke Button')
+      .at(0)
+      .props()
+      .action();
+    assert.equal(revokeModelAccess.called, true, 'revokeModelAccess was not called');
     assert.equal(revokeModelAccess.args[0][0], 'drwho@external');
     assert.equal(revokeModelAccess.args[0][1], 'read');
   });
@@ -266,7 +259,6 @@ describe('Sharing', () => {
   });
 
   describe('add button states', () => {
-
     it('shows a disabled button with "add" text by default', () => {
       const wrapper = renderComponent({canShareModel: true});
       const button = wrapper.find('.sharing__invite--grant-button Button');

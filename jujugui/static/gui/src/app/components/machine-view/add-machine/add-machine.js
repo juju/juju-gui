@@ -15,8 +15,7 @@ class MachineViewAddMachine extends React.Component {
     this.state = {
       constraints: null,
       selectedContainer: null,
-      selectedMachine:
-        !this.props.dbAPI && !this.props.parentId ? 'new' : null
+      selectedMachine: !this.props.dbAPI && !this.props.parentId ? 'new' : null
     };
   }
 
@@ -59,7 +58,11 @@ class MachineViewAddMachine extends React.Component {
       const series = constraints.series || null;
       delete constraints.series;
       machine = props.modelAPI.createMachine(
-        selectedContainer, machineId, series, constraints);
+        selectedContainer,
+        machineId,
+        series,
+        constraints
+      );
       if (props.selectMachine && !machineId) {
         props.selectMachine(machine.id);
       }
@@ -67,8 +70,7 @@ class MachineViewAddMachine extends React.Component {
     // If the component has been provided a unit then we need to place the
     // unit on the machine/container.
     if (props.unit) {
-      props.modelAPI.placeUnit(
-        props.unit, machine.id || selectedContainer || selectedMachine);
+      props.modelAPI.placeUnit(props.unit, machine.id || selectedContainer || selectedMachine);
     }
     this.props.close();
   }
@@ -94,18 +96,18 @@ class MachineViewAddMachine extends React.Component {
   _generateConstraints() {
     const props = this.props;
     return (
-      <div className="add-machine__constraints" key='constraints'>
-        <h4 className="add-machine__title">
-          Define constraints
-        </h4>
+      <div className="add-machine__constraints" key="constraints">
+        <h4 className="add-machine__title">Define constraints</h4>
         <Constraints
           containerType={this.state.selectedContainer || ''}
           disabled={props.acl.isReadOnly()}
           hasUnit={!!props.unit}
           providerType={props.modelAPI.providerType}
           series={props.series}
-          valuesChanged={this._updateConstraints.bind(this)} />
-      </div>);
+          valuesChanged={this._updateConstraints.bind(this)}
+        />
+      </div>
+    );
   }
 
   /**
@@ -130,14 +132,16 @@ class MachineViewAddMachine extends React.Component {
         defaultValue=""
         disabled={this.props.acl.isReadOnly()}
         key="containers"
-        onChange={this._updateSelectedContainer.bind(this)}>
+        onChange={this._updateSelectedContainer.bind(this)}
+      >
         <option disabled={true} value="">
           Choose container type...
         </option>
         {this._generateContainerOptions()}
         <option value="lxd">LXD</option>
         <option value="kvm">KVM</option>
-      </select>);
+      </select>
+    );
   }
 
   /**
@@ -161,15 +165,15 @@ class MachineViewAddMachine extends React.Component {
         defaultValue=""
         disabled={this.props.acl.isReadOnly()}
         key="machines"
-        onChange={this._updateSelectedMachine.bind(this)}>
+        onChange={this._updateSelectedMachine.bind(this)}
+      >
         <option disabled={true} value="">
           Move to...
         </option>
-        <option value="new">
-          New machine
-        </option>
+        <option value="new">New machine</option>
         {this._generateMachineOptions()}
-      </select>);
+      </select>
+    );
   }
 
   /**
@@ -186,11 +190,10 @@ class MachineViewAddMachine extends React.Component {
         return;
       }
       components.push(
-        <option
-          key={machine.id}
-          value={machine.id}>
+        <option key={machine.id} value={machine.id}>
           {machine.displayName}
-        </option>);
+        </option>
+      );
     });
     return components;
   }
@@ -210,21 +213,20 @@ class MachineViewAddMachine extends React.Component {
     var containers = dbAPI.machines.filterByParent(this.state.selectedMachine);
     var machineId = this._getParentId();
     components.push(
-      <option
-        key="root"
-        value={machineId}>
-        {machineId}/root-container
-      </option>);
+      <option key="root" value={machineId}>
+        {machineId}
+        /root-container
+      </option>
+    );
     containers.forEach(container => {
       if (container.deleted) {
         return;
       }
       components.push(
-        <option
-          key={container.id}
-          value={container.id}>
+        <option key={container.id} value={container.id}>
           {container.displayName}
-        </option>);
+        </option>
+      );
     });
     return components;
   }
@@ -237,23 +239,24 @@ class MachineViewAddMachine extends React.Component {
   */
   _generateButtons() {
     const props = this.props;
-    const buttons = [{
-      title: 'Cancel',
-      action: props.close,
-      type: 'base'
-    }, {
-      title: props.unit ? 'Place' : 'Create',
-      action: this._submitForm.bind(this),
-      type: 'neutral',
-      // In the add-container mode disable the Create button until a container
-      // type has been selected.
-      disabled: props.acl.isReadOnly() || (!props.unit && !props.dbAPI
-        && props.parentId && !this.state.selectedContainer)
-    }];
-    return (
-      <ButtonRow
-        buttons={buttons}
-        key="buttons" />);
+    const buttons = [
+      {
+        title: 'Cancel',
+        action: props.close,
+        type: 'base'
+      },
+      {
+        title: props.unit ? 'Place' : 'Create',
+        action: this._submitForm.bind(this),
+        type: 'neutral',
+        // In the add-container mode disable the Create button until a container
+        // type has been selected.
+        disabled:
+          props.acl.isReadOnly() ||
+          (!props.unit && !props.dbAPI && props.parentId && !this.state.selectedContainer)
+      }
+    ];
+    return <ButtonRow buttons={buttons} key="buttons" />;
   }
 
   render() {
@@ -288,7 +291,7 @@ class MachineViewAddMachine extends React.Component {
     }
     return <div className="add-machine">{components}</div>;
   }
-};
+}
 
 MachineViewAddMachine.propTypes = {
   acl: shapeup.shape({

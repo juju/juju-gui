@@ -36,8 +36,7 @@ describe('Entity Extension', function() {
 
   beforeEach(function() {
     jujuConfig = window.juju_config;
-    EntityModel = Y.Base.create(
-      'entity-model', Y.Base, [models.EntityExtension], {});
+    EntityModel = Y.Base.create('entity-model', Y.Base, [models.EntityExtension], {});
     entityModel = new EntityModel();
     var attrs = {
       id: '~owner/foobar',
@@ -95,8 +94,7 @@ describe('Entity Extension', function() {
       tags: ['database', 'application']
     };
 
-    assert.deepEqual(expected, entity,
-      'charm POJO did not match expected object');
+    assert.deepEqual(expected, entity, 'charm POJO did not match expected object');
   });
 
   it('converts a bundle to an entity POJO', function() {
@@ -142,8 +140,7 @@ describe('Entity Extension', function() {
       applications: [],
       unitCount: 5
     };
-    assert.deepEqual(expected, entity,
-      'bundle POJO did not match expected object');
+    assert.deepEqual(expected, entity, 'bundle POJO did not match expected object');
   });
 
   it('uses the staticURL for bundle asset if available', function() {
@@ -161,7 +158,8 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     assert.deepEqual(
       entity.iconPath,
-      'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
+      'static/static/gui/build/app/assets/images/non-sprites/bundle.svg'
+    );
   });
 
   it('uses the correct name for the canonical-kubernetes bundle', function() {
@@ -172,7 +170,6 @@ describe('Entity Extension', function() {
       name: 'canonical-kubernetes'
     });
     const entity = entityModel.toEntity();
-    assert.strictEqual(
-      entity.displayName, 'The Canonical Distribution Of Kubernetes');
+    assert.strictEqual(entity.displayName, 'The Canonical Distribution Of Kubernetes');
   });
 });

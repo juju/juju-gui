@@ -8,16 +8,17 @@ const CreateModelButton = require('./create-model-button');
 const Button = require('../shared/button/button');
 
 describe('CreateModelButton', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <CreateModelButton
-      action={options.action || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      switchModel={options.switchModel || sinon.stub()}
-      title={options.title}
-      type={options.type} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <CreateModelButton
+        action={options.action || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        switchModel={options.switchModel || sinon.stub()}
+        title={options.title}
+        type={options.type}
+      />
+    );
 
   it('renders a button with default values', () => {
     const wrapper = renderComponent();
@@ -26,7 +27,8 @@ describe('CreateModelButton', () => {
         <Button
           action={wrapper.find('Button').prop('action')}
           disabled={false}
-          type="inline-neutral">
+          type="inline-neutral"
+        >
           Create new
         </Button>
       </div>
@@ -52,14 +54,20 @@ describe('CreateModelButton', () => {
   it('calls the passed action', () => {
     const action = sinon.stub();
     const wrapper = renderComponent({action});
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.isTrue(action.called);
   });
 
-  it('the passed action isn\'t called if button is disabled', () => {
+  it("the passed action isn't called if button is disabled", () => {
     const action = sinon.stub();
     const wrapper = renderComponent({action, disabled: true});
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.isFalse(action.called);
   });
 
@@ -70,7 +78,10 @@ describe('CreateModelButton', () => {
       changeState,
       switchModel
     });
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0], [
       {profile: null, hash: null, postDeploymentPanel: null}

@@ -13,24 +13,25 @@ class BasicTableCell extends React.Component {
     let content = this.props.content;
     // if there is no content then add a space so that the column doesn't
     // collapse.
-    if ((typeof(content) === 'string' && content.replace(/\s/g, '') === '') ||
-      content === undefined || content === null) {
-      content = (<span>&nbsp;</span>);
+    if (
+      (typeof content === 'string' && content.replace(/\s/g, '') === '') ||
+      content === undefined ||
+      content === null
+    ) {
+      content = <span>&nbsp;</span>;
     }
     if (isHeader) {
-      return (
-        <th className={className}>
-          {content}
-        </th>);
+      return <th className={className}>{content}</th>;
     } else {
       return (
         <td className={className}>
           {this.props.link}
           {content}
-        </td>);
+        </td>
+      );
     }
   }
-};
+}
 
 BasicTableCell.propTypes = {
   classes: PropTypes.arrayOf(PropTypes.string),

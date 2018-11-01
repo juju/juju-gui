@@ -12,15 +12,13 @@ const SvgIcon = require('../svg-icon/svg-icon');
 const testUtils = require('react-dom/test-utils');
 
 describe('CopyToClipboard', function() {
-
   const renderComponent = (options = {}) => {
     return enzyme.shallow(
-      <CopyToClipboard
-        className={options.className}
-        value={options.value} />,
+      <CopyToClipboard className={options.className} value={options.value} />,
       // Don't call componentDidMount as it requires nodes that don't exist in
       // the shallow renderer.
-      {disableLifecycleMethods: true});
+      {disableLifecycleMethods: true}
+    );
   };
 
   it('renders with a default value', function() {
@@ -32,13 +30,10 @@ describe('CopyToClipboard', function() {
           readOnly="true"
           ref="input"
           type="text"
-          value="" />
-        <button
-          className="copy-to-clipboard__btn"
-          ref="btn">
-          <SvgIcon
-            name="copy-to-clipboard-16"
-            size="16" />
+          value=""
+        />
+        <button className="copy-to-clipboard__btn" ref="btn">
+          <SvgIcon name="copy-to-clipboard-16" size="16" />
         </button>
       </div>
     );
@@ -55,16 +50,21 @@ describe('CopyToClipboard', function() {
   it('renders a user-provided value properly', function() {
     var value = 'foobar';
     const wrapper = renderComponent({value});
-    assert.equal(wrapper.find('input').prop('value'), value,
-      'Value is not set properly for input');
+    assert.equal(
+      wrapper.find('input').prop('value'),
+      value,
+      'Value is not set properly for input'
+    );
   });
 
   // XXX: can't stub out internal methods.
   xit('initializes the Clipboard widget', function() {
-    var component = testUtils.renderIntoDocument(
-      <CopyToClipboard />);
+    var component = testUtils.renderIntoDocument(<CopyToClipboard />);
     var node = ReactDOM.findDOMNode(component).querySelector('button');
-    assert.deepEqual(Clipboard.getCall(0).args[0], node,
-      'Clipboard was not initialized with expected node');
+    assert.deepEqual(
+      Clipboard.getCall(0).args[0],
+      node,
+      'Clipboard was not initialized with expected node'
+    );
   });
 });

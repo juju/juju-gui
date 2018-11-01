@@ -16,7 +16,6 @@ const addToObj = (obj, key, value) => {
 };
 
 class AddedServicesList extends React.Component {
-
   /**
     Generate a new AddedServicesListItem component and return it.
     @param {Object} service The service instance to fetch data from.
@@ -37,7 +36,9 @@ class AddedServicesList extends React.Component {
         lastInList={lastInList}
         ref={'AddedServicesListItem-' + service.get('id')}
         service={service}
-        serviceModule={this.props.serviceModule} />);
+        serviceModule={this.props.serviceModule}
+      />
+    );
   }
 
   /**
@@ -65,7 +66,8 @@ class AddedServicesList extends React.Component {
         continue;
       }
       items.push(
-        <AddedServicesLabel bundleURL={key} changeState={this.props.changeState} key={key} />);
+        <AddedServicesLabel bundleURL={key} changeState={this.props.changeState} key={key} />
+      );
       // Now that the label has been added, loop through the applications in that
       // bundle.
       const length = grouped[key].length - 1;
@@ -90,14 +92,11 @@ class AddedServicesList extends React.Component {
       </div>
     );
   }
-};
+}
 
 AddedServicesList.propTypes = {
   changeState: PropTypes.func.isRequired,
-  hoveredId: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
+  hoveredId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   serviceModule: shapeup.shape({
     hoverService: PropTypes.func.isRequired,
     panToService: PropTypes.func.isRequired,

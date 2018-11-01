@@ -12,20 +12,22 @@ const Button = require('../../../shared/button/button');
 describe('PaymentDetailsAddress', () => {
   let acl, address, newAddress;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <PaymentDetailsAddress
-      acl={options.acl || acl}
-      addAddress={options.addAddress || sinon.stub()}
-      addNotification={options.addNotification || sinon.stub()}
-      address={options.address || address}
-      close={options.close || sinon.stub()}
-      getCountries={options.getCountries || sinon.stub()}
-      removeAddress={options.removeAddress || sinon.stub()}
-      showEdit={options.showEdit === undefined ? true : options.showEdit}
-      updateAddress={options.updateAddress || sinon.stub()}
-      updated={options.updated || sinon.stub()}
-      username={options.username || 'spinach'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <PaymentDetailsAddress
+        acl={options.acl || acl}
+        addAddress={options.addAddress || sinon.stub()}
+        addNotification={options.addNotification || sinon.stub()}
+        address={options.address || address}
+        close={options.close || sinon.stub()}
+        getCountries={options.getCountries || sinon.stub()}
+        removeAddress={options.removeAddress || sinon.stub()}
+        showEdit={options.showEdit === undefined ? true : options.showEdit}
+        updateAddress={options.updateAddress || sinon.stub()}
+        updated={options.updated || sinon.stub()}
+        username={options.username || 'spinach'}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -62,43 +64,47 @@ describe('PaymentDetailsAddress', () => {
             'twelve-col': true
           }}
           clickable={false}
-          expanded={true}>
-          <AddressForm
-            address={address}
-            disabled={true}
-            getCountries={sinon.stub()} />
+          expanded={true}
+        >
+          <AddressForm address={address} disabled={true} getCountries={sinon.stub()} />
           <div className="twelve-col payment-details-address__edit u-no-margin--bottom">
             <AddressForm
               addNotification={sinon.stub()}
               address={address}
               disabled={false}
               getCountries={sinon.stub()}
-              ref="addressForm" />
-            <div className={
-              'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
-              <Button
-                action={sinon.stub()}
-                disabled={false}
-                type="inline-neutral">
+              ref="addressForm"
+            />
+            <div className={'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
+              <Button action={sinon.stub()} disabled={false} type="inline-neutral">
                 Cancel
               </Button>
               <Button
-                action={wrapper.find('Button').at(1).prop('action')}
+                action={wrapper
+                  .find('Button')
+                  .at(1)
+                  .prop('action')}
                 disabled={false}
-                type="inline-positive">
+                type="inline-positive"
+              >
                 Update
               </Button>
             </div>
           </div>
         </ExpandingRow>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can cancel the form', () => {
     const close = sinon.stub();
     const wrapper = renderComponent({close});
-    wrapper.find('Button').at(0).props().action();
+    wrapper
+      .find('Button')
+      .at(0)
+      .props()
+      .action();
     assert.equal(close.callCount, 1);
   });
 
@@ -111,7 +117,11 @@ describe('PaymentDetailsAddress', () => {
         validate: sinon.stub().returns(false)
       }
     };
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(removeAddress.callCount, 0);
   });
 
@@ -130,7 +140,11 @@ describe('PaymentDetailsAddress', () => {
         getValue: sinon.stub().returns(newAddress)
       }
     };
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(updateAddress.callCount, 1);
     assert.equal(updateAddress.args[0][0], 'spinach');
     assert.equal(updateAddress.args[0][1], 'address1');
@@ -152,7 +166,11 @@ describe('PaymentDetailsAddress', () => {
         getValue: sinon.stub().returns(newAddress)
       }
     };
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not update address',
@@ -173,7 +191,11 @@ describe('PaymentDetailsAddress', () => {
         getValue: sinon.stub().returns(newAddress)
       }
     };
-    wrapper.find('Button').at(1).props().action();
+    wrapper
+      .find('Button')
+      .at(1)
+      .props()
+      .action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });

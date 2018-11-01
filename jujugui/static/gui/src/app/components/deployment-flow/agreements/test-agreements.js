@@ -10,14 +10,16 @@ const Button = require('../../shared/button/button');
 describe('DeploymentAgreements', function() {
   let acl, terms;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentAgreements
-      acl={options.acl || acl}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      onCheckboxChange={options.onCheckboxChange || sinon.stub()}
-      showTerms={options.showTerms === undefined ? false : options.showTerms}
-      terms={options.terms === undefined ? terms : options.terms} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentAgreements
+        acl={options.acl || acl}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        onCheckboxChange={options.onCheckboxChange || sinon.stub()}
+        showTerms={options.showTerms === undefined ? false : options.showTerms}
+        terms={options.terms === undefined ? terms : options.terms}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -33,13 +35,13 @@ describe('DeploymentAgreements', function() {
           disabled={false}
           id="terms"
           onChange={sinon.stub()}
-          type="checkbox" />
-        <label
-          className="deployment-flow__deploy-label"
-          htmlFor="terms">
+          type="checkbox"
+        />
+        <label className="deployment-flow__deploy-label" htmlFor="terms">
           I agree to all terms.
         </label>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -58,18 +60,20 @@ describe('DeploymentAgreements', function() {
     terms = [{}, {}];
     const wrapper = renderComponent({showTerms: true});
     const expected = (
-      <Button
-        action={wrapper.find('Button').prop('action')}
-        type="inline-base">
+      <Button action={wrapper.find('Button').prop('action')} type="inline-base">
         View terms
-      </Button>);
+      </Button>
+    );
     assert.compareJSX(wrapper.find('Button'), expected);
   });
 
   it('can show the terms popup', function() {
     terms = [{}, {}];
     const wrapper = renderComponent({showTerms: true});
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     wrapper.update();
     assert.equal(wrapper.find('TermsPopup').length, 1);
   });

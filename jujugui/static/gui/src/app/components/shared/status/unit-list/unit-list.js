@@ -11,7 +11,6 @@ const maracaPropTypes = require('../../../../maraca/prop-types');
 const utils = require('../../utils');
 
 class StatusUnitList extends React.Component {
-
   /**
     Format the ports ranges for a unit
     @param ranges {Array} The port ranges.
@@ -21,12 +20,14 @@ class StatusUnitList extends React.Component {
     if (!ranges) {
       return '';
     }
-    return ranges.map(range => {
-      if (range.fromPort === range.toPort) {
-        return `${range.fromPort}/${range.protocol}`;
-      }
-      return `${range.fromPort}-${range.toPort}/${range.protocol}`;
-    }).join(', ');
+    return ranges
+      .map(range => {
+        if (range.fromPort === range.toPort) {
+          return `${range.fromPort}/${range.protocol}`;
+        }
+        return `${range.fromPort}-${range.toPort}/${range.protocol}`;
+      })
+      .join(', ');
   }
 
   /**
@@ -51,57 +52,61 @@ class StatusUnitList extends React.Component {
         const protocol = port === 443 ? 'https' : 'http';
         const href = `${protocol}://${label}`;
         publicAddress = (
-          <a
-            className="status-view__link"
-            href={href}
-            target="_blank">
+          <a className="status-view__link" href={href} target="_blank">
             {unit.publicAddress}
-          </a>);
+          </a>
+        );
       }
       const agentStatus = (unit.agentStatus || {}).current;
       const workloadStatus = (unit.workloadStatus || {}).current;
       accumulator.push({
-        classes: [utils.getStatusClass(
-          'status-table__row--',
-          [agentStatus, workloadStatus])],
+        classes: [utils.getStatusClass('status-table__row--', [agentStatus, workloadStatus])],
         onClick: this.props.generateUnitOnClick(unit.name),
         clickURL: this.props.generateUnitURL(unit.name),
-        columns: [{
-          columnSize: 2,
-          content: (
-            <span>
-              <img className="status-view__icon" src={this.props.getIconPath(application)} />
-              {unit.name}
-            </span>)
-        }, {
-          columnSize: 2,
-          content: workloadStatus ? (
-            <StatusLabel status={workloadStatus} />) : null
-        }, {
-          columnSize: 2,
-          content: agentStatus ? (
-            <StatusLabel status={agentStatus} />) : null
-        }, {
-          columnSize: 1,
-          content: (
-            <a
-              className="status-view__link"
-              href={this.props.generateMachineURL(unit.machineID)}
-              onClick={this.props.onMachineClick.bind(this, unit.machineID)}>
-              {unit.machineID}
-            </a>)
-        }, {
-          columnSize: 2,
-          content: publicAddress
-        }, {
-          columnSize: 1,
-          content: this._formatPorts(unit.portRanges)
-        }, {
-          columnSize: 2,
-          content: (unit.workloadStatus || {}).message
-        }],
-        extraData: utils.getHighestStatus(
-          [agentStatus, workloadStatus]),
+        columns: [
+          {
+            columnSize: 2,
+            content: (
+              <span>
+                <img className="status-view__icon" src={this.props.getIconPath(application)} />
+                {unit.name}
+              </span>
+            )
+          },
+          {
+            columnSize: 2,
+            content: workloadStatus ? <StatusLabel status={workloadStatus} /> : null
+          },
+          {
+            columnSize: 2,
+            content: agentStatus ? <StatusLabel status={agentStatus} /> : null
+          },
+          {
+            columnSize: 1,
+            content: (
+              <a
+                className="status-view__link"
+                href={this.props.generateMachineURL(unit.machineID)}
+                onClick={this.props.onMachineClick.bind(this, unit.machineID)}
+              >
+                {unit.machineID}
+              </a>
+            )
+          },
+          {
+            columnSize: 2,
+            content: publicAddress
+          },
+          {
+            columnSize: 1,
+            content: this._formatPorts(unit.portRanges)
+          },
+          {
+            columnSize: 2,
+            content: (unit.workloadStatus || {}).message
+          }
+        ],
+        extraData: utils.getHighestStatus([agentStatus, workloadStatus]),
         key: unit.name
       });
       return accumulator;
@@ -109,35 +114,45 @@ class StatusUnitList extends React.Component {
   }
 
   render() {
-    const headers = [{
-      content: 'Unit',
-      columnSize: 2
-    }, {
-      content: 'Workload',
-      columnSize: 2
-    }, {
-      content: 'Agent',
-      columnSize: 2
-    }, {
-      content: 'Machine',
-      columnSize: 1
-    }, {
-      content: 'Public address',
-      columnSize: 2
-    }, {
-      content: 'Ports',
-      columnSize: 1
-    }, {
-      content: 'Message',
-      columnSize: 2
-    }];
+    const headers = [
+      {
+        content: 'Unit',
+        columnSize: 2
+      },
+      {
+        content: 'Workload',
+        columnSize: 2
+      },
+      {
+        content: 'Agent',
+        columnSize: 2
+      },
+      {
+        content: 'Machine',
+        columnSize: 1
+      },
+      {
+        content: 'Public address',
+        columnSize: 2
+      },
+      {
+        content: 'Ports',
+        columnSize: 1
+      },
+      {
+        content: 'Message',
+        columnSize: 2
+      }
+    ];
     return (
       <StatusTable
         headers={headers}
         rows={this._generateRows()}
-        statusFilter={this.props.statusFilter} />);
+        statusFilter={this.props.statusFilter}
+      />
+    );
   }
-};
+}
 
 StatusUnitList.propTypes = {
   applications: maracaPropTypes.applications,

@@ -29,37 +29,35 @@ class DeploymentExpertBudget extends React.Component {
     return (
       <div className="deployment-expert-budget">
         <div className="deployment-expert-budget__row">
-          <span>
-            Total estimated monthly cost:
-          </span>
+          <span>Total estimated monthly cost:</span>
           <span className="deployment-expert-budget__cost">
             ${this.props.estimateWithSLA || 0}
           </span>
         </div>
         <div className="deployment-expert-budget__row">
-          <span>
-            Never charge me more than:
-          </span>
+          <span>Never charge me more than:</span>
           <span className="deployment-expert-budget__budget-input">
             $
             <GenericInput
               disabled={false}
               onChange={this._inputChange.bind(this)}
-              value={this.props.budget} />
+              value={this.props.budget}
+            />
           </span>
         </div>
         <div className="deployment-expert-budget__row">
           <Button
             action={this.props.setBudget.bind(this, this.state.budget)}
             disabled={!changed}
-            type="inline-positive">
+            type="inline-positive"
+          >
             Set budget
           </Button>
         </div>
       </div>
     );
   }
-};
+}
 
 DeploymentExpertBudget.propTypes = {
   budget: PropTypes.any,

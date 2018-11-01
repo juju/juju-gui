@@ -36,17 +36,14 @@ class StringConfigInput extends React.Component {
         dangerouslySetInnerHTML={{__html: this.state.value}}
         onBlur={this._updateValue.bind(this)}
         onInput={this._updateValue.bind(this)}
-        ref="editableInput">
-      </div>
+        ref="editableInput"
+      />
     );
   }
-};
+}
 
 StringConfigInput.propTypes = {
-  config: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
+  config: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   disabled: PropTypes.bool,
   setValue: PropTypes.func.isRequired
 };

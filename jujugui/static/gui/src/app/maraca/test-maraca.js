@@ -24,13 +24,15 @@ describe('Maraca', () => {
     const listener = sinon.stub();
     document.addEventListener('_rpc_response', listener);
     maraca.connect();
-    document.dispatchEvent(new CustomEvent('_rpc_response', {
-      detail: {
-        response: {
-          deltas: []
+    document.dispatchEvent(
+      new CustomEvent('_rpc_response', {
+        detail: {
+          response: {
+            deltas: []
+          }
         }
-      }
-    }));
+      })
+    );
     assert.equal(onChange.calledOnce, true);
     document.removeEventListener('_rpc_response', listener);
   });
@@ -40,13 +42,15 @@ describe('Maraca', () => {
     document.addEventListener('_rpc_response', listener);
     maraca.connect();
     maraca.disconnect();
-    document.dispatchEvent(new CustomEvent('_rpc_response', {
-      detail: {
-        response: {
-          deltas: []
+    document.dispatchEvent(
+      new CustomEvent('_rpc_response', {
+        detail: {
+          response: {
+            deltas: []
+          }
         }
-      }
-    }));
+      })
+    );
     assert.equal(onChange.calledOnce, false);
     document.removeEventListener('_rpc_response', listener);
   });
@@ -55,11 +59,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0'
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0'
+              }
+            ]
+          ]
         }
       }
     });
@@ -74,12 +82,16 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0',
-              series: 'trusty'
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0',
+                series: 'trusty'
+              }
+            ]
+          ]
         }
       }
     });
@@ -92,12 +104,16 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0',
-              series: 'wily'
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0',
+                series: 'wily'
+              }
+            ]
+          ]
         }
       }
     });
@@ -113,12 +129,16 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0',
-              ports: ['80', '443']
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0',
+                ports: ['80', '443']
+              }
+            ]
+          ]
         }
       }
     });
@@ -131,12 +151,16 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0',
-              ports: ['81', '443']
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0',
+                ports: ['81', '443']
+              }
+            ]
+          ]
         }
       }
     });
@@ -154,11 +178,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0'
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0'
+              }
+            ]
+          ]
         }
       }
     });
@@ -170,11 +198,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'remove', {
-              name: 'apache2/0'
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'remove',
+              {
+                name: 'apache2/0'
+              }
+            ]
+          ]
         }
       }
     });
@@ -185,11 +217,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'remote-application', 'change', {
-              name: 'apache2'
-            }
-          ]]
+          deltas: [
+            [
+              'remote-application',
+              'change',
+              {
+                name: 'apache2'
+              }
+            ]
+          ]
         }
       }
     });
@@ -204,11 +240,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'application', 'change', {
-              name: 'apache2'
-            }
-          ]]
+          deltas: [
+            [
+              'application',
+              'change',
+              {
+                name: 'apache2'
+              }
+            ]
+          ]
         }
       }
     });
@@ -223,11 +263,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'unit', 'change', {
-              name: 'apache2/0'
-            }
-          ]]
+          deltas: [
+            [
+              'unit',
+              'change',
+              {
+                name: 'apache2/0'
+              }
+            ]
+          ]
         }
       }
     });
@@ -242,11 +286,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'machine', 'change', {
-              id: '0'
-            }
-          ]]
+          deltas: [
+            [
+              'machine',
+              'change',
+              {
+                id: '0'
+              }
+            ]
+          ]
         }
       }
     });
@@ -261,11 +309,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'relation', 'change', {
-              id: '1'
-            }
-          ]]
+          deltas: [
+            [
+              'relation',
+              'change',
+              {
+                id: '1'
+              }
+            ]
+          ]
         }
       }
     });
@@ -280,11 +332,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'annotation', 'change', {
-              tag: 'application-apache2'
-            }
-          ]]
+          deltas: [
+            [
+              'annotation',
+              'change',
+              {
+                tag: 'application-apache2'
+              }
+            ]
+          ]
         }
       }
     });
@@ -301,11 +357,15 @@ describe('Maraca', () => {
     maraca._watcherListener({
       detail: {
         response: {
-          deltas: [[
-            'nothing-here', 'change', {
-              id: '1'
-            }
-          ]]
+          deltas: [
+            [
+              'nothing-here',
+              'change',
+              {
+                id: '1'
+              }
+            ]
+          ]
         }
       }
     });

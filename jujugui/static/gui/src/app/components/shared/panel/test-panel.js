@@ -7,15 +7,15 @@ const enzyme = require('enzyme');
 const Panel = require('./panel');
 
 describe('PanelComponent', function() {
-
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
       <Panel
         clickAction={options.clickAction}
         focus={options.focus}
         instanceName={options.instanceName || 'custom-instance-name'}
-        visible={options.visible === undefined ? true : options.visible}>
-        {options.children || (<div>child</div>)}
+        visible={options.visible === undefined ? true : options.visible}
+      >
+        {options.children || <div>child</div>}
       </Panel>,
       {disableLifecycleMethods: true}
     );
@@ -36,13 +36,16 @@ describe('PanelComponent', function() {
         className="panel-component custom-instance-name"
         onClick={wrapper.prop('onClick')}
         ref="content"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <div
           className="panel-component__inner"
-          onClick={wrapper.find('.panel-component__inner').prop('onClick')}>
+          onClick={wrapper.find('.panel-component__inner').prop('onClick')}
+        >
           <div>child</div>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

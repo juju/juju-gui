@@ -20,8 +20,7 @@ class AddedServicesListItem extends React.Component {
     var status;
     for (var key in unitStatuses) {
       status = unitStatuses[key];
-      if (key !== 'started' && status.priority < top.priority &&
-          status.size > 0) {
+      if (key !== 'started' && status.priority < top.priority && status.size > 0) {
         top = {
           key: key,
           priority: status.priority,
@@ -45,9 +44,7 @@ class AddedServicesListItem extends React.Component {
     var shownStatuses = ['uncommitted', 'pending', 'error'];
     var className = 'inspector-view__status--' + statusData.key;
     if (shownStatuses.indexOf(statusData.key) > -1) {
-      return (
-        <span className={className}>{statusData.size}</span>
-      );
+      return <span className={className}>{statusData.size}</span>;
     }
   }
 
@@ -69,14 +66,11 @@ class AddedServicesListItem extends React.Component {
   _generateClassName() {
     var props = this.props;
     var service = props.service;
-    return classNames(
-      'inspector-view__list-item',
-      {
-        'visibility-toggled': service.get('highlight') || service.get('fade'),
-        hover: props.hovered,
-        'inspector-view__list-item__last': this.props.lastInList
-      }
-    );
+    return classNames('inspector-view__list-item', {
+      'visibility-toggled': service.get('highlight') || service.get('fade'),
+      hover: props.hovered,
+      'inspector-view__list-item__last': this.props.lastInList
+    });
   }
 
   /**
@@ -107,29 +101,20 @@ class AddedServicesListItem extends React.Component {
         onMouseEnter={this._onMouseEnter.bind(this)}
         onMouseLeave={this._onMouseLeave.bind(this)}
         role="button"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <img className="inspector-view__item-icon" src={service.icon} />
-        <span className="inspector-view__item-count">
-          {service.unit_count}
-        </span>
-        {' '}
-        <span className="inspector-view__item-name">
-          {service.name}
-        </span>
-        <span className="inspector-view__status-block">
-          {statusIndicator}
-        </span>
+        <span className="inspector-view__item-count">{service.unit_count}</span>{' '}
+        <span className="inspector-view__item-name">{service.name}</span>
+        <span className="inspector-view__status-block">{statusIndicator}</span>
       </li>
     );
   }
-};
+}
 
 AddedServicesListItem.propTypes = {
   changeState: PropTypes.func.isRequired,
-  hovered: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
+  hovered: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   lastInList: PropTypes.bool,
   service: PropTypes.object.isRequired,
   serviceModule: shapeup.shape({

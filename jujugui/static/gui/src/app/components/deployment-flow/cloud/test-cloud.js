@@ -11,29 +11,31 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 describe('DeploymentCloud', function() {
   let acl, cloudList;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentCloud
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      cloud={options.cloud || null}
-      controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
-      listClouds={options.listClouds || sinon.stub().callsArgWith(0, null, cloudList)}
-      setCloud={options.setCloud || sinon.stub()}
-      setCloudCount={options.setCloudCount} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentCloud
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        cloud={options.cloud || null}
+        controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
+        listClouds={options.listClouds || sinon.stub().callsArgWith(0, null, cloudList)}
+        setCloud={options.setCloud || sinon.stub()}
+        setCloudCount={options.setCloudCount}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     cloudList = {
-      'google': {
+      google: {
         name: 'google',
         cloudType: 'gce'
       },
-      'azure': {
+      azure: {
         name: 'azure',
         cloudType: 'azure'
       },
-      'aws': {
+      aws: {
         name: 'aws',
         cloudType: 'ec2'
       }
@@ -51,12 +53,10 @@ describe('DeploymentCloud', function() {
             key="google"
             onClick={options.at(0).prop('onClick')}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             <span className="deployment-cloud__cloud-logo">
-              <SvgIcon
-                height={33}
-                name="google"
-                width={256} />
+              <SvgIcon height={33} name="google" width={256} />
             </span>
           </li>
           <li
@@ -64,12 +64,10 @@ describe('DeploymentCloud', function() {
             key="azure"
             onClick={options.at(1).prop('onClick')}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             <span className="deployment-cloud__cloud-logo">
-              <SvgIcon
-                height={24}
-                name="azure"
-                width={204} />
+              <SvgIcon height={24} name="azure" width={204} />
             </span>
           </li>
           <li
@@ -77,17 +75,16 @@ describe('DeploymentCloud', function() {
             key="aws"
             onClick={options.at(2).prop('onClick')}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             <span className="deployment-cloud__cloud-logo">
-              <SvgIcon
-                height={44}
-                name="aws"
-                width={117} />
+              <SvgIcon height={44} name="aws" width={117} />
             </span>
           </li>
         </ul>
         {undefined}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -96,7 +93,8 @@ describe('DeploymentCloud', function() {
     var expected = (
       <div className="deployment-cloud__loading">
         <Spinner />
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-cloud__loading'), expected);
   });
 
@@ -107,18 +105,16 @@ describe('DeploymentCloud', function() {
     });
     var expected = (
       <div className="deployment-cloud__chosen">
-        <SvgIcon
-          height={33}
-          name="google"
-          width={256} />
-      </div>);
+        <SvgIcon height={33} name="google" width={256} />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-cloud__chosen'), expected);
     assert.equal(wrapper.find('.deployment-cloud__list').length, 0);
   });
 
   it('automatically selects a cloud if there is only one', function() {
     cloudList = {
-      'google': {name: 'google'}
+      google: {name: 'google'}
     };
     const setCloud = sinon.stub();
     const setCloudCount = sinon.stub();
@@ -140,7 +136,10 @@ describe('DeploymentCloud', function() {
     const wrapper = renderComponent({
       setCloud
     });
-    wrapper.find('.deployment-cloud__cloud').at(0).simulate('click');
+    wrapper
+      .find('.deployment-cloud__cloud')
+      .at(0)
+      .simulate('click');
     assert.strictEqual(setCloud.callCount, 1);
     assert.deepEqual(setCloud.args[0][0], {
       name: 'google',

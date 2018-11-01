@@ -7,25 +7,24 @@ const enzyme = require('enzyme');
 const SvgIcon = require('./svg-icon');
 
 describe('SvgIcon', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <SvgIcon
-      className={options.className}
-      height={options.height}
-      name={options.name || 'icon-name'}
-      size={options.size}
-      width={options.width} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <SvgIcon
+        className={options.className}
+        height={options.height}
+        name={options.name || 'icon-name'}
+        size={options.size}
+        width={options.width}
+      />
+    );
 
   it('can render an icon', function() {
     const wrapper = renderComponent({size: 24});
     const expected = (
-      <svg
-        className="svg-icon"
-        style={{width: '24px', height: '24px'}}
-        viewBox='0 0 24 24'>
+      <svg className="svg-icon" style={{width: '24px', height: '24px'}} viewBox="0 0 24 24">
         <use xlinkHref="#icon-name" />
-      </svg>);
+      </svg>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

@@ -57,31 +57,27 @@ describe('Analytics', () => {
     sendAnalytics('category', 'action', 'label');
     assert.lengthOf(dataLayer, 1);
     assert.deepEqual(dataLayer[0], {
-      'event': 'GAEvent',
-      'eventCategory': 'category',
-      'eventAction': 'action',
-      'eventLabel': 'label',
-      'eventValue': 'loggedIn:true'
+      event: 'GAEvent',
+      eventCategory: 'category',
+      eventAction: 'action',
+      eventLabel: 'label',
+      eventValue: 'loggedIn:true'
     });
   });
 
   it('combines values if present', () => {
     const sendAnalytics = sendAnalyticsFactory(controllerAPI, dataLayer);
-    sendAnalytics(
-      'category',
-      'action',
-      'label',
-      {
-        'value': 'mambo',
-        'number': 5
-      });
+    sendAnalytics('category', 'action', 'label', {
+      value: 'mambo',
+      number: 5
+    });
     assert.lengthOf(dataLayer, 1);
     assert.deepEqual(dataLayer[0], {
-      'event': 'GAEvent',
-      'eventCategory': 'category',
-      'eventAction': 'action',
-      'eventLabel': 'label',
-      'eventValue': 'loggedIn:true|value:mambo|number:5'
+      event: 'GAEvent',
+      eventCategory: 'category',
+      eventAction: 'action',
+      eventLabel: 'label',
+      eventValue: 'loggedIn:true|value:mambo|number:5'
     });
   });
 });

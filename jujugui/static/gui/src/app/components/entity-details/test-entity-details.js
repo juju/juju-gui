@@ -35,7 +35,8 @@ describe('EntityDetails', function() {
         sendAnalytics={options.sendAnalytics || sinon.stub()}
         setPageTitle={options.setPageTitle || sinon.stub()}
         showTerms={options.showTerms || sinon.stub()}
-        staticURL={options.staticURL || 'http://example.com'} />,
+        staticURL={options.staticURL || 'http://example.com'}
+      />,
       {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
@@ -75,15 +76,14 @@ describe('EntityDetails', function() {
     const wrapper = renderComponent({
       flags: {'test.ddeploy': true}
     });
-    assert.isTrue(charmstore.getEntity.calledOnce,
-      'getEntity function not called');
-    assert.equal(charmstore.getEntity.args[0][0], 'django',
-      'getEntity not called with the entity ID');
+    assert.isTrue(charmstore.getEntity.calledOnce, 'getEntity function not called');
+    assert.equal(
+      charmstore.getEntity.args[0][0],
+      'django',
+      'getEntity not called with the entity ID'
+    );
     const expected = (
-      <div
-        className="entity-details charm"
-        ref="content"
-        tabIndex="0">
+      <div className="entity-details charm" ref="content" tabIndex="0">
         <div>
           <EntityHeader
             acl={acl}
@@ -96,7 +96,8 @@ describe('EntityDetails', function() {
             hasPlans={false}
             importBundleYAML={sinon.stub()}
             plans={null}
-            scrollPosition={100} />
+            scrollPosition={100}
+          />
           {undefined}
           <EntityContent
             addNotification={sinon.stub()}
@@ -117,7 +118,8 @@ describe('EntityDetails', function() {
             scrollCharmbrowser={sinon.stub()}
             sendAnalytics={sinon.stub()}
             showTerms={sinon.stub()}
-            staticURL="http://example.com" />
+            staticURL="http://example.com"
+          />
         </div>
       </div>
     );
@@ -128,20 +130,17 @@ describe('EntityDetails', function() {
     charmstore.getEntity.callsArgWith(1, 'bad wolf', [mockEntity]);
     const wrapper = renderComponent();
     const expected = (
-      <div
-        className="entity-details"
-        ref="content"
-        tabIndex="0">
+      <div className="entity-details" ref="content" tabIndex="0">
         <p className="error">
-          There was a problem while loading the entity details.
-          You could try searching for another charm or bundle or go{' '}
-          <span
-            className="link"
-            onClick={wrapper.find('.link').prop('onClick')}>
+          There was a problem while loading the entity details. You could try searching for
+          another charm or bundle or go{' '}
+          <span className="link" onClick={wrapper.find('.link').prop('onClick')}>
             back
-          </span>.
+          </span>
+          .
         </p>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.entity-details'), expected);
   });
 

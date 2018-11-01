@@ -71,7 +71,7 @@ describe('StatsClient', () => {
 
   it('adds flags as statsd tags', () => {
     const url = 'https://example.com/stats/';
-    const flags = {'test.bar': true, 'baz': true};
+    const flags = {'test.bar': true, baz: true};
     const client = new StatsClient(url, 'gui', flags);
     const name = client._addFlags('foo');
     assert.equal(name, 'foo,test.bar=true');

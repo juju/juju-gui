@@ -25,22 +25,20 @@ const AmbiguousRelationMenu = function(props) {
           data-endservice={end.service}
           data-startname={start.name}
           data-startservice={start.service}
-          key={start.name + end.name + i}>
+          key={start.name + end.name + i}
+        >
           {start.displayName}:{start.name} &rarr; {end.displayName}:{end.name}
-        </li>);
+        </li>
+      );
     });
     return components;
   }
 
   return (
     <div className="menu">
-      <ul>
-        {_generateRelations(props.endpoints)}
-      </ul>
+      <ul>{_generateRelations(props.endpoints)}</ul>
       <div className="cancel link" role="button" tabIndex="0">
-        <SvgIcon
-          name="close_16"
-          size="16" />
+        <SvgIcon name="close_16" size="16" />
       </div>
     </div>
   );

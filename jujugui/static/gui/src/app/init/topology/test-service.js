@@ -12,7 +12,7 @@ const readCharmEntries = sinon.stub();
 const jsYamlMock = sinon.stub();
 const EnvironmentView = proxyquire('./environment', {
   './service': proxyquire('./service', {
-    'd3': {
+    d3: {
       mouse: sinon.stub().returns([0, 0])
     },
     'js-yaml': {
@@ -40,7 +40,9 @@ describe('service module annotations', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     called = false;
     location = {'gui-x': 0, 'gui-y': 0};
     const env = {
@@ -49,7 +51,8 @@ describe('service module annotations', function() {
         location['gui-x'] = data['gui-x'];
         location['gui-y'] = data['gui-y'];
       },
-      get: function() {}};
+      get: function() {}
+    };
     view = new EnvironmentView({
       container: viewContainer,
       db: db,
@@ -68,32 +71,32 @@ describe('service module annotations', function() {
   });
 
   // Test the drag end handler.
-  it('should set location annotations on service block drag end',
-    function() {
-      const d =
-           {id: 'wordpress',
-             inDrag: serviceModule.DRAG_ACTIVE,
-             x: 100.1,
-             y: 200.2};
-      serviceModule.dragend(d, serviceModule);
-      assert.isTrue(called);
-      location['gui-x'].should.equal(100.1);
-      location['gui-y'].should.equal(200.2);
-    });
+  it('should set location annotations on service block drag end', function() {
+    const d = {
+      id: 'wordpress',
+      inDrag: serviceModule.DRAG_ACTIVE,
+      x: 100.1,
+      y: 200.2
+    };
+    serviceModule.dragend(d, serviceModule);
+    assert.isTrue(called);
+    location['gui-x'].should.equal(100.1);
+    location['gui-y'].should.equal(200.2);
+  });
 
-  it('should not set annotations on drag end if building a relation',
-    function() {
-      const d =
-           {id: 'wordpress',
-             x: 100.1,
-             y: 200.2};
-      const topo = serviceModule.topo;
-      topo.buildingRelation = true;
-      serviceModule.dragend(d, serviceModule);
-      assert.isFalse(called);
-      location['gui-x'].should.equal(0);
-      location['gui-y'].should.equal(0);
-    });
+  it('should not set annotations on drag end if building a relation', function() {
+    const d = {
+      id: 'wordpress',
+      x: 100.1,
+      y: 200.2
+    };
+    const topo = serviceModule.topo;
+    topo.buildingRelation = true;
+    serviceModule.dragend(d, serviceModule);
+    assert.isFalse(called);
+    location['gui-x'].should.equal(0);
+    location['gui-y'].should.equal(0);
+  });
 
   it('should clear the state when the event is fired', function() {
     const topo = serviceModule.topo;
@@ -129,15 +132,17 @@ describe('service updates', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-    view = new EnvironmentView(
-      {container: viewContainer,
-        db: db,
-        env: {
-          update_annotations: function() {}
-        },
-        state: {changeState: sinon.stub()}
-      });
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
+    view = new EnvironmentView({
+      container: viewContainer,
+      db: db,
+      env: {
+        update_annotations: function() {}
+      },
+      state: {changeState: sinon.stub()}
+    });
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
@@ -182,10 +187,8 @@ describe('service updates', function() {
   });
 });
 
-
 describe('service module events', function() {
-  let cleanups, db, charm, fakeStore, models, serviceModule, topo,
-      view, viewContainer;
+  let cleanups, db, charm, fakeStore, models, serviceModule, topo, view, viewContainer;
 
   beforeAll(function(done) {
     YUI(GlobalConfig).use(['juju-models'], function(Y) {
@@ -205,7 +208,9 @@ describe('service module events', function() {
     viewContainer = utils.makeContainer(this, 'content');
     const charmData = utils.loadFixture('data/haproxy-api-response.json', true);
     charm = new models.Charm(charmData.charm);
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     db.services.add({id: 'haproxy', charm: 'cs:precise/haproxy-18'});
     db.charms.add(charm);
     view = new EnvironmentView({
@@ -253,9 +258,13 @@ describe('service module events', function() {
     let called = false;
     const d = {
       id: 'wordpress',
-      containsPoint: function() {return true;}
+      containsPoint: function() {
+        return true;
+      }
     };
-    serviceModule.fake = function() {called = true;};
+    serviceModule.fake = function() {
+      called = true;
+    };
     serviceModule.currentServiceClickAction = 'fake';
     topo.ignoreServiceClick = true;
     serviceModule.serviceClick(d, serviceModule);
@@ -265,10 +274,7 @@ describe('service module events', function() {
   });
 
   it('should show only visible services', function() {
-    db.services.add([
-      {id: 'rails', life: 'dying'},
-      {id: 'mysql', life: 'dead'}
-    ]);
+    db.services.add([{id: 'rails', life: 'dying'}, {id: 'mysql', life: 'dead'}]);
     db.services.add({id: 'django'});
     db.services.add({
       id: 'wordpress',
@@ -297,41 +303,57 @@ describe('service module events', function() {
   xit('should highlight and unhighlight services', function() {
     serviceModule.highlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, true);
-    assert.equal(topo.vis.select('.service-block-image').attr('href'),
-      '/static/gui/build/app/assets/svgs/service_module_selected.svg');
-    assert.notEqual(topo.vis.select('.service.highlight')[0][0],
-      null, 'Highlight class not found');
+    assert.equal(
+      topo.vis.select('.service-block-image').attr('href'),
+      '/static/gui/build/app/assets/svgs/service_module_selected.svg'
+    );
+    assert.notEqual(
+      topo.vis.select('.service.highlight')[0][0],
+      null,
+      'Highlight class not found'
+    );
     serviceModule.unhighlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, false);
-    assert.equal(topo.vis.select('.service-block-image').attr('href'),
-      '/static/gui/build/app/assets/svgs/service_module.svg');
-    assert.notEqual(topo.vis.select('.service.unhighlight')[0][0],
-      null, 'Unhighlight class not found');
+    assert.equal(
+      topo.vis.select('.service-block-image').attr('href'),
+      '/static/gui/build/app/assets/svgs/service_module.svg'
+    );
+    assert.notEqual(
+      topo.vis.select('.service.unhighlight')[0][0],
+      null,
+      'Unhighlight class not found'
+    );
   });
 
   it('should highlight and unhighlight related services', function() {
     db.services.add({id: 'wordpress'});
     db.relations.add({
-      'interface': 'proxy',
+      interface: 'proxy',
       scope: 'global',
       endpoints: [
         ['haproxy', {role: 'server', name: 'haproxy'}],
         ['wordpress', {role: 'client', name: 'wordpress'}]
       ],
-      'id': 'relation1'
+      id: 'relation1'
     });
     serviceModule.update();
-    serviceModule.highlight({serviceName: 'haproxy',
-      highlightRelated: true});
+    serviceModule.highlight({
+      serviceName: 'haproxy',
+      highlightRelated: true
+    });
     assert.equal(topo.service_boxes.wordpress.highlighted, true);
-    serviceModule.unhighlight({serviceName: 'haproxy',
-      unhighlightRelated: true});
+    serviceModule.unhighlight({
+      serviceName: 'haproxy',
+      unhighlightRelated: true
+    });
     assert.equal(topo.service_boxes.wordpress.highlighted, false);
   });
 
   it('can generate a selection from a list of service names', function() {
-    assert.deepEqual(serviceModule.selectionFromServiceNames(['haproxy']),
-      topo.vis.selectAll('.service'));
+    assert.deepEqual(
+      serviceModule.selectionFromServiceNames(['haproxy']),
+      topo.vis.selectAll('.service')
+    );
   });
 
   it('should pan to a deployed bundle', function() {
@@ -349,8 +371,7 @@ describe('service module events', function() {
     ]);
     serviceModule.update();
     serviceModule.panToBundle({services: [db.services.item(0)]});
-    assert.equal(stubFindCentroid.calledOnce, true,
-      'findCentroid not called');
+    assert.equal(stubFindCentroid.calledOnce, true, 'findCentroid not called');
   });
 
   it('should deploy a service on charm token drop events', function(done) {
@@ -378,7 +399,7 @@ describe('service module events', function() {
       assert.equal(attributes.icon, src);
 
       const closeTo = (value, original, delta) =>
-        value >= (original-delta) && value <= (original+delta);
+        value >= original - delta && value <= original + delta;
 
       assert(closeTo(attributes.coordinates[0], 52, 5));
       assert(closeTo(attributes.coordinates[1], -52, 5));
@@ -398,8 +419,7 @@ describe('service module events', function() {
       dataTransfer: {
         getData: function(name) {
           return JSON.stringify({
-            data: '{"data": "BUNDLE DATA",' +
-                  ' "id": "~jorge/bundle/thing"}',
+            data: '{"data": "BUNDLE DATA",' + ' "id": "~jorge/bundle/thing"}',
             dataType: 'token-drag-and-drop',
             iconSrc: src
           });
@@ -462,8 +482,7 @@ describe('service module events', function() {
     };
 
     serviceModule.topo = view.topo;
-    const extractCharmMetadata = sinon.stub(
-      serviceModule, '_extractCharmMetadata');
+    const extractCharmMetadata = sinon.stub(serviceModule, '_extractCharmMetadata');
     cleanups.push(extractCharmMetadata.restore);
 
     serviceModule.canvasDropHandler(fakeEventObject);
@@ -493,8 +512,7 @@ describe('service module events', function() {
     };
 
     serviceModule.topo = view.topo;
-    const extractCharmMetadata = sinon.stub(
-      serviceModule, '_extractCharmMetadata');
+    const extractCharmMetadata = sinon.stub(serviceModule, '_extractCharmMetadata');
     cleanups.push(extractCharmMetadata.restore);
 
     serviceModule.canvasDropHandler(fakeEventObject);
@@ -509,14 +527,12 @@ describe('service module events', function() {
 
   it('_extractCharmMetadata: calls ziputils.getEntries()', function() {
     const fileObj = {file: ''},
-        topoObj = {topo: ''},
-        envObj = {env: ''},
-        dbObj = {db: ''};
-    const findCharmEntries = sinon.stub(
-      serviceModule, '_findCharmEntries');
+      topoObj = {topo: ''},
+      envObj = {env: ''},
+      dbObj = {db: ''};
+    const findCharmEntries = sinon.stub(serviceModule, '_findCharmEntries');
     cleanups.push(findCharmEntries.restore);
-    const zipExtractionError = sinon.stub(
-      serviceModule, '_zipExtractionError');
+    const zipExtractionError = sinon.stub(serviceModule, '_zipExtractionError');
     cleanups.push(zipExtractionError);
 
     serviceModule._extractCharmMetadata(fileObj, topoObj, envObj, dbObj);
@@ -559,8 +575,7 @@ describe('service module events', function() {
     it('finds the files in the zip', function() {
       const entries = {metadata: 'foo'};
       findCharmEntries.returns(entries);
-      const readEntries = sinon.stub(
-        serviceModule, '_readCharmEntries');
+      const readEntries = sinon.stub(serviceModule, '_readCharmEntries');
       cleanups.push(readEntries.restore);
 
       serviceModule._findCharmEntries(fileObj, topoObj, envObj, dbObj, {});
@@ -579,8 +594,7 @@ describe('service module events', function() {
     it('shows an error notification if there is no metadata.yaml', function() {
       const entries = {foo: 'bar'};
       findCharmEntries.returns(entries);
-      const readEntries = sinon.stub(
-        serviceModule, '_readCharmEntries');
+      const readEntries = sinon.stub(serviceModule, '_readCharmEntries');
       cleanups.push(readEntries.restore);
       topoObj.environmentView = {
         fadeHelpIndicator: sinon.stub()
@@ -592,8 +606,11 @@ describe('service module events', function() {
       assert.deepEqual(findCharmEntries.lastCall.args[0], {});
       assert.deepEqual(notificationParams, {
         title: 'Import failed',
-        message: 'Import from "' + fileObj.name + '" failed. Invalid charm ' +
-            'file, missing metadata.yaml',
+        message:
+          'Import from "' +
+          fileObj.name +
+          '" failed. Invalid charm ' +
+          'file, missing metadata.yaml',
         level: 'error'
       });
       assert.equal(readEntries.calledOnce, false);
@@ -602,14 +619,12 @@ describe('service module events', function() {
 
   it('_readCharmEntries: calls ziputils.readCharmEntries', function() {
     const fileObj = {file: ''},
-        topoObj = {topo: ''},
-        envObj = {env: ''},
-        dbObj = {db: ''};
-    const existingServices = sinon.stub(
-      serviceModule, '_checkForExistingServices');
+      topoObj = {topo: ''},
+      envObj = {env: ''},
+      dbObj = {db: ''};
+    const existingServices = sinon.stub(serviceModule, '_checkForExistingServices');
     cleanups.push(existingServices);
-    const extractionError = sinon.stub(
-      serviceModule, '_zipExtractionError');
+    const extractionError = sinon.stub(serviceModule, '_zipExtractionError');
 
     serviceModule._readCharmEntries(fileObj, topoObj, envObj, dbObj, {});
 
@@ -635,8 +650,15 @@ describe('service module events', function() {
   });
 
   describe('_checkForExistingService', function() {
-    let dbObj, deployCharm, contentsObj, envObj, fileObj, getServicesStub,
-        cleanups, topochangeState, topoObj;
+    let dbObj,
+      deployCharm,
+      contentsObj,
+      envObj,
+      fileObj,
+      getServicesStub,
+      cleanups,
+      topochangeState,
+      topoObj;
 
     beforeEach(function() {
       cleanups = [];
@@ -670,8 +692,7 @@ describe('service module events', function() {
       getServicesStub = sinon.stub().returns(['service']);
       dbObj = {services: {getServicesFromCharmName: getServicesStub}};
 
-      serviceModule._checkForExistingServices(
-        fileObj, topoObj, envObj, dbObj, contentsObj);
+      serviceModule._checkForExistingServices(fileObj, topoObj, envObj, dbObj, contentsObj);
 
       sharedAssert();
       assert.equal(deployCharm.calledOnce, false);
@@ -683,8 +704,7 @@ describe('service module events', function() {
       getServicesStub = sinon.stub().returns(['service']);
       dbObj = {services: {getServicesFromCharmName: getServicesStub}};
 
-      serviceModule._checkForExistingServices(
-        fileObj, topoObj, envObj, dbObj, contentsObj);
+      serviceModule._checkForExistingServices(fileObj, topoObj, envObj, dbObj, contentsObj);
 
       sharedAssert();
 
@@ -712,8 +732,7 @@ describe('service module events', function() {
 
     assert.deepEqual(notificationParams, {
       title: 'Import failed',
-      message: 'Import from "' + fileObj.name + '" failed. See console for ' +
-          'error object',
+      message: 'Import from "' + fileObj.name + '" failed. See console for ' + 'error object',
       level: 'error'
     });
     assert.equal(fadeHelpIndicator.callCount, 1);
@@ -772,10 +791,13 @@ describe('canvasDropHandler', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    const db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    const db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     const env = {
       update_annotations: function(name, type, data) {},
-      get: function() {}};
+      get: function() {}
+    };
     view = new EnvironmentView({
       container: viewContainer,
       db: db,
@@ -803,17 +825,19 @@ describe('canvasDropHandler', function() {
     // easiest way to show that the one is just a shim around the other.
     assert.equal(
       serviceModule.canvasDropHandler(evt),
-      serviceModule._canvasDropHandler(files));
+      serviceModule._canvasDropHandler(files)
+    );
   });
 
   it('halts the event so FF does not try to reload the page', function(done) {
     const evt = {
       dataTransfer: {files: {length: 2}},
-      preventDefault: () => {done();}
+      preventDefault: () => {
+        done();
+      }
     };
     serviceModule.canvasDropHandler(evt);
   });
-
 });
 
 describe('_canvasDropHandler', function() {
@@ -831,10 +855,13 @@ describe('_canvasDropHandler', function() {
 
   beforeEach(function() {
     viewContainer = utils.makeContainer(this);
-    const db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    const db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     const env = {
       update_annotations: function(name, type, data) {},
-      get: function() {}};
+      get: function() {}
+    };
     view = new EnvironmentView({
       container: viewContainer,
       db: db,
@@ -860,7 +887,9 @@ describe('_canvasDropHandler', function() {
   it('deploys charms dropped from the sidebar', function(done) {
     const files = {};
     const self = {
-      _deployFromCharmbrowser: function() {done();}
+      _deployFromCharmbrowser: function() {
+        done();
+      }
     };
     serviceModule._canvasDropHandler.call(self, files);
   });
@@ -868,7 +897,9 @@ describe('_canvasDropHandler', function() {
   it('extracts a zipped charm directory when dropped', function(done) {
     const file = {name: 'charm.zip', type: 'application/zip'};
     const self = {
-      _extractCharmMetadata: function() {done();}
+      _extractCharmMetadata: function() {
+        done();
+      }
     };
     serviceModule._canvasDropHandler.call(self, [file]);
   });
@@ -877,11 +908,12 @@ describe('_canvasDropHandler', function() {
     const file = {name: 'charm.zip', type: 'application/x-zip-compressed'};
     const files = {length: 1, 0: file};
     const self = {
-      _extractCharmMetadata: function() {done();}
+      _extractCharmMetadata: function() {
+        done();
+      }
     };
     serviceModule._canvasDropHandler.call(self, files);
   });
-
 });
 
 describe('updateElementVisibility', function() {
@@ -898,10 +930,13 @@ describe('updateElementVisibility', function() {
   beforeEach(function() {
     cleanups = [];
     viewContainer = utils.makeContainer(this);
-    const db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    const db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     const env = {
       update_annotations: function(name, type, data) {},
-      get: function() {}};
+      get: function() {}
+    };
     view = new EnvironmentView({
       container: viewContainer,
       db: db,
@@ -940,22 +975,30 @@ describe('updateElementVisibility', function() {
     const highlight = sinon.stub(serviceModule, 'highlight');
     const unhighlight = sinon.stub(serviceModule, 'unhighlight');
     cleanups.concat([
-      fade.restore, hide.restore, show.restore, highlight.restore,
+      fade.restore,
+      hide.restore,
+      show.restore,
+      highlight.restore,
       unhighlight.restore
     ]);
     const serviceList = new models.ServiceList();
-    serviceList.add([{
-      id: 'foo1',
-      fade: true
-    }, {
-      id: 'foo2',
-      hide: true
-    }, {
-      id: 'foo3',
-      highlight: true
-    }, {
-      id: 'foo4'
-    }]);
+    serviceList.add([
+      {
+        id: 'foo1',
+        fade: true
+      },
+      {
+        id: 'foo2',
+        hide: true
+      },
+      {
+        id: 'foo3',
+        highlight: true
+      },
+      {
+        id: 'foo4'
+      }
+    ]);
     serviceModule.topo.db.services = serviceList;
     serviceModule.updateElementVisibility();
     assert.equal(fade.callCount, 1);

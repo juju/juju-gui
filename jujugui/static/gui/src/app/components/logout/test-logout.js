@@ -7,15 +7,16 @@ const enzyme = require('enzyme');
 const Logout = require('./logout');
 
 describe('Logout', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Logout
-      charmstoreLogoutUrl={options.charmstoreLogoutUrl || 'http://charmstorelogout'}
-      doCharmstoreLogout={options.doCharmstoreLogout || sinon.stub().returns(false)}
-      locationAssign={options.locationAssign || sinon.stub()}
-      logoutUrl={options.logoutUrl || 'http://logout'}
-      visible={options.visible === undefined ? true : options.visible} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Logout
+        charmstoreLogoutUrl={options.charmstoreLogoutUrl || 'http://charmstorelogout'}
+        doCharmstoreLogout={options.doCharmstoreLogout || sinon.stub().returns(false)}
+        locationAssign={options.locationAssign || sinon.stub()}
+        logoutUrl={options.logoutUrl || 'http://logout'}
+        visible={options.visible === undefined ? true : options.visible}
+      />
+    );
 
   it('renders properly for regular logout', () => {
     const wrapper = renderComponent();
@@ -24,7 +25,10 @@ describe('Logout', () => {
         className="logout-link dropdown-menu__list-item-link"
         href="http://logout"
         onClick={wrapper.prop('onClick')}
-        target="_self">Logout</a>
+        target="_self"
+      >
+        Logout
+      </a>
     );
     assert.compareJSX(wrapper, expected);
   });

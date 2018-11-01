@@ -21,9 +21,7 @@ class SearchResultsItem extends React.Component {
     if (!this.props.item.special) {
       return;
     }
-    return (
-      <span className="special-flag"></span>
-    );
+    return <span className="special-flag" />;
   }
 
   /**
@@ -36,17 +34,16 @@ class SearchResultsItem extends React.Component {
     var components = [];
     var tags = this.props.item.tags || [];
     if (tags.length === 0) {
-      return <span>{' '}</span>;
+      return <span> </span>;
     }
     tags.forEach(function(tag, i) {
       components.push(
-        <li
-          className="tag-list--item"
-          key={tag + i}>
+        <li className="tag-list--item" key={tag + i}>
           <a
             className="list-block__list--item-link"
             href={this.props.generatePath({search: {tags: tag}})}
-            onClick={this._handleTagClick.bind(this, tag)}>
+            onClick={this._handleTagClick.bind(this, tag)}
+          >
             {tag}
           </a>
         </li>
@@ -71,13 +68,12 @@ class SearchResultsItem extends React.Component {
     }
     series.forEach(function(s) {
       components.push(
-        <li
-          className="list-series__item"
-          key={s.name}>
+        <li className="list-series__item" key={s.name}>
           <a
             className="list-block__list--item-link"
             href={this._generateStoreURL(s.storeId)}
-            onClick={this._handleItemClick.bind(this, s.storeId)}>
+            onClick={this._handleItemClick.bind(this, s.storeId)}
+          >
             {s.name}
           </a>
         </li>
@@ -94,9 +90,7 @@ class SearchResultsItem extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses(selected) {
-    return classNames(
-      {selected: selected}
-    );
+    return classNames({selected: selected});
   }
 
   /**
@@ -109,7 +103,7 @@ class SearchResultsItem extends React.Component {
     let url;
     try {
       url = urls.URL.fromLegacyString(id);
-    } catch(_) {
+    } catch (_) {
       url = urls.URL.fromString(id);
     }
     return {
@@ -234,36 +228,37 @@ class SearchResultsItem extends React.Component {
         <a
           className="list-block__list--item-main-link"
           href={this._generateStoreURL(item.id)}
-          onClick={this._handleItemClick.bind(this, item.id)}></a>
+          onClick={this._handleItemClick.bind(this, item.id)}
+        />
         <div className="four-col charm-name__column">
           <h3 className="list-block__list--item-title">
             {item.displayName}
             {this._generateSpecialFlag()}
           </h3>
-          <ul className="tag-list">
-            {this._generateTagList()}
-          </ul>
+          <ul className="tag-list">{this._generateTagList()}</ul>
         </div>
         <div className={this._generateSeriesClass()}>
-          <ul className="list-series">
-            {this._generateSeriesList()}
-          </ul>
+          <ul className="list-series">{this._generateSeriesList()}</ul>
         </div>
         <div className={this._generateCharmsClass()}>
           <IconList
             applications={this.props.item.applications || [this.props.item]}
             changeState={this.props.changeState}
-            generatePath={this.props.generatePath} />
+            generatePath={this.props.generatePath}
+          />
         </div>
         <div className="two-col owner__column list-block__column">
           <p className="cell">
             {'By '}
             <a
               className="list-block__list--item-link"
-              href={
-                this.props.generatePath({search: null, profile: item.owner})}
+              href={this.props.generatePath({
+                search: null,
+                profile: item.owner
+              })}
               onClick={this._handleOwnerClick.bind(this, item.owner)}
-              title={`See other charms and bundles by ${item.owner}`}>
+              title={`See other charms and bundles by ${item.owner}`}
+            >
               {item.owner}
             </a>
           </p>
@@ -273,16 +268,15 @@ class SearchResultsItem extends React.Component {
             action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
             extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
-            <SvgIcon
-              name="add-icon"
-              size="16" />
+            type="inline-neutral"
+          >
+            <SvgIcon name="add-icon" size="16" />
           </Button>
         </div>
       </li>
     );
   }
-};
+}
 
 SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,

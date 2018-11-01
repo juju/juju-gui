@@ -22,8 +22,7 @@ class OverviewAction extends React.Component {
   _valueClasses() {
     return classNames(
       this.baseClass + '__value',
-      this.props.valueType ?
-        this.baseClass + '__value--type-' + this.props.valueType : '',
+      this.props.valueType ? this.baseClass + '__value--type-' + this.props.valueType : '',
       {
         hidden: !this.props.value
       }
@@ -37,12 +36,9 @@ class OverviewAction extends React.Component {
     @returns {String} The collection of class names.
   */
   _linkClasses() {
-    return classNames(
-      this.baseClass + '__link',
-      {
-        hidden: !this.props.linkAction
-      }
-    );
+    return classNames(this.baseClass + '__link', {
+      hidden: !this.props.linkAction
+    });
   }
 
   /**
@@ -69,9 +65,7 @@ class OverviewAction extends React.Component {
     }
     return (
       <span className="overview-action__icon">
-        <SvgIcon
-          name={icon}
-          size="16" />
+        <SvgIcon name={icon} size="16" />
       </span>
     );
   }
@@ -84,23 +78,18 @@ class OverviewAction extends React.Component {
         onClick={this.props.action}
         role="button"
         tabIndex="0"
-        title={this.props.title}>
+        title={this.props.title}
+      >
         {this._generateIcon()}
-        <span className={titleClass}>
-          {this.props.title}
-        </span>
-        <span
-          className={this._linkClasses()}
-          onClick={this._handleLinkClick.bind(this)}>
+        <span className={titleClass}>{this.props.title}</span>
+        <span className={this._linkClasses()} onClick={this._handleLinkClick.bind(this)}>
           {this.props.linkTitle}
         </span>
-        <span className={this._valueClasses()}>
-          {this.props.value}
-        </span>
+        <span className={this._valueClasses()}>{this.props.value}</span>
       </li>
     );
   }
-};
+}
 
 OverviewAction.propTypes = {
   action: PropTypes.func.isRequired,
@@ -108,10 +97,7 @@ OverviewAction.propTypes = {
   linkAction: PropTypes.func,
   linkTitle: PropTypes.string,
   title: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   valueType: PropTypes.string
 };
 

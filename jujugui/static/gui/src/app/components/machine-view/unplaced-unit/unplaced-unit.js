@@ -85,7 +85,8 @@ class MachineViewUnplacedUnit extends React.Component {
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         selectMachine={props.unitAPI.selectMachine}
         series={props.series}
-        unit={props.unitAPI.unit} />
+        unit={props.unitAPI.unit}
+      />
     );
   }
 
@@ -96,10 +97,9 @@ class MachineViewUnplacedUnit extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'machine-view__unplaced-unit', {
-        'machine-view__unplaced-unit--dragged': this.props.isDragging
-      });
+    return classNames('machine-view__unplaced-unit', {
+      'machine-view__unplaced-unit--dragged': this.props.isDragging
+    });
   }
 
   render() {
@@ -107,30 +107,35 @@ class MachineViewUnplacedUnit extends React.Component {
     const isReadOnly = props.acl.isReadOnly();
     const unitAPI = props.unitAPI;
     const unit = unitAPI.unit;
-    const menuItems = [{
-      label: 'Deploy to...',
-      action: (!isReadOnly && this._togglePlaceUnit.bind(this)) || null
-    }, {
-      label: 'Destroy',
-      action: (!isReadOnly && unitAPI.removeUnit.bind(null, unit.id)) || null
-    }];
+    const menuItems = [
+      {
+        label: 'Deploy to...',
+        action: (!isReadOnly && this._togglePlaceUnit.bind(this)) || null
+      },
+      {
+        label: 'Destroy',
+        action: (!isReadOnly && unitAPI.removeUnit.bind(null, unit.id)) || null
+      }
+    ];
     // Wrap the returned components in the drag source method.
     return props.connectDragSource(
       <li className={this._generateClasses()}>
         <img
           alt={unit.displayName}
           className="machine-view__unplaced-unit-icon"
-          src={unitAPI.icon} />
+          src={unitAPI.icon}
+        />
         {unit.displayName}
         <ButtonDropdown
           classes={['machine-view__unplaced-unit-dropdown']}
-          listItems={menuItems} />
+          listItems={menuItems}
+        />
         {this._generatePlaceUnit()}
-        <div className="machine-view__unplaced-unit-drag-state"></div>
+        <div className="machine-view__unplaced-unit-drag-state" />
       </li>
     );
   }
-};
+}
 
 MachineViewUnplacedUnit.propTypes = {
   acl: shapeup.shape({
@@ -158,5 +163,7 @@ MachineViewUnplacedUnit.propTypes = {
 };
 
 module.exports = ReactDnD.DragSource(
-  'unit', MachineViewUnplacedUnitGlobals.dragSource,
-  MachineViewUnplacedUnitGlobals.collect)(MachineViewUnplacedUnit);
+  'unit',
+  MachineViewUnplacedUnitGlobals.dragSource,
+  MachineViewUnplacedUnitGlobals.collect
+)(MachineViewUnplacedUnit);

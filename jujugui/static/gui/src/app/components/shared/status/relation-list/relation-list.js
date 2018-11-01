@@ -8,7 +8,6 @@ const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusTable = require('../table/table');
 
 class StatusRelationList extends React.Component {
-
   /**
     Generate a link to an application from a relation.
     @param name {String} An app name.
@@ -19,16 +18,18 @@ class StatusRelationList extends React.Component {
     if (!app) {
       // If the application is not in the DB it must be remote app so don't
       // link to it.
-      return (<span>{name}</span>);
+      return <span>{name}</span>;
     }
     return (
       <a
         className="status-view__link"
         href={this.props.generateApplicationURL(name)}
-        onClick={this.props.onApplicationClick.bind(this, name)}>
+        onClick={this.props.onApplicationClick.bind(this, name)}
+      >
         <img className="status-view__icon" src={this.props.getIconPath(app)} />
         {name}
-      </a>);
+      </a>
+    );
   }
 
   /**
@@ -64,46 +65,57 @@ class StatusRelationList extends React.Component {
         }
       });
       return {
-        columns: [{
-          columnSize: 3,
-          content: name
-        }, {
-          columnSize: 3,
-          content: this._generateRelationAppLink(provides)
-        }, {
-          columnSize: 3,
-          content: this._generateRelationAppLink(consumes)
-        }, {
-          columnSize: 3,
-          content: scope
-        }],
+        columns: [
+          {
+            columnSize: 3,
+            content: name
+          },
+          {
+            columnSize: 3,
+            content: this._generateRelationAppLink(provides)
+          },
+          {
+            columnSize: 3,
+            content: this._generateRelationAppLink(consumes)
+          },
+          {
+            columnSize: 3,
+            content: scope
+          }
+        ],
         key: (rel.id || '').toString()
       };
     });
   }
 
   render() {
-    const headers = [{
-      content: 'Relation',
-      columnSize: 3
-    }, {
-      content: 'Provides',
-      columnSize: 3
-    }, {
-      content: 'Consumes',
-      columnSize: 3
-    }, {
-      content: 'Type',
-      columnSize: 3
-    }];
+    const headers = [
+      {
+        content: 'Relation',
+        columnSize: 3
+      },
+      {
+        content: 'Provides',
+        columnSize: 3
+      },
+      {
+        content: 'Consumes',
+        columnSize: 3
+      },
+      {
+        content: 'Type',
+        columnSize: 3
+      }
+    ];
     return (
       <StatusTable
         headers={headers}
         rows={this._generateRows()}
-        statusFilter={this.props.statusFilter} />
+        statusFilter={this.props.statusFilter}
+      />
     );
   }
-};
+}
 
 StatusRelationList.propTypes = {
   applications: maracaPropTypes.applications,

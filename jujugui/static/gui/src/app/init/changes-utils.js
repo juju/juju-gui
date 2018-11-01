@@ -2,7 +2,6 @@
 'use strict';
 
 const changesUtils = {
-
   /**
     Filter a changeset by a parent change.
     @param {Object} changeSet The change set to apply the filter to.
@@ -79,7 +78,12 @@ const changesUtils = {
   sortDescriptionsByApplication: (getServiceById, changeset, descriptions) => {
     // ECS methods to blacklist for description sorting.
     const methodBlacklist = [
-      'addCharm', 'addMachines', 'addSSHKeys', 'importSSHKeys', 'destroyMachines'];
+      'addCharm',
+      'addMachines',
+      'addSSHKeys',
+      'importSSHKeys',
+      'destroyMachines'
+    ];
     const grouped = {};
     // If the application name is a temporary ID (contains $)
     // then fetch its real name and return that or return the original name.
@@ -150,10 +154,9 @@ const changesUtils = {
   */
   generateAllChangeDescriptions: (services, units, changeSet) => {
     let changes = [],
-        change;
+      change;
     Object.keys(changeSet).forEach(key => {
-      change = changesUtils.generateChangeDescription(
-        services, units, changeSet[key]);
+      change = changesUtils.generateChangeDescription(services, units, changeSet[key]);
       if (change) {
         changes.push(change);
       }
@@ -168,7 +171,7 @@ const changesUtils = {
     {one: '', two: undefined, three: null} will become one="" three=null.
     @param args {Object} The object of arguments.
   */
-  _objectToParams: (args={}) => {
+  _objectToParams: (args = {}) => {
     let params = [];
     Object.keys(args).forEach(key => {
       const property = [key];
@@ -209,8 +212,7 @@ const changesUtils = {
       switch (change.command.method) {
         case '_addCharm':
           command = change.command;
-          changeItem.description = ' ' + command.args[0] +
-            ' will be added to the controller.';
+          changeItem.description = ' ' + command.args[0] + ' will be added to the controller.';
           // TODO frankban: retrieve the icon from the charm itself. We cannot
           // always pass applicationId as an option, and maybe we should never
           // do that, and just get what we need from the charm.
@@ -224,8 +226,7 @@ const changesUtils = {
           const applicationName = change.command.args[0].applicationName;
           const application = services.getServiceByName(applicationName);
           changeItem.icon = application.get('icon');
-          changeItem.description = ` ${applicationName} resources will` +
-            ' be added.';
+          changeItem.description = ` ${applicationName} resources will` + ' be added.';
           break;
         case '_deploy':
           if (!change.command.options || !change.command.options.modelId) {
@@ -234,15 +235,15 @@ const changesUtils = {
             // bar.
             return;
           }
-          ghostService = services.getById(
-            change.command.options.modelId);
+          ghostService = services.getById(change.command.options.modelId);
           changeItem.icon = ghostService.get('icon');
           name = ghostService.get('name');
-          changeItem.description = ' ' + name +
-              ' will be added to the model.';
+          changeItem.description = ' ' + name + ' will be added to the model.';
           command = `juju deploy ${ghostService.get('charm')}`;
-          const originalName = ghostService.get('displayName').replace(
-            '(', '').replace(')', '');
+          const originalName = ghostService
+            .get('displayName')
+            .replace('(', '')
+            .replace(')', '');
           if (name !== originalName) {
             command = `${command} ${name}`;
           }
@@ -251,27 +252,32 @@ const changesUtils = {
         case '_destroyApplication':
           name = change.command.args[0];
           changeItem.icon = 'changes-service-destroyed';
-          changeItem.description = ' ' + name +
-              ' will be destroyed.';
+          changeItem.description = ' ' + name + ' will be destroyed.';
           changeItem.command = `juju remove-application ${name}`;
           break;
         case '_add_unit':
           const service = changesUtils.getServiceByUnitId(
-            change.command.options.modelId, services, units);
+            change.command.options.modelId,
+            services,
+            units
+          );
           name = service.get('name');
           changeItem.icon = 'changes-units-added';
           const unitCount = change.command.args[1];
-          changeItem.description = ` ${unitCount} ${name} ` +
-            `unit${unitCount === 1 ? '' : 's'} will be added.`;
+          changeItem.description =
+            ` ${unitCount} ${name} ` + `unit${unitCount === 1 ? '' : 's'} will be added.`;
           changeItem.command = `juju add-unit -n ${unitCount} ${name}`;
           break;
         case '_remove_units':
           changeItem.icon = 'changes-units-removed';
           /*jslint -W004*/
           const unitList = change.command.args[0];
-          changeItem.description = unitList.length + ' unit' +
-              (unitList.length === 1 ? '' : 's') +
-              ' will be removed from ' + unitList[0].split('/')[0];
+          changeItem.description =
+            unitList.length +
+            ' unit' +
+            (unitList.length === 1 ? '' : 's') +
+            ' will be removed from ' +
+            unitList[0].split('/')[0];
           changeItem.command = `juju remove-unit ${unitList.join(' ')}`;
           break;
         case '_expose':
@@ -287,42 +293,49 @@ const changesUtils = {
         case '_unexpose':
           name = change.command.args[0];
           changeItem.icon = 'exposed_16';
-          changeItem.description = name +
-            ' will be unexposed';
+          changeItem.description = name + ' will be unexposed';
           changeItem.command = `juju unexpose ${name}`;
           break;
         case '_add_relation':
           const serviceList = changesUtils.getRealRelationEndpointNames(
-            change.command.args, services);
+            change.command.args,
+            services
+          );
           changeItem.icon = 'changes-relation-added';
-          changeItem.description = change.command.args[0][1].name +
-              ' relation will be added between ' +
-              serviceList[0] + ' and ' + serviceList[1] + '.';
-          changeItem.command = `juju relate ${serviceList[0]} ` +
-            `${serviceList[1]}`;
+          changeItem.description =
+            change.command.args[0][1].name +
+            ' relation will be added between ' +
+            serviceList[0] +
+            ' and ' +
+            serviceList[1] +
+            '.';
+          changeItem.command = `juju relate ${serviceList[0]} ` + `${serviceList[1]}`;
           break;
         case '_remove_relation':
           changeItem.icon = 'changes-relation-removed';
-          changeItem.description = change.command.args[0][1].name +
-              ' relation will be removed between ' +
-              change.command.args[0][0] +
-              ' and ' +
-              change.command.args[1][0] + '.';
-          changeItem.command = 'juju remove-relation ' +
+          changeItem.description =
+            change.command.args[0][1].name +
+            ' relation will be removed between ' +
+            change.command.args[0][0] +
+            ' and ' +
+            change.command.args[1][0] +
+            '.';
+          changeItem.command =
+            'juju remove-relation ' +
             `${change.command.args[0][0]} ${change.command.args[1][0]}`;
           break;
         case '_addMachines':
-          machineType = change.command.args[0][0].parentId ?
-            'container' : 'machine';
+          machineType = change.command.args[0][0].parentId ? 'container' : 'machine';
           const machines = change.command.args[0];
           changeItem.icon = 'changes-' + machineType + '-created';
-          changeItem.description = change.command.args[0].length +
-              ' ' + machineType +
-              (machines.length !== 1 ? 's' : '') +
-              ' will be added.';
+          changeItem.description =
+            change.command.args[0].length +
+            ' ' +
+            machineType +
+            (machines.length !== 1 ? 's' : '') +
+            ' will be added.';
           const series = machines[0].series;
-          const constraints = changesUtils._objectToParams(
-            machines[0].constraints);
+          const constraints = changesUtils._objectToParams(machines[0].constraints);
           command = `juju add-machine -n ${machines.length}`;
           if (constraints) {
             command = `${command} --constraints ${constraints}`;
@@ -333,25 +346,25 @@ const changesUtils = {
           changeItem.command = command;
           break;
         case '_destroyMachines':
-          machineType = change.command.args[0][0].indexOf('/') !== -1 ?
-            'container' : 'machine';
+          machineType =
+            change.command.args[0][0].indexOf('/') !== -1 ? 'container' : 'machine';
           changeItem.icon = 'changes-' + machineType + '-destroyed';
-          changeItem.description = change.command.args[0].length +
-              ' ' + machineType +
-              (change.command.args[0].length !== 1 ? 's' : '') +
-              ' will be destroyed.';
-          changeItem.command = 'juju remove-machine ' +
-            `${change.command.args[0].join(' ')}`;
+          changeItem.description =
+            change.command.args[0].length +
+            ' ' +
+            machineType +
+            (change.command.args[0].length !== 1 ? 's' : '') +
+            ' will be destroyed.';
+          changeItem.command = 'juju remove-machine ' + `${change.command.args[0].join(' ')}`;
           break;
         case '_set_config':
           const cfgServ = services.getById(change.command.args[0]);
           ghostService = services.getById(change.command.args[0]);
           const config = changesUtils._objectToParams(change.command.args[1]);
           changeItem.icon = 'changes-config-changed';
-          changeItem.description = 'Configuration values will be changed for ' +
-              cfgServ.get('name') + '.';
-          changeItem.command = `juju config ${ghostService.get('name')} ` +
-            `${config}`;
+          changeItem.description =
+            'Configuration values will be changed for ' + cfgServ.get('name') + '.';
+          changeItem.command = `juju config ${ghostService.get('name')} ` + `${config}`;
           break;
         case '_addKeys':
           changeItem.icon = 'changes-unknown';
@@ -359,8 +372,8 @@ const changesUtils = {
           break;
         default:
           changeItem.icon = 'changes-unknown';
-          changeItem.description = 'An unknown change has been made ' +
-              'to this model via the CLI.';
+          changeItem.description =
+            'An unknown change has been made ' + 'to this model via the CLI.';
           break;
       }
     }
@@ -394,7 +407,7 @@ const changesUtils = {
   */
   getRealRelationEndpointNames: (args, services) => {
     let serviceList = [],
-        serviceId;
+      serviceId;
     services.each(service => {
       serviceId = service.get('id');
       args.forEach(arg => {

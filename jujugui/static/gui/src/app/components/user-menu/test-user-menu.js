@@ -8,23 +8,22 @@ const UserMenu = require('./user-menu');
 const ButtonDropdown = require('../button-dropdown/button-dropdown');
 
 describe('UserMenu', () => {
+  const loginLink = <div className="login" />;
+  const logoutLink = <div className="logout" />;
 
-  const loginLink = <div className="login"></div>;
-  const logoutLink = <div className="logout"></div>;
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <UserMenu
-      controllerAPI={{
-        userIsAuthenticated: options.userIsAuthenticated !== undefined ?
-          options.userIsAuthenticated : true
-      }}
-      LogoutLink={options.LogoutLink || logoutLink}
-      navigateUserProfile={options.navigateUserProfile || sinon.stub()}
-      showHelp={sinon.stub()}
-      USSOLoginLink={
-        options.USSOLoginLink !== undefined ?
-          options.USSOLoginLink : loginLink} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <UserMenu
+        controllerAPI={{
+          userIsAuthenticated:
+            options.userIsAuthenticated !== undefined ? options.userIsAuthenticated : true
+        }}
+        LogoutLink={options.LogoutLink || logoutLink}
+        navigateUserProfile={options.navigateUserProfile || sinon.stub()}
+        showHelp={sinon.stub()}
+        USSOLoginLink={options.USSOLoginLink !== undefined ? options.USSOLoginLink : loginLink}
+      />
+    );
 
   it('can render', () => {
     const wrapper = renderComponent({
@@ -36,16 +35,21 @@ describe('UserMenu', () => {
           classes={['user-menu']}
           disableDropdown={true}
           icon={loginLink}
-          listItems={[{
-            action: sinon.stub(),
-            label: 'Profile'
-          }, {
-            action: sinon.stub(),
-            label: 'GUI help'
-          }, {
-            element: logoutLink
-          }]}
-          tooltip={''} />
+          listItems={[
+            {
+              action: sinon.stub(),
+              label: 'Profile'
+            },
+            {
+              action: sinon.stub(),
+              label: 'GUI help'
+            },
+            {
+              element: logoutLink
+            }
+          ]}
+          tooltip={''}
+        />
       </div>
     );
     assert.compareJSX(wrapper, expected);
@@ -68,8 +72,10 @@ describe('UserMenu', () => {
   it('navigates to user profile when clicked', () => {
     const navigateUserProfile = sinon.stub();
     const wrapper = renderComponent({navigateUserProfile});
-    wrapper.find('ButtonDropdown').prop('listItems')[0].action();
+    wrapper
+      .find('ButtonDropdown')
+      .prop('listItems')[0]
+      .action();
     assert.equal(navigateUserProfile.callCount, 1);
   });
-
 });

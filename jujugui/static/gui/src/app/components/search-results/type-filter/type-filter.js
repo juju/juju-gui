@@ -14,9 +14,7 @@ class SearchResultsTypeFilter extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses(selected) {
-    return classNames(
-      {selected: selected}
-    );
+    return classNames({selected: selected});
   }
 
   /**
@@ -28,19 +26,23 @@ class SearchResultsTypeFilter extends React.Component {
   _generateFilterItems() {
     var components = [];
     var currentType = this.props.currentType;
-    var items = [{
-      label: 'All',
-      selected: !currentType,
-      action: null
-    }, {
-      label: 'Charms',
-      selected: currentType === 'charm',
-      action: 'charm'
-    }, {
-      label: 'Bundles',
-      selected: currentType === 'bundle',
-      action: 'bundle'
-    }];
+    var items = [
+      {
+        label: 'All',
+        selected: !currentType,
+        action: null
+      },
+      {
+        label: 'Charms',
+        selected: currentType === 'charm',
+        action: 'charm'
+      },
+      {
+        label: 'Bundles',
+        selected: currentType === 'bundle',
+        action: 'bundle'
+      }
+    ];
     items.forEach(function(item) {
       components.push(
         <li
@@ -48,9 +50,11 @@ class SearchResultsTypeFilter extends React.Component {
           key={item.label}
           onClick={this._handleFilterClick.bind(this, item.action)}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           {item.label}
-        </li>);
+        </li>
+      );
     }, this);
     return components;
   }
@@ -72,13 +76,11 @@ class SearchResultsTypeFilter extends React.Component {
   render() {
     return (
       <nav className="six-col list-block__type">
-        <ul>
-          {this._generateFilterItems()}
-        </ul>
+        <ul>{this._generateFilterItems()}</ul>
       </nav>
     );
   }
-};
+}
 
 SearchResultsTypeFilter.propTypes = {
   changeState: PropTypes.func.isRequired,

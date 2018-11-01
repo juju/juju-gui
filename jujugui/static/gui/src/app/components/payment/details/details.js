@@ -48,24 +48,14 @@ class PaymentDetails extends React.Component {
     return (
       <div className="payment-details-view twelve-col">
         <div className="payment-details-fields">
-          <GenericInput
-            disabled={true}
-            label="Name"
-            value={user.name} />
-          <GenericInput
-            disabled={true}
-            label="Email address"
-            value={user.email} />
+          <GenericInput disabled={true} label="Name" value={user.name} />
+          <GenericInput disabled={true} label="Email address" value={user.email} />
           {business ? (
-            <GenericInput
-              disabled={true}
-              label="VAT number (optional)"
-              value={user.vat} />) : null}
+            <GenericInput disabled={true} label="VAT number (optional)" value={user.vat} />
+          ) : null}
           {business ? (
-            <GenericInput
-              disabled={true}
-              label="Business name"
-              value={user.businessName} />) : null}
+            <GenericInput disabled={true} label="Business name" value={user.businessName} />
+          ) : null}
         </div>
         <h4>
           Addresses
@@ -74,9 +64,11 @@ class PaymentDetails extends React.Component {
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
               extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              type="inline-neutral"
+            >
               Edit
-            </Button>)}
+            </Button>
+          )}
         </h4>
         {this._generateAddresses(user.addresses)}
         <h4>
@@ -86,12 +78,15 @@ class PaymentDetails extends React.Component {
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
               extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              type="inline-neutral"
+            >
               Edit
-            </Button>)}
+            </Button>
+          )}
         </h4>
         {this._generateAddresses(user.billingAddresses, true)}
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -102,48 +97,51 @@ class PaymentDetails extends React.Component {
     @param {Boolean} billing Whether this is a billing address.
     @returns {Object} The markup for the addresses.
   */
-  _generateAddresses(addresses, billing=false) {
+  _generateAddresses(addresses, billing = false) {
     let list = addresses.map(address => {
       return (
         <PaymentDetailsAddress
           acl={this.props.acl}
           addAddress={
-            billing ? this.props.payment.addBillingAddress : this.props.payment.addAddress}
+            billing ? this.props.payment.addBillingAddress : this.props.payment.addAddress
+          }
           addNotification={this.props.addNotification}
           address={address}
           close={
-            billing ? this._toggleBillingAddressEdit.bind(this) :
-              this._toggleAddressEdit.bind(this)}
+            billing
+              ? this._toggleBillingAddressEdit.bind(this)
+              : this._toggleAddressEdit.bind(this)
+          }
           getCountries={this.props.payment.getCountries}
           key={address.name}
           removeAddress={
-            billing ? this.props.payment.removeBillingAddress :
-              this.props.payment.removeAddress}
-          showEdit={
-            billing ? this.state.billingAddressEdit : this.state.addressEdit}
+            billing
+              ? this.props.payment.removeBillingAddress
+              : this.props.payment.removeAddress
+          }
+          showEdit={billing ? this.state.billingAddressEdit : this.state.addressEdit}
           updateAddress={
-            billing ? this.props.payment.updateBillingAddress :
-              this.props.payment.updateAddress}
+            billing
+              ? this.props.payment.updateBillingAddress
+              : this.props.payment.updateAddress
+          }
           updated={this.props.updateUser}
-          username={this.props.username} />);
+          username={this.props.username}
+        />
+      );
     });
-    return (
-      <ul className="payment-details-addresses">
-        {list}
-      </ul>);
+    return <ul className="payment-details-addresses">{list}</ul>;
   }
 
   render() {
     return (
       <div className="payment__section">
-        <h2 className="payment__title twelve-col">
-          Account details
-        </h2>
+        <h2 className="payment__title twelve-col">Account details</h2>
         {this._generateDetails()}
       </div>
     );
   }
-};
+}
 
 PaymentDetails.propTypes = {
   acl: PropTypes.object.isRequired,

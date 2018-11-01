@@ -47,7 +47,7 @@ describe('user auth class', () => {
           });
         }
       };
-    };
+    }();
   };
 
   describe('controller credentials', () => {
@@ -65,8 +65,9 @@ describe('user auth class', () => {
 
     it('can be set', () => {
       user.controller = {user: 'rose'};
-      assert.deepEqual(
-        JSON.parse(storage.controllerCredentials), {user: 'rose'});
+      assert.deepEqual(JSON.parse(storage.controllerCredentials), {
+        user: 'rose'
+      });
     });
 
     it('can be retrieved', () => {
@@ -113,8 +114,7 @@ describe('user auth class', () => {
 
     it('can be set', () => {
       user.model = {user: 'rose'};
-      assert.deepEqual(
-        JSON.parse(storage.modelCredentials), {user: 'rose'});
+      assert.deepEqual(JSON.parse(storage.modelCredentials), {user: 'rose'});
     });
 
     it('can be retrieved', () => {
@@ -205,7 +205,7 @@ describe('user auth class', () => {
     });
   });
 
-  describe('usernames', () =>{
+  describe('usernames', () => {
     let storage, user;
 
     beforeEach(() => {
@@ -244,9 +244,7 @@ describe('user auth class', () => {
         expirationDatetime: expiration
       };
       user = new User(cfg);
-      assert.deepEqual(
-        new Date(user.expirationDatetime).getTime(),
-        expiration.getTime());
+      assert.deepEqual(new Date(user.expirationDatetime).getTime(), expiration.getTime());
     });
 
     it('sets an expiration time in the future if one is not provided', () => {

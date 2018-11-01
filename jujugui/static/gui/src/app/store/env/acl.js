@@ -45,10 +45,7 @@ aclModule.generateAcl = function(controllerAPI, modelAPI) {
       @return {Boolean} Whether the user can add models.
     */
     canAddModels: () => {
-      const access = (
-        modelAPI.get('controllerAccess') ||
-        controllerAPI.get('controllerAccess')
-      );
+      const access = modelAPI.get('controllerAccess') || controllerAPI.get('controllerAccess');
       return access === 'add-model' || access === 'superuser';
     },
 
@@ -89,8 +86,7 @@ aclModule.generateAcl = function(controllerAPI, modelAPI) {
     */
     canRemoveCurrentModel: () => {
       return (
-        modelAPI.get('modelAccess') === 'admin' &&
-        modelAPI.get('modelOwner') === getUser()
+        modelAPI.get('modelAccess') === 'admin' && modelAPI.get('modelOwner') === getUser()
       );
     }
   };

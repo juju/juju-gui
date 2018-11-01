@@ -23,30 +23,33 @@ describe('RelationUtils', () => {
       // It's stable.
       assert.strictEqual(
         relationUtils.generateHash('kumquat'),
-        relationUtils.generateHash('kumquat'));
+        relationUtils.generateHash('kumquat')
+      );
       // Different values hash differently.
       assert.notEqual(
         relationUtils.generateHash('kumquat'),
-        relationUtils.generateHash('qumquat'));
+        relationUtils.generateHash('qumquat')
+      );
     });
 
     it('can generate safe relation ids', () => {
       const relationId = 'foo:Bar relation-00000006!@#';
       assert.strictEqual(
         relationUtils.generateSafeDOMId(relationId),
-        'e-foo_Bar_relation_00000006___-' +
-          relationUtils.generateHash(relationId));
+        'e-foo_Bar_relation_00000006___-' + relationUtils.generateHash(relationId)
+      );
     });
 
     it('can generate safe relation ids with a parent id', () => {
       const relationId = 'foo:Bar relation-00000006!@#';
       assert.notEqual(
         relationUtils.generateSafeDOMId(relationId, 'topo1'),
-        relationUtils.generateSafeDOMId(relationId, 'topo2'));
+        relationUtils.generateSafeDOMId(relationId, 'topo2')
+      );
       assert.strictEqual(
         relationUtils.generateSafeDOMId(relationId, 'topo1'),
-        'e-foo_Bar_relation_00000006___-' +
-          relationUtils.generateHash(relationId + 'topo1'));
+        'e-foo_Bar_relation_00000006___-' + relationUtils.generateHash(relationId + 'topo1')
+      );
     });
   });
 
@@ -67,65 +70,65 @@ describe('RelationUtils', () => {
       };
       const wordpressProvides = {
         website: {
-          'interface': 'http',
+          interface: 'http',
           scope: 'global'
         }
       };
       const wordpressRequires = {
         cache: {
-          'interface': 'memcache',
+          interface: 'memcache',
           scope: 'global'
         },
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         },
         nfs: {
-          'interface': 'mount',
+          interface: 'mount',
           scope: 'global'
         }
       };
       const mysqlProvides = {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         },
         'db-admin': {
-          'interface': 'mysql-root',
+          interface: 'mysql-root',
           scope: 'global'
         },
         'local-monitors': {
-          'interface': 'local-monitors',
+          interface: 'local-monitors',
           scope: 'container'
         },
         master: {
-          'interface': 'mysql-oneway-replication',
+          interface: 'mysql-oneway-replication',
           scope: 'global'
         },
         monitors: {
-          'interface': 'monitors',
+          interface: 'monitors',
           scope: 'global'
         },
         munin: {
-          'interface': 'munin-node',
+          interface: 'munin-node',
           scope: 'global'
         },
         'shared-db': {
-          'interface': 'mysql-shared',
+          interface: 'mysql-shared',
           scope: 'global'
         }
       };
       const mysqlRequires = {
         ceph: {
-          'interface': 'ceph-client',
+          interface: 'ceph-client',
           scope: 'global'
         },
         ha: {
-          'interface': 'hacluster',
+          interface: 'hacluster',
           scope: 'global'
         },
         slave: {
-          'interface': 'mysql-oneway-replication',
+          interface: 'mysql-oneway-replication',
           scope: 'global'
         }
       };
@@ -154,7 +157,7 @@ describe('RelationUtils', () => {
     it('finds endpoint matches for relations', () => {
       const actual = relationUtils.findEndpointMatch(endpoints);
       const expected = {
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         provides: endpoints[1],
         requires: endpoints[0],
@@ -176,21 +179,21 @@ describe('RelationUtils', () => {
       endpoints[1].type = null;
       endpoints[0].charm.set('requires', {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         },
         'db-admin': {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         }
       });
       endpoints[1].charm.set('provides', {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         },
         'db-admin': {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         }
       });
@@ -204,27 +207,27 @@ describe('RelationUtils', () => {
       endpoints[1].type = null;
       endpoints[0].charm.set('requires', {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         },
         'juju-info': {
-          'interface': 'juju-info',
+          interface: 'juju-info',
           scope: 'container'
         }
       });
       endpoints[1].charm.set('provides', {
         db: {
-          'interface': 'mysql',
+          interface: 'mysql',
           scope: 'global'
         },
         'juju-info': {
-          'interface': 'juju-info',
+          interface: 'juju-info',
           scope: 'container'
         }
       });
       const actual = relationUtils.findEndpointMatch(endpoints);
       const expected = {
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         provides: endpoints[1],
         requires: endpoints[0],
@@ -239,7 +242,9 @@ describe('RelationUtils', () => {
     let db, service, getById;
 
     beforeEach(() => {
-      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+      db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
       service = new models.Service({
         id: 'mysql',
         charm: 'cs:mysql',
@@ -270,42 +275,40 @@ describe('RelationUtils', () => {
       });
       db.services.add(secondApplication);
       db.relations.add({
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         endpoints: [
           ['mysql', {role: 'server', name: 'mydb'}],
           ['mediawiki', {role: 'client', name: 'db'}]
         ],
-        'id': 'relation-0000000002'
+        id: 'relation-0000000002'
       });
       const results = relationUtils.getRelationDataForService(db, service);
       assert.strictEqual(1, results.length);
-      const results2 = relationUtils.getRelationDataForService(db, service,
-        secondApplication);
+      const results2 = relationUtils.getRelationDataForService(db, service, secondApplication);
       assert.strictEqual(0, results2.length);
       db.relations.add({
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         endpoints: [
           ['mysql', {role: 'server', name: 'mydb'}],
           ['mediawiki-a', {role: 'client', name: 'db'}]
         ],
-        'id': 'relation-0000000003'
+        id: 'relation-0000000003'
       });
-      const results3 = relationUtils.getRelationDataForService(db, service,
-        secondApplication);
+      const results3 = relationUtils.getRelationDataForService(db, service, secondApplication);
       assert.strictEqual(1, results3.length);
     });
 
     it('shows a juju-core rel from the perspective of a service', () => {
       db.relations.add({
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         endpoints: [
           ['mysql', {role: 'provider', name: 'mydb'}],
           ['mediawiki', {role: 'requirer', name: 'db'}]
         ],
-        'id': 'mediawiki:db mysql:mydb'
+        id: 'mediawiki:db mysql:mydb'
       });
       const results = relationUtils.getRelationDataForService(db, service);
       assert.strictEqual(1, results.length);
@@ -329,13 +332,13 @@ describe('RelationUtils', () => {
 
     it('includes the service names', () => {
       db.relations.add({
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         endpoints: [
           ['mysql', {role: 'provider', name: 'mydb'}],
           ['mediawiki', {role: 'requirer', name: 'db'}]
         ],
-        'id': 'mediawiki:db mysql:mydb'
+        id: 'mediawiki:db mysql:mydb'
       });
       const result = relationUtils.getRelationDataForService(db, service)[0];
       assert.strictEqual(result.near.serviceName, 'cs:mysql');
@@ -344,13 +347,13 @@ describe('RelationUtils', () => {
 
     it('does not fail if the far application has been removed', () => {
       db.relations.add({
-        'interface': 'mysql',
+        interface: 'mysql',
         scope: 'global',
         endpoints: [
           ['mysql', {role: 'provider', name: 'mydb'}],
           ['mediawiki', {role: 'requirer', name: 'db'}]
         ],
-        'id': 'mediawiki:db mysql:mydb'
+        id: 'mediawiki:db mysql:mydb'
       });
       // By not returning an application we're simulating that the service no
       // longer exists, i.e. has been destroyed.
@@ -384,37 +387,31 @@ describe('RelationUtils', () => {
         units: {toArray: () => target._units}
       };
       inputRelation = new models.Relation({
-        endpoints: [
-          ['source-id', {name: 'endpoint-1'}],
-          ['target-id', {name: 'endpoint-2'}]
-        ]
+        endpoints: [['source-id', {name: 'endpoint-1'}], ['target-id', {name: 'endpoint-2'}]]
       });
       unit = {
-        'agent_state': undefined,
-        'agent_state_data': {
-          'hook': undefined
+        agent_state: undefined,
+        agent_state_data: {
+          hook: undefined
         }
       };
     });
 
-    it('mirrors the relation\'s properties', () => {
+    it("mirrors the relation's properties", () => {
       inputRelation.set('foo', 'bar');
-      const relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      const relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.nestedProperty(relation, 'foo');
       assert.equal(relation.foo, 'bar');
     });
 
     it('exposes the source and target as attributes', () => {
-      const relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      const relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.equal(relation.source, source);
       assert.equal(relation.target, target);
     });
 
     it('generates an ID that includes source and target IDs', () => {
-      const relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      const relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.match(relation.compositeId, new RegExp(source.modelId()));
       assert.match(relation.compositeId, new RegExp(target.modelId()));
     });
@@ -422,8 +419,7 @@ describe('RelationUtils', () => {
     it('includes endpoint names in its ID, if they exist', () => {
       const firstEndpointName = 'endpoint-1';
       const secondEndpointName = 'endpoint-2';
-      const relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      const relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.match(relation.compositeId, new RegExp(firstEndpointName));
       assert.match(relation.compositeId, new RegExp(secondEndpointName));
     });
@@ -431,26 +427,34 @@ describe('RelationUtils', () => {
     it('exposes the fact that a relation is a subordinate', () => {
       inputRelation.set('scope', 'container');
       // Return true when checking source.model.get('subordinate')
-      source.model.get = function() { return true; };
-      const relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      source.model.get = function() {
+        return true;
+      };
+      const relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.isTrue(relation.isSubordinate);
     });
 
     it('exposes the fact that a relation is not a subordinate', () => {
       inputRelation.set('scope', 'not-container');
       // Return false when checking source.model.get('subordinate')
-      source.model.get = function() { return false; };
-      let relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      source.model.get = function() {
+        return false;
+      };
+      let relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
       // Return true for subordinate, but maintain non-container scope.
-      source.model.get = function() { return true; };
+      source.model.get = function() {
+        return true;
+      };
       relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
       // Return false for subordinate on both models but 'container' for scope
-      source.model.get = function() { return false; };
-      target.model.get = function() { return false; };
+      source.model.get = function() {
+        return false;
+      };
+      target.model.get = function() {
+        return false;
+      };
       inputRelation.set('scope', 'container');
       relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
@@ -459,8 +463,7 @@ describe('RelationUtils', () => {
     it('can tell when a relation is in error', () => {
       source._units = [Object.assign({}, unit)];
       target._units = [Object.assign({}, unit)];
-      const relation = relationUtils.DecoratedRelation(
-        inputRelation, source, target);
+      const relation = relationUtils.DecoratedRelation(inputRelation, source, target);
       // Test no error scenario.
       assert.isFalse(relation.sourceHasError());
       assert.isFalse(relation.targetHasError());
@@ -516,7 +519,11 @@ describe('RelationUtils', () => {
       thirdModel._units = [Object.assign({}, unit)];
       thirdModel._units[0].agent_state = 'error';
       thirdModel._units[0].agent_state_data.hook = 'endpoint-1-relation';
-      thirdModel.units = {toArray: function() { return thirdModel._units; }};
+      thirdModel.units = {
+        toArray: function() {
+          return thirdModel._units;
+        }
+      };
       // Add two relations between the same two models, plus a third.
       const relations = [
         relationUtils.DecoratedRelation(inputRelation, source, target),
@@ -563,22 +570,27 @@ describe('RelationUtils', () => {
   });
 
   describe('createRelation', () => {
-
     it('properly creates a relation', () => {
       const relationId = 'pending-19984570$:db23212464$:db';
       const charmGet = sinon.stub();
-      charmGet.withArgs('requires').onFirstCall().returns({
-        db: {
-          interface: 'db',
-          scope: 'global'
-        }
-      });
-      charmGet.withArgs('requires').onSecondCall().returns({
-        misc: {
-          interface: 'misc',
-          scope: 'global'
-        }
-      });
+      charmGet
+        .withArgs('requires')
+        .onFirstCall()
+        .returns({
+          db: {
+            interface: 'db',
+            scope: 'global'
+          }
+        });
+      charmGet
+        .withArgs('requires')
+        .onSecondCall()
+        .returns({
+          misc: {
+            interface: 'misc',
+            scope: 'global'
+          }
+        });
       charmGet.withArgs('provides').returns({
         db: {
           interface: 'db',
@@ -607,17 +619,22 @@ describe('RelationUtils', () => {
       const env = {
         add_relation: sinon.stub()
       };
-      const endpoints = [[
-        '19984570$', {
-          name: 'db',
-          role: 'client'
-        }
-      ], [
-        '23212464$', {
-          name: 'db',
-          role: 'server'
-        }
-      ]];
+      const endpoints = [
+        [
+          '19984570$',
+          {
+            name: 'db',
+            role: 'client'
+          }
+        ],
+        [
+          '23212464$',
+          {
+            name: 'db',
+            role: 'server'
+          }
+        ]
+      ];
       relationUtils.createRelation(db, env, endpoints, sinon.stub());
       assert.equal(db.relations.add.callCount, 1);
       assert.deepEqual(db.relations.add.lastCall.args[0], {
@@ -633,7 +650,7 @@ describe('RelationUtils', () => {
       assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
       env.add_relation.lastCall.args[2]({
-        result: {id: 'foo', 'interface': 'bar', scope: 'global'}
+        result: {id: 'foo', interface: 'bar', scope: 'global'}
       });
       // Callback method assertions.
       assert.equal(db.relations.remove.callCount, 1);
@@ -651,18 +668,24 @@ describe('RelationUtils', () => {
     it('relates a subordinate with a matching series', () => {
       const relationId = 'pending-19984570$:db23212464$:db';
       const charmGet = sinon.stub();
-      charmGet.withArgs('requires').onFirstCall().returns({
-        db: {
-          interface: 'db',
-          scope: 'global'
-        }
-      });
-      charmGet.withArgs('requires').onSecondCall().returns({
-        misc: {
-          interface: 'misc',
-          scope: 'global'
-        }
-      });
+      charmGet
+        .withArgs('requires')
+        .onFirstCall()
+        .returns({
+          db: {
+            interface: 'db',
+            scope: 'global'
+          }
+        });
+      charmGet
+        .withArgs('requires')
+        .onSecondCall()
+        .returns({
+          misc: {
+            interface: 'misc',
+            scope: 'global'
+          }
+        });
       charmGet.withArgs('provides').returns({
         db: {
           interface: 'db',
@@ -671,8 +694,14 @@ describe('RelationUtils', () => {
       });
       const serviceSet = sinon.stub();
       const serviceGet = sinon.stub();
-      serviceGet.withArgs('subordinate').onFirstCall().returns(true);
-      serviceGet.withArgs('subordinate').onSecondCall().returns(false);
+      serviceGet
+        .withArgs('subordinate')
+        .onFirstCall()
+        .returns(true);
+      serviceGet
+        .withArgs('subordinate')
+        .onSecondCall()
+        .returns(false);
       serviceGet.withArgs('series').returns('xenial');
       const db = {
         charms: {
@@ -697,19 +726,23 @@ describe('RelationUtils', () => {
       const env = {
         add_relation: sinon.stub()
       };
-      const endpoints = [[
-        '19984570$', {
-          name: 'db',
-          role: 'client'
-        }
-      ], [
-        '23212464$', {
-          name: 'db',
-          role: 'server'
-        }
-      ]];
-      relationUtils.createRelation(
-        db, env, endpoints, sinon.stub());
+      const endpoints = [
+        [
+          '19984570$',
+          {
+            name: 'db',
+            role: 'client'
+          }
+        ],
+        [
+          '23212464$',
+          {
+            name: 'db',
+            role: 'server'
+          }
+        ]
+      ];
+      relationUtils.createRelation(db, env, endpoints, sinon.stub());
       assert.equal(db.relations.add.callCount, 1);
       assert.deepEqual(db.relations.add.lastCall.args[0], {
         relation_id: relationId,
@@ -724,7 +757,7 @@ describe('RelationUtils', () => {
       assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
       env.add_relation.lastCall.args[2]({
-        result: {id: 'foo', 'interface': 'bar', scope: 'global'}
+        result: {id: 'foo', interface: 'bar', scope: 'global'}
       });
       // Callback method assertions.
       assert.equal(db.relations.remove.callCount, 1);
@@ -743,18 +776,24 @@ describe('RelationUtils', () => {
     it('relates multi-series subordinate with non-matching series', () => {
       const relationId = 'pending-19984570$:db23212464$:db';
       const charmGet = sinon.stub();
-      charmGet.withArgs('requires').onFirstCall().returns({
-        db: {
-          interface: 'db',
-          scope: 'global'
-        }
-      });
-      charmGet.withArgs('requires').onSecondCall().returns({
-        misc: {
-          interface: 'misc',
-          scope: 'global'
-        }
-      });
+      charmGet
+        .withArgs('requires')
+        .onFirstCall()
+        .returns({
+          db: {
+            interface: 'db',
+            scope: 'global'
+          }
+        });
+      charmGet
+        .withArgs('requires')
+        .onSecondCall()
+        .returns({
+          misc: {
+            interface: 'misc',
+            scope: 'global'
+          }
+        });
       charmGet.withArgs('provides').returns({
         db: {
           interface: 'db',
@@ -763,10 +802,22 @@ describe('RelationUtils', () => {
       });
       const serviceSet = sinon.stub();
       const serviceGet = sinon.stub();
-      serviceGet.withArgs('subordinate').onFirstCall().returns(true);
-      serviceGet.withArgs('subordinate').onSecondCall().returns(false);
-      serviceGet.withArgs('series').onFirstCall().returns('trusty');
-      serviceGet.withArgs('series').onSecondCall().returns('xenial');
+      serviceGet
+        .withArgs('subordinate')
+        .onFirstCall()
+        .returns(true);
+      serviceGet
+        .withArgs('subordinate')
+        .onSecondCall()
+        .returns(false);
+      serviceGet
+        .withArgs('series')
+        .onFirstCall()
+        .returns('trusty');
+      serviceGet
+        .withArgs('series')
+        .onSecondCall()
+        .returns('xenial');
       const db = {
         charms: {
           getById: sinon.stub().returns({
@@ -791,19 +842,23 @@ describe('RelationUtils', () => {
       const env = {
         add_relation: sinon.stub()
       };
-      const endpoints = [[
-        '19984570$', {
-          name: 'db',
-          role: 'client'
-        }
-      ], [
-        '23212464$', {
-          name: 'db',
-          role: 'server'
-        }
-      ]];
-      relationUtils.createRelation(
-        db, env, endpoints, sinon.stub());
+      const endpoints = [
+        [
+          '19984570$',
+          {
+            name: 'db',
+            role: 'client'
+          }
+        ],
+        [
+          '23212464$',
+          {
+            name: 'db',
+            role: 'server'
+          }
+        ]
+      ];
+      relationUtils.createRelation(db, env, endpoints, sinon.stub());
       assert.equal(db.relations.add.callCount, 1);
       assert.deepEqual(db.relations.add.lastCall.args[0], {
         relation_id: relationId,
@@ -818,7 +873,7 @@ describe('RelationUtils', () => {
       assert.deepEqual(env.add_relation.lastCall.args[1], endpoints[1]);
       // Call the add_relation callback.
       env.add_relation.lastCall.args[2]({
-        result: {id: 'foo', 'interface': 'bar', scope: 'global'}
+        result: {id: 'foo', interface: 'bar', scope: 'global'}
       });
       // Callback method assertions.
       assert.equal(db.relations.remove.callCount, 1);
@@ -838,65 +893,101 @@ describe('RelationUtils', () => {
   });
 
   describe('getAvailableEndpoints', () => {
-
     function runGetAvailableEndpoints(vals, context) {
       const endpointsController = 'endpointsController';
       const endpointData = {};
       endpointData[vals.applicationToId] = JSON.parse(vals.getEndpoints);
       const getEndpoints = sinon.stub().returns(endpointData);
       const applicationFrom = vals.applicationFrom || {};
-      const applicationTo = {get: function() { return vals.applicationToId; }};
+      const applicationTo = {
+        get: function() {
+          return vals.applicationToId;
+        }
+      };
       return relationUtils.getAvailableEndpoints(
-        endpointsController, 'db', getEndpoints, applicationFrom,
-        applicationTo, JSON.parse(vals.getRelationDataForService));
+        endpointsController,
+        'db',
+        getEndpoints,
+        applicationFrom,
+        applicationTo,
+        JSON.parse(vals.getRelationDataForService)
+      );
     }
 
     describe('works with...', () => {
       /* eslint-disable max-len */
       it('two services, one possible endpoint', () => {
-        const relatableEndpoints = '[[{"service":"8784924$","name":"db","type":"mysql"},{"service":"38546607$","name":"db","type":"mysql"}]]';
-        const availableEndpoints = runGetAvailableEndpoints({
-          applicationToId: '38546607$',
-          getEndpoints: relatableEndpoints,
-          getRelationDataForService: '[]'
-        }, this);
+        const relatableEndpoints =
+          '[[{"service":"8784924$","name":"db","type":"mysql"},{"service":"38546607$","name":"db","type":"mysql"}]]';
+        const availableEndpoints = runGetAvailableEndpoints(
+          {
+            applicationToId: '38546607$',
+            getEndpoints: relatableEndpoints,
+            getRelationDataForService: '[]'
+          },
+          this
+        );
         assert.deepEqual(availableEndpoints, JSON.parse(relatableEndpoints));
       });
 
       it('two services, one full endpoint', () => {
-        const availableEndpoints = runGetAvailableEndpoints({
-          applicationToId: '38546607$',
-          getEndpoints: '[[{"service":"8784924$","name":"db","type":"mysql"},{"service":"38546607$","name":"db","type":"mysql"}]]',
-          getRelationDataForService: '[{"interface":"db","initialized":true,"destroyed":false,"clientId":"relation_10","id":"pending-8784924$:db38546607$:db","relation_id":"pending-8784924$:db38546607$:db","endpoints":[["8784924$",{"name":"db","role":"client"}],["38546607$",{"name":"db","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"38546607$","serviceName":"wordpress","role":"server","name":"db"},"far":{"service":"8784924$","serviceName":"mariadb","role":"client","name":"db"},"ident":"pending-8784924$:db38546607$:db","elementId":"e-pending_8784924__db38546607__db-1455252509"}]'
-        }, this);
+        const availableEndpoints = runGetAvailableEndpoints(
+          {
+            applicationToId: '38546607$',
+            getEndpoints:
+              '[[{"service":"8784924$","name":"db","type":"mysql"},{"service":"38546607$","name":"db","type":"mysql"}]]',
+            getRelationDataForService:
+              '[{"interface":"db","initialized":true,"destroyed":false,"clientId":"relation_10","id":"pending-8784924$:db38546607$:db","relation_id":"pending-8784924$:db38546607$:db","endpoints":[["8784924$",{"name":"db","role":"client"}],["38546607$",{"name":"db","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"38546607$","serviceName":"wordpress","role":"server","name":"db"},"far":{"service":"8784924$","serviceName":"mariadb","role":"client","name":"db"},"ident":"pending-8784924$:db38546607$:db","elementId":"e-pending_8784924__db38546607__db-1455252509"}]'
+          },
+          this
+        );
         assert.deepEqual(availableEndpoints, []);
       });
 
       it('two services, two possible and empty endpoints', () => {
-        const relatableEndpoints = '[[{"service":"1485178$","name":"master","type":"mysql-oneway-replication"},{"service":"81820288$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"1485178$","name":"slave","type":"mysql-oneway-replication"},{"service":"81820288$","name":"master","type":"mysql-oneway-replication"}]]';
-        const availableEndpoints = runGetAvailableEndpoints({
-          applicationToId: '1485178$',
-          getEndpoints: relatableEndpoints,
-          getRelationDataForService: '[]'
-        }, this);
+        const relatableEndpoints =
+          '[[{"service":"1485178$","name":"master","type":"mysql-oneway-replication"},{"service":"81820288$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"1485178$","name":"slave","type":"mysql-oneway-replication"},{"service":"81820288$","name":"master","type":"mysql-oneway-replication"}]]';
+        const availableEndpoints = runGetAvailableEndpoints(
+          {
+            applicationToId: '1485178$',
+            getEndpoints: relatableEndpoints,
+            getRelationDataForService: '[]'
+          },
+          this
+        );
         assert.deepEqual(availableEndpoints, JSON.parse(relatableEndpoints));
       });
 
       it('two services, one possible and one full endpoint', () => {
-        const availableEndpoints = runGetAvailableEndpoints({
-          applicationToId: '12648410$',
-          getEndpoints: '[[{"service":"96799599$","name":"master","type":"mysql-oneway-replication"},{"service":"12648410$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"96799599$","name":"slave","type":"mysql-oneway-replication"},{"service":"12648410$","name":"master","type":"mysql-oneway-replication"}]]',
-          getRelationDataForService: '[{"initialized":true,"destroyed":false,"clientId":"relation_72","id":"pending-96799599$12648410$slavemaster","relation_id":"pending-96799599$12648410$slavemaster","endpoints":[["96799599$",{"name":"slave","role":"server"}],["12648410$",{"name":"master","role":"client"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"12648410$","serviceName":"mysql","role":"client","name":"master"},"far":{"service":"96799599$","serviceName":"mysql-a","role":"server","name":"slave"},"ident":"pending-96799599$12648410$slavemaster","elementId":"e-pending_96799599_12648410_slavemaster-1611657570"}]'
-        }, this);
-        assert.deepEqual(availableEndpoints, JSON.parse('[[{"service":"96799599$","name":"master","type":"mysql-oneway-replication"},{"service":"12648410$","name":"slave","type":"mysql-oneway-replication"}]]'));
+        const availableEndpoints = runGetAvailableEndpoints(
+          {
+            applicationToId: '12648410$',
+            getEndpoints:
+              '[[{"service":"96799599$","name":"master","type":"mysql-oneway-replication"},{"service":"12648410$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"96799599$","name":"slave","type":"mysql-oneway-replication"},{"service":"12648410$","name":"master","type":"mysql-oneway-replication"}]]',
+            getRelationDataForService:
+              '[{"initialized":true,"destroyed":false,"clientId":"relation_72","id":"pending-96799599$12648410$slavemaster","relation_id":"pending-96799599$12648410$slavemaster","endpoints":[["96799599$",{"name":"slave","role":"server"}],["12648410$",{"name":"master","role":"client"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"12648410$","serviceName":"mysql","role":"client","name":"master"},"far":{"service":"96799599$","serviceName":"mysql-a","role":"server","name":"slave"},"ident":"pending-96799599$12648410$slavemaster","elementId":"e-pending_96799599_12648410_slavemaster-1611657570"}]'
+          },
+          this
+        );
+        assert.deepEqual(
+          availableEndpoints,
+          JSON.parse(
+            '[[{"service":"96799599$","name":"master","type":"mysql-oneway-replication"},{"service":"12648410$","name":"slave","type":"mysql-oneway-replication"}]]'
+          )
+        );
       });
 
       it('two services, no possible and two full endpoints', () => {
-        const availableEndpoints = runGetAvailableEndpoints({
-          applicationToId: '93057667$',
-          getEndpoints: '[[{"service":"24412010$","name":"master","type":"mysql-oneway-replication"},{"service":"93057667$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"24412010$","name":"slave","type":"mysql-oneway-replication"},{"service":"93057667$","name":"master","type":"mysql-oneway-replication"}]]',
-          getRelationDataForService: '[{"interface":"master","initialized":true,"destroyed":false,"clientId":"relation_72","id":"pending-24412010$:master93057667$:slave","relation_id":"pending-24412010$:master93057667$:slave","endpoints":[["24412010$",{"name":"master","role":"client"}],["93057667$",{"name":"slave","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"93057667$","serviceName":"mysql","role":"server","name":"slave"},"far":{"service":"24412010$","serviceName":"mysql-a","role":"client","name":"master"},"ident":"pending-24412010$:master93057667$:slave","elementId":"e-pending_24412010__master93057667__slave-278287960"},{"interface":"slave","initialized":true,"destroyed":false,"clientId":"relation_73","id":"pending-24412010$:slave93057667$:master","relation_id":"pending-24412010$:slave93057667$:master","endpoints":[["24412010$",{"name":"slave","role":"client"}],["93057667$",{"name":"master","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"93057667$","serviceName":"mysql","role":"server","name":"master"},"far":{"service":"24412010$","serviceName":"mysql-a","role":"client","name":"slave"},"ident":"pending-24412010$:slave93057667$:master","elementId":"e-pending_24412010__slave93057667__master-1283641382"}]'
-        }, this);
+        const availableEndpoints = runGetAvailableEndpoints(
+          {
+            applicationToId: '93057667$',
+            getEndpoints:
+              '[[{"service":"24412010$","name":"master","type":"mysql-oneway-replication"},{"service":"93057667$","name":"slave","type":"mysql-oneway-replication"}],[{"service":"24412010$","name":"slave","type":"mysql-oneway-replication"},{"service":"93057667$","name":"master","type":"mysql-oneway-replication"}]]',
+            getRelationDataForService:
+              '[{"interface":"master","initialized":true,"destroyed":false,"clientId":"relation_72","id":"pending-24412010$:master93057667$:slave","relation_id":"pending-24412010$:master93057667$:slave","endpoints":[["24412010$",{"name":"master","role":"client"}],["93057667$",{"name":"slave","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"93057667$","serviceName":"mysql","role":"server","name":"slave"},"far":{"service":"24412010$","serviceName":"mysql-a","role":"client","name":"master"},"ident":"pending-24412010$:master93057667$:slave","elementId":"e-pending_24412010__master93057667__slave-278287960"},{"interface":"slave","initialized":true,"destroyed":false,"clientId":"relation_73","id":"pending-24412010$:slave93057667$:master","relation_id":"pending-24412010$:slave93057667$:master","endpoints":[["24412010$",{"name":"slave","role":"client"}],["93057667$",{"name":"master","role":"server"}]],"pending":true,"scope":"global","display_name":"pending","near":{"service":"93057667$","serviceName":"mysql","role":"server","name":"master"},"far":{"service":"24412010$","serviceName":"mysql-a","role":"client","name":"slave"},"ident":"pending-24412010$:slave93057667$:master","elementId":"e-pending_24412010__slave93057667__master-1283641382"}]'
+          },
+          this
+        );
         assert.deepEqual(availableEndpoints, []);
       });
       /* eslint-enable max-len */
@@ -904,29 +995,33 @@ describe('RelationUtils', () => {
   });
 
   describe('getRelatableApplications', () => {
-
     it('properly returns relatable applications', () => {
       const service1 = 'service1';
       const db = {
         services: {
-          getById: function(appName) { return service1; }
+          getById: function(appName) {
+            return service1;
+          }
         }
       };
       const endpoints = {
         '7117087$': [
-          [{
-            service: '2003212$',
-            name: 'db',
-            type: 'mysql'
-          }, {
-            service: '7117087$',
-            name: 'db',
-            type: 'mysql'
-          }]
-        ]};
+          [
+            {
+              service: '2003212$',
+              name: 'db',
+              type: 'mysql'
+            },
+            {
+              service: '7117087$',
+              name: 'db',
+              type: 'mysql'
+            }
+          ]
+        ]
+      };
 
-      assert.deepEqual(
-        [service1], relationUtils.getRelatableApplications(db, endpoints));
+      assert.deepEqual([service1], relationUtils.getRelatableApplications(db, endpoints));
     });
   });
 

@@ -12,12 +12,14 @@ describe('ModalGUISettings', function() {
 
   // Shallow render the component with the given parameters, and return an
   // object with the instance and the resulting output.
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ModalGUISettings
-      closeModal={options.closeModal || sinon.stub()}
-      flags={options.flags || {terminal: false}}
-      localStorage={options.localStorage || storage} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ModalGUISettings
+        closeModal={options.closeModal || sinon.stub()}
+        flags={options.flags || {terminal: false}}
+        localStorage={options.localStorage || storage}
+      />
+    );
 
   beforeEach(() => {
     storage = {
@@ -33,11 +35,7 @@ describe('ModalGUISettings', function() {
       <div className="modal modal--narrow">
         <div className="twelve-col no-margin-bottom">
           <h2 className="bordered">Custom GUI Settings</h2>
-          <span
-            className="close"
-            onClick={sinon.stub()}
-            role="button"
-            tabIndex="0">
+          <span className="close" onClick={sinon.stub()} role="button" tabIndex="0">
             <SvgIcon name="close_16" size="16" />
           </span>
         </div>
@@ -49,8 +47,9 @@ describe('ModalGUISettings', function() {
                 id="disable-cookie"
                 name="disable-cookie"
                 onChange={wrapper.find('#disable-cookie').prop('onChange')}
-                type="checkbox" />&nbsp;
-              Disable the EU cookie warning.
+                type="checkbox"
+              />
+              &nbsp; Disable the EU cookie warning.
             </label>
           </p>
           <p>
@@ -60,8 +59,9 @@ describe('ModalGUISettings', function() {
                 id="force-containers"
                 name="force-containers"
                 onChange={wrapper.find('#force-containers').prop('onChange')}
-                type="checkbox" />&nbsp;
-              Enable container control for this provider.
+                type="checkbox"
+              />
+              &nbsp; Enable container control for this provider.
             </label>
           </p>
           <p>
@@ -71,8 +71,9 @@ describe('ModalGUISettings', function() {
                 id="disable-auto-place"
                 name="disable-auto-place"
                 onChange={wrapper.find('#disable-auto-place').prop('onChange')}
-                type="checkbox" />&nbsp;
-              Default to not automatically place units on commit.
+                type="checkbox"
+              />
+              &nbsp; Default to not automatically place units on commit.
             </label>
           </p>
           <p>
@@ -82,14 +83,13 @@ describe('ModalGUISettings', function() {
                 name="jujushell-url"
                 onChange={wrapper.find('#jujushell-url').prop('onChange')}
                 type="text"
-                value="" />&nbsp;
-              DNS name for the Juju Shell.
+                value=""
+              />
+              &nbsp; DNS name for the Juju Shell.
             </label>
           </p>
           <p>
-            <small>
-              NOTE: You will need to reload for changes to take effect.
-            </small>
+            <small>NOTE: You will need to reload for changes to take effect.</small>
           </p>
           <input
             className="button--positive"
@@ -97,9 +97,11 @@ describe('ModalGUISettings', function() {
             name="save-settings"
             onClick={wrapper.find('#save-settings').prop('onClick')}
             type="button"
-            value="Save" />
+            value="Save"
+          />
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

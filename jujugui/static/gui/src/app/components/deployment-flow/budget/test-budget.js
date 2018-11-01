@@ -15,21 +15,27 @@ const BudgetChart = require('../../budget-chart/budget-chart');
 describe('DeploymentBudget', function() {
   var acl, budgets;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentBudget
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      listBudgets={options.listBudgets || sinon.stub()}
-      setBudget={options.setBudget || sinon.stub()}
-      user={options.user === undefined ? 'user-admin' : options.user} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentBudget
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        listBudgets={options.listBudgets || sinon.stub()}
+        setBudget={options.setBudget || sinon.stub()}
+        user={options.user === undefined ? 'user-admin' : options.user}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    budgets = {budgets: [{
-      budget: 'Big budget',
-      limit: 20
-    }]};
+    budgets = {
+      budgets: [
+        {
+          budget: 'Big budget',
+          limit: 20
+        }
+      ]
+    };
   });
 
   it('can display a loading spinner', function() {
@@ -37,7 +43,8 @@ describe('DeploymentBudget', function() {
     var expected = (
       <div className="deployment-budget__loading">
         <Spinner />
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -53,58 +60,55 @@ describe('DeploymentBudget', function() {
             'twelve-col': true
           }}
           clickable={false}
-          expanded={false}>
+          expanded={false}
+        >
           <div>
             <div className="four-col">
               <InsetSelect
                 disabled={false}
                 label="Budget"
                 onChange={wrapper.find('InsetSelect').prop('onChange')}
-                options={[{
-                  label: 'Big budget ($20)',
-                  value: 'Big budget'
-                }]} />
+                options={[
+                  {
+                    label: 'Big budget ($20)',
+                    value: 'Big budget'
+                  }
+                ]}
+              />
             </div>
             <div className="three-col">
               <span className="deployment-budget__increase-button">
                 <Button
-                  action={wrapper.find('Button').at(0).prop('action')}
+                  action={wrapper
+                    .find('Button')
+                    .at(0)
+                    .prop('action')}
                   disabled={false}
-                  type="base">
+                  type="base"
+                >
                   Increase budget
                 </Button>
               </span>
             </div>
-            <BudgetChart
-              budgets={budgets} />
+            <BudgetChart budgets={budgets} />
           </div>
           <div>
             <div className="deployment-budget__increase-form">
               <h4>Increase budget</h4>
-              <div className="two-col">
-                Credit limit: $100
-              </div>
-              <div className="ten-col last-col">
-                Available credit: $500
-              </div>
-              <div className="one-col">
-                Increase
-              </div>
+              <div className="two-col">Credit limit: $100</div>
+              <div className="ten-col last-col">Available credit: $500</div>
+              <div className="one-col">Increase</div>
               <div className="three-col">
                 <GenericInput
                   disabled={true}
                   label="Budget"
                   placeholder="Personal ($100)"
-                  required={false} />
+                  required={false}
+                />
               </div>
-              <div className="one-col">
-                to
-              </div>
+              <div className="one-col">to</div>
               <div className="three-col last-col">
-                <GenericInput
-                  disabled={true}
-                  label="New budget amount"
-                  required={false} />
+                <GenericInput disabled={true} label="New budget amount" required={false} />
               </div>
               <div>
                 <div className="eight-col">
@@ -112,17 +116,25 @@ describe('DeploymentBudget', function() {
                 </div>
                 <div className="two-col">
                   <Button
-                    action={wrapper.find('Button').at(1).prop('action')}
+                    action={wrapper
+                      .find('Button')
+                      .at(1)
+                      .prop('action')}
                     disabled={false}
-                    type="base">
+                    type="base"
+                  >
                     Cancel
                   </Button>
                 </div>
                 <div className="two-col last-col">
                   <Button
-                    action={wrapper.find('Button').at(2).prop('action')}
+                    action={wrapper
+                      .find('Button')
+                      .at(2)
+                      .prop('action')}
                     disabled={false}
-                    type="neutral">
+                    type="neutral"
+                  >
                     Confirm
                   </Button>
                 </div>
@@ -130,7 +142,8 @@ describe('DeploymentBudget', function() {
             </div>
           </div>
         </ExpandingRow>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

@@ -34,19 +34,21 @@ describe('CredentialAddEdit', () => {
     };
   });
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <CredentialAddEdit
-      acl={acl}
-      addNotification={options.addNotification || sinon.stub()}
-      controllerAPI={controllerAPI}
-      controllerIsReady={controllerIsReady}
-      credential={options.credential}
-      credentials={['test1', 'test2']}
-      onCancel={options.onCancel || sinon.stub()}
-      onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      username="spinach@external" />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <CredentialAddEdit
+        acl={acl}
+        addNotification={options.addNotification || sinon.stub()}
+        controllerAPI={controllerAPI}
+        controllerIsReady={controllerIsReady}
+        credential={options.credential}
+        credentials={['test1', 'test2']}
+        onCancel={options.onCancel || sinon.stub()}
+        onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        username="spinach@external"
+      />
+    );
 
   it('can show cloud options when adding credentials', () => {
     const wrapper = renderComponent();
@@ -59,8 +61,10 @@ describe('CredentialAddEdit', () => {
           controllerIsReady={controllerIsReady}
           key="deployment-cloud"
           listClouds={sinon.stub()}
-          setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
-      </div>);
+          setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -70,7 +74,8 @@ describe('CredentialAddEdit', () => {
     const expected = (
       <div className="credential-add-edit">
         <Spinner />
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -83,9 +88,7 @@ describe('CredentialAddEdit', () => {
       <div className="credential-add-edit">
         <div>
           <div className="credential-add-edit__choose-cloud">
-            <Button
-              action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+            <Button action={wrapper.find('Button').prop('action')} type="inline-neutral">
               Change cloud
             </Button>
           </div>
@@ -96,7 +99,8 @@ describe('CredentialAddEdit', () => {
             controllerIsReady={controllerIsReady}
             key="deployment-cloud"
             listClouds={sinon.stub()}
-            setCloud={wrapper.find('DeploymentCloud').prop('setCloud')} />
+            setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
+          />
           <DeploymentCredentialAdd
             acl={acl}
             addNotification={sinon.stub()}
@@ -108,9 +112,11 @@ describe('CredentialAddEdit', () => {
             onCredentialUpdated={sinon.stub()}
             sendAnalytics={sinon.stub()}
             updateCloudCredential={sinon.stub()}
-            user="spinach@external" />
+            user="spinach@external"
+          />
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -134,8 +140,10 @@ describe('CredentialAddEdit', () => {
           onCredentialUpdated={sinon.stub()}
           sendAnalytics={sinon.stub()}
           updateCloudCredential={sinon.stub()}
-          user="spinach@external" />
-      </div>);
+          user="spinach@external"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

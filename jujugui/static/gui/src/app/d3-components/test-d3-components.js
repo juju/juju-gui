@@ -10,7 +10,7 @@ describe('d3-components', function() {
 
   beforeEach(function() {
     TestModule = class {
-      constructor(options={}) {
+      constructor(options = {}) {
         this.name = options.name || 'TestModule';
         this.container = options.container;
         this.events = {
@@ -58,7 +58,6 @@ describe('d3-components', function() {
     container = null;
   });
 
-
   it('should be able to create a component and add a module', function() {
     comp = new Component();
     utils.isValue(comp).should.equal(true);
@@ -102,48 +101,47 @@ describe('d3-components', function() {
     state.thing.should.equal('decorated');
   });
 
-  it('should allow event bindings through the use of a declarative object',
-    function() {
-      comp = new Component({container: container});
+  it('should allow event bindings through the use of a declarative object', function() {
+    comp = new Component({container: container});
 
-      // Change test module to use rich captures on some events.
-      // This defines a phase for click (before, after, on (default))
-      // and also shows an inline callback (which is discouraged but allowed)
-      class modA extends TestModule {
-        constructor(options) {
-          super(options);
-          this.events.scene['.thing'] = {
-            click: {
-              phase: 'after',
-              callback: 'afterThing'
-            },
-            dblclick: {
-              phase: 'on',
-              callback: function(evt) {
-                state.dbldbl = true;
-              }
+    // Change test module to use rich captures on some events.
+    // This defines a phase for click (before, after, on (default))
+    // and also shows an inline callback (which is discouraged but allowed)
+    class modA extends TestModule {
+      constructor(options) {
+        super(options);
+        this.events.scene['.thing'] = {
+          click: {
+            phase: 'after',
+            callback: 'afterThing'
+          },
+          dblclick: {
+            phase: 'on',
+            callback: function(evt) {
+              state.dbldbl = true;
             }
-          };
-        }
-
-        afterThing(evt) {
-          state.clicked = true;
-        }
+          }
+        };
       }
-      comp.addModule(modA, {name: 'modA', container: container});
-      comp.render();
 
-      container.querySelector('.thing').click();
-      assert.strictEqual(state.clicked, true);
+      afterThing(evt) {
+        state.clicked = true;
+      }
+    }
+    comp.addModule(modA, {name: 'modA', container: container});
+    comp.render();
 
-      const event = new MouseEvent('dblclick', {
-        'view': window,
-        'bubbles': true,
-        'cancelable': true
-      });
-      container.querySelector('.thing').dispatchEvent(event);
-      assert.strictEqual(state.dbldbl, true);
+    container.querySelector('.thing').click();
+    assert.strictEqual(state.clicked, true);
+
+    const event = new MouseEvent('dblclick', {
+      view: window,
+      bubbles: true,
+      cancelable: true
     });
+    container.querySelector('.thing').dispatchEvent(event);
+    assert.strictEqual(state.dbldbl, true);
+  });
 
   it('deep clones event objects to avoid shared bindings', function() {
     var compA = new Component({container: container});
@@ -155,41 +153,42 @@ describe('d3-components', function() {
     compB.addModule(TestModule);
     compB.render();
 
-    assert.notEqual(compA.events.TestModule.subscriptions[1].callable,
-      compB.events.TestModule.subscriptions[1].callable);
+    assert.notEqual(
+      compA.events.TestModule.subscriptions[1].callable,
+      compB.events.TestModule.subscriptions[1].callable
+    );
 
     // Cleanup
     compA.unbind();
     compB.unbind();
   });
 
-  it('should support basic rendering from all modules',
-    function() {
-      class modA extends TestModule {
-        render() {
-          const node = document.createElement('div');
-          node.setAttribute('id', 'fromA');
-          this.container.appendChild(node);
-        }
+  it('should support basic rendering from all modules', function() {
+    class modA extends TestModule {
+      render() {
+        const node = document.createElement('div');
+        node.setAttribute('id', 'fromA');
+        this.container.appendChild(node);
       }
+    }
 
-      class modB extends TestModule {
-        render() {
-          const node = document.createElement('div');
-          node.setAttribute('id', 'fromB');
-          this.container.appendChild(node);
-        }
+    class modB extends TestModule {
+      render() {
+        const node = document.createElement('div');
+        node.setAttribute('id', 'fromB');
+        this.container.appendChild(node);
       }
+    }
 
-      comp = new Component({container: container});
+    comp = new Component({container: container});
 
-      comp.addModule(modA, {name: 'modA', container: container});
-      comp.addModule(modB, {name: 'modB', container: container});
+    comp.addModule(modA, {name: 'modA', container: container});
+    comp.addModule(modB, {name: 'modB', container: container});
 
-      comp.render();
-      utils.isValue(document.querySelector('#fromA')).should.equal(true);
-      utils.isValue(document.querySelector('#fromB')).should.equal(true);
-    });
+    comp.render();
+    utils.isValue(document.querySelector('#fromA')).should.equal(true);
+    utils.isValue(document.querySelector('#fromB')).should.equal(true);
+  });
 
   it('should support d3 event bindings post render', function() {
     comp = new Component({container: container});
@@ -202,5 +201,4 @@ describe('d3-components', function() {
     document.querySelector('.target').click();
     state.targeted.should.equal(true);
   });
-
 });

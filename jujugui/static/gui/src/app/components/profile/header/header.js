@@ -66,7 +66,8 @@ class ProfileHeader extends React.Component {
         <img
           alt={`Gravatar for ${user.fullname}`}
           className="p-media-object__image is-round"
-          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`} />
+          src={`https://www.gravatar.com/avatar/${user.gravatar_id}`}
+        />
       );
     }
     const classes = classNames('profile-header__avatar', {
@@ -77,10 +78,7 @@ class ProfileHeader extends React.Component {
       'profile-header__avatar--hidden': !this.state.userRequested
     });
     const tooltip = isCurrent ? (
-      <span
-        className="p-tooltip__message"
-        id="tp-cntr"
-        role="tooltip">
+      <span className="p-tooltip__message" id="tp-cntr" role="tooltip">
         Edit your Gravatar
       </span>
     ) : null;
@@ -91,7 +89,8 @@ class ProfileHeader extends React.Component {
             aria-describedby="tp-cntr"
             className="p-tooltip p-tooltip--btm-center"
             href="http://gravatar.com/"
-            target="_blank">
+            target="_blank"
+          >
             {content}
             {tooltip}
           </a>
@@ -114,37 +113,33 @@ class ProfileHeader extends React.Component {
     let items;
     if (this.props.gisf) {
       items = [
-        <li
-          className="p-list__item"
-          key="controller">
+        <li className="p-list__item" key="controller">
           <h2 className="u-no-margin--bottom">
             <a href="/">jaas</a>
           </h2>
           <hr />
         </li>,
-        <li
-          className="p-list__item"
-          key="home">
-          <a href="https://jujucharms.com/home" target="_blank">Home</a>
+        <li className="p-list__item" key="home">
+          <a href="https://jujucharms.com/home" target="_blank">
+            Home
+          </a>
         </li>,
-        <li
-          className="p-list__item"
-          key="aboutjaas">
-          <a href="https://jujucharms.com/jaas" target="_blank">About JAAS</a>
+        <li className="p-list__item" key="aboutjaas">
+          <a href="https://jujucharms.com/jaas" target="_blank">
+            About JAAS
+          </a>
         </li>
       ];
     } else {
       items = [
-        <li
-          className="p-list__item"
-          key="controller">
+        <li className="p-list__item" key="controller">
           <h2 className="u-no-margin--bottom">{this.props.controllerIP}</h2>
           <hr />
         </li>,
-        <li
-          className="p-list__item"
-          key="home">
-          <a href="https://jujucharms.com/about" target="_blank">Juju Home</a>
+        <li className="p-list__item" key="home">
+          <a href="https://jujucharms.com/about" target="_blank">
+            Juju Home
+          </a>
         </li>
       ];
     }
@@ -175,10 +170,9 @@ class ProfileHeader extends React.Component {
                 className="profile-header__close"
                 onClick={this._handleClose.bind(this)}
                 role="button"
-                tabIndex="0">
-                <SvgIcon
-                  name="close_16"
-                  size="20" />
+                tabIndex="0"
+              >
+                <SvgIcon name="close_16" size="20" />
               </div>
             </div>
           </div>

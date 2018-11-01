@@ -27,19 +27,18 @@ class FileField extends React.Component {
       errors.push(
         <li className="file-field__error" key="required">
           This field is required.
-        </li>);
+        </li>
+      );
     }
     if (!this.ready) {
       errors.push(
         <li className="file-field__error" key="partial-upload">
           File upload is not completed.
-        </li>);
+        </li>
+      );
     }
     if (errors.length > 0) {
-      components = (
-        <ul className="file-field__errors">
-          {errors}
-        </ul>);
+      components = <ul className="file-field__errors">{errors}</ul>;
     } else {
       this._handleFileChange();
     }
@@ -110,11 +109,10 @@ class FileField extends React.Component {
         label = 'File stored.';
       }
       element = (
-        <label
-          className="file-field__label"
-          htmlFor={id}>
+        <label className="file-field__label" htmlFor={id}>
           {label}
-        </label>);
+        </label>
+      );
     }
     return {
       labelElement: element,
@@ -129,11 +127,9 @@ class FileField extends React.Component {
   */
   render() {
     const {labelElement, id} = this._generateLabel();
-    const classes = classNames(
-      'file-field', {
-        error: !!this.state.errors
-      }
-    );
+    const classes = classNames('file-field', {
+      error: !!this.state.errors
+    });
     return (
       <div className={classes}>
         <input
@@ -144,13 +140,14 @@ class FileField extends React.Component {
           onChange={this.validate.bind(this)}
           ref="field"
           required={this.props.required}
-          type="file" />
+          type="file"
+        />
         {labelElement}
         {this.state.errors}
       </div>
     );
   }
-};
+}
 
 FileField.propTypes = {
   accept: PropTypes.string,

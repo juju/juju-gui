@@ -18,7 +18,7 @@ class Component {
    *    - Providing suggestions around updating the interactive portions
    *      of the application.
    **/
-  constructor(options={}) {
+  constructor(options = {}) {
     this.container = options.container;
     this.modules = {};
     this.events = {};
@@ -90,7 +90,7 @@ class Component {
   _normalizeHandler(handler, module, selector) {
     var result = {};
 
-    if (typeof(handler) === 'string') {
+    if (typeof handler === 'string') {
       result.callback = module[handler];
       result.phase = 'on';
     }
@@ -100,7 +100,7 @@ class Component {
       result.callback = handler.callback;
     }
 
-    if (typeof(result.callback) === 'string') {
+    if (typeof result.callback === 'string') {
       result.callback = module[result.callback];
     }
 
@@ -108,9 +108,14 @@ class Component {
       //console.error('No Event handler for', selector, module.name);
       return;
     }
-    if (typeof(result.callback) !== 'function') {
-      console.error('Unable to resolve a proper callback for',
-        selector, handler, module.name, result);
+    if (typeof result.callback !== 'function') {
+      console.error(
+        'Unable to resolve a proper callback for',
+        selector,
+        handler,
+        module.name,
+        result
+      );
       return;
     }
     // Set up binding context for callback.
@@ -152,15 +157,15 @@ class Component {
    **/
   _bindEvents(modName) {
     const self = this,
-        modEvents = this.events[modName],
-        module = this.modules[modName];
+      modEvents = this.events[modName],
+      module = this.modules[modName];
     let subscriptions = [];
 
     const _bindEvent = (name, handler, selector, context) => {
       // Adapt between d3 events and delegates.
       const d3Adapter = evt => {
         const selection = d3.select(evt.target),
-            d = selection.data()[0];
+          d = selection.data()[0];
         // This is a minor violation (extension)
         // of the interface, but suits us well.
         d3.event = evt;
@@ -179,8 +184,7 @@ class Component {
       Object.keys(modEvents.scene).forEach(selector => {
         const handlers = modEvents.scene[selector];
         Object.keys(handlers).forEach(trigger => {
-          const handler = self._normalizeHandler(
-            handlers[trigger], module, selector);
+          const handler = self._normalizeHandler(handlers[trigger], module, selector);
           if (utils.isValue(handler)) {
             _bindEvent(trigger, handler.callback, selector, handler.context);
           }
@@ -188,12 +192,12 @@ class Component {
       });
     }
     if (modEvents.topo) {
-      subscriptions = subscriptions.concat(
-        this._attachEvents(module, modEvents.topo, 'topo'));
+      subscriptions = subscriptions.concat(this._attachEvents(module, modEvents.topo, 'topo'));
     }
     if (modEvents.window) {
       subscriptions = subscriptions.concat(
-        this._attachEvents(module, modEvents.window, null, window));
+        this._attachEvents(module, modEvents.window, null, window)
+      );
     }
     return subscriptions;
   }
@@ -208,7 +212,7 @@ class Component {
     @param parent {String} The parent to attach to.
     @returns {Array} The subscriptions added.
   */
-  _attachEvents(module, group, prefix, parent=document) {
+  _attachEvents(module, group, prefix, parent = document) {
     let subscriptions = [];
     let resolvedHandler = {};
     Object.keys(group).forEach(name => {
@@ -248,9 +252,11 @@ class Component {
    * @method bind
    **/
   bind(moduleName) {
-    if (this.interactive === false) { return; }
+    if (this.interactive === false) {
+      return;
+    }
     var eventSet = this.events,
-        filtered = {};
+      filtered = {};
 
     if (moduleName) {
       filtered[moduleName] = eventSet[moduleName];
@@ -278,10 +284,12 @@ class Component {
     // Walk each selector for a given module 'name', doing a
     // d3 selection and an 'on' binding.
     var self = this,
-        modEvents = this.events[modName],
-        module;
+      modEvents = this.events[modName],
+      module;
 
-    if (this.interactive === false) { return; }
+    if (this.interactive === false) {
+      return;
+    }
     if (!modEvents || !modEvents.d3) {
       return;
     }
@@ -295,7 +303,7 @@ class Component {
         // Create an adapter
         adapter = function() {
           var selection = d3.select(this),
-              d = selection.data()[0];
+            d = selection.data()[0];
           //console.debug('D3 Handler for', selector, trigger);
           return handler.callback.call(this, d, handler.context);
         };
@@ -363,12 +371,12 @@ class Component {
   }
 
   /**
-  * Internal. Called automatically by removeModule.
+   * Internal. Called automatically by removeModule.
    * @method unbind
    **/
   unbind(moduleName) {
     var eventSet = this.events,
-        filtered = {};
+      filtered = {};
 
     const _unbind = modEvents => {
       Object.keys(modEvents.subscriptions || {}).forEach(key => {
@@ -493,6 +501,6 @@ class Component {
   destructor() {
     this.removeModules();
   }
-};
+}
 
 module.exports = Component;

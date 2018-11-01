@@ -22,7 +22,6 @@ const User = require('../app/user/user');
 const utils = require('../app/init/testing-utils');
 
 (function() {
-
   describe('environment login support', function() {
     let conn, env, juju;
 
@@ -41,17 +40,24 @@ const utils = require('../app/init/testing-utils');
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
+          setItem: function(name, val) {
+            this.store['name'] = val;
+          },
+          getItem: function(name) {
+            return this.store['name'] || null;
+          }
         };
-      };
+      }();
     };
 
     beforeEach(function() {
       const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
-      env = new juju.environments.GoEnvironment({conn: conn, user: userClass});
+      env = new juju.environments.GoEnvironment({
+        conn: conn,
+        user: userClass
+      });
       env.connect();
       conn.open();
     });
@@ -68,11 +74,13 @@ const utils = require('../app/init/testing-utils');
     });
 
     it('successful login event marks user as authenticated', function() {
-      var data = {response: {
-        facades: [{name: 'ModelManager', versions: [2]}],
-        'model-tag': 'model-42',
-        'user-info': {}
-      }};
+      var data = {
+        response: {
+          facades: [{name: 'ModelManager', versions: [2]}],
+          'model-tag': 'model-42',
+          'user-info': {}
+        }
+      };
       env.handleLogin(data);
       assert.isTrue(env.userIsAuthenticated);
     });
@@ -86,8 +94,11 @@ const utils = require('../app/init/testing-utils');
     it('bad credentials are removed', function() {
       var data = {error: 'who are you?'};
       env.handleLogin(data);
-      assert.deepEqual(
-        env.get('user').controller, {user: '', password: '', macaroons: null});
+      assert.deepEqual(env.get('user').controller, {
+        user: '',
+        password: '',
+        macaroons: null
+      });
     });
 
     it('if already authenticated, login() is a no-op', function() {
@@ -104,7 +115,5 @@ const utils = require('../app/init/testing-utils');
       assert.equal(message.params['auth-tag'], 'user-admin@local');
       assert.equal(message.params.credentials, 'password');
     });
-
   });
-
 })();

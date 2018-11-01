@@ -7,9 +7,7 @@ const {urls} = require('jaaslib');
 
 const initUtils = require('../../../../init/utils');
 
-
 class EntityFiles extends React.Component {
-
   constructor() {
     super();
     this.state = {};
@@ -54,7 +52,7 @@ class EntityFiles extends React.Component {
       if (segments.length) {
         if (!node[segment]) {
           node[segment] = {};
-        };
+        }
         extendTree(node[segment], segments);
       } else {
         node[segment] = null;
@@ -87,7 +85,8 @@ class EntityFiles extends React.Component {
             className="button--inline-neutral entity-files__link"
             href={codeUrl}
             ref="codeLink"
-            target="_blank">
+            target="_blank"
+          >
             View code
           </a>
         </li>
@@ -124,11 +123,7 @@ class EntityFiles extends React.Component {
         const fileLink = `${url}/${path}`;
         return (
           <li className="p-list-tree__item" key={path}>
-            <a
-              className="link link--cold"
-              href={fileLink}
-              target="_blank"
-              title={fileName}>
+            <a className="link link--cold" href={fileLink} target="_blank" title={fileName}>
               {fileName}
             </a>
           </li>
@@ -138,8 +133,7 @@ class EntityFiles extends React.Component {
         // Note that this logic covers everything *but* the root node; see
         // the corresponding comment below.
         Object.keys(children).forEach(child => {
-          childItems.push(buildList.call(this, `${path}/${child}`,
-            children[child]));
+          childItems.push(buildList.call(this, `${path}/${child}`, children[child]));
         });
         const isExpanded = this.state[`/${fileName}-isExpanded`] || false;
         return (
@@ -147,14 +141,16 @@ class EntityFiles extends React.Component {
             className="p-list-tree__item p-list-tree__item--group"
             key={path}
             tabIndex="0"
-            title={`/${fileName}`}>
+            title={`/${fileName}`}
+          >
             <button
               aria-controls={`/${fileName}`}
               aria-expanded={`${isExpanded}`}
               className="p-list-tree__toggle"
               id={`/${fileName}-toggle`}
               onClick={this._onDirectoryClick.bind(this)}
-              role="tab">
+              role="tab"
+            >
               {`/${fileName}`}
             </button>
             <ul
@@ -162,7 +158,8 @@ class EntityFiles extends React.Component {
               aria-labelledby={`/${fileName}-toggle`}
               className="p-list-tree"
               id={`/${fileName}`}
-              role="tabpanel">
+              role="tabpanel"
+            >
               {childItems}
             </ul>
           </li>
@@ -186,14 +183,8 @@ class EntityFiles extends React.Component {
     const archiveUrl = `${this.props.apiUrl}/${url.legacyPath()}/archive`;
     return (
       <div className="entity-files section" id="files">
-        <h3 className="section__title">
-          {initUtils.pluralize('File', files.length)}
-        </h3>
-        <ul
-          aria-multiselectable="true"
-          className="p-list-tree"
-          ref="files"
-          role="tablist">
+        <h3 className="section__title">{initUtils.pluralize('File', files.length)}</h3>
+        <ul aria-multiselectable="true" className="p-list-tree" ref="files" role="tablist">
           {this._generateFileItems(files, archiveUrl)}
         </ul>
         <ul className="section__list">
@@ -202,7 +193,8 @@ class EntityFiles extends React.Component {
             <a
               className="button--inline-neutral entity-files__link"
               href={archiveUrl}
-              target="_blank">
+              target="_blank"
+            >
               Download .zip
             </a>
           </li>
@@ -210,7 +202,7 @@ class EntityFiles extends React.Component {
       </div>
     );
   }
-};
+}
 
 EntityFiles.propTypes = {
   apiUrl: PropTypes.string.isRequired,

@@ -75,12 +75,9 @@ class BooleanConfig extends React.Component {
   }
 
   render() {
-    const classes = classNames(
-      'boolean-config--label',
-      {
-        'boolean-config--label-changed':
-          this.state.value !== this.props.config
-      });
+    const classes = classNames('boolean-config--label', {
+      'boolean-config--label-changed': this.state.value !== this.props.config
+    });
     return (
       <div className="boolean-config">
         <div className="boolean-config--toggle-container">
@@ -93,22 +90,21 @@ class BooleanConfig extends React.Component {
               id={this.props.option.key}
               onChange={this._handleChange.bind(this)}
               onClick={this._stopBubble.bind(this)}
-              type="checkbox" />
-            <label
-              className={classes}
-              htmlFor={this.props.option.key}>
-              <div className="boolean-config--handle"></div>
+              type="checkbox"
+            />
+            <label className={classes} htmlFor={this.props.option.key}>
+              <div className="boolean-config--handle" />
             </label>
           </div>
         </div>
         <div
           className="boolean-config--description"
-          dangerouslySetInnerHTML={{__html: this.props.option.description}}>
-        </div>
+          dangerouslySetInnerHTML={{__html: this.props.option.description}}
+        />
       </div>
     );
   }
-};
+}
 
 BooleanConfig.propTypes = {
   config: PropTypes.any.isRequired,

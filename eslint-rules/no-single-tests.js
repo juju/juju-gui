@@ -7,7 +7,7 @@ module.exports = function(context) {
         return;
       }
       const nodeName = node.name;
-      switch(nodeName) {
+      switch (nodeName) {
         case 'only':
           const parentName = node.parent.object.name;
           if (parentName === 'it' || parentName === 'describe') {

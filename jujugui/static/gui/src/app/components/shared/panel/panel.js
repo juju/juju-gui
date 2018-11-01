@@ -64,22 +64,18 @@ class Panel extends React.Component {
         className={this._genClasses()}
         onClick={this._handleClick.bind(this)}
         ref="content"
-        tabIndex="0">
-        <div
-          className="panel-component__inner"
-          onClick={this._stopBubble.bind(this)}>
+        tabIndex="0"
+      >
+        <div className="panel-component__inner" onClick={this._stopBubble.bind(this)}>
           {this.props.children}
         </div>
       </div>
     );
   }
-};
+}
 
 Panel.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   clickAction: PropTypes.func,
   extraClasses: PropTypes.string,
   focus: PropTypes.bool,

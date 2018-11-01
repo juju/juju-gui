@@ -95,10 +95,7 @@ class CheckListItem extends React.Component {
   _generateAside() {
     var aside = this.props.aside;
     if (aside) {
-      return (
-        <span className="check-list-item__aside">
-          {aside}
-        </span>);
+      return <span className="check-list-item__aside">{aside}</span>;
     }
   }
 
@@ -107,11 +104,10 @@ class CheckListItem extends React.Component {
       return;
     }
     return (
-      <span
-        className="check-list-item__extra-info"
-        title={this.props.extraInfo}>
+      <span className="check-list-item__extra-info" title={this.props.extraInfo}>
         {this.props.extraInfo}
-      </span>);
+      </span>
+    );
   }
 
   render() {
@@ -122,29 +118,27 @@ class CheckListItem extends React.Component {
         data-id={this.props.id}
         onClick={this.props.action}
         role="button"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <label htmlFor={this._generateId(id)}>
-          <div
-            className="check-list-item__hit-area"
-            onClick={this._hitAreaClick.bind(this)}>
+          <div className="check-list-item__hit-area" onClick={this._hitAreaClick.bind(this)}>
             <input
               checked={this.state.checked}
               disabled={this.props.disabled}
               id={id}
               onChange={this._handleChange.bind(this)}
               onClick={this._stopBubble.bind(this)}
-              type="checkbox" />
+              type="checkbox"
+            />
           </div>
-          <span className="check-list-item__label">
-            {this.props.label}
-          </span>
+          <span className="check-list-item__label">{this.props.label}</span>
           {this._generateExtraInfo(this.props.extraInfo)}
           {this._generateAside()}
         </label>
       </li>
     );
   }
-};
+}
 
 CheckListItem.propTypes = {
   action: PropTypes.func,

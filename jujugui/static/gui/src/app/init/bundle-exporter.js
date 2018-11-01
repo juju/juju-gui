@@ -64,7 +64,7 @@ class BundleExporter {
         delete serviceData.num_units;
       } else {
         // Test models or ghosts might not have a units LazyModelList.
-        serviceData.num_units = units && units.size() || 0;
+        serviceData.num_units = (units && units.size()) || 0;
       }
       if (serviceOptions && Object.keys(serviceOptions).length >= 1) {
         serviceData.options = serviceOptions;
@@ -89,8 +89,10 @@ class BundleExporter {
       // rather than relative.
       var anno = service.get('annotations');
       if (anno && anno['gui-x'] && anno['gui-y']) {
-        serviceData.annotations = {'gui-x': anno['gui-x'],
-          'gui-y': anno['gui-y']};
+        serviceData.annotations = {
+          'gui-x': anno['gui-x'],
+          'gui-y': anno['gui-y']
+        };
       }
       services[serviceName] = serviceData;
     }, this);
@@ -112,7 +114,7 @@ class BundleExporter {
     // "Sort" machines w/ parents (e.g. containers) to the back of the list.
     machines.sort(function(a, b) {
       let aLxc = 0,
-          bLxc = 0;
+        bLxc = 0;
       if (a.parentId) {
         aLxc = -1;
       }
@@ -180,8 +182,11 @@ class BundleExporter {
         return;
       }
       // Export this relation.
-      relations.push(endpoints.map(endpoint =>
-        endpoint[0] + (endpoint[1].name ? `:${endpoint[1].name}` : '')));
+      relations.push(
+        endpoints.map(
+          endpoint => endpoint[0] + (endpoint[1].name ? `:${endpoint[1].name}` : '')
+        )
+      );
     });
     return relations;
   }
@@ -241,21 +246,19 @@ class BundleExporter {
         }
       }, this);
       // Add the machine placement information to the services 'to' directive.
-      serviceList[serviceName].to = machinePlacement[serviceName].map(
-        function(machineId) {
-          let parts = machineId.split(':');
-          if (parts.length === 2) {
-            // It's a container
-            let partInt = parseInt(parts[1], 10);
-            if (!isNaN(partInt)) {
-              parts[1] = machineIdMap[partInt];
-            }
-            return parts.join(':');
-          } else {
-            return machineIdMap[machineId] + '';
+      serviceList[serviceName].to = machinePlacement[serviceName].map(function(machineId) {
+        let parts = machineId.split(':');
+        if (parts.length === 2) {
+          // It's a container
+          let partInt = parseInt(parts[1], 10);
+          if (!isNaN(partInt)) {
+            parts[1] = machineIdMap[partInt];
           }
+          return parts.join(':');
+        } else {
+          return machineIdMap[machineId] + '';
         }
-      );
+      });
     }, this);
 
     const defaultSeries = this.db.environment.get('defaultSeries');
@@ -348,7 +351,10 @@ class BundleExporter {
     const machinePlacement = this._mapServicesToMachines(this.db.machines);
     result.relations = this._generateRelationSpec(this.db.relations);
     result.machines = this._generateMachineSpec(
-      machinePlacement, this.db.machines, applications);
+      machinePlacement,
+      this.db.machines,
+      applications
+    );
     return result;
   }
 }

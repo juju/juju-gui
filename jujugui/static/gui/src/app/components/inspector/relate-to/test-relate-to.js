@@ -7,31 +7,39 @@ const enzyme = require('enzyme');
 const InspectorRelateTo = require('./relate-to');
 
 describe('InspectorRelateTo', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <InspectorRelateTo
-      application={options.application || {}}
-      changeState={options.changeState || sinon.stub()}
-      relatableApplications={options.relatableApplications || [{
-        getAttrs: () => ({id: 'id', name: 'name', icon: 'icon'})
-      }]} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <InspectorRelateTo
+        application={options.application || {}}
+        changeState={options.changeState || sinon.stub()}
+        relatableApplications={
+          options.relatableApplications || [
+            {
+              getAttrs: () => ({id: 'id', name: 'name', icon: 'icon'})
+            }
+          ]
+        }
+      />
+    );
 
   it('can render properly', () => {
     const wrapper = renderComponent();
     var expected = (
       <div className="inspector-relate-to">
         <ul className="inspector-view__list">
-          {[<li
-            className="inspector-view__list-item"
-            data-id="id"
-            key="id0"
-            onClick={wrapper.find('.inspector-view__list-item').prop('onClick')}
-            role="button"
-            tabIndex="0">
-            <img className="inspector-view__item-icon" src="icon" />
+          {[
+            <li
+              className="inspector-view__list-item"
+              data-id="id"
+              key="id0"
+              onClick={wrapper.find('.inspector-view__list-item').prop('onClick')}
+              role="button"
+              tabIndex="0"
+            >
+              <img className="inspector-view__item-icon" src="icon" />
               name
-          </li>]}
+            </li>
+          ]}
         </ul>
       </div>
     );
@@ -42,7 +50,8 @@ describe('InspectorRelateTo', function() {
     const wrapper = renderComponent({relatableApplications: []});
     assert.equal(
       wrapper.find('.unit-list__message').text(),
-      'No relatable endpoints available.');
+      'No relatable endpoints available.'
+    );
   });
 
   it('can navigate to relate-to-endpoint', () => {
@@ -56,7 +65,10 @@ describe('InspectorRelateTo', function() {
     // Trigger a relation click.
     wrapper.find('.inspector-view__list-item').simulate('click', {
       currentTarget: {
-        getAttribute: sinon.stub().withArgs('data-id').returns('zee-spouse')
+        getAttribute: sinon
+          .stub()
+          .withArgs('data-id')
+          .returns('zee-spouse')
       }
     });
     assert.equal(changeState.callCount, 1);
@@ -66,8 +78,8 @@ describe('InspectorRelateTo', function() {
           id: 'my-id',
           'relate-to': 'zee-spouse',
           activeComponent: 'relate-to'
-        }}});
-
+        }
+      }
+    });
   });
-
 });

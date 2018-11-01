@@ -52,19 +52,16 @@ class Lightbox extends React.Component {
 
     const bullets = [];
 
-    for(let i = 0, ii = this.state.lastSlide; i <= ii; i += 1) {
-      const classes = classNames(
-        'lightbox__navigation-bullet',
-        {
-          'is-active': this.state.activeSlide === i
-        }
-      );
+    for (let i = 0, ii = this.state.lastSlide; i <= ii; i += 1) {
+      const classes = classNames('lightbox__navigation-bullet', {
+        'is-active': this.state.activeSlide === i
+      });
 
       bullets.push(
-        <li
-          className={classes}
-          key={i}
-          onClick={this.setState.bind(this, {activeSlide: i})}>&bull;</li>);
+        <li className={classes} key={i} onClick={this.setState.bind(this, {activeSlide: i})}>
+          &bull;
+        </li>
+      );
     }
 
     return (
@@ -72,18 +69,18 @@ class Lightbox extends React.Component {
         <button
           className="lightbox__navigation-previous"
           disabled={this.state.activeSlide === 0}
-          onClick={this._goToSlide.bind(this, -1)}>
+          onClick={this._goToSlide.bind(this, -1)}
+        >
           <SvgIcon name="chevron_down_16" width="16" />
         </button>
         <button
           className="lightbox__navigation-next"
           disabled={this.state.activeSlide === this.state.lastSlide}
-          onClick={this._goToSlide.bind(this, 1)}>
+          onClick={this._goToSlide.bind(this, 1)}
+        >
           <SvgIcon name="chevron_down_16" width="16" />
         </button>
-        <ul className="lightbox__navigation-bullets">
-          {bullets}
-        </ul>
+        <ul className="lightbox__navigation-bullets">{bullets}</ul>
       </div>
     );
   }
@@ -94,14 +91,13 @@ class Lightbox extends React.Component {
     }
 
     return this.props.children.map((child, index) => {
-      const classes = classNames(
-        'lightbox__slide',
-        {
-          'is-active': this.state.activeSlide === index
-        }
-      );
+      const classes = classNames('lightbox__slide', {
+        'is-active': this.state.activeSlide === index
+      });
       return (
-        <div className={classes} key={index}>{child}</div>
+        <div className={classes} key={index}>
+          {child}
+        </div>
       );
     });
   }
@@ -118,17 +114,10 @@ class Lightbox extends React.Component {
     let caption;
 
     if (this.props.caption) {
-      caption = (
-        <div className="lightbox__caption">
-          {this.props.caption}
-        </div>
-      );
+      caption = <div className="lightbox__caption">{this.props.caption}</div>;
     }
 
-    let classes = classNames(
-      'lightbox',
-      this.props.extraClasses
-    );
+    let classes = classNames('lightbox', this.props.extraClasses);
 
     return (
       <div className={classes} onClick={this._handleClose.bind(this)}>
@@ -145,7 +134,7 @@ class Lightbox extends React.Component {
       </div>
     );
   }
-};
+}
 
 Lightbox.propTypes = {
   caption: PropTypes.string,

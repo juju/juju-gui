@@ -8,16 +8,17 @@ const EntityContentDiagram = require('./diagram');
 const SvgIcon = require('../../../svg-icon/svg-icon');
 
 describe('EntityContentDiagram', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EntityContentDiagram
-      clearLightbox={options.clearLightbox}
-      diagramUrl={options.diagramUrl || 'example.com/diagram.svg'}
-      displayLightbox={options.displayLightbox}
-      isExpandable={options.isExpandable}
-      isRow={options.isRow}
-      title={options.title || 'example'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EntityContentDiagram
+        clearLightbox={options.clearLightbox}
+        diagramUrl={options.diagramUrl || 'example.com/diagram.svg'}
+        displayLightbox={options.displayLightbox}
+        isExpandable={options.isExpandable}
+        isRow={options.isRow}
+        title={options.title || 'example'}
+      />
+    );
 
   it('can display a diagram', function() {
     const wrapper = renderComponent();
@@ -27,15 +28,16 @@ describe('EntityContentDiagram', function() {
           className="entity-content__diagram-image"
           data="example.com/diagram.svg"
           title="example"
-          type="image/svg+xml" />
-      </div>);
+          type="image/svg+xml"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can display a diagram as a row', () => {
     const wrapper = renderComponent({isRow: true});
-    assert.equal(wrapper.prop('className'),
-      'entity-content__diagram row row--grey');
+    assert.equal(wrapper.prop('className'), 'entity-content__diagram row row--grey');
   });
 
   it('can display a diagram expand button', () => {
@@ -44,7 +46,8 @@ describe('EntityContentDiagram', function() {
       <button
         className="entity-content__diagram-expand"
         onClick={wrapper.find('button').prop('onClick')}
-        role="button">
+        role="button"
+      >
         <SvgIcon name="fullscreen-grey_16" size="12" />
       </button>
     );

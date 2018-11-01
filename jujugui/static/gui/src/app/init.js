@@ -102,18 +102,18 @@ class GUIApp {
       @type {Integer}
     */
     this._dbChangedTimer = null;
-    this._domEventHandlers['boundOnDatabaseChanged'] =
-      this.onDatabaseChanged.bind(this);
-    document.addEventListener(
-      'update', this._domEventHandlers['boundOnDatabaseChanged']);
+    this._domEventHandlers['boundOnDatabaseChanged'] = this.onDatabaseChanged.bind(this);
+    document.addEventListener('update', this._domEventHandlers['boundOnDatabaseChanged']);
     /**
       Application instance of the user class.
       @type {Object}
     */
-    this.user = config.user || new User({
-      externalAuth: config.auth,
-      expiration: window.sessionStorage.getItem('expirationDatetime')
-    });
+    this.user =
+      config.user ||
+      new User({
+        externalAuth: config.auth,
+        expiration: window.sessionStorage.getItem('expirationDatetime')
+      });
     /**
       Stores the user object for the charmstore.
       @type {Object}
@@ -129,8 +129,7 @@ class GUIApp {
       Used to perform requests on a macaroon authenticated endpoints.
       @type {Object}
     */
-    this.bakery = newBakery(
-      config, this.user, cookieSetter, webHandler);
+    this.bakery = newBakery(config, this.user, cookieSetter, webHandler);
     /**
       An identity instance.
       Used to retrieve information about the currently logged in user.
@@ -148,8 +147,7 @@ class GUIApp {
       Used to retrieve a list of actions to generate a bundle.
       @type {Object}
     */
-    this.bundleService = this._setupBundleservice(
-      config, bundleService);
+    this.bundleService = this._setupBundleservice(config, bundleService);
 
     this.ecs = this._setupEnvironmentChangeSet();
     const modelOptions = {
@@ -169,8 +167,7 @@ class GUIApp {
     this.modelAPI = new environments.GoEnvironment(modelOptions);
     // When the environment name becomes available, display it.
     this.modelAPI.after('environmentNameChange', this.onModelNameChange, this);
-    this.modelAPI.after(
-      'defaultSeriesChange', this.onDefaultSeriesChange, this);
+    this.modelAPI.after('defaultSeriesChange', this.onDefaultSeriesChange, this);
     // When the connection resets, reset the db, re-login (a delta will
     // arrive with successful authentication), and redispatch.
     this.modelAPI.after('connectedChange', evt => {
@@ -215,9 +212,7 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.sendAnalytics = analytics.sendAnalyticsFactory(
-      this.controllerAPI,
-      window.dataLayer);
+    this.sendAnalytics = analytics.sendAnalyticsFactory(this.controllerAPI, window.dataLayer);
 
     let baseURL = config.baseUrl;
     if (baseURL.indexOf('://') < 0) {
@@ -254,13 +249,14 @@ class GUIApp {
     this.bundleImporter = new BundleImporter({
       db: this.db,
       modelAPI: this.modelAPI,
-      getBundleChanges: this.controllerAPI.getBundleChanges.bind(
-        this.controllerAPI),
+      getBundleChanges: this.controllerAPI.getBundleChanges.bind(this.controllerAPI),
       charmstore: this.charmstore,
       hideDragOverNotification: () => {
-        document.dispatchEvent(new CustomEvent('showDragOverNotification', {
-          detail: false
-        }));
+        document.dispatchEvent(
+          new CustomEvent('showDragOverNotification', {
+            detail: false
+          })
+        );
       }
     });
 
@@ -286,43 +282,37 @@ class GUIApp {
     this._domEventHandlers['onDeltaBound'] = this.db.onDelta.bind(this.db);
     document.addEventListener('delta', this._domEventHandlers['onDeltaBound']);
 
-    this.db.machines.after(
-      ['add', 'remove', '*:change'],
-      this.onDatabaseChanged, this);
-    this.db.services.after(
-      ['add', 'remove', '*:change'],
-      this.onDatabaseChanged, this);
-    this.db.relations.after(
-      ['add', 'remove', '*:change'],
-      this.onDatabaseChanged, this);
+    this.db.machines.after(['add', 'remove', '*:change'], this.onDatabaseChanged, this);
+    this.db.services.after(['add', 'remove', '*:change'], this.onDatabaseChanged, this);
+    this.db.relations.after(['add', 'remove', '*:change'], this.onDatabaseChanged, this);
+    this.db.environment.after(['add', 'remove', '*:change'], this.onDatabaseChanged, this);
     this.db.environment.after(
       ['add', 'remove', '*:change'],
-      this.onDatabaseChanged, this);
-    this.db.environment.after(
-      ['add', 'remove', '*:change'], () => {
+      () => {
         this._renderApp(this.state.current, () => {});
-      }, this);
-    this.db.units.after(
-      ['add', 'remove', '*:change'],
-      this.onDatabaseChanged, this);
-    this.db.notifications.after('add', () => {
-      this._renderApp(this.state.current, () => {});
-    }, this);
+      },
+      this
+    );
+    this.db.units.after(['add', 'remove', '*:change'], this.onDatabaseChanged, this);
+    this.db.notifications.after(
+      'add',
+      () => {
+        this._renderApp(this.state.current, () => {});
+      },
+      this
+    );
 
     // When someone wants a charm to be deployed they fire an event and we
     // show the charm panel to configure/deploy the service.
     this._domEventHandlers['onInitiateDeploy'] = evt => {
       this.deployService(evt.detail.charm, evt.detail.ghostAttributes);
     };
-    document.addEventListener(
-      'initiateDeploy', this._domEventHandlers['onInitiateDeploy']);
+    document.addEventListener('initiateDeploy', this._domEventHandlers['onInitiateDeploy']);
 
-    this._domEventHandlers['boundAppDragOverHandler'] =
-      this._appDragOverHandler.bind(this);
+    this._domEventHandlers['boundAppDragOverHandler'] = this._appDragOverHandler.bind(this);
     // These are manually detached in the destructor.
     ['dragenter', 'dragover', 'dragleave'].forEach(eventName => {
-      document.addEventListener(
-        eventName, this._domEventHandlers['boundAppDragOverHandler']);
+      document.addEventListener(eventName, this._domEventHandlers['boundAppDragOverHandler']);
     });
 
     /**
@@ -397,7 +387,8 @@ class GUIApp {
       const bundleServiceURL = config && config.bundleServiceURL;
       if (!config || !bundleServiceURL) {
         console.error('no juju config for bundleserviceURL available');
-        const message = 'The service for handling bundles is not available.' +
+        const message =
+          'The service for handling bundles is not available.' +
           ' Please try refreshing the GUI.';
         this.db.notifications.add({
           title: message,
@@ -406,9 +397,7 @@ class GUIApp {
         });
         return;
       }
-      return new BundleService(
-        bundleServiceURL,
-        new WebHandler());
+      return new BundleService(bundleServiceURL, new WebHandler());
     }
     return this.bundleService;
   }
@@ -439,10 +428,7 @@ class GUIApp {
     @param {Function} next - Run the next route handler, if any.
    */
   _ensureControllerConnection(state, next) {
-    if (
-      !this.controllerAPI.get('connecting') &&
-      !this.controllerAPI.get('connected')
-    ) {
+    if (!this.controllerAPI.get('connecting') && !this.controllerAPI.get('connected')) {
       this.controllerAPI.connect();
     }
     next();
@@ -492,7 +478,10 @@ class GUIApp {
   */
   _renderApp(state, next) {
     const switchModel = utils.switchModel.bind(
-      this, this.modelAPI, this.db.notifications.add.bind(this.db.notifications));
+      this,
+      this.modelAPI,
+      this.db.notifications.add.bind(this.db.notifications)
+    );
     ReactDOM.render(
       <App
         acl={this.acl}
@@ -528,7 +517,8 @@ class GUIApp {
         terms={this.terms}
         topology={this.topology}
         user={this.user}
-        valueStore={this.maraca.getValueStore()} />,
+        valueStore={this.maraca.getValueStore()}
+      />,
       document.getElementById('app')
     );
     next();
@@ -553,12 +543,9 @@ class GUIApp {
       ['*', this._ensureControllerConnection.bind(this)],
       ['*', this.checkUserCredentials.bind(this)],
       ['*', this._renderApp.bind(this)],
-      ['root',
-        this._rootDispatcher.bind(this)],
-      ['user',
-        this._handleUserEntity.bind(this)],
-      ['model',
-        this._handleModelState.bind(this)],
+      ['root', this._rootDispatcher.bind(this)],
+      ['user', this._handleUserEntity.bind(this)],
+      ['model', this._handleModelState.bind(this)],
       ['special.deployTarget', this._deployTarget.bind(this)],
       // The follow states are handled by app.js and do not need to do anything
       // special. These are only here to suppress warnings about dispatchers not found.
@@ -619,9 +606,10 @@ class GUIApp {
   */
   _handleModelState(state, next) {
     const modelAPI = this.modelAPI;
-    if (this.modelUUID !== state.model.uuid ||
-        (!modelAPI.get('connected') && !modelAPI.get('connecting') &&
-        !modelAPI.loading)) {
+    if (
+      this.modelUUID !== state.model.uuid ||
+      (!modelAPI.get('connected') && !modelAPI.get('connecting') && !modelAPI.loading)
+    ) {
       this._switchModelToUUID(state.model.uuid);
     }
     next();
@@ -642,7 +630,8 @@ class GUIApp {
         protocol: config.socket_protocol,
         apiAddress: config.apiAddress,
         template: config.socketTemplate,
-        uuid});
+        uuid
+      });
     } else {
       console.log('switching to disconnected mode');
       this.modelUUID = null;
@@ -664,8 +653,7 @@ class GUIApp {
     @param {Function} next - Run the next route handler, if any.
   */
   _handleUserEntity(state, next) {
-    this._disambiguateUserState(
-      this._fetchEntityFromUserState(state.user));
+    this._disambiguateUserState(this._fetchEntityFromUserState(state.user));
   }
 
   /**
@@ -679,8 +667,7 @@ class GUIApp {
       return;
     }
     if (this.plans || this.terms) {
-      console.error(
-        'romulus services are being redefined:', this.plans, this.terms);
+      console.error('romulus services are being redefined:', this.plans, this.terms);
     }
     /**
       Application instance of the plans API.
@@ -697,21 +684,18 @@ class GUIApp {
         Application instance of the payment API.
         @type {Object}
       */
-      this.payment = new payment.payment(
-        config.paymentURL, this.bakery);
+      this.payment = new payment.payment(config.paymentURL, this.bakery);
       /**
         Application instance of the stripe API.
         @type {Object}
       */
-      this.stripe = new stripe(
-        'https://js.stripe.com/', config.stripeKey);
+      this.stripe = new stripe('https://js.stripe.com/', config.stripeKey);
     }
     /**
       Application instance of the rates API.
       @type {Object}
     */
-    this.rates = new rates.rates(
-      config.ratesURL, new WebHandler());
+    this.rates = new rates.rates(config.ratesURL, new WebHandler());
   }
 
   /**
@@ -761,15 +745,14 @@ class GUIApp {
         reject(userState);
         return;
       }
-      this.charmstore.getEntity(
-        legacyPath, (err, entityData) => {
-          if (err) {
-            console.log('model/charm store disambiguation:', err);
-            reject(userState);
-            return;
-          }
-          resolve(userState);
-        });
+      this.charmstore.getEntity(legacyPath, (err, entityData) => {
+        if (err) {
+          console.log('model/charm store disambiguation:', err);
+          reject(userState);
+          return;
+        }
+        resolve(userState);
+      });
     });
     userPaths.set(userState, {promise: entityPromise});
     return entityPromise;
@@ -790,20 +773,24 @@ class GUIApp {
       // represents a charm store entity.
       entityPromise = this._fetchEntityFromUserState(pathState.state.user);
     }
-    this._domEventHandlers['controllerLoginHandler'] =
-      this._controllerLoginHandler.bind(this, entityPromise);
-    document.addEventListener(
-      'login', this._domEventHandlers['controllerLoginHandler']);
+    this._domEventHandlers['controllerLoginHandler'] = this._controllerLoginHandler.bind(
+      this,
+      entityPromise
+    );
+    document.addEventListener('login', this._domEventHandlers['controllerLoginHandler']);
     this.controllerAPI.after(
       'connectedChange',
-      this._controllerConnectedChangeHandler.bind(this));
+      this._controllerConnectedChangeHandler.bind(this)
+    );
     const config = this.applicationConfig;
-    this.controllerAPI.set('socket_url',
+    this.controllerAPI.set(
+      'socket_url',
       utils.createSocketURL({
         apiAddress: config.apiAddress,
         template: config.controllerSocketTemplate,
         protocol: config.socket_protocol
-      }));
+      })
+    );
   }
 
   /**
@@ -888,14 +875,13 @@ class GUIApp {
       this.maskVisibility(false);
       const isLogin = current.root === 'login';
       const previousState = state.previous;
-      const previousRoot = previousState && previousState.root || null;
+      const previousRoot = (previousState && previousState.root) || null;
       // If there was a previous root before the login then redirect to that
       // otherwise go to the profile.
       let newState = {
         // We don't want to redirect to the previous root if it was the
         // login page.
-        profile: previousRoot && previousRoot !== 'login' ?
-          null : current.profile,
+        profile: previousRoot && previousRoot !== 'login' ? null : current.profile,
         root: isLogin ? previousRoot : current.root
       };
       // If the current root is 'login' after logging into the controller,
@@ -928,20 +914,21 @@ class GUIApp {
     const rootState = currentState ? currentState.root : null;
     // If an anonymous GISF user lands on the GUI at /new then don't
     // attempt to log into the controller.
-    if ((
-      !creds.areAvailable && gisf && rootState === 'new'
-    ) || (
-      this.anonymousMode && rootState !== 'login'
-    )) {
+    if (
+      (!creds.areAvailable && gisf && rootState === 'new') ||
+      (this.anonymousMode && rootState !== 'login')
+    ) {
       this.anonymousMode = true;
       console.log('now in anonymous mode');
       this.maskVisibility(false);
       return;
     }
-    if (!creds.areAvailable ||
-    // When using direct deploy when a user is not logged in it will
-    // navigate to show the login if we do not have this state check.
-        (currentState.special && currentState.special.dd)) {
+    if (
+      !creds.areAvailable ||
+      // When using direct deploy when a user is not logged in it will
+      // navigate to show the login if we do not have this state check.
+      (currentState.special && currentState.special.dd)
+    ) {
       // Set the mask visibility to false as we need to actually be able to
       // see the login.
       this.maskVisibility(false);
@@ -1016,9 +1003,11 @@ class GUIApp {
       return; // Ignore if it's not a supported type
     }
     if (e.type === 'dragenter') {
-      document.dispatchEvent(new CustomEvent('showDragOverNotification', {
-        detail: true
-      }));
+      document.dispatchEvent(
+        new CustomEvent('showDragOverNotification', {
+          detail: true
+        })
+      );
     }
     // Possible values for type are 'dragover' and 'dragleave'.
     this._dragleaveTimerControl(e.type === 'dragover' ? 'stop' : 'start');
@@ -1037,9 +1026,11 @@ class GUIApp {
     }
     if (action === 'start') {
       this._dragLeaveTimer = setTimeout(() => {
-        document.dispatchEvent(new CustomEvent('showDragOverNotification', {
-          detail: false
-        }));
+        document.dispatchEvent(
+          new CustomEvent('showDragOverNotification', {
+            detail: false
+          })
+        );
       }, 100);
     }
   }
@@ -1075,8 +1066,7 @@ class GUIApp {
     if (dataTransfer.items) {
       // See method doc for bug information.
       const file = dataTransfer.items[0];
-      if (file.type === 'application/zip' ||
-          file.type === 'application/x-zip-compressed') {
+      if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
         return 'zip';
       }
       return 'yaml';
@@ -1112,16 +1102,13 @@ class GUIApp {
     @param {Array} apis The apis instances that we should be logging into.
       Defaults to [this.controllerAPI, this.modelAPI].
   */
-  loginToAPIs(
-    credentials, useMacaroons, apis=[this.controllerAPI, this.modelAPI]) {
+  loginToAPIs(credentials, useMacaroons, apis = [this.controllerAPI, this.modelAPI]) {
     if (useMacaroons) {
       apis.forEach(api => {
         // The api may be unset if the current Juju does not support it.
         if (api && api.get('connected')) {
           console.log(`logging into ${api.name} with macaroons`);
-          api.loginWithMacaroon(
-            this.bakery,
-            this._apiLoginHandler.bind(this, api));
+          api.loginWithMacaroon(this.bakery, this._apiLoginHandler.bind(this, api));
         }
       });
       return;
@@ -1198,7 +1185,13 @@ class GUIApp {
           uuid: this.modelUUID,
           server: publicHost.value,
           port: publicHost.port
-        }), null, null, null, true, false);
+        }),
+        null,
+        null,
+        null,
+        true,
+        false
+      );
     });
   }
 
@@ -1219,8 +1212,13 @@ class GUIApp {
   switchEnv(
     // TODO frankban: make the function defaults saner, for instance
     // clearDB=true should really be preserveDB=false by default.
-    socketUrl, username, password, callback, reconnect=!!socketUrl,
-    clearDB=true) {
+    socketUrl,
+    username,
+    password,
+    callback,
+    reconnect = !!socketUrl,
+    clearDB = true
+  ) {
     console.log('switching model connection');
     this.modelAPI.loading = true;
     if (username && password) {
@@ -1231,7 +1229,7 @@ class GUIApp {
         user: username,
         password: password
       };
-    };
+    }
     const credentials = this.user.model;
     const onLogin = callback => {
       this.modelAPI.loading = false;
@@ -1242,12 +1240,12 @@ class GUIApp {
       if (current.root === 'login') {
         this.state.changeState({root: null});
       }
-
     };
     // Delay the callback until after the env login as everything should be
     // set up by then.
-    document.addEventListener(
-      'model.login', onLogin.bind(this, callback), {once: true});
+    document.addEventListener('model.login', onLogin.bind(this, callback), {
+      once: true
+    });
     if (clearDB) {
       // Clear uncommitted state.
       this.modelAPI.get('ecs').clear();
@@ -1318,8 +1316,9 @@ class GUIApp {
 
       let model = undefined;
       if (modelPath) {
-        model = noErrorModels.find(model =>
-          generatePath(model.owner, model.name) === modelPath);
+        model = noErrorModels.find(
+          model => generatePath(model.owner, model.name) === modelPath
+        );
       } else if (modelUUID) {
         model = noErrorModels.find(model => model.uuid === modelUUID);
       }
@@ -1363,25 +1362,27 @@ class GUIApp {
       getEntity charmstore call.
   */
   _disambiguateUserState(entityPromise) {
-    entityPromise.then(userState => {
-      console.log('entity found, showing store');
-      // The entity promise returned an entity so it is not a model and
-      // we should navigate to the store.
-      this.maskVisibility(false);
-      this.state.changeState({
-        store: 'u/' + userState,
-        user: null
+    entityPromise
+      .then(userState => {
+        console.log('entity found, showing store');
+        // The entity promise returned an entity so it is not a model and
+        // we should navigate to the store.
+        this.maskVisibility(false);
+        this.state.changeState({
+          store: 'u/' + userState,
+          user: null
+        });
+      })
+      .catch(userState => {
+        // No entity was found so it's possible that this is a model.
+        // We need to list the models that the user has access to and find
+        // one which matches the name to extract the UUID.
+        if (!this.controllerAPI.userIsAuthenticated) {
+          console.log('not logged into controller');
+          return;
+        }
+        this._listAndSwitchModel(userState);
       });
-    }).catch(userState => {
-      // No entity was found so it's possible that this is a model.
-      // We need to list the models that the user has access to and find
-      // one which matches the name to extract the UUID.
-      if (!this.controllerAPI.userIsAuthenticated) {
-        console.log('not logged into controller');
-        return;
-      }
-      this._listAndSwitchModel(userState);
-    });
   }
 
   /**
@@ -1408,7 +1409,13 @@ class GUIApp {
     webhandler.sendPostRequest(
       '/_login',
       {'Content-Type': 'application/x-www-form-urlencoded'},
-      content, null, null, null, null, callback);
+      content,
+      null,
+      null,
+      null,
+      null,
+      callback
+    );
   }
 
   /**
@@ -1492,9 +1499,7 @@ class GUIApp {
   */
   _directDeploy(ddData) {
     const current = this.state.current;
-    if (current &&
-        current.gui &&
-        current.gui.deploy) {
+    if (current && current.gui && current.gui.deploy) {
       // If we're already in the deployment flow then return to stop
       // infinitely updating state.
       return;
@@ -1569,7 +1574,7 @@ class GUIApp {
         } else {
           charm = charm[0];
           let config = {},
-              options = charm.get ? charm.get('options') : charm.options;
+            options = charm.get ? charm.get('options') : charm.options;
           Object.keys(options).forEach(function(key) {
             config[key] = options[key]['default'];
           });
@@ -1596,8 +1601,7 @@ class GUIApp {
       state: this.state,
       staticURL: this.applicationConfig.staticURL,
       sendAnalytics: this.sendAnalytics,
-      container: document.querySelector(
-        this.applicationConfig.container || '#main')
+      container: document.querySelector(this.applicationConfig.container || '#main')
     });
     topology.render();
     // Trigger the resized method so that the topology fills the viewport.
@@ -1659,7 +1663,7 @@ class GUIApp {
     // the config path is defined on render by the various deployment environments.
     const oldScript = doc.querySelector('script[data=config]');
     // Remove the old config script tag and add it back again for it to re-fetch.
-    const script= doc.createElement('script');
+    const script = doc.createElement('script');
     script.setAttribute('data', 'config');
     script.src = oldScript.src;
     script.onload = () => {
@@ -1702,9 +1706,6 @@ class GUIApp {
   }
 }
 
-class JujuGUI extends mixwith.mix(GUIApp).with(
-  csUser.CharmstoreUserMixin,
-  DeployerMixin
-) {}
+class JujuGUI extends mixwith.mix(GUIApp).with(csUser.CharmstoreUserMixin, DeployerMixin) {}
 
 module.exports = JujuGUI;

@@ -9,14 +9,16 @@ const BooleanConfig = require('./boolean-config');
 describe('BooleanConfig', function() {
   let option;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <BooleanConfig
-      config={options.config === undefined ? true : options.config}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      label={options.label || 'Test'}
-      onChange={options.onChange || null}
-      option={options.option || option} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <BooleanConfig
+        config={options.config === undefined ? true : options.config}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        label={options.label || 'Test'}
+        onChange={options.onChange || null}
+        option={options.option || option}
+      />
+    );
 
   beforeEach(() => {
     option = {
@@ -40,18 +42,17 @@ describe('BooleanConfig', function() {
               id={option.key}
               onChange={input.prop('onChange')}
               onClick={input.prop('onClick')}
-              type="checkbox" />
-            <label
-              className="boolean-config--label"
-              htmlFor={option.key}>
-              <div className="boolean-config--handle"></div>
+              type="checkbox"
+            />
+            <label className="boolean-config--label" htmlFor={option.key}>
+              <div className="boolean-config--handle" />
             </label>
           </div>
         </div>
         <div
           className="boolean-config--description"
-          dangerouslySetInnerHTML={{__html: option.description}}>
-        </div>
+          dangerouslySetInnerHTML={{__html: option.description}}
+        />
       </div>
     );
     assert.compareJSX(wrapper, expected);

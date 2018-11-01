@@ -9,14 +9,16 @@ const StatusModel = require('./model');
 describe('StatusModel', function() {
   let counts, model;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StatusModel
-      changeFilter={options.changeFilter || sinon.stub()}
-      counts={options.counts || counts}
-      highestStatus={options.highestStatus || 'error'}
-      model={options.model || model}
-      statusFilter={options.statusFilter} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <StatusModel
+        changeFilter={options.changeFilter || sinon.stub()}
+        counts={options.counts || counts}
+        highestStatus={options.highestStatus || 'error'}
+        model={options.model || model}
+        statusFilter={options.statusFilter}
+      />
+    );
 
   beforeEach(() => {
     counts = {

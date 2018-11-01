@@ -7,7 +7,6 @@ const React = require('react');
 const {urls} = require('jaaslib');
 
 class AddedServicesLabel extends React.Component {
-
   /**
     Calls changeState to show the readme.
   */
@@ -16,7 +15,8 @@ class AddedServicesLabel extends React.Component {
       // we use fromAnyString here because juju core will set the bundleURL
       // to the legacy url format cs:bundle/wiki-simple-4 instead of the new
       // format wiki-simple/bundle/4.
-      store: urls.URL.fromAnyString(this.props.bundleURL).path()});
+      store: urls.URL.fromAnyString(this.props.bundleURL).path()
+    });
   }
 
   /**
@@ -27,7 +27,8 @@ class AddedServicesLabel extends React.Component {
       // we use fromAnyString here because juju core will set the bundleURL
       // to the legacy url format cs:bundle/wiki-simple-4 instead of the new
       // format wiki-simple/bundle/4.
-      postDeploymentPanel: urls.URL.fromAnyString(this.props.bundleURL).path()});
+      postDeploymentPanel: urls.URL.fromAnyString(this.props.bundleURL).path()
+    });
   }
 
   render() {
@@ -52,7 +53,8 @@ class AddedServicesLabel extends React.Component {
           <li onClick={this._showReadme.bind(this)}>Bundle details</li>
           <li onClick={this._showGetStarted.bind(this)}>Get started</li>
         </ul>
-      </li>);
+      </li>
+    );
   }
 }
 

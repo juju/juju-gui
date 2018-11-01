@@ -7,10 +7,7 @@ const enzyme = require('enzyme');
 const ExpandingProgress = require('./expanding-progress');
 
 describe('ExpandingProgress', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ExpandingProgress />
-  );
+  const renderComponent = (options = {}) => enzyme.shallow(<ExpandingProgress />);
 
   beforeEach(() => {
     this.clock = sinon.useFakeTimers();
@@ -22,8 +19,7 @@ describe('ExpandingProgress', function() {
 
   it('renders properly', () => {
     const wrapper = renderComponent();
-    var expected = (
-      <div className="expanding-progress"></div>);
+    var expected = <div className="expanding-progress" />;
     assert.compareJSX(wrapper, expected);
   });
 
@@ -32,9 +28,6 @@ describe('ExpandingProgress', function() {
     // The class is set asynchronously fast forward until it should be applied.
     this.clock.tick(1);
     wrapper.update();
-    assert.equal(
-      wrapper.prop('className').includes('expanding-progress--active'),
-      true);
+    assert.equal(wrapper.prop('className').includes('expanding-progress--active'), true);
   });
-
 });

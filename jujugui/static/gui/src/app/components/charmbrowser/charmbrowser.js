@@ -29,15 +29,13 @@ class Charmbrowser extends React.Component {
   componentDidMount() {
     // The ref cannot exist at this point in the tests.
     if (this.refs.charmbrowser) {
-      this.refs.charmbrowser.addEventListener(
-        'scroll', this._onScroll.bind(this));
+      this.refs.charmbrowser.addEventListener('scroll', this._onScroll.bind(this));
     }
   }
 
   componentWillUnmount() {
     if (this.refs.charmbrowser) {
-      this.refs.charmbrowser.removeEventListener(
-        'scroll', this._onScroll.bind(this));
+      this.refs.charmbrowser.removeEventListener('scroll', this._onScroll.bind(this));
     }
   }
 
@@ -52,8 +50,7 @@ class Charmbrowser extends React.Component {
     const hash = this.props.appState.current.hash;
     const target = container.querySelector(`#${hash}`);
     // The charmbrowser element does the scrolling.
-    const charmbrowser = ReactDOM.findDOMNode(this).querySelector(
-      '.charmbrowser');
+    const charmbrowser = ReactDOM.findDOMNode(this).querySelector('.charmbrowser');
     if (target && charmbrowser) {
       // Set the scroll position to the element's top position taking into
       // account the sticky header size.
@@ -133,7 +130,8 @@ class Charmbrowser extends React.Component {
             gisf={this.props.gisf}
             setPageTitle={this.props.setPageTitle}
             showExperts={this.props.flags.expert}
-            staticURL={this.props.staticURL} />
+            staticURL={this.props.staticURL}
+          />
         );
         break;
       case 'search-results':
@@ -153,7 +151,8 @@ class Charmbrowser extends React.Component {
             setPageTitle={this.props.setPageTitle}
             sort={search.sort}
             tags={search.tags}
-            type={search.type} />
+            type={search.type}
+          />
         );
         break;
       case 'entity-details':
@@ -181,7 +180,8 @@ class Charmbrowser extends React.Component {
             sendAnalytics={this.props.sendAnalytics}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}
-            staticURL={this.props.staticURL} />
+            staticURL={this.props.staticURL}
+          />
         );
         break;
     }
@@ -198,16 +198,15 @@ class Charmbrowser extends React.Component {
         clickAction={this._close.bind(this)}
         focus={false}
         instanceName="white-box"
-        visible={true}>
-        <div
-          className="charmbrowser"
-          ref="charmbrowser">
+        visible={true}
+      >
+        <div className="charmbrowser" ref="charmbrowser">
           {this._generateContent()}
         </div>
       </Panel>
     );
   }
-};
+}
 
 Charmbrowser.propTypes = {
   acl: PropTypes.object.isRequired,

@@ -65,8 +65,10 @@ describe('Profile Charm List', function() {
         handleDeploy={options.handleDeploy || sinon.stub()}
         isActiveUsersProfile={isActiveUsersProfile}
         storeUser={options.storeUser || sinon.stub()}
-        user={
-          options.user !== undefined ? options.user : 'hatch@external'} />, true);
+        user={options.user !== undefined ? options.user : 'hatch@external'}
+      />,
+      true
+    );
   };
   let acl;
 
@@ -86,13 +88,19 @@ describe('Profile Charm List', function() {
     const expected = (
       <p className="profile-charm-list__onboarding">
         Learn about&nbsp;
-        <a
-          href="https://jujucharms.com/docs/stable/developer-getting-started"
-          target="_blank">
+        <a href="https://jujucharms.com/docs/stable/developer-getting-started" target="_blank">
           writing your own charm
-        </a>.
-      </p>);
-    assert.equal(wrapper.find('.profile__title-count').html().includes('(0)'), true);
+        </a>
+        .
+      </p>
+    );
+    assert.equal(
+      wrapper
+        .find('.profile__title-count')
+        .html()
+        .includes('(0)'),
+      true
+    );
     assert.compareJSX(wrapper.find('.profile-charm-list__onboarding'), expected);
   });
 

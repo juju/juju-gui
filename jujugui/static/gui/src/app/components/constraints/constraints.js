@@ -30,7 +30,7 @@ class Constraints extends React.Component {
     const disk = refs.diskConstraintInput || defaultRef;
     const series = refs.seriesConstraintSelect || defaultRef;
     this.props.valuesChanged({
-      'arch': arch.value,
+      arch: arch.value,
       'cpu-power': cpu.value,
       'cpu-cores': cores.value,
       mem: mem.value,
@@ -52,7 +52,11 @@ class Constraints extends React.Component {
     if (!props.hasUnit && props.series.length) {
       // Generate a list of series options.
       const seriesOptions = props.series.map(ser => {
-        return <option key={ser} value={ser}>{ser}</option>;
+        return (
+          <option key={ser} value={ser}>
+            {ser}
+          </option>
+        );
       });
       series = (
         <select
@@ -63,8 +67,11 @@ class Constraints extends React.Component {
           key="seriesConstraintSelect"
           name="series-constraint"
           onChange={this._handleValueChanged.bind(this)}
-          ref="seriesConstraintSelect">
-          <option key="default" value="">Optionally choose a series</option>
+          ref="seriesConstraintSelect"
+        >
+          <option key="default" value="">
+            Optionally choose a series
+          </option>
           {seriesOptions}
         </select>
       );
@@ -80,12 +87,17 @@ class Constraints extends React.Component {
         key="archConstraintSelect"
         name="arch-constraint"
         onChange={this._handleValueChanged.bind(this)}
-        ref="archConstraintSelect">
+        ref="archConstraintSelect"
+      >
         <option key="default" value="">
           Optionally choose an architecture
         </option>
-        <option key="amd64" value="amd64">amd64</option>
-        <option key="i386" value="i386">i386</option>
+        <option key="amd64" value="amd64">
+          amd64
+        </option>
+        <option key="i386" value="i386">
+          i386
+        </option>
       </select>
     );
     const cpu = (
@@ -101,7 +113,8 @@ class Constraints extends React.Component {
           name="cpu-constraint"
           onChange={this._handleValueChanged.bind(this)}
           ref="cpuConstraintInput"
-          type="text" />
+          type="text"
+        />
       </div>
     );
     const cores = (
@@ -117,7 +130,8 @@ class Constraints extends React.Component {
           name="cores-constraint"
           onChange={this._handleValueChanged.bind(this)}
           ref="coresConstraintInput"
-          type="text" />
+          type="text"
+        />
       </div>
     );
     const mem = (
@@ -133,7 +147,8 @@ class Constraints extends React.Component {
           name="mem-constraint"
           onChange={this._handleValueChanged.bind(this)}
           ref="memConstraintInput"
-          type="text" />
+          type="text"
+        />
       </div>
     );
     const disk = (
@@ -149,7 +164,8 @@ class Constraints extends React.Component {
           name="disk-constraint"
           onChange={this._handleValueChanged.bind(this)}
           ref="diskConstraintInput"
-          type="text" />
+          type="text"
+        />
       </div>
     );
     let parts = [arch, cpu, cores, mem, disk];
@@ -209,7 +225,7 @@ class Constraints extends React.Component {
       </div>
     );
   }
-};
+}
 
 Constraints.propTypes = {
   constraints: PropTypes.object,

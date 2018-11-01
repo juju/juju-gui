@@ -17,9 +17,8 @@ class Login extends React.Component {
           if (this.refs.USSOLoginLink) {
             this.refs.USSOLoginLink.handleLogin();
           }
-        } else if ((performance.now() - startTime) < 5000) {
-          console.log(
-            'controller not yet connected, attempting retry.');
+        } else if (performance.now() - startTime < 5000) {
+          console.log('controller not yet connected, attempting retry.');
           setTimeout(bounce, 150, performance.now());
         } else {
           const message = 'controller never connected';
@@ -49,10 +48,13 @@ class Login extends React.Component {
     if (evt && evt.preventDefault) {
       evt.preventDefault();
     }
-    this.props.loginToAPIs({
-      user: this.refs.username.value,
-      password: this.refs.password.value
-    }, false);
+    this.props.loginToAPIs(
+      {
+        user: this.refs.username.value,
+        password: this.refs.password.value
+      },
+      false
+    );
   }
 
   /**
@@ -76,9 +78,11 @@ class Login extends React.Component {
   _generateHelpMessage() {
     return (
       <p>
-        Find your username and password with<br />
+        Find your username and password with
+        <br />
         <code>juju show-controller --show-password</code>
-      </p>);
+      </p>
+    );
   }
 
   _generateUSSOLink() {
@@ -90,11 +94,13 @@ class Login extends React.Component {
         addNotification={this.props.addNotification}
         displayType="button"
         loginToController={this.props.loginToController}
-        ref="USSOLoginLink" />);
+        ref="USSOLoginLink"
+      />
+    );
   }
 
   _generateClassnames() {
-    return classNames('login', {'hidden': this.props.gisf});
+    return classNames('login', {hidden: this.props.gisf});
   }
 
   render() {
@@ -104,35 +110,22 @@ class Login extends React.Component {
           <SvgIcon height="30" name="juju-logo" width="75" />
         </div>
         <div className="login__full-form">
-          <div className="login__env-name">
-            Login
-          </div>
+          <div className="login__env-name">Login</div>
           {this._generateErrorMessage()}
           <form
             className="login__form"
             onSubmit={this._handleLoginSubmit.bind(this)}
-            ref="form">
-            <label
-              className="login__label">
+            ref="form"
+          >
+            <label className="login__label">
               Username
-              <input
-                className="login__input"
-                name="username"
-                ref="username"
-                type="text" />
+              <input className="login__input" name="username" ref="username" type="text" />
             </label>
-            <label
-              className="login__label">
+            <label className="login__label">
               Password
-              <input
-                className="login__input"
-                name="password"
-                ref="password"
-                type="password" />
+              <input className="login__input" name="password" ref="password" type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
+            <Button submit={true} type="positive">
               Login
             </Button>
             {this._generateUSSOLink()}
@@ -149,7 +142,7 @@ class Login extends React.Component {
       </div>
     );
   }
-};
+}
 
 Login.propTypes = {
   addNotification: PropTypes.func.isRequired,

@@ -57,8 +57,7 @@ describe('test_model.js', function() {
       charm.get('series').should.equal('precise');
       charm.get('package_name').should.equal('openstack-dashboard');
       charm.get('revision').should.equal(0);
-      charm.get('full_name').should.equal(
-        '~alt-bac/precise/openstack-dashboard');
+      charm.get('full_name').should.equal('~alt-bac/precise/openstack-dashboard');
     });
 
     it('must dedupe tags', () => {
@@ -70,8 +69,9 @@ describe('test_model.js', function() {
     });
 
     it('must accept charm ids without versions.', function() {
-      const charm = new models.Charm(
-        {id: 'cs:~alt-bac/precise/openstack-dashboard'});
+      const charm = new models.Charm({
+        id: 'cs:~alt-bac/precise/openstack-dashboard'
+      });
       assert.strictEqual(charm.get('revision'), null);
     });
 
@@ -84,8 +84,7 @@ describe('test_model.js', function() {
     });
 
     it('must accept charm ids without series.', function() {
-      const charm = new models.Charm(
-        {id: 'cs:~alt-bac/openstack-dashboard'});
+      const charm = new models.Charm({id: 'cs:~alt-bac/openstack-dashboard'});
       assert.isUndefined(charm.get('series'));
     });
 
@@ -124,10 +123,7 @@ describe('test_model.js', function() {
   describe('juju models', function() {
     var models, Y;
     const cleanups = [];
-    var requirements = [
-      'juju-models',
-      'juju-charm-models'
-    ];
+    var requirements = ['juju-models', 'juju-charm-models'];
 
     beforeAll(function(done) {
       Y = YUI(GlobalConfig).use(requirements, function(Y) {
@@ -148,13 +144,11 @@ describe('test_model.js', function() {
     });
 
     it('can update a units displayName', function(done) {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-      db.services.add([
-        {id: 'mysql', name: 'mysql'}
-      ]);
-      db.addUnits([
-        {id: 'mysql/0'}
-      ]);
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
+      db.services.add([{id: 'mysql', name: 'mysql'}]);
+      db.addUnits([{id: 'mysql/0'}]);
       var service = db.services.getById('mysql');
       service.set('name', 'notmysql');
       document.addEventListener('update', () => {
@@ -171,14 +165,12 @@ describe('test_model.js', function() {
     });
 
     it('can update a unit id', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-      db.services.add([
-        {id: 'mysql', name: 'mysql'}
-      ]);
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
+      db.services.add([{id: 'mysql', name: 'mysql'}]);
       var service = db.services.getById('mysql');
-      db.addUnits([
-        {id: 'mysql/0'}
-      ]);
+      db.addUnits([{id: 'mysql/0'}]);
       var unit = db.units.getById('mysql/0');
       service.set('id', 'mysql2');
       assert.deepEqual(Object.keys(db.units._idMap), ['mysql/0']);
@@ -193,9 +185,10 @@ describe('test_model.js', function() {
 
     it('should aggregate unit info when adding units', function() {
       var service_unit = {id: 'mysql/0'};
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-      var stub = sinon.stub(
-        db.units, 'update_service_unit_aggregates');
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
+      var stub = sinon.stub(db.units, 'update_service_unit_aggregates');
       _cleanups.push(stub.restore);
       db.services.add({id: 'mysql'});
       db.addUnits(service_unit);
@@ -240,39 +233,38 @@ describe('test_model.js', function() {
       };
       wordpress.get('units').add([wp0, wp1, wp2, wp3], true);
 
-      assert.deepEqual(mysql.get('units')
-        .get_informative_states_for_service(mysql),
-      [{'pending': 2}, {}]);
-      assert.deepEqual(wordpress.get('units')
-        .get_informative_states_for_service(wordpress),
-      [{'pending': 1, 'error': 3}, {
-        mysql: 'db-relation-changed',
-        wordpress: 'peer-relation-broken'
-      }]);
+      assert.deepEqual(mysql.get('units').get_informative_states_for_service(mysql), [
+        {pending: 2},
+        {}
+      ]);
+      assert.deepEqual(wordpress.get('units').get_informative_states_for_service(wordpress), [
+        {pending: 1, error: 3},
+        {
+          mysql: 'db-relation-changed',
+          wordpress: 'peer-relation-broken'
+        }
+      ]);
     });
 
-    it('service unit list should update analytics when units are added',
-      function() {
-        var sl = new models.ServiceList();
-        var mysql = new models.Service({id: 'mysql'});
-        sl.add([mysql]);
-        var my0 = {id: 'mysql/0', agent_state: 'pending'};
-        var my1 = {id: 'mysql/1', agent_state: 'pending'};
-        var sul = mysql.get('units');
+    it('service unit list should update analytics when units are added', function() {
+      var sl = new models.ServiceList();
+      var mysql = new models.Service({id: 'mysql'});
+      sl.add([mysql]);
+      var my0 = {id: 'mysql/0', agent_state: 'pending'};
+      var my1 = {id: 'mysql/1', agent_state: 'pending'};
+      var sul = mysql.get('units');
 
-        window._gaq.should.eql([]);
-        sul.add([my0], true);
-        sul.update_service_unit_aggregates(mysql);
-        window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
-          'mysql', 1]);
-        sul.add([my1], true);
-        sul.update_service_unit_aggregates(mysql);
-        window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
-          'mysql', 2]);
-        // Calling update with no additions does not create a new trackEvent.
-        sul.update_service_unit_aggregates(mysql);
-        window._gaq.should.eql([]);
-      });
+      window._gaq.should.eql([]);
+      sul.add([my0], true);
+      sul.update_service_unit_aggregates(mysql);
+      window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update', 'mysql', 1]);
+      sul.add([my1], true);
+      sul.update_service_unit_aggregates(mysql);
+      window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update', 'mysql', 2]);
+      // Calling update with no additions does not create a new trackEvent.
+      sul.update_service_unit_aggregates(mysql);
+      window._gaq.should.eql([]);
+    });
 
     it('services are instantiated with _dirtyFields property', function() {
       var service = new models.Service();
@@ -281,60 +273,56 @@ describe('test_model.js', function() {
       assert.equal(dirtyFields.length, 0);
     });
 
-    it('service unit objects should parse the service name from unit id',
-      function() {
-        var service_unit = {id: 'mysql/0'};
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-        db.services.add({id: 'mysql'});
-        db.addUnits(service_unit);
-        service_unit.service.should.equal('mysql');
+    it('service unit objects should parse the service name from unit id', function() {
+      var service_unit = {id: 'mysql/0'};
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
       });
+      db.services.add({id: 'mysql'});
+      db.addUnits(service_unit);
+      service_unit.service.should.equal('mysql');
+    });
 
-    it('service unit objects should report their number correctly',
-      function() {
-        var service_unit = {id: 'mysql/5'};
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-        db.services.add({id: 'mysql'});
-        db.addUnits(service_unit);
-        service_unit.number.should.equal(5);
+    it('service unit objects should report their number correctly', function() {
+      var service_unit = {id: 'mysql/5'};
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
       });
+      db.services.add({id: 'mysql'});
+      db.addUnits(service_unit);
+      service_unit.number.should.equal(5);
+    });
 
     it('should display service names properly', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-          longId = '1234567890123456789',
-          shortId = '12345678901234567';
+      var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        }),
+        longId = '1234567890123456789',
+        shortId = '12345678901234567';
       db.services.add([{id: longId}, {id: shortId}]);
       var longName = db.services.getById(longId).get('displayName');
       assert.equal(longName.length, 19, 'name is not trucated');
       var shortName = db.services.getById(shortId).get('displayName');
-      assert.equal(shortName.length, shortId.length,
-        'name does not match');
+      assert.equal(shortName.length, shortId.length, 'name does not match');
     });
 
     it('should display ghost service names properly', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-          longId = '12345678901',
-          shortId = '123456789';
-      db.services.add([
-        {id: longId, pending: true},
-        {id: shortId, pending: true}
-      ]);
+      var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        }),
+        longId = '12345678901',
+        shortId = '123456789';
+      db.services.add([{id: longId, pending: true}, {id: shortId, pending: true}]);
       var longName = db.services.getById(longId).get('displayName');
       var shortName = db.services.getById(shortId).get('displayName');
-      assert.equal(longName.indexOf('('), 0,
-        'open paren not found');
-      assert.equal(longName.lastIndexOf(')'), longName.length - 1,
-        'close paren not found');
-      assert.equal(shortName.indexOf('('), 0,
-        'open paren not found');
-      assert.equal(shortName.lastIndexOf(')'), shortName.length - 1,
-        'close paren not found');
+      assert.equal(longName.indexOf('('), 0, 'open paren not found');
+      assert.equal(longName.lastIndexOf(')'), longName.length - 1, 'close paren not found');
+      assert.equal(shortName.indexOf('('), 0, 'open paren not found');
+      assert.equal(shortName.lastIndexOf(')'), shortName.length - 1, 'close paren not found');
       // add 2 to the expected length to account for the parenthesis
       // that surround ghosted names
-      assert.equal(longName.length, 11 + 2,
-        'name is not trucated');
-      assert.equal(shortName.length, shortId.length + 2,
-        'name does not match');
+      assert.equal(longName.length, 11 + 2, 'name is not trucated');
+      assert.equal(shortName.length, shortId.length + 2, 'name does not match');
     });
 
     it('should update the ecs records when an app name changes', () => {
@@ -364,22 +352,23 @@ describe('test_model.js', function() {
           }
         }
       };
-      let db = new models.Database(
-        {getECS: sinon.stub().returns({changeSet: changeSet})});
+      let db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: changeSet})
+      });
       db.services.add([{id: 'wordpress', name: 'wordpress1'}]);
       const wordpress = db.services.getById('wordpress');
       assert.equal(wordpress.get('name'), 'wordpress1');
       wordpress.set('name', 'wordpress2');
       assert.equal(changeSet['add-unit1'].command.args[0], 'wordpress2');
       assert.equal(changeSet['add-unit2'].command.args[0], 'wordpress99');
-      assert.equal(
-        changeSet['add-app1'].command.args[0].applicationName, 'wordpress2');
-      assert.equal(
-        changeSet['add-app2'].command.args[0].applicationName, 'wordpress99');
+      assert.equal(changeSet['add-app1'].command.args[0].applicationName, 'wordpress2');
+      assert.equal(changeSet['add-app2'].command.args[0].applicationName, 'wordpress99');
     });
 
     it('must be able to resolve models by their name', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
       // Add some services.
       db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
       // A service is properly resolved.
@@ -403,24 +392,40 @@ describe('test_model.js', function() {
     });
 
     describe('onDelta', function() {
-
       it('should update service units on change', function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        });
         var mysql = new models.Service({id: 'mysql'});
         db.services.add([mysql]);
-        assert.equal(mysql.get('units') instanceof models.ServiceUnitList,
-          true);
-        db.onDelta({detail: {data: {result: [
-          ['unitInfo', 'add', {name: 'mysql/0'}],
-          ['unitInfo', 'add', {name: 'mysql/1'}]
-        ]}}});
+        assert.equal(mysql.get('units') instanceof models.ServiceUnitList, true);
+        db.onDelta({
+          detail: {
+            data: {
+              result: [
+                ['unitInfo', 'add', {name: 'mysql/0'}],
+                ['unitInfo', 'add', {name: 'mysql/1'}]
+              ]
+            }
+          }
+        });
         assert.equal(mysql.get('units').size(), 2);
-        db.onDelta({detail: {data: {result: [
-          ['unitInfo', 'remove', {
-            name: 'mysql/0',
-            applicastion: 'mysql'
-          }]
-        ]}}});
+        db.onDelta({
+          detail: {
+            data: {
+              result: [
+                [
+                  'unitInfo',
+                  'remove',
+                  {
+                    name: 'mysql/0',
+                    applicastion: 'mysql'
+                  }
+                ]
+              ]
+            }
+          }
+        });
         assert.equal(mysql.get('units').size(), 1);
       });
 
@@ -430,247 +435,367 @@ describe('test_model.js', function() {
         // change, but the actual create machine delta may not have arrived.
         // In these cases we check to see if the instance exists, and if not,
         // we create it before applying the changes.
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-            id = '0';
-        assert.equal(db.machines.size(), 0,
-          'the machine list is not be empty');
-        db.onDelta({detail: {data: {result: [
-          ['machineInfo', 'change', {id: id}]
-        ]}}});
-        assert.equal(db.machines.size(), 1,
-          'the machines list did not have the expected size');
+        var db = new models.Database({
+            getECS: sinon.stub().returns({changeSet: {}})
+          }),
+          id = '0';
+        assert.equal(db.machines.size(), 0, 'the machine list is not be empty');
+        db.onDelta({
+          detail: {
+            data: {
+              result: [['machineInfo', 'change', {id: id}]]
+            }
+          }
+        });
+        assert.equal(
+          db.machines.size(),
+          1,
+          'the machines list did not have the expected size'
+        );
         var machine = db.machines.getById(id);
-        assert.notEqual(machine, undefined,
-          'the expected machine was not found in the database');
+        assert.notEqual(
+          machine,
+          undefined,
+          'the expected machine was not found in the database'
+        );
       });
 
       it('should copy visibility flags from service to unit', function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-            id = 'mysql/0';
+        var db = new models.Database({
+            getECS: sinon.stub().returns({changeSet: {}})
+          }),
+          id = 'mysql/0';
         // By default, these flags are all false.
-        db.services.add([
-          {id: 'mysql', hide: true, fade: true, highlight: true}
-        ]);
+        db.services.add([{id: 'mysql', hide: true, fade: true, highlight: true}]);
         var service = db.services.item(0);
-        db.onDelta({detail: {data: {result: [
-          ['unitInfo', 'change', {name: id, application: service.get('id')}]
-        ]}}});
+        db.onDelta({
+          detail: {
+            data: {
+              result: [['unitInfo', 'change', {name: id, application: service.get('id')}]]
+            }
+          }
+        });
         var unit = db.units.getById(id);
         assert.notEqual(unit, null, 'Unit was not created');
-        assert.equal(unit.hide, service.get('hide'),
-          'Hide flags should match between unit and service');
-        assert.equal(unit.fade, service.get('fade'),
-          'Fade flags should match between unit and service');
-        assert.equal(unit.highlight, service.get('highlight'),
-          'Highlight flags should match between unit and service');
+        assert.equal(
+          unit.hide,
+          service.get('hide'),
+          'Hide flags should match between unit and service'
+        );
+        assert.equal(
+          unit.fade,
+          service.get('fade'),
+          'Fade flags should match between unit and service'
+        );
+        assert.equal(
+          unit.highlight,
+          service.get('highlight'),
+          'Highlight flags should match between unit and service'
+        );
       });
 
       it('should change machines when units change', function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        });
         var machinesStub = sinon.stub(db.machines, 'process_delta'),
-            unitsStub = sinon.stub(db.units, 'process_delta');
+          unitsStub = sinon.stub(db.units, 'process_delta');
         _cleanups.push(machinesStub.restore);
         _cleanups.push(unitsStub.restore);
-        db.onDelta({detail: {data: {result: [
-          ['unitInfo', 'remove', {'machine-id': '0'}]
-        ]}}});
+        db.onDelta({
+          detail: {
+            data: {
+              result: [['unitInfo', 'remove', {'machine-id': '0'}]]
+            }
+          }
+        });
         var args = machinesStub.lastCall.args;
-        assert.equal(args[0], 'change',
-          'the expected action was not applied to machines');
-        assert.equal(args[1].id, '0',
-          'the expected machine ID was not changed');
+        assert.equal(args[0], 'change', 'the expected action was not applied to machines');
+        assert.equal(args[1].id, '0', 'the expected machine ID was not changed');
       });
 
-      it('should handle remove changes correctly',
-        function() {
-          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-          var mysql = db.services.add({id: 'mysql'});
-          var my0 = {id: 'mysql/0', agent_state: 'pending'};
-          var my1 = {id: 'mysql/1', agent_state: 'pending'};
-          db.addUnits([my0, my1]);
-          db.onDelta({detail: {data: {result: [
-            ['unitInfo', 'remove', {
-              name: 'mysql/1',
-              application: 'mysql'
-            }]
-          ]}}});
-          var names = mysql.get('units').get('id');
-          names.length.should.equal(1);
-          names[0].should.equal('mysql/0');
+      it('should handle remove changes correctly', function() {
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
         });
-
-      it('should be able to reuse existing services with add',
-        function() {
-          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-          var my0 = new models.Service({id: 'mysql', exposed: true});
-          db.services.add([my0]);
-          db.onDelta({detail: {data: {result: [
-            ['applicationInfo', 'add', {
-              name: 'mysql',
-              'charm-url': 'cs:precise/mysql',
-              exposed: false
-            }]
-          ]}}});
-          my0.get('exposed').should.equal(false);
+        var mysql = db.services.add({id: 'mysql'});
+        var my0 = {id: 'mysql/0', agent_state: 'pending'};
+        var my1 = {id: 'mysql/1', agent_state: 'pending'};
+        db.addUnits([my0, my1]);
+        db.onDelta({
+          detail: {
+            data: {
+              result: [
+                [
+                  'unitInfo',
+                  'remove',
+                  {
+                    name: 'mysql/1',
+                    application: 'mysql'
+                  }
+                ]
+              ]
+            }
+          }
         });
+        var names = mysql.get('units').get('id');
+        names.length.should.equal(1);
+        names[0].should.equal('mysql/0');
+      });
 
-      it('should be able to reuse existing units with add',
+      it('should be able to reuse existing services with add', function() {
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        });
+        var my0 = new models.Service({id: 'mysql', exposed: true});
+        db.services.add([my0]);
+        db.onDelta({
+          detail: {
+            data: {
+              result: [
+                [
+                  'applicationInfo',
+                  'add',
+                  {
+                    name: 'mysql',
+                    'charm-url': 'cs:precise/mysql',
+                    exposed: false
+                  }
+                ]
+              ]
+            }
+          }
+        });
+        my0.get('exposed').should.equal(false);
+      });
+
+      it('should be able to reuse existing units with add', function() {
         // Units are special because they use the LazyModelList.
-        function() {
-          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-          db.services.add({id: 'mysql'});
-          var my0 = {id: 'mysql/0', public_address: '1.2.3.4'};
-          db.addUnits([my0]);
-          db.onDelta({detail: {data: {result: [
-            ['unitInfo', 'add', {
-              name: 'mysql/0',
-              'public-address': '5.6.7.8'
-            }]
-          ]}}});
-          my0.public_address.should.equal('5.6.7.8');
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
         });
+        db.services.add({id: 'mysql'});
+        var my0 = {id: 'mysql/0', public_address: '1.2.3.4'};
+        db.addUnits([my0]);
+        db.onDelta({
+          detail: {
+            data: {
+              result: [
+                [
+                  'unitInfo',
+                  'add',
+                  {
+                    name: 'mysql/0',
+                    'public-address': '5.6.7.8'
+                  }
+                ]
+              ]
+            }
+          }
+        });
+        my0.public_address.should.equal('5.6.7.8');
+      });
 
       it('uses default handler for unknown deltas', function() {
-        var handler = sinon.stub(
-          Y.juju.models.handlers, 'defaultHandler');
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-        db.onDelta({detail: {data: {result: [
-          ['fakeDelta', 'add', {}]
-        ]}}});
+        var handler = sinon.stub(Y.juju.models.handlers, 'defaultHandler');
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        });
+        db.onDelta({
+          detail: {
+            data: {
+              result: [['fakeDelta', 'add', {}]]
+            }
+          }
+        });
         assert.equal(handler.callCount, 1);
       });
 
       // XXX - We no longer use relation_errors but this test should remain
       // until it's completely removed from the codebase.
-      xit('should reset relation_errors',
-        function() {
-          var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
-          var my0 = {
-            id: 'mysql/0',
-            relation_errors: {'cache': ['memcached']}
-          };
-          db.addUnits([my0]);
-          // Note that relation_errors is not set.
-          db.onDelta({detail: {data: {result: [
-            ['unit', 'change', {id: 'mysql/0'}]
-          ]}}});
-          my0.relation_errors.should.eql({});
+      xit('should reset relation_errors', function() {
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
         });
+        var my0 = {
+          id: 'mysql/0',
+          relation_errors: {cache: ['memcached']}
+        };
+        db.addUnits([my0]);
+        // Note that relation_errors is not set.
+        db.onDelta({
+          detail: {
+            data: {
+              result: [['unit', 'change', {id: 'mysql/0'}]]
+            }
+          }
+        });
+        my0.relation_errors.should.eql({});
+      });
     });
 
-    it('ServiceUnitList should accept a list of units at instantiation and ' +
-       'decorate them', function() {
-      var mysql = new models.Service({id: 'mysql'});
-      var objs = [{id: 'mysql/0'}, {id: 'mysql/1'}];
-      var sul = mysql.get('units');
-      sul.add(objs, true);
-      var unit_data = sul.getAttrs(['service', 'number']);
-      unit_data.service.should.eql(['mysql', 'mysql']);
-      unit_data.number.should.eql([0, 1]);
-    });
-
-    it('RelationList.has_relations.. should return true if rel found.',
+    it(
+      'ServiceUnitList should accept a list of units at instantiation and ' + 'decorate them',
       function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-            rel0 = new models.Relation({
-              id: 'relation-0',
-              endpoints: [
-                ['mediawiki', {name: 'cache', role: 'source'}],
-                ['squid', {name: 'cache', role: 'front'}]],
-              'interface': 'cache'
-            }),
-            rel1 = new models.Relation({
-              id: 'relation-4',
-              endpoints: [
-                ['something', {name: 'foo', role: 'bar'}],
-                ['mysql', {name: 'la', role: 'lee'}]],
-              'interface': 'thing'
-            });
-        db.relations.add([rel0, rel1]);
-        db.relations.has_relation_for_endpoint(
-          {service: 'squid', name: 'cache', type: 'cache'}
-        ).should.equal(true);
-        db.relations.has_relation_for_endpoint(
-          {service: 'mysql', name: 'la', type: 'thing'}
-        ).should.equal(true);
-        db.relations.has_relation_for_endpoint(
-          {service: 'squid', name: 'cache', type: 'http'}
-        ).should.equal(false);
+        var mysql = new models.Service({id: 'mysql'});
+        var objs = [{id: 'mysql/0'}, {id: 'mysql/1'}];
+        var sul = mysql.get('units');
+        sul.add(objs, true);
+        var unit_data = sul.getAttrs(['service', 'number']);
+        unit_data.service.should.eql(['mysql', 'mysql']);
+        unit_data.number.should.eql([0, 1]);
+      }
+    );
 
-        // We can also pass a service name which must match for the
-        // same relation.
+    it('RelationList.has_relations.. should return true if rel found.', function() {
+      var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        }),
+        rel0 = new models.Relation({
+          id: 'relation-0',
+          endpoints: [
+            ['mediawiki', {name: 'cache', role: 'source'}],
+            ['squid', {name: 'cache', role: 'front'}]
+          ],
+          interface: 'cache'
+        }),
+        rel1 = new models.Relation({
+          id: 'relation-4',
+          endpoints: [
+            ['something', {name: 'foo', role: 'bar'}],
+            ['mysql', {name: 'la', role: 'lee'}]
+          ],
+          interface: 'thing'
+        });
+      db.relations.add([rel0, rel1]);
+      db.relations
+        .has_relation_for_endpoint({
+          service: 'squid',
+          name: 'cache',
+          type: 'cache'
+        })
+        .should.equal(true);
+      db.relations
+        .has_relation_for_endpoint({
+          service: 'mysql',
+          name: 'la',
+          type: 'thing'
+        })
+        .should.equal(true);
+      db.relations
+        .has_relation_for_endpoint({
+          service: 'squid',
+          name: 'cache',
+          type: 'http'
+        })
+        .should.equal(false);
 
-        db.relations.has_relation_for_endpoint(
-          {service: 'squid', name: 'cache', type: 'cache'},
-          'kafka'
-        ).should.equal(false);
+      // We can also pass a service name which must match for the
+      // same relation.
 
-        db.relations.has_relation_for_endpoint(
+      db.relations
+        .has_relation_for_endpoint({service: 'squid', name: 'cache', type: 'cache'}, 'kafka')
+        .should.equal(false);
+
+      db.relations
+        .has_relation_for_endpoint(
           {service: 'squid', name: 'cache', type: 'cache'},
           'mediawiki'
-        ).should.equal(true);
+        )
+        .should.equal(true);
+    });
 
-      });
-
-    it('RelationList.get_relations_for_service should do what it says',
-      function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})}),
-            service = new models.Service({id: 'mysql', exposed: false}),
-            rel0 = new models.Relation(
-              {id: 'relation-0',
-                endpoints:
-                 [['mediawiki', {name: 'cache', role: 'source'}],
-                   ['squid', {name: 'cache', role: 'front'}]],
-                'interface': 'cache'}),
-            rel1 = new models.Relation(
-              {id: 'relation-1',
-                endpoints: [['wordpress', {
-                  role: 'peer', name: 'loadbalancer'}]],
-                'interface': 'reversenginx'}),
-            rel2 = new models.Relation(
-              {id: 'relation-2',
-                endpoints: [['mysql', {name: 'db', role: 'db'}],
-                  ['mediawiki', {name: 'storage', role: 'app'}]],
-                'interface': 'db'}),
-            rel3 = new models.Relation(
-              {id: 'relation-3',
-                endpoints:
-                 [['mysql', {role: 'peer', name: 'loadbalancer'}]],
-                'interface': 'mysql-loadbalancer'}),
-            rel4 = new models.Relation(
-              {id: 'relation-4',
-                endpoints:
-                 [['something', {name: 'foo', role: 'bar'}],
-                   ['mysql', {name: 'la', role: 'lee'}]],
-                'interface': 'thing'});
-        db.relations.add([rel0, rel1, rel2, rel3, rel4]);
-        db.relations.get_relations_for_service(service).map(
-          function(r) { return r.get('id'); })
-          .should.eql(['relation-2', 'relation-3', 'relation-4']);
-      });
+    it('RelationList.get_relations_for_service should do what it says', function() {
+      var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        }),
+        service = new models.Service({id: 'mysql', exposed: false}),
+        rel0 = new models.Relation({
+          id: 'relation-0',
+          endpoints: [
+            ['mediawiki', {name: 'cache', role: 'source'}],
+            ['squid', {name: 'cache', role: 'front'}]
+          ],
+          interface: 'cache'
+        }),
+        rel1 = new models.Relation({
+          id: 'relation-1',
+          endpoints: [
+            [
+              'wordpress',
+              {
+                role: 'peer',
+                name: 'loadbalancer'
+              }
+            ]
+          ],
+          interface: 'reversenginx'
+        }),
+        rel2 = new models.Relation({
+          id: 'relation-2',
+          endpoints: [
+            ['mysql', {name: 'db', role: 'db'}],
+            ['mediawiki', {name: 'storage', role: 'app'}]
+          ],
+          interface: 'db'
+        }),
+        rel3 = new models.Relation({
+          id: 'relation-3',
+          endpoints: [['mysql', {role: 'peer', name: 'loadbalancer'}]],
+          interface: 'mysql-loadbalancer'
+        }),
+        rel4 = new models.Relation({
+          id: 'relation-4',
+          endpoints: [
+            ['something', {name: 'foo', role: 'bar'}],
+            ['mysql', {name: 'la', role: 'lee'}]
+          ],
+          interface: 'thing'
+        });
+      db.relations.add([rel0, rel1, rel2, rel3, rel4]);
+      db.relations
+        .get_relations_for_service(service)
+        .map(function(r) {
+          return r.get('id');
+        })
+        .should.eql(['relation-2', 'relation-3', 'relation-4']);
+    });
 
     it('getRelationFromEndpoints returns relation using endpoints', function() {
       var relations = new models.RelationList();
       var relation = new models.Relation({
         endpoints: [
-          ['wordpress', {
+          [
+            'wordpress',
+            {
+              name: 'db',
+              role: 'server'
+            }
+          ],
+          [
+            'mysql',
+            {
+              name: 'db',
+              role: 'client'
+            }
+          ]
+        ]
+      });
+      var endpoints = [
+        [
+          'wordpress',
+          {
             name: 'db',
             role: 'server'
-          }],
-          ['mysql', {
+          }
+        ],
+        [
+          'mysql',
+          {
             name: 'db',
             role: 'client'
-          }]
-        ]});
-      var endpoints = [
-        ['wordpress', {
-          name: 'db',
-          role: 'server'
-        }],
-        ['mysql', {
-          name: 'db',
-          role: 'client'
-        }]
+          }
+        ]
       ];
       relations.add(relation);
       assert.deepEqual(relations.getRelationFromEndpoints(endpoints), relation);
@@ -679,58 +804,87 @@ describe('test_model.js', function() {
     it('compareRelationEndpoints can compare two endpoint sets', function() {
       var relations = new models.RelationList();
       var endpointSetA = [
-        ['wordpress', {
-          name: 'db',
-          role: 'server'
-        }],
-        ['mysql', {
-          name: 'db',
-          role: 'client'
-        }]
+        [
+          'wordpress',
+          {
+            name: 'db',
+            role: 'server'
+          }
+        ],
+        [
+          'mysql',
+          {
+            name: 'db',
+            role: 'client'
+          }
+        ]
       ];
       var endpointSetB = [
-        ['wordpress', {
-          name: 'db',
-          role: 'server'
-        }],
-        ['mysql', {
-          name: 'db',
-          role: 'client'
-        }]
+        [
+          'wordpress',
+          {
+            name: 'db',
+            role: 'server'
+          }
+        ],
+        [
+          'mysql',
+          {
+            name: 'db',
+            role: 'client'
+          }
+        ]
       ];
 
       assert.equal(
         relations.compareRelationEndpoints(
           [endpointSetA[0], endpointSetA[1]],
-          [endpointSetB[0], endpointSetB[1]]),
-        true, 'compare set 1 failed');
+          [endpointSetB[0], endpointSetB[1]]
+        ),
+        true,
+        'compare set 1 failed'
+      );
       assert.equal(
         relations.compareRelationEndpoints(
           [endpointSetA[1], endpointSetA[0]],
-          [endpointSetB[0], endpointSetB[1]]),
-        true, 'compare set 2 failed');
+          [endpointSetB[0], endpointSetB[1]]
+        ),
+        true,
+        'compare set 2 failed'
+      );
       assert.equal(
         relations.compareRelationEndpoints(
           [endpointSetA[0], endpointSetA[1]],
-          [endpointSetB[1], endpointSetB[0]]),
-        true, 'compare set 3 failed');
+          [endpointSetB[1], endpointSetB[0]]
+        ),
+        true,
+        'compare set 3 failed'
+      );
       assert.equal(
         relations.compareRelationEndpoints(
           [endpointSetA[0], endpointSetA[0]],
-          [endpointSetB[1], endpointSetB[1]]),
-        false, 'compare set 4 failed');
+          [endpointSetB[1], endpointSetB[1]]
+        ),
+        false,
+        'compare set 4 failed'
+      );
       // Compare endpoints that share the same origin but connect to different
       // services on the other end. (e.g., wordpress related to both mysql and
       // haproxy)
       assert.equal(
         relations.compareRelationEndpoints(
           [endpointSetA[0], endpointSetA[0]],
-          [endpointSetB[0], endpointSetB[1]]),
-        false, 'compare set 4 failed');
+          [endpointSetB[0], endpointSetB[1]]
+        ),
+        false,
+        'compare set 4 failed'
+      );
     });
 
     it('must be able to reference the Environment model', function() {
-      var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+      var db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
       var env = db.environment;
       env.get('annotations').should.eql({});
     });
@@ -756,14 +910,17 @@ describe('test_model.js', function() {
     });
 
     describe('serviceUnits.preventDirectChanges', function() {
-
       it('changes are disallowed when instantiating the db', function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        });
         assert.strictEqual(db.units.get('preventDirectChanges'), true);
       });
 
       it('changes are disallowed in the service units', function() {
-        var db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+        var db = new models.Database({
+          getECS: sinon.stub().returns({changeSet: {}})
+        });
         var service = db.services.add({id: 'django'});
         var units = service.get('units');
         assert.strictEqual(units.get('preventDirectChanges'), true);
@@ -796,7 +953,6 @@ describe('test_model.js', function() {
         };
         assert.throw(func, 'direct calls to units.remove() are not allowed');
       });
-
     });
 
     describe('serviceUnits.filterByMachine', function() {
@@ -853,7 +1009,11 @@ describe('test_model.js', function() {
       it('returns the machine hosted units including children', function() {
         var resultingUnits = units.filterByMachine('1', true);
         var expectedUnits = [
-          'haproxy/4', 'mysql/42', 'rails/42', 'django/2', 'rails/2',
+          'haproxy/4',
+          'mysql/42',
+          'rails/42',
+          'django/2',
+          'rails/2',
           'mysql/47'
         ];
         assertUnits(resultingUnits, expectedUnits);
@@ -861,8 +1021,11 @@ describe('test_model.js', function() {
 
       it('should not return units with partially matching ids', function() {
         var resultingUnits = mapUnitIds(units.filterByMachine('1', true));
-        assert.equal(resultingUnits.indexOf('mysql/12'), -1,
-          'This item should not be returned');
+        assert.equal(
+          resultingUnits.indexOf('mysql/12'),
+          -1,
+          'This item should not be returned'
+        );
       });
 
       it('returns the container hosted units including children', function() {
@@ -894,7 +1057,6 @@ describe('test_model.js', function() {
         var resultingUnits = units.filterByMachine('no-such', true);
         assert.lengthOf(resultingUnits, 0);
       });
-
     });
 
     describe('serviceUnits.filterByStatus', function() {
@@ -989,7 +1151,6 @@ describe('test_model.js', function() {
         assert.strictEqual(attrs.sourceName, undefined);
         assert.deepEqual(attrs.endpoints, []);
       });
-
     });
 
     describe('machines model list', function() {
@@ -1014,8 +1175,7 @@ describe('test_model.js', function() {
 
       it('returns a display name for a container', function() {
         assert.deepEqual(machines.createDisplayName('0/lxc/0'), '0/lxc/0');
-        assert.deepEqual(
-          machines.createDisplayName('1/kvm/0/lxc/42'), '1/kvm/0/lxc/42');
+        assert.deepEqual(machines.createDisplayName('1/kvm/0/lxc/42'), '1/kvm/0/lxc/42');
       });
 
       it('retrieves machine info parsing the bootstrap node name', function() {
@@ -1086,7 +1246,6 @@ describe('test_model.js', function() {
       });
 
       describe('addGhost', function() {
-
         afterEach(function() {
           machines.reset();
         });
@@ -1124,7 +1283,9 @@ describe('test_model.js', function() {
         });
 
         it('raises an error if the container type is not passed', function() {
-          var func = function() {machines.addGhost('0');};
+          var func = function() {
+            machines.addGhost('0');
+          };
           var expectedError = 'parent id specified without a container type';
           assert.throws(func, expectedError);
         });
@@ -1142,11 +1303,9 @@ describe('test_model.js', function() {
           assert.strictEqual(machine1.id, '42/kvm/new1');
           assert.strictEqual(machine2.id, 'new2');
         });
-
       });
 
       describe('containerization', function() {
-
         beforeEach(function() {
           machines.add([
             {id: '0'},
@@ -1175,14 +1334,14 @@ describe('test_model.js', function() {
 
         it('returns the children of a machine', function() {
           assertMachinesNames(machines.filterByParent('1'), ['1/lxc/0']);
-          assertMachinesNames(
-            machines.filterByParent('2'), ['2/kvm/0', '2/lxc/42']);
+          assertMachinesNames(machines.filterByParent('2'), ['2/kvm/0', '2/lxc/42']);
         });
 
         it('returns the children of a container', function() {
-          assertMachinesNames(
-            machines.filterByParent('2/kvm/0'),
-            ['2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+          assertMachinesNames(machines.filterByParent('2/kvm/0'), [
+            '2/kvm/0/lxc/0',
+            '2/kvm/0/lxc/1'
+          ]);
         });
 
         it('returns an empty list if a machine has no children', function() {
@@ -1200,15 +1359,19 @@ describe('test_model.js', function() {
 
         it('filters machines by machine ancestor', function() {
           assertMachinesNames(machines.filterByAncestor('1'), ['1/lxc/0']);
-          assertMachinesNames(
-            machines.filterByAncestor('2'),
-            ['2/kvm/0', '2/lxc/42', '2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+          assertMachinesNames(machines.filterByAncestor('2'), [
+            '2/kvm/0',
+            '2/lxc/42',
+            '2/kvm/0/lxc/0',
+            '2/kvm/0/lxc/1'
+          ]);
         });
 
         it('filters machines by container ancestor', function() {
-          assertMachinesNames(
-            machines.filterByAncestor('2/kvm/0'),
-            ['2/kvm/0/lxc/0', '2/kvm/0/lxc/1']);
+          assertMachinesNames(machines.filterByAncestor('2/kvm/0'), [
+            '2/kvm/0/lxc/0',
+            '2/kvm/0/lxc/1'
+          ]);
         });
 
         it('returns an empty list if no descendants are found', function() {
@@ -1223,9 +1386,7 @@ describe('test_model.js', function() {
         it('returns all the machines if ancestor is null', function() {
           assert.deepEqual(machines.filterByAncestor(null), machines._items);
         });
-
       });
-
     });
 
     describe('service state simplification', function() {
@@ -1289,16 +1450,22 @@ describe('test_model.js', function() {
         return new function() {
           return {
             store: {},
-            setItem: function(name, val) { this.store['name'] = val; },
-            getItem: function(name) { return this.store['name'] || null; }
+            setItem: function(name, val) {
+              this.store['name'] = val;
+            },
+            getItem: function(name) {
+              return this.store['name'] || null;
+            }
           };
-        };
+        }();
       };
       const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
       conn = new utils.SocketStub();
       env = new juju.environments.GoEnvironment({
-        conn: conn, user: userClass});
+        conn: conn,
+        user: userClass
+      });
       env.connect();
       env.set('facades', {Client: [0], Charms: [1]});
       conn.open();
@@ -1333,24 +1500,21 @@ describe('test_model.js', function() {
       }
     });
 
-    it('throws an error if you do not pass get_charm',
-      function() {
-        var charm = new models.Charm({id: 'local:precise/foo-4'});
-        try {
-          charm.sync('read', {});
-          assert.fail('Should have thrown an error');
-        } catch (e) {
-          e.should.equal(
-            'You must supply a get_charm function.');
-        }
-        try {
-          charm.sync('read', {env: 42});
-          assert.fail('Should have thrown an error');
-        } catch (e) {
-          e.should.equal(
-            'You must supply a get_charm function.');
-        }
-      });
+    it('throws an error if you do not pass get_charm', function() {
+      var charm = new models.Charm({id: 'local:precise/foo-4'});
+      try {
+        charm.sync('read', {});
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal('You must supply a get_charm function.');
+      }
+      try {
+        charm.sync('read', {env: 42});
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal('You must supply a get_charm function.');
+      }
+    });
 
     it('must send request to juju environment for local charms', function() {
       var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env);
@@ -1359,14 +1523,15 @@ describe('test_model.js', function() {
     });
 
     it('must handle success from local charm request', function(done) {
-      var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert.strictEqual(err, false);
-          assert.equal(charm.get('summary'), 'wowza');
-          assert.strictEqual(charm.loaded, true);
-          done();
-        });
+      var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env, function(
+        err,
+        response
+      ) {
+        assert.strictEqual(err, false);
+        assert.equal(charm.get('summary'), 'wowza');
+        assert.strictEqual(charm.loaded, true);
+        done();
+      });
       var response = {
         'request-id': conn.last_message()['request-id'],
         response: {meta: {summary: 'wowza'}, config: {}}
@@ -1376,17 +1541,18 @@ describe('test_model.js', function() {
     });
 
     it('parses charm model options correctly', function(done) {
-      var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(!err);
-          // This checks to make sure the parse mechanism is working properly
-          // for both the old ane new charm browser.
-          var option = charm.get('options').default_log;
-          assert.equal('global', option['default']);
-          assert.equal('Default log', option.description);
-          done();
-        });
+      var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env, function(
+        err,
+        response
+      ) {
+        assert(!err);
+        // This checks to make sure the parse mechanism is working properly
+        // for both the old ane new charm browser.
+        var option = charm.get('options').default_log;
+        assert.equal('global', option['default']);
+        assert.equal('Default log', option.description);
+        done();
+      });
       var response = {
         'request-id': conn.last_message()['request-id'],
         response: {
@@ -1405,14 +1571,15 @@ describe('test_model.js', function() {
     });
 
     it('must handle failure from local charm request', function(done) {
-      var charm = new models.Charm({id: 'local:precise/foo-4'}).load(
-        env,
-        function(err, response) {
-          assert(err);
-          assert(response.err);
-          assert(!charm.loaded);
-          done();
-        });
+      var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env, function(
+        err,
+        response
+      ) {
+        assert(err);
+        assert(response.err);
+        assert(!charm.loaded);
+        done();
+      });
       var response = {
         'request-id': conn.last_message()['request-id'],
         error: 'error'
@@ -1498,23 +1665,15 @@ describe('test_model.js', function() {
       // browser, but not across browsers.
       instance = new models.Charm({
         id: 'cs:precise/mysql-2',
-        files: [
-          'alpha/beta/gamma',
-          'alpha/beta',
-          'alpha/aardvark',
-          'zebra',
-          'yam'
-        ]
+        files: ['alpha/beta/gamma', 'alpha/beta', 'alpha/aardvark', 'zebra', 'yam']
       });
-      assert.deepEqual(
-        instance.get('files'),
-        [
-          'yam',
-          'zebra',
-          'alpha/aardvark',
-          'alpha/beta',
-          'alpha/beta/gamma'
-        ]);
+      assert.deepEqual(instance.get('files'), [
+        'yam',
+        'zebra',
+        'alpha/aardvark',
+        'alpha/beta',
+        'alpha/beta/gamma'
+      ]);
     });
 
     it('tracks the total commits of the charm', function() {
@@ -1526,13 +1685,14 @@ describe('test_model.js', function() {
       // The charm details needs the failing providers generated from the list
       // of tested_providers.
       data.tested_providers = {
-        'ec2': 'SUCCESS',
-        'local': 'FAILURE',
-        'openstack': 'FAILURE'
+        ec2: 'SUCCESS',
+        local: 'FAILURE',
+        openstack: 'FAILURE'
       };
       instance = new models.Charm(data);
-      instance.get('providers').should.eql(
-        {successes: ['ec2'], failures: ['local', 'openstack']});
+      instance
+        .get('providers')
+        .should.eql({successes: ['ec2'], failures: ['local', 'openstack']});
     });
 
     it('has an entity type static property', function() {
@@ -1541,7 +1701,6 @@ describe('test_model.js', function() {
     });
 
     describe('hasMetrics', function() {
-
       it('returns true if there is data in the metrics attribute', function() {
         instance = new models.Charm(data);
         instance.set('metrics', {});
@@ -1600,7 +1759,6 @@ describe('test_model.js', function() {
         assert.equal(instance.hasGetStarted(), true);
       });
     });
-
   });
 
   describe('service models', function() {
@@ -1633,7 +1791,9 @@ describe('test_model.js', function() {
         life: 'dead',
         aggregated_status: {error: 0}
       });
-      list = new models.ServiceList({items: [rails, django, wordpress, mysql]});
+      list = new models.ServiceList({
+        items: [rails, django, wordpress, mysql]
+      });
     });
 
     it('instances identify if they are alive', function() {
@@ -1696,7 +1856,6 @@ describe('test_model.js', function() {
     });
 
     describe('getServiceByName', function() {
-
       beforeEach(function() {
         list.add({
           id: '432178$',
@@ -1746,8 +1905,10 @@ describe('test_model.js', function() {
         };
         Object.keys(mapping).forEach(function(key) {
           assert.equal(
-            list._numToLetter(key), mapping[key],
-            key + ' did not properly convert to ' + mapping[key]);
+            list._numToLetter(key),
+            mapping[key],
+            key + ' did not properly convert to ' + mapping[key]
+          );
         });
       });
     });
@@ -1774,8 +1935,10 @@ describe('test_model.js', function() {
         };
         Object.keys(mapping).forEach(function(key) {
           assert.equal(
-            list._letterToNum(key), mapping[key],
-            key + ' did not properly convert to ' + mapping[key]);
+            list._letterToNum(key),
+            mapping[key],
+            key + ' did not properly convert to ' + mapping[key]
+          );
         });
       });
     });
@@ -1794,7 +1957,9 @@ describe('test_model.js', function() {
     });
 
     beforeEach(function() {
-      db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+      db = new models.Database({
+        getECS: sinon.stub().returns({changeSet: {}})
+      });
       metadata = {
         name: 'mycharm',
         summary: 'charm summary',
@@ -1833,8 +1998,7 @@ describe('test_model.js', function() {
     };
 
     it('creates and returns a new charm model instance', function() {
-      var charm = db.charms.addFromCharmData(
-        metadata, 'trusty', 42, 'local', options);
+      var charm = db.charms.addFromCharmData(metadata, 'trusty', 42, 'local', options);
       // A new charm model instance has been created.
       assert.strictEqual(db.charms.size(), 1);
       // The newly created charm has been returned.
@@ -1844,10 +2008,8 @@ describe('test_model.js', function() {
     });
 
     it('creates different series and revisions of the same charm', function() {
-      var charm1 = db.charms.addFromCharmData(
-        metadata, 'saucy', 42, 'local', options);
-      var charm2 = db.charms.addFromCharmData(
-        metadata, 'trusty', 47, 'local', options);
+      var charm1 = db.charms.addFromCharmData(metadata, 'saucy', 42, 'local', options);
+      var charm2 = db.charms.addFromCharmData(metadata, 'trusty', 47, 'local', options);
       // Two new charm model instance have been created.
       assert.strictEqual(db.charms.size(), 2);
       // The newly created charms have been returned.
@@ -1859,10 +2021,8 @@ describe('test_model.js', function() {
     });
 
     it('just retrieves the charm if it already exists', function() {
-      var charm1 = db.charms.addFromCharmData(
-        metadata, 'trusty', 42, 'local', options);
-      var charm2 = db.charms.addFromCharmData(
-        metadata, 'trusty', 42, 'local', options);
+      var charm1 = db.charms.addFromCharmData(metadata, 'trusty', 42, 'local', options);
+      var charm2 = db.charms.addFromCharmData(metadata, 'trusty', 42, 'local', options);
       // Only one charm model instance has been actually created.
       assert.strictEqual(db.charms.size(), 1);
       // The original charm has been returned by the second call.
@@ -1877,8 +2037,7 @@ describe('test_model.js', function() {
       metadata.provides = 'new-provides';
       metadata.requires = 'new-requires';
       options = {'another-option': {}};
-      var charm = db.charms.addFromCharmData(
-        metadata, 'trusty', 42, 'local', options);
+      var charm = db.charms.addFromCharmData(metadata, 'trusty', 42, 'local', options);
       // Only one charm model instance has been actually created.
       assert.strictEqual(db.charms.size(), 1);
       // The updated charm has been returned.
@@ -1886,7 +2045,6 @@ describe('test_model.js', function() {
       // The returned charm is well formed.
       assertCharm(charm, 'trusty', 42);
     });
-
   });
 
   describe('validateCharmMetadata', function() {
@@ -1938,7 +2096,5 @@ describe('test_model.js', function() {
       var errors = models.validateCharmMetadata(metadata);
       assert.deepEqual(errors, ['missing name', 'missing description']);
     });
-
   });
-
 });

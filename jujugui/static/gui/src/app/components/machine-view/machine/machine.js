@@ -11,7 +11,6 @@ const Constraints = require('../../constraints/constraints');
 const Machine = require('../../shared/machine/machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
-
 const dropTarget = {
   /**
     Called when something is dropped on the machine.
@@ -101,22 +100,25 @@ class MachineViewMachine extends React.Component {
     const machine = this.props.machineAPI.machine;
     const disabled = this.props.acl.isReadOnly();
     const units = this.props.dbAPI.units.filterByMachine(
-      machine.id, this.props.type === 'machine');
-    const buttons = [{
-      title: 'Cancel',
-      action: this._toggleForm.bind(this),
-      type: 'base'
-    }, {
-      title: 'Update',
-      action: this._setConstraints.bind(this),
-      type: 'neutral',
-      disabled: disabled
-    }];
+      machine.id,
+      this.props.type === 'machine'
+    );
+    const buttons = [
+      {
+        title: 'Cancel',
+        action: this._toggleForm.bind(this),
+        type: 'base'
+      },
+      {
+        title: 'Update',
+        action: this._setConstraints.bind(this),
+        type: 'neutral',
+        disabled: disabled
+      }
+    ];
     return (
       <div className="add-machine__constraints">
-        <h4 className="add-machine__title">
-          Update constraints
-        </h4>
+        <h4 className="add-machine__title">Update constraints</h4>
         <Constraints
           constraints={this.props.parseConstraints(machine.constraints)}
           currentSeries={machine.series}
@@ -124,11 +126,11 @@ class MachineViewMachine extends React.Component {
           hasUnit={!!units.length}
           providerType={this.props.modelAPI.providerType}
           series={this.props.machineAPI.series}
-          valuesChanged={this._updateConstraints.bind(this)} />
-        <ButtonRow
-          buttons={buttons}
-          key="buttons" />
-      </div>);
+          valuesChanged={this._updateConstraints.bind(this)}
+        />
+        <ButtonRow buttons={buttons} key="buttons" />
+      </div>
+    );
   }
 
   /**
@@ -137,8 +139,7 @@ class MachineViewMachine extends React.Component {
   */
   _generateHardware() {
     const props = this.props;
-    if (props.type === 'container' || !props.showConstraints ||
-        this.state.showForm) {
+    if (props.type === 'container' || !props.showConstraints || this.state.showForm) {
       return;
     }
     const machineAPI = props.machineAPI;
@@ -156,19 +157,19 @@ class MachineViewMachine extends React.Component {
     const props = this.props;
     const includeChildren = props.type === 'machine';
     const units = props.dbAPI.units.filterByMachine(
-      props.machineAPI.machine.id, includeChildren);
+      props.machineAPI.machine.id,
+      includeChildren
+    );
     if (units.length === 0) {
       return;
     }
     const components = [];
     units.forEach(unit => {
       const service = props.dbAPI.applications.getById(unit.service);
-      if (props.type === 'machine' && (service.get('hide')
-        || service.get('fade'))) {
+      if (props.type === 'machine' && (service.get('hide') || service.get('fade'))) {
         return;
       }
-      const propTypes = (
-        MachineViewMachineUnit.DecoratedComponent.propTypes);
+      const propTypes = MachineViewMachineUnit.DecoratedComponent.propTypes;
       components.push(
         <MachineViewMachineUnit
           acl={props.acl.reshape(propTypes.acl)}
@@ -177,12 +178,11 @@ class MachineViewMachine extends React.Component {
           machineType={props.type}
           removeUnit={props.machineAPI.removeUnit}
           sendAnalytics={props.sendAnalytics}
-          unit={unit} />);
+          unit={unit}
+        />
+      );
     });
-    return (
-      <ul className="machine-view__machine-units machine__units">
-        {components}
-      </ul>);
+    return <ul className="machine-view__machine-units machine__units">{components}</ul>;
   }
 
   /**
@@ -213,8 +213,8 @@ class MachineViewMachine extends React.Component {
       'machine-view__machine': true,
       'machine-view__machine--drop': this.props.isOver && this.props.canDrop,
       'machine-view__machine--selected': this.props.machineAPI.selected,
-      'machine-view__machine--uncommitted': machine.deleted ||
-        machine.commitStatus === 'uncommitted'
+      'machine-view__machine--uncommitted':
+        machine.deleted || machine.commitStatus === 'uncommitted'
     };
     return Object.keys(classes).filter(className => classes[className]);
   }
@@ -228,20 +228,24 @@ class MachineViewMachine extends React.Component {
   _generateSSHAction() {
     const props = this.props;
     const machine = this.props.machineAPI.machine;
-    if (props.type !== 'container' && props.showSSHButton &&
-        machine.commitStatus !== 'uncommitted') {
+    if (
+      props.type !== 'container' &&
+      props.showSSHButton &&
+      machine.commitStatus !== 'uncommitted'
+    ) {
       return this._sshToMachine.bind(this);
     }
   }
 
   render() {
     const machine = this.props.machineAPI.machine;
-    let menuItems = [{
-      label: 'Destroy',
-      action: (!this.props.acl.isReadOnly() && this._destroyMachine.bind(this)) || null
-    }];
-    if (this.props.type === 'machine' &&
-        machine.commitStatus === 'uncommitted') {
+    let menuItems = [
+      {
+        label: 'Destroy',
+        action: (!this.props.acl.isReadOnly() && this._destroyMachine.bind(this)) || null
+      }
+    ];
+    if (this.props.type === 'machine' && machine.commitStatus === 'uncommitted') {
       menuItems.push({
         label: 'Update constraints',
         action: (!this.props.acl.isReadOnly() && this._toggleForm.bind(this)) || null
@@ -264,7 +268,8 @@ class MachineViewMachine extends React.Component {
           menuItems={menuItems}
           onClick={this._handleSelectMachine.bind(this)}
           sshAction={this._generateSSHAction()}
-          sshLabel={machine.public_address}>
+          sshLabel={machine.public_address}
+        >
           {this._generateUnits()}
           {this._generateConstraintsForm()}
           <div className="machine-view__machine-drop-target">
@@ -276,7 +281,7 @@ class MachineViewMachine extends React.Component {
       </div>
     );
   }
-};
+}
 
 MachineViewMachine.propTypes = {
   acl: shapeup.shape({

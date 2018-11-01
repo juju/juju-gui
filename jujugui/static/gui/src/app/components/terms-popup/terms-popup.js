@@ -23,21 +23,19 @@ class TermsPopup extends React.Component {
       });
       content = (
         <div className="terms-popup__container">
-          <ul className="terms-popup__terms">
-            {termsList}
-          </ul>
-        </div>);
+          <ul className="terms-popup__terms">{termsList}</ul>
+        </div>
+      );
     }
     return (
       <div>
-        <Popup
-          close={this.props.close}
-          type="wide">
+        <Popup close={this.props.close} type="wide">
           {content}
         </Popup>
-      </div>);
+      </div>
+    );
   }
-};
+}
 
 TermsPopup.propTypes = {
   close: PropTypes.func.isRequired,

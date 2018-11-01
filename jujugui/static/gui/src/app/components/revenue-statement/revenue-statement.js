@@ -37,7 +37,8 @@ class RevenueStatement extends React.Component {
             <img
               alt="Juju logo"
               className="revenue-statement__logo"
-              src="https://assets.ubuntu.com/v1/dc0fe093-juju-logo.svg" />
+              src="https://assets.ubuntu.com/v1/dc0fe093-juju-logo.svg"
+            />
 
             <h1 className="revenue-statement__heading">Revenue statement</h1>
 
@@ -134,7 +135,8 @@ class RevenueStatement extends React.Component {
                   amount="91.42"
                   name="Kubernetes Master"
                   plan="Pilot Whale burst"
-                  share="40" />
+                  share="40"
+                />
                 <div className="rs__details-item-total">
                   <div className="rs__details-total-value u-align-text--center">$142.38</div>
                 </div>
@@ -155,7 +157,8 @@ class RevenueStatement extends React.Component {
                   amount="91.42"
                   name="Kubernetes Master"
                   plan="Pilot Whale burst"
-                  share="40" />
+                  share="40"
+                />
                 <div className="rs__details-item-total">
                   <div className="rs__details-total-value u-align-text--center">$142.38</div>
                 </div>
@@ -172,7 +175,8 @@ class RevenueStatement extends React.Component {
               <img
                 alt="Canonical logo"
                 src="https://assets.ubuntu.com/v1/5d6da5c4-logo-canonical-aubergine.svg"
-                width="120" />
+                width="120"
+              />
             </div>
 
             <div className="revenue-statement__footer">

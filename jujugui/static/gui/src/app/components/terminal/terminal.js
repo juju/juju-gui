@@ -18,7 +18,6 @@ const fit = require('xterm/lib/addons/fit/fit');
 
 /** Terminal component used to display the Juju shell. */
 class Terminal extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -58,12 +57,14 @@ class Terminal extends React.Component {
     this.ws = ws;
     const creds = props.creds;
     ws.onopen = () => {
-      ws.send(JSON.stringify({
-        operation: OP_LOGIN,
-        username: creds.user,
-        password: creds.password,
-        macaroons: creds.macaroons
-      }));
+      ws.send(
+        JSON.stringify({
+          operation: OP_LOGIN,
+          username: creds.user,
+          password: creds.password,
+          macaroons: creds.macaroons
+        })
+      );
       ws.send(JSON.stringify({operation: OP_START}));
     };
     ws.onerror = err => {
@@ -85,7 +86,7 @@ class Terminal extends React.Component {
         });
         return;
       }
-      switch(resp[0]) {
+      switch (resp[0]) {
         case 'disconnect':
           // Terminado sends a "disconnect" message when the process it's
           // running exits. When we receive that, we close the terminal.
@@ -106,23 +107,23 @@ class Terminal extends React.Component {
             // If the first PS1 presented to the user changes then this will
             // need to be updated.
             const suffix = '$ ';
-            if (resp[1].indexOf(suffix, resp[1].length-suffix.length) !== -1) {
+            if (resp[1].indexOf(suffix, resp[1].length - suffix.length) !== -1) {
               // Call to resize the terminal after getting the first PS1.
               term.fit();
               this.focus();
               this.initialCommandsSent = true;
               const commands = props.commands;
               if (commands) {
-                commands.forEach(
-                  cmd => ws.send(JSON.stringify(['stdin', `${cmd}\n`])));
+                commands.forEach(cmd => ws.send(JSON.stringify(['stdin', `${cmd}\n`])));
               }
             }
           }
       }
-      if (resp.code === CODE_OK && (
-        resp.message === 'session is ready' || // Legacy API.
-        resp.operation === OP_START // New supported API.
-      )) {
+      if (
+        resp.code === CODE_OK &&
+        (resp.message === 'session is ready' || // Legacy API.
+          resp.operation === OP_START) // New supported API.
+      ) {
         term.terminadoAttach(ws);
         this._welcome(term, resp.message);
       }
@@ -204,15 +205,18 @@ class Terminal extends React.Component {
     if (size === 'max') {
       terminalSize = window.innerHeight - 250 + 'px';
     }
-    this.setState({
-      size,
-      terminalSize
-    }, () => {
-      if (this.term) {
-        this.term.fit();
-        this.focus();
+    this.setState(
+      {
+        size,
+        terminalSize
+      },
+      () => {
+        if (this.term) {
+          this.term.fit();
+          this.focus();
+        }
       }
-    });
+    );
   }
 
   /**
@@ -234,10 +238,9 @@ class Terminal extends React.Component {
 
   render() {
     const state = this.state;
-    const terminalClassNames = classnames(
-      'juju-shell__terminal', {
-        'juju-shell__terminal--min': state.size === 'min'
-      });
+    const terminalClassNames = classnames('juju-shell__terminal', {
+      'juju-shell__terminal--min': state.size === 'min'
+    });
     const styles = {};
     if (state.size === 'max') {
       styles.height = state.terminalSize;
@@ -258,12 +261,11 @@ class Terminal extends React.Component {
             </span>
           </div>
         </div>
-        <div className={terminalClassNames} ref="terminal" style={styles}></div>
+        <div className={terminalClassNames} ref="terminal" style={styles} />
       </div>
     );
   }
-
-};
+}
 
 Terminal.propTypes = {
   WebSocket: PropTypes.func.isRequired,

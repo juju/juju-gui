@@ -18,17 +18,23 @@ const UserMenu = props => {
         classes={['user-menu']}
         disableDropdown={showLogin}
         icon={showLogin ? props.USSOLoginLink : 'user_16'}
-        listItems={[{
-          action: props.navigateUserProfile,
-          label: 'Profile'
-        }, {
-          action: props.showHelp,
-          label: 'GUI help'
-        }, {
-          element: props.LogoutLink
-        }]}
-        tooltip={showLogin ? '' : 'user'} />
-    </div>);
+        listItems={[
+          {
+            action: props.navigateUserProfile,
+            label: 'Profile'
+          },
+          {
+            action: props.showHelp,
+            label: 'GUI help'
+          },
+          {
+            element: props.LogoutLink
+          }
+        ]}
+        tooltip={showLogin ? '' : 'user'}
+      />
+    </div>
+  );
 };
 
 UserMenu.propTypes = {

@@ -43,8 +43,7 @@ class DeploymentBarNotification extends React.Component {
       // Only show the notification if we've received a new id.
       if (newId !== oldId) {
         this.setState({visible: true});
-        this.timeout = window.setTimeout(
-          this._hideNotification.bind(this), 4000);
+        this.timeout = window.setTimeout(this._hideNotification.bind(this), 4000);
       }
     }
   }
@@ -68,14 +67,12 @@ class DeploymentBarNotification extends React.Component {
       'deployment-bar__notification--visible': this.state.visible
     });
     return (
-      <div
-        className={classes}
-        onClick={this._handleClick.bind(this)}>
+      <div className={classes} onClick={this._handleClick.bind(this)}>
         {description}
       </div>
     );
   }
-};
+}
 
 DeploymentBarNotification.propTypes = {
   change: PropTypes.object

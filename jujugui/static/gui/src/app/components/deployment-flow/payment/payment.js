@@ -65,17 +65,12 @@ class DeploymentPayment extends React.Component {
   _generatePaymentMethods() {
     const methods = this.props.paymentUser.paymentMethods.map((method, i) => {
       return (
-        <li
-          className="deployment-payment__method"
-          key={method.name + i}>
-          <PaymentMethodCard
-            card={method} />
-        </li>);
+        <li className="deployment-payment__method" key={method.name + i}>
+          <PaymentMethodCard card={method} />
+        </li>
+      );
     });
-    return (
-      <ul className="deployment-payment__methods twelve-col">
-        {methods}
-      </ul>);
+    return <ul className="deployment-payment__methods twelve-col">{methods}</ul>;
   }
 
   /**
@@ -90,12 +85,17 @@ class DeploymentPayment extends React.Component {
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         onUserCreated={this._getUser.bind(this)}
-        payment={payment && shapeup.addReshape({
-          createUser: payment.createUser.bind(payment),
-          getCountries: payment.getCountries.bind(payment)
-        })}
+        payment={
+          payment &&
+          shapeup.addReshape({
+            createUser: payment.createUser.bind(payment),
+            getCountries: payment.getCountries.bind(payment)
+          })
+        }
         stripe={this.props.stripe}
-        username={this.props.username} />);
+        username={this.props.username}
+      />
+    );
   }
 
   /**
@@ -115,20 +115,22 @@ class DeploymentPayment extends React.Component {
             hash: 'payment',
             profile: this.props.username
           }}
-          generatePath={this.props.generatePath}>
+          generatePath={this.props.generatePath}
+        >
           Profile
-        </Link>.
-      </div>);
+        </Link>
+        .
+      </div>
+    );
   }
 
   render() {
     let content;
     const {paymentUser} = this.props;
-    const hasPaymentMethods = paymentUser && paymentUser.paymentMethods &&
-      paymentUser.paymentMethods.length;
+    const hasPaymentMethods =
+      paymentUser && paymentUser.paymentMethods && paymentUser.paymentMethods.length;
     if (this.state.loading) {
-      content = (
-        <Spinner />);
+      content = <Spinner />;
     } else if (paymentUser && hasPaymentMethods) {
       content = this._generatePaymentMethods();
     } else if (paymentUser && !hasPaymentMethods) {
@@ -136,13 +138,9 @@ class DeploymentPayment extends React.Component {
     } else {
       content = this._generatePaymentForm();
     }
-    return (
-      <div className="deployment-payment">
-        {content}
-      </div>
-    );
+    return <div className="deployment-payment">{content}</div>;
   }
-};
+}
 
 DeploymentPayment.propTypes = {
   acl: PropTypes.object.isRequired,

@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-
 /**
   Factory that returns a function for sending analytics to GA.
 
@@ -10,7 +9,6 @@
   @return {function} The curryed function for sending analaytics.
 */
 const sendAnalyticsFactory = function(controllerAPI, dataLayer) {
-
   /**
     The retunrned function that sends stats to GA.
 
@@ -28,7 +26,7 @@ const sendAnalyticsFactory = function(controllerAPI, dataLayer) {
     // set. On the other hand, we don't want to block the execution in case
     // of errors while sending analytics.
     const requiredArgs = ['category', 'action', 'label'];
-    for (let i = 0, ii = requiredArgs.length; i < ii; i+= 1) {
+    for (let i = 0, ii = requiredArgs.length; i < ii; i += 1) {
       if (!arguments[i]) {
         console.error(`cannot send analytics: ${requiredArgs[i]} required`);
         return;
@@ -63,11 +61,11 @@ const sendAnalyticsFactory = function(controllerAPI, dataLayer) {
 
     // Emit a google tag manager event registering the state change.
     dataLayer.push({
-      'event': 'GAEvent',
-      'eventCategory': category,
-      'eventAction': action,
-      'eventLabel': label,
-      'eventValue': valueStr
+      event: 'GAEvent',
+      eventCategory: category,
+      eventAction: action,
+      eventLabel: label,
+      eventValue: valueStr
     });
   };
 };

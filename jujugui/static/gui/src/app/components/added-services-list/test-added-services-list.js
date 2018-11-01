@@ -10,13 +10,15 @@ const AddedServicesList = require('./added-services-list');
 describe('AddedServicesList', () => {
   let serviceModule;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <AddedServicesList
-      changeState={options.changeState || sinon.stub()}
-      hoveredId={options.hoveredId || 'mysql'}
-      serviceModule={options.serviceModule || serviceModule}
-      services={options.services || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <AddedServicesList
+        changeState={options.changeState || sinon.stub()}
+        hoveredId={options.hoveredId || 'mysql'}
+        serviceModule={options.serviceModule || serviceModule}
+        services={options.services || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     serviceModule = {
@@ -34,14 +36,20 @@ describe('AddedServicesList', () => {
   });
 
   it('adds a label to services with bundleURL annotations', () => {
-    const allServices = [{get: () => 1}, {get: key => {
-      if (key === 'annotations') {
-        return {bundleURL: 'elasticsearch-cluster/bundle/17'};
-      }
-      if (key === 'name') {
-        return 'elasticsearch-cluser/bundle/17';
-      }
-    }}, {get: () => 3}];
+    const allServices = [
+      {get: () => 1},
+      {
+        get: key => {
+          if (key === 'annotations') {
+            return {bundleURL: 'elasticsearch-cluster/bundle/17'};
+          }
+          if (key === 'name') {
+            return 'elasticsearch-cluser/bundle/17';
+          }
+        }
+      },
+      {get: () => 3}
+    ];
     const services = {each: cb => allServices.forEach(cb)};
     const component = renderComponent({services});
     expect(component).toMatchSnapshot();

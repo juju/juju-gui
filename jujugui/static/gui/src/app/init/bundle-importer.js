@@ -63,8 +63,7 @@ class BundleImporter {
   _ensureV4Format(bundleYAML) {
     try {
       const bundle = jsyaml.safeLoad(bundleYAML);
-      if (bundle.services && !bundle.services.services ||
-        bundle.applications) {
+      if ((bundle.services && !bundle.services.services) || bundle.applications) {
         return bundleYAML;
       } else {
         // Fetch the first bundle in the v3 bundle basket.
@@ -92,7 +91,10 @@ class BundleImporter {
       bundleYAML = this._ensureV4Format(bundleYAML);
     }
     this._getBundleChanges(
-      bundleYAML, changesToken, this._handleFetchDryRun.bind(this, bundleURL));
+      bundleYAML,
+      changesToken,
+      this._handleFetchDryRun.bind(this, bundleURL)
+    );
   }
 
   /**
@@ -105,8 +107,10 @@ class BundleImporter {
     if (errors && errors.length) {
       this.db.notifications.add({
         title: 'Error generating changeSet',
-        message: 'The following errors occurred while retrieving bundle ' +
-            'changes: ' + errors.join(', '),
+        message:
+          'The following errors occurred while retrieving bundle ' +
+          'changes: ' +
+          errors.join(', '),
         level: 'error'
       });
       return;
@@ -177,7 +181,10 @@ class BundleImporter {
         message: 'Changeset processing started.',
         level: 'important'
       });
-      const bundleFileName = file.name.split('.').slice(0, -1).join('.');
+      const bundleFileName = file.name
+        .split('.')
+        .slice(0, -1)
+        .join('.');
       // result is YAML so we need to fetch the dry run changeset data from
       // the guiserver.
       this.fetchDryRun(e.target.result, bundleFileName, null);
@@ -199,7 +206,8 @@ class BundleImporter {
           records.filter(function(r) {
             return r.id === requiredRecordId;
           })[0],
-          requires);
+          requires
+        );
       }, this);
     }
     return requires;
@@ -222,14 +230,13 @@ class BundleImporter {
         changeSet.push(record);
         continue;
       }
-      const prereq = this._collectRequires(records, record, [])
-        .every(recordId => {
-          // Loop through the changeSet to see if the required record is
-          // in the changeSet already.
-          return changeSet.some(record => {
-            return record.id === recordId ? true : false;
-          });
+      const prereq = this._collectRequires(records, record, []).every(recordId => {
+        // Loop through the changeSet to see if the required record is
+        // in the changeSet already.
+        return changeSet.some(record => {
+          return record.id === recordId ? true : false;
         });
+      });
       // If all prerequisites have been added to the list.
       if (prereq) {
         // Make sure we don't have any duplicate records.
@@ -282,9 +289,11 @@ class BundleImporter {
       this._dryRunIndex = -1;
       const collectedServices = this._collectedServices;
       this._collectedServices = [];
-      document.dispatchEvent(new CustomEvent('topo.bundleImportComplete', {
-        detail: {services: collectedServices}
-      }));
+      document.dispatchEvent(
+        new CustomEvent('topo.bundleImportComplete', {
+          detail: {services: collectedServices}
+        })
+      );
       return;
     }
     this._dryRunIndex += 1;
@@ -299,8 +308,7 @@ class BundleImporter {
   _executeRecord(record, records) {
     var method = this['_execute_' + record.method];
     if (typeof method === 'function') {
-      this['_execute_' + record.method](
-        record, this._executeDryRun.bind(this, records));
+      this['_execute_' + record.method](record, this._executeDryRun.bind(this, records));
     } else {
       this.db.notifications.add({
         title: 'Unknown method type',
@@ -356,14 +364,17 @@ class BundleImporter {
     // XXX This code is duplicated from scale-up.js:191. We need to create a
     // layer where we create ghosts and handle cleaning them up.
     const params = record.args[0];
-    const machine = this.db.machines.addGhost(
-      params.parentId,
-      params.containerType,
-      {series: params.series, constraints: params.constraints}
+    const machine = this.db.machines.addGhost(params.parentId, params.containerType, {
+      series: params.series,
+      constraints: params.constraints
+    });
+    this.modelAPI.addMachines(
+      record.args,
+      function(machine) {
+        this.db.machines.remove(machine);
+      }.bind(this, machine),
+      {modelId: machine.id}
     );
-    this.modelAPI.addMachines(record.args, function(machine) {
-      this.db.machines.remove(machine);
-    }.bind(this, machine), {modelId: machine.id});
     // Loop through recordSet and add the machine model to every record which
     // requires it.
     this._saveModelToRequires(record.id, machine);
@@ -380,9 +391,7 @@ class BundleImporter {
     // loop through the args and update the fields which required a previous
     // record to complete.
     record.args.forEach((arg, index) => {
-      if (typeof arg === 'string' &&
-          arg.indexOf('$') === 0 &&
-          arg.split('-').length === 2) {
+      if (typeof arg === 'string' && arg.indexOf('$') === 0 && arg.split('-').length === 2) {
         const recordId = arg.replace(/^\$/, '');
         const requiredModel = record[recordId];
         switch (index) {
@@ -392,20 +401,22 @@ class BundleImporter {
         }
       }
     });
-    this.charmstore.getEntity(record.args[0],
-      (error, charm) => {
-        if (error) {
-          console.warn('error loading charm: ', error);
-          this.db.notifications.add({
-            title: 'Unable to load charm',
-            message: `Charm ${record.args[0]} was not able to be loaded.`,
-            level: 'error'
-          });
-          return;
-        }
-        this._deploy_addCharm_success(
-          jujulibConversionUtils.makeEntityModel(charm[0]), record, next);
-      });
+    this.charmstore.getEntity(record.args[0], (error, charm) => {
+      if (error) {
+        console.warn('error loading charm: ', error);
+        this.db.notifications.add({
+          title: 'Unable to load charm',
+          message: `Charm ${record.args[0]} was not able to be loaded.`,
+          level: 'error'
+        });
+        return;
+      }
+      this._deploy_addCharm_success(
+        jujulibConversionUtils.makeEntityModel(charm[0]),
+        record,
+        next
+      );
+    });
   }
 
   /**
@@ -459,8 +470,8 @@ class BundleImporter {
       if (err) {
         this.db.notifications.add({
           title: 'Error deploying ' + applicationName,
-          message: 'Could not deploy the requested application. Server ' +
-              'responded with: ' + err,
+          message:
+            'Could not deploy the requested application. Server ' + 'responded with: ' + err,
           level: 'error'
         });
         return;
@@ -486,8 +497,9 @@ class BundleImporter {
       }
       // This must always have {immediate: true} so that we don't require that
       // positional annotations have to be committed.
-      this.modelAPI.update_annotations(name, 'application', annotations, null,
-        {immediate: true});
+      this.modelAPI.update_annotations(name, 'application', annotations, null, {
+        immediate: true
+      });
     }.bind(this, ghostService);
 
     const charmURL = charm.get('id');
@@ -495,33 +507,42 @@ class BundleImporter {
     // Add the resources to the Juju controller if we have any.
     const charmResources = charm.get('resources');
     if (charmResources) {
-      this.modelAPI.addPendingResources({
-        applicationName: record.args[2],
-        charmURL: charmURL,
-        channel: 'stable',
-        resources: charmResources
-      }, (error, ids) => {
-        if (error !== null) {
-          this.db.notifications.add({
-            title: 'Error adding resources',
-            message: `Could not add requested resources for ${charmURL}. `
-              + 'Server responded with: ' + error,
-            level: 'error'
-          });
-          return;
+      this.modelAPI.addPendingResources(
+        {
+          applicationName: record.args[2],
+          charmURL: charmURL,
+          channel: 'stable',
+          resources: charmResources
+        },
+        (error, ids) => {
+          if (error !== null) {
+            this.db.notifications.add({
+              title: 'Error adding resources',
+              message:
+                `Could not add requested resources for ${charmURL}. ` +
+                'Server responded with: ' +
+                error,
+              level: 'error'
+            });
+            return;
+          }
+          // Store the id map in the application model for use by the ecs
+          // during deploy.
+          ghostService.set('resourceIds', ids);
         }
-        // Store the id map in the application model for use by the ecs
-        // during deploy.
-        ghostService.set('resourceIds', ids);
-      });
+      );
     }
-    this.modelAPI.deploy({
-      charmURL: charmURL,
-      applicationName: record.args[2],
-      series: series,
-      config: record.args[3],
-      constraints: constraints
-    }, deployCallback, {modelId: ghostService.get('id')});
+    this.modelAPI.deploy(
+      {
+        charmURL: charmURL,
+        applicationName: record.args[2],
+        series: series,
+        config: record.args[3],
+        constraints: constraints
+      },
+      deployCallback,
+      {modelId: ghostService.get('id')}
+    );
     this._saveModelToRequires(record.id, ghostService);
     this._collectedServices.push(ghostService);
     next();
@@ -593,9 +614,7 @@ class BundleImporter {
     // record to complete.
     record.args.forEach(function(arg, index) {
       // If the record value is a record key in the format $addMachines-123
-      if (typeof arg === 'string' &&
-          arg.indexOf('$') === 0 &&
-          arg.split('-').length === 2) {
+      if (typeof arg === 'string' && arg.indexOf('$') === 0 && arg.split('-').length === 2) {
         const recordId = arg.replace(/^\$/, '');
         const requiredModel = record[recordId];
         switch (index) {
@@ -641,12 +660,15 @@ class BundleImporter {
     this.modelAPI.add_unit.apply(this.modelAPI, record.args);
     // If the unit does not specify a machine, create a new machine.
     if (record.args[2] === null) {
-      this._execute_addMachines({
-        args: [{}],
-        id: record.id
-      }, function(machine) {
-        record.args[2] = machine.id;
-      }.bind(this));
+      this._execute_addMachines(
+        {
+          args: [{}],
+          id: record.id
+        },
+        function(machine) {
+          record.args[2] = machine.id;
+        }.bind(this)
+      );
     }
     // Place all units.
     this.modelAPI.placeUnit(ghostUnit, record.args[2]);
@@ -662,10 +684,7 @@ class BundleImporter {
   _execute_addRelation(record, next) {
     const ep1 = record.args[0].split(':');
     const ep2 = record.args[1].split(':');
-    const endpoints = [
-      [ep1[0], {name: ep1[1]}],
-      [ep2[0], {name: ep2[1]}]
-    ];
+    const endpoints = [[ep1[0], {name: ep1[1]}], [ep2[0], {name: ep2[1]}]];
     // Resolve the record indexes to the service names.
     endpoints.forEach(function(ep, index) {
       endpoints[index][0] = record[ep[0].replace(/^\$/, '')].get('id');
@@ -675,18 +694,19 @@ class BundleImporter {
     // and unique app names to avoid conflicts. The app names will have
     // already been updated where there are multiple services with the same
     // name (e.g. mysql will become mysql-a).
-    const relationId = 'pending-' + record.args[0] + endpoints[0][0] +
-      record.args[1] + endpoints[1][0];
+    const relationId =
+      'pending-' + record.args[0] + endpoints[0][0] + record.args[1] + endpoints[1][0];
     const pendingRelation = this.db.relations.add({
       relation_id: relationId,
-      'interface': endpoints[0][1].name,
+      interface: endpoints[0][1].name,
       endpoints: endpoints,
       pending: true,
       scope: 'global', // XXX check the charms to see if this is a subordinate
       display_name: 'pending'
     });
     this.modelAPI.add_relation(
-      endpoints[0], endpoints[1],
+      endpoints[0],
+      endpoints[1],
       function(evt) {
         this.db.relations.create({
           relation_id: evt.result.id,
@@ -697,7 +717,8 @@ class BundleImporter {
         });
         this.db.relations.remove(pendingRelation);
       }.bind(this),
-      {modelId: pendingRelation.get('id')});
+      {modelId: pendingRelation.get('id')}
+    );
     next();
   }
 
@@ -720,8 +741,10 @@ class BundleImporter {
       while (match) {
         match = this.db.services.some(app => {
           const appAnnotations = app.get('annotations');
-          if (annotations['gui-x'] === appAnnotations['gui-x'] &&
-          annotations['gui-y'] === appAnnotations['gui-y']) {
+          if (
+            annotations['gui-x'] === appAnnotations['gui-x'] &&
+            annotations['gui-y'] === appAnnotations['gui-y']
+          ) {
             return true;
           }
         });
@@ -735,7 +758,6 @@ class BundleImporter {
     }
     next();
   }
-
 }
 
 module.exports = BundleImporter;

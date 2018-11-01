@@ -63,12 +63,14 @@ class EnvironmentChangeSet {
   */
   _updateChangesetFromResults(record, results) {
     var changeSet = this.changeSet,
-        changeSetRecord;
+      changeSetRecord;
     Object.keys(changeSet).forEach(function(key) {
       changeSetRecord = changeSet[key];
-      if (changeSetRecord.command.onParentResults &&
-          changeSetRecord.parents &&
-          changeSetRecord.parents.indexOf(record.key) !== -1) {
+      if (
+        changeSetRecord.command.onParentResults &&
+        changeSetRecord.parents &&
+        changeSetRecord.parents.indexOf(record.key) !== -1
+      ) {
         changeSetRecord.command.onParentResults(record, results);
       }
     });
@@ -81,7 +83,7 @@ class EnvironmentChangeSet {
     @return {Integer} A random number.
   */
   _generateRandomNumber() {
-    return Math.floor((Math.random() * 1000) + 1);
+    return Math.floor(Math.random() * 1000 + 1);
   }
 
   /**
@@ -98,8 +100,6 @@ class EnvironmentChangeSet {
     }
     return key;
   }
-
-
 
   /**
     Given a unit and reference to the db get that units series.
@@ -183,13 +183,15 @@ class EnvironmentChangeSet {
         //  under. In most cases this will be `env`.
         result = callback.apply(this, arguments);
       }
-      document.dispatchEvent(new CustomEvent('ecs.taskComplete', {
-        detail: {
-          id: record.id,
-          record: record,
-          result: arguments
-        }
-      }));
+      document.dispatchEvent(
+        new CustomEvent('ecs.taskComplete', {
+          detail: {
+            id: record.id,
+            record: record,
+            result: arguments
+          }
+        })
+      );
       // Signal that this record has been completed by decrementing the
       // count of records to complete and deleting it from the changeset.
       self.levelRecordCount -= 1;
@@ -232,12 +234,12 @@ class EnvironmentChangeSet {
   */
   _buildHierarchy(removeUnplaced) {
     var hierarchy = [[]],
-        command,
-        keyToLevelMap = {},
-        currLevel = 1,
-        keys = [],
-        db = this.db,
-        unplacedUnits = db.units.filterByMachine(null);
+      command,
+      keyToLevelMap = {},
+      currLevel = 1,
+      keys = [],
+      db = this.db,
+      unplacedUnits = db.units.filterByMachine(null);
     this.placedCount = 0;
 
     // Retrieve only the keys for changeSet entries in the current index.
@@ -251,10 +253,12 @@ class EnvironmentChangeSet {
     // Filter out unplaced units and increment their changeSet index;
     // they should remain undeployed by default.
     if (unplacedUnits && removeUnplaced) {
-      var unplacedIds = unplacedUnits.map(function(u) { return u.id; });
+      var unplacedIds = unplacedUnits.map(function(u) {
+        return u.id;
+      });
       keys = keys.filter(function(key) {
         var command = this.changeSet[key].command,
-            modelId = command.options && command.options.modelId;
+          modelId = command.options && command.options.modelId;
         // Return all non-add-unit records
         if (command.method !== '_add_unit') {
           return true;
@@ -292,8 +296,7 @@ class EnvironmentChangeSet {
     while (this.placedCount < keys.length) {
       hierarchy.push([]);
       Object.keys(keyToLevelMap).forEach(key => {
-        this._placeIfNeeded(
-          currLevel, keyToLevelMap, hierarchy, keyToLevelMap[key], key);
+        this._placeIfNeeded(currLevel, keyToLevelMap, hierarchy, keyToLevelMap[key], key);
       });
       currLevel += 1;
     }
@@ -351,15 +354,15 @@ class EnvironmentChangeSet {
     this.currentCommit[this.currentLevel].forEach(function(changeSetRecord) {
       record = this.changeSet[changeSetRecord.key];
       this._execute(env, record);
-      document.dispatchEvent(new CustomEvent('ecs.commit', {
-        detail: record
-      }));
+      document.dispatchEvent(
+        new CustomEvent('ecs.commit', {
+          detail: record
+        })
+      );
     }, this);
     // Wait until the entire level has completed (received RPC callbacks from
     // the state server) before starting the next level.
-    this.levelTimer = window.setInterval(this._waitOnLevel.bind(this), 200,
-      env, currentIndex);
-
+    this.levelTimer = window.setInterval(this._waitOnLevel.bind(this), 200, env, currentIndex);
   }
 
   /**
@@ -384,11 +387,13 @@ class EnvironmentChangeSet {
         // committing.
         this.committing = false;
         delete this.currentCommit;
-        document.dispatchEvent(new CustomEvent('ecs.currentCommitFinished', {
-          detail: {
-            index: currentIndex
-          }
-        }));
+        document.dispatchEvent(
+          new CustomEvent('ecs.currentCommitFinished', {
+            detail: {
+              index: currentIndex
+            }
+          })
+        );
       }
     }
   }
@@ -402,7 +407,7 @@ class EnvironmentChangeSet {
   */
   _markCommitStatus(status, command) {
     var db = this.db,
-        modelList;
+      modelList;
     // When we add commit status changes to services, relations etc they will
     // be switched here.
     switch (command.method) {
@@ -468,11 +473,15 @@ class EnvironmentChangeSet {
     var toClear = this._buildHierarchy(false);
     // We need to work through the hierarchy of changes in reverse, otherwise
     // removing units will fail as the service might not exist anymore.
-    toClear.reverse().forEach(function(level) {
-      level.forEach(function(change) {
-        this._clearFromDB(change.command);
-      }.bind(this));
-    }.bind(this));
+    toClear.reverse().forEach(
+      function(level) {
+        level.forEach(
+          function(change) {
+            this._clearFromDB(change.command);
+          }.bind(this)
+        );
+      }.bind(this)
+    );
     // Wipe out the current index from the changeset.
     Object.keys(this.changeSet).forEach(key => {
       const value = this.changeSet[key];
@@ -496,10 +505,10 @@ class EnvironmentChangeSet {
   */
   _clearFromDB(command) {
     var db = this.db,
-        services = db.services,
-        machines = db.machines,
-        relations = db.relations,
-        units = db.units;
+      services = db.services,
+      machines = db.machines,
+      relations = db.relations,
+      units = db.units;
     switch (command.method) {
       case '_addCharm':
         // Leaving the charm in memory doesn't pose any negative side
@@ -539,10 +548,9 @@ class EnvironmentChangeSet {
         relations.remove(relations.getById(command.options.modelId));
         break;
       case '_remove_relation':
-        relations.getRelationFromEndpoints([
-          command.args[0],
-          command.args[1]
-        ]).set('deleted', false);
+        relations
+          .getRelationFromEndpoints([command.args[0], command.args[1]])
+          .set('deleted', false);
         break;
       case '_remove_units':
         command.args[0].forEach(function(unit) {
@@ -950,7 +958,7 @@ class EnvironmentChangeSet {
   */
   lazySetConfig(args, options) {
     var ghostServiceName = args[0],
-        parent = [];
+      parent = [];
     // Search for and add the service to parent.
     Object.keys(this.changeSet).forEach(key => {
       const value = this.changeSet[key];
@@ -977,10 +985,7 @@ class EnvironmentChangeSet {
         if (record.command.method === '_deploy') {
           // After deploy change the temp id to the real name.
           const tempId = this.args[0];
-          if (
-            tempId.indexOf('$') > -1 &&
-            record.command.options.modelId === tempId
-          ) {
+          if (tempId.indexOf('$') > -1 && record.command.options.modelId === tempId) {
             const applicationName = results[1];
             this.args[0] = applicationName;
           }
@@ -1001,9 +1006,7 @@ class EnvironmentChangeSet {
     var dirtyFields = service.get(DIRTYFIELDS);
     dirtyFields = dirtyFields.concat(Object.keys(changedFields));
     service.set(DIRTYFIELDS, dirtyFields);
-    service.set(
-      'config',
-      Object.assign(service.get('config') || {}, changedFields));
+    service.set('config', Object.assign(service.get('config') || {}, changedFields));
     // XXX Jeff - We may want to flatten this into the deploy service
     // command on 'commit' if there is a queued service for this command.
     // We will want to flatten multiple setConfig calls to the same service
@@ -1051,10 +1054,7 @@ class EnvironmentChangeSet {
       onParentResults: function(record, results) {
         if (record.command.method === '_deploy') {
           this.args.forEach(function(arg, index) {
-            if (
-              Array.isArray(arg) &&
-              record.command.options.modelId === arg[0]
-            ) {
+            if (Array.isArray(arg) && record.command.options.modelId === arg[0]) {
               const applicationName = results[1];
               this.args[index][0] = applicationName;
             }
@@ -1088,9 +1088,9 @@ class EnvironmentChangeSet {
       command = changeSet[key].command;
       if (command.method === '_add_relation') {
         // If there is a matching ecs relation then remove it from the queue.
-        if (relations.compareRelationEndpoints(
-          [command.args[0], command.args[1]],
-          argsEndpoints)) {
+        if (
+          relations.compareRelationEndpoints([command.args[0], command.args[1]], argsEndpoints)
+        ) {
           ghosted = true;
           this._removeExistingRecord(key);
           // Remove the relation from the relations db. Even the ghost
@@ -1125,10 +1125,11 @@ class EnvironmentChangeSet {
     // If an existing ecs record for this unit exists, remove it from the
     // queue.
     var changeSet = this.changeSet,
-        toRemove = args[0],
-        db = this.db,
-        units = db.units,
-        command, record;
+      toRemove = args[0],
+      db = this.db,
+      units = db.units,
+      command,
+      record;
     // XXX It is currently not possible to remove pending units, there may
     // be future work around this - Makyo 2014-08-13
     Object.keys(changeSet).forEach(function(key) {
@@ -1198,12 +1199,14 @@ class EnvironmentChangeSet {
     });
     db.services.getById(args[0]).set('exposed', true);
 
-    return this._createNewRecord('expose', {
-      method: '_expose',
-      args: args,
-      options: options,
+    return this._createNewRecord(
+      'expose',
+      {
+        method: '_expose',
+        args: args,
+        options: options,
 
-      /**
+        /**
         Replace changeSet keys with real service names returned from the call.
 
         @method onParentResults
@@ -1211,20 +1214,19 @@ class EnvironmentChangeSet {
           results.
         @param {String} results The data returned by the API call.
       */
-      onParentResults: function(record, results) {
-        if (record.command.method === '_deploy') {
-          // After deploy change the temp id to the real name.
-          const tempId = this.args[0];
-          if (
-            tempId.indexOf('$') > -1 &&
-            record.command.options.modelId === tempId
-          ) {
-            const applicationName = results[1];
-            this.args[0] = applicationName;
+        onParentResults: function(record, results) {
+          if (record.command.method === '_deploy') {
+            // After deploy change the temp id to the real name.
+            const tempId = this.args[0];
+            if (tempId.indexOf('$') > -1 && record.command.options.modelId === tempId) {
+              const applicationName = results[1];
+              this.args[0] = applicationName;
+            }
           }
         }
-      }
-    }, parent);
+      },
+      parent
+    );
   }
 
   /**
@@ -1279,8 +1281,10 @@ class EnvironmentChangeSet {
         Object.keys(this.changeSet).forEach(key => {
           const value = this.changeSet[key];
           var command = value.command;
-          if (command.method === '_addMachines' &&
-              command.options.modelId === param.parentId) {
+          if (
+            command.method === '_addMachines' &&
+            command.options.modelId === param.parentId
+          ) {
             parent.push(key);
           }
         });
@@ -1331,8 +1335,7 @@ class EnvironmentChangeSet {
           var currentParentId = record.command.options.modelId;
           var newParentId = results[0].machines[0].name;
           this.args[0].forEach(function(param) {
-            param.parentId = param.parentId.replace(
-              currentParentId, newParentId);
+            param.parentId = param.parentId.replace(currentParentId, newParentId);
           });
         }
       }
@@ -1351,8 +1354,7 @@ class EnvironmentChangeSet {
     Object.keys(this.changeSet).forEach(key => {
       const value = this.changeSet[key];
       const command = value.command;
-      if (command.method === '_addMachines' &&
-          command.options.modelId === machineId) {
+      if (command.method === '_addMachines' && command.options.modelId === machineId) {
         value.command.args[0][0].series = series;
       }
     });
@@ -1377,8 +1379,7 @@ class EnvironmentChangeSet {
     Object.keys(this.changeSet).forEach(key => {
       const value = this.changeSet[key];
       const command = value.command;
-      if (command.method === '_addMachines' &&
-          command.options.modelId === machineId) {
+      if (command.method === '_addMachines' && command.options.modelId === machineId) {
         value.command.args[0][0].constraints = constraints;
       }
     });
@@ -1423,8 +1424,7 @@ class EnvironmentChangeSet {
       Object.keys(this.changeSet).forEach(key => {
         const value = this.changeSet[key];
         var command = value.command;
-        if (command.method === '_addMachines' &&
-            command.options.modelId === toMachine) {
+        if (command.method === '_addMachines' && command.options.modelId === toMachine) {
           parent.push(key);
         }
       });
@@ -1461,8 +1461,7 @@ class EnvironmentChangeSet {
             // We also need to update the unit id to match the new service id
             // so that we can correctly look up the unit using service id +
             // unit number.
-            const unit = db.updateUnitId(
-              applicationName, this.options.modelId);
+            const unit = db.updateUnitId(applicationName, this.options.modelId);
             // Update the ecs change with the new id.
             this.options.modelId = unit.id;
             break;
@@ -1484,8 +1483,7 @@ class EnvironmentChangeSet {
     Object.keys(this.changeSet).some(key => {
       const value = this.changeSet[key];
       var command = value.command;
-      if (command.method === '_add_unit' &&
-          command.options.modelId === unitId) {
+      if (command.method === '_add_unit' && command.options.modelId === unitId) {
         record = value;
         return true;
       }
@@ -1532,8 +1530,7 @@ class EnvironmentChangeSet {
     Object.keys(this.changeSet).forEach(key => {
       var value = this.changeSet[key];
       var command = value.command;
-      if (command.method === '_addMachines' &&
-          command.options.modelId === machineId) {
+      if (command.method === '_addMachines' && command.options.modelId === machineId) {
         // If the machine doesn't yet have a series defined then set one
         // when placing the first unit on it.
         if (!value.command.args[0][0].series) {
@@ -1568,12 +1565,14 @@ class EnvironmentChangeSet {
     @returns {Array} Any units that had been unplaced, or an empty array.
   */
   unplaceServiceUnits(serviceId) {
-    return this.db.units
-      // We only want to unplace units which have the matching
-      // service id and which are placed on machines.
-      .filter(unit => unit.service === serviceId && unit.machine)
-      // Unplace any units which match the criteria.
-      .map(unit => this.unplaceUnit(unit));
+    return (
+      this.db.units
+        // We only want to unplace units which have the matching
+        // service id and which are placed on machines.
+        .filter(unit => unit.service === serviceId && unit.machine)
+        // Unplace any units which match the criteria.
+        .map(unit => this.unplaceUnit(unit))
+    );
   }
 
   /**
@@ -1632,8 +1631,14 @@ class EnvironmentChangeSet {
       // This is a real provisioned machine. Ensure its series matches the
       // unit series.
       if (machine.series !== unitSeries) {
-        return 'unable to place a ' + unitSeries + ' unit on the ' +
-            machine.series + ' machine ' + machine.id;
+        return (
+          'unable to place a ' +
+          unitSeries +
+          ' unit on the ' +
+          machine.series +
+          ' machine ' +
+          machine.id
+        );
       }
       return null;
     }
@@ -1644,13 +1649,17 @@ class EnvironmentChangeSet {
     db.units.filterByMachine(machine.id).some(existingUnit => {
       var existingUnitSeries = this._getUnitSeries(existingUnit, db);
       if (existingUnitSeries !== unitSeries) {
-        error = 'machine ' + machine.id + ' already includes units with a ' +
-            'different series: ' + existingUnitSeries;
+        error =
+          'machine ' +
+          machine.id +
+          ' already includes units with a ' +
+          'different series: ' +
+          existingUnitSeries;
         return true;
       }
     });
     return error;
   }
-};
+}
 
 module.exports = EnvironmentChangeSet;

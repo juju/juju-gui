@@ -42,7 +42,9 @@ class InspectorExpose extends React.Component {
         <InspectorExposeUnit
           action={this._unitItemAction.bind(this)}
           key={unit.id}
-          unit={unit} />);
+          unit={unit}
+        />
+      );
     }, this);
     return units;
   }
@@ -57,10 +59,7 @@ class InspectorExpose extends React.Component {
     if (!this.props.service.get('exposed')) {
       return;
     }
-    return (
-      <ul className="inspector-expose__units">
-        {this._generateUnits()}
-      </ul>);
+    return <ul className="inspector-expose__units">{this._generateUnits()}</ul>;
   }
 
   /**
@@ -72,11 +71,13 @@ class InspectorExpose extends React.Component {
     var service = this.props.service;
     var serviceId = service.get('id');
     if (service.get('exposed')) {
-      this.props.modelAPI.unexposeService(serviceId,
-        this._exposeServiceCallback.bind(this), {});
+      this.props.modelAPI.unexposeService(
+        serviceId,
+        this._exposeServiceCallback.bind(this),
+        {}
+      );
     } else {
-      this.props.modelAPI.exposeService(serviceId,
-        this._exposeServiceCallback.bind(this), {});
+      this.props.modelAPI.exposeService(serviceId, this._exposeServiceCallback.bind(this), {});
     }
   }
 
@@ -91,8 +92,8 @@ class InspectorExpose extends React.Component {
       console.error(e.err);
       this.props.addNotification({
         title: 'Exposing charm failed',
-        message: 'The application' + this.props.service.get('name') +
-          ' failed to expose:' + e.err,
+        message:
+          'The application' + this.props.service.get('name') + ' failed to expose:' + e.err,
         level: 'error'
       });
     }
@@ -112,17 +113,17 @@ class InspectorExpose extends React.Component {
             label="Expose application"
             onChange={this._handleExposeChange.bind(this)}
             option={toggle}
-            ref={toggle.key} />
+            ref={toggle.key}
+          />
         </div>
         <p className="inspector-expose__warning">
-            Exposing this application may make it publicly accessible from
-            the web
+          Exposing this application may make it publicly accessible from the web
         </p>
         {this._displayUnitList()}
       </div>
     );
   }
-};
+}
 
 InspectorExpose.propTypes = {
   acl: PropTypes.object.isRequired,

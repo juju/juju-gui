@@ -31,7 +31,8 @@ class PanZoomModule {
 
   componentBound() {
     const topo = this.topo;
-    this.toScale = d3.scale.linear()
+    this.toScale = d3.scale
+      .linear()
       .domain([topo.minZoom, topo.maxZoom])
       .range([topo.minZoom, topo.maxZoom])
       .clamp(true);
@@ -93,10 +94,10 @@ class PanZoomModule {
   */
   _fire_zoom(scale) {
     var topo = this.topo,
-        zoom = topo.zoom,
-        size = topo.size,
-        delta,
-        evt = {};
+      zoom = topo.zoom,
+      size = topo.size,
+      delta,
+      evt = {};
 
     delta = scale - topo.getScale();
 
@@ -125,7 +126,7 @@ class PanZoomModule {
     // behavior outside of mouse events,
     // and can't trust that zoomExtent will play well.
     var topo = this.topo,
-        vis = this.topo.vis;
+      vis = this.topo.vis;
 
     if (!vis) {
       return;
@@ -140,16 +141,18 @@ class PanZoomModule {
     // Store the current value of translate as well, by copying the event
     // array in order to avoid reference sharing.
     topo.setTranslate([...evt.translate]);
-    vis.attr('transform', 'translate(' + topo.getTranslate() + ')' +
-            ' scale(' + topo.getScale() + ')');
+    vis.attr(
+      'transform',
+      'translate(' + topo.getTranslate() + ')' + ' scale(' + topo.getScale() + ')'
+    );
   }
 
   renderedHandler(evt) {
     // Preserve zoom when the scene is updated.
     var topo = this.topo,
-        changed = false,
-        currentScale = topo.getScale(),
-        currentTranslate = topo.getTranslate();
+      changed = false,
+      currentScale = topo.getScale(),
+      currentTranslate = topo.getTranslate();
     if (currentTranslate && currentTranslate !== topo.getTranslate()) {
       topo.zoom.translate(currentTranslate);
       changed = true;
@@ -171,17 +174,17 @@ class PanZoomModule {
   */
   panToPoint(evt) {
     const point = evt.point,
-        topo = this.topo,
-        scale = topo.getScale(),
-        size = [window.innerWidth, window.innerHeight],
-        translate = topo.getTranslate();
+      topo = this.topo,
+      scale = topo.getScale(),
+      size = [window.innerWidth, window.innerHeight],
+      translate = topo.getTranslate();
     const offset = topo.zoom.translate();
     const screenWidth = size[0];
     const screenHeight = size[1];
     // Translate the points to values that can be compared with the current
     // screen area.
-    const pointX = (point[0] * scale) + offset[0];
-    const pointY = (point[1] * scale) + offset[1];
+    const pointX = point[0] * scale + offset[0];
+    const pointY = point[1] * scale + offset[1];
     // Find out if the points we have are within the screen rectangle
     // (accounting for the size of the app circle).
     const circleSize = 200 * scale;
@@ -191,7 +194,7 @@ class PanZoomModule {
     if (evt.center) {
       // If we do actually want to center the screen on the point then figure
       // out the new points.
-      const newXY = point.map((d, i) => ((0 - d) * scale) + (size[i] / 2));
+      const newXY = point.map((d, i) => (0 - d) * scale + size[i] / 2);
       newX = newXY[0];
       newY = newXY[1];
     } else {
@@ -200,19 +203,17 @@ class PanZoomModule {
       const space = 40;
       if (pointX < 0) {
         // If the circle is outside the left edge of the screen move it.
-        newX = (translate[0] - pointX) + space;
+        newX = translate[0] - pointX + space;
       } else if (pointX > screenWidth - circleSize) {
         // If the circle is outside the right edge of the screen move it.
-        newX = translate[0] +
-          ((screenWidth - (pointX + circleSize)) - space);
+        newX = translate[0] + (screenWidth - (pointX + circleSize) - space);
       }
       if (pointY < 0) {
         // If the circle is outside the top edge of the screen move it.
-        newY = (translate[1] - pointY) + space;
+        newY = translate[1] - pointY + space;
       } else if (pointY > screenHeight - circleSize) {
         // If the circle is outside the bottom edge of the screen move it.
-        newY = translate[1] +
-          ((screenHeight - (pointY + circleSize)) - space);
+        newY = translate[1] + (screenHeight - (pointY + circleSize) - space);
       }
     }
     // If there are new coordinates then pan to them.
@@ -223,6 +224,6 @@ class PanZoomModule {
       });
     }
   }
-};
+}
 
 module.exports = PanZoomModule;

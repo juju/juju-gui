@@ -8,17 +8,18 @@ const OverviewAction = require('./overview-action');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('OverviewAction', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <OverviewAction
-      action={options.action || sinon.stub()}
-      icon={options.icon}
-      linkAction={options.linkAction}
-      linkTitle={options.linkTitle}
-      title={options.title || 'My action'}
-      value={options.value}
-      valueType={options.valueType} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <OverviewAction
+        action={options.action || sinon.stub()}
+        icon={options.icon}
+        linkAction={options.linkAction}
+        linkTitle={options.linkTitle}
+        title={options.title || 'My action'}
+        value={options.value}
+        valueType={options.valueType}
+      />
+    );
 
   it('calls the callable provided when clicked', function() {
     const action = sinon.stub();
@@ -36,10 +37,9 @@ describe('OverviewAction', function() {
     const wrapper = renderComponent({icon: 'action-icon'});
     const expected = (
       <span className="overview-action__icon">
-        <SvgIcon
-          name="action-icon"
-          size="16" />
-      </span>);
+        <SvgIcon name="action-icon" size="16" />
+      </span>
+    );
     assert.compareJSX(wrapper.find('.overview-action__icon'), expected);
   });
 
@@ -52,9 +52,11 @@ describe('OverviewAction', function() {
     const expected = (
       <span
         className="overview-action__link"
-        onClick={wrapper.find('.overview-action__link').prop('onClick')}>
-          Juju Charms
-      </span>);
+        onClick={wrapper.find('.overview-action__link').prop('onClick')}
+      >
+        Juju Charms
+      </span>
+    );
     assert.compareJSX(wrapper.find('.overview-action__link'), expected);
   });
 
@@ -75,8 +77,12 @@ describe('OverviewAction', function() {
   it('hides the link if it is not provided', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.overview-action__link').prop('className').includes('hidden'),
-      true);
+      wrapper
+        .find('.overview-action__link')
+        .prop('className')
+        .includes('hidden'),
+      true
+    );
   });
 
   it('sets the value', function() {
@@ -90,16 +96,22 @@ describe('OverviewAction', function() {
       valueType: 'pending'
     });
     assert.equal(
-      wrapper.find('.overview-action__value').prop('className').includes(
-        'overview-action__value--type-pending'),
-      true);
+      wrapper
+        .find('.overview-action__value')
+        .prop('className')
+        .includes('overview-action__value--type-pending'),
+      true
+    );
   });
 
   it('hides the value if it is not provided', function() {
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.overview-action__value').prop('className').includes(
-        'hidden'),
-      true);
+      wrapper
+        .find('.overview-action__value')
+        .prop('className')
+        .includes('hidden'),
+      true
+    );
   });
 });

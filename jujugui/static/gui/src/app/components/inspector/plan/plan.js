@@ -17,10 +17,9 @@ class InspectorPlan extends React.Component {
       <div className="inspector-plan__details">
         <div className="inspector-plan__title">{currentPlan.url}</div>
         <div className="inspector-plan__price">{currentPlan.price}</div>
-        <div className="inspector-plan__description">
-          {currentPlan.description}
-        </div>
-      </div>);
+        <div className="inspector-plan__description">{currentPlan.description}</div>
+      </div>
+    );
   }
 
   /**
@@ -30,21 +29,17 @@ class InspectorPlan extends React.Component {
     @return {Function} The React elements for the UI.
   */
   _generateNoPlans() {
-    return (
-      <div className="inspector-plan__no-plan">
-        You have no active plan
-      </div>);
+    return <div className="inspector-plan__no-plan">You have no active plan</div>;
   }
 
   render() {
     return (
       <div className="inspector-plan">
-        {this.props.currentPlan ?
-          this._generatePlanDetails() : this._generateNoPlans()}
+        {this.props.currentPlan ? this._generatePlanDetails() : this._generateNoPlans()}
       </div>
     );
   }
-};
+}
 
 InspectorPlan.propTypes = {
   acl: PropTypes.object.isRequired,

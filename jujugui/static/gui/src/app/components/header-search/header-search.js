@@ -23,7 +23,7 @@ class HeaderSearch extends React.Component {
   */
   _getSearchQuery() {
     const current = this.props.appState.current;
-    return current.search && current.search.text || '';
+    return (current.search && current.search.text) || '';
   }
 
   /**
@@ -34,8 +34,7 @@ class HeaderSearch extends React.Component {
   */
   _activeForComponent() {
     const state = this.props.appState.current;
-    return state.store === '' ||
-            state.store !== undefined || state.search !== undefined;
+    return state.store === '' || state.store !== undefined || state.search !== undefined;
   }
 
   /**
@@ -75,10 +74,9 @@ class HeaderSearch extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'header-search', {
-        'header-search--active': this.state.active
-      });
+    return classNames('header-search', {
+      'header-search--active': this.state.active
+    });
   }
 
   /**
@@ -88,10 +86,9 @@ class HeaderSearch extends React.Component {
     @returns {String} The collection of class names.
   */
   _closeClasses() {
-    return classNames(
-      'header-search__close', {
-        hidden: !this.state.active
-      });
+    return classNames('header-search__close', {
+      hidden: !this.state.active
+    });
   }
 
   /**
@@ -218,10 +215,9 @@ class HeaderSearch extends React.Component {
           <button
             className="header-search__submit"
             onClick={this._handleSubmit.bind(this)}
-            type="submit">
-            <SvgIcon
-              name="search_16"
-              size="16" />
+            type="submit"
+          >
+            <SvgIcon name="search_16" size="16" />
           </button>
           <input
             className="header-search__input"
@@ -232,32 +228,31 @@ class HeaderSearch extends React.Component {
             ref="searchInput"
             style={this.state.inputStyles}
             type="search"
-            value={this.state.query} />
+            value={this.state.query}
+          />
         </form>
         <span
           className="header-search__search--mobile"
           onClick={this._handleStoreClick.bind(this)}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           <span className="header-search__store-icon">
-            <SvgIcon
-              name="search_16"
-              size="16" />
+            <SvgIcon name="search_16" size="16" />
           </span>
         </span>
         <span
           className={this._closeClasses()}
           onClick={this._handleClose.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            name="close_16"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon name="close_16" size="16" />
         </span>
       </div>
     );
   }
-};
+}
 
 HeaderSearch.propTypes = {
   appState: PropTypes.object.isRequired

@@ -63,14 +63,7 @@ class AddressForm extends React.Component {
     @returns {Boolean} Whether the form is valid.
   */
   validate() {
-    let fields = [
-      'line1',
-      'line2',
-      'city',
-      'state',
-      'postcode',
-      'country'
-    ];
+    let fields = ['line1', 'line2', 'city', 'state', 'postcode', 'country'];
     if (this.props.showName) {
       fields.push('name');
     }
@@ -130,11 +123,15 @@ class AddressForm extends React.Component {
         label="Full name"
         ref="name"
         required={true}
-        validate={[{
-          regex: /\S+/,
-          error: 'This field is required.'
-        }]}
-        value={address.name} />);
+        validate={[
+          {
+            regex: /\S+/,
+            error: 'This field is required.'
+          }
+        ]}
+        value={address.name}
+      />
+    );
   }
 
   /**
@@ -154,20 +151,23 @@ class AddressForm extends React.Component {
           label="Phone number"
           ref="phoneNumber"
           required={true}
-          validate={[{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }]}
-          value={(address.phones || []).join(', ')} />
-      </div>);
+          validate={[
+            {
+              regex: /\S+/,
+              error: 'This field is required.'
+            }
+          ]}
+          value={(address.phones || []).join(', ')}
+        />
+      </div>
+    );
   }
 
   render() {
     const address = this.props.address;
     let content;
     if (this.state.loading) {
-      content = (
-        <Spinner />);
+      content = <Spinner />;
     } else {
       const required = {
         regex: /\S+/,
@@ -190,7 +190,8 @@ class AddressForm extends React.Component {
             label="Country"
             options={this._generateCountryOptions()}
             ref="country"
-            value={countryCode} />
+            value={countryCode}
+          />
           {this._generateNameField()}
           <GenericInput
             disabled={disabled}
@@ -198,20 +199,23 @@ class AddressForm extends React.Component {
             ref="line1"
             required={true}
             validate={[required]}
-            value={address.line1} />
+            value={address.line1}
+          />
           <GenericInput
             disabled={disabled}
             label="Address line 2 (optional)"
             ref="line2"
             required={false}
-            value={address.line2} />
+            value={address.line2}
+          />
           <GenericInput
             disabled={disabled}
             label="State/province"
             ref="state"
             required={true}
             validate={[required]}
-            value={address.county} />
+            value={address.county}
+          />
           <div className="twelve-col u-no-margin--bottom">
             <div className="six-col u-no-margin--bottom">
               <GenericInput
@@ -220,7 +224,8 @@ class AddressForm extends React.Component {
                 ref="city"
                 required={true}
                 validate={[required]}
-                value={address.city} />
+                value={address.city}
+              />
             </div>
             <div className="six-col last-col u-no-margin--bottom">
               <GenericInput
@@ -229,19 +234,17 @@ class AddressForm extends React.Component {
                 ref="postcode"
                 required={true}
                 validate={[required]}
-                value={address.postcode} />
+                value={address.postcode}
+              />
             </div>
           </div>
           {this._generatePhoneField()}
-        </div>);
+        </div>
+      );
     }
-    return (
-      <div className="address-form">
-        {content}
-      </div>
-    );
+    return <div className="address-form">{content}</div>;
   }
-};
+}
 
 AddressForm.propTypes = {
   addNotification: PropTypes.func,

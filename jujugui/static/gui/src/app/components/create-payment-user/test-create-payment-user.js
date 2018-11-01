@@ -14,15 +14,17 @@ const AddressForm = require('../address-form/address-form');
 describe('CreatePaymentUser', function() {
   let acl, onUserCreated, payment, stripe, refs;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <CreatePaymentUser
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      onUserCreated={options.onUserCreated || onUserCreated}
-      payment={payment}
-      stripe={stripe}
-      username={options.username || 'spinach'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <CreatePaymentUser
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        onUserCreated={options.onUserCreated || onUserCreated}
+        payment={payment}
+        stripe={stripe}
+        username={options.username || 'spinach'}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -76,8 +78,9 @@ describe('CreatePaymentUser', function() {
                     id="business"
                     name="formType"
                     onChange={options.at(1).prop('onChange')}
-                    type="radio" />
-                    Business use
+                    type="radio"
+                  />
+                  Business use
                 </label>
               </li>
               <li className="create-payment-user__form-type-option">
@@ -87,37 +90,35 @@ describe('CreatePaymentUser', function() {
                     id="personal"
                     name="formType"
                     onChange={options.at(0).prop('onChange')}
-                    type="radio" />
+                    type="radio"
+                  />
                   Personal use
                 </label>
               </li>
             </ul>
             {null}
-            <h2 className="create-payment-user__title">
-              Your contact details
-            </h2>
+            <h2 className="create-payment-user__title">Your contact details</h2>
             {null}
             <GenericInput
               disabled={false}
               label="Email address"
               ref="emailAddress"
               required={true}
-              validate={[{
-                regex: /\S+/,
-                error: 'This field is required.'
-              }]} />
+              validate={[
+                {
+                  regex: /\S+/,
+                  error: 'This field is required.'
+                }
+              ]}
+            />
             <AddressForm
               addNotification={addNotification}
               disabled={false}
               getCountries={sinon.stub()}
-              ref="userAddress" />
-            <h2 className="create-payment-user__title">
-              Payment information
-            </h2>
-            <CardForm
-              acl={acl}
-              createCardElement={sinon.stub()}
-              ref="cardForm" />
+              ref="userAddress"
+            />
+            <h2 className="create-payment-user__title">Payment information</h2>
+            <CardForm acl={acl} createCardElement={sinon.stub()} ref="cardForm" />
             <label htmlFor="cardAddressSame">
               <input
                 checked={true}
@@ -125,7 +126,8 @@ describe('CreatePaymentUser', function() {
                 name="cardAddressSame"
                 onChange={options.at(2).prop('onChange')}
                 ref="cardAddressSame"
-                type="checkbox" />
+                type="checkbox"
+              />
               Credit or debit card address is the same as above
             </label>
             <label htmlFor="billingAddressSame">
@@ -135,7 +137,8 @@ describe('CreatePaymentUser', function() {
                 name="billingAddressSame"
                 onChange={options.at(3).prop('onChange')}
                 ref="billingAddressSame"
-                type="checkbox" />
+                type="checkbox"
+              />
               Billing address is the same as above
             </label>
             {null}
@@ -144,13 +147,15 @@ describe('CreatePaymentUser', function() {
               <Button
                 action={wrapper.find('Button').prop('action')}
                 disabled={false}
-                type="inline-positive">
+                type="inline-positive"
+              >
                 Add payment details
               </Button>
             </div>
           </div>
         </form>
-      </div>);
+      </div>
+    );
     wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
     assert.compareJSX(wrapper, expected);
   });
@@ -166,36 +171,35 @@ describe('CreatePaymentUser', function() {
   it('can display card and billing address fields', function() {
     const addNotification = sinon.stub();
     const wrapper = renderComponent({addNotification});
-    wrapper.find('#cardAddressSame').simulate('change',
-      {currentTarget: {checked: false}});
-    wrapper.find('#billingAddressSame').simulate('change',
-      {currentTarget: {checked: false}});
+    wrapper.find('#cardAddressSame').simulate('change', {currentTarget: {checked: false}});
+    wrapper.find('#billingAddressSame').simulate('change', {currentTarget: {checked: false}});
     const cardExpected = (
       <div className="create-payment-user__card-address-form">
-        <h2 className="create-payment-user__title">
-          Card address
-        </h2>
+        <h2 className="create-payment-user__title">Card address</h2>
         <AddressForm
           addNotification={addNotification}
           disabled={false}
           getCountries={sinon.stub()}
-          ref="cardAddress" />
-      </div>);
+          ref="cardAddress"
+        />
+      </div>
+    );
     const billingExpected = (
       <div className="create-payment-user__billing-address-form">
-        <h2 className="create-payment-user__title">
-          Billing address
-        </h2>
+        <h2 className="create-payment-user__title">Billing address</h2>
         <AddressForm
           addNotification={addNotification}
           disabled={false}
           getCountries={sinon.stub()}
-          ref="billingAddress" />
-      </div>);
+          ref="billingAddress"
+        />
+      </div>
+    );
+    assert.compareJSX(wrapper.find('.create-payment-user__card-address-form'), cardExpected);
     assert.compareJSX(
-      wrapper.find('.create-payment-user__card-address-form'), cardExpected);
-    assert.compareJSX(
-      wrapper.find('.create-payment-user__billing-address-form'), billingExpected);
+      wrapper.find('.create-payment-user__billing-address-form'),
+      billingExpected
+    );
   });
 
   it('can abort requests when unmounting', function() {
@@ -204,7 +208,10 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     wrapper.unmount();
     assert.equal(abort.callCount, 1);
   });
@@ -214,7 +221,10 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     instance.refs.emailAddress.validate = sinon.stub().returns(false);
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(stripe.createToken.callCount, 0);
   });
 
@@ -222,7 +232,10 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {card: 'value'});
     assert.deepEqual(stripe.createToken.args[0][1], {
@@ -252,10 +265,12 @@ describe('CreatePaymentUser', function() {
       })
     };
     instance.refs = refs;
-    wrapper.find('#cardAddressSame').simulate('change',
-      {currentTarget: {checked: false}});
+    wrapper.find('#cardAddressSame').simulate('change', {currentTarget: {checked: false}});
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(stripe.createToken.callCount, 1);
     assert.deepEqual(stripe.createToken.args[0][0], {card: 'value'});
     assert.deepEqual(stripe.createToken.args[0][1], {
@@ -275,7 +290,10 @@ describe('CreatePaymentUser', function() {
     const wrapper = renderComponent({addNotification});
     const instance = wrapper.instance();
     instance.refs = refs;
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create Stripe token',
@@ -290,35 +308,42 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(payment.createUser.callCount, 1);
     assert.deepEqual(payment.createUser.args[0][0], {
       nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
-      addresses: [{
-        name: 'Geoffrey Spinach',
-        line1: '10 Maple St',
-        line2: '',
-        city: 'Sasquatch',
-        state: 'Bunnyhug',
-        postcode: '90210',
-        countryCode: 'CA',
-        phones: ['12341234']
-      }],
+      addresses: [
+        {
+          name: 'Geoffrey Spinach',
+          line1: '10 Maple St',
+          line2: '',
+          city: 'Sasquatch',
+          state: 'Bunnyhug',
+          postcode: '90210',
+          countryCode: 'CA',
+          phones: ['12341234']
+        }
+      ],
       vat: null,
       business: false,
       businessName: null,
-      billingAddresses: [{
-        name: 'Geoffrey Spinach',
-        line1: '10 Maple St',
-        line2: '',
-        city: 'Sasquatch',
-        state: 'Bunnyhug',
-        postcode: '90210',
-        countryCode: 'CA',
-        phones: ['12341234']
-      }],
+      billingAddresses: [
+        {
+          name: 'Geoffrey Spinach',
+          line1: '10 Maple St',
+          line2: '',
+          city: 'Sasquatch',
+          state: 'Bunnyhug',
+          postcode: '90210',
+          countryCode: 'CA',
+          phones: ['12341234']
+        }
+      ],
       token: 'token_123',
       paymentMethodName: 'Default'
     });
@@ -340,7 +365,10 @@ describe('CreatePaymentUser', function() {
     instance.refs = refs;
     wrapper.find('#business').simulate('change', {target: {id: 'business'}});
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(payment.createUser.callCount, 1);
     const args = payment.createUser.args[0][0];
     assert.equal(args.business, true);
@@ -366,38 +394,44 @@ describe('CreatePaymentUser', function() {
     };
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
-    wrapper.find('#billingAddressSame').simulate('change',
-      {currentTarget: {checked: false}});
+    wrapper.find('#billingAddressSame').simulate('change', {currentTarget: {checked: false}});
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(payment.createUser.callCount, 1);
     assert.deepEqual(payment.createUser.args[0][0], {
       nickname: 'spinach',
       name: 'Geoffrey Spinach',
       email: 'spinach@example.com',
-      addresses: [{
-        name: 'Geoffrey Spinach',
-        line1: '10 Maple St',
-        line2: '',
-        city: 'Sasquatch',
-        state: 'Bunnyhug',
-        postcode: '90210',
-        countryCode: 'CA',
-        phones: ['12341234']
-      }],
+      addresses: [
+        {
+          name: 'Geoffrey Spinach',
+          line1: '10 Maple St',
+          line2: '',
+          city: 'Sasquatch',
+          state: 'Bunnyhug',
+          postcode: '90210',
+          countryCode: 'CA',
+          phones: ['12341234']
+        }
+      ],
       vat: null,
       business: false,
       businessName: null,
-      billingAddresses: [{
-        name: 'Bruce Dundee',
-        line1: '9 Kangaroo St',
-        line2: '',
-        city: 'Snake',
-        state: 'Spider',
-        postcode: '9000',
-        countryCode: 'AU',
-        phones: ['00001111']
-      }],
+      billingAddresses: [
+        {
+          name: 'Bruce Dundee',
+          line1: '9 Kangaroo St',
+          line2: '',
+          city: 'Snake',
+          state: 'Spider',
+          postcode: '9000',
+          countryCode: 'AU',
+          phones: ['00001111']
+        }
+      ],
       token: 'token_123',
       paymentMethodName: 'Default'
     });
@@ -411,7 +445,10 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'Could not create a payment user',
@@ -427,7 +464,10 @@ describe('CreatePaymentUser', function() {
     const instance = wrapper.instance();
     instance.refs = refs;
     wrapper.find('#personal').simulate('change', {target: {id: 'personal'}});
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(onUserCreated.callCount, 1);
   });
 });

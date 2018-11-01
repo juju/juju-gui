@@ -11,22 +11,23 @@ const SearchResultsSelectFilter = require('./select-filter/select-filter');
 const SearchResultsTypeFilter = require('./type-filter/type-filter');
 
 describe('SearchResults', function() {
-  let acl, addToModel, charmstoreSearch, generatePath,
-      models, results;
+  let acl, addToModel, charmstoreSearch, generatePath, models, results;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <SearchResults
-      acl={options.acl || acl}
-      addToModel={options.addToModel || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
-      generatePath={options.generatePath || generatePath}
-      query={options.query || 'spinach'}
-      series={options.series}
-      setPageTitle={options.setPageTitle || sinon.stub()}
-      sort={options.sort}
-      type={options.type} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <SearchResults
+        acl={options.acl || acl}
+        addToModel={options.addToModel || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
+        generatePath={options.generatePath || generatePath}
+        query={options.query || 'spinach'}
+        series={options.series}
+        setPageTitle={options.setPageTitle || sinon.stub()}
+        sort={options.sort}
+        type={options.type}
+      />
+    );
 
   beforeEach(function() {
     // The makeEntityModel util uses the global models variable, so fake that here.
@@ -38,56 +39,66 @@ describe('SearchResults', function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
     addToModel = sinon.stub();
     generatePath = sinon.stub();
-    results = [{
-      name: 'mysql-one',
-      displayName: 'mysql-one',
-      url: 'http://example.com/mysql-one',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: 'mysql-one',
-      storeId: '~test-owner/mysql-one',
-      type: 'charm'
-    }, {
-      name: 'mysql-two',
-      displayName: 'mysql-two',
-      url: 'http://example.com/mysql-two',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: true,
-      id: 'mysql-two',
-      storeId: '~test-owner/mysql-two',
-      type: 'charm'
-    }, {
-      name: 'mysql-three',
-      displayName: 'mysql-three',
-      url: 'http://example.com/mysql-three',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: false,
-      id: 'mysql-three',
-      storeId: '~test-owner/mysql-three',
-      type: 'charm'
-    }, {
-      name: 'mysql-four',
-      displayName: 'mysql-four',
-      url: 'http://example.com/mysql-four',
-      downloads: 1000,
-      owner: 'test-owner',
-      promulgated: false,
-      id: 'mysql-four',
-      storeId: '~test-owner/mysql-four',
-      type: 'charm'
-    }];
-    const mockData = [{
-      toEntity: sinon.stub().returns(results[0])
-    }, {
-      toEntity: sinon.stub().returns(results[1])
-    }, {
-      toEntity: sinon.stub().returns(results[2])
-    }, {
-      toEntity: sinon.stub().returns(results[3])
-    }];
+    results = [
+      {
+        name: 'mysql-one',
+        displayName: 'mysql-one',
+        url: 'http://example.com/mysql-one',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'mysql-one',
+        storeId: '~test-owner/mysql-one',
+        type: 'charm'
+      },
+      {
+        name: 'mysql-two',
+        displayName: 'mysql-two',
+        url: 'http://example.com/mysql-two',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: true,
+        id: 'mysql-two',
+        storeId: '~test-owner/mysql-two',
+        type: 'charm'
+      },
+      {
+        name: 'mysql-three',
+        displayName: 'mysql-three',
+        url: 'http://example.com/mysql-three',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: false,
+        id: 'mysql-three',
+        storeId: '~test-owner/mysql-three',
+        type: 'charm'
+      },
+      {
+        name: 'mysql-four',
+        displayName: 'mysql-four',
+        url: 'http://example.com/mysql-four',
+        downloads: 1000,
+        owner: 'test-owner',
+        promulgated: false,
+        id: 'mysql-four',
+        storeId: '~test-owner/mysql-four',
+        type: 'charm'
+      }
+    ];
+    const mockData = [
+      {
+        toEntity: sinon.stub().returns(results[0])
+      },
+      {
+        toEntity: sinon.stub().returns(results[1])
+      },
+      {
+        toEntity: sinon.stub().returns(results[2])
+      },
+      {
+        toEntity: sinon.stub().returns(results[3])
+      }
+    ];
     charmstoreSearch = sinon.stub().callsArgWith(1, null, mockData);
   });
 
@@ -107,19 +118,17 @@ describe('SearchResults', function() {
       const expected = (
         <div className="twelve-col no-results-container last-col">
           <h1 className="row-title">
-            Your search for <strong>spinach</strong>
-            {' '}
-            returned 0 results
+            Your search for <strong>spinach</strong> returned 0 results
           </h1>
           <p>
-            Try a more specific or different query, try other keywords or
-            learn how to
-            {' '}
+            Try a more specific or different query, try other keywords or learn how to{' '}
             <a href="http://jujucharms.com/docs/authors-charm-writing">
               create your own solution
-            </a>.
+            </a>
+            .
           </p>
-        </div>);
+        </div>
+      );
       assert.compareJSX(wrapper.find('.no-results-container'), expected);
     });
 
@@ -128,23 +137,17 @@ describe('SearchResults', function() {
       const wrapper = renderComponent();
       const expected = (
         <div className="twelve-col no-results-container last-col">
-          <h1 className="row-title">
-            Something went wrong
-          </h1>
+          <h1 className="row-title">Something went wrong</h1>
           <p>
-            For some reason the search failed. You could try searching at
-            {' '}
-            <a href="http://jujucharms.com/store">
-              http://jujucharms.com
-            </a>
-            {' '}or go{' '}
-            <span
-              className="link"
-              onClick={wrapper.find('.link').prop('onClick')}>
+            For some reason the search failed. You could try searching at{' '}
+            <a href="http://jujucharms.com/store">http://jujucharms.com</a> or go{' '}
+            <span className="link" onClick={wrapper.find('.link').prop('onClick')}>
               back
-            </span>.
+            </span>
+            .
           </p>
-        </div>);
+        </div>
+      );
       assert.compareJSX(wrapper.find('.no-results-container'), expected);
     });
 
@@ -168,50 +171,65 @@ describe('SearchResults', function() {
         charmstoreSearch
       });
       const instance = wrapper.instance();
-      assert.isTrue(charmstoreSearch.calledOnce,
-        'search function not called');
-      assert.isTrue(mockModel.toEntity.callCount == mockData.length,
-        'all models not converted to plain old objects');
+      assert.isTrue(charmstoreSearch.calledOnce, 'search function not called');
+      assert.isTrue(
+        mockModel.toEntity.callCount == mockData.length,
+        'all models not converted to plain old objects'
+      );
       var data = instance.state.data;
-      assert.equal(data.text, 'spinach',
-        'search text not set to the query');
-      assert.equal(data.solutionsCount, mockData.length,
-        'total results returned is incorrect');
+      assert.equal(data.text, 'spinach', 'search text not set to the query');
+      assert.equal(
+        data.solutionsCount,
+        mockData.length,
+        'total results returned is incorrect'
+      );
     });
 
     it('can render the promulgated search results', function() {
-      const sortItems = [{
-        label: 'Default',
-        value: ''
-      }, {
-        label: 'Most popular',
-        value: '-downloads'
-      }, {
-        label: 'Least popular',
-        value: 'downloads'
-      }, {
-        label: 'Name (a-z)',
-        value: 'name'
-      }, {
-        label: 'Name (z-a)',
-        value: '-name'
-      }, {
-        label: 'Author (a-z)',
-        value: 'owner'
-      }, {
-        label: 'Author (z-a)',
-        value: '-owner'
-      }];
-      const seriesItems = [{
-        label: 'All',
-        value: ''
-      }, {
-        label: 'Vivid Vervet 15.04',
-        value: 'vivid'
-      }, {
-        label: 'Wily Werewolf 15.10',
-        value: 'wily'
-      }];
+      const sortItems = [
+        {
+          label: 'Default',
+          value: ''
+        },
+        {
+          label: 'Most popular',
+          value: '-downloads'
+        },
+        {
+          label: 'Least popular',
+          value: 'downloads'
+        },
+        {
+          label: 'Name (a-z)',
+          value: 'name'
+        },
+        {
+          label: 'Name (z-a)',
+          value: '-name'
+        },
+        {
+          label: 'Author (a-z)',
+          value: 'owner'
+        },
+        {
+          label: 'Author (z-a)',
+          value: '-owner'
+        }
+      ];
+      const seriesItems = [
+        {
+          label: 'All',
+          value: ''
+        },
+        {
+          label: 'Vivid Vervet 15.04',
+          value: 'vivid'
+        },
+        {
+          label: 'Wily Werewolf 15.10',
+          value: 'wily'
+        }
+      ];
       const wrapper = renderComponent({
         series: 'wily',
         sort: '-name',
@@ -222,28 +240,29 @@ describe('SearchResults', function() {
           <div className="row no-padding-top">
             <div className="inner-wrapper list-block">
               <div className="twelve-col list-block__title no-margin-bottom">
-                Your search for &lsquo;{'spinach'}&rsquo; returned {4}{' '}
-                results.
+                Your search for &lsquo;
+                {'spinach'}
+                &rsquo; returned {4} results.
               </div>
               <div className="list-block__filters">
-                <SearchResultsTypeFilter
-                  changeState={sinon.stub()}
-                  currentType="charm" />
+                <SearchResultsTypeFilter changeState={sinon.stub()} currentType="charm" />
                 <div className="six-col last-col">
                   <div className="list-block__filters--selects">
                     <form>
                       <SearchResultsSelectFilter
                         changeState={sinon.stub()}
                         currentValue="-name"
-                        filter='sort'
+                        filter="sort"
                         items={sortItems}
-                        label="Sort by" />
+                        label="Sort by"
+                      />
                       <SearchResultsSelectFilter
                         changeState={sinon.stub()}
                         currentValue="wily"
-                        filter='series'
+                        filter="series"
                         items={seriesItems}
-                        label="Series" />
+                        label="Series"
+                      />
                     </form>
                   </div>
                 </div>
@@ -261,14 +280,16 @@ describe('SearchResults', function() {
                         changeState={sinon.stub()}
                         generatePath={generatePath}
                         item={results[0]}
-                        key="~test-owner/mysql-one" />
+                        key="~test-owner/mysql-one"
+                      />
                       <SearchResultsItem
                         acl={acl}
                         addToModel={addToModel}
                         changeState={sinon.stub()}
                         generatePath={generatePath}
                         item={results[1]}
-                        key="~test-owner/mysql-two" />
+                        key="~test-owner/mysql-two"
+                      />
                     </ul>
                   </div>
                   <div className="clearfix community-results">
@@ -276,13 +297,15 @@ describe('SearchResults', function() {
                       <Button
                         action={wrapper.find('Button').prop('action')}
                         extraClasses="show-community-button"
-                        type="inline-neutral">
+                        type="inline-neutral"
+                      >
                         Show 2 community results
                       </Button>
                     </div>
-                    <div
-                      className="clearfix community-results__content hidden">
-                      <h4>Community <span className="count">({2})</span></h4>
+                    <div className="clearfix community-results__content hidden">
+                      <h4>
+                        Community <span className="count">({2})</span>
+                      </h4>
                       <ul className="list-block__list">
                         <SearchResultsItem
                           acl={acl}
@@ -290,14 +313,16 @@ describe('SearchResults', function() {
                           changeState={sinon.stub()}
                           generatePath={generatePath}
                           item={results[2]}
-                          key="~test-owner/mysql-three" />
+                          key="~test-owner/mysql-three"
+                        />
                         <SearchResultsItem
                           acl={acl}
                           addToModel={addToModel}
                           changeState={sinon.stub()}
                           generatePath={generatePath}
                           item={results[3]}
-                          key="~test-owner/mysql-four" />
+                          key="~test-owner/mysql-four"
+                        />
                       </ul>
                     </div>
                   </div>
@@ -305,7 +330,8 @@ describe('SearchResults', function() {
               </div>
             </div>
           </div>
-        </div>);
+        </div>
+      );
       assert.compareJSX(wrapper, expected);
     });
 
@@ -315,9 +341,12 @@ describe('SearchResults', function() {
       instance._toggleCommunityResults();
       wrapper.update();
       assert.equal(
-        wrapper.find('.community-results__content').prop('className').includes(
-          'hidden'),
-        false);
+        wrapper
+          .find('.community-results__content')
+          .prop('className')
+          .includes('hidden'),
+        false
+      );
     });
 
     it('aborts existing requests before making new ones', function() {
@@ -343,49 +372,64 @@ describe('SearchResults', function() {
 
     it('collapses identical charms with different series', function() {
       var entities = [
-        {id: 'foo', name: 'foo', owner: 'bar', type: 'charm', series: 'trusty'},
-        {id: 'foo',
+        {
+          id: 'foo',
           name: 'foo',
           owner: 'bar',
           type: 'charm',
-          series: 'precise'},
+          series: 'trusty'
+        },
+        {
+          id: 'foo',
+          name: 'foo',
+          owner: 'bar',
+          type: 'charm',
+          series: 'precise'
+        },
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
       var actual = searchResults._collapseSeries(entities),
-          first = entities[0],
-          last = entities[2];
-      var expected = [{
-        id: first.name,
-        name: first.name,
-        owner: first.owner,
-        type: first.type,
-        series: [{name: 'trusty', storeId: ''}, {name: 'precise', storeId: ''}],
-        downloads: 0,
-        storeId: ''
-      }, {
-        id: last.name,
-        name: last.name,
-        owner: last.owner,
-        type: last.type,
-        series: [{name: 'vivid', storeId: ''}],
-        downloads: 0,
-        storeId: ''
-      }];
+        first = entities[0],
+        last = entities[2];
+      var expected = [
+        {
+          id: first.name,
+          name: first.name,
+          owner: first.owner,
+          type: first.type,
+          series: [{name: 'trusty', storeId: ''}, {name: 'precise', storeId: ''}],
+          downloads: 0,
+          storeId: ''
+        },
+        {
+          id: last.name,
+          name: last.name,
+          owner: last.owner,
+          type: last.type,
+          series: [{name: 'vivid', storeId: ''}],
+          downloads: 0,
+          storeId: ''
+        }
+      ];
       assert.deepEqual(actual, expected);
     });
 
     it('can collapse charms when the id contains "cs:"', () => {
       const entities = [
-        {id: 'cs:foo',
+        {
+          id: 'cs:foo',
           name: 'foo',
           owner: 'bar',
           type: 'charm',
-          series: 'trusty'},
-        {id: 'foo',
+          series: 'trusty'
+        },
+        {
+          id: 'foo',
           name: 'foo',
           owner: 'bar',
           type: 'charm',
-          series: 'precise'},
+          series: 'precise'
+        },
         {id: 'foo', name: 'foo', owner: 'baz', type: 'charm', series: 'vivid'}
       ];
       const actual = searchResults._collapseSeries(entities);
@@ -394,24 +438,30 @@ describe('SearchResults', function() {
 
     it('aggregates downloads when collapsing charms', function() {
       var entities = [
-        {name: 'c1',
+        {
+          name: 'c1',
           id: 'c1',
           owner: 'o1',
           type: 'c',
           series: 's1',
-          downloads: 1},
-        {name: 'c1',
+          downloads: 1
+        },
+        {
+          name: 'c1',
           id: 'c1',
           owner: 'o1',
           type: 'c',
           series: 's2',
-          downloads: 5},
-        {name: 'c1',
+          downloads: 5
+        },
+        {
+          name: 'c1',
           id: 'c1',
           owner: 'o2',
           type: 'c',
           series: 's3',
-          downloads: 3}
+          downloads: 3
+        }
       ];
       var actual = searchResults._collapseSeries(entities);
       assert.equal(actual[0].downloads, 6, 'downloads not aggregated');
@@ -420,68 +470,78 @@ describe('SearchResults', function() {
 
     it('maintains sort order when collapsing charms', function() {
       var entities = [
-        {id: 'foo1',
+        {
+          id: 'foo1',
           name: 'foo1',
           owner: 'bar',
           type: 'c',
           series: 's1',
-          downloads: 6},
-        {id: 'foo2',
+          downloads: 6
+        },
+        {
+          id: 'foo2',
           name: 'foo2',
           owner: 'bar',
           type: 'c',
           series: 's1',
-          downloads: 5},
-        {id: 'foo1',
+          downloads: 5
+        },
+        {
+          id: 'foo1',
           name: 'foo1',
           owner: 'bar',
           type: 'c',
           series: 's2',
-          downloads: 4},
-        {id: 'foo3',
+          downloads: 4
+        },
+        {
+          id: 'foo3',
           name: 'foo3',
           owner: 'bar',
           type: 'c',
           series: 's1',
-          downloads: 4},
-        {id: 'foo2',
+          downloads: 4
+        },
+        {
+          id: 'foo2',
           name: 'foo2',
           owner: 'bar',
           type: 'c',
           series: 's1',
-          downloads: 3},
-        {id: 'foo3',
+          downloads: 3
+        },
+        {
+          id: 'foo3',
           name: 'foo3',
           owner: 'bar',
           type: 'c',
           series: 's3',
-          downloads: 3},
-        {id: 'foo3',
+          downloads: 3
+        },
+        {
+          id: 'foo3',
           name: 'foo3',
           owner: 'bar',
           type: 'c',
           series: 's4',
-          downloads: 3},
-        {id: 'foo3',
+          downloads: 3
+        },
+        {
+          id: 'foo3',
           name: 'foo3',
           owner: 'bar',
           type: 'c',
           series: 's5',
-          downloads: 3}
+          downloads: 3
+        }
       ];
       var actual = searchResults._collapseSeries(entities);
-      assert.equal(actual[0].name, 'foo1',
-        'foo1 did not maintain sort position');
-      assert.equal(actual[0].downloads, 10,
-        'foo1 downloads not aggregated');
-      assert.equal(actual[1].name, 'foo2',
-        'foo2 did not maintain sort position');
-      assert.equal(actual[1].downloads, 8,
-        'foo2 downloads not aggregated');
-      assert.equal(actual[2].name, 'foo3',
-        'foo3 did not maintain sort position');
-      assert.equal(actual[2].downloads, 13,
-        'foo3 downloads not aggregated');
+      assert.equal(actual[0].name, 'foo1', 'foo1 did not maintain sort position');
+      assert.equal(actual[0].downloads, 10, 'foo1 downloads not aggregated');
+      assert.equal(actual[1].name, 'foo2', 'foo2 did not maintain sort position');
+      assert.equal(actual[1].downloads, 8, 'foo2 downloads not aggregated');
+      assert.equal(actual[2].name, 'foo3', 'foo3 did not maintain sort position');
+      assert.equal(actual[2].downloads, 13, 'foo3 downloads not aggregated');
     });
 
     it('sorts the series within collapsed results', function() {
@@ -491,8 +551,8 @@ describe('SearchResults', function() {
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'vivid'}
       ];
       var actual = searchResults._collapseSeries(entities),
-          actualSeries = actual[0].series,
-          seriesNames = [];
+        actualSeries = actual[0].series,
+        seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
         seriesNames.push(actualSeries[i].name);
       }
@@ -506,8 +566,8 @@ describe('SearchResults', function() {
         {name: 'c1', id: 'c1', owner: 'o1', type: 'c', series: 'trusty'}
       ];
       var actual = searchResults._collapseSeries(entities),
-          actualSeries = actual[0].series,
-          seriesNames = [];
+        actualSeries = actual[0].series,
+        seriesNames = [];
       for (var i = 0, l = actualSeries.length; i < l; i++) {
         seriesNames.push(actualSeries[i].name);
       }
@@ -521,25 +581,28 @@ describe('SearchResults', function() {
       searchResults.props = {
         query: query
       };
-      var results = [{
-        name: 'spinach',
-        displayName: 'spinach',
-        url: 'http://example.com/spinach',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: true,
-        id: 'spinach',
-        type: 'charm'
-      }, {
-        name: 'red spinach',
-        displayName: 'red spinach',
-        url: 'http://example.com/red-spinach',
-        downloads: 1000,
-        owner: 'test-owner',
-        promulgated: false,
-        id: 'red-spinach',
-        type: 'charm'
-      }];
+      var results = [
+        {
+          name: 'spinach',
+          displayName: 'spinach',
+          url: 'http://example.com/spinach',
+          downloads: 1000,
+          owner: 'test-owner',
+          promulgated: true,
+          id: 'spinach',
+          type: 'charm'
+        },
+        {
+          name: 'red spinach',
+          displayName: 'red spinach',
+          url: 'http://example.com/red-spinach',
+          downloads: 1000,
+          owner: 'test-owner',
+          promulgated: false,
+          id: 'red-spinach',
+          type: 'charm'
+        }
+      ];
       var rawResults = results.map(function(obj) {
         var m = {};
         m.toEntity = sinon.stub().returns(obj);
@@ -555,10 +618,16 @@ describe('SearchResults', function() {
       searchResults.setState = sinon.spy();
       searchResults._searchCallback(null, rawResults);
       var spy = searchResults.setState;
-      assert.deepEqual(spy.getCall(0).args[0], {waitingForSearch: false},
-        'waitingForSearch flag still set');
-      assert.deepEqual(spy.getCall(1).args[0], {data: expected},
-        'search data returned is incorrect');
+      assert.deepEqual(
+        spy.getCall(0).args[0],
+        {waitingForSearch: false},
+        'waitingForSearch flag still set'
+      );
+      assert.deepEqual(
+        spy.getCall(1).args[0],
+        {data: expected},
+        'search data returned is incorrect'
+      );
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
 
@@ -569,11 +638,16 @@ describe('SearchResults', function() {
       var searchSpy = sinon.spy();
       searchResults.props = {charmstoreSearch: searchSpy};
       searchResults._searchRequest(query, 'ops');
-      assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
-        'waitingForSearch flag is not set');
-      assert.deepEqual(searchSpy.getCall(0).args[0],
+      assert.deepEqual(
+        stateSpy.getCall(1).args[0],
+        {waitingForSearch: true},
+        'waitingForSearch flag is not set'
+      );
+      assert.deepEqual(
+        searchSpy.getCall(0).args[0],
         {text: query, tags: 'ops'},
-        'query not passed in correctly');
+        'query not passed in correctly'
+      );
     });
 
     it('passes the optional parameters to the search', function() {
@@ -583,21 +657,29 @@ describe('SearchResults', function() {
       var searchSpy = sinon.spy();
       searchResults.props = {charmstoreSearch: searchSpy};
       searchResults._searchRequest(query, 'ops', 'bundle', '-name');
-      assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
-        'waitingForSearch flag is not set');
+      assert.deepEqual(
+        stateSpy.getCall(1).args[0],
+        {waitingForSearch: true},
+        'waitingForSearch flag is not set'
+      );
       assert.deepEqual(
         searchSpy.getCall(0).args[0],
         {text: query, tags: 'ops', type: 'bundle', sort: '-name'},
-        'query not passed in correctly');
+        'query not passed in correctly'
+      );
     });
 
     it('decides to search when the query changes', function() {
       var query = 'spinach';
       searchResults.state = {data: {text: query}};
-      assert.isFalse(searchResults._shouldSearch({query: query}),
-        'Unchanged query should not trigger search');
-      assert.isTrue(searchResults._shouldSearch({query: 'foo'}),
-        'Changed query should trigger search');
+      assert.isFalse(
+        searchResults._shouldSearch({query: query}),
+        'Unchanged query should not trigger search'
+      );
+      assert.isTrue(
+        searchResults._shouldSearch({query: 'foo'}),
+        'Changed query should trigger search'
+      );
     });
 
     it('triggers a search request upon component mount', function() {
@@ -622,22 +704,28 @@ describe('SearchResults', function() {
     it('re-renders only after a new search has finished', function() {
       searchResults._shouldSearch = sinon.stub().returns(true);
       searchResults.state = {waitingForSearch: false};
-      assert.isTrue(searchResults.shouldComponentUpdate(),
-        'Should re-render after new search finished');
+      assert.isTrue(
+        searchResults.shouldComponentUpdate(),
+        'Should re-render after new search finished'
+      );
       searchResults._shouldSearch = sinon.stub().returns(false);
       searchResults.state = {
         waitingForSearch: false,
         activeComponent: 'loading'
       };
-      assert.isFalse(searchResults.shouldComponentUpdate(),
-        'Should not re-render without a new search');
+      assert.isFalse(
+        searchResults.shouldComponentUpdate(),
+        'Should not re-render without a new search'
+      );
       searchResults._shouldSearch = sinon.stub().returns(true);
       searchResults.state = {
         waitingForSearch: true,
         activeComponent: 'loading'
       };
-      assert.isFalse(searchResults.shouldComponentUpdate(),
-        'Should not re-render when waiting for a search');
+      assert.isFalse(
+        searchResults.shouldComponentUpdate(),
+        'Should not re-render when waiting for a search'
+      );
     });
 
     it('will abort the request when unmounting', function() {
@@ -654,45 +742,50 @@ describe('SearchResults', function() {
       searchResults.props = {
         query: 'mysql'
       };
-      var results = [{
-        name: 'mysql',
-        displayName: 'mysql',
-        url: 'http://example.com/mysql',
-        downloads: 1000,
-        owner: 'charmers',
-        promulgated: true,
-        id: 'cs:trusty/mysql-38',
-        type: 'charm'
-      }, {
-        name: 'postgresql-psql',
-        displayName: 'postgresql-psql',
-        url: 'http://example.com/postgresql',
-        downloads: 1000,
-        owner: 'stub',
-        promulgated: true,
-        id: 'cs:~stub/precise/postgresql-psql-9',
-        type: 'charm'
-      }, {
-        name: 'nova-volume',
-        displayName: 'nova-volume',
-        url: 'http://example.com/nova-volume',
-        downloads: 1000,
-        owner: 'charmers',
-        promulgated: true,
-        id: 'cs:precise/nova-volume-6',
-        type: 'charm',
-        storeId: 'cs:precise/nova-volume-6'
-      }, {
-        name: 'mssql-express',
-        displayName: 'mssql-express',
-        url: 'http://example.com/mssql-express',
-        downloads: 1000,
-        owner: 'cloudbaseit',
-        promulgated: true,
-        id: 'cs:~cloudbaseit/win2012r2/mssql-express-1',
-        type: 'charm',
-        storeId: 'cs:~cloudbaseit/win2012r2/mssql-express-1'
-      }];
+      var results = [
+        {
+          name: 'mysql',
+          displayName: 'mysql',
+          url: 'http://example.com/mysql',
+          downloads: 1000,
+          owner: 'charmers',
+          promulgated: true,
+          id: 'cs:trusty/mysql-38',
+          type: 'charm'
+        },
+        {
+          name: 'postgresql-psql',
+          displayName: 'postgresql-psql',
+          url: 'http://example.com/postgresql',
+          downloads: 1000,
+          owner: 'stub',
+          promulgated: true,
+          id: 'cs:~stub/precise/postgresql-psql-9',
+          type: 'charm'
+        },
+        {
+          name: 'nova-volume',
+          displayName: 'nova-volume',
+          url: 'http://example.com/nova-volume',
+          downloads: 1000,
+          owner: 'charmers',
+          promulgated: true,
+          id: 'cs:precise/nova-volume-6',
+          type: 'charm',
+          storeId: 'cs:precise/nova-volume-6'
+        },
+        {
+          name: 'mssql-express',
+          displayName: 'mssql-express',
+          url: 'http://example.com/mssql-express',
+          downloads: 1000,
+          owner: 'cloudbaseit',
+          promulgated: true,
+          id: 'cs:~cloudbaseit/win2012r2/mssql-express-1',
+          type: 'charm',
+          storeId: 'cs:~cloudbaseit/win2012r2/mssql-express-1'
+        }
+      ];
       var rawResults = results.map(function(obj) {
         var m = {};
         m.toEntity = sinon.stub().returns(obj);
@@ -703,14 +796,10 @@ describe('SearchResults', function() {
       searchResults.setState = setState;
       searchResults._searchCallback(null, rawResults);
       var actualResults = setState.getCall(1).args[0].data.promulgatedResults;
-      assert.deepEqual(actualResults[0].storeId,
-        'cs:~charmers/trusty/mysql-38');
-      assert.deepEqual(actualResults[1].storeId,
-        'cs:~stub/precise/postgresql-psql-9');
-      assert.deepEqual(actualResults[2].storeId,
-        'cs:~charmers/precise/nova-volume-6');
-      assert.deepEqual(actualResults[3].storeId,
-        'cs:~cloudbaseit/win2012r2/mssql-express-1');
+      assert.deepEqual(actualResults[0].storeId, 'cs:~charmers/trusty/mysql-38');
+      assert.deepEqual(actualResults[1].storeId, 'cs:~stub/precise/postgresql-psql-9');
+      assert.deepEqual(actualResults[2].storeId, 'cs:~charmers/precise/nova-volume-6');
+      assert.deepEqual(actualResults[3].storeId, 'cs:~cloudbaseit/win2012r2/mssql-express-1');
       searchResults._changeActiveComponent = _changeActiveComponent;
     });
   });

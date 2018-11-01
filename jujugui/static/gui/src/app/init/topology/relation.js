@@ -11,8 +11,7 @@ const topoUtils = require('./utils');
 const environmentUtils = require('./environment-utils');
 const utils = require('../utils');
 
-const AmbiguousRelationMenu = require(
-  '../../components/relation-menu/ambiguous-relation-menu');
+const AmbiguousRelationMenu = require('../../components/relation-menu/ambiguous-relation-menu');
 const RelationMenu = require('../../components/relation-menu/relation-menu');
 
 /**
@@ -48,10 +47,10 @@ class RelationModule {
         },
         '.dragline': {
           /**
-          * The user clicked while the dragline was active.
-          *
-          * @method events.scene.dragline.click
-          */
+           * The user clicked while the dragline was active.
+           *
+           * @method events.scene.dragline.click
+           */
           click: {callback: 'draglineClicked'}
         },
         '.zoom-plane': {
@@ -196,7 +195,7 @@ class RelationModule {
   */
   getContainer() {
     const container = this.topo.container;
-    return container.getDOMNode && container.getDOMNode() || container;
+    return (container.getDOMNode && container.getDOMNode()) || container;
   }
 
   renderedHandler() {
@@ -236,8 +235,7 @@ class RelationModule {
         if (!source || !target) {
           return;
         }
-        const decoratedRelation = relationUtils.DecoratedRelation(
-          relation, source, target);
+        const decoratedRelation = relationUtils.DecoratedRelation(relation, source, target);
         // Copy the relation type to the box.
         decorated.push(decoratedRelation);
       }
@@ -275,22 +273,25 @@ class RelationModule {
       return;
     }
 
-    self.relations.filter(relation => {
-      return relation.source.id === service.id ||
-         relation.target.id === service.id;
-    }).forEach(relation => {
-      // Select only the pertinent relation groups.
-      const rel_group = topo.vis.select(
-        '#' + relationUtils.generateSafeDOMId(relation.id, parentId));
-      const connectors = relation.source.getConnectorPair(relation.target);
-      const s = connectors[0];
-      const t = connectors[1];
-      rel_group.select('line')
-        .attr('x1', s[0])
-        .attr('y1', s[1])
-        .attr('x2', t[0])
-        .attr('y2', t[1]);
-    });
+    self.relations
+      .filter(relation => {
+        return relation.source.id === service.id || relation.target.id === service.id;
+      })
+      .forEach(relation => {
+        // Select only the pertinent relation groups.
+        const rel_group = topo.vis.select(
+          '#' + relationUtils.generateSafeDOMId(relation.id, parentId)
+        );
+        const connectors = relation.source.getConnectorPair(relation.target);
+        const s = connectors[0];
+        const t = connectors[1];
+        rel_group
+          .select('line')
+          .attr('x1', s[0])
+          .attr('y1', s[1])
+          .attr('x2', t[0])
+          .attr('y2', t[1]);
+      });
   }
 
   drawRelationGroup() {
@@ -300,96 +301,97 @@ class RelationModule {
     let staticURL = topo.staticURL || '';
     if (staticURL) {
       staticURL += '/';
-    };
+    }
     const basePath = `${staticURL}static/gui/build/app`;
     const vis = topo.vis;
     const parentId = topo._yuid;
     const imageSize = 20;
-    const g = vis.selectAll('g.rel-group')
-      .data(self.relations,
-        function(r) {
-          return r.compositeId;
-        });
+    const g = vis.selectAll('g.rel-group').data(self.relations, function(r) {
+      return r.compositeId;
+    });
     // If this is the initial creation of the relation group, add all of the
     // elements involved.
-    const enter = g.enter()
+    const enter = g
+      .enter()
       .insert('g', 'g.service')
       .attr('id', function(d) {
         return relationUtils.generateSafeDOMId(d.id, parentId);
       })
       .classed('rel-group', true);
-    enter.append('svg:line', 'g.service')
-      .attr('class', function(d) {
-        // Style relation lines differently depending on status.
-        return 'relation ' + d.aggregatedStatus;
-      });
+    enter.append('svg:line', 'g.service').attr('class', function(d) {
+      // Style relation lines differently depending on status.
+      return 'relation ' + d.aggregatedStatus;
+    });
 
     // The knob connecting the relation line with the FROM service block
-    enter.append('circle')
-      .attr({
-        'cx': 0,
-        'cy': 0,
-        'r': 4,
-        'class'(d) {
-          // Style relation connector differently depending on status.
-          return 'connector1 ' + d.aggregatedStatus;
-        }
-      });
+    enter.append('circle').attr({
+      cx: 0,
+      cy: 0,
+      r: 4,
+      class(d) {
+        // Style relation connector differently depending on status.
+        return 'connector1 ' + d.aggregatedStatus;
+      }
+    });
 
     // The knob connecting the relation line with the TO service block
-    enter.append('circle')
-      .attr({
-        'cx': 0,
-        'cy': 0,
-        'r': 4,
-        'class'(d) {
-          // Style relation connector differently depending on status.
-          return 'connector2 ' + d.aggregatedStatus;
-        }
-      });
-    enter.append('g')
+    enter.append('circle').attr({
+      cx: 0,
+      cy: 0,
+      r: 4,
+      class(d) {
+        // Style relation connector differently depending on status.
+        return 'connector2 ' + d.aggregatedStatus;
+      }
+    });
+    enter
+      .append('g')
       .classed('rel-indicator', true)
       .append('image')
       .attr({
-        'width': imageSize,
-        'height': imageSize,
-        'x': imageSize / -2,
-        'y': imageSize / -2,
-        'rx': imageSize / 2,
-        'ry': imageSize / 2
+        width: imageSize,
+        height: imageSize,
+        x: imageSize / -2,
+        y: imageSize / -2,
+        rx: imageSize / 2,
+        ry: imageSize / 2
       });
-    enter.append('text')
+    enter
+      .append('text')
       .append('tspan')
-      .text(function(d) {return d.display_name; });
+      .text(function(d) {
+        return d.display_name;
+      });
 
     g.filter(function(d) {
-      let currStatus = d3.select(this).select('image')
-        .attr('xlink:href') || '';
-      currStatus = currStatus.split('relation-icon-')
+      let currStatus =
+        d3
+          .select(this)
+          .select('image')
+          .attr('xlink:href') || '';
+      currStatus = currStatus
+        .split('relation-icon-')
         .reverse()[0]
         .split('.')[0];
       return currStatus !== d.aggregatedStatus;
     })
       .selectAll('image')
       .attr('xlink:href', function(d) {
-        return (
-          basePath + '/assets/svgs/relation-icon-' +
-            d.aggregatedStatus + '.svg');
+        return basePath + '/assets/svgs/relation-icon-' + d.aggregatedStatus + '.svg';
       });
     return g;
   }
 
   drawRelation(relation) {
-    const connectors = relation.source
-      .getConnectorPair(relation.target);
+    const connectors = relation.source.getConnectorPair(relation.target);
     const s = connectors[0];
     const t = connectors[1];
     const link = d3.select(this).select('line');
     const connector1 = d3.select(this).select('.connector1');
     const connector2 = d3.select(this).select('.connector2');
     const relationIcon = d3.select(this).select('.rel-indicator');
-    const sRadius = (relation.source.w / 2) - 4;
-    const tRadius = (relation.target.w / 2) - 4;
+    const sRadius = relation.source.w / 2 - 4;
+    const tRadius = relation.target.w / 2 - 4;
 
     link
       .attr('x1', s[0])
@@ -405,30 +407,26 @@ class RelationModule {
     const deg = Math.atan2(s[1] - t[1], s[0] - t[0]);
 
     // Convert the radian to a point[x, y] for the FROM knob
-    const dot1 = [
-      s[0] + -(Math.cos(deg) * sRadius),
-      s[1] + -(Math.sin(deg) * sRadius)];
+    const dot1 = [s[0] + -(Math.cos(deg) * sRadius), s[1] + -(Math.sin(deg) * sRadius)];
 
     // Convert the radian to a point[x, y] for the TO knob
-    const dot2 = [
-      t[0] + Math.cos(deg) * tRadius,
-      t[1] + Math.sin(deg) * tRadius];
+    const dot2 = [t[0] + Math.cos(deg) * tRadius, t[1] + Math.sin(deg) * tRadius];
 
     // Position the TO knob
-    connector1
-      .attr('cx', dot1[0])
-      .attr('cy', dot1[1]);
+    connector1.attr('cx', dot1[0]).attr('cy', dot1[1]);
 
     // Position the FROM knob
-    connector2
-      .attr('cx', dot2[0])
-      .attr('cy', dot2[1]);
+    connector2.attr('cx', dot2[0]).attr('cy', dot2[1]);
 
     relationIcon.attr('transform', function(d) {
-      return 'translate(' + [
-        Math.max(dot1[0], dot2[0]) - Math.abs(((dot1[0] - dot2[0])) / 2),
-        Math.max(dot1[1], dot2[1]) - Math.abs(((dot1[1] - dot2[1])) / 2)
-      ] + ')';
+      return (
+        'translate(' +
+        [
+          Math.max(dot1[0], dot2[0]) - Math.abs((dot1[0] - dot2[0]) / 2),
+          Math.max(dot1[1], dot2[1]) - Math.abs((dot1[1] - dot2[1]) / 2)
+        ] +
+        ')'
+      );
     });
 
     return link;
@@ -439,7 +437,8 @@ class RelationModule {
     const vis = topo.vis;
     const self = this;
 
-    vis.selectAll('.service.subordinate')
+    vis
+      .selectAll('.service.subordinate')
       .selectAll('.sub-rel-block tspan')
       .text(function(d) {
         return self.subordinateRelationsForService(d).length;
@@ -464,7 +463,8 @@ class RelationModule {
   mousemove(d, self) {
     if (self.clickAddRelation) {
       self.addRelationDrag.call(self, {
-        box: self.addRelationStart_service});
+        box: self.addRelationStart_service
+      });
     }
   }
 
@@ -477,9 +477,7 @@ class RelationModule {
    */
   mouseMoveHandler(evt) {
     const container = this.getContainer();
-    this.mousemove.call(
-      container.querySelector('.zoom-plane'),
-      null, this);
+    this.mousemove.call(container.querySelector('.zoom-plane'), null, this);
   }
 
   snapToService(evt) {
@@ -498,11 +496,12 @@ class RelationModule {
     // and draw the line between the two nearest connector points of
     // the two services.
     if (this.dragline) {
-      const connectors = d.getConnectorPair(
-        this.addRelationStart_service);
+      const connectors = d.getConnectorPair(this.addRelationStart_service);
       const s = connectors[0];
       const t = connectors[1];
-      this.dragline.select('line').attr('x1', t[0])
+      this.dragline
+        .select('line')
+        .attr('x1', t[0])
         .attr('y1', t[1])
         .attr('x2', s[0])
         .attr('y2', s[1])
@@ -515,8 +514,9 @@ class RelationModule {
     this.clearRelationSettings();
 
     if (this.dragline) {
-      this.dragline.select('line').attr('class',
-        'relation pending-relation dragline dragging');
+      this.dragline
+        .select('line')
+        .attr('class', 'relation pending-relation dragline dragging');
       this.draglineOverService = false;
       this.clickAddRelation = true;
       this.topo.buildingRelation = true;
@@ -535,11 +535,10 @@ class RelationModule {
       const d = evt.service;
       // Create a pending drag-line.
       const vis = this.topo.vis;
-      const dragline = vis.insert('g', ':first-child')
-        .attr('class', 'drag-relation-group');
-      dragline.insert('line')
-        .attr('class', 'relation pending-relation dragline dragging');
-      dragline.append('circle')
+      const dragline = vis.insert('g', ':first-child').attr('class', 'drag-relation-group');
+      dragline.insert('line').attr('class', 'relation pending-relation dragline dragging');
+      dragline
+        .append('circle')
         .attr('class', 'dragline__indicator')
         .attr({
           r: 15,
@@ -547,7 +546,8 @@ class RelationModule {
           stroke: '#888888',
           'stroke-width': 1.1
         });
-      dragline.append('image')
+      dragline
+        .append('image')
         .attr('class', 'dragline__indicator-image')
         .attr({
           'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
@@ -563,20 +563,20 @@ class RelationModule {
       this.cursorBox = new environmentUtils.BoundingBox();
       this.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       const point = this.cursorBox.getConnectorPair(d);
-      const imagePos = (point[0][0] - 8) + ', ' + (point[0][1] - 8);
+      const imagePos = point[0][0] - 8 + ', ' + (point[0][1] - 8);
 
-      dragline.select('line')
+      dragline
+        .select('line')
         .classed('dragline__line', true)
         .attr('x1', point[0][0])
         .attr('y1', point[0][1])
         .attr('x2', point[1][0])
         .attr('y2', point[1][1]);
-      dragline.select('circle')
+      dragline
+        .select('circle')
         .attr('cx', point[0][0])
         .attr('cy', point[0][1]);
-      dragline.select('image')
-        .attr('transform',
-          'translate(' + imagePos + ')');
+      dragline.select('image').attr('transform', 'translate(' + imagePos + ')');
       this.dragline = dragline;
       vis.select('.plus-service').classed('fade', true);
       // Start the add-relation process.
@@ -612,22 +612,22 @@ class RelationModule {
       }
       this.cursorBox.pos = {x: mouseX, y: mouseY, w: 0, h: 0};
 
-      const imagePos = (mouseX - 8) + ', ' + (mouseY - 8);
+      const imagePos = mouseX - 8 + ', ' + (mouseY - 8);
       // Draw the relation line from the connector point nearest the
       // cursor to the cursor itself.
       const connectors = this.cursorBox.getConnectorPair(d),
-          s = connectors[1];
-      this.dragline.select('line')
+        s = connectors[1];
+      this.dragline
+        .select('line')
         .attr('x1', s[0])
         .attr('y1', s[1])
         .attr('x2', mouseX)
         .attr('y2', mouseY);
-      this.dragline.select('circle')
+      this.dragline
+        .select('circle')
         .attr('cx', mouseX)
         .attr('cy', mouseY);
-      this.dragline.select('image')
-        .attr('transform',
-          'translate(' + imagePos + ')');
+      this.dragline.select('image').attr('transform', 'translate(' + imagePos + ')');
     }
   }
 
@@ -747,13 +747,13 @@ class RelationModule {
     if (!serviceNames || serviceNames.length === 0) {
       serviceNames = Object.keys(topo.service_boxes);
     }
-    const selection = topo.vis.selectAll('.rel-group')
-      .filter(function(d) {
-        return (serviceNames.indexOf(d.source.id) > -1 ||
-            serviceNames.indexOf(d.target.id) > -1) &&
-            (d.target.hide === false && d.source.hide === false) &&
-            (d.target.fade === false && d.source.fade === false);
-      });
+    const selection = topo.vis.selectAll('.rel-group').filter(function(d) {
+      return (
+        (serviceNames.indexOf(d.source.id) > -1 || serviceNames.indexOf(d.target.id) > -1) &&
+        (d.target.hide === false && d.source.hide === false) &&
+        (d.target.fade === false && d.source.fade === false)
+      );
+    });
     selection.classed(topoUtils.getVisibilityClasses('show'));
   }
 
@@ -769,11 +769,9 @@ class RelationModule {
       return;
     }
     const topo = this.topo;
-    const selection = topo.vis.selectAll('.rel-group')
-      .filter(function(d) {
-        return serviceNames.indexOf(d.source.id) > -1 ||
-              serviceNames.indexOf(d.target.id) > -1;
-      });
+    const selection = topo.vis.selectAll('.rel-group').filter(function(d) {
+      return serviceNames.indexOf(d.source.id) > -1 || serviceNames.indexOf(d.target.id) > -1;
+    });
     selection.classed(topoUtils.getVisibilityClasses('fade'));
   }
 
@@ -790,11 +788,9 @@ class RelationModule {
       return;
     }
     const topo = this.topo;
-    const selection = topo.vis.selectAll('.rel-group')
-      .filter(function(d) {
-        return serviceNames.indexOf(d.source.id) > -1 ||
-            serviceNames.indexOf(d.target.id) > -1;
-      });
+    const selection = topo.vis.selectAll('.rel-group').filter(function(d) {
+      return serviceNames.indexOf(d.source.id) > -1 || serviceNames.indexOf(d.target.id) > -1;
+    });
     selection.classed(topoUtils.getVisibilityClasses('hide'));
   }
 
@@ -815,9 +811,11 @@ class RelationModule {
     this.clickAddRelation = true;
 
     // make sure all services are shown (not faded or hidden)
-    document.dispatchEvent(new CustomEvent('topo.show', {
-      detail: [{selection: vis.selectAll('.service')}]
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.show', {
+        detail: [{selection: vis.selectAll('.service')}]
+      })
+    );
 
     const db = topo.db;
     const endpointsController = topo.endpointsController;
@@ -825,9 +823,11 @@ class RelationModule {
 
     // Transform endpoints into a list of relatable services (to the
     // service).
-    const possible_relations = utils.arrayFlatten(
-      Object.keys(endpoints).map(k => endpoints[k])).map(
-      ep => {return ep.service;});
+    const possible_relations = utils
+      .arrayFlatten(Object.keys(endpoints).map(k => endpoints[k]))
+      .map(ep => {
+        return ep.service;
+      });
     const invalidRelationTargets = {};
 
     // Iterate services and invert the possibles list.
@@ -841,18 +841,22 @@ class RelationModule {
     // Rather than two loops this marks
     // all services as selectable and then
     // removes the invalid ones.
-    const sel = vis.selectAll('.service')
+    const sel = vis
+      .selectAll('.service')
       .classed('selectable-service', true)
       .filter(function(d) {
-        return (d.id in invalidRelationTargets &&
-                        d.id !== service.get('id'));
+        return d.id in invalidRelationTargets && d.id !== service.get('id');
       });
-    document.dispatchEvent(new CustomEvent('topo.fade', {
-      detail: [{
-        selection: sel,
-        serviceNames: Object.keys(invalidRelationTargets)
-      }]
-    }));
+    document.dispatchEvent(
+      new CustomEvent('topo.fade', {
+        detail: [
+          {
+            selection: sel,
+            serviceNames: Object.keys(invalidRelationTargets)
+          }
+        ]
+      })
+    );
     sel.classed('selectable-service', false);
 
     // Store possible endpoints.
@@ -889,12 +893,21 @@ class RelationModule {
       // Create a relation with the only available endpoint.
       const ep = endpoints[0];
       const endpoints_item = [
-        [ep[0].service,
-          {name: ep[0].name,
-            role: 'server'}],
-        [ep[1].service,
-          {name: ep[1].name,
-            role: 'client'}]];
+        [
+          ep[0].service,
+          {
+            name: ep[0].name,
+            role: 'server'
+          }
+        ],
+        [
+          ep[1].service,
+          {
+            name: ep[1].name,
+            role: 'client'
+          }
+        ]
+      ];
       view.addRelationEnd(endpoints_item, view, context);
       return;
     }
@@ -936,7 +949,8 @@ class RelationModule {
           displayName = topo.db.services
             .getById(serviceName)
             .get('displayName')
-            .replace(/^\(/, '').replace(/\)$/, '');
+            .replace(/^\(/, '')
+            .replace(/\)$/, '');
         } else {
           displayName = serviceName;
         }
@@ -959,9 +973,9 @@ class RelationModule {
     const container = this.getContainer();
     const menu = container.querySelector('#ambiguous-relation-menu');
     ReactDOM.render(
-      <AmbiguousRelationMenu
-        endpoints={endpoints} />,
-      menu.querySelector('#ambiguous-relation-menu-content'));
+      <AmbiguousRelationMenu endpoints={endpoints} />,
+      menu.querySelector('#ambiguous-relation-menu-content')
+    );
     return menu;
   }
 
@@ -979,12 +993,20 @@ class RelationModule {
       node.addEventListener('click', function(evt) {
         const el = evt.currentTarget;
         const endpoints_item = [
-          [el.getAttribute('data-startservice'), {
-            name: el.getAttribute('data-startname'),
-            role: 'server'}],
-          [el.getAttribute('data-endservice'), {
-            name: el.getAttribute('data-endname'),
-            role: 'client'}]
+          [
+            el.getAttribute('data-startservice'),
+            {
+              name: el.getAttribute('data-startname'),
+              role: 'server'
+            }
+          ],
+          [
+            el.getAttribute('data-endservice'),
+            {
+              name: el.getAttribute('data-endname'),
+              role: 'client'
+            }
+          ]
         ];
         menu.classList.remove('active');
         view.addRelationEnd(endpoints_item, view, context);
@@ -1050,9 +1072,11 @@ class RelationModule {
    */
   subordinateRelationsForService(service) {
     return this.relations.filter(function(relation) {
-      return (relation.source.modelId === service.modelId ||
+      return (
+        (relation.source.modelId === service.modelId ||
           relation.target.modelId === service.modelId) &&
-          relation.isSubordinate;
+        relation.isSubordinate
+      );
     });
   }
 
@@ -1078,10 +1102,7 @@ class RelationModule {
    */
   showRelationMenu(relation) {
     const menu = document.querySelector('#relation-menu');
-    ReactDOM.render(
-      <RelationMenu
-        relations={relation.relations} />,
-      menu);
+    ReactDOM.render(<RelationMenu relations={relation.relations} />, menu);
     menu.classList.add('active');
     this.relationMenuActive = true;
     this.relationMenuRelation = relation;
@@ -1113,20 +1134,18 @@ class RelationModule {
   relationRemoveClick(_, self) {
     const topo = self.topo;
     const db = topo.db;
-    const relationId = this.closest('.relation-container').getAttribute(
-      'data-relationid');
+    const relationId = this.closest('.relation-container').getAttribute('data-relationid');
     let relation = db.relations.getById(relationId);
     relation = self.decorateRelations([relation])[0];
     document.dispatchEvent(new Event('topo.clearState'));
     if (relation.isSubordinate && !relation.relations[0].pending) {
       db.notifications.add({
-        title: 'Subordinate relations can\'t be removed',
-        message: 'Subordinate relations can\'t be removed',
+        title: "Subordinate relations can't be removed",
+        message: "Subordinate relations can't be removed",
         level: 'error'
       });
     } else {
-      relationUtils.destroyRelations(
-        topo.db, topo.env, [relationId]);
+      relationUtils.destroyRelations(topo.db, topo.env, [relationId]);
     }
     // The state needs to be cleared after the relation is destroyed as well
     // to hide the destroy relation popup.
@@ -1152,6 +1171,6 @@ class RelationModule {
       }
     });
   }
-};
+}
 
 module.exports = RelationModule;

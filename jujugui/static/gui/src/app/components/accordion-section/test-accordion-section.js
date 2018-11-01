@@ -8,14 +8,15 @@ const AccordionSection = require('./accordion-section');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 describe('AccordionSection', () => {
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <AccordionSection
-      startOpen={
-        options.startOpen === undefined ? false : options.startOpen}
-      title={options.title || 'My title!'}>
-      {options.children === undefined ? (<span>Hello</span>) : options.children}
-    </AccordionSection>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <AccordionSection
+        startOpen={options.startOpen === undefined ? false : options.startOpen}
+        title={options.title || 'My title!'}
+      >
+        {options.children === undefined ? <span>Hello</span> : options.children}
+      </AccordionSection>
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();
@@ -24,18 +25,16 @@ describe('AccordionSection', () => {
         <div
           className="accordion-section__title"
           onClick={wrapper.find('.accordion-section__title').prop('onClick')}
-          role="button">
+          role="button"
+        >
           <span className="accordion-section__title-content">My title!</span>
-          <SvgIcon
-            className="right"
-            name="chevron_down_16"
-            size="16" />
+          <SvgIcon className="right" name="chevron_down_16" size="16" />
         </div>
-        <div
-          className="accordion-section__content"
-          ref="content"
-          style={{maxHeight: 0}}><span>Hello</span></div>
-      </div>);
+        <div className="accordion-section__content" ref="content" style={{maxHeight: 0}}>
+          <span>Hello</span>
+        </div>
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -47,24 +46,20 @@ describe('AccordionSection', () => {
     };
     instance._toggle();
     const expected = (
-      <div
-        className="accordion-section__content"
-        ref="content"
-        style={{maxHeight: '100px'}}>
+      <div className="accordion-section__content" ref="content" style={{maxHeight: '100px'}}>
         <span>Hello</span>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.accordion-section__content'), expected);
   });
 
   it('does not show chevron or content when there are no children', () => {
     const wrapper = renderComponent({children: null});
     const expected = (
-      <div
-        className="accordion-section__content"
-        ref="content"
-        style={{maxHeight: '100px'}}>
+      <div className="accordion-section__content" ref="content" style={{maxHeight: '100px'}}>
         {null}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.accordion-section__content'), expected);
   });
 });

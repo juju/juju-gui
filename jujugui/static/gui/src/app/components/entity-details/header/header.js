@@ -52,7 +52,8 @@ class EntityHeader extends React.Component {
       const bundleURL = urls.URL.fromLegacyString(entity.id);
       props.getBundleYAML(
         bundleURL.legacyPath(),
-        this._getBundleYAMLCallback.bind(this, bundleURL.path()));
+        this._getBundleYAMLCallback.bind(this, bundleURL.path())
+      );
     }
     this._closeEntityDetails();
   }
@@ -82,8 +83,8 @@ class EntityHeader extends React.Component {
       console.error(error);
       this.props.addNotification({
         title: 'Bundle failed to deploy',
-        message: 'The bundle ' + this.props.entityModel.get('name') +
-          ' failed to deploy:' + error,
+        message:
+          'The bundle ' + this.props.entityModel.get('name') + ' failed to deploy:' + error,
         level: 'error'
       });
       return;
@@ -131,13 +132,9 @@ class EntityHeader extends React.Component {
     @method _generateClasses
   */
   _generateClasses() {
-    return classNames(
-      'entity-header',
-      {
-        'entity-header--sticky':
-          this.props.scrollPosition > this.state.headerHeight
-      }
-    );
+    return classNames('entity-header', {
+      'entity-header--sticky': this.props.scrollPosition > this.state.headerHeight
+    });
   }
 
   /**
@@ -161,17 +158,16 @@ class EntityHeader extends React.Component {
           disabled={this.props.acl.isReadOnly()}
           ref="deployAction"
           tooltip={
-            `Add this ${entity.type} to ` +
-            `${modelName ? 'your current' : 'a new'} model`}
-          type="positive">
+            `Add this ${entity.type} to ` + `${modelName ? 'your current' : 'a new'} model`
+          }
+          type="positive"
+        >
           {title}
         </Button>
       );
     } else {
       deployAction = (
-        <div
-          className="entity-header__deploy-action"
-          ref="deployAction">
+        <div className="entity-header__deploy-action" ref="deployAction">
           This type of charm can only be deployed from the command line.
         </div>
       );
@@ -186,8 +182,7 @@ class EntityHeader extends React.Component {
   */
   _generateSelectPlan() {
     var props = this.props;
-    if (props.entityModel.get('entityType') !== 'charm' ||
-      !this.props.hasPlans) {
+    if (props.entityModel.get('entityType') !== 'charm' || !this.props.hasPlans) {
       return;
     }
     var plans = props.plans;
@@ -205,20 +200,18 @@ class EntityHeader extends React.Component {
       options = [];
       plans.forEach((plan, i) => {
         options.push(
-          <option
-            key={plan.url + i}
-            value={plan.url}>
+          <option key={plan.url + i} value={plan.url}>
             {plan.url}
-          </option>);
+          </option>
+        );
       });
     }
     return (
-      <select
-        className="entity-header__select"
-        ref="plan">
+      <select className="entity-header__select" ref="plan">
         <option key="default">{defaultMessage}</option>
         {options}
-      </select>);
+      </select>
+    );
   }
 
   /**
@@ -232,15 +225,15 @@ class EntityHeader extends React.Component {
     var serviceCount = entity.serviceCount;
     var unitCount = entity.unitCount;
     var machineCount = entity.machineCount;
-    return (<ul className="bullets inline entity-header__properties">
-      <li className="entity-header__counts">
-        {serviceCount} {initUtils.pluralize('application', serviceCount)},
-          &nbsp;
-        {machineCount} {initUtils.pluralize('machine', machineCount)},
-          &nbsp;
-        {unitCount} {initUtils.pluralize('unit', unitCount)}
-      </li>
-    </ul>);
+    return (
+      <ul className="bullets inline entity-header__properties">
+        <li className="entity-header__counts">
+          {serviceCount} {initUtils.pluralize('application', serviceCount)}, &nbsp;
+          {machineCount} {initUtils.pluralize('machine', machineCount)}, &nbsp;
+          {unitCount} {initUtils.pluralize('unit', unitCount)}
+        </li>
+      </ul>
+    );
   }
 
   /**
@@ -257,13 +250,10 @@ class EntityHeader extends React.Component {
       <li className="entity-header__subordinate">
         Subordinate
         <a
-          href={
-            'https://jujucharms.com/docs/stable/' +
-            'authors-subordinate-applications'}
-          target="_blank">
-          <SvgIcon
-            name="help_16"
-            size="16" />
+          href={'https://jujucharms.com/docs/stable/' + 'authors-subordinate-applications'}
+          target="_blank"
+        >
+          <SvgIcon name="help_16" size="16" />
         </a>
       </li>
     );
@@ -293,7 +283,8 @@ class EntityHeader extends React.Component {
     return (
       <li className="entity-header__series" key={lastRevision}>
         <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
-            Latest version (#{url.revision})
+          Latest version (#
+          {url.revision})
         </span>
       </li>
     );
@@ -342,8 +333,11 @@ class EntityHeader extends React.Component {
       return null;
     }
     series = !Array.isArray(series) ? [series] : series;
-    return series.map(series =>
-      <li className="entity-header__series" key={series}>{series}</li>);
+    return series.map(series => (
+      <li className="entity-header__series" key={series}>
+        {series}
+      </li>
+    ));
   }
 
   /**
@@ -358,12 +352,18 @@ class EntityHeader extends React.Component {
     if (!channels.length) {
       return null;
     }
-    const names = channels.map(ch => {
-      const name = ch.name;
-      // Capitalize channel names.
-      return name.charAt(0).toUpperCase() + name.slice(1);
-    }).join(', ');
-    return <li className="entity-header__channels" key={names}>{names}</li>;
+    const names = channels
+      .map(ch => {
+        const name = ch.name;
+        // Capitalize channel names.
+        return name.charAt(0).toUpperCase() + name.slice(1);
+      })
+      .join(', ');
+    return (
+      <li className="entity-header__channels" key={names}>
+        {names}
+      </li>
+    );
   }
 
   render() {
@@ -382,36 +382,29 @@ class EntityHeader extends React.Component {
     ].join('');
 
     if (entity.type !== 'bundle') {
-      icon = (<img
-        alt={entity.displayName}
-        className="entity-header__icon"
-        src={entity.iconPath}
-        width="96" />);
+      icon = (
+        <img
+          alt={entity.displayName}
+          className="entity-header__icon"
+          src={entity.iconPath}
+          width="96"
+        />
+      );
     }
     return (
-      <div
-        className="row-hero"
-        ref="headerWrapper"
-        style={this._generateWrapperStyles()}>
+      <div className="row-hero" ref="headerWrapper" style={this._generateWrapperStyles()}>
         <header className={this._generateClasses()}>
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
               {icon}
-              <h1
-                className="entity-header__title"
-                itemProp="name"
-                ref="entityHeaderTitle">
+              <h1 className="entity-header__title" itemProp="name" ref="entityHeaderTitle">
                 {entity.displayName}{' '}
-                <span className="entity-header__version">
-                  #{entity.revision_id}
-                </span>
+                <span className="entity-header__version">#{entity.revision_id}</span>
               </h1>
               <ul className="bullets inline entity-header__properties">
                 <li className="entity-header__by">
                   By&nbsp;
-                  <span
-                    className="link"
-                    onClick={this._onOwnerClick.bind(this)}>
+                  <span className="link" onClick={this._onOwnerClick.bind(this)}>
                     {entity.owner}
                   </span>
                 </li>
@@ -423,32 +416,20 @@ class EntityHeader extends React.Component {
               {this._generateCounts()}
               <ul className="entity-header__social-list">
                 <li>
-                  <a
-                    href={twitterUrl}
-                    id="item-twitter"
-                    target="_blank">
-                    <SvgIcon
-                      name="icon-social-twitter"
-                      size="36" />
+                  <a href={twitterUrl} id="item-twitter" target="_blank">
+                    <SvgIcon name="icon-social-twitter" size="36" />
                   </a>
                 </li>
                 <li>
-                  <a
-                    href={googlePlusUrl}
-                    id="item-googleplus"
-                    target="_blank">
-                    <SvgIcon
-                      name="icon-social-google"
-                      size="36" />
+                  <a href={googlePlusUrl} id="item-googleplus" target="_blank">
+                    <SvgIcon name="icon-social-google" size="36" />
                   </a>
                 </li>
               </ul>
             </div>
-            <div className={
-              'entity-header__right four-col last-col no-margin-bottom'}>
+            <div className={'entity-header__right four-col last-col no-margin-bottom'}>
               {this._generateSelectPlan()}
-              <CopyToClipboard
-                value={'juju deploy ' + entity.id} />
+              <CopyToClipboard value={'juju deploy ' + entity.id} />
               {this._generateDeployAction()}
             </div>
           </div>
@@ -456,7 +437,7 @@ class EntityHeader extends React.Component {
       </div>
     );
   }
-};
+}
 
 EntityHeader.propTypes = {
   acl: PropTypes.object.isRequired,

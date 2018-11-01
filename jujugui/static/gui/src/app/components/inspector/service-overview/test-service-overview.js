@@ -9,19 +9,21 @@ const ServiceOverview = require('./service-overview');
 describe('ServiceOverview', function() {
   let acl, charm, service;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ServiceOverview
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      charm={options.charm || charm}
-      destroyService={options.destroyService || sinon.stub()}
-      modelUUID={options.modelUUID || 'abc123'}
-      service={options.service || service}
-      serviceRelations={options.serviceRelations || [1]}
-      showActivePlan={options.showActivePlan || sinon.stub()}
-      showPlans={options.showPlans === undefined ? false : options.showPlans} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ServiceOverview
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        charm={options.charm || charm}
+        destroyService={options.destroyService || sinon.stub()}
+        modelUUID={options.modelUUID || 'abc123'}
+        service={options.service || service}
+        serviceRelations={options.serviceRelations || [1]}
+        showActivePlan={options.showActivePlan || sinon.stub()}
+        showPlans={options.showPlans === undefined ? false : options.showPlans}
+      />
+    );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -47,8 +49,7 @@ describe('ServiceOverview', function() {
   });
 
   it('does not request plans if charm does not have metrics', function() {
-    service.get.withArgs('activePlan')
-      .throws('it should not fetch this if no metrics');
+    service.get.withArgs('activePlan').throws('it should not fetch this if no metrics');
     service.get.withArgs('name').throws('it should not fetch this if no metrics');
     service.get.withArgs('plans').throws('it should not fetch this if no metrics');
     charm.hasMetrics.returns(false);
@@ -133,11 +134,16 @@ describe('ServiceOverview', function() {
     const wrapper = renderComponent({changeState});
     // call the action method which is passed to the child to make sure it
     // is hooked up to the changeState method.
-    wrapper.find('OverviewAction[valueType="all"]').props().action({
-      currentTarget: {
-        getAttribute: function() { return 'Units'; }
-      }
-    });
+    wrapper
+      .find('OverviewAction[valueType="all"]')
+      .props()
+      .action({
+        currentTarget: {
+          getAttribute: function() {
+            return 'Units';
+          }
+        }
+      });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -151,28 +157,25 @@ describe('ServiceOverview', function() {
   });
 
   it('shows the uncommitted units action', function() {
-    service.get.withArgs('units').returns({toArray: () => [
-      {agent_state: 'uncommitted'},
-      {agent_state: 'started'},
-      {}
-    ]});
+    service.get.withArgs('units').returns({
+      toArray: () => [{agent_state: 'uncommitted'}, {agent_state: 'started'}, {}]
+    });
     const wrapper = renderComponent();
-    assert.equal(
-      wrapper.find('OverviewAction[valueType="uncommitted"]').length, 1);
+    assert.equal(wrapper.find('OverviewAction[valueType="uncommitted"]').length, 1);
   });
 
   it('shows the pending units action', function() {
-    service.get.withArgs('units').returns({toArray: () => [
-      {agent_state: 'pending'}
-    ]});
+    service.get.withArgs('units').returns({
+      toArray: () => [{agent_state: 'pending'}]
+    });
     const wrapper = renderComponent();
     assert.equal(wrapper.find('OverviewAction[valueType="pending"]').length, 1);
   });
 
   it('shows the errors units action', function() {
-    service.get.withArgs('units').returns({toArray: () => [
-      {agent_state: 'error'}
-    ]});
+    service.get.withArgs('units').returns({
+      toArray: () => [{agent_state: 'error'}]
+    });
     const wrapper = renderComponent();
     assert.equal(wrapper.find('OverviewAction[valueType="error"]').length, 1);
   });
@@ -211,7 +214,10 @@ describe('ServiceOverview', function() {
   it('shows the charm details if the version is clicked', function() {
     const changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('OverviewAction[title="Change version"]').props().linkAction();
+    wrapper
+      .find('OverviewAction[title="Change version"]')
+      .props()
+      .linkAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       store: 'django'
@@ -230,8 +236,10 @@ describe('ServiceOverview', function() {
     const showActivePlan = sinon.stub();
     const wrapper = renderComponent({showActivePlan});
     assert.equal(
-      showActivePlan.callCount, 0,
-      'we are defining plans in the service, it should not call to fetch more');
+      showActivePlan.callCount,
+      0,
+      'we are defining plans in the service, it should not call to fetch more'
+    );
     assert.equal(wrapper.find('OverviewAction[title="Plan"]').length, 1);
   });
 
@@ -250,8 +258,8 @@ describe('ServiceOverview', function() {
   it('renders the delete confirmation when pending deletion', function() {
     service.get.withArgs('deleted').returns(true);
     const wrapper = renderComponent();
-    const confirmMessage = 'This application has been marked to be destroyed'
-      + ' on next deployment.';
+    const confirmMessage =
+      'This application has been marked to be destroyed' + ' on next deployment.';
     const confirm = wrapper.find('InspectorConfirm');
     assert.equal(confirm.length, 1);
     assert.equal(confirm.prop('message'), confirmMessage);
@@ -267,7 +275,10 @@ describe('ServiceOverview', function() {
     const destroyService = sinon.stub();
     const wrapper = renderComponent({destroyService});
     // Simulate the confirm click.
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(destroyService.callCount, 1);
   });
 });

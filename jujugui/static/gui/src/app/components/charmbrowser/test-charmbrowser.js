@@ -13,27 +13,29 @@ const Store = require('../store/store');
 describe('Charmbrowser', function() {
   var acl, appState, charmstore;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Charmbrowser
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      addToModel={options.addToModel || sinon.stub()}
-      appState={options.appState || {}}
-      charmstore={options.charmstore || charmstore}
-      charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
-      clearLightbox={options.clearLightbox}
-      deployService={options.deployService || sinon.stub()}
-      displayLightbox={options.displayLightbox}
-      flags={options.flags || {}}
-      getModelName={options.getModelName || sinon.stub()}
-      gisf={options.gisf === undefined ? true : options.gisf}
-      importBundleYAML={options.importBundleYAML || sinon.stub()}
-      listPlansForCharm={options.listPlansForCharm || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      setPageTitle={options.setPageTitle || sinon.stub()}
-      showTerms={options.showTerms || sinon.stub()}
-      staticURL={options.staticURL} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Charmbrowser
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        addToModel={options.addToModel || sinon.stub()}
+        appState={options.appState || {}}
+        charmstore={options.charmstore || charmstore}
+        charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
+        clearLightbox={options.clearLightbox}
+        deployService={options.deployService || sinon.stub()}
+        displayLightbox={options.displayLightbox}
+        flags={options.flags || {}}
+        getModelName={options.getModelName || sinon.stub()}
+        gisf={options.gisf === undefined ? true : options.gisf}
+        importBundleYAML={options.importBundleYAML || sinon.stub()}
+        listPlansForCharm={options.listPlansForCharm || sinon.stub()}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        setPageTitle={options.setPageTitle || sinon.stub()}
+        showTerms={options.showTerms || sinon.stub()}
+        staticURL={options.staticURL}
+      />
+    );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -72,9 +74,7 @@ describe('Charmbrowser', function() {
     });
     const searchResults = wrapper.find('SearchResults');
     const expected = (
-      <div
-        className="charmbrowser"
-        ref="charmbrowser">
+      <div className="charmbrowser" ref="charmbrowser">
         <SearchResults
           acl={acl}
           addToModel={addToModel}
@@ -89,8 +89,10 @@ describe('Charmbrowser', function() {
           setPageTitle={setPageTitle}
           sort={undefined}
           tags={undefined}
-          type={undefined} />
-      </div>);
+          type={undefined}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.charmbrowser'), expected);
   });
 
@@ -102,17 +104,17 @@ describe('Charmbrowser', function() {
       staticURL: 'surl'
     });
     const expected = (
-      <div
-        className="charmbrowser"
-        ref="charmbrowser">
+      <div className="charmbrowser" ref="charmbrowser">
         <Store
           changeState={wrapper.find('Store').prop('changeState')}
           charmstoreURL="http://1.2.3.4/"
           gisf={true}
           setPageTitle={setPageTitle}
           showExperts={undefined}
-          staticURL='surl' />
-      </div>);
+          staticURL="surl"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.charmbrowser'), expected);
   });
 
@@ -145,9 +147,7 @@ describe('Charmbrowser', function() {
     });
     const entityDetails = wrapper.find('EntityDetails');
     const expected = (
-      <div
-        className="charmbrowser"
-        ref="charmbrowser">
+      <div className="charmbrowser" ref="charmbrowser">
         <EntityDetails
           acl={acl}
           addNotification={addNotification}
@@ -174,8 +174,10 @@ describe('Charmbrowser', function() {
           sendAnalytics={sinon.stub()}
           setPageTitle={setPageTitle}
           showTerms={showTerms}
-          staticURL="http://example.com" />
-      </div>);
+          staticURL="http://example.com"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.charmbrowser'), expected);
   });
 

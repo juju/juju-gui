@@ -7,19 +7,15 @@ const enzyme = require('enzyme');
 const Spinner = require('./spinner');
 
 describe('Spinner', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Spinner />
-  );
+  const renderComponent = (options = {}) => enzyme.shallow(<Spinner />);
 
   it('renders the spinner', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="spinner-container">
-        <div className="spinner-loading">
-          Loading...
-        </div>
-      </div>);
+        <div className="spinner-loading">Loading...</div>
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 });

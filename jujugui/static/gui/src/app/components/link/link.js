@@ -29,12 +29,13 @@ class Link extends React.Component {
       <a
         className={classes}
         href={this.props.generatePath(clickState)}
-        onClick={this._handleClick.bind(this, clickState)}>
+        onClick={this._handleClick.bind(this, clickState)}
+      >
         {this.props.children}
       </a>
     );
   }
-};
+}
 
 Link.propTypes = {
   changeState: PropTypes.func.isRequired,

@@ -4,14 +4,7 @@
 const User = require('./user/user');
 const utils = require('./init/testing-utils');
 
-const {
-  charmstore,
-  identity,
-  plans,
-  terms,
-  urls
-} = require('jaaslib');
-
+const {charmstore, identity, plans, terms, urls} = require('jaaslib');
 
 describe('init', () => {
   let app, cleanups, container, getMockStorage, JujuGUI;
@@ -60,10 +53,14 @@ describe('init', () => {
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store[name] = val; },
-          getItem: function(name) { return this.store[name] || null; }
+          setItem: function(name, val) {
+            this.store[name] = val;
+          },
+          getItem: function(name) {
+            return this.store[name] || null;
+          }
         };
-      };
+      }();
     };
   });
 
@@ -110,12 +107,12 @@ describe('init', () => {
         // The charmstore attribute is undefined by default
         assert.equal(typeof app.charmstore, 'object');
         assert.equal(app.charmstore.url, 'http://1.2.3.4/v5');
-        app._setupCharmstore(
-          {charmstoreURL: 'it broke'}, charmstore.charmstore);
+        app._setupCharmstore({charmstoreURL: 'it broke'}, charmstore.charmstore);
         assert.equal(
           app.charmstore.url,
           'http://1.2.3.4/v5',
-          'It should only ever create a single instance of the charmstore');
+          'It should only ever create a single instance of the charmstore'
+        );
       });
     });
 
@@ -127,22 +124,28 @@ describe('init', () => {
       it('is idempotent', () => {
         // The identity attribute is undefined by default
         assert.equal(typeof app.identity, 'object');
-        app._setupIdentity(
-          {getIdentityURL: () => 'broken'}, identity);
+        app._setupIdentity({getIdentityURL: () => 'broken'}, identity);
         assert.strictEqual(
           app.identity.getIdentityURL(),
           null,
-          'It should only ever create a single instance of the identity service');
+          'It should only ever create a single instance of the identity service'
+        );
       });
     });
 
     describe('romulus services', () => {
       it('sets up API clients', () => {
         assert.strictEqual(
-          app.plans instanceof plans.plans, true, 'plans is not the correct instance type');
+          app.plans instanceof plans.plans,
+          true,
+          'plans is not the correct instance type'
+        );
         assert.strictEqual(app.plans.url, 'http://plans.example.com/v3');
         assert.strictEqual(
-          app.terms instanceof terms.terms, true, 'termss is not the correct instance type');
+          app.terms instanceof terms.terms,
+          true,
+          'termss is not the correct instance type'
+        );
         assert.strictEqual(app.terms.url, 'http://terms.example.com/v1');
       });
     });
@@ -188,7 +191,7 @@ describe('init', () => {
     });
 
     describe('_determineFileType', () => {
-      it('returns false if it\'s not a file being dragged', () => {
+      it("returns false if it's not a file being dragged", () => {
         const result = app._determineFileType({
           types: ['foo']
         });
@@ -236,22 +239,26 @@ describe('init', () => {
     });
 
     it('dispatches drag events properly: _appDragOverHandler', () => {
-      const determineFileTypeStub = sinon.stub(
-        app, '_determineFileType').returns('zip');
-      const dragTimerControlStub = sinon.stub(
-        app, '_dragleaveTimerControl');
+      const determineFileTypeStub = sinon.stub(app, '_determineFileType').returns('zip');
+      const dragTimerControlStub = sinon.stub(app, '_dragleaveTimerControl');
       const dragOverListener = sinon.stub();
       document.addEventListener('showDragOverNotification', dragOverListener);
       cleanups = cleanups.concat([
         determineFileTypeStub.restore,
         dragTimerControlStub,
         document.removeEventListener.bind(
-          document, 'showDragOverNotification', dragOverListener)
+          document,
+          'showDragOverNotification',
+          dragOverListener
+        )
       ]);
 
       const noop = () => {};
       const ev1 = {
-        dataTransfer: 'foo', preventDefault: noop, type: 'dragenter'};
+        dataTransfer: 'foo',
+        preventDefault: noop,
+        type: 'dragenter'
+      };
       const ev2 = {dataTransfer: {}, preventDefault: noop, type: 'dragleave'};
       const ev3 = {dataTransfer: {}, preventDefault: noop, type: 'dragover'};
 
@@ -312,9 +319,14 @@ describe('init', () => {
 
     it('avoids trying to login without credentials', () => {
       app.modelAPI.get('user').controller = null;
-      app.navigate = () => { return; };
-      assert.deepEqual(
-        app.user.controller, {user: '', password: '', macaroons: null});
+      app.navigate = () => {
+        return;
+      };
+      assert.deepEqual(app.user.controller, {
+        user: '',
+        password: '',
+        macaroons: null
+      });
       assert.equal(conn.messages.length, 0);
     });
 
@@ -337,7 +349,7 @@ describe('init', () => {
 
     it('tries to re-login with macaroons on disconnections', () => {
       app.modelAPI.setAttrs({jujuCoreVersion: '2.0.0'});
-      app.modelAPI.get('user').controller = ({macaroons: ['macaroon']});
+      app.modelAPI.get('user').controller = {macaroons: ['macaroon']};
       app.modelAPI.connect();
       // Disconnect and reconnect the WebSocket.
       conn.transient_close();
@@ -403,7 +415,6 @@ describe('init', () => {
       assert.equal(app.db.reset.callCount, 0);
     });
 
-
     describe('logout', () => {
       it('logs out from API connections and then reconnects', () => {
         let controllerClosed = false;
@@ -420,15 +431,19 @@ describe('init', () => {
         app.controllerAPI = {
           close: callback => {
             assert.strictEqual(
-              modelClosed, true,
-              'controller: close called before model close');
+              modelClosed,
+              true,
+              'controller: close called before model close'
+            );
             controllerClosed = true;
             callback();
           },
           connect: () => {
             assert.strictEqual(
-              controllerClosed, true,
-              'controller: connect called before close');
+              controllerClosed,
+              true,
+              'controller: connect called before close'
+            );
             controllerConnected = true;
           },
           destroy: sinon.stub()
@@ -440,8 +455,7 @@ describe('init', () => {
             callback();
           },
           connect: () => {
-            assert.strictEqual(
-              modelClosed, true, 'model: connect called before close');
+            assert.strictEqual(modelClosed, true, 'model: connect called before close');
             modelConnected = true;
           },
           destroy: sinon.stub(),
@@ -461,12 +475,14 @@ describe('init', () => {
         assert.strictEqual(app.db.fireEvent.lastCall.args[0], 'update');
         assert.strictEqual(ecs.clear.calledOnce, true, 'ecs.clear');
         assert.equal(app.state.changeState.callCount, 1);
-        assert.deepEqual(app.state.changeState.args[0], [{
-          model: null,
-          profile: null,
-          root: null,
-          store: null
-        }]);
+        assert.deepEqual(app.state.changeState.args[0], [
+          {
+            model: null,
+            profile: null,
+            root: null,
+            store: null
+          }
+        ]);
       });
 
       it('clears the db changed timer when the app is destroyed', () => {
@@ -509,8 +525,10 @@ describe('init', () => {
       assert.isTrue(app.db.reset.called, 'db was not reset.');
       assert.equal(app.db.fireEvent.args[0][0], 'update', 'db was not updated.');
       const topo = app.topology.topo;
-      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
-        'canvas centering was not reset.');
+      assert.isTrue(
+        topo.modules.ServiceModule.centerOnLoad,
+        'canvas centering was not reset.'
+      );
     });
 
     it('clears and resets the env, db, and ecs on change', () => {
@@ -520,8 +538,10 @@ describe('init', () => {
       assert.isTrue(app.db.reset.called, 'db was not reset.');
       assert.equal(app.db.fireEvent.args[0][0], 'update', 'db was not updated.');
       const topo = app.topology.topo;
-      assert.isTrue(topo.modules.ServiceModule.centerOnLoad,
-        'canvas centering was not reset.');
+      assert.isTrue(
+        topo.modules.ServiceModule.centerOnLoad,
+        'canvas centering was not reset.'
+      );
     });
 
     it('can not clear and reset the db, and ecs on change', () => {
@@ -549,7 +569,7 @@ describe('init', () => {
         name: 'foo'
       };
       app.users = {
-        'charmstore': charmstoreUser
+        charmstore: charmstoreUser
       };
       assert.deepEqual(app.getUser('charmstore'), charmstoreUser);
     });
@@ -561,7 +581,7 @@ describe('init', () => {
         name: 'foo'
       };
       app.users = {
-        'charmstore': charmstoreUser
+        charmstore: charmstoreUser
       };
       app.clearUser('charmstore');
       assert.equal(app.users.charmstore, undefined);
@@ -603,7 +623,10 @@ describe('init', () => {
       return {
         destroy: sinon.stub(),
         name: 'test-api',
-        get: sinon.stub().withArgs('connected').returns(connected),
+        get: sinon
+          .stub()
+          .withArgs('connected')
+          .returns(connected),
         login: sinon.stub(),
         loginWithMacaroon: sinon.stub()
       };
@@ -756,8 +779,7 @@ describe('init', () => {
       app.controllerAPI.login = sinon.stub();
       app.controllerAPI.set('connected', true);
       app._ensureControllerConnection({root: 'store'}, sinon.stub());
-      assert.strictEqual(
-        app.controllerAPI.connect.callCount, 0, 'controller');
+      assert.strictEqual(app.controllerAPI.connect.callCount, 0, 'controller');
     });
 
     it('does not connect to the controller if it is already connecting', () => {
@@ -851,10 +873,13 @@ describe('init', () => {
       app.maskVisibility = sinon.stub();
       app.state.changeState = state => {
         assert.deepEqual(app.maskVisibility.args[0], [false]);
-        assert.deepEqual({
-          store: 'u/hatch',
-          user: null
-        }, state);
+        assert.deepEqual(
+          {
+            store: 'u/hatch',
+            user: null
+          },
+          state
+        );
         done();
       };
       app._disambiguateUserState(entityPromise);
@@ -865,31 +890,34 @@ describe('init', () => {
     let modelList;
 
     beforeEach(() => {
-      modelList = [{
-        'id': 'fe9a2845-4829-4d61-8653-248b7052204e',
-        'name': 'latta',
-        'series': 'xenial',
-        'provider': 'gce',
-        'uuid': 'fe9a2845-4829-4d61-8653-248b7052204e',
-        'controllerUUID': 'a030379a-940f-4760-8fcf-3062b41a04e7',
-        'owner': 'frankban@external',
-        'life': 'alive',
-        'isAlive': true,
-        'isController': false,
-        'lastConnection': null
-      }, {
-        'id': '509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
-        'name': 'jujugui-org',
-        'series': 'xenial',
-        'provider': 'gce',
-        'uuid': '509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
-        'controllerUUID': 'a030379a-940f-4760-8fcf-3062b41a04e7',
-        'owner': 'uros-jovanovic@external',
-        'life': 'alive',
-        'isAlive': true,
-        'isController': false,
-        'lastConnection': null
-      }];
+      modelList = [
+        {
+          id: 'fe9a2845-4829-4d61-8653-248b7052204e',
+          name: 'latta',
+          series: 'xenial',
+          provider: 'gce',
+          uuid: 'fe9a2845-4829-4d61-8653-248b7052204e',
+          controllerUUID: 'a030379a-940f-4760-8fcf-3062b41a04e7',
+          owner: 'frankban@external',
+          life: 'alive',
+          isAlive: true,
+          isController: false,
+          lastConnection: null
+        },
+        {
+          id: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+          name: 'jujugui-org',
+          series: 'xenial',
+          provider: 'gce',
+          uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0',
+          controllerUUID: 'a030379a-940f-4760-8fcf-3062b41a04e7',
+          owner: 'uros-jovanovic@external',
+          life: 'alive',
+          isAlive: true,
+          isController: false,
+          lastConnection: null
+        }
+      ];
       app.maskVisibility = sinon.stub();
       app.state.changeState = sinon.stub();
       app.controllerAPI.listModelsWithInfo = callback => {
@@ -902,14 +930,16 @@ describe('init', () => {
       assert.equal(app.maskVisibility.callCount, 1);
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
-      assert.deepEqual(app.state.changeState.args[0], [{
-        model: {
-          path: 'frankban/latta',
-          uuid: 'fe9a2845-4829-4d61-8653-248b7052204e'
-        },
-        user: null,
-        root: null
-      }]);
+      assert.deepEqual(app.state.changeState.args[0], [
+        {
+          model: {
+            path: 'frankban/latta',
+            uuid: 'fe9a2845-4829-4d61-8653-248b7052204e'
+          },
+          user: null,
+          root: null
+        }
+      ]);
     });
 
     it('switches to a supplied model uuid', () => {
@@ -917,14 +947,16 @@ describe('init', () => {
       assert.equal(app.maskVisibility.callCount, 1);
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
-      assert.deepEqual(app.state.changeState.args[0], [{
-        model: {
-          path: 'uros-jovanovic/jujugui-org',
-          uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0'
-        },
-        user: null,
-        root: null
-      }]);
+      assert.deepEqual(app.state.changeState.args[0], [
+        {
+          model: {
+            path: 'uros-jovanovic/jujugui-org',
+            uuid: '509f6e4c-4da4-49c8-8f18-537c33b4d3a0'
+          },
+          user: null,
+          root: null
+        }
+      ]);
     });
 
     it('switches to disconnected state if no model is found via uuid', () => {
@@ -932,13 +964,15 @@ describe('init', () => {
       assert.equal(app.maskVisibility.callCount, 1);
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
-      assert.deepEqual(app.state.changeState.args[0], [{
-        root: null,
-        store: null,
-        model: null,
-        user: null,
-        profile: ''
-      }]);
+      assert.deepEqual(app.state.changeState.args[0], [
+        {
+          root: null,
+          store: null,
+          model: null,
+          user: null,
+          profile: ''
+        }
+      ]);
     });
 
     it('switches to disconnected state if no model found via path', () => {
@@ -946,13 +980,15 @@ describe('init', () => {
       assert.equal(app.maskVisibility.callCount, 1);
       assert.deepEqual(app.maskVisibility.args[0], [false]);
       assert.equal(app.state.changeState.callCount, 1);
-      assert.deepEqual(app.state.changeState.args[0], [{
-        root: null,
-        store: null,
-        model: null,
-        user: null,
-        profile: ''
-      }]);
+      assert.deepEqual(app.state.changeState.args[0], [
+        {
+          root: null,
+          store: null,
+          model: null,
+          user: null,
+          profile: ''
+        }
+      ]);
     });
   });
 
@@ -1009,8 +1045,7 @@ describe('init', () => {
       app._switchModelToUUID('my-uuid');
       assert.equal(app.modelUUID, 'my-uuid');
       assert.equal(app.switchEnv.callCount, 1);
-      assert.equal(
-        app.switchEnv.args[0][0].endsWith('/model/my-uuid/api'), true);
+      assert.equal(app.switchEnv.args[0][0].endsWith('/model/my-uuid/api'), true);
     });
 
     it('switches to disconnected if none provided', () => {
@@ -1189,9 +1224,11 @@ describe('init', () => {
           changeState: sinon.stub(),
           dispatch: sinon.stub()
         };
-        document.dispatchEvent(new CustomEvent('login', {
-          detail: {err: null}
-        }));
+        document.dispatchEvent(
+          new CustomEvent('login', {
+            detail: {err: null}
+          })
+        );
       });
       app.controllerAPI.set('connected', true);
     });
@@ -1209,9 +1246,11 @@ describe('init', () => {
         done();
       };
       document.addEventListener('login', listener);
-      document.dispatchEvent(new CustomEvent('login', {
-        detail: {err: 'bad wolf'}
-      }));
+      document.dispatchEvent(
+        new CustomEvent('login', {
+          detail: {err: 'bad wolf'}
+        })
+      );
     });
   });
 

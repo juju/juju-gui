@@ -49,11 +49,13 @@ class PlansUsage extends React.Component {
   */
   plotLine(data) {
     const d3 = this.props.d3;
-    const lineGen = d3.svg.line()
+    const lineGen = d3.svg
+      .line()
       .x(d => this.xScale(d.date))
       .y(d => this.yScale(d.value));
 
-    this.svg.append('path')
+    this.svg
+      .append('path')
       .attr('d', lineGen(data))
       .attr('stroke', 'teal')
       .classed('line', true);
@@ -84,29 +86,34 @@ class PlansUsage extends React.Component {
 
     // Create an SVG container
     const vis = d3.select('.d3-chart-wrapper');
-    this.svg = vis.append('svg')
+    this.svg = vis
+      .append('svg')
       .attr('width', w)
       .attr('height', h)
       .classed('d3-chart', true);
 
     // Define the y scale
-    this.yScale = d3.scale.linear()
+    this.yScale = d3.scale
+      .linear()
       .domain(y_domain)
       .range([h - this.margins.top, this.margins.bottom]);
 
     // Define the x scale
-    this.xScale = d3.time.scale()
+    this.xScale = d3.time
+      .scale()
       .domain(x_domain)
       .range([this.margins.left, w - this.margins.left]);
 
     // Define the y axis
-    const yAxis = d3.svg.axis()
+    const yAxis = d3.svg
+      .axis()
       .orient('left')
       .scale(this.yScale)
       .tickFormat(d => `$${d}`);
 
     // Define the x axis
-    const xAxis = d3.svg.axis()
+    const xAxis = d3.svg
+      .axis()
       .orient('bottom')
       .ticks(ticks)
       .scale(this.xScale)
@@ -114,13 +121,15 @@ class PlansUsage extends React.Component {
 
     // Draw y axis with labels and move in from the size by the amount of
     // padding
-    this.svg.append('g')
+    this.svg
+      .append('g')
       .attr('transform', `translate(0, ${h - this.margins.bottom})`)
       .classed('axis', true)
       .call(xAxis);
 
     // Draw x axis with labels and move to the bottom of the chart area
-    this.svg.append('g')
+    this.svg
+      .append('g')
       .attr('transform', `translate(${this.margins.left}, 0)`)
       .classed('axis', true)
       .call(yAxis);
@@ -133,10 +142,11 @@ class PlansUsage extends React.Component {
     return (
       <div className="twelve-col isv-profile__plan-usage">
         <h4>Plan usage</h4>
-        <div className="d3-chart-wrapper"></div>
-      </div>);
+        <div className="d3-chart-wrapper" />
+      </div>
+    );
   }
-};
+}
 
 PlansUsage.propTypes = {
   d3: PropTypes.object.isRequired,

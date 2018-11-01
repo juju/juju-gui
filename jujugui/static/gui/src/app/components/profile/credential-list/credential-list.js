@@ -107,7 +107,8 @@ class ProfileCredentialList extends React.Component {
             });
           });
           resolve(credentials);
-        });
+        }
+      );
     });
   }
 
@@ -124,15 +125,11 @@ class ProfileCredentialList extends React.Component {
           return;
         }
         const sorted = new Map();
-        modelData
-          .filter(model => model.owner === props.username)
-          .forEach(model => {
-            const key = model.credential;
-            const modelName = model.name;
-            sorted.has(key) ?
-              sorted.get(key).push(modelName) :
-              sorted.set(key, [modelName]);
-          });
+        modelData.filter(model => model.owner === props.username).forEach(model => {
+          const key = model.credential;
+          const modelName = model.name;
+          sorted.has(key) ? sorted.get(key).push(modelName) : sorted.set(key, [modelName]);
+        });
         resolve(sorted);
       });
     });
@@ -169,14 +166,11 @@ class ProfileCredentialList extends React.Component {
     // re-rendered and therefore the fields cleared between uses.
     const form = this.state.showAdd ? this._generateCredentialForm() : null;
     return (
-      <ExpandingRow
-        clickable={false}
-        expanded={this.state.showAdd}>
-        <div></div>
-        <div className="col-12">
-          {form}
-        </div>
-      </ExpandingRow>);
+      <ExpandingRow clickable={false} expanded={this.state.showAdd}>
+        <div />
+        <div className="col-12">{form}</div>
+      </ExpandingRow>
+    );
   }
 
   /**
@@ -232,7 +226,7 @@ class ProfileCredentialList extends React.Component {
     @param {Object} overrides The overrides for the default props.
     @return {Object} React component for DeploymentCredentialAdd
   */
-  _generateCredentialForm(overrides={}) {
+  _generateCredentialForm(overrides = {}) {
     const controllerAPI = this.props.controllerAPI;
     const credentials = this.state.credentialMap;
     return (
@@ -246,13 +240,17 @@ class ProfileCredentialList extends React.Component {
         controllerIsReady={this.props.controllerIsReady}
         credential={overrides.credential}
         credentials={
-          credentials ? Array.from(credentials).map(credential => credential[0]) : []}
+          credentials ? Array.from(credentials).map(credential => credential[0]) : []
+        }
         key="deployment-credential-add"
         onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
         onCredentialUpdated={
-          overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
+          overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)
+        }
         sendAnalytics={this.props.sendAnalytics}
-        username={this.props.username} />);
+        username={this.props.username}
+      />
+    );
   }
 
   /**
@@ -270,8 +268,10 @@ class ProfileCredentialList extends React.Component {
           credential={credential}
           onCancel={this._setDeleteCredential.bind(this)}
           onCredentialDeleted={this._onCredentialDeleted.bind(this)}
-          revokeCloudCredential={this.props.controllerAPI.revokeCloudCredential} />
-      </div>);
+          revokeCloudCredential={this.props.controllerAPI.revokeCloudCredential}
+        />
+      </div>
+    );
   }
 
   /**
@@ -282,10 +282,10 @@ class ProfileCredentialList extends React.Component {
     const state = this.state;
     const credentials = state.credentialMap;
     if (state.loading) {
-      return (<Spinner />);
+      return <Spinner />;
     }
     if (credentials.size === 0) {
-      return (<div>No credentials available</div>);
+      return <div>No credentials available</div>;
     }
     let rows = [];
     const selectedCredential = this.props.credential;
@@ -293,38 +293,48 @@ class ProfileCredentialList extends React.Component {
     credentials.forEach((credential, key) => {
       rows.push({
         classes: key === selectedCredential ? ['profile-credential-list--highlighted'] : null,
-        columns: [{
-          content: credential.displayName
-        }, {
-          content: credential.cloud
-        }, {
-          content: function() {
-            const models = credential.models;
-            const modelCount = models ? models.length : 0;
-            switch(modelCount) {
-              case 0:
-                return '-';
-                break;
-              case 1:
-                return `${credential.models[0]}`;
-                break;
-              default:
-                return `${modelCount} Models`;
-            }
-          }()
-        }, {
-          content: (
-            <ButtonDropdown
-              icon="contextual-menu-horizontal"
-              listItems={[{
-                label: 'Edit',
-                action: this._setEditCredential.bind(this, key)
-              }, {
-                label: 'Delete',
-                action: this._setDeleteCredential.bind(this, key)
-              }]} />),
-          classes: ['u-align-text--right']
-        }],
+        columns: [
+          {
+            content: credential.displayName
+          },
+          {
+            content: credential.cloud
+          },
+          {
+            content: (function() {
+              const models = credential.models;
+              const modelCount = models ? models.length : 0;
+              switch (modelCount) {
+                case 0:
+                  return '-';
+                  break;
+                case 1:
+                  return `${credential.models[0]}`;
+                  break;
+                default:
+                  return `${modelCount} Models`;
+              }
+            })()
+          },
+          {
+            content: (
+              <ButtonDropdown
+                icon="contextual-menu-horizontal"
+                listItems={[
+                  {
+                    label: 'Edit',
+                    action: this._setEditCredential.bind(this, key)
+                  },
+                  {
+                    label: 'Delete',
+                    action: this._setDeleteCredential.bind(this, key)
+                  }
+                ]}
+              />
+            ),
+            classes: ['u-align-text--right']
+          }
+        ],
         expandedContent: this._generateEditCredentials(credential, key),
         expandedContentExpanded: this.state.editCredential === key,
         key,
@@ -335,17 +345,23 @@ class ProfileCredentialList extends React.Component {
     return (
       <div className="profile-credential-list__list">
         <BasicTable
-          headers={[{
-            content: 'Name'
-          }, {
-            content: 'Provider'
-          }, {
-            content: 'Used by'
-          }, {
-            content: 'Action',
-            classes: ['u-align-text--right']
-          }]}
-          rows={rows} />
+          headers={[
+            {
+              content: 'Name'
+            },
+            {
+              content: 'Provider'
+            },
+            {
+              content: 'Used by'
+            },
+            {
+              content: 'Action',
+              classes: ['u-align-text--right']
+            }
+          ]}
+          rows={rows}
+        />
       </div>
     );
   }
@@ -353,11 +369,10 @@ class ProfileCredentialList extends React.Component {
   render() {
     const clouds = this.state.clouds;
     let addButton = (
-      <Button
-        action={this._toggleAdd.bind(this)}
-        type="p-button--neutral">
+      <Button action={this._toggleAdd.bind(this)} type="p-button--neutral">
         Add credentials
-      </Button>);
+      </Button>
+    );
     if (clouds && clouds[LOCAL_CLOUD]) {
       addButton = null;
     }
@@ -366,9 +381,7 @@ class ProfileCredentialList extends React.Component {
         <div className="profile-credential-list__header">
           <h4 className="profile__title">
             Credentials
-            <span className="profile__title-count">
-              ({this.state.credentialMap.size})
-            </span>
+            <span className="profile__title-count">({this.state.credentialMap.size})</span>
           </h4>
           <div className="profile-credential-list__add">{addButton}</div>
         </div>

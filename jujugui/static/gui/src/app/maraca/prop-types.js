@@ -46,11 +46,13 @@ propTypes.application = shapeup.shape({
   The shape of a machine.
 */
 propTypes.machine = shapeup.shape({
-  addresses: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string,
-    type: PropTypes.string,
-    scope: PropTypes.string
-  })),
+  addresses: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string,
+      type: PropTypes.string,
+      scope: PropTypes.string
+    })
+  ),
   agentStatus: PropTypes.shape({
     current: PropTypes.string,
     message: PropTypes.string,
@@ -80,17 +82,19 @@ propTypes.machine = shapeup.shape({
   The shape of a relation.
 */
 propTypes.relation = shapeup.shape({
-  endpoints: PropTypes.arrayOf(PropTypes.shape({
-    applicationName: PropTypes.string,
-    relation: PropTypes.shape({
-      name: PropTypes.string,
-      role: PropTypes.string,
-      'interface': PropTypes.string,
-      optional: PropTypes.bool,
-      limit: PropTypes.number,
-      scope: PropTypes.stringe
+  endpoints: PropTypes.arrayOf(
+    PropTypes.shape({
+      applicationName: PropTypes.string,
+      relation: PropTypes.shape({
+        name: PropTypes.string,
+        role: PropTypes.string,
+        interface: PropTypes.string,
+        optional: PropTypes.bool,
+        limit: PropTypes.number,
+        scope: PropTypes.stringe
+      })
     })
-  })),
+  ),
   id: PropTypes.number,
   key: PropTypes.string,
   modelUUID: PropTypes.string
@@ -128,15 +132,19 @@ propTypes.unit = shapeup.shape({
   machineID: PropTypes.string,
   modelUUID: PropTypes.string,
   name: PropTypes.string,
-  portRanges: PropTypes.arrayOf(PropTypes.shape({
-    fromPort: PropTypes.number,
-    toPort: PropTypes.number,
-    protocol: PropTypes.string
-  })),
-  ports: PropTypes.arrayOf(PropTypes.shape({
-    protocol: PropTypes.string,
-    number: PropTypes.number
-  })),
+  portRanges: PropTypes.arrayOf(
+    PropTypes.shape({
+      fromPort: PropTypes.number,
+      toPort: PropTypes.number,
+      protocol: PropTypes.string
+    })
+  ),
+  ports: PropTypes.arrayOf(
+    PropTypes.shape({
+      protocol: PropTypes.string,
+      number: PropTypes.number
+    })
+  ),
   privateAddress: PropTypes.string,
   publicAddress: PropTypes.string,
   series: PropTypes.string,

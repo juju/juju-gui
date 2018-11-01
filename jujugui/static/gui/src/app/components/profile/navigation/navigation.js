@@ -35,7 +35,8 @@ class ProfileNavigation extends React.Component {
           className={classes}
           key={key}
           onClick={this._changeState.bind(this, key)}
-          role="button">
+          role="button"
+        >
           {val.label}
         </li>
       );

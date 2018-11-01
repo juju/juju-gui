@@ -14,22 +14,23 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('EntityHeader', function() {
   let acl, mockEntity, attrs;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EntityHeader
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      deployService={options.deployService || sinon.stub()}
-      entityModel={options.entityModel || mockEntity}
-      getBundleYAML={options.getBundleYAML || sinon.stub()}
-      getModelName={options.getModelName || sinon.stub()}
-      hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
-      importBundleYAML={options.importBundleYAML || sinon.stub()}
-      plans={options.plans}
-      scrollPosition={
-        options.scrollPosition === undefined ? 0 : options.scrollPosition} />,
-    {disableLifecycleMethods: true}
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EntityHeader
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        deployService={options.deployService || sinon.stub()}
+        entityModel={options.entityModel || mockEntity}
+        getBundleYAML={options.getBundleYAML || sinon.stub()}
+        getModelName={options.getModelName || sinon.stub()}
+        hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
+        importBundleYAML={options.importBundleYAML || sinon.stub()}
+        plans={options.plans}
+        scrollPosition={options.scrollPosition === undefined ? 0 : options.scrollPosition}
+      />,
+      {disableLifecycleMethods: true}
+    );
 
   beforeEach(function() {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -46,10 +47,7 @@ describe('EntityHeader', function() {
   it('renders the latest entity properly', function() {
     const wrapper = renderComponent();
     const expected = (
-      <div
-        className="row-hero"
-        ref="headerWrapper"
-        style={{}}>
+      <div className="row-hero" ref="headerWrapper" style={{}}>
         <header className="entity-header">
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
@@ -57,14 +55,13 @@ describe('EntityHeader', function() {
                 alt="django"
                 className="entity-header__icon"
                 src="data:image/gif;base64,"
-                width="96" />
-              <h1
-                className="entity-header__title"
-                itemProp="name"
-                ref="entityHeaderTitle">
+                width="96"
+              />
+              <h1 className="entity-header__title" itemProp="name" ref="entityHeaderTitle">
                 django{' '}
                 <span className="entity-header__version">
-                  {'#'}{123}
+                  {'#'}
+                  {123}
                 </span>
               </h1>
               <ul className="bullets inline entity-header__properties">
@@ -72,70 +69,77 @@ describe('EntityHeader', function() {
                   By&nbsp;
                   <span
                     className="link"
-                    onClick={wrapper.find('.entity-header__by .link').prop('onClick')}>
+                    onClick={wrapper.find('.entity-header__by .link').prop('onClick')}
+                  >
                     test-owner
                   </span>
                 </li>
                 <li className="entity-header__series">
                   <span
                     className="link"
-                    onClick={wrapper.find('.entity-header__series .link').prop('onClick')}>
-                    Latest version (#{42})
+                    onClick={wrapper.find('.entity-header__series .link').prop('onClick')}
+                  >
+                    Latest version (#
+                    {42})
                   </span>
                 </li>
-                {[<li className="entity-header__series" key="trusty">
-                  trusty
-                </li>]}
+                {[
+                  <li className="entity-header__series" key="trusty">
+                    trusty
+                  </li>
+                ]}
                 {undefined}
-                {<li
-                  className="entity-header__channels"
-                  key="Stable, Candidate">
-                  Stable, Candidate
-                </li>}
+                {
+                  <li className="entity-header__channels" key="Stable, Candidate">
+                    Stable, Candidate
+                  </li>
+                }
               </ul>
               <ul className="entity-header__social-list">
                 <li>
                   <a
-                    href={'https://twitter.com/intent/tweet?text=django%20' +
+                    href={
+                      'https://twitter.com/intent/tweet?text=django%20' +
                       'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
-                      '.com%2Fdjango%2Ftrusty%2F'}
+                      '.com%2Fdjango%2Ftrusty%2F'
+                    }
                     id="item-twitter"
-                    target="_blank">
-                    <SvgIcon
-                      name="icon-social-twitter"
-                      size="36" />
+                    target="_blank"
+                  >
+                    <SvgIcon name="icon-social-twitter" size="36" />
                   </a>
                 </li>
                 <li>
                   <a
-                    href={'https://plus.google.com/share?url=https%3A%2F%2F' +
-                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}
+                    href={
+                      'https://plus.google.com/share?url=https%3A%2F%2F' +
+                      'jujucharms.com%2Fdjango%2Ftrusty%2F'
+                    }
                     id="item-googleplus"
-                    target="_blank">
-                    <SvgIcon
-                      name="icon-social-google"
-                      size="36" />
+                    target="_blank"
+                  >
+                    <SvgIcon name="icon-social-google" size="36" />
                   </a>
                 </li>
               </ul>
             </div>
-            <div className={
-              'entity-header__right four-col last-col no-margin-bottom'}>
+            <div className={'entity-header__right four-col last-col no-margin-bottom'}>
               {undefined}
-              <CopyToClipboard
-                value="juju deploy cs:django" />
+              <CopyToClipboard value="juju deploy cs:django" />
               <Button
                 action={wrapper.find('Button').prop('action')}
                 disabled={false}
                 ref="deployAction"
                 tooltip="Add this charm to a new model"
-                type="positive">
+                type="positive"
+              >
                 Add to model
               </Button>
             </div>
           </div>
         </header>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -144,8 +148,10 @@ describe('EntityHeader', function() {
     const wrapper = renderComponent();
     const expected = (
       <span className="entity-header__version">
-        {'#'}{122}
-      </span>);
+        {'#'}
+        {122}
+      </span>
+    );
     assert.compareJSX(wrapper.find('.entity-header__version'), expected);
   });
 
@@ -156,16 +162,15 @@ describe('EntityHeader', function() {
       plans
     });
     const expected = (
-      <select
-        className="entity-header__select"
-        ref="plan">
+      <select className="entity-header__select" ref="plan">
         <option key="default">Choose a plan</option>
-        {[<option
-          key="test0"
-          value="test">
-          test
-        </option>]}
-      </select>);
+        {[
+          <option key="test0" value="test">
+            test
+          </option>
+        ]}
+      </select>
+    );
     assert.compareJSX(wrapper.find('.entity-header__select'), expected);
   });
 
@@ -175,12 +180,11 @@ describe('EntityHeader', function() {
       plans: null
     });
     const expected = (
-      <select
-        className="entity-header__select"
-        ref="plan">
+      <select className="entity-header__select" ref="plan">
         <option key="default">Loading plans...</option>
         {null}
-      </select>);
+      </select>
+    );
     assert.compareJSX(wrapper.find('.entity-header__select'), expected);
   });
 
@@ -199,12 +203,11 @@ describe('EntityHeader', function() {
     });
     const expected = (
       <li className="entity-header__counts">
-        {3} {'applications'},
-        &nbsp;
-        {2} {'machines'},
-        &nbsp;
+        {3} {'applications'}, &nbsp;
+        {2} {'machines'}, &nbsp;
         {5} {'units'}
-      </li>);
+      </li>
+    );
     assert.compareJSX(wrapper.find('.entity-header__counts'), expected);
   });
 
@@ -218,15 +221,13 @@ describe('EntityHeader', function() {
       <li className="entity-header__subordinate">
         Subordinate
         <a
-          href={
-            'https://jujucharms.com/docs/stable/' +
-            'authors-subordinate-applications'}
-          target="_blank">
-          <SvgIcon
-            name="help_16"
-            size="16" />
+          href={'https://jujucharms.com/docs/stable/' + 'authors-subordinate-applications'}
+          target="_blank"
+        >
+          <SvgIcon name="help_16" size="16" />
         </a>
-      </li>);
+      </li>
+    );
     assert.compareJSX(wrapper.find('.entity-header__subordinate'), expected);
   });
 
@@ -250,8 +251,12 @@ describe('EntityHeader', function() {
     mockEntity.set('series', undefined);
     const wrapper = renderComponent();
     assert.equal(
-      wrapper.find('.entity-header__deploy-action').children().text(),
-      'This type of charm can only be deployed from the command line.');
+      wrapper
+        .find('.entity-header__deploy-action')
+        .children()
+        .text(),
+      'This type of charm can only be deployed from the command line.'
+    );
   });
 
   it('adds a charm when the add button is clicked', function() {
@@ -260,7 +265,10 @@ describe('EntityHeader', function() {
       deployService
     });
     // Simulate a click.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(deployService.callCount, 1);
     assert.equal(deployService.args[0][0], mockEntity);
   });
@@ -277,7 +285,10 @@ describe('EntityHeader', function() {
     // Change the select value to a plan.
     instance.refs = {plan: {value: 'test-plan'}};
     // Simulate a click.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(deployService.callCount, 1);
     assert.deepEqual(deployService.args[0][2], plans);
     assert.deepEqual(deployService.args[0][3], plans[0]);
@@ -292,7 +303,10 @@ describe('EntityHeader', function() {
       plans: plans
     });
     // Simulate a click.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(deployService.callCount, 1);
     assert.deepEqual(deployService.args[0][2], plans);
     assert.isUndefined(deployService.args[0][3]);
@@ -310,7 +324,10 @@ describe('EntityHeader', function() {
       importBundleYAML
     });
     // Simulate a click.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(getBundleYAML.callCount, 1);
     assert.equal(getBundleYAML.args[0][0], 'django-cluster');
     assert.equal(importBundleYAML.callCount, 1);
@@ -328,10 +345,12 @@ describe('EntityHeader', function() {
       getBundleYAML
     });
     // Simulate a click.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(addNotification.callCount, 1);
-    assert.deepEqual(
-      addNotification.args[0][0].title, 'Bundle failed to deploy');
+    assert.deepEqual(addNotification.args[0][0].title, 'Bundle failed to deploy');
   });
 
   it('can display as sticky', function() {
@@ -355,10 +374,16 @@ describe('EntityHeader', function() {
     //     </header>
     //   </div>
     // );
-    assert.deepEqual(wrapper.find('.row-hero').prop('style'), {height: '99px'});
+    assert.deepEqual(wrapper.find('.row-hero').prop('style'), {
+      height: '99px'
+    });
     assert.equal(
-      wrapper.find('header').prop('className').includes('entity-header--sticky'),
-      true);
+      wrapper
+        .find('header')
+        .prop('className')
+        .includes('entity-header--sticky'),
+      true
+    );
   });
 
   it('goes to the profile page when the owner is clicked', function() {

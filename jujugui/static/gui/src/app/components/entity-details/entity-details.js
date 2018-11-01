@@ -52,7 +52,7 @@ class EntityDetails extends React.Component {
     let url;
     try {
       url = urls.URL.fromString(id);
-    } catch(err) {
+    } catch (err) {
       callback(err, {});
       return;
     }
@@ -105,7 +105,8 @@ class EntityDetails extends React.Component {
               hasPlans={this.state.hasPlans}
               importBundleYAML={this.props.importBundleYAML}
               plans={this.state.plans}
-              scrollPosition={this.props.scrollPosition} />
+              scrollPosition={this.props.scrollPosition}
+            />
             <EntityContent
               addNotification={this.props.addNotification}
               changeState={this.props.changeState}
@@ -124,20 +125,20 @@ class EntityDetails extends React.Component {
               scrollCharmbrowser={this.props.scrollCharmbrowser}
               sendAnalytics={this.props.sendAnalytics}
               showTerms={this.props.showTerms}
-              staticURL={this.props.staticURL} />
+              staticURL={this.props.staticURL}
+            />
           </div>
         );
         break;
       case 'error':
         activeChild = (
           <p className="error">
-              There was a problem while loading the entity details.
-              You could try searching for another charm or bundle or go{' '}
-            <span
-              className="link"
-              onClick={this._handleBack.bind(this)}>
-                back
-            </span>.
+            There was a problem while loading the entity details. You could try searching for
+            another charm or bundle or go{' '}
+            <span className="link" onClick={this._handleBack.bind(this)}>
+              back
+            </span>
+            .
           </p>
         );
         break;
@@ -201,7 +202,9 @@ class EntityDetails extends React.Component {
       if (entityModel.hasMetrics()) {
         this.setState({hasPlans: true}, () => {
           const xhr = this.props.listPlansForCharm(
-            entityModel.get('id'), this._getPlansCallback.bind(this));
+            entityModel.get('id'),
+            this._getPlansCallback.bind(this)
+          );
           this.xhrs.push(xhr);
         });
       }
@@ -251,23 +254,17 @@ class EntityDetails extends React.Component {
     if (entityModel) {
       classes[entityModel.get('entityType')] = true;
     }
-    return classNames(
-      'entity-details',
-      classes
-    );
+    return classNames('entity-details', classes);
   }
 
   render() {
     return (
-      <div
-        className={this._generateClasses()}
-        ref="content"
-        tabIndex="0">
+      <div className={this._generateClasses()} ref="content" tabIndex="0">
         {this._generateContent()}
       </div>
     );
   }
-};
+}
 
 EntityDetails.propTypes = {
   acl: PropTypes.object.isRequired,

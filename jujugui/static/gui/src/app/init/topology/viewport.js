@@ -31,7 +31,7 @@ class ViewportModule {
     // Get the DOM node if the container has been provided by YUI,
     // otherwise the container will be the DOM node already.
     const container = this.topo.container;
-    return container.getDOMNode && container.getDOMNode() || container;
+    return (container.getDOMNode && container.getDOMNode()) || container;
   }
 
   /**
@@ -66,8 +66,7 @@ class ViewportModule {
     // If the size has actually changed (as this method is sometimes called
     // on deltas through the render method), pan to the center; otherwise,
     // leave the pan alone.
-    if (oldSize[0] !== dimensions.width ||
-        oldSize[1] !== dimensions.height) {
+    if (oldSize[0] !== dimensions.width || oldSize[1] !== dimensions.height) {
       document.dispatchEvent(new Event('topo.panToCenter'));
     }
   }
@@ -96,11 +95,10 @@ class ViewportModule {
     document.dispatchEvent(new Event('beforePageSizeRecalculation'));
     // This sets the minimum viewport size - y was reduced to 200 to render
     // properly on 7" tablets in horizontal view.
-    var dimensions = environmentUtils.getEffectiveViewportSize(
-      true, 800, 200);
+    var dimensions = environmentUtils.getEffectiveViewportSize(true, 800, 200);
     this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
     document.dispatchEvent(new Event('afterPageSizeRecalculation'));
   }
-};
+}
 
 module.exports = ViewportModule;

@@ -72,8 +72,7 @@ class Store extends React.Component {
   */
   _handleEntityClick(e) {
     e.stopPropagation();
-    var id = (e.target.dataset.entity ||
-      e.target.closest('[data-entity]').dataset.entity);
+    var id = e.target.dataset.entity || e.target.closest('[data-entity]').dataset.entity;
     this.props.changeState({
       store: id
     });
@@ -122,7 +121,7 @@ class Store extends React.Component {
   */
   _getData(target, key) {
     const node = target || target.closest(`[data-${key}]`);
-    return node && node.dataset && node.dataset[key] || '';
+    return (node && node.dataset && node.dataset[key]) || '';
   }
 
   /**
@@ -132,31 +131,31 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _writeOurOwnSection() {
-    const href =
-      'https://www.jujucharms.com/docs/stable/authors-charm-writing';
-    return (<div className="row row--write-your-own">
-      <div className="wrapper">
-        <div className="inner-wrapper">
-          <div className="text six-col">
-            <h2>Write a charm and join the ecosystem</h2>
-            <p>Creating new charms it easy. Charms can be written
-            in your choice of language and adapting existing
-            scripts is straightforward. You can keep new charms
-            private, or share them back with the community.</p>
-            <p>
-              <a
-                className="link link--cold"
-                href={href}
-                target="_blank">
-              Learn more about writing charms&nbsp;&rsaquo;
-              </a></p>
+    const href = 'https://www.jujucharms.com/docs/stable/authors-charm-writing';
+    return (
+      <div className="row row--write-your-own">
+        <div className="wrapper">
+          <div className="inner-wrapper">
+            <div className="text six-col">
+              <h2>Write a charm and join the ecosystem</h2>
+              <p>
+                Creating new charms it easy. Charms can be written in your choice of language
+                and adapting existing scripts is straightforward. You can keep new charms
+                private, or share them back with the community.
+              </p>
+              <p>
+                <a className="link link--cold" href={href} target="_blank">
+                  Learn more about writing charms&nbsp;&rsaquo;
+                </a>
+              </p>
+            </div>
+          </div>
+          <div>
+            <img src={this._generateLocalImagePath('write-your-own.png')} />
           </div>
         </div>
-        <div>
-          <img src={this._generateLocalImagePath('write-your-own.png')} />
-        </div>
       </div>
-    </div>);
+    );
   }
 
   /**
@@ -166,52 +165,53 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _developmentToolsSection() {
-    return (<div className="row row--border-bottom">
-      <div className="inner-wrapper">
-        <h2>Development tools</h2>
-        <ul className="twelve-col no-bullets equal-height">
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="gitlab"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('gitlab')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Gitlab
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="jenkins"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('jenkins')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Jenkins
-                </h3>
-                <p>by Creative</p>
-              </div>
-            </span>
-          </li>
-        </ul>
+    return (
+      <div className="row row--border-bottom">
+        <div className="inner-wrapper">
+          <h2>Development tools</h2>
+          <ul className="twelve-col no-bullets equal-height">
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="gitlab"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('gitlab')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Gitlab</h3>
+                  <p>by charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="jenkins"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('jenkins')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Jenkins</h3>
+                  <p>by Creative</p>
+                </div>
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>);
+    );
   }
 
   /**
@@ -231,46 +231,64 @@ class Store extends React.Component {
     if (lastCol) {
       sharedClasses.push('last-col');
     }
-    let kubernetesButton = (<a
-      className="button--inline-neutral"
-      href="https://jujucharms.com/kubernetes"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-          Find out more
-    </a>);
-    let openstackButton = (<a
-      className="button--inline-neutral"
-      href="https://jujucharms.com/openstack"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-          Find out more
-    </a>);
-    let bigdataButton = (<a
-      className="button--inline-neutral"
-      href="https://jujucharms.com/big-data"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-      Find out more
-    </a>);
+    let kubernetesButton = (
+      <a
+        className="button--inline-neutral"
+        href="https://jujucharms.com/kubernetes"
+        onClick={this._stopPropagation.bind(this)}
+        target="_blank"
+      >
+        Find out more
+      </a>
+    );
+    let openstackButton = (
+      <a
+        className="button--inline-neutral"
+        href="https://jujucharms.com/openstack"
+        onClick={this._stopPropagation.bind(this)}
+        target="_blank"
+      >
+        Find out more
+      </a>
+    );
+    let bigdataButton = (
+      <a
+        className="button--inline-neutral"
+        href="https://jujucharms.com/big-data"
+        onClick={this._stopPropagation.bind(this)}
+        target="_blank"
+      >
+        Find out more
+      </a>
+    );
     if (!this.props.gisf) {
-      kubernetesButton = (<span
-        className="button--inline-neutral"
-        data-query="kubernetes"
-        onClick={this._handleSearchClick.bind(this)}>
-        View
-      </span>);
-      openstackButton = (<span
-        className="button--inline-neutral"
-        data-query="openstack"
-        onClick={this._handleSearchClick.bind(this)}>
+      kubernetesButton = (
+        <span
+          className="button--inline-neutral"
+          data-query="kubernetes"
+          onClick={this._handleSearchClick.bind(this)}
+        >
           View
-      </span>);
-      bigdataButton = (<span
-        className="button--inline-neutral"
-        data-query="hadoop"
-        onClick={this._handleSearchClick.bind(this)}>
-        View
-      </span>);
+        </span>
+      );
+      openstackButton = (
+        <span
+          className="button--inline-neutral"
+          data-query="openstack"
+          onClick={this._handleSearchClick.bind(this)}
+        >
+          View
+        </span>
+      );
+      bigdataButton = (
+        <span
+          className="button--inline-neutral"
+          data-query="hadoop"
+          onClick={this._handleSearchClick.bind(this)}
+        >
+          View
+        </span>
+      );
     }
     switch (name) {
       case 'kubernetes':
@@ -279,57 +297,68 @@ class Store extends React.Component {
             className={classNames('box--kubernetes', sharedClasses)}
             data-query="kubernetes"
             key="kubernetes"
-            onClick={this._handleSearchClick.bind(this)}>
+            onClick={this._handleSearchClick.bind(this)}
+          >
             <img
               alt="Kubernetes"
               className="box__image"
-              src={this._generateLocalImagePath('k8-image.png')} />
+              src={this._generateLocalImagePath('k8-image.png')}
+            />
             <div className="align-bottom">
               <h2>Kubernetes</h2>
               {kubernetesButton}
             </div>
-          </div>);
+          </div>
+        );
       case 'openstack':
         return (
           <div
             className={classNames('box--openstack', sharedClasses)}
             data-query="openstack"
             key="openstack"
-            onClick={this._handleSearchClick.bind(this)}>
+            onClick={this._handleSearchClick.bind(this)}
+          >
             <img
               alt="Openstack"
               className="box__image"
-              src={this._generateLocalImagePath('openstack-promo.png')} />
+              src={this._generateLocalImagePath('openstack-promo.png')}
+            />
             <div className="align-bottom">
               <h2>OpenStack</h2>
               {openstackButton}
             </div>
-          </div>);
+          </div>
+        );
       case 'bigdata':
         return (
           <div
             className={classNames('box--hadoop', sharedClasses)}
             data-query="hadoop"
             key="hadoop"
-            onClick={this._handleSearchClick.bind(this)}>
+            onClick={this._handleSearchClick.bind(this)}
+          >
             <div className="box--hadoop-container">
               <img
                 alt="Hadoop"
                 className="box__image"
-                src={this._generateLocalImagePath('hadoop-elephant.png')} />
+                src={this._generateLocalImagePath('hadoop-elephant.png')}
+              />
               <div className="align-bottom">
                 <h2>Big Data</h2>
                 {bigdataButton}
               </div>
             </div>
-          </div>);
+          </div>
+        );
       case 'expert':
         return (
           <ExpertStoreCard
             classes={sharedClasses.concat(['box--expert'])}
             expert="spiculecharms"
             key="expert"
-            staticURL={this.props.staticURL} />);
+            staticURL={this.props.staticURL}
+          />
+        );
     }
   }
 
@@ -361,11 +390,9 @@ class Store extends React.Component {
     const activeCards = _activeCards.call(this);
     const cardCount = activeCards.length;
     const featureItems = activeCards.map((item, i) =>
-      this._generateFeature(item, cardCount, i === (cardCount - 1)));
-    return (
-      <div className="row equal-height">
-        {featureItems}
-      </div>);
+      this._generateFeature(item, cardCount, i === cardCount - 1)
+    );
+    return <div className="row equal-height">{featureItems}</div>;
   }
 
   /**
@@ -394,23 +421,26 @@ class Store extends React.Component {
     topics.forEach(function(topic, index) {
       let key = `tagItem-${index}`;
       let comma = index === topics.length - 1 ? '' : ',';
-      list.push(<li className="inline-list__item" key={key}>
-        <span
-          className="link link--cold"
-          data-filterkey="tags"
-          data-filtervalue={topic.name}
-          onClick={this._handleSearchClick.bind(this)}>
-          {topic.name}
-        </span>
-        <span className="note">({topic.count})</span>
-        {comma}
-      </li>);
+      list.push(
+        <li className="inline-list__item" key={key}>
+          <span
+            className="link link--cold"
+            data-filterkey="tags"
+            data-filtervalue={topic.name}
+            onClick={this._handleSearchClick.bind(this)}
+          >
+            {topic.name}
+          </span>
+          <span className="note">({topic.count})</span>
+          {comma}
+        </li>
+      );
     }, this);
-    return (<div className="eight-col prepend-two align-center">
-      <ul className="no-bullets inline-list">
-        {list}
-      </ul>
-    </div>);
+    return (
+      <div className="eight-col prepend-two align-center">
+        <ul className="no-bullets inline-list">{list}</ul>
+      </div>
+    );
   }
 
   /**
@@ -421,49 +451,51 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _charmAndBundleSection() {
-    return (<div className="row row--charm-and-bundle row--border-bottom">
-      <div className="inner-wrapper equal-height">
-        <div className="six-col box">
-          <div className="one-col no-margin-bottom align-center">
-            <img
-              alt=""
-              src={this._generateLocalImagePath('charm-icon.png')} />
+    return (
+      <div className="row row--charm-and-bundle row--border-bottom">
+        <div className="inner-wrapper equal-height">
+          <div className="six-col box">
+            <div className="one-col no-margin-bottom align-center">
+              <img alt="" src={this._generateLocalImagePath('charm-icon.png')} />
+            </div>
+            <div className="five-col no-margin-bottom last-col">
+              <p>
+                Charms are sets of scripts that simplify the deployment and management tasks of
+                a service. They are regularly reviewed and updated.
+              </p>
+              <span
+                className="button--inline-neutral"
+                data-filterkey="type"
+                data-filtervalue="charm"
+                onClick={this._handleSearchClick.bind(this)}
+              >
+                View all the charms
+              </span>
+            </div>
           </div>
-          <div className="five-col no-margin-bottom last-col">
-            <p>Charms are sets of scripts that simplify the
-                  deployment and management tasks of a service. They
-                  are regularly reviewed and updated.</p>
-            <span
-              className="button--inline-neutral"
-              data-filterkey="type"
-              data-filtervalue="charm"
-              onClick={this._handleSearchClick.bind(this)}>
-                      View all the charms
-            </span>
+          <div className="six-col last-col box">
+            <div className="one-col no-margin-bottom align-center">
+              <img alt="" src={this._generateLocalImagePath('bundle-icon.png')} />
+            </div>
+            <div className="five-col no-margin-bottom last-col">
+              <p>
+                Bundles are collections of charms that link applications together, so you can
+                deploy whole chunks of infrastructure in one go.
+              </p>
+              <span
+                className="button--inline-neutral"
+                data-filterkey="type"
+                data-filtervalue="bundle"
+                onClick={this._handleSearchClick.bind(this)}
+              >
+                View all the bundles
+              </span>
+            </div>
           </div>
+          {this._tagsSection()}
         </div>
-        <div className="six-col last-col box">
-          <div className="one-col no-margin-bottom align-center">
-            <img
-              alt=""
-              src={this._generateLocalImagePath('bundle-icon.png')} />
-          </div>
-          <div className="five-col no-margin-bottom last-col">
-            <p>Bundles are collections of charms that link
-                  applications together, so you can deploy whole
-                  chunks of infrastructure in one go.</p>
-            <span
-              className="button--inline-neutral"
-              data-filterkey="type"
-              data-filtervalue="bundle"
-              onClick={this._handleSearchClick.bind(this)}>
-                      View all the bundles
-            </span>
-          </div>
-        </div>
-        {this._tagsSection()}
       </div>
-    </div>);
+    );
   }
 
   /**
@@ -473,212 +505,207 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _operationsSection() {
-    return (<div className="row">
-      <div className="inner-wrapper">
-        <h2>Operations</h2>
-        <div className="box box--nagios clearfix">
-          <div className="six-col no-margin-bottom align-center">
-            <img
-              alt=""
-              src={this._generateLocalImagePath('nagios-promo.png')} />
+    return (
+      <div className="row">
+        <div className="inner-wrapper">
+          <h2>Operations</h2>
+          <div className="box box--nagios clearfix">
+            <div className="six-col no-margin-bottom align-center">
+              <img alt="" src={this._generateLocalImagePath('nagios-promo.png')} />
+            </div>
+            <div className="six-col no-margin-bottom last-col">
+              <h3>Nagios</h3>
+              <p>
+                By{' '}
+                <a
+                  className="link link--cold"
+                  href={this._generateUserPath('charmers')}
+                  target="_blank"
+                >
+                  charmers
+                </a>
+              </p>
+              <p>
+                Nagios offers complete monitoring, management and alerting of any service from
+                the charm store that is related to it.
+              </p>
+              <span
+                className="button--inline-neutral"
+                data-entity="nagios"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                View the charm
+              </span>
+            </div>
           </div>
-          <div className="six-col no-margin-bottom last-col">
-            <h3>Nagios</h3>
-            <p>
-                      By <a
-                className="link link--cold"
-                href={this._generateUserPath('charmers')}
-                target="_blank">
-                          charmers
-              </a>
-            </p>
-            <p>Nagios offers complete monitoring, management
-                  and alerting of any service from the charm store
-                  that is related to it.</p>
-            <span
-              className="button--inline-neutral"
-              data-entity="nagios"
-              onClick={this._handleEntityClick.bind(this)}>
-                      View the charm
-            </span>
-          </div>
-        </div>
 
-        <ul className="twelve-col no-bullets equal-height">
-          <li className="three-col featured-entity">
+          <ul className="twelve-col no-bullets equal-height">
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="kibana"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('kibana')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">kibana</h3>
+                  <p>by containers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="logstash"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('logstash')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">logstash</h3>
+                  <p>by containers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="elasticsearch"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('elasticsearch')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Elasticsearch</h3>
+                  <p>by onlineservices-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col last-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="prometheus"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('prometheus')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Prometheus</h3>
+                  <p>by prometheus-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <a
+                className="featured-entity__link link"
+                data-entity="munin"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('munin')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Munin</h3>
+                  <p>by charmers</p>
+                </div>
+              </a>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="rsyslog"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('rsyslog')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Rsyslog</h3>
+                  <p>by charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="zabbix-server"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image control-size"
+                    src={this._generateIconPath('zabbix-server')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Zabbix Server</h3>
+                  <p>by charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col last-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="u/ricardokirkner/sentry"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image control-size"
+                    src={this._generateIconPath('~ricardokirkner/sentry')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Sentry</h3>
+                  <p>by ricardokirkner</p>
+                </div>
+              </span>
+            </li>
+          </ul>
+          <p className="intro">
             <span
-              className="featured-entity__link link"
-              data-entity="kibana"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('kibana')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              kibana
-                </h3>
-                <p>by containers</p>
-              </div>
+              className="link link--cold"
+              data-filterkey="tags"
+              data-filtervalue="ops"
+              onClick={this._handleSearchClick.bind(this)}
+            >
+              View all operations&nbsp;&rsaquo;
             </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="logstash"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('logstash')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              logstash
-                </h3>
-                <p>by containers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="elasticsearch"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('elasticsearch')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Elasticsearch
-                </h3>
-                <p>by onlineservices-charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col last-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="prometheus"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath(
-                    'prometheus')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                                Prometheus
-                </h3>
-                <p>by prometheus-charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <a
-              className="featured-entity__link link"
-              data-entity="munin"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div
-                className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('munin')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                            Munin
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </a>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="rsyslog"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div
-                className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('rsyslog')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                                Rsyslog
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="zabbix-server"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image control-size"
-                  src={this._generateIconPath('zabbix-server')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Zabbix Server
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col last-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="u/ricardokirkner/sentry"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image control-size"
-                  src={this._generateIconPath(
-                    '~ricardokirkner/sentry')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Sentry
-                </h3>
-                <p>by ricardokirkner</p>
-              </div>
-            </span>
-          </li>
-        </ul>
-        <p className="intro">
-          <span
-            className="link link--cold"
-            data-filterkey="tags"
-            data-filtervalue="ops"
-            onClick={this._handleSearchClick.bind(this)}>
-                  View all operations&nbsp;&rsaquo;
-          </span>
-        </p>
+          </p>
+        </div>
       </div>
-    </div>);
+    );
   }
 
   /**
@@ -688,27 +715,33 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _bigDataSection() {
-    return (<div className="row row--containers">
-      <div className="wrapper bigdata">
-        <div className="inner-wrapper bigdata">
-          <div className="text six-col">
-            <h2>Container management</h2>
-            <p>Juju makes it easy to deploy container management solutions
-            by provisioning, installing and configuring all the systems in
-            the cluster.</p>
-            <p><span
-              className="button--inline-neutral"
-              data-query="containers"
-              onClick={this._handleSearchClick.bind(this)}>
-              View bundles
-            </span></p>
+    return (
+      <div className="row row--containers">
+        <div className="wrapper bigdata">
+          <div className="inner-wrapper bigdata">
+            <div className="text six-col">
+              <h2>Container management</h2>
+              <p>
+                Juju makes it easy to deploy container management solutions by provisioning,
+                installing and configuring all the systems in the cluster.
+              </p>
+              <p>
+                <span
+                  className="button--inline-neutral"
+                  data-query="containers"
+                  onClick={this._handleSearchClick.bind(this)}
+                >
+                  View bundles
+                </span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <img src={this._generateLocalImagePath('kubernetes-promo.png')} />
           </div>
         </div>
-        <div>
-          <img src={this._generateLocalImagePath('kubernetes-promo.png')} />
-        </div>
       </div>
-    </div>);
+    );
   }
 
   /**
@@ -718,182 +751,188 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _analyticsSection() {
-    return (<div className="row row--border-bottom">
-      <div className="inner-wrapper">
-        <h2>Analytics</h2>
-        <div className="box box--realtime-syslog-analytics clearfix">
-          <div className="six-col no-margin-bottom align-center">
-            <object
-              data={this._generateDiagramPath(
-                'realtime-syslog-analytics')}
-              type="image/svg+xml"
-              width="100%"
-              wmode="transparent">
-            </object>
+    return (
+      <div className="row row--border-bottom">
+        <div className="inner-wrapper">
+          <h2>Analytics</h2>
+          <div className="box box--realtime-syslog-analytics clearfix">
+            <div className="six-col no-margin-bottom align-center">
+              <object
+                data={this._generateDiagramPath('realtime-syslog-analytics')}
+                type="image/svg+xml"
+                width="100%"
+                wmode="transparent"
+              />
+            </div>
+            <div className="six-col no-margin-bottom last-col">
+              <h3>Realtime Syslog Analytics</h3>
+              <p>
+                By{' '}
+                <a
+                  className="link link--cold"
+                  href={this._generateUserPath('bigdata-charmers')}
+                  target="_blank"
+                >
+                  bigdata-charmers
+                </a>
+              </p>
+              <p>
+                This bundle provides a big data environment for analysing syslog events. Built
+                around Apache Hadoop components, it offers a repeatable and reliable way to
+                setup complex software across multiple substrates.
+              </p>
+              <span
+                className="button--inline-neutral"
+                data-entity="realtime-syslog-analytics"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                View the bundle
+              </span>
+            </div>
           </div>
-          <div className="six-col no-margin-bottom last-col">
-            <h3>Realtime Syslog Analytics</h3>
-            <p>By <a
-              className="link link--cold"
-              href={this._generateUserPath('bigdata-charmers')}
-              target="_blank">
-                          bigdata-charmers
-            </a>
-            </p>
-            <p>This bundle provides a big data environment for
-                  analysing syslog events. Built around Apache Hadoop
-                  components, it offers a repeatable and reliable way
-                  to setup complex software across multiple
-                  substrates.</p>
-            <span
-              className="button--inline-neutral"
-              data-entity="realtime-syslog-analytics"
-              onClick={this._handleEntityClick.bind(this)}>
-                      View the bundle
-            </span>
-          </div>
-        </div>
 
-        <ul className="twelve-col no-bullets equal-height">
-          <li className="three-col featured-entity">
+          <ul className="twelve-col no-bullets equal-height">
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="hive"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('hive')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Hive</h3>
+                  <p>by bigdata-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="spark"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('spark')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Spark</h3>
+                  <p>by bigdata-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="zeppelin"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('zeppelin')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Zeppelin</h3>
+                  <p>by bigdata-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col last-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="elasticsearch-cluster"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <ul className="featured-entity__image-list one-col">
+                  <li className="featured-entity__image-list-item">
+                    <img
+                      alt=""
+                      className="featured-entity__image"
+                      src={this._generateIconPath('elasticsearch')}
+                    />
+                  </li>
+                  <li className="featured-entity__image-list-item">
+                    <img
+                      alt=""
+                      className="featured-entity__image"
+                      src={this._generateIconPath('kibana')}
+                    />
+                  </li>
+                </ul>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Elasticsearch cluster</h3>
+                  <p>by charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="u/elasticsearch-charmers/elk-stack"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <ul className="featured-entity__image-list one-col">
+                  <li className="featured-entity__image-list-item">
+                    <img
+                      alt=""
+                      className="featured-entity__image"
+                      src={this._generateIconPath('zulu8')}
+                    />
+                  </li>
+                  <li className="featured-entity__image-list-item">
+                    <img
+                      alt=""
+                      className="featured-entity__image"
+                      src={this._generateIconPath('elasticsearch')}
+                    />
+                  </li>
+                  <li className="featured-entity__image-list-item">
+                    <img
+                      alt=""
+                      className="featured-entity__image"
+                      src={this._generateIconPath('~containers/logstash')}
+                    />
+                  </li>
+                  <li className="featured-entity__image-list-item">
+                    <img
+                      alt=""
+                      className="featured-entity__image"
+                      src={this._generateIconPath('kibana')}
+                    />
+                  </li>
+                </ul>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">elk stack</h3>
+                  <p>by containers</p>
+                </div>
+              </span>
+            </li>
+          </ul>
+          <p className="intro">
             <span
-              className="featured-entity__link link"
-              data-entity="hive"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('hive')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                                Hive
-                </h3>
-                <p>by bigdata-charmers</p>
-              </div>
+              className="link link--cold"
+              data-filterkey="tags"
+              data-filtervalue="analytics"
+              onClick={this._handleSearchClick.bind(this)}
+            >
+              View all analytics&nbsp;&rsaquo;
             </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="spark"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('spark')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Spark
-                </h3>
-                <p>by bigdata-charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="zeppelin"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('zeppelin')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Zeppelin
-                </h3>
-                <p>by bigdata-charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col last-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="elasticsearch-cluster"
-              onClick={this._handleEntityClick.bind(this)}>
-              <ul className="featured-entity__image-list one-col">
-                <li className="featured-entity__image-list-item">
-                  <img
-                    alt=""
-                    className="featured-entity__image"
-                    src={this._generateIconPath(
-                      'elasticsearch')} />
-                </li>
-                <li className="featured-entity__image-list-item">
-                  <img
-                    alt=""
-                    className="featured-entity__image"
-                    src={this._generateIconPath('kibana')} />
-                </li>
-              </ul>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Elasticsearch cluster
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="u/elasticsearch-charmers/elk-stack"
-              onClick={this._handleEntityClick.bind(this)}>
-              <ul className="featured-entity__image-list one-col">
-                <li className="featured-entity__image-list-item">
-                  <img
-                    alt=""
-                    className="featured-entity__image"
-                    src={this._generateIconPath('zulu8')} />
-                </li>
-                <li className="featured-entity__image-list-item">
-                  <img
-                    alt=""
-                    className="featured-entity__image"
-                    src={this._generateIconPath(
-                      'elasticsearch')} />
-                </li>
-                <li className="featured-entity__image-list-item">
-                  <img
-                    alt=""
-                    className="featured-entity__image"
-                    src={this._generateIconPath(
-                      '~containers/logstash')} />
-                </li>
-                <li className="featured-entity__image-list-item">
-                  <img
-                    alt=""
-                    className="featured-entity__image"
-                    src={this._generateIconPath('kibana')} />
-                </li>
-              </ul>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              elk stack
-                </h3>
-                <p>by containers</p>
-              </div>
-            </span>
-          </li>
-        </ul>
-        <p className="intro">
-          <span
-            className="link link--cold"
-            data-filterkey="tags"
-            data-filtervalue="analytics"
-            onClick={this._handleSearchClick.bind(this)}>
-                  View all analytics&nbsp;&rsaquo;
-          </span>
-        </p>
+          </p>
+        </div>
       </div>
-    </div>);
+    );
   }
 
   /**
@@ -903,147 +942,150 @@ class Store extends React.Component {
     @return {Object} The contents of the section
   */
   _databasesSection() {
-    return (<div className="row row--border-bottom">
-      <div className="inner-wrapper">
-        <h2>Databases</h2>
-        <div className="box box--mysql clearfix">
-          <div className="six-col no-margin-bottom align-center">
-            <img
-              alt=""
-              src={this._generateLocalImagePath('mysql-promo.png')} />
+    return (
+      <div className="row row--border-bottom">
+        <div className="inner-wrapper">
+          <h2>Databases</h2>
+          <div className="box box--mysql clearfix">
+            <div className="six-col no-margin-bottom align-center">
+              <img alt="" src={this._generateLocalImagePath('mysql-promo.png')} />
+            </div>
+            <div className="six-col no-margin-bottom last-col">
+              <h3>MySQL</h3>
+              <p>
+                By{' '}
+                <a
+                  className="link link--cold"
+                  href={this._generateUserPath('mysql-charmers')}
+                  target="_blank"
+                >
+                  mysql-charmers
+                </a>
+              </p>
+              <p>
+                MySQL is a fast, stable and true multi-user, multi-threaded SQL database
+                server. Its main goals are speed, robustness and ease of use.
+              </p>
+              <span
+                className="button--inline-neutral"
+                data-entity="mysql"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                View the charm
+              </span>
+            </div>
           </div>
-          <div className="six-col no-margin-bottom last-col">
-            <h3>MySQL</h3>
-            <p>By <a
-              className="link link--cold"
-              href={this._generateUserPath('mysql-charmers')}
-              target="_blank">
-                          mysql-charmers
-            </a>
-            </p>
-            <p>MySQL is a fast, stable and true multi-user,
-                  multi-threaded SQL database server. Its main goals
-                  are speed, robustness and ease of use.</p>
-            <span
-              className="button--inline-neutral"
-              data-entity="mysql"
-              onClick={this._handleEntityClick.bind(this)}>
-                      View the charm
-            </span>
-          </div>
-        </div>
 
-        <ul className="twelve-col no-bullets equal-height">
-          <li className="three-col featured-entity">
+          <ul className="twelve-col no-bullets equal-height">
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="cassandra"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('cassandra')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Cassandra</h3>
+                  <p>by cassandra-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="mariadb"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('mariadb')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Mariadb</h3>
+                  <p>by mariadb-charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="mongodb"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('mongodb')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Mongodb</h3>
+                  <p>by charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col last-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="redis"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('redis')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Redis</h3>
+                  <p>by charmers</p>
+                </div>
+              </span>
+            </li>
+            <li className="three-col last-col featured-entity">
+              <span
+                className="featured-entity__link link"
+                data-entity="postgresql"
+                onClick={this._handleEntityClick.bind(this)}
+              >
+                <div className="one-col no-margin-bottom">
+                  <img
+                    alt=""
+                    className="featured-entity__image"
+                    src={this._generateIconPath('postgresql')}
+                  />
+                </div>
+                <div className="two-col last-col no-margin-bottom">
+                  <h3 className="featured-entity__title">Postgresql</h3>
+                  <p>by postgresql-charmers</p>
+                </div>
+              </span>
+            </li>
+          </ul>
+          <p className="intro">
             <span
-              className="featured-entity__link link"
-              data-entity="cassandra"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('cassandra')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Cassandra
-                </h3>
-                <p>by cassandra-charmers</p>
-              </div>
+              className="link link--cold"
+              data-filterkey="tags"
+              data-filtervalue="databases"
+              onClick={this._handleSearchClick.bind(this)}
+            >
+              View all databases&nbsp;&rsaquo;
             </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="mariadb"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div
-                className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('mariadb')} />
-              </div>
-              <div
-                className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                            Mariadb
-                </h3>
-                <p>by mariadb-charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="mongodb"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('mongodb')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Mongodb
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col last-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="redis"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('redis')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Redis
-                </h3>
-                <p>by charmers</p>
-              </div>
-            </span>
-          </li>
-          <li className="three-col last-col featured-entity">
-            <span
-              className="featured-entity__link link"
-              data-entity="postgresql"
-              onClick={this._handleEntityClick.bind(this)}>
-              <div
-                className="one-col no-margin-bottom">
-                <img
-                  alt=""
-                  className="featured-entity__image"
-                  src={this._generateIconPath('postgresql')} />
-              </div>
-              <div className="two-col last-col no-margin-bottom">
-                <h3 className="featured-entity__title">
-                              Postgresql
-                </h3>
-                <p>by postgresql-charmers</p>
-              </div>
-            </span>
-          </li>
-        </ul>
-        <p className="intro">
-          <span
-            className="link link--cold"
-            data-filterkey="tags"
-            data-filtervalue="databases"
-            onClick={this._handleSearchClick.bind(this)}>
-                  View all databases&nbsp;&rsaquo;
-          </span>
-        </p>
+          </p>
+        </div>
       </div>
-    </div>);
+    );
   }
 
   render() {
@@ -1060,7 +1102,7 @@ class Store extends React.Component {
       </div>
     );
   }
-};
+}
 
 Store.propTypes = {
   changeState: PropTypes.func.isRequired,

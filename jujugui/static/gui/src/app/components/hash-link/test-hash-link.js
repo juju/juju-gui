@@ -8,23 +8,21 @@ const HashLink = require('./hash-link');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 describe('HashLink', () => {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <HashLink
-      changeState={options.changeState || sinon.stub()}
-      hash={options.hash || 'readme'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <HashLink
+        changeState={options.changeState || sinon.stub()}
+        hash={options.hash || 'readme'}
+      />
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div
-        className="hash-link"
-        onClick={wrapper.prop('onClick')}>
-        <SvgIcon
-          name="anchor_16"
-          size="16" />
-      </div>);
+      <div className="hash-link" onClick={wrapper.prop('onClick')}>
+        <SvgIcon name="anchor_16" size="16" />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

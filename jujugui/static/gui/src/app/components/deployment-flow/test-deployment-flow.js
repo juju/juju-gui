@@ -19,9 +19,18 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const Button = require('../shared/button/button');
 
 describe('DeploymentFlow', function() {
-  let acl, applications, changesUtils, controllerAPI, charmstore, initUtils,
-      modelAPI, models, payment, plans, stripe, terms;
-
+  let acl,
+    applications,
+    changesUtils,
+    controllerAPI,
+    charmstore,
+    initUtils,
+    modelAPI,
+    models,
+    payment,
+    plans,
+    stripe,
+    terms;
 
   /**
     Convenience function for quickly and easily creating a DeploymentFlow
@@ -33,10 +42,16 @@ describe('DeploymentFlow', function() {
     const appId = 'service1';
     const charmsGetById = sinon.stub();
     charmsGetById.withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns(['service1-terms'])
+      get: sinon
+        .stub()
+        .withArgs('terms')
+        .returns(['service1-terms'])
     });
     charmsGetById.withArgs('mysql').returns({
-      get: sinon.stub().withArgs('terms').returns(['my-terms', 'general-terms'])
+      get: sinon
+        .stub()
+        .withArgs('terms')
+        .returns(['my-terms', 'general-terms'])
     });
     // Note that the defaults are *only* set for required DeploymentFlow props.
     const defaults = {
@@ -101,7 +116,8 @@ describe('DeploymentFlow', function() {
     return enzyme.shallow(
       <DeploymentFlow {...props}>
         <span>content</span>
-      </DeploymentFlow>);
+      </DeploymentFlow>
+    );
   };
 
   beforeEach(() => {
@@ -155,16 +171,19 @@ describe('DeploymentFlow', function() {
       createCardElement: sinon.stub(),
       createToken: sinon.stub()
     };
-    const getAgreementsByTerms = sinon.stub().callsArgWith(1, null, [{
-      name: 'service1-terms',
-      content: 'service1 terms.',
-      owner: 'spinach',
-      revision: 5
-    }, {
-      name: 'my-terms',
-      content: 'Mysql terms.',
-      revision: 9
-    }]);
+    const getAgreementsByTerms = sinon.stub().callsArgWith(1, null, [
+      {
+        name: 'service1-terms',
+        content: 'service1 terms.',
+        owner: 'spinach',
+        revision: 5
+      },
+      {
+        name: 'my-terms',
+        content: 'Mysql terms.',
+        revision: 9
+      }
+    ]);
     terms = {
       addAgreement: sinon.stub(),
       getAgreementsByTerms,
@@ -193,19 +212,22 @@ describe('DeploymentFlow', function() {
           isDirectDeploy={false}
           loggedIn={true}
           sendAnalytics={wrapper.find('DeploymentPanel').prop('sendAnalytics')}
-          title="Pavlova">
+          title="Pavlova"
+        >
           <React.Fragment>
             <DeploymentSection
               completed={true}
               instance="deployment-model-name"
               showCheck={true}
-              title="Set your model name">
+              title="Set your model name"
+            >
               <DeploymentModelName
                 acl={acl}
                 ddEntity={null}
                 focusName={true}
                 modelName="Pavlova"
-                setModelName={sinon.stub()} />
+                setModelName={sinon.stub()}
+              />
             </DeploymentSection>
             <DeploymentSection
               buttons={undefined}
@@ -213,7 +235,8 @@ describe('DeploymentFlow', function() {
               disabled={false}
               instance="deployment-cloud"
               showCheck={true}
-              title="Choose cloud to deploy to">
+              title="Choose cloud to deploy to"
+            >
               <DeploymentCloud
                 acl={acl}
                 addNotification={sinon.stub()}
@@ -221,22 +244,30 @@ describe('DeploymentFlow', function() {
                 controllerIsReady={sinon.stub()}
                 listClouds={sinon.stub()}
                 setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
-                setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')} />
+                setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')}
+              />
             </DeploymentSection>
             <DeploymentSection
               completed={false}
               disabled={true}
               instance="deployment-ssh-key"
               showCheck={true}
-              title={<span>Add public SSH keys <em>(optional)</em></span>}>
+              title={
+                <span>
+                  Add public SSH keys <em>(optional)</em>
+                </span>
+              }
+            >
               <DeploymentSSHKey
                 addNotification={sinon.stub()}
                 cloud={null}
-                setLaunchpadUsernames={
-                  wrapper.find('DeploymentSSHKey').prop('setLaunchpadUsernames')}
+                setLaunchpadUsernames={wrapper
+                  .find('DeploymentSSHKey')
+                  .prop('setLaunchpadUsernames')}
                 setSSHKeys={wrapper.find('DeploymentSSHKey').prop('setSSHKeys')}
                 username={undefined}
-                WebHandler={sinon.stub()} />
+                WebHandler={sinon.stub()}
+              />
             </DeploymentSection>
             {undefined}
             <DeploymentSection
@@ -244,7 +275,8 @@ describe('DeploymentFlow', function() {
               disabled={true}
               instance="deployment-machines"
               showCheck={false}
-              title="Machines to be provisioned">
+              title="Machines to be provisioned"
+            >
               <DeploymentMachines
                 acl={acl}
                 cloud={null}
@@ -253,12 +285,11 @@ describe('DeploymentFlow', function() {
                   generateMachineDetails: sinon.stub(),
                   reshape: shapeup.reshapeFunc
                 }}
-                machines={{machine: 'machine1'}} />
+                machines={{machine: 'machine1'}}
+              />
             </DeploymentSection>
             <div className="deployment-services">
-              <AccordionSection
-                startOpen={false}
-                title="Model changes">
+              <AccordionSection startOpen={false} title="Model changes">
                 <DeploymentServices
                   acl={acl}
                   addNotification={sinon.stub()}
@@ -269,7 +300,8 @@ describe('DeploymentFlow', function() {
                   listPlansForCharm={sinon.stub()}
                   parseTermId={wrapper.find('DeploymentServices').prop('parseTermId')}
                   showTerms={sinon.stub()}
-                  withPlans={true} />
+                  withPlans={true}
+                />
               </AccordionSection>
             </div>
             <DeploymentSection
@@ -277,13 +309,15 @@ describe('DeploymentFlow', function() {
               disabled={true}
               instance="deployment-budget"
               showCheck={true}
-              title="Confirm budget">
+              title="Confirm budget"
+            >
               <DeploymentBudget
                 acl={acl}
                 addNotification={sinon.stub()}
                 listBudgets={sinon.stub()}
                 setBudget={wrapper.find('DeploymentBudget').prop('setBudget')}
-                user="dalek" />
+                user="dalek"
+              />
             </DeploymentSection>
             {null}
             <div className="twelve-col">
@@ -293,7 +327,8 @@ describe('DeploymentFlow', function() {
                   <Button
                     action={wrapper.find('Button').prop('action')}
                     disabled={true}
-                    type="positive">
+                    type="positive"
+                  >
                     Deploy
                   </Button>
                 </div>
@@ -302,7 +337,8 @@ describe('DeploymentFlow', function() {
             {null}
           </React.Fragment>
         </DeploymentPanel>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -381,14 +417,16 @@ describe('DeploymentFlow', function() {
     wrapper.update();
     const directDeploy = wrapper.find('DeploymentDirectDeploy');
     assert.equal(directDeploy.length, 1);
-    assert.deepEqual(directDeploy.prop('ddData'), {id: 'cs:bundle/kubernetes-core-8'});
+    assert.deepEqual(directDeploy.prop('ddData'), {
+      id: 'cs:bundle/kubernetes-core-8'
+    });
   });
 
   it('can update the direct deploy state', () => {
     const addNotification = sinon.stub();
     const changeState = sinon.stub();
     const entityId = 'cs:bundle/kubernetes-core-8';
-    const entityId2 ='cs:new/entity';
+    const entityId2 = 'cs:new/entity';
     const entityGet = sinon.stub();
     entityGet.withArgs('terms').returns([]);
     entityGet.withArgs('supported').returns(false);
@@ -561,14 +599,17 @@ describe('DeploymentFlow', function() {
       cloudCount: 2
     });
     wrapper.update();
-    const buttons = wrapper.find(
-      'DeploymentSection[instance="deployment-cloud"]').prop('buttons');
-    assert.deepEqual(buttons, [{
-      action: buttons[0].action,
-      disabled: false,
-      title: 'Change cloud',
-      type: 'neutral'
-    }]);
+    const buttons = wrapper
+      .find('DeploymentSection[instance="deployment-cloud"]')
+      .prop('buttons');
+    assert.deepEqual(buttons, [
+      {
+        action: buttons[0].action,
+        disabled: false,
+        title: 'Change cloud',
+        type: 'neutral'
+      }
+    ]);
   });
 
   it('does not display the change cloud button if there is only one cloud', () => {
@@ -581,7 +622,8 @@ describe('DeploymentFlow', function() {
     wrapper.update();
     assert.strictEqual(
       wrapper.find('DeploymentSection[instance="deployment-cloud"]').prop('buttons'),
-      undefined);
+      undefined
+    );
   });
 
   it('does not show the model name when comitting', function() {
@@ -617,8 +659,10 @@ describe('DeploymentFlow', function() {
     assert.isNull(instance.state.credential);
     assert.equal(instance.props.sendAnalytics.callCount, 1);
     assert.deepEqual(instance.props.sendAnalytics.args[0], [
-      'Deployment Flow', 'Component mounted',
-      'is DD - is new model - doesn\'t have USSO']);
+      `Deployment Flow`,
+      `Component mounted`,
+      `is DD - is new model - doesn't have USSO`
+    ]);
   });
 
   it('can enable the credential section', function() {
@@ -724,7 +768,10 @@ describe('DeploymentFlow', function() {
 
   it('can display the agreements section', function() {
     const charmsGetById = sinon.stub().returns({
-      get: sinon.stub().withArgs('terms').returns(['django-terms'])
+      get: sinon
+        .stub()
+        .withArgs('terms')
+        .returns(['django-terms'])
     });
     const wrapper = createDeploymentFlow({
       cloud: {name: 'cloud'},
@@ -738,7 +785,9 @@ describe('DeploymentFlow', function() {
         disabled={false}
         onCheckboxChange={wrapper.find('DeploymentAgreements').prop('onCheckboxChange')}
         showTerms={false}
-        terms={null} />);
+        terms={null}
+      />
+    );
     assert.compareJSX(wrapper.find('DeploymentAgreements'), expected);
   });
 
@@ -763,9 +812,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('can deploy', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'cloud'},
@@ -776,7 +831,10 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     const props = instance.props;
     // Click to deploy.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(initUtils.deploy.callCount, 1);
     assert.strictEqual(initUtils.deploy.args[0].length, 5);
     assert.equal(initUtils.deploy.args[0][2], 'Pavlova');
@@ -789,17 +847,27 @@ describe('DeploymentFlow', function() {
     assert.equal(props.changeState.callCount, 1);
     assert.equal(props.sendAnalytics.callCount, 2);
     assert.deepEqual(props.sendAnalytics.args[0], [
-      'Deployment Flow', 'Component mounted',
-      'is DD - is model update - doesn\'t have USSO']);
+      'Deployment Flow',
+      'Component mounted',
+      "is DD - is model update - doesn't have USSO"
+    ]);
     assert.deepEqual(props.sendAnalytics.args[1], [
-      'Deployment Flow', 'Button click',
-      'Deploy model - is DD - is model update - doesn\'t have USSO']);
+      'Deployment Flow',
+      'Button click',
+      "Deploy model - is DD - is model update - doesn't have USSO"
+    ]);
   });
 
   it('Enables the deploy button if deploying fails', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     initUtils.deploy.callsArgWith(0, 'Uh oh!');
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
@@ -811,7 +879,10 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     const props = instance.props;
     // Click to deploy.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(initUtils.deploy.callCount, 1);
     assert.equal(props.changeState.callCount, 0);
     wrapper.update();
@@ -819,9 +890,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('increases stats when deploying', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const statsIncrease = sinon.stub();
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
@@ -832,7 +909,10 @@ describe('DeploymentFlow', function() {
       stats: {increase: statsIncrease}
     });
     // Click to deploy.
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(statsIncrease.callCount, 1, 'statsIncrease callCount');
     const args = statsIncrease.args[0];
     assert.equal(args.length, 1, 'statsIncrease args length');
@@ -849,163 +929,187 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._handleTermsAgreement({target: {checked: true}});
     wrapper.update();
-    wrapper.find('Button').props().action();
-    assert.equal(initUtils.deploy.callCount, 0,
-      'The deploy function should not be called');
-    assert.equal(terms.addAgreement.callCount, 1,
-      'The addAgreement function was not called');
-    assert.deepEqual(terms.addAgreement.args[0][0], [{
-      name: 'service1-terms',
-      owner: 'spinach',
-      revision: 5
-    }, {
-      name: 'my-terms',
-      revision: 9
-    }], 'The agreement passed in was not as expected.');
+    wrapper
+      .find('Button')
+      .props()
+      .action();
+    assert.equal(initUtils.deploy.callCount, 0, 'The deploy function should not be called');
+    assert.equal(terms.addAgreement.callCount, 1, 'The addAgreement function was not called');
+    assert.deepEqual(
+      terms.addAgreement.args[0][0],
+      [
+        {
+          name: 'service1-terms',
+          owner: 'spinach',
+          revision: 5
+        },
+        {
+          name: 'my-terms',
+          revision: 9
+        }
+      ],
+      'The agreement passed in was not as expected.'
+    );
   });
 
   it('allows or disallows deployments', function() {
-    const tests = [{
-      about: 'no model name',
-      state: {modelName: ''},
-      allowed: false
-    }, {
-      about: 'no cloud',
-      state: {modelName: 'mymodel'},
-      modelCommitted: true,
-      allowed: false
-    }, {
-      about: 'read only',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'}
+    const tests = [
+      {
+        about: 'no model name',
+        state: {modelName: ''},
+        allowed: false
       },
-      isReadOnly: true,
-      modelCommitted: true,
-      allowed: false
-    }, {
-      about: 'deploying',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        deploying: true
+      {
+        about: 'no cloud',
+        state: {modelName: 'mymodel'},
+        modelCommitted: true,
+        allowed: false
       },
-      modelCommitted: true,
-      allowed: false
-    }, {
-      about: 'model committed',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred'
+      {
+        about: 'read only',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'}
+        },
+        isReadOnly: true,
+        modelCommitted: true,
+        allowed: false
       },
-      modelCommitted: true,
-      noTerms: true,
-      allowed: true
-    }, {
-      about: 'no ssh on azure',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'azure'},
-        credential: 'cred'
+      {
+        about: 'deploying',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          deploying: true
+        },
+        modelCommitted: true,
+        allowed: false
       },
-      allowed: false
-    }, {
-      about: 'no ssh on aws',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred'
+      {
+        about: 'model committed',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred'
+        },
+        modelCommitted: true,
+        noTerms: true,
+        allowed: true
       },
-      noTerms: true,
-      allowed: true
-    }, {
-      about: 'ssh provided on azure',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'azure'},
-        credential: 'cred',
-        sshKeys: ['mykey']
+      {
+        about: 'no ssh on azure',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'azure'},
+          credential: 'cred'
+        },
+        allowed: false
       },
-      noTerms: true,
-      allowed: true
-    }, {
-      about: 'ssh provided on aws',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred',
-        sshKeys: ['mykey']
+      {
+        about: 'no ssh on aws',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred'
+        },
+        noTerms: true,
+        allowed: true
       },
-      noTerms: true,
-      allowed: true
-    }, {
-      about: 'no payment user',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred',
-        paymentUser: null,
-        sshKeys: ['mykey']
+      {
+        about: 'ssh provided on azure',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'azure'},
+          credential: 'cred',
+          sshKeys: ['mykey']
+        },
+        noTerms: true,
+        allowed: true
       },
-      noTerms: true,
-      showPay: true,
-      allowed: false
-    }, {
-      about: 'payment required but not provided',
-      state: {
-        modelname: 'mymodel',
-        cloud: {cloudType: 'gce'},
-        credential: 'cred',
-        paymentUser: null,
-        sshKeys: ['mykey']
+      {
+        about: 'ssh provided on aws',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred',
+          sshKeys: ['mykey']
+        },
+        noTerms: true,
+        allowed: true
       },
-      noTerms: true,
-      showPay: true,
-      allowed: true,
-      payment: null
-    }, {
-      about: 'terms not agreed',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred',
-        terms: ['foo'],
-        termsAgreed: false
+      {
+        about: 'no payment user',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred',
+          paymentUser: null,
+          sshKeys: ['mykey']
+        },
+        noTerms: true,
+        showPay: true,
+        allowed: false
       },
-      allowed: false,
-      includeAgreements: true
-    }, {
-      about: 'terms agreed',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred',
-        terms: ['foo'],
-        termsAgreed: true
+      {
+        about: 'payment required but not provided',
+        state: {
+          modelname: 'mymodel',
+          cloud: {cloudType: 'gce'},
+          credential: 'cred',
+          paymentUser: null,
+          sshKeys: ['mykey']
+        },
+        noTerms: true,
+        showPay: true,
+        allowed: true,
+        payment: null
       },
-      noTerms: true,
-      allowed: true
-    }, {
-      about: 'terms not finished loading',
-      state: {
-        loadingTerms: true,
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: 'cred',
-        terms: ['foo'],
-        termsAgreed: true
+      {
+        about: 'terms not agreed',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred',
+          terms: ['foo'],
+          termsAgreed: false
+        },
+        allowed: false,
+        includeAgreements: true
       },
-      allowed: false
-    }, {
-      about: 'deploy should be disabled when there no credentials',
-      state: {
-        modelName: 'mymodel',
-        cloud: {cloudType: 'aws'},
-        credential: null
+      {
+        about: 'terms agreed',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred',
+          terms: ['foo'],
+          termsAgreed: true
+        },
+        noTerms: true,
+        allowed: true
       },
-      allowed: false
-    }];
+      {
+        about: 'terms not finished loading',
+        state: {
+          loadingTerms: true,
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: 'cred',
+          terms: ['foo'],
+          termsAgreed: true
+        },
+        allowed: false
+      },
+      {
+        about: 'deploy should be disabled when there no credentials',
+        state: {
+          modelName: 'mymodel',
+          cloud: {cloudType: 'aws'},
+          credential: null
+        },
+        allowed: false
+      }
+    ];
     tests.forEach(test => {
       const charmsGetById = sinon.stub();
       if (test.noTerms) {
@@ -1037,9 +1141,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('can disable the deploy button on deploy', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'cloud'},
@@ -1048,7 +1158,10 @@ describe('DeploymentFlow', function() {
       modelCommitted: true,
       region: 'north'
     });
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
 
     // .action() rerenders the component so we need to get it again
     wrapper.update();
@@ -1059,9 +1172,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('shows a commit button if the model is committed', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'cloud'},
@@ -1070,13 +1189,25 @@ describe('DeploymentFlow', function() {
       modelCommitted: true,
       region: 'north'
     });
-    assert.equal(wrapper.find('Button').children().text(), 'Commit');
+    assert.equal(
+      wrapper
+        .find('Button')
+        .children()
+        .text(),
+      'Commit'
+    );
   });
 
   it('can deploy with SSH keys', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'azure'},
@@ -1088,7 +1219,10 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setSSHKeys([{text: 'my SSH key'}]);
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
@@ -1103,9 +1237,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('can deploy with a Launchpad username', () => {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'azure'},
@@ -1117,15 +1257,24 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setLaunchpadUsernames(['rose']);
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(modelAPI.importKeys.callCount, 1);
     assert.deepEqual(modelAPI.importKeys.args[0][1], ['lp:rose']);
   });
 
   it('can deploy with a VPC id', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'aws'},
@@ -1137,7 +1286,10 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setVPCId('my VPC id');
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
@@ -1152,9 +1304,15 @@ describe('DeploymentFlow', function() {
   });
 
   it('can deploy with a forced VPC id', function() {
-    const charmsGetById = sinon.stub().withArgs('service1').returns({
-      get: sinon.stub().withArgs('terms').returns([])
-    });
+    const charmsGetById = sinon
+      .stub()
+      .withArgs('service1')
+      .returns({
+        get: sinon
+          .stub()
+          .withArgs('terms')
+          .returns([])
+      });
     const wrapper = createDeploymentFlow({
       charmsGetById: charmsGetById,
       cloud: {name: 'aws'},
@@ -1166,7 +1324,10 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance._setVPCId('my VPC id', true);
     wrapper.update();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     const deploy = initUtils.deploy;
     assert.equal(deploy.callCount, 1);
     assert.strictEqual(deploy.args[0].length, 5);
@@ -1236,8 +1397,11 @@ describe('DeploymentFlow', function() {
       gtmEnabled: true
     });
     assert.equal(
-      wrapper.find('.deployment-flow__deploy').prop('className').includes(
-        'deployment-flow__deploy--cookie-visible'),
-      true);
+      wrapper
+        .find('.deployment-flow__deploy')
+        .prop('className')
+        .includes('deployment-flow__deploy--cookie-visible'),
+      true
+    );
   });
 });

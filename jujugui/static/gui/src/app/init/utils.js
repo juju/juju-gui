@@ -40,8 +40,9 @@ utils.createSocketURL = data => {
     // the necessary config values.
     alert(
       'Unable to create socketURL, no apiAddress provided. The GUI must ' +
-      'be loaded with a valid configuration. Try GUIProxy if ' +
-      'running in development mode: https://github.com/juju/guiproxy');
+        'be loaded with a valid configuration. Try GUIProxy if ' +
+        'running in development mode: https://github.com/juju/guiproxy'
+    );
     return;
   }
   if (template[0] === '/') {
@@ -65,8 +66,10 @@ utils.createSocketURL = data => {
 */
 utils.unloadWindow = function() {
   if (Object.keys(this.ecs.getCurrentChangeSet()).length > 0) {
-    return 'You have uncommitted changes to your model. You will ' +
-      'lose these changes if you continue.';
+    return (
+      'You have uncommitted changes to your model. You will ' +
+      'lose these changes if you continue.'
+    );
   }
 };
 
@@ -77,7 +80,7 @@ utils.unloadWindow = function() {
   @param {Function} [sendAnalytics] Function to send analytics about the use of
     the bundle export.
 */
-utils.exportEnvironmentFile = (db, sendAnalytics)=> {
+utils.exportEnvironmentFile = (db, sendAnalytics) => {
   const apps = db.services.toArray();
   const idMap = new Map();
   // Store a map of all the temporary app ids to the real ids.
@@ -93,8 +96,9 @@ utils.exportEnvironmentFile = (db, sendAnalytics)=> {
   });
   // In order to support Safari 7 the type of this blob needs
   // to be text/plain instead of it's actual type of application/yaml.
-  const exportBlob = new Blob([exportData],
-    {type: 'text/plain;charset=utf-8'});
+  const exportBlob = new Blob([exportData], {
+    type: 'text/plain;charset=utf-8'
+  });
   const envName = db.environment.get('name');
   sendAnalytics('BundleExport', 'export', 'export', apps.length);
   FileSaver.saveAs(exportBlob, utils._generateBundleExportFileName(envName));
@@ -107,16 +111,18 @@ utils.exportEnvironmentFile = (db, sendAnalytics)=> {
   @param {String} Enviroment name
   @param {Date} date object
 */
-utils._generateBundleExportFileName = (envName, date=new Date()) => {
+utils._generateBundleExportFileName = (envName, date = new Date()) => {
   envName = envName || 'untitled-model';
   const fileExtension = '.yaml';
-  return [envName,
-    date.getFullYear(),
-    ('0' + (date.getMonth() + 1)).slice(-2),
-    ('0' + date.getDate()).slice(-2)].join('-') + fileExtension;
+  return (
+    [
+      envName,
+      date.getFullYear(),
+      ('0' + (date.getMonth() + 1)).slice(-2),
+      ('0' + date.getDate()).slice(-2)
+    ].join('-') + fileExtension
+  );
 };
-
-
 
 /**
   Get the config for a service from a YAML file.
@@ -172,18 +178,18 @@ cases are handled by passing in a plural form (e.g. octopus => ocotopi).
 */
 utils.pluralize = (word, object, plural_word, options) => {
   let plural = false;
-  if (typeof(object) === 'number') {
-    plural = (object !== 1);
+  if (typeof object === 'number') {
+    plural = object !== 1;
   }
   if (object) {
     if (object.size) {
-      plural = (object.size() !== 1);
+      plural = object.size() !== 1;
     } else if (object.length) {
-      plural = (object.length !== 1);
+      plural = object.length !== 1;
     }
   }
   if (plural) {
-    if (typeof(plural_word) === 'string') {
+    if (typeof plural_word === 'string') {
       return plural_word;
     } else {
       return word + 's';
@@ -233,9 +239,13 @@ utils.jujushellURL = (storage, db, config) => {
 */
 utils.destroyService = (db, env, service, callback) => {
   if (service.name === 'service') {
-    env.destroyApplication(service.get('id'),
+    env.destroyApplication(
+      service.get('id'),
       utils._destroyServiceCallback.bind(this, service, db, callback),
-      {modelId: null});
+      {
+        modelId: null
+      }
+    );
   } else if (service.get('pending')) {
     db.services.remove(service);
     service.destroy();
@@ -287,7 +297,13 @@ utils._destroyServiceCallback = (service, db, callback, evt) => {
     is destroyed.
 */
 utils.destroyModel = (
-  destroyModels, modelAPI, switchModel, modelUUID, callback=null, clearProfileState=true) => {
+  destroyModels,
+  modelAPI,
+  switchModel,
+  modelUUID,
+  callback = null,
+  clearProfileState = true
+) => {
   // If the current model is being destroyed then disconnect first.
   if (modelAPI.get('modelUUID') === modelUUID) {
     switchModel(null, false, clearProfileState);
@@ -326,7 +342,7 @@ utils.getUnitStatusCounts = units => {
 // escaped the forward slashes and removed the negative-lookbehind, which JS
 // does not support. See line 46 in Gruber's gist; that's the line/feature
 // I had to take out.
-const URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/ig; // eslint-disable-line max-len
+const URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b\/?(?!@)))/gi;
 
 /**
   Convert plain text links to anchor tags.
@@ -335,7 +351,8 @@ const URL_RE = /\b((?:(?:https?|ftp):(?:\/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com
 */
 utils.linkify = str => {
   // Sanitize any malicious HTML or Javascript.
-  let sanitizedStr = str.replace(/&/g, '&amp;')
+  let sanitizedStr = str
+    .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
   const links = sanitizedStr.match(URL_RE);
@@ -344,8 +361,10 @@ utils.linkify = str => {
       // Sanitize any attempts to escape an href attribute.
       const href = link.replace(/"/g, '&quot;');
       // Replace the text-only link with an anchor element.
-      sanitizedStr = sanitizedStr.replace(link,
-        `<a href="${href}" target="_blank">${link}</a>`);
+      sanitizedStr = sanitizedStr.replace(
+        link,
+        `<a href="${href}" target="_blank">${link}</a>`
+      );
     });
   }
   return sanitizedStr;
@@ -363,7 +382,12 @@ utils.linkify = str => {
   @param {Boolean} clearProfileState Whether to close the profile.
 */
 utils.switchModel = function(
-  modelAPI, addNotification, model, confirmUncommitted=true, clearProfileState=true) {
+  modelAPI,
+  addNotification,
+  model,
+  confirmUncommitted = true,
+  clearProfileState = true
+) {
   if (model && model.id === this.modelUUID) {
     // There is nothing to be done as we are already connected to the model.
     // Note that this check is always false when switching models from the
@@ -383,7 +407,13 @@ utils.switchModel = function(
     this.modelUUID = uuid;
   };
   const switchModel = utils._switchModel.bind(
-    null, this.state, modelAPI, model, clearProfileState, updateModelUUID);
+    null,
+    this.state,
+    modelAPI,
+    model,
+    clearProfileState,
+    updateModelUUID
+  );
   const currentChangeSet = modelAPI.get('ecs').getCurrentChangeSet();
   // If there are uncommitted changes then show a confirmation popup.
   if (confirmUncommitted && Object.keys(currentChangeSet).length > 0) {
@@ -400,18 +430,22 @@ utils.switchModel = function(
   @param {Function} action The method to call if the user continues.
 */
 utils._showUncommittedConfirm = action => {
-  document.dispatchEvent(new CustomEvent('popupAction', {
-    detail: action
-  }));
+  document.dispatchEvent(
+    new CustomEvent('popupAction', {
+      detail: action
+    })
+  );
 };
 
 /**
   Hide the confirmation popup.
 */
 utils._hidePopup = () => {
-  document.dispatchEvent(new CustomEvent('popupAction', {
-    detail: null
-  }));
+  document.dispatchEvent(
+    new CustomEvent('popupAction', {
+      detail: null
+    })
+  );
 };
 
 /**
@@ -424,7 +458,12 @@ utils._hidePopup = () => {
   @param {Boolean} clearProfileState Whether to close the profile.
 */
 utils._switchModel = function(
-  state, modelAPI, model, clearProfileState=true, updateModelUUID=null) {
+  state,
+  modelAPI,
+  model,
+  clearProfileState = true,
+  updateModelUUID = null
+) {
   // Remove the switch model confirmation popup if it has been displayed to
   // the user.
   utils._hidePopup();
@@ -501,7 +540,14 @@ utils.showProfile = (changeState, username) => {
       model's resources.
 */
 utils.deploy = function(
-  appProps, autoPlaceUnits, callback, autoplace=true, modelName, args, slaData) {
+  appProps,
+  autoPlaceUnits,
+  callback,
+  autoplace = true,
+  modelName,
+  args,
+  slaData
+) {
   const modelAPI = appProps.modelAPI;
   const controllerAPI = appProps.controllerAPI;
   const user = appProps.user;
@@ -520,7 +566,11 @@ utils.deploy = function(
   const handler = (err, model) => {
     if (err) {
       const msg = 'cannot create model: ' + err;
-      appProps.db.notifications.add({title: msg, message: msg, level: 'error'});
+      appProps.db.notifications.add({
+        title: msg,
+        message: msg,
+        level: 'error'
+      });
       callback(msg, null);
       return;
     }
@@ -550,7 +600,11 @@ utils.deploy = function(
       if (err) {
         console.error(err);
         const msg = 'Unable to authorize SLA';
-        appProps.db.notifications.add({title: msg, message: msg, level: 'error'});
+        appProps.db.notifications.add({
+          title: msg,
+          message: msg,
+          level: 'error'
+        });
         return;
       }
       const current = appProps.appState.current;
@@ -574,14 +628,19 @@ utils.deploy = function(
         uuid: model.uuid
       });
       appProps.switchEnv(
-        socketUrl, null, null, setSLAOnController.bind(this, slaData), true, false);
+        socketUrl,
+        null,
+        null,
+        setSLAOnController.bind(this, slaData),
+        true,
+        false
+      );
       appProps.appState.changeState({postDeploymentPanel: true});
     };
     // If the user has set a budget and an SLA then authorize that after the
     // model has been created and the entities have been deployed.
     if (slaData) {
-      appProps.plans.authorizeSLA(
-        slaData.name, model.uuid, slaData.budget, switchToModel);
+      appProps.plans.authorizeSLA(slaData.name, model.uuid, slaData.budget, switchToModel);
     } else {
       switchToModel();
     }
@@ -613,7 +672,7 @@ utils.generateCloudCredentialName = (cloudName, user, credName) => {
 
 utils.getCloudProviderDetails = providerName => {
   const providers = {
-    'gce': {
+    gce: {
       id: 'google',
       showLogo: true,
       signupUrl: 'https://console.cloud.google.com/billing/freetrial',
@@ -621,45 +680,60 @@ utils.getCloudProviderDetails = providerName => {
       svgWidth: 256,
       title: 'Google Compute Engine',
       forms: {
-        jsonfile: [{
-          id: 'file',
-          title: 'Google Compute Engine project credentials .json file',
-          json: true
-        }],
-        oauth2: [{
-          id: 'client-id',
-          title: 'Client ID'
-        }, {
-          id: 'client-email',
-          title: 'Client e-mail address'
-        }, {
-          autocomplete: false,
-          id: 'private-key',
-          title: 'Private key',
-          multiLine: true,
-          unescape: true
-        }, {
-          id: 'project-id',
-          title: 'Project ID'
-        }]
+        jsonfile: [
+          {
+            id: 'file',
+            title: 'Google Compute Engine project credentials .json file',
+            json: true
+          }
+        ],
+        oauth2: [
+          {
+            id: 'client-id',
+            title: 'Client ID'
+          },
+          {
+            id: 'client-email',
+            title: 'Client e-mail address'
+          },
+          {
+            autocomplete: false,
+            id: 'private-key',
+            title: 'Private key',
+            multiLine: true,
+            unescape: true
+          },
+          {
+            id: 'project-id',
+            title: 'Project ID'
+          }
+        ]
       },
       message: (
         <p>
-          Need help? Read more about <a
+          Need help? Read more about{' '}
+          <a
             className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
             target="_blank"
-            title="Cloud credentials help">credentials in
-          general</a> or <a
+            title="Cloud credentials help"
+          >
+            credentials in general
+          </a>{' '}
+          or{' '}
+          <a
             className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-google"
             target="_blank"
-            title="Help using the Google Compute Engine public cloud">
-            setting up GCE credentials</a>.
+            title="Help using the Google Compute Engine public cloud"
+          >
+            setting up GCE credentials
+          </a>
+          .
         </p>
       )
     },
-    'azure': {
+    azure: {
       id: 'azure',
       showLogo: true,
       signupUrl: 'https://azure.microsoft.com/en-us/free/',
@@ -667,194 +741,247 @@ utils.getCloudProviderDetails = providerName => {
       svgWidth: 204,
       title: 'Microsoft Azure',
       forms: {
-        'service-principal-secret': [{
-          id: 'application-id',
-          title: 'Azure Active Directory application ID'
-        }, {
-          id: 'subscription-id',
-          title: 'Azure subscription ID'
-        }, {
-          id: 'application-password',
-          title: 'Azure Active Directory application password',
-          type: 'password'
-        }]
+        'service-principal-secret': [
+          {
+            id: 'application-id',
+            title: 'Azure Active Directory application ID'
+          },
+          {
+            id: 'subscription-id',
+            title: 'Azure subscription ID'
+          },
+          {
+            id: 'application-password',
+            title: 'Azure Active Directory application password',
+            type: 'password'
+          }
+        ]
       },
       message: (
         <p>
-          Need help? Read more about <a
+          Need help? Read more about{' '}
+          <a
             className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
             target="_blank"
-            title="Cloud credentials help">credentials in
-          general</a> or <a
+            title="Cloud credentials help"
+          >
+            credentials in general
+          </a>{' '}
+          or{' '}
+          <a
             className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-azure"
             target="_blank"
-            title="Help using the Microsoft Azure public cloud">setting up
-          Azure credentials</a>.
+            title="Help using the Microsoft Azure public cloud"
+          >
+            setting up Azure credentials
+          </a>
+          .
         </p>
       )
     },
-    'ec2': {
+    ec2: {
       id: 'aws',
       showLogo: true,
-      signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' +
-      'registration/index.html',
+      signupUrl: 'https://portal.aws.amazon.com/gp/aws/developer/' + 'registration/index.html',
       svgHeight: 44,
       svgWidth: 117,
       title: 'Amazon Web Services',
       forms: {
-        'access-key': [{
-          id: 'access-key',
-          title: 'The EC2 access key'
-        }, {
-          autocomplete: false,
-          id: 'secret-key',
-          title: 'The EC2 secret key'
-        }]
+        'access-key': [
+          {
+            id: 'access-key',
+            title: 'The EC2 access key'
+          },
+          {
+            autocomplete: false,
+            id: 'secret-key',
+            title: 'The EC2 secret key'
+          }
+        ]
       },
       message: (
         <p>
-          Need help? Read more about <a
+          Need help? Read more about{' '}
+          <a
             className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/credentials"
             target="_blank"
-            title="Cloud credentials help">credentials in
-          general</a> or <a
+            title="Cloud credentials help"
+          >
+            credentials in general
+          </a>{' '}
+          or{' '}
+          <a
             className="deployment-panel__link"
             href="https://jujucharms.com/docs/stable/help-aws"
             target="_blank"
-            title="Help using the Amazon Web Service public cloud">setting up
-          AWS credentials</a>.
+            title="Help using the Amazon Web Service public cloud"
+          >
+            setting up AWS credentials
+          </a>
+          .
         </p>
       )
     },
-    'openstack': {
+    openstack: {
       id: 'openstack',
       showLogo: false,
       title: 'OpenStack',
       forms: {
-        userpass: [{
-          id: 'username',
-          title: 'Username'
-        }, {
-          id: 'password',
-          title: 'Password',
-          type: 'password'
-        }, {
-          id: 'tenant-name',
-          title: 'Tenant name'
-        }, {
-          id: 'domain-name',
-          required: false,
-          title: 'Domain name'
-        }],
-        'access-key': [{
-          id: 'access-key',
-          title: 'Access key'
-        }, {
-          autocomplete: false,
-          id: 'secret-key',
-          title: 'Secret key'
-        }, {
-          id: 'tenant-name',
-          title: 'Tenant name'
-        }]
+        userpass: [
+          {
+            id: 'username',
+            title: 'Username'
+          },
+          {
+            id: 'password',
+            title: 'Password',
+            type: 'password'
+          },
+          {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          },
+          {
+            id: 'domain-name',
+            required: false,
+            title: 'Domain name'
+          }
+        ],
+        'access-key': [
+          {
+            id: 'access-key',
+            title: 'Access key'
+          },
+          {
+            autocomplete: false,
+            id: 'secret-key',
+            title: 'Secret key'
+          },
+          {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          }
+        ]
       }
     },
-    'cloudsigma': {
+    cloudsigma: {
       id: 'cloudsigma',
       showLogo: false,
       title: 'CloudSigma',
       forms: {
-        userpass: [{
-          id: 'username',
-          title: 'Username'
-        }, {
-          id: 'password',
-          title: 'Password',
-          type: 'password'
-        }]
+        userpass: [
+          {
+            id: 'username',
+            title: 'Username'
+          },
+          {
+            id: 'password',
+            title: 'Password',
+            type: 'password'
+          }
+        ]
       }
     },
-    'joyent': {
+    joyent: {
       id: 'joyent',
       showLogo: false,
       title: 'Joyent',
       forms: {
-        userpass: [{
-          id: 'sdc-user',
-          title: 'SmartDataCenter user ID'
-        }, {
-          id: 'sdc-key-id',
-          title: 'SmartDataCenter key ID'
-        }, {
-          autocomplete: false,
-          id: 'private-key',
-          title: 'Private key used to sign requests'
-        }, {
-          id: 'algorithm',
-          title: 'Algorithm used to generate the private key'
-        }]
+        userpass: [
+          {
+            id: 'sdc-user',
+            title: 'SmartDataCenter user ID'
+          },
+          {
+            id: 'sdc-key-id',
+            title: 'SmartDataCenter key ID'
+          },
+          {
+            autocomplete: false,
+            id: 'private-key',
+            title: 'Private key used to sign requests'
+          },
+          {
+            id: 'algorithm',
+            title: 'Algorithm used to generate the private key'
+          }
+        ]
       }
     },
-    'maas': {
+    maas: {
       id: 'maas',
       showLogo: false,
       title: 'MAAS',
       forms: {
-        oauth1: [{
-          id: 'maas-oauth',
-          title: 'OAuth/API-key credentials for MAAS'
-        }]
+        oauth1: [
+          {
+            id: 'maas-oauth',
+            title: 'OAuth/API-key credentials for MAAS'
+          }
+        ]
       }
     },
-    'rackspace': {
+    rackspace: {
       id: 'rackspace',
       showLogo: false,
       title: 'Rackspace',
       forms: {
-        userpass: [{
-          id: 'username',
-          title: 'Username'
-        }, {
-          id: 'password',
-          title: 'Password',
-          type: 'password'
-        }, {
-          id: 'tenant-name',
-          title: 'Tenant name'
-        }, {
-          id: 'domain-name',
-          required: false,
-          title: 'Domain name'
-        }],
-        'access-key': [{
-          id: 'access-key',
-          title: 'Access key'
-        }, {
-          autocomplete: false,
-          id: 'secret-key',
-          title: 'Secret key'
-        }, {
-          id: 'tenant-name',
-          title: 'Tenant name'
-        }]
+        userpass: [
+          {
+            id: 'username',
+            title: 'Username'
+          },
+          {
+            id: 'password',
+            title: 'Password',
+            type: 'password'
+          },
+          {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          },
+          {
+            id: 'domain-name',
+            required: false,
+            title: 'Domain name'
+          }
+        ],
+        'access-key': [
+          {
+            id: 'access-key',
+            title: 'Access key'
+          },
+          {
+            autocomplete: false,
+            id: 'secret-key',
+            title: 'Secret key'
+          },
+          {
+            id: 'tenant-name',
+            title: 'Tenant name'
+          }
+        ]
       }
     },
-    'vsphere': {
+    vsphere: {
       id: 'vsphere',
       showLogo: false,
       title: 'vSphere',
       forms: {
-        userpass: [{
-          id: 'username',
-          title: 'Username'
-        }, {
-          id: 'password',
-          title: 'Password',
-          type: 'password'
-        }]
+        userpass: [
+          {
+            id: 'username',
+            title: 'Username'
+          },
+          {
+            id: 'password',
+            title: 'Password',
+            type: 'password'
+          }
+        ]
       }
     },
     localhost: {
@@ -903,7 +1030,7 @@ utils.validateForm = (fields, refs) => {
   @param constraints {String} A constraints string.
   @returns {Object} The constraints object.
 */
-utils.parseConstraints = (genericConstraints, constraints='') => {
+utils.parseConstraints = (genericConstraints, constraints = '') => {
   let types = {};
   // Map the list of constraint types to an object.
   genericConstraints.forEach(constraint => {
@@ -927,15 +1054,15 @@ utils.parseConstraints = (genericConstraints, constraints='') => {
   @returns {String} The machine details.
 */
 utils.parseMachineDetails = (genericConstraints, machine) => {
-  const hardware = machine.hardware ||
-    utils.parseConstraints(genericConstraints, machine.constraints) || {};
+  const hardware =
+    machine.hardware || utils.parseConstraints(genericConstraints, machine.constraints) || {};
   let details = [];
   Object.keys(hardware).forEach(name => {
     let value = hardware[name];
     // Some details will not be set, so don't display them.
     if (value) {
       if (name === 'cpu-power' || name === 'cpuPower') {
-        value = `${(value / 100)}GHz`;
+        value = `${value / 100}GHz`;
       } else if (name === 'mem' || name === 'root-disk' || name === 'disk') {
         value = `${(value / 1024).toFixed(2)}GB`;
       }
@@ -968,12 +1095,12 @@ utils.parseMachineDetails = (genericConstraints, machine) => {
 utils.generateMachineDetails = (genericConstraints, units, machine) => {
   const unitCount = units.filterByMachine(machine.id, true).length;
   const details = utils.parseMachineDetails(genericConstraints, machine);
-  const detailsLine = details ?
-    details.map(detail => `${detail.label}: ${detail.value}`).join(', ') : '';
+  const detailsLine = details
+    ? details.map(detail => `${detail.label}: ${detail.value}`).join(', ')
+    : '';
   let hardwareDetails;
   if (detailsLine) {
-    const constraintsMessage = machine.constraints ?
-      'requested constraints: ' : '';
+    const constraintsMessage = machine.constraints ? 'requested constraints: ' : '';
     hardwareDetails = `${constraintsMessage}${detailsLine}`;
   }
   if (!hardwareDetails) {
@@ -988,7 +1115,6 @@ utils.generateMachineDetails = (genericConstraints, units, machine) => {
   return `${unitCount} unit${plural}, ${series}${hardwareDetails}`;
 };
 
-
 /**
   Given the db, env, service, unit count and constraints, create and auto
   place those units on new machines.
@@ -1000,20 +1126,25 @@ utils.generateMachineDetails = (genericConstraints, units, machine) => {
   @param {Integer} numUnits The unit count from the form input.
   @param {Object} constraints The constraints to create the new machines with.
 */
-utils.createMachinesPlaceUnits = function(
-  db, env, service, numUnits, constraints) {
+utils.createMachinesPlaceUnits = function(db, env, service, numUnits, constraints) {
   let machine;
   let parentId = null;
-  let containerType =null;
+  let containerType = null;
   for (let i = 0; i < parseInt(numUnits, 10); i += 1) {
-    machine = db.machines.addGhost(
-      parentId, containerType,
-      {constraints: initUtils.formatConstraints(constraints)});
-    env.addMachines([{
-      constraints: constraints
-    }], function(machine) {
-      db.machines.remove(machine);
-    }.bind(this, machine), {modelId: machine.id});
+    machine = db.machines.addGhost(parentId, containerType, {
+      constraints: initUtils.formatConstraints(constraints)
+    });
+    env.addMachines(
+      [
+        {
+          constraints: constraints
+        }
+      ],
+      function(machine) {
+        db.machines.remove(machine);
+      }.bind(this, machine),
+      {modelId: machine.id}
+    );
     env.placeUnit(addGhostAndEcsUnits(db, env, service, 1)[0], machine.id);
   }
 };
@@ -1033,23 +1164,30 @@ utils.createMachinesPlaceUnits = function(
 */
 function addGhostAndEcsUnits(db, env, service, unitCount, callback) {
   var serviceName = service.get('id'),
-      unitCount = parseInt(unitCount, 10),
-      units = [],
-      displayName, ghostUnit, unitId, unitIdCount;
+    unitCount = parseInt(unitCount, 10),
+    units = [],
+    displayName,
+    ghostUnit,
+    unitId,
+    unitIdCount;
   // u will be a unit OR the previous unit index value.
   const parseId = u => parseInt((u.id && u.id.split('/')[1]) || u, 10);
   const serviceUnits = service.get('units').toArray();
   let highestIndex = -1;
   if (serviceUnits.length) {
     highestIndex = serviceUnits.reduce(
-      (prev, curr) => Math.max(parseId(prev), parseId(curr)), 0);
+      (prev, curr) => Math.max(parseId(prev), parseId(curr)),
+      0
+    );
   }
   // Service names have a $ in them when they are uncommitted. Uncomitted
   // service's display names are also wrapped in parens to display on the
   // canvas.
   if (serviceName.indexOf('$') > 0) {
-    displayName = service.get('displayName')
-      .replace(/^\(/, '').replace(/\)$/, '');
+    displayName = service
+      .get('displayName')
+      .replace(/^\(/, '')
+      .replace(/\)$/, '');
   } else {
     displayName = serviceName;
   }
@@ -1068,11 +1206,14 @@ function addGhostAndEcsUnits(db, env, service, unitCount, callback) {
       1,
       null,
       removeGhostAddUnitCallback.bind(null, ghostUnit, db, callback),
-      {modelId: unitId});
+      {
+        modelId: unitId
+      }
+    );
     units.push(ghostUnit);
   }
   return units;
-};
+}
 
 /**
   Callback for the env add_unit call from the addGhostAndEcsUnit method.
@@ -1143,9 +1284,9 @@ utils.ensureTrailingSlash = function(text) {
 */
 utils.getIconPath = function(charmId, isBundle, env) {
   var cfg = window.juju_config,
-      charmstoreURL = (cfg && cfg.charmstoreURL) || '',
-      localIndex = charmId.indexOf('local:'),
-      path;
+    charmstoreURL = (cfg && cfg.charmstoreURL) || '',
+    localIndex = charmId.indexOf('local:'),
+    path;
   charmstoreURL = utils.ensureTrailingSlash(charmstoreURL);
 
   if (localIndex > -1 && env) {
@@ -1172,8 +1313,7 @@ utils.getIconPath = function(charmId, isBundle, env) {
       // normal use to default to the charm version, but if it's a boolean,
       // then check that boolean because the author cares specifically if
       // it's a bundle or not.
-      path = charmstoreURL + [
-        charmstore.charmstoreAPIVersion, charmId, 'icon.svg'].join('/');
+      path = charmstoreURL + [charmstore.charmstoreAPIVersion, charmId, 'icon.svg'].join('/');
     }
   } else {
     // If no env is provided as necessary then return the default icon.
@@ -1212,8 +1352,7 @@ utils.isValue = value => {
   @returns {Boolean} Whether the value is an object.
 */
 utils.isObject = value => {
-  return typeof(value) === 'object' && value !== null &&
-    !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
 
 /**
@@ -1239,7 +1378,8 @@ utils.arrayFlatten = function(array) {
     return flattened.concat(
       // If this is an array then flatten it before concat, otherwise concat
       // the current value.
-      Array.isArray(current) ? utils.arrayFlatten(current) : current);
+      Array.isArray(current) ? utils.arrayFlatten(current) : current
+    );
   }, []);
 };
 
@@ -1251,13 +1391,15 @@ utils.arrayFlatten = function(array) {
   @returns {String} A formatted constraints string.
 */
 utils.formatConstraints = constraints => {
-  return Object.keys(constraints || {}).reduce((collected, key) => {
-    const value = constraints[key];
-    if (value) {
-      collected.push(key + '=' + value);
-    }
-    return collected;
-  }, []).join(' ');
+  return Object.keys(constraints || {})
+    .reduce((collected, key) => {
+      const value = constraints[key];
+      if (value) {
+        collected.push(key + '=' + value);
+      }
+      return collected;
+    }, [])
+    .join(' ');
 };
 
 module.exports = utils;

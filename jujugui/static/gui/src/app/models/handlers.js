@@ -29,14 +29,14 @@ const {urls} = require('jaaslib');
    @module handlers
  */
 
-window.yui.add('juju-delta-handlers', function(Y) {
+window.yui.add(
+  'juju-delta-handlers',
+  function(Y) {
+    var models = Y.namespace('juju.models');
 
-  var models = Y.namespace('juju.models');
-
-  // A collection of helper functions used by the delta handlers.
-  var utils = {
-
-    /**
+    // A collection of helper functions used by the delta handlers.
+    var utils = {
+      /**
       Clean up the entity tags, which have the entity type prefixing the
       entity's name when retrieved from the server in some instances, notably
       annotations.
@@ -51,20 +51,20 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {String} tag The tag to clean up.
       @return {String} The tag without the prefix.
     */
-    cleanUpEntityTags: function(tag) {
-      var result = tag.replace(/^(application|unit|machine|model)-/, '');
-      if (!result) {
-        return tag;
-      }
-      var unitPrefix = 'unit-';
-      if (tag.slice(0, unitPrefix.length) === unitPrefix) {
-        // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
-        result = result.replace(/-(\d+)$/, '/$1');
-      }
-      return result;
-    },
+      cleanUpEntityTags: function(tag) {
+        var result = tag.replace(/^(application|unit|machine|model)-/, '');
+        if (!result) {
+          return tag;
+        }
+        var unitPrefix = 'unit-';
+        if (tag.slice(0, unitPrefix.length) === unitPrefix) {
+          // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
+          result = result.replace(/-(\d+)$/, '/$1');
+        }
+        return result;
+      },
 
-    /**
+      /**
       Return a list of endpoints suitable for being included in the database.
 
       @method createEndpoints
@@ -72,15 +72,15 @@ window.yui.add('juju-delta-handlers', function(Y) {
        delta stream.
       @return {Array} The converted list of endpoints.
     */
-    createEndpoints: function(endpoints) {
-      return endpoints.map(endpoint => {
-        var relation = endpoint.relation;
-        var data = {role: relation.role, name: relation.name};
-        return [endpoint['application-name'], data];
-      });
-    },
+      createEndpoints: function(endpoints) {
+        return endpoints.map(endpoint => {
+          var relation = endpoint.relation;
+          var data = {role: relation.role, name: relation.name};
+          return [endpoint['application-name'], data];
+        });
+      },
 
-    /**
+      /**
       Return the constraints converting the tags to a comma separated string.
 
       @method convertConstraints
@@ -88,43 +88,42 @@ window.yui.add('juju-delta-handlers', function(Y) {
         for applications, or null/undefined if no constraints are set.
       @return {Object} The converted constraints.
     */
-    convertConstraints: function(constraints) {
-      var result = constraints || {};
-      var tags = result.tags || [];
-      delete result.tags;
-      if (tags.length) {
-        result.tags = tags.join(',');
-      }
-      return result;
-    },
+      convertConstraints: function(constraints) {
+        var result = constraints || {};
+        var tags = result.tags || [];
+        delete result.tags;
+        if (tags.length) {
+          result.tags = tags.join(',');
+        }
+        return result;
+      },
 
-    handleGUIServices: (unit, db) => {
-      // XXX This if-statement is in place for some minor test difficulties.
-      // Something about the way that test data is loaded into the db in tests
-      // allows unit.charmUrl to be undefined. This is a problem with tests
-      // only and lower priority, so this will be an issue to be tackled later.
-      // https://github.com/juju/juju-gui/issues/3277
-      // Makyo 2017-10-12
-      if (!unit.charmUrl) {
-        return;
-      }
-      const url = urls.URL.fromLegacyString(unit.charmUrl);
-      if (
-        url.name !== 'jujushell' || (
-          url.user && url.user !== 'juju-gui' && url.user !== 'yellow'
-        )
-      ) {
-        return;
-      }
-      let address = null;
-      const app = db.services.getById(unit.service);
-      if (unit.agent_state === 'started' && app.get('exposed')) {
-        address = app.get('config')['dns-name'] || null;
-      }
-      db.environment.set('jujushellURL', address);
-    },
+      handleGUIServices: (unit, db) => {
+        // XXX This if-statement is in place for some minor test difficulties.
+        // Something about the way that test data is loaded into the db in tests
+        // allows unit.charmUrl to be undefined. This is a problem with tests
+        // only and lower priority, so this will be an issue to be tackled later.
+        // https://github.com/juju/juju-gui/issues/3277
+        // Makyo 2017-10-12
+        if (!unit.charmUrl) {
+          return;
+        }
+        const url = urls.URL.fromLegacyString(unit.charmUrl);
+        if (
+          url.name !== 'jujushell' ||
+          (url.user && url.user !== 'juju-gui' && url.user !== 'yellow')
+        ) {
+          return;
+        }
+        let address = null;
+        const app = db.services.getById(unit.service);
+        if (unit.agent_state === 'started' && app.get('exposed')) {
+          address = app.get('config')['dns-name'] || null;
+        }
+        db.environment.set('jujushellURL', address);
+      },
 
-    /**
+      /**
       Translates the new JujuStatus and WorkloadStatus's to the legacy Juju 1
       values.
 
@@ -139,72 +138,72 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {String} workloadStatusMessage WorkloadStatus.Message
       @return {String} The legacy agent state.
     */
-    translateToLegacyAgentState: function(
-      currentStatus, workloadStatus, workloadStatusMessage) {
-      const statusMaintenance = 'maintenance';
-      const statusAllocating = 'allocating';
-      const statusPending = 'pending';
-      const statusError = 'error';
-      const statusRebooting = 'rebooting';
-      const statusExecuting = 'executing';
-      const statusIdle = 'idle';
-      const statusLost = 'lost';
-      const statusFailed = 'failed';
-      const statusTerminated = 'terminated';
-      const statusStarted = 'started';
-      const statusStopped = 'stopped';
+      translateToLegacyAgentState: function(
+        currentStatus,
+        workloadStatus,
+        workloadStatusMessage
+      ) {
+        const statusMaintenance = 'maintenance';
+        const statusAllocating = 'allocating';
+        const statusPending = 'pending';
+        const statusError = 'error';
+        const statusRebooting = 'rebooting';
+        const statusExecuting = 'executing';
+        const statusIdle = 'idle';
+        const statusLost = 'lost';
+        const statusFailed = 'failed';
+        const statusTerminated = 'terminated';
+        const statusStarted = 'started';
+        const statusStopped = 'stopped';
 
-      switch (currentStatus) {
+        switch (currentStatus) {
+          case statusAllocating:
+            return statusPending;
+            break;
 
-        case statusAllocating:
-          return statusPending;
-          break;
+          case statusError:
+            return statusError;
+            break;
 
-        case statusError:
-          return statusError;
-          break;
+          case statusRebooting:
+          case statusExecuting:
+          case statusIdle:
+          case statusLost:
+          case statusFailed:
+            switch (workloadStatus) {
+              case statusError:
+                return statusError;
+                break;
 
-        case statusRebooting:
-        case statusExecuting:
-        case statusIdle:
-        case statusLost:
-        case statusFailed:
-          switch (workloadStatus) {
+              case statusTerminated:
+                return statusStopped;
+                break;
 
-            case statusError:
-              return statusError;
-              break;
+              case statusMaintenance:
+                return statusPending;
+                break;
 
-            case statusTerminated:
-              return statusStopped;
-              break;
-
-            case statusMaintenance:
-              return statusPending;
-              break;
-
-            default:
-              return statusStarted;
-              break;
-          }
-          break;
+              default:
+                return statusStarted;
+                break;
+            }
+            break;
+        }
       }
-    }
+    };
+    models.utils = utils; // Exported for testing purposes.
 
-  };
-  models.utils = utils; // Exported for testing purposes.
-
-  /*
+    /*
     The applicationChangedHooks object maps application names to functions to
     be executed when the next corresponding application change event arrives.
     When an application is removed, the corresponding key is also garbage
     collected.
   */
-  var applicationChangedHooks = Object.create(null);
-  // Store the hooks in the models for testing.
-  models._applicationChangedHooks = applicationChangedHooks;
+    var applicationChangedHooks = Object.create(null);
+    // Store the hooks in the models for testing.
+    models._applicationChangedHooks = applicationChangedHooks;
 
-  /*
+    /*
     Each handler is called passing the db instance, the action to be
     performed ("add", "change" or "remove"), the change coming from
     the environment, and a (optional) kind identifying what will be
@@ -212,9 +211,8 @@ window.yui.add('juju-delta-handlers', function(Y) {
     Each handler has the responsibility to update the database according to
     the received change.
   */
-  models.handlers = {
-
-    /**
+    models.handlers = {
+      /**
       Called by the delta parser if a delta is passed to the GUI which it does
       not understand. Throws a console error and then allows delta parsing to
       continue.
@@ -225,13 +223,18 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {Object} change The data for the delta change.
       @param {String} kind The type of delta.
     */
-    defaultHandler: function(db, action, change, kind) {
-      console.warn(
-        'unknown mega-watcher ' + action + ' event of type ' + kind + ': ' +
-        JSON.stringify(change));
-    },
+      defaultHandler: function(db, action, change, kind) {
+        console.warn(
+          'unknown mega-watcher ' +
+            action +
+            ' event of type ' +
+            kind +
+            ': ' +
+            JSON.stringify(change)
+        );
+      },
 
-    /**
+      /**
       Handle unit info coming from the juju-core delta, updating the
       relevant database models.
 
@@ -243,61 +246,68 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    unitInfo: function(db, action, change) {
-      const portRanges = change['port-ranges'] || [];
-      const agentStatus = change['agent-status'] || {};
-      const workloadStatus = change['workload-status'] || {};
-      const unitData = {
-        id: change.name,
-        charmUrl: change['charm-url'],
-        service: change.application,
-        machine: change['machine-id'],
-        public_address: change['public-address'],
-        private_address: change['private-address'],
-        portRanges: portRanges.map(portRange => {
-          return {
-            from: portRange['from-port'],
-            to: portRange['to-port'],
-            protocol: portRange.protocol,
-            single: portRange['from-port'] === portRange['to-port']
-          };
-        }),
-        subordinate: change.subordinate,
-        agentStatus: agentStatus.current || '',
-        workloadStatus: workloadStatus.current || '',
-        workloadStatusMessage: workloadStatus.message || ''
-      };
+      unitInfo: function(db, action, change) {
+        const portRanges = change['port-ranges'] || [];
+        const agentStatus = change['agent-status'] || {};
+        const workloadStatus = change['workload-status'] || {};
+        const unitData = {
+          id: change.name,
+          charmUrl: change['charm-url'],
+          service: change.application,
+          machine: change['machine-id'],
+          public_address: change['public-address'],
+          private_address: change['private-address'],
+          portRanges: portRanges.map(portRange => {
+            return {
+              from: portRange['from-port'],
+              to: portRange['to-port'],
+              protocol: portRange.protocol,
+              single: portRange['from-port'] === portRange['to-port']
+            };
+          }),
+          subordinate: change.subordinate,
+          agentStatus: agentStatus.current || '',
+          workloadStatus: workloadStatus.current || '',
+          workloadStatusMessage: workloadStatus.message || ''
+        };
 
-      // Handle legacy status.
-      if (workloadStatus.current === 'error') {
-        unitData.agent_state = workloadStatus.current;
-        unitData.agent_state_info = workloadStatus.message;
-        unitData.agent_state_data = workloadStatus.data;
-      } else {
-        unitData.agent_state = utils.translateToLegacyAgentState(
-          agentStatus.current, workloadStatus.current, workloadStatus.message);
-        unitData.agent_state_info = agentStatus.message;
-        unitData.agent_state_data = agentStatus.data;
-      }
+        // Handle legacy status.
+        if (workloadStatus.current === 'error') {
+          unitData.agent_state = workloadStatus.current;
+          unitData.agent_state_info = workloadStatus.message;
+          unitData.agent_state_data = workloadStatus.data;
+        } else {
+          unitData.agent_state = utils.translateToLegacyAgentState(
+            agentStatus.current,
+            workloadStatus.current,
+            workloadStatus.message
+          );
+          unitData.agent_state_info = agentStatus.message;
+          unitData.agent_state_data = agentStatus.data;
+        }
 
-      // Handle GUI additional services.
-      utils.handleGUIServices(unitData, db);
+        // Handle GUI additional services.
+        utils.handleGUIServices(unitData, db);
 
-      // The units model list included in the corresponding application is
-      // automatically kept in sync by db.units.process_delta().
-      db.units.process_delta(action, unitData, db);
-      // It's valid for an application/unit to not have a machine; for example,
-      // when a deploy fails due to an error. In that case the unit is unplaced
-      // and we don't need to process machine info.
-      if (unitData.machine) {
-        db.machines.process_delta('change', {
-          id: unitData.machine,
-          public_address: unitData.public_address
-        }, db);
-      }
-    },
+        // The units model list included in the corresponding application is
+        // automatically kept in sync by db.units.process_delta().
+        db.units.process_delta(action, unitData, db);
+        // It's valid for an application/unit to not have a machine; for example,
+        // when a deploy fails due to an error. In that case the unit is unplaced
+        // and we don't need to process machine info.
+        if (unitData.machine) {
+          db.machines.process_delta(
+            'change',
+            {
+              id: unitData.machine,
+              public_address: unitData.public_address
+            },
+            db
+          );
+        }
+      },
 
-    /**
+      /**
       Handle application info coming from the juju-core delta, updating the
       relevant database models.
 
@@ -308,61 +318,63 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {Object} change The JSON entity information.
       @return {undefined} Nothing.
      */
-    applicationInfo: function(db, action, change) {
-      const status = change.status || {};
-      const data = {
-        id: change.name,
-        // The name attribute is used to store the temporary name of ghost
-        // applications. We set it here for consistency, even if the name of a
-        // real application can never be changed.
-        name: change.name,
-        charm: change['charm-url'],
-        exposed: change.exposed,
-        life: change.life,
-        constraints: utils.convertConstraints(change.constraints),
-        status: {
-          current: status.current,
-          message: status.message,
-          data: status.data,
-          since: status.since
-        },
-        subordinate: change.subordinate,
-        workloadVersion: change['workload-version'] || ''
-      };
-      // Check whether there is a ghost for this application, in which case
-      // we need to summon and resurrect it.
-      db.services.filter(model => {
-        return model.get('pending') && model.get('name') === change.name;
-      }).forEach(model => {
-        model.setAttrs({
+      applicationInfo: function(db, action, change) {
+        const status = change.status || {};
+        const data = {
           id: change.name,
-          displayName: undefined,
-          pending: false,
-          loading: false
-        });
-      });
-      // Process the stream.
-      db.services.process_delta(action, data);
-      if (action !== 'remove') {
-        const app = db.services.getById(change.name);
-        // TODO frankban: what is this for?
-        app.updateConfig(change.config || {});
-        // Execute the registered application hooks.
-        var hooks = applicationChangedHooks[change.name] || [];
-        hooks.forEach(function(hook) {
-          hook();
-        });
-        // Handle GUI additional services. This is called on applications and
-        // units, as changes to both can affect the behavior of the GUI.
-        app.get('units').each(unit => {
-          utils.handleGUIServices(unit, db);
-        });
-      }
-      // Delete the application hooks for this application.
-      delete applicationChangedHooks[change.name];
-    },
+          // The name attribute is used to store the temporary name of ghost
+          // applications. We set it here for consistency, even if the name of a
+          // real application can never be changed.
+          name: change.name,
+          charm: change['charm-url'],
+          exposed: change.exposed,
+          life: change.life,
+          constraints: utils.convertConstraints(change.constraints),
+          status: {
+            current: status.current,
+            message: status.message,
+            data: status.data,
+            since: status.since
+          },
+          subordinate: change.subordinate,
+          workloadVersion: change['workload-version'] || ''
+        };
+        // Check whether there is a ghost for this application, in which case
+        // we need to summon and resurrect it.
+        db.services
+          .filter(model => {
+            return model.get('pending') && model.get('name') === change.name;
+          })
+          .forEach(model => {
+            model.setAttrs({
+              id: change.name,
+              displayName: undefined,
+              pending: false,
+              loading: false
+            });
+          });
+        // Process the stream.
+        db.services.process_delta(action, data);
+        if (action !== 'remove') {
+          const app = db.services.getById(change.name);
+          // TODO frankban: what is this for?
+          app.updateConfig(change.config || {});
+          // Execute the registered application hooks.
+          var hooks = applicationChangedHooks[change.name] || [];
+          hooks.forEach(function(hook) {
+            hook();
+          });
+          // Handle GUI additional services. This is called on applications and
+          // units, as changes to both can affect the behavior of the GUI.
+          app.get('units').each(unit => {
+            utils.handleGUIServices(unit, db);
+          });
+        }
+        // Delete the application hooks for this application.
+        delete applicationChangedHooks[change.name];
+      },
 
-    /**
+      /**
       Handle remote application info coming from the juju-core delta, updating
       the relevant database models.
 
@@ -373,24 +385,24 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {Object} change The JSON entity information.
       @param {String} kind The delta event type.
      */
-    remoteApplicationInfo: function(db, action, change) {
-      const status = change.status || {};
-      const data = {
-        id: change['application-url'],
-        service: change.name,
-        sourceId: change['model-uuid'],
-        life: change.life,
-        status: {
-          current: status.current,
-          message: status.message,
-          data: status.data,
-          since: status.since
-        }
-      };
-      db.remoteServices.process_delta(action, data);
-    },
+      remoteApplicationInfo: function(db, action, change) {
+        const status = change.status || {};
+        const data = {
+          id: change['application-url'],
+          service: change.name,
+          sourceId: change['model-uuid'],
+          life: change.life,
+          status: {
+            current: status.current,
+            message: status.message,
+            data: status.data,
+            since: status.since
+          }
+        };
+        db.remoteServices.process_delta(action, data);
+      },
 
-    /**
+      /**
       Handle relation info coming from the juju-core delta, updating the
       relevant database models.
 
@@ -402,41 +414,43 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    relationInfo: function(db, action, change) {
-      var endpoints = change.endpoints;
-      var firstEp = endpoints[0];
-      var firstRelation = firstEp.relation;
-      var data = {
-        id: change.key,
-        // The interface and scope attrs should be the same in both relations.
-        'interface': firstRelation.interface,
-        scope: firstRelation.scope,
-        endpoints: utils.createEndpoints(endpoints)
-      };
+      relationInfo: function(db, action, change) {
+        var endpoints = change.endpoints;
+        var firstEp = endpoints[0];
+        var firstRelation = firstEp.relation;
+        var data = {
+          id: change.key,
+          // The interface and scope attrs should be the same in both relations.
+          interface: firstRelation.interface,
+          scope: firstRelation.scope,
+          endpoints: utils.createEndpoints(endpoints)
+        };
 
-      var processRelation = function() {
-        db.relations.process_delta(action, data, db);
-      };
+        var processRelation = function() {
+          db.relations.process_delta(action, data, db);
+        };
 
-      var applicationName = firstEp['application-name'];
-      if (!db.services.getById(applicationName)) {
-        // Sometimes (e.g. when a peer relation is immediately created on
-        // application deploy) a relation delta is sent by juju-core before the
-        // corresponding application is added to the db. In this case, wait for
-        // the application delta to arrive before adding a relation.
-        console.log(
-          'relation change', change.key,
-          'delayed, waiting for missing application',
-          applicationName);
-        var hooks = applicationChangedHooks[applicationName] || [];
-        hooks.push(processRelation);
-        applicationChangedHooks[applicationName] = hooks;
-        return;
-      }
-      processRelation();
-    },
+        var applicationName = firstEp['application-name'];
+        if (!db.services.getById(applicationName)) {
+          // Sometimes (e.g. when a peer relation is immediately created on
+          // application deploy) a relation delta is sent by juju-core before the
+          // corresponding application is added to the db. In this case, wait for
+          // the application delta to arrive before adding a relation.
+          console.log(
+            'relation change',
+            change.key,
+            'delayed, waiting for missing application',
+            applicationName
+          );
+          var hooks = applicationChangedHooks[applicationName] || [];
+          hooks.push(processRelation);
+          applicationChangedHooks[applicationName] = hooks;
+          return;
+        }
+        processRelation();
+      },
 
-    /**
+      /**
       Handle machine info coming from the juju-core delta, updating the
       relevant database models.
 
@@ -448,51 +462,51 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    machineInfo: function(db, action, change) {
-      var addresses = change.addresses || [];
-      var status = change['agent-status'] || {};
-      var data = {
-        id: change.id,
-        addresses: addresses.map(function(address) {
-          return {
-            name: address['space-name'],
-            scope: address.scope,
-            type: address.type,
-            value: address.value
-          };
-        }),
-        instance_id: change['instance-id'],
-        agent_state: status.current,
-        agent_state_info: status.message || '',
-        agent_state_data: status.data,
-        hardware: {},
-        jobs: change.jobs,
-        life: change.life,
-        series: change.series,
-        supportedContainers: null
-      };
-      // The "hardware-characteristics" attribute is undefined if the machine
-      // is not yet provisioned.
-      var hardwareCharacteristics = change['hardware-characteristics'];
-      if (hardwareCharacteristics) {
-        data.hardware = {
-          arch: hardwareCharacteristics.arch,
-          cpuCores: hardwareCharacteristics['cpu-cores'],
-          cpuPower: hardwareCharacteristics['cpu-power'],
-          mem: hardwareCharacteristics.mem,
-          disk: hardwareCharacteristics['root-disk'],
-          availabilityZone: hardwareCharacteristics['availability-zone']
+      machineInfo: function(db, action, change) {
+        var addresses = change.addresses || [];
+        var status = change['agent-status'] || {};
+        var data = {
+          id: change.id,
+          addresses: addresses.map(function(address) {
+            return {
+              name: address['space-name'],
+              scope: address.scope,
+              type: address.type,
+              value: address.value
+            };
+          }),
+          instance_id: change['instance-id'],
+          agent_state: status.current,
+          agent_state_info: status.message || '',
+          agent_state_data: status.data,
+          hardware: {},
+          jobs: change.jobs,
+          life: change.life,
+          series: change.series,
+          supportedContainers: null
         };
-      }
-      // The supported containers are only available when the machine is
-      // provisioned.
-      if (change['supported-containers-known']) {
-        data.supportedContainers = change['supported-containers'];
-      }
-      db.machines.process_delta(action, data);
-    },
+        // The "hardware-characteristics" attribute is undefined if the machine
+        // is not yet provisioned.
+        var hardwareCharacteristics = change['hardware-characteristics'];
+        if (hardwareCharacteristics) {
+          data.hardware = {
+            arch: hardwareCharacteristics.arch,
+            cpuCores: hardwareCharacteristics['cpu-cores'],
+            cpuPower: hardwareCharacteristics['cpu-power'],
+            mem: hardwareCharacteristics.mem,
+            disk: hardwareCharacteristics['root-disk'],
+            availabilityZone: hardwareCharacteristics['availability-zone']
+          };
+        }
+        // The supported containers are only available when the machine is
+        // provisioned.
+        if (change['supported-containers-known']) {
+          data.supportedContainers = change['supported-containers'];
+        }
+        db.machines.process_delta(action, data);
+      },
 
-    /**
+      /**
       Handle annotation info coming from the juju-core delta, updating the
       relevant database models.
 
@@ -504,39 +518,41 @@ window.yui.add('juju-delta-handlers', function(Y) {
       @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
-    annotationInfo: function(db, action, change) {
-      var tag = change.tag,
+      annotationInfo: function(db, action, change) {
+        var tag = change.tag,
           kind = tag.split('-')[0],
           id = utils.cleanUpEntityTags(tag),
           instance;
-      // We cannot use the process_delta methods here, because their legacy
-      // behavior is to override the application exposed and unit
-      // relation_errors attributes when they are missing in the change data.
-      if (kind === 'model') {
-        instance = db.environment;
-      } else {
-        instance = db.resolveModelByName(id);
-      }
-      // Do not proceed if the instance is not found.
-      if (!instance) {
-        return;
-      }
-      models.setAnnotations(instance, change.annotations, true);
-      // Keep in sync annotations in units present in the global units model
-      // list and application nested ones.
-      if (instance.name === 'serviceUnit') {
-        var application = db.services.getById(instance.service);
-        if (application) {
-          var applicationUnits = application.get('units');
-          if (applicationUnits) {
-            var nestedInstance = applicationUnits.getById(id);
-            models.setAnnotations(nestedInstance, change.annotations, true);
+        // We cannot use the process_delta methods here, because their legacy
+        // behavior is to override the application exposed and unit
+        // relation_errors attributes when they are missing in the change data.
+        if (kind === 'model') {
+          instance = db.environment;
+        } else {
+          instance = db.resolveModelByName(id);
+        }
+        // Do not proceed if the instance is not found.
+        if (!instance) {
+          return;
+        }
+        models.setAnnotations(instance, change.annotations, true);
+        // Keep in sync annotations in units present in the global units model
+        // list and application nested ones.
+        if (instance.name === 'serviceUnit') {
+          var application = db.services.getById(instance.service);
+          if (application) {
+            var applicationUnits = application.get('units');
+            if (applicationUnits) {
+              var nestedInstance = applicationUnits.getById(id);
+              models.setAnnotations(nestedInstance, change.annotations, true);
+            }
           }
         }
       }
-    }
-  };
-
-}, '0.1.0', {
-  requires: ['base']
-});
+    };
+  },
+  '0.1.0',
+  {
+    requires: ['base']
+  }
+);

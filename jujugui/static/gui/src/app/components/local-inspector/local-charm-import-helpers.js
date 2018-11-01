@@ -35,7 +35,8 @@ function uploadLocalCharm(env, db, series, file, options) {
     file,
     series,
     _uploadLocalCharmProgress,
-    _uploadLocalCharmLoad.bind(null, file, env, db, options));
+    _uploadLocalCharmLoad.bind(null, file, env, db, options)
+  );
 }
 
 /**
@@ -65,10 +66,14 @@ function _loadCharmDetailsCallback(charm) {
   // The charm is generated and populated in loadCharmDetails() then passed
   // here and fired in this event which the deployService() method of the
   // application catches to show the ghostInspector.
-  document.dispatchEvent(new CustomEvent('initiateDeploy', {'detail': {
-    charm: charm,
-    ghostAttributes: {}
-  }}));
+  document.dispatchEvent(
+    new CustomEvent('initiateDeploy', {
+      detail: {
+        charm: charm,
+        ghostAttributes: {}
+      }
+    })
+  );
 }
 /**
   Callback for the progress events returned from uploading the charm.
@@ -109,8 +114,7 @@ function _uploadLocalCharmLoad(file, env, db, options, e) {
 
     let callback;
     if (options && options.services) {
-      callback = _upgradeServices.bind(
-        null, options.services, env, db);
+      callback = _upgradeServices.bind(null, options.services, env, db);
     } else {
       callback = _loadCharmDetailsCallback;
     }
@@ -131,7 +135,8 @@ function _upgradeServices(services, env, db, charm) {
       service.get('id'),
       charm.get('id'),
       false,
-      _showServiceUpgradedNotification.bind(null, db));
+      _showServiceUpgradedNotification.bind(null, db)
+    );
   });
 }
 
@@ -151,8 +156,8 @@ function _showServiceUpgradedNotification(db, result) {
   }
   db.notifications.add({
     title: 'Charm upgrade accepted',
-    message: 'Upgrade for "' + result.applicationName + '" from "' +
-        result.charmUrl + '" accepted.',
+    message:
+      'Upgrade for "' + result.applicationName + '" from "' + result.charmUrl + '" accepted.',
     level: 'important'
   });
 }

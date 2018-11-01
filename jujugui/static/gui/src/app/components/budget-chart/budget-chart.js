@@ -17,14 +17,14 @@ class BudgetChart extends React.Component {
   _generateStyles(limit, allocated, newAllocations) {
     // Set the width of the new allocations bar to the percent of the limit.
     // If the limit is zero the percent will equal NaN, hence the || 0.
-    var newWidth = ((newAllocations / limit * 100) || 0) + '%';
+    var newWidth = ((newAllocations / limit) * 100 || 0) + '%';
     return {
       existing: {
         // Move the bar to start where the new allocations bar ends.
         left: newWidth,
         // Set the width of the allocated bar to the percent of the limit.
         // If the limit is zero the percent will equal NaN, hence the || 0.
-        width: ((allocated / limit * 100) || 0) + '%'
+        width: ((allocated / limit) * 100 || 0) + '%'
       },
       new: {
         width: newWidth
@@ -50,39 +50,26 @@ class BudgetChart extends React.Component {
     return (
       <div className="budget-chart">
         <div className="budget-chart__chart twelve-col">
-          <div className="budget-chart__chart-limit">
-          </div>
-          <div
-            className="budget-chart__chart-new"
-            style={styles.new}>
-          </div>
-          <div
-            className="budget-chart__chart-existing"
-            style={styles.existing}>
-          </div>
+          <div className="budget-chart__chart-limit" />
+          <div className="budget-chart__chart-new" style={styles.new} />
+          <div className="budget-chart__chart-existing" style={styles.existing} />
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--new'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--new'} />
           New allocations: <strong>${newAllocations}</strong>
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--existing'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--existing'} />
           Existing allocations: <strong>${allocated}</strong>
         </div>
         <div className="three-col">
-          <span className={
-            'budget-chart__indicator budget-chart__indicator--limit'}>
-          </span>
+          <span className={'budget-chart__indicator budget-chart__indicator--limit'} />
           Budget limit: <strong>${limit}</strong>
         </div>
       </div>
     );
   }
-};
+}
 
 BudgetChart.propTypes = {
   budgets: PropTypes.object

@@ -9,22 +9,24 @@ const Status = require('./status');
 describe('Status', () => {
   let model, valueStore;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Status
-      generateApplicationOnClick={options.generateApplicationOnClick || sinon.stub()}
-      generateApplicationURL={options.generateApplicationURL || sinon.stub()}
-      generateCharmURL={options.generateCharmURL || sinon.stub()}
-      generateMachineOnClick={options.generateMachineOnClick || sinon.stub()}
-      generateMachineURL={options.generateMachineURL || sinon.stub()}
-      generateUnitOnClick={options.generateUnitOnClick || sinon.stub()}
-      generateUnitURL={options.generateUnitURL || sinon.stub()}
-      getIconPath={options.getIconPath || sinon.stub()}
-      model={options.model || model}
-      navigateToApplication={options.navigateToApplication || sinon.stub()}
-      navigateToCharm={options.navigateToCharm || sinon.stub()}
-      navigateToMachine={options.navigateToMachine || sinon.stub()}
-      valueStore={options.valueStore || valueStore} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Status
+        generateApplicationOnClick={options.generateApplicationOnClick || sinon.stub()}
+        generateApplicationURL={options.generateApplicationURL || sinon.stub()}
+        generateCharmURL={options.generateCharmURL || sinon.stub()}
+        generateMachineOnClick={options.generateMachineOnClick || sinon.stub()}
+        generateMachineURL={options.generateMachineURL || sinon.stub()}
+        generateUnitOnClick={options.generateUnitOnClick || sinon.stub()}
+        generateUnitURL={options.generateUnitURL || sinon.stub()}
+        getIconPath={options.getIconPath || sinon.stub()}
+        model={options.model || model}
+        navigateToApplication={options.navigateToApplication || sinon.stub()}
+        navigateToCharm={options.navigateToCharm || sinon.stub()}
+        navigateToMachine={options.navigateToMachine || sinon.stub()}
+        valueStore={options.valueStore || valueStore}
+      />
+    );
 
   beforeEach(() => {
     model = {
@@ -36,26 +38,32 @@ describe('Status', () => {
       version: '2.42.47'
     };
     valueStore = {
-      applications: {app: {
-        status: {
-          current: ''
+      applications: {
+        app: {
+          status: {
+            current: ''
+          }
         }
-      }},
-      machines: {machine: {
-        agentStatus: {
-          current: ''
+      },
+      machines: {
+        machine: {
+          agentStatus: {
+            current: ''
+          }
         }
-      }},
+      },
       relations: {relation: {}},
       remoteApplications: {app: {}},
-      units: {unit: {
-        agentStatus: {
-          current: ''
-        },
-        workloadStatus: {
-          current: ''
+      units: {
+        unit: {
+          agentStatus: {
+            current: ''
+          },
+          workloadStatus: {
+            current: ''
+          }
         }
-      }}
+      }
     };
   });
 

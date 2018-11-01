@@ -37,7 +37,7 @@ class PaymentCharges extends React.Component {
 
     @param chargeId {String|Null} The charge to display.
   */
-  _togglePopup(chargeId=null) {
+  _togglePopup(chargeId = null) {
     this.setState({showPopup: chargeId});
   }
 
@@ -75,50 +75,33 @@ class PaymentCharges extends React.Component {
   _generateLineItems(lineItems) {
     if (!lineItems || !lineItems.length) {
       return (
-        <div className="payment-charges__line-items">
-          There are no items for this charge.
-        </div>);
+        <div className="payment-charges__line-items">There are no items for this charge.</div>
+      );
     }
     const items = lineItems.map((item, i) => {
       return (
-        <li
-          className="user-profile__list-row twelve-col"
-          key={item.name + i}>
-          <div className="three-col no-margin-bottom">
-            {item.name}
-          </div>
-          <div className="three-col no-margin-bottom">
-            {item.details}
-          </div>
-          <div className="three-col no-margin-bottom">
-            {item.usage}
-          </div>
-          <div className="three-col last-col no-margin-bottom">
-            {item.price}
-          </div>
-        </li>);
+        <li className="user-profile__list-row twelve-col" key={item.name + i}>
+          <div className="three-col no-margin-bottom">{item.name}</div>
+          <div className="three-col no-margin-bottom">{item.details}</div>
+          <div className="three-col no-margin-bottom">{item.usage}</div>
+          <div className="three-col last-col no-margin-bottom">{item.price}</div>
+        </li>
+      );
     });
     return (
       <div className="payment-charges__line-items">
         <h4>Charges for:</h4>
         <ul className="user-profile__list twelve-col">
           <li className="user-profile__list-header twelve-col">
-            <div className="three-col no-margin-bottom">
-              Name
-            </div>
-            <div className="three-col no-margin-bottom">
-              Details
-            </div>
-            <div className="three-col no-margin-bottom">
-              Usage
-            </div>
-            <div className="three-col last-col no-margin-bottom">
-              Price
-            </div>
+            <div className="three-col no-margin-bottom">Name</div>
+            <div className="three-col no-margin-bottom">Details</div>
+            <div className="three-col no-margin-bottom">Usage</div>
+            <div className="three-col last-col no-margin-bottom">Price</div>
           </li>
           {items}
         </ul>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -132,10 +115,7 @@ class PaymentCharges extends React.Component {
     }
     const charges = this.state.charges;
     if (!charges || !charges.length) {
-      return (
-        <div>
-          You do not have any charges.
-        </div>);
+      return <div>You do not have any charges.</div>;
     }
     let list = charges.map(charge => {
       return (
@@ -145,15 +125,12 @@ class PaymentCharges extends React.Component {
             'user-profile__list-row': true
           }}
           clickable={true}
-          key={charge.id}>
+          key={charge.id}
+        >
           <div>
+            <div className="two-col no-margin-bottom">{charge.statementId}</div>
             <div className="two-col no-margin-bottom">
-              {charge.statementId}
-            </div>
-            <div className="two-col no-margin-bottom">
-              <DateDisplay
-                date={charge.for}
-                relative={true} />
+              <DateDisplay date={charge.for} relative={true} />
             </div>
             <div className="two-col no-margin-bottom">
               {charge.price / 100} {charge.currency}
@@ -168,37 +145,28 @@ class PaymentCharges extends React.Component {
               <Button
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
-                type="inline-neutral">
+                type="inline-neutral"
+              >
                 Show receipt
               </Button>
             </div>
           </div>
-          <div className="twelve-col">
-            {this._generateLineItems(charge.lineItems)}
-          </div>
-        </ExpandingRow>);
+          <div className="twelve-col">{this._generateLineItems(charge.lineItems)}</div>
+        </ExpandingRow>
+      );
     });
     return (
       <ul className="user-profile__list twelve-col">
         <li className="user-profile__list-header twelve-col">
-          <div className="two-col no-margin-bottom">
-            ID
-          </div>
-          <div className="two-col no-margin-bottom">
-            Date
-          </div>
-          <div className="two-col no-margin-bottom">
-            Price
-          </div>
-          <div className="two-col no-margin-bottom">
-            VAT
-          </div>
-          <div className="two-col last-col no-margin-bottom">
-            Total
-          </div>
+          <div className="two-col no-margin-bottom">ID</div>
+          <div className="two-col no-margin-bottom">Date</div>
+          <div className="two-col no-margin-bottom">Price</div>
+          <div className="two-col no-margin-bottom">VAT</div>
+          <div className="two-col last-col no-margin-bottom">Total</div>
         </li>
         {list}
-      </ul>);
+      </ul>
+    );
   }
 
   /**
@@ -216,23 +184,23 @@ class PaymentCharges extends React.Component {
         addNotification={this.props.addNotification}
         chargeId={charge}
         close={this._togglePopup.bind(this)}
-        getReceipt={this.props.payment.getReceipt} />);
+        getReceipt={this.props.payment.getReceipt}
+      />
+    );
   }
 
   render() {
     return (
       <div className="payment-charges">
         <div className="payment__section">
-          <h2 className="payment__title twelve-col">
-            Charges
-          </h2>
+          <h2 className="payment__title twelve-col">Charges</h2>
           {this._generateCharges()}
           {this._generatePopup()}
         </div>
       </div>
     );
   }
-};
+}
 
 PaymentCharges.propTypes = {
   acl: PropTypes.object.isRequired,

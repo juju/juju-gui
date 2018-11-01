@@ -14,19 +14,21 @@ const LAST_TRANSPILE = '.last-transpile';
 const rootDir = path.join(__dirname, '/../');
 let fileList = null;
 
-const plugins = [
-  'transform-react-jsx'
-];
+const plugins = ['transform-react-jsx'];
 
 // 'touch' the canary file.
 const touchCanary = () => fs.writeFileSync(LAST_TRANSPILE);
 // Handler for the fileWrite calls.
-const writeHandler = err => { if (err) { console.log(err); } };
+const writeHandler = err => {
+  if (err) {
+    console.log(err);
+  }
+};
 
 if (process.argv.includes('--spawned')) {
   // We're spawned so just start the work with the supplied files.
   // Grab the list of files passed.
-  const passedFilesList = process.argv[process.argv.indexOf('--files')+1];
+  const passedFilesList = process.argv[process.argv.indexOf('--files') + 1];
   transpile(passedFilesList.split(','));
   // We're just a worker so exit when done.
   return;
@@ -37,14 +39,16 @@ if (FILE_LIST) {
 } else {
   // If no files were provided then we need to determine what files need to be built.
   if (fs.existsSync(LAST_TRANSPILE)) {
-    fileList = childProcess.execSync(`find jujugui/static/gui/src/app -type f -name "*.js" -cnewer ${LAST_TRANSPILE}`); //eslint-disable-line max-len
+    fileList = childProcess.execSync(
+      `find jujugui/static/gui/src/app -type f -name "*.js" -cnewer ${LAST_TRANSPILE}`
+    ); //eslint-disable-line max-len
   } else {
     console.log('Building all files, no last-transpile time found.');
     fileList = childProcess.execSync('find jujugui/static/gui/src/app -type f -name "*.js"');
   }
   fileList = fileList.toString().split('\n');
   // There is an extra newline at the end of the string
-  fileList = fileList.slice(0, fileList.length-1);
+  fileList = fileList.slice(0, fileList.length - 1);
 }
 
 if (fileList.length === 0) {
@@ -66,15 +70,19 @@ if (spliceLength == 0) {
 }
 
 console.log(`Spawning ${cpuCount} processes to transpile ${fileList.length} files.`);
-for (let i = 1; i <= cpuCount; i+=1) {
+for (let i = 1; i <= cpuCount; i += 1) {
   if (fileList.length < spliceLength || i === cpuCount) {
     spliceLength = fileList.length;
   }
   let filesSubset = fileList.splice(0, spliceLength).join(',');
-  const transpiler = childProcess.spawn(
-    'node', ['scripts/transpile.js', '--spawned', '--files', filesSubset]);
+  const transpiler = childProcess.spawn('node', [
+    'scripts/transpile.js',
+    '--spawned',
+    '--files',
+    filesSubset
+  ]);
   const onData = data => console.log(`${data}`);
-  transpiler.stdout.on('data',onData);
+  transpiler.stdout.on('data', onData);
   transpiler.stderr.on('data', onData);
   transpiler.on('close', code => {
     console.log(`child process exited with code ${code}`);
@@ -82,27 +90,31 @@ for (let i = 1; i <= cpuCount; i+=1) {
   });
 }
 
-function transpile (fileList) {
+function transpile(fileList) {
   fileList.forEach(file => {
     const fileParts = file.split('/');
     const fileName = fileParts.pop();
     const directory = rootDir + fileParts.join('/').replace('/src/', '/build/');
     const fullPath = `${directory}/${fileName}`;
 
-    fs.readFile(rootDir + file, {
-      encoding: 'utf-8'
-    }, (err, data) => {
-      console.log('Transpiling', fullPath);
-      mkdirp.sync(directory);
-      const full = babel.transform(data, { plugins, compact: false });
-      fs.writeFile(fullPath, full.code, writeHandler);
-      const min = babel.transform(data, {
-        presets: ['babel-preset-babili'],
-        plugins,
-        compact: true,
-        comments: false
-      });
-      fs.writeFile(`${fullPath.replace('.js', '-min.js')}`, min.code, writeHandler);
-    });
+    fs.readFile(
+      rootDir + file,
+      {
+        encoding: 'utf-8'
+      },
+      (err, data) => {
+        console.log('Transpiling', fullPath);
+        mkdirp.sync(directory);
+        const full = babel.transform(data, {plugins, compact: false});
+        fs.writeFile(fullPath, full.code, writeHandler);
+        const min = babel.transform(data, {
+          presets: ['babel-preset-babili'],
+          plugins,
+          compact: true,
+          comments: false
+        });
+        fs.writeFile(`${fullPath.replace('.js', '-min.js')}`, min.code, writeHandler);
+      }
+    );
   });
 }

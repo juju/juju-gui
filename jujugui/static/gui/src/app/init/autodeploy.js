@@ -27,24 +27,32 @@ function autoPlaceUnits(db, modelAPI) {
 */
 function createMachine(db, modelAPI, containerType, parentId, series, constraints) {
   const cons = utils.formatConstraints(constraints);
-  const machine = db.machines.addGhost(
-    parentId, containerType, {series: series, constraints: cons});
+  const machine = db.machines.addGhost(parentId, containerType, {
+    series: series,
+    constraints: cons
+  });
   const callback = resp => {
     db.machines.remove(machine);
     if (resp.err) {
       db.notifications.add({
         title: 'Error creating the new machine',
-        message: 'Could not add the requested machine: '+ resp.err,
+        message: 'Could not add the requested machine: ' + resp.err,
         level: 'error'
       });
     }
   };
-  modelAPI.addMachines([{
-    series: series,
-    containerType: containerType,
-    parentId: parentId,
-    constraints: constraints || {}
-  }], callback, {modelId: machine.id});
+  modelAPI.addMachines(
+    [
+      {
+        series: series,
+        containerType: containerType,
+        parentId: parentId,
+        constraints: constraints || {}
+      }
+    ],
+    callback,
+    {modelId: machine.id}
+  );
   return machine;
 }
 

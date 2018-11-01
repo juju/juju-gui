@@ -9,56 +9,74 @@ const BasicTable = require('./basic-table');
 describe('BasicTable', () => {
   let headers, rows;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <BasicTable
-      filterPredicate={options.filterPredicate || null}
-      headerClasses={options.headerClasses || null}
-      headerColumnClasses={options.headerColumnClasses || null}
-      headers={options.headers || headers}
-      rowClasses={options.rowClasses || null}
-      rowColumnClasses={options.rowColumnClasses || null}
-      rows={options.rows || rows}
-      sort={options.sort || null}
-      tableClasses={options.tableClasses || null} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <BasicTable
+        filterPredicate={options.filterPredicate || null}
+        headerClasses={options.headerClasses || null}
+        headerColumnClasses={options.headerColumnClasses || null}
+        headers={options.headers || headers}
+        rowClasses={options.rowClasses || null}
+        rowColumnClasses={options.rowColumnClasses || null}
+        rows={options.rows || rows}
+        sort={options.sort || null}
+        tableClasses={options.tableClasses || null}
+      />
+    );
 
   beforeEach(() => {
-    headers = [{
-      content: 'Column 1',
-      columnSize: 3,
-      classes: ['class1', 'class2']
-    }, {
-      content: (<span>Column 2</span>),
-      columnSize: 4
-    }];
-    rows = [{
-      columns: [{
-        content: (<span>row 1 column 1</span>),
+    headers = [
+      {
+        content: 'Column 1',
         columnSize: 3,
-        classes: ['r1c1class1', 'r1c1class2']
-      }, {
-        content: 'row 1 column 2',
-        columnSize: 3
-      }],
-      key: 'row-one-key'
-    }, {
-      columns: [{
-        content: 'row 2 column 1',
-        columnSize: 7
-      }],
-      key: 'row-two-key'
-    }, {
-      columns: [{
-        content: 'row 3 column 1',
-        columnSize: 3
-      }, {
-        columnSize: 3
-      }, {
-        content: 0,
-        columnSize: 6
-      }],
-      key: 'row-three-key'
-    }];
+        classes: ['class1', 'class2']
+      },
+      {
+        content: <span>Column 2</span>,
+        columnSize: 4
+      }
+    ];
+    rows = [
+      {
+        columns: [
+          {
+            content: <span>row 1 column 1</span>,
+            columnSize: 3,
+            classes: ['r1c1class1', 'r1c1class2']
+          },
+          {
+            content: 'row 1 column 2',
+            columnSize: 3
+          }
+        ],
+        key: 'row-one-key'
+      },
+      {
+        columns: [
+          {
+            content: 'row 2 column 1',
+            columnSize: 7
+          }
+        ],
+        key: 'row-two-key'
+      },
+      {
+        columns: [
+          {
+            content: 'row 3 column 1',
+            columnSize: 3
+          },
+          {
+            columnSize: 3
+          },
+          {
+            content: 0,
+            columnSize: 6
+          }
+        ],
+        key: 'row-three-key'
+      }
+    ];
   });
 
   it('can render the table', () => {

@@ -26,9 +26,15 @@ class SearchResults extends React.Component {
     const query = this.props.query ? ` for: ${this.props.query}` : '';
     this.props.setPageTitle(`Search results${query}`);
     this._searchRequest(
-      this.props.query, this.props.tags, this.props.type,
-      this.props.sort, this.props.series, this.props.provides,
-      this.props.requires, this.props.owner);
+      this.props.query,
+      this.props.tags,
+      this.props.type,
+      this.props.sort,
+      this.props.series,
+      this.props.provides,
+      this.props.requires,
+      this.props.owner
+    );
   }
 
   componentWillUnmount() {
@@ -37,15 +43,24 @@ class SearchResults extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this._shouldSearch(nextProps)) {
-      this._searchRequest(nextProps.query, nextProps.tags, nextProps.type,
-        nextProps.sort, nextProps.series, nextProps.provides,
-        nextProps.requires, nextProps.owner);
+      this._searchRequest(
+        nextProps.query,
+        nextProps.tags,
+        nextProps.type,
+        nextProps.sort,
+        nextProps.series,
+        nextProps.provides,
+        nextProps.requires,
+        nextProps.owner
+      );
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.activeComponent !== 'loading' ||
-        this._shouldSearch(nextProps) && !this.state.waitingForSearch;
+    return (
+      this.state.activeComponent !== 'loading' ||
+      (this._shouldSearch(nextProps) && !this.state.waitingForSearch)
+    );
   }
 
   /**
@@ -71,20 +86,22 @@ class SearchResults extends React.Component {
     }
 
     var collapsedEntities = {},
-        orderedKeys = [];
+      orderedKeys = [];
     for (var i = 0, l = entities.length; i < l; i++) {
       var entity = entities[i],
-          key = entityKey(entity),
-          series = entity.series,
-          storeId = entity.storeId || '',
-          value = {name: series, storeId: storeId};
+        key = entityKey(entity),
+        series = entity.series,
+        storeId = entity.storeId || '',
+        value = {name: series, storeId: storeId};
 
       if (Array.isArray(series)) {
         // This is a multi-series charm so we don't need to do any collapsing.
         // The series data structure is modified in the non-multi series
         // charms so this formats the series to match.
-        entity.series = series.map(
-          name => ({name: name, storeId: entity.id}));
+        entity.series = series.map(name => ({
+          name: name,
+          storeId: entity.id
+        }));
         collapsedEntities[key] = entity;
         orderedKeys.push(key);
         continue;
@@ -163,11 +180,11 @@ class SearchResults extends React.Component {
     results = this._collapseSeries(results);
     // Split the results into promulgated and normal.
     var promulgatedResults = [],
-        communityResults = [];
+      communityResults = [];
     results.forEach(function(obj) {
       // Pass in a full id including the owner to allow looking up the entity.
       var ownerPath = `~${obj.owner}`,
-          storeId = obj.storeId;
+        storeId = obj.storeId;
       // If the store ID is not set, or if it does not already have the
       // owner...
       if (!storeId || storeId.indexOf(ownerPath) < 0) {
@@ -213,8 +230,7 @@ class SearchResults extends React.Component {
     @param {String} sort The sort method.
     @param {String} series The series to filter by.
   */
-  _searchRequest(query, tags, type, sort, series, provides,
-    requires, owner) {
+  _searchRequest(query, tags, type, sort, series, provides, requires, owner) {
     var filters = {text: query, tags: tags};
     // Don't add the type property unless required otherwise the API will
     // filter by charm.
@@ -246,7 +262,8 @@ class SearchResults extends React.Component {
     this.searchXhr = this.props.charmstoreSearch(
       filters,
       this._searchCallback.bind(this),
-      150);
+      150
+    );
   }
 
   /**
@@ -261,12 +278,14 @@ class SearchResults extends React.Component {
       return true;
     }
     var nextQuery = JSON.stringify(nextProps.query),
-        currentQuery = JSON.stringify(this.state.data.text);
-    return nextQuery !== currentQuery ||
-        nextProps.type !== this.props.type ||
-        nextProps.tags !== this.props.tags ||
-        nextProps.series !== this.props.series ||
-        nextProps.sort !== this.props.sort;
+      currentQuery = JSON.stringify(this.state.data.text);
+    return (
+      nextQuery !== currentQuery ||
+      nextProps.type !== this.props.type ||
+      nextProps.tags !== this.props.tags ||
+      nextProps.series !== this.props.series ||
+      nextProps.sort !== this.props.sort
+    );
   }
 
   /**
@@ -281,45 +300,55 @@ class SearchResults extends React.Component {
       activeComponent: nextProps.activeComponent || 'loading',
       showCommunity: nextProps.showCommunity || false
     };
-    var currentType = nextProps.type !== undefined ?
-      nextProps.type : this.props.type;
+    var currentType = nextProps.type !== undefined ? nextProps.type : this.props.type;
     switch (state.activeComponent) {
       case 'loading':
         state.activeChild = {
-          component:
+          component: (
             <div className="twelve-col initial-load-container last-col">
               <Spinner />
             </div>
+          )
         };
         break;
       case 'search-results':
         var data = this.state.data;
-        var sortItems = [{
-          label: 'Default',
-          value: ''
-        }, {
-          label: 'Most popular',
-          value: '-downloads'
-        }, {
-          label: 'Least popular',
-          value: 'downloads'
-        }, {
-          label: 'Name (a-z)',
-          value: 'name'
-        }, {
-          label: 'Name (z-a)',
-          value: '-name'
-        }, {
-          label: 'Author (a-z)',
-          value: 'owner'
-        }, {
-          label: 'Author (z-a)',
-          value: '-owner'
-        }];
-        var seriesItems = [{
-          label: 'All',
-          value: ''
-        }];
+        var sortItems = [
+          {
+            label: 'Default',
+            value: ''
+          },
+          {
+            label: 'Most popular',
+            value: '-downloads'
+          },
+          {
+            label: 'Least popular',
+            value: 'downloads'
+          },
+          {
+            label: 'Name (a-z)',
+            value: 'name'
+          },
+          {
+            label: 'Name (z-a)',
+            value: '-name'
+          },
+          {
+            label: 'Author (a-z)',
+            value: 'owner'
+          },
+          {
+            label: 'Author (z-a)',
+            value: '-owner'
+          }
+        ];
+        var seriesItems = [
+          {
+            label: 'All',
+            value: ''
+          }
+        ];
         var series = initUtils.getSeriesList();
         var seriesMap = Object.keys(series).map(key => {
           return {
@@ -329,83 +358,77 @@ class SearchResults extends React.Component {
         });
         seriesItems = seriesItems.concat(seriesMap);
         state.activeChild = {
-          component:
+          component: (
             <div className="row no-padding-top">
               <div className="inner-wrapper list-block">
                 {this._generateResultsMessage(data.text, data.solutionsCount)}
                 <div className="list-block__filters">
                   <SearchResultsTypeFilter
                     changeState={this.props.changeState}
-                    currentType={currentType} />
+                    currentType={currentType}
+                  />
                   <div className="six-col last-col">
                     <div className="list-block__filters--selects">
                       <form>
                         <SearchResultsSelectFilter
                           changeState={this.props.changeState}
                           currentValue={nextProps.sort || this.props.sort}
-                          filter='sort'
+                          filter="sort"
                           items={sortItems}
-                          label="Sort by" />
+                          label="Sort by"
+                        />
                         <SearchResultsSelectFilter
                           changeState={this.props.changeState}
-                          currentValue={
-                            nextProps.series || this.props.series}
-                          filter='series'
+                          currentValue={nextProps.series || this.props.series}
+                          filter="series"
                           items={seriesItems}
-                          label="Series" />
+                          label="Series"
+                        />
                       </form>
                     </div>
                   </div>
                 </div>
                 <div className="entity-search-results">
-                  {this._generateResultsList(
-                    data.promulgatedResults, data.communityResults)}
+                  {this._generateResultsList(data.promulgatedResults, data.communityResults)}
                 </div>
               </div>
             </div>
+          )
         };
         break;
       case 'no-results':
         state.activeChild = {
-          component:
+          component: (
             <div className="twelve-col no-results-container last-col">
               <h1 className="row-title">
-                Your search for <strong>{this.state.data.text}</strong>
-                {' '}
-                returned 0 results
+                Your search for <strong>{this.state.data.text}</strong> returned 0 results
               </h1>
               <p>
-                Try a more specific or different query, try other keywords or
-                learn how to
-                {' '}
+                Try a more specific or different query, try other keywords or learn how to{' '}
                 <a href="http://jujucharms.com/docs/authors-charm-writing">
                   create your own solution
-                </a>.
+                </a>
+                .
               </p>
             </div>
+          )
         };
         break;
       case 'error':
         state.activeChild = {
-          component:
+          component: (
             <div className="twelve-col no-results-container last-col">
-              <h1 className="row-title">
-                Something went wrong
-              </h1>
+              <h1 className="row-title">Something went wrong</h1>
               <p>
-                For some reason the search failed. You could try searching at
-                {' '}
-                <a href="http://jujucharms.com/store">
-                  http://jujucharms.com
-                </a>
-                {' '}or go{' '}
-                <span
-                  className="link"
-                  onClick={this._handleBack.bind(this)}>
+                For some reason the search failed. You could try searching at{' '}
+                <a href="http://jujucharms.com/store">http://jujucharms.com</a> or go{' '}
+                <span className="link" onClick={this._handleBack.bind(this)}>
                   back
-                </span>.
+                </span>
+                .
               </p>
             </div>
+          )
         };
         break;
     }
@@ -435,8 +458,9 @@ class SearchResults extends React.Component {
     if (text) {
       return (
         <div className="twelve-col list-block__title no-margin-bottom">
-          Your search for &lsquo;{text}&rsquo; returned {solutionsCount}{' '}
-          results.
+          Your search for &lsquo;
+          {text}
+          &rsquo; returned {solutionsCount} results.
         </div>
       );
     }
@@ -459,21 +483,25 @@ class SearchResults extends React.Component {
     @return {Object} JSX div containing heading and list.
   */
   _generatePromulgatedResults(promulgated) {
-    return (<div className="clearfix promulgated-results">
-      <h4>Recommended <span className="count">
-        ({promulgated.length})
-      </span></h4>
-      <ul className="list-block__list">
-        {promulgated.map((item, i) => (
-          <SearchResultsItem
-            acl={this.props.acl}
-            addToModel={this.props.addToModel}
-            changeState={this.props.changeState}
-            generatePath={this.props.generatePath}
-            item={item}
-            key={item.storeId + i} />))}
-      </ul>
-    </div>);
+    return (
+      <div className="clearfix promulgated-results">
+        <h4>
+          Recommended <span className="count">({promulgated.length})</span>
+        </h4>
+        <ul className="list-block__list">
+          {promulgated.map((item, i) => (
+            <SearchResultsItem
+              acl={this.props.acl}
+              addToModel={this.props.addToModel}
+              changeState={this.props.changeState}
+              generatePath={this.props.generatePath}
+              item={item}
+              key={item.storeId + i}
+            />
+          ))}
+        </ul>
+      </div>
+    );
   }
 
   /**
@@ -493,41 +521,45 @@ class SearchResults extends React.Component {
     @return {Object} JSX div containing toggle button, header and list.
   */
   _generateCommunityResults(community, hasPromulgated) {
-    const holderClasses = classNames(
-      'clearfix',
-      'community-results__content',
-      {
-        'hidden': !this.state.showCommunity && hasPromulgated
-      });
-    const buttonTitle = this.state.showCommunity ?
-      'Hide community results' : `Show ${community.length} community results`;
+    const holderClasses = classNames('clearfix', 'community-results__content', {
+      hidden: !this.state.showCommunity && hasPromulgated
+    });
+    const buttonTitle = this.state.showCommunity
+      ? 'Hide community results'
+      : `Show ${community.length} community results`;
     const button = hasPromulgated ? (
       <div className="button-wrapper--ruled">
         <Button
           action={this._toggleCommunityResults.bind(this)}
           extraClasses="show-community-button"
-          type="inline-neutral">
+          type="inline-neutral"
+        >
           {buttonTitle}
         </Button>
-      </div>) : null;
-    return (<div className="clearfix community-results">
-      {button}
-      <div className={holderClasses}>
-        <h4>Community <span className="count">
-          ({community.length})
-        </span></h4>
-        <ul className="list-block__list">
-          {community.map((item, i) => (
-            <SearchResultsItem
-              acl={this.props.acl}
-              addToModel={this.props.addToModel}
-              changeState={this.props.changeState}
-              generatePath={this.props.generatePath}
-              item={item}
-              key={item.storeId + i} />))}
-        </ul>
       </div>
-    </div>);
+    ) : null;
+    return (
+      <div className="clearfix community-results">
+        {button}
+        <div className={holderClasses}>
+          <h4>
+            Community <span className="count">({community.length})</span>
+          </h4>
+          <ul className="list-block__list">
+            {community.map((item, i) => (
+              <SearchResultsItem
+                acl={this.props.acl}
+                addToModel={this.props.addToModel}
+                changeState={this.props.changeState}
+                generatePath={this.props.generatePath}
+                item={item}
+                key={item.storeId + i}
+              />
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
   }
 
   /**
@@ -544,21 +576,16 @@ class SearchResults extends React.Component {
     const hasCommunity = community.length > 0;
     return (
       <div>
-        {hasPromulgated ?
-          this._generatePromulgatedResults(promulgated) : null}
-        {hasCommunity ?
-          this._generateCommunityResults(community, hasPromulgated) : null}
-      </div>);
-  }
-
-  render() {
-    return (
-      <div className="search-results">
-        {this.state.activeChild.component}
+        {hasPromulgated ? this._generatePromulgatedResults(promulgated) : null}
+        {hasCommunity ? this._generateCommunityResults(community, hasPromulgated) : null}
       </div>
     );
   }
-};
+
+  render() {
+    return <div className="search-results">{this.state.activeChild.component}</div>;
+  }
+}
 
 SearchResults.propTypes = {
   acl: PropTypes.object.isRequired,

@@ -26,7 +26,9 @@ class InspectorRelations extends React.Component {
         inspector: {
           id: this.props.service.get('id'),
           activeComponent: 'relate-to'
-        }}});
+        }
+      }
+    });
   }
 
   /**
@@ -44,7 +46,7 @@ class InspectorRelations extends React.Component {
         }
       }
     });
-    this.setState({'activeCount': activeCount});
+    this.setState({activeCount: activeCount});
   }
 
   /**
@@ -71,11 +73,13 @@ class InspectorRelations extends React.Component {
     var activeRelations = [];
     // Remove deleted relations from the list
     for (var i in relations) {
-      if (relations.hasOwnProperty(i) &&
-          // Excluded deleted relations.
-          !relations[i].deleted &&
-          // Exclude peer relations as they cannot be removed.
-          relations[i].near.role !== 'peer') {
+      if (
+        relations.hasOwnProperty(i) &&
+        // Excluded deleted relations.
+        !relations[i].deleted &&
+        // Exclude peer relations as they cannot be removed.
+        relations[i].near.role !== 'peer'
+      ) {
         activeRelations.push(relations[i]);
       }
     }
@@ -84,17 +88,19 @@ class InspectorRelations extends React.Component {
       return (
         <li className="inspector-relations__message">
           No active relations for this application.
-        </li>);
+        </li>
+      );
     }
     var ref = 'select-all';
     var components = [
       <CheckListItem
-        className='select-all'
+        className="select-all"
         disabled={disabled}
-        key={ref+'1'}
-        label='Select all relations'
+        key={ref + '1'}
+        label="Select all relations"
         ref={ref}
-        whenChanged={this._selectAllRelations.bind(this)} />
+        whenChanged={this._selectAllRelations.bind(this)}
+      />
     ];
 
     relations.forEach(function(relation, index) {
@@ -106,7 +112,9 @@ class InspectorRelations extends React.Component {
           key={relation.id}
           label={this._generateRelationLabel(relation)}
           ref={ref}
-          whenChanged={this._updateActiveCount.bind(this)} />);
+          whenChanged={this._updateActiveCount.bind(this)}
+        />
+      );
     }, this);
     return components;
   }
@@ -159,13 +167,16 @@ class InspectorRelations extends React.Component {
     var refs = this.refs;
     Object.keys(refs).forEach(ref => {
       if (ref.split('-')[0] === 'CheckListItem') {
-        refs[ref].setState({
-          checked: checked
-        }, () => {
-          // After the state has been updated then update the active unit
-          // count to enable/disable the buttons.
-          this._updateActiveCount();
-        });
+        refs[ref].setState(
+          {
+            checked: checked
+          },
+          () => {
+            // After the state has been updated then update the active unit
+            // count to enable/disable the buttons.
+            this._updateActiveCount();
+          }
+        );
       }
     });
   }
@@ -180,8 +191,7 @@ class InspectorRelations extends React.Component {
     if (this.props.serviceRelations.length === 0) {
       return;
     }
-    var disabled = this.state.activeCount === 0 ||
-      this.props.acl.isReadOnly();
+    var disabled = this.state.activeCount === 0 || this.props.acl.isReadOnly();
     var buttons = [];
     buttons.push({
       title: 'Remove',
@@ -189,9 +199,7 @@ class InspectorRelations extends React.Component {
       action: this._handleRemoveRelation.bind(this),
       disabled: disabled
     });
-    return (
-      <ButtonRow
-        buttons={buttons} />);
+    return <ButtonRow buttons={buttons} />;
   }
 
   /**
@@ -206,22 +214,22 @@ class InspectorRelations extends React.Component {
         <OverviewAction
           action={this._showCreateRelation.bind(this)}
           icon="plus_box_16"
-          title="Build a relation" />
-      </div>);
+          title="Build a relation"
+        />
+      </div>
+    );
   }
 
   render() {
     return (
       <div className="inspector-relations">
         {this._generateBuildRelation()}
-        <ul className="inspector-relations__list">
-          {this._generateRelations()}
-        </ul>
+        <ul className="inspector-relations__list">{this._generateRelations()}</ul>
         {this._generateButtons()}
       </div>
     );
   }
-};
+}
 
 InspectorRelations.propTypes = {
   acl: PropTypes.object.isRequired,

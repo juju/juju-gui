@@ -23,12 +23,26 @@ class WebHandler {
     @param {Function} completedCallback The load event callback.
     @return {Object} The asynchronous request instance.
   */
-  sendPostRequest(path, headers, data, username, password,
-    withCredentials, progressCallback,
-    completedCallback) {
+  sendPostRequest(
+    path,
+    headers,
+    data,
+    username,
+    password,
+    withCredentials,
+    progressCallback,
+    completedCallback
+  ) {
     var xhr = this._createRequest(
-      path, 'POST', headers, username, password, withCredentials,
-      progressCallback, completedCallback);
+      path,
+      'POST',
+      headers,
+      username,
+      password,
+      withCredentials,
+      progressCallback,
+      completedCallback
+    );
     // Send the POST data.
     xhr.send(data);
     return xhr;
@@ -50,12 +64,26 @@ class WebHandler {
     @param {Function} completedCallback The load event callback.
     @return {Object} The asynchronous request instance.
   */
-  sendPutRequest(path, headers, data, username, password,
-    withCredentials, progressCallback,
-    completedCallback) {
+  sendPutRequest(
+    path,
+    headers,
+    data,
+    username,
+    password,
+    withCredentials,
+    progressCallback,
+    completedCallback
+  ) {
     var xhr = this._createRequest(
-      path, 'PUT', headers, username, password, withCredentials,
-      progressCallback, completedCallback);
+      path,
+      'PUT',
+      headers,
+      username,
+      password,
+      withCredentials,
+      progressCallback,
+      completedCallback
+    );
     // Send the PUT data.
     xhr.send(data);
     return xhr;
@@ -77,12 +105,26 @@ class WebHandler {
     @param {Function} completedCallback The load event callback.
     @return {Object} The asynchronous request instance.
   */
-  sendPatchRequest(path, headers, data, username, password,
-    withCredentials, progressCallback,
-    completedCallback) {
+  sendPatchRequest(
+    path,
+    headers,
+    data,
+    username,
+    password,
+    withCredentials,
+    progressCallback,
+    completedCallback
+  ) {
     var xhr = this._createRequest(
-      path, 'PATCH', headers, username, password, withCredentials,
-      progressCallback, completedCallback);
+      path,
+      'PATCH',
+      headers,
+      username,
+      password,
+      withCredentials,
+      progressCallback,
+      completedCallback
+    );
     // Send the PATCH data.
     xhr.send(data);
     return xhr;
@@ -102,11 +144,25 @@ class WebHandler {
     @param {Function} completedCallback The load event callback.
     @return {Object} The asynchronous request instance.
   */
-  sendGetRequest(path, headers, username, password, withCredentials,
-    progressCallback, completedCallback) {
+  sendGetRequest(
+    path,
+    headers,
+    username,
+    password,
+    withCredentials,
+    progressCallback,
+    completedCallback
+  ) {
     var xhr = this._createRequest(
-      path, 'GET', headers, username, password, withCredentials,
-      progressCallback, completedCallback);
+      path,
+      'GET',
+      headers,
+      username,
+      password,
+      withCredentials,
+      progressCallback,
+      completedCallback
+    );
     // Send the GET request.
     xhr.send();
     return xhr;
@@ -126,12 +182,25 @@ class WebHandler {
     @param {Function} completedCallback The load event callback.
     @return {Object} The asynchronous request instance.
   */
-  sendDeleteRequest(path, headers, username, password,
-    withCredentials, progressCallback,
-    completedCallback) {
+  sendDeleteRequest(
+    path,
+    headers,
+    username,
+    password,
+    withCredentials,
+    progressCallback,
+    completedCallback
+  ) {
     var xhr = this._createRequest(
-      path, 'DELETE', headers, username, password, withCredentials,
-      progressCallback, completedCallback);
+      path,
+      'DELETE',
+      headers,
+      username,
+      password,
+      withCredentials,
+      progressCallback,
+      completedCallback
+    );
     // Send the GET request.
     xhr.send();
     return xhr;
@@ -149,9 +218,7 @@ class WebHandler {
   */
   getUrl(path, username, password) {
     var location = window.location;
-    return location.protocol + '//' +
-        username + ':' + password + '@' +
-        location.host + path;
+    return location.protocol + '//' + username + ':' + password + '@' + location.host + path;
   }
 
   /**
@@ -224,14 +291,24 @@ class WebHandler {
     @param {Function} completedCallback The load event callback.
     @return {Object} The asynchronous request instance.
   */
-  _createRequest(path, method, headers, username, password,
-    withCredentials, progressCallback,
-    completedCallback) {
+  _createRequest(
+    path,
+    method,
+    headers,
+    username,
+    password,
+    withCredentials,
+    progressCallback,
+    completedCallback
+  ) {
     var xhr = new XMLHttpRequest({});
     // Set up the event handlers.
     var progressHandler = this._createProgressHandler(progressCallback);
     var completedHandler = this._createCompletedHandler(
-      completedCallback, progressHandler, xhr);
+      completedCallback,
+      progressHandler,
+      xhr
+    );
     xhr.addEventListener('progress', progressHandler, false);
     xhr.addEventListener('error', completedHandler, false);
     xhr.addEventListener('load', completedHandler, false);
@@ -253,6 +330,6 @@ class WebHandler {
     }
     return xhr;
   }
-};
+}
 
 module.exports = WebHandler;

@@ -24,9 +24,7 @@ class CardForm extends React.Component {
     @returns {Boolean} Whether the form is valid.
   */
   validate() {
-    const fields = [
-      'name'
-    ];
+    const fields = ['name'];
     return initUtils.validateForm(fields, this.refs);
   }
 
@@ -55,14 +53,13 @@ class CardForm extends React.Component {
           label="Name on card"
           ref="name"
           required={true}
-          validate={[required]} />
-        <div
-          className="card-form__card"
-          ref="cardNode"></div>
+          validate={[required]}
+        />
+        <div className="card-form__card" ref="cardNode" />
       </div>
     );
   }
-};
+}
 
 CardForm.propTypes = {
   acl: PropTypes.object.isRequired,

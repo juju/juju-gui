@@ -25,7 +25,8 @@ describe('MachineView', function() {
         parseConstraints={options.parseConstraints || sinon.stub()}
         parseMachineDetails={options.parseMachineDetails || sinon.stub()}
         parseMachineName={options.parseMachineName || parseMachineName}
-        sendAnalytics={options.sendAnalytics || sinon.stub()} />,
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+      />,
       {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
@@ -46,20 +47,26 @@ describe('MachineView', function() {
       containerType: null,
       number: 'new0'
     });
-    units = [{
-      id: 'django/0',
-      service: 'django'
-    }, {
-      id: 'django/1',
-      service: 'django'
-    }];
-    machineList = [{
-      displayName: 'new0',
-      id: 'new0'
-    }, {
-      displayName: 'new1',
-      id: 'new1'
-    }];
+    units = [
+      {
+        id: 'django/0',
+        service: 'django'
+      },
+      {
+        id: 'django/1',
+        service: 'django'
+      }
+    ];
+    machineList = [
+      {
+        displayName: 'new0',
+        id: 'new0'
+      },
+      {
+        displayName: 'new1',
+        id: 'new1'
+      }
+    ];
     machines = {
       filterByParent: sinon.stub().returns([]),
       getById: sinon.stub(),
@@ -112,17 +119,16 @@ describe('MachineView', function() {
               action: columns.at(0).prop('toggle').action,
               disabled: true,
               toggleOn: false
-            }}>
+            }}
+          >
             {undefined}
             <div className="machine-view__column-onboarding">
               <div>
                 <p>
-                  Unplaced units will appear here. Drag and drop them to
-                  customise your deployment.
+                  Unplaced units will appear here. Drag and drop them to customise your
+                  deployment.
                 </p>
-                <span
-                  className="link"
-                  onClick={links.at(0).prop('onClick')}>
+                <span className="link" onClick={links.at(0).prop('onClick')}>
                   Add applications to get started
                 </span>
               </div>
@@ -133,43 +139,54 @@ describe('MachineView', function() {
             activeMenuItem="name"
             droppable={true}
             dropUnit={columns.at(1).prop('dropUnit')}
-            menuItems={[{
-              label: 'Add machine',
-              action: machineMenuItems[0].action
-            }, {
-              label: 'Hide constraints',
-              action: machineMenuItems[1].action
-            }, {
-              label: 'Sort by:'
-            }, {
-              label: 'Name',
-              id: 'name',
-              action: machineMenuItems[3].action
-            }, {
-              label: 'No. applications',
-              id: 'applications',
-              action: machineMenuItems[4].action
-            }, {
-              label: 'No. units',
-              id: 'units',
-              action: machineMenuItems[5].action
-            }, {
-              label: 'Disk',
-              id: 'disk',
-              action: machineMenuItems[6].action
-            }, {
-              label: 'RAM',
-              id: 'ram',
-              action: machineMenuItems[7].action
-            }, {
-              label: 'CPU',
-              id: 'cpu',
-              action: machineMenuItems[8].action
-            }]}
+            menuItems={[
+              {
+                label: 'Add machine',
+                action: machineMenuItems[0].action
+              },
+              {
+                label: 'Hide constraints',
+                action: machineMenuItems[1].action
+              },
+              {
+                label: 'Sort by:'
+              },
+              {
+                label: 'Name',
+                id: 'name',
+                action: machineMenuItems[3].action
+              },
+              {
+                label: 'No. applications',
+                id: 'applications',
+                action: machineMenuItems[4].action
+              },
+              {
+                label: 'No. units',
+                id: 'units',
+                action: machineMenuItems[5].action
+              },
+              {
+                label: 'Disk',
+                id: 'disk',
+                action: machineMenuItems[6].action
+              },
+              {
+                label: 'RAM',
+                id: 'ram',
+                action: machineMenuItems[7].action
+              },
+              {
+                label: 'CPU',
+                id: 'cpu',
+                action: machineMenuItems[8].action
+              }
+            ]}
             ref="machinesColumn"
             sendAnalytics={sinon.stub()}
             title="My Model (0)"
-            type="machine">
+            type="machine"
+          >
             {undefined}
             <div className="machine-view__column-onboarding">
               <p>Use machine view to:</p>
@@ -185,7 +202,8 @@ describe('MachineView', function() {
                 className="link"
                 onClick={links.at(1).prop('onClick')}
                 role="button"
-                tabIndex="0">
+                tabIndex="0"
+              >
                 Add machine
               </span>
             </div>
@@ -195,33 +213,41 @@ describe('MachineView', function() {
             activeMenuItem="name"
             droppable={true}
             dropUnit={columns.at(2).prop('dropUnit')}
-            menuItems={[{
-              label: 'Add container',
-              action: null
-            }, {
-              label: 'Sort by:'
-            }, {
-              label: 'Name',
-              id: 'name',
-              action: containerMenuItems[2].action
-            }, {
-              label: 'No. units',
-              id: 'units',
-              action: containerMenuItems[3].action
-            }, {
-              label: 'Applications',
-              id: 'applications',
-              action: containerMenuItems[4].action
-            }]}
+            menuItems={[
+              {
+                label: 'Add container',
+                action: null
+              },
+              {
+                label: 'Sort by:'
+              },
+              {
+                label: 'Name',
+                id: 'name',
+                action: containerMenuItems[2].action
+              },
+              {
+                label: 'No. units',
+                id: 'units',
+                action: containerMenuItems[3].action
+              },
+              {
+                label: 'Applications',
+                id: 'applications',
+                action: containerMenuItems[4].action
+              }
+            ]}
             ref="containersColumn"
             sendAnalytics={sinon.stub()}
             title="0 containers, 0 units"
-            type="container">
+            type="container"
+          >
             {undefined}
             {undefined}
           </MachineViewColumn>
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -231,25 +257,31 @@ describe('MachineView', function() {
       <div className="machine-view__column-onboarding">
         <div>
           <p>
-            Unplaced units will appear here. Drag and drop them to
-            customise your deployment.
+            Unplaced units will appear here. Drag and drop them to customise your deployment.
           </p>
           <span
             className="link"
-            onClick={
-              wrapper.find('.machine-view__column-onboarding .link').at(0).prop('onClick')}>
+            onClick={wrapper
+              .find('.machine-view__column-onboarding .link')
+              .at(0)
+              .prop('onClick')}
+          >
             Add applications to get started
           </span>
         </div>
-      </div>);
-    assert.compareJSX(
-      wrapper.find('.machine-view__column-onboarding').at(0), expected);
+      </div>
+    );
+    assert.compareJSX(wrapper.find('.machine-view__column-onboarding').at(0), expected);
   });
 
   it('can open the store from the onboarding', function() {
     const changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('.machine-view__column-onboarding .link').at(0).props().onClick();
+    wrapper
+      .find('.machine-view__column-onboarding .link')
+      .at(0)
+      .props()
+      .onClick();
     assert.equal(changeState.callCount, 2);
     assert.deepEqual(changeState.args[1][0], {store: ''});
   });
@@ -259,13 +291,11 @@ describe('MachineView', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__column-onboarding">
-        <SvgIcon
-          name="task-done_16"
-          size="16" />
+        <SvgIcon name="task-done_16" size="16" />
         You have placed all of your units
-      </div>);
-    assert.compareJSX(
-      wrapper.find('.machine-view__column-onboarding').at(0), expected);
+      </div>
+    );
+    assert.compareJSX(wrapper.find('.machine-view__column-onboarding').at(0), expected);
   });
 
   it('can display a service scale up form', function() {
@@ -286,8 +316,12 @@ describe('MachineView', function() {
   it('does not display unplaced subordinate units', function() {
     const getStub = sinon.stub();
     getStub.withArgs('icon').returns('django.svg');
-    getStub.withArgs('subordinate').onFirstCall().returns(false)
-      .onSecondCall().returns(true);
+    getStub
+      .withArgs('subordinate')
+      .onFirstCall()
+      .returns(false)
+      .onSecondCall()
+      .returns(true);
     dbAPI.units.filterByMachine.returns(units);
     dbAPI.applications.getById = sinon.stub().returns({
       get: getStub
@@ -308,20 +342,21 @@ describe('MachineView', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__column-onboarding">
-        <SvgIcon
-          name="task-done_16"
-          size="16" />
+        <SvgIcon name="task-done_16" size="16" />
         You have placed all of your units
-      </div>);
-    assert.compareJSX(
-      wrapper.find('.machine-view__column-onboarding').at(0), expected);
+      </div>
+    );
+    assert.compareJSX(wrapper.find('.machine-view__column-onboarding').at(0), expected);
   });
 
   it('can auto place units', function() {
     dbAPI.units.filterByMachine.returns(units);
     dbAPI.applications.size.returns(1);
     const wrapper = renderComponent();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     assert.equal(modelAPI.autoPlaceUnits.callCount, 1);
   });
 
@@ -348,30 +383,36 @@ describe('MachineView', function() {
         </ul>
         <span
           className="link"
-          onClick={wrapper.find('.link').at(1).prop('onClick')}
+          onClick={wrapper
+            .find('.link')
+            .at(1)
+            .prop('onClick')}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           Add machine
         </span>
-      </div>);
-    assert.compareJSX(
-      wrapper.find('.machine-view__column-onboarding').at(1), expected);
+      </div>
+    );
+    assert.compareJSX(wrapper.find('.machine-view__column-onboarding').at(1), expected);
   });
 
   it('can display onboarding if there is one machine', function() {
-    const machineList = [{
-      displayName: 'new0',
-      id: 'new0'
-    }];
+    const machineList = [
+      {
+        displayName: 'new0',
+        id: 'new0'
+      }
+    ];
     dbAPI.machines.filterByParent.returns(machineList);
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__column-onboarding">
-        Drag and drop unplaced units onto your machines and containers to
-        customise your deployment.
-      </div>);
-    assert.compareJSX(
-      wrapper.find('.machine-view__column-onboarding').at(1), expected);
+        Drag and drop unplaced units onto your machines and containers to customise your
+        deployment.
+      </div>
+    );
+    assert.compareJSX(wrapper.find('.machine-view__column-onboarding').at(1), expected);
   });
 
   it('can display a list of machines', function() {
@@ -381,13 +422,16 @@ describe('MachineView', function() {
   });
 
   it('can order a list of machines', function() {
-    const machineList = [{
-      displayName: 'new5',
-      id: 'new5'
-    }, {
-      displayName: 'new0',
-      id: 'new0'
-    }];
+    const machineList = [
+      {
+        displayName: 'new5',
+        id: 'new5'
+      },
+      {
+        displayName: 'new0',
+        id: 'new0'
+      }
+    ];
     dbAPI.machines.filterByParent.returns(machineList);
     const wrapper = renderComponent();
     const machines = wrapper.find('DropTarget(MachineViewMachine)');
@@ -448,15 +492,19 @@ describe('MachineView', function() {
 
   it('can display a list of containers', function() {
     dbAPI.machines.filterByParent.returns(machineList);
-    dbAPI.machines.filterByParent.withArgs('new0').returns([{
-      id: 'new0/lxc/0'
-    }]);
+    dbAPI.machines.filterByParent.withArgs('new0').returns([
+      {
+        id: 'new0/lxc/0'
+      }
+    ]);
     dbAPI.machines.getById.returns({
       id: 'new0',
       commitStatus: 'committed'
     });
     const wrapper = renderComponent();
-    const containers = wrapper.find('.machine-view__list').at(1)
+    const containers = wrapper
+      .find('.machine-view__list')
+      .at(1)
       .find('DropTarget(MachineViewMachine)');
     assert.equal(containers.length, 2);
     assert.equal(containers.at(0).prop('machineAPI').machine.id, 'new0');
@@ -466,19 +514,24 @@ describe('MachineView', function() {
 
   it('can order a list of containers', function() {
     dbAPI.machines.filterByParent.returns(machineList);
-    dbAPI.machines.filterByParent.withArgs('new0').returns([{
-      displayName: 'new0/lxc/5',
-      id: 'new0/lxc/5'
-    }, {
-      displayName: 'new0/lxc/0',
-      id: 'new0/lxc/0'
-    }]);
+    dbAPI.machines.filterByParent.withArgs('new0').returns([
+      {
+        displayName: 'new0/lxc/5',
+        id: 'new0/lxc/5'
+      },
+      {
+        displayName: 'new0/lxc/0',
+        id: 'new0/lxc/0'
+      }
+    ]);
     dbAPI.machines.getById.returns({
       id: 'new0',
       commitStatus: 'committed'
     });
     const wrapper = renderComponent();
-    const containers = wrapper.find('.machine-view__list').at(1)
+    const containers = wrapper
+      .find('.machine-view__list')
+      .at(1)
       .find('DropTarget(MachineViewMachine)');
     assert.equal(containers.at(1).prop('machineAPI').machine.id, 'new0/lxc/0');
     assert.equal(containers.at(2).prop('machineAPI').machine.id, 'new0/lxc/5');
@@ -510,10 +563,12 @@ describe('MachineView', function() {
   });
 
   it('can remove a unit', function() {
-    dbAPI.machines.filterByParent.withArgs('new0').returns([{
-      displayName: 'new0/lxc/0',
-      id: 'new0/lxc/0'
-    }]);
+    dbAPI.machines.filterByParent.withArgs('new0').returns([
+      {
+        displayName: 'new0/lxc/0',
+        id: 'new0/lxc/0'
+      }
+    ]);
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     instance._removeUnit('wordpress/8');
@@ -523,10 +578,12 @@ describe('MachineView', function() {
   });
 
   it('can place a unit on a machine', function() {
-    dbAPI.machines.filterByParent.withArgs('new0').returns([{
-      displayName: 'new0/lxc/0',
-      id: 'new0/lxc/0'
-    }]);
+    dbAPI.machines.filterByParent.withArgs('new0').returns([
+      {
+        displayName: 'new0/lxc/0',
+        id: 'new0/lxc/0'
+      }
+    ]);
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     const placeUnit = modelAPI.placeUnit;

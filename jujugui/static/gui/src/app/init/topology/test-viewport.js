@@ -10,7 +10,9 @@ describe('ViewportModule (Topology module)', function() {
       querySelector: testUtils.getter({'.topology-canvas': undefined}, {})
     };
     var view = new ViewportModule();
-    view.getContainer = function() {return container;};
+    view.getContainer = function() {
+      return container;
+    };
     // Since we do not provide most of the environment needed by "resized" we
     // know that it takes an early out if calling it does not raise an
     // exception.
@@ -22,7 +24,9 @@ describe('ViewportModule (Topology module)', function() {
       querySelector: testUtils.getter({'.the-canvas': undefined}, {})
     };
     var view = new ViewportModule();
-    view.getContainer = function() {return container;};
+    view.getContainer = function() {
+      return container;
+    };
     // Since we do not provide most of the environment needed by "resized" we
     // know that it takes an early out if calling it does not raise an
     // exception.
@@ -41,16 +45,17 @@ describe('ViewportModule (Topology module)', function() {
       querySelector: testUtils.getter({}, {})
     };
     // Catch global custom page resize events.
-    ['beforePageSizeRecalculation', 'afterPageSizeRecalculation'].forEach(
-      evt => {
-        document.addEventListener(evt, () => {
-          events.push(evt);
-        });
+    ['beforePageSizeRecalculation', 'afterPageSizeRecalculation'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        events.push(evt);
       });
+    });
 
     var view = new ViewportModule();
     // Provide a test container that likes to return empty objects.
-    view.getContainer = function() {return container;};
+    view.getContainer = function() {
+      return container;
+    };
     // Ignore setting dimensions, we're not testing that bit.  However, we
     // would like to know when this method is called relative to the
     // beforePageSizeRecalculation and afterPageSizeRecalculation events, so we
@@ -61,16 +66,16 @@ describe('ViewportModule (Topology module)', function() {
     // Inject a topology component that records events.
     view.topo = topo;
     view.resized();
-    events.should.eql(
-      ['beforePageSizeRecalculation',
-        'setAllTheDimensions called',
-        'afterPageSizeRecalculation']);
+    events.should.eql([
+      'beforePageSizeRecalculation',
+      'setAllTheDimensions called',
+      'afterPageSizeRecalculation'
+    ]);
   });
 });
 
 describe('ViewportModule.setAllTheDimensions', function() {
-  let view, width, height, canvas, svg, topo, zoomPlane,
-      dimensions;
+  let view, width, height, canvas, svg, topo, zoomPlane, dimensions;
 
   beforeEach(function() {
     height = Math.floor(Math.random() * 1000);
@@ -132,10 +137,16 @@ describe('ViewportModule.setAllTheDimensions', function() {
       done();
     };
     document.addEventListener('topo.panToCenter', handler);
-    view.setAllTheDimensions({
-      height: height + 1,
-      width: width + 1
-    }, canvas, svg, topo, zoomPlane);
+    view.setAllTheDimensions(
+      {
+        height: height + 1,
+        width: width + 1
+      },
+      canvas,
+      svg,
+      topo,
+      zoomPlane
+    );
     assert.equal(called, true);
   });
 

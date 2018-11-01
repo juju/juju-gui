@@ -16,15 +16,17 @@ describe('DeploymentSSHKey', function() {
   let setSSHKeys;
   let setLaunchpadUsernames;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentSSHKey
-      addNotification={options.addNotification || addNotification}
-      cloud={options.cloud === undefined ? {cloudType: 'aws'} : options.cloud}
-      setLaunchpadUsernames={options.setLaunchpadUsernames || setLaunchpadUsernames}
-      setSSHKeys={options.setSSHKeys || setSSHKeys}
-      username={options.username}
-      WebHandler={options.WebHandler || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentSSHKey
+        addNotification={options.addNotification || addNotification}
+        cloud={options.cloud === undefined ? {cloudType: 'aws'} : options.cloud}
+        setLaunchpadUsernames={options.setLaunchpadUsernames || setLaunchpadUsernames}
+        setSSHKeys={options.setSSHKeys || setSSHKeys}
+        username={options.username}
+        WebHandler={options.WebHandler || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     addNotification = sinon.stub();
@@ -44,8 +46,7 @@ describe('DeploymentSSHKey', function() {
     const expected = (
       <div className="deployment-ssh-key">
         <p className="deployment-ssh-key__description">
-          Keys will allow you SSH access to the machines
-          provisioned by Juju for this model.
+          Keys will allow you SSH access to the machines provisioned by Juju for this model.
         </p>
         {false}
         {false}
@@ -69,7 +70,8 @@ describe('DeploymentSSHKey', function() {
                   value: 'launchpad'
                 }
               ]}
-              ref="sshSource" />
+              ref="sshSource"
+            />
           </div>
           <div className="deployment-ssh-key__username three-col last-col no-margin-bottom">
             <GenericInput
@@ -80,13 +82,13 @@ describe('DeploymentSSHKey', function() {
               onKeyUp={wrapper.find('GenericInput').prop('onKeyUp')}
               ref="githubUsername"
               required={false}
-              type="text" />
+              type="text"
+            />
           </div>
           <div className="deployment-ssh-key__add-key right">
-            <Button
-              action={wrapper.find('Button').prop('action')}
-              disabled
-              type="positive">Add keys</Button>
+            <Button action={wrapper.find('Button').prop('action')} disabled type="positive">
+              Add keys
+            </Button>
           </div>
         </div>
       </div>
@@ -116,7 +118,8 @@ describe('DeploymentSSHKey', function() {
           ref="launchpadUsername"
           required={false}
           type="text"
-          value="rose" />
+          value="rose"
+        />
       </div>
     );
     assert.compareJSX(wrapper.find('.deployment-ssh-key__username'), expected);
@@ -155,20 +158,22 @@ describe('DeploymentSSHKey', function() {
       const expected = (
         <span className="deployment-ssh-key__notification">
           <Notification
-            content={(
+            content={
               <span>
                 <b>Error:</b>
                 <span>
                   No keys found.
-                  <a
-                    className="link"
-                    href="https://github.com/settings/keys"
-                    target="_blank">Create an SSH Key</a>.
+                  <a className="link" href="https://github.com/settings/keys" target="_blank">
+                    Create an SSH Key
+                  </a>
+                  .
                 </span>
               </span>
-            )}
-            type="negative" />
-        </span>);
+            }
+            type="negative"
+          />
+        </span>
+      );
       assert.compareJSX(wrapper.find('.deployment-ssh-key__notification'), expected);
     });
 
@@ -182,9 +187,15 @@ describe('DeploymentSSHKey', function() {
       const expected = (
         <span className="deployment-ssh-key__notification">
           <Notification
-            content={(<span><b>Error:</b> Not Found</span>)}
-            type="negative" />
-        </span>);
+            content={
+              <span>
+                <b>Error:</b> Not Found
+              </span>
+            }
+            type="negative"
+          />
+        </span>
+      );
       assert.compareJSX(wrapper.find('.deployment-ssh-key__notification'), expected);
     });
 
@@ -219,7 +230,8 @@ describe('DeploymentSSHKey', function() {
                   className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
-                  title="Remove key">
+                  title="Remove key"
+                >
                   <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
@@ -250,7 +262,8 @@ describe('DeploymentSSHKey', function() {
           className="added-keys__key-remove right"
           onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
           role="button"
-          title="Remove key">
+          title="Remove key"
+        >
           <SvgIcon name="close_16" size="16" />
         </span>
       );
@@ -275,11 +288,10 @@ describe('DeploymentSSHKey', function() {
         {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
       ]);
       expect(instance.props.setSSHKeys.callCount).toEqual(1);
-      expect(instance.props.setSSHKeys.args[0][0]).
-        toEqual([
-          {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
-          {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
-        ]);
+      expect(instance.props.setSSHKeys.args[0][0]).toEqual([
+        {id: 1, type: 'ssh-rsa', body: 'thekey', text: 'ssh-rsa thekey'},
+        {id: 2, type: 'ssh-rsa', body: 'thekey2', text: 'ssh-rsa thekey2'}
+      ]);
     });
 
     it('disables the add key button after keys stored', function() {
@@ -335,9 +347,7 @@ describe('DeploymentSSHKey', function() {
     it('stores the Launchpad username', () => {
       instance._handleAddMoreKeys(wrapper.instance);
       expect(instance.props.setLaunchpadUsernames.callCount).toEqual(1);
-      assert.deepEqual(
-        instance.props.setLaunchpadUsernames.args[0][0],
-        ['rose']);
+      assert.deepEqual(instance.props.setLaunchpadUsernames.args[0][0], ['rose']);
     });
 
     it('shows a table if usernames are present', () => {
@@ -350,15 +360,14 @@ describe('DeploymentSSHKey', function() {
               Launchpad Users
             </li>
             <li className="deployment-flow__row twelve-col">
-              <div className="eleven-col">
-                rose
-              </div>
+              <div className="eleven-col">rose</div>
               <div className="one-col last-col">
                 <span
                   className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
-                  title="Remove username">
+                  title="Remove username"
+                >
                   <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
@@ -379,15 +388,14 @@ describe('DeploymentSSHKey', function() {
               Launchpad Users
             </li>
             <li className="deployment-flow__row twelve-col">
-              <div className="eleven-col">
-                rose
-              </div>
+              <div className="eleven-col">rose</div>
               <div className="one-col last-col">
                 <span
                   className="added-keys__key-remove right"
                   onClick={wrapper.find('.added-keys__key-remove').prop('onClick')}
                   role="button"
-                  title="Remove username">
+                  title="Remove username"
+                >
                   <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
@@ -396,18 +404,25 @@ describe('DeploymentSSHKey', function() {
         </div>
       );
       assert.compareJSX(wrapper.find('.deployment-ssh-key__added-keys'), expected);
-      wrapper.find('.added-keys__key-remove').props().onClick('rose');
+      wrapper
+        .find('.added-keys__key-remove')
+        .props()
+        .onClick('rose');
       wrapper.update();
       assert.equal(wrapper.find('.deployment-ssh-key__added-keys').length, 0);
     });
 
     it('shows a table for usernames and keys', () => {
-      instance.setState({SSHkeys: [{
-        body: 'thekey',
-        text: 'ssh-rsa thekey',
-        type: 'ssh-rsa',
-        id: 0
-      }]});
+      instance.setState({
+        SSHkeys: [
+          {
+            body: 'thekey',
+            text: 'ssh-rsa thekey',
+            type: 'ssh-rsa',
+            id: 0
+          }
+        ]
+      });
       instance._handleAddMoreKeys(wrapper.instance);
       wrapper.update();
       const expected = (
@@ -425,9 +440,13 @@ describe('DeploymentSSHKey', function() {
               <div className="one-col last-col">
                 <span
                   className="added-keys__key-remove right"
-                  onClick={wrapper.find('.added-keys__key-remove').at(0).prop('onClick')}
+                  onClick={wrapper
+                    .find('.added-keys__key-remove')
+                    .at(0)
+                    .prop('onClick')}
                   role="button"
-                  title="Remove key">
+                  title="Remove key"
+                >
                   <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
@@ -438,15 +457,17 @@ describe('DeploymentSSHKey', function() {
               Launchpad Users
             </li>
             <li className="deployment-flow__row twelve-col">
-              <div className="eleven-col">
-                rose
-              </div>
+              <div className="eleven-col">rose</div>
               <div className="one-col last-col">
                 <span
                   className="added-keys__key-remove right"
-                  onClick={wrapper.find('.added-keys__key-remove').at(1).prop('onClick')}
+                  onClick={wrapper
+                    .find('.added-keys__key-remove')
+                    .at(1)
+                    .prop('onClick')}
                   role="button"
-                  title="Remove username">
+                  title="Remove username"
+                >
                   <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
@@ -478,14 +499,14 @@ describe('DeploymentSSHKey', function() {
     it('stores the SSH key', function() {
       instance._handleAddMoreKeys(instance);
       expect(instance.props.setSSHKeys.callCount).toEqual(1);
-      assert.deepEqual(
-        instance.props.setSSHKeys.args[0][0],
-        [{
+      assert.deepEqual(instance.props.setSSHKeys.args[0][0], [
+        {
           body: 'thekey',
           text: 'ssh-rsa thekey',
           type: 'ssh-rsa',
           id: 0
-        }]);
+        }
+      ]);
     });
 
     it('shows a table if keys present', () => {
@@ -508,7 +529,8 @@ describe('DeploymentSSHKey', function() {
                   className="added-keys__key-remove right"
                   onClick={instance._removeKey.bind(instance)}
                   role="button"
-                  title="Remove key">
+                  title="Remove key"
+                >
                   <SvgIcon name="close_16" size="16" />
                 </span>
               </div>
@@ -528,5 +550,4 @@ describe('DeploymentSSHKey', function() {
     });
     expect(wrapper).toMatchSnapshot();
   });
-
 });

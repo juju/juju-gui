@@ -46,11 +46,10 @@ topologyUtils.pointOutside = function(vertices, padding) {
     var hull = topologyUtils.safeHull(vertices);
 
     // Find the node furthest from the origin in the set of hull vertices.
-    var furthestDistance = 0, furthestVertex = [0, 0];
+    var furthestDistance = 0,
+      furthestVertex = [0, 0];
     hull.forEach(vertex => {
-      var distance = Math.sqrt(
-        Math.pow(vertex[0], 2) +
-          Math.pow(vertex[1], 2));
+      var distance = Math.sqrt(Math.pow(vertex[0], 2) + Math.pow(vertex[1], 2));
       if (distance >= furthestDistance) {
         furthestDistance = distance;
         furthestVertex = vertex;
@@ -73,10 +72,8 @@ topologyUtils.pointOutside = function(vertices, padding) {
     case 2:
       // Pad to the right of the right-most existing service.
       return [
-        (vertices[0][0] > vertices[1][0] ?
-          vertices[0][0] : vertices[1][0]) + padding,
-        (vertices[0][1] > vertices[1][1] ?
-          vertices[0][1] : vertices[1][1])
+        (vertices[0][0] > vertices[1][0] ? vertices[0][0] : vertices[1][0]) + padding,
+        vertices[0][1] > vertices[1][1] ? vertices[0][1] : vertices[1][1]
       ];
     default:
       // Pad to the right of the convex hull of existing services
@@ -94,11 +91,13 @@ topologyUtils.pointOutside = function(vertices, padding) {
   @return {array} A list of coordinate pairs.
 */
 topologyUtils.serviceBoxesToVertices = function(serviceBoxes) {
-  return Object.keys(serviceBoxes).map(k => serviceBoxes[k]).map(box => {
-    var center = box.center || [false, false];
-    // Default undefined x/y attributes to 0.
-    return [center[0] || box.x || 0, center[1] || box.y || 0];
-  });
+  return Object.keys(serviceBoxes)
+    .map(k => serviceBoxes[k])
+    .map(box => {
+      var center = box.center || [false, false];
+      // Default undefined x/y attributes to 0.
+      return [center[0] || box.x || 0, center[1] || box.y || 0];
+    });
 };
 
 /**
@@ -119,8 +118,8 @@ topologyUtils.centroid = function(vertices) {
       break;
     case 2:
       centroid = [
-        vertices[0][0] - ((vertices[0][0] - vertices[1][0]) / 2),
-        vertices[0][1] - ((vertices[0][1] - vertices[1][1]) / 2)
+        vertices[0][0] - (vertices[0][0] - vertices[1][0]) / 2,
+        vertices[0][1] - (vertices[0][1] - vertices[1][1]) / 2
       ];
       break;
     default:
@@ -129,7 +128,8 @@ topologyUtils.centroid = function(vertices) {
       // [NaN, NaN]; in this case, find the outermost two services and
       // generate the centroid using the two-vertex case above.
       if (isNaN(centroid[0]) || isNaN(centroid[1])) {
-        var min = vertices[0], max = vertices[0];
+        var min = vertices[0],
+          max = vertices[0];
         vertices.forEach(function(vertex) {
           if (vertex[0] < min[0] && vertex[1] < min[1]) {
             min = vertex;
@@ -145,20 +145,31 @@ topologyUtils.centroid = function(vertices) {
 };
 
 topologyUtils.getBoundingBox = function(vertices, boxWidth, boxHeight) {
-  var minX = Infinity, maxX = -Infinity,
-      minY = Infinity, maxY = -Infinity;
+  var minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
 
   vertices.forEach(function(v) {
-    if (v[0] < minX) { minX = v[0]; }
-    if (v[1] < minY) { minY = v[1]; }
-    if (v[0] > maxX) { maxX = v[0]; }
-    if (v[1] > maxY) { maxY = v[1]; }
+    if (v[0] < minX) {
+      minX = v[0];
+    }
+    if (v[1] < minY) {
+      minY = v[1];
+    }
+    if (v[0] > maxX) {
+      maxX = v[0];
+    }
+    if (v[1] > maxY) {
+      maxY = v[1];
+    }
   });
   return {
     translateX: minX - boxWidth / 2,
     translateY: minY - boxHeight / 2,
     w: maxX - minX + boxWidth,
-    h: maxY - minY + boxHeight};
+    h: maxY - minY + boxHeight
+  };
 };
 
 /**
@@ -208,16 +219,10 @@ topologyUtils.locateRelativePointOnCanvas = function(endpoint, offset, scale) {
       method.
 */
 topologyUtils.getVisibilityClasses = function(visibility) {
-  var visibilities = [
-    'show',
-    'fade',
-    'hide',
-    'highlight',
-    'unhighlight'
-  ];
+  var visibilities = ['show', 'fade', 'hide', 'highlight', 'unhighlight'];
   var css = {};
   visibilities.forEach(function(v) {
-    css[v] = (v === visibility);
+    css[v] = v === visibility;
   });
   return css;
 };
@@ -255,7 +260,7 @@ var addSVGClass = function(selector, class_name) {
     return;
   }
 
-  if (typeof(selector) === 'string') {
+  if (typeof selector === 'string') {
     document.querySelectorAll(selector).forEach(function(n) {
       var classes = this.getAttribute('class');
       if (!self.hasSVGClass(this, class_name)) {
@@ -286,7 +291,7 @@ var removeSVGClass = function(selector, class_name) {
     return;
   }
 
-  if (typeof(selector) === 'string') {
+  if (typeof selector === 'string') {
     document.querySelectorAll(selector).each(function() {
       var classes = this.getAttribute('class');
       this.setAttribute('class', classes.replace(class_name, ''));

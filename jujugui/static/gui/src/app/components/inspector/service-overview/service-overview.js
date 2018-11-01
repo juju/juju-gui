@@ -50,25 +50,22 @@ class ServiceOverview extends React.Component {
       // If we don't have the plans or the activePlan then make a request
       // to fetch them. This is a fallback as the UI should handle
       // insufficient data transparently.
-      props.showActivePlan(
-        modelUUID,
-        service.get('name'),
-        (err, activePlan, plans) => {
-          if (err) {
-            const message = 'fetching plan failed';
-            this.props.addNotification({
-              title: message,
-              message: `${message}: ${err}`,
-              level: 'error'
-            });
-            console.error(message, err);
-            return;
-          }
-          if (plans && plans.length > 0) {
-            service.set('activePlan', activePlan);
-            this.setState({activePlan, plans});
-          }
-        });
+      props.showActivePlan(modelUUID, service.get('name'), (err, activePlan, plans) => {
+        if (err) {
+          const message = 'fetching plan failed';
+          this.props.addNotification({
+            title: message,
+            message: `${message}: ${err}`,
+            level: 'error'
+          });
+          console.error(message, err);
+          return;
+        }
+        if (plans && plans.length > 0) {
+          service.set('activePlan', activePlan);
+          this.setState({activePlan, plans});
+        }
+      });
     }
   }
 
@@ -107,7 +104,9 @@ class ServiceOverview extends React.Component {
           linkTitle={action.linkTitle}
           title={action.title}
           value={action.value}
-          valueType={action.valueType} />);
+          valueType={action.valueType}
+        />
+      );
     });
     return items;
   }
@@ -126,20 +125,25 @@ class ServiceOverview extends React.Component {
     const statusCounts = initUtils.getUnitStatusCounts(units);
     const plans = this.props.charm.get('plans');
     statusCounts.all = {size: units.length};
-    const statuses = [{
-      title: 'Units',
-      key: 'all',
-      icon: 'units'
-    }, {
-      title: 'Errors',
-      key: 'error'
-    }, {
-      title: 'Pending',
-      key: 'pending'
-    }, {
-      title: 'Uncommitted',
-      key: 'uncommitted'
-    }];
+    const statuses = [
+      {
+        title: 'Units',
+        key: 'all',
+        icon: 'units'
+      },
+      {
+        title: 'Errors',
+        key: 'error'
+      },
+      {
+        title: 'Pending',
+        key: 'pending'
+      },
+      {
+        title: 'Uncommitted',
+        key: 'uncommitted'
+      }
+    ];
     statuses.forEach(function(status) {
       const key = status.key;
       const count = statusCounts[key].size;
@@ -155,7 +159,11 @@ class ServiceOverview extends React.Component {
               inspector: {
                 id: serviceId,
                 activeComponent: 'units',
-                unitStatus: key === 'all' ? null : key}}}});
+                unitStatus: key === 'all' ? null : key
+              }
+            }
+          }
+        });
       }
     }, this);
 
@@ -167,7 +175,11 @@ class ServiceOverview extends React.Component {
         gui: {
           inspector: {
             id: service.get('id'),
-            activeComponent: 'config'}}}});
+            activeComponent: 'config'
+          }
+        }
+      }
+    });
     actions.push({
       title: 'Relations',
       icon: 'relations',
@@ -176,7 +188,11 @@ class ServiceOverview extends React.Component {
         gui: {
           inspector: {
             id: serviceId,
-            activeComponent: 'relations'}}}});
+            activeComponent: 'relations'
+          }
+        }
+      }
+    });
     actions.push({
       title: 'Expose',
       value: service.get('exposed') ? 'On' : 'Off',
@@ -186,7 +202,11 @@ class ServiceOverview extends React.Component {
         gui: {
           inspector: {
             id: serviceId,
-            activeComponent: 'expose'}}}});
+            activeComponent: 'expose'
+          }
+        }
+      }
+    });
     const resources = this.props.charm.get('resources') || {};
     if (Object.keys(resources).length > 0) {
       actions.push({
@@ -197,7 +217,11 @@ class ServiceOverview extends React.Component {
           gui: {
             inspector: {
               id: service.get('id'),
-              activeComponent: 'resources'}}}});
+              activeComponent: 'resources'
+            }
+          }
+        }
+      });
     }
     if (!service.get('pending')) {
       const charmId = service.get('charm');
@@ -212,7 +236,11 @@ class ServiceOverview extends React.Component {
           gui: {
             inspector: {
               id: serviceId,
-              activeComponent: 'change-version'}}}});
+              activeComponent: 'change-version'
+            }
+          }
+        }
+      });
     }
 
     if (state.activePlan || plans) {
@@ -224,7 +252,11 @@ class ServiceOverview extends React.Component {
           gui: {
             inspector: {
               id: serviceId,
-              activeComponent: 'plan'}}}});
+              activeComponent: 'plan'
+            }
+          }
+        }
+      });
     }
     this.state.actions = actions;
   }
@@ -253,15 +285,16 @@ class ServiceOverview extends React.Component {
 
   _generateDelete(render, readOnly) {
     if (render) {
-      const buttons = [{
-        disabled: readOnly,
-        title: 'Destroy',
-        action: this._destroyService.bind(this)
-      }];
+      const buttons = [
+        {
+          disabled: readOnly,
+          title: 'Destroy',
+          action: this._destroyService.bind(this)
+        }
+      ];
       return (
         <div className="service-overview__delete">
-          <ButtonRow
-            buttons={buttons} />
+          <ButtonRow buttons={buttons} />
         </div>
       );
     }
@@ -272,14 +305,11 @@ class ServiceOverview extends React.Component {
     this._generateActions(props.service);
     const isDeleted = props.service.get('deleted');
     const readOnly = props.acl.isReadOnly();
-    const message = 'This application has been marked to be destroyed on '
-      + 'next deployment.';
+    const message =
+      'This application has been marked to be destroyed on ' + 'next deployment.';
     return (
       <div className="service-overview">
-        <InspectorConfirm
-          buttons={[]}
-          message={message}
-          open={isDeleted} />
+        <InspectorConfirm buttons={[]} message={message} open={isDeleted} />
         <ul className="service-overview__actions">
           {this._generateActionList(this.state.actions)}
         </ul>
@@ -287,7 +317,7 @@ class ServiceOverview extends React.Component {
       </div>
     );
   }
-};
+}
 
 ServiceOverview.propTypes = {
   acl: PropTypes.object.isRequired,

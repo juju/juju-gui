@@ -10,7 +10,6 @@ const EntityContentDiagram = require('../../entity-details/content/diagram/diagr
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const DeploymentSection = require('../section/section');
 
-
 class DeploymentDirectDeploy extends React.Component {
   constructor(props) {
     super(props);
@@ -40,19 +39,17 @@ class DeploymentDirectDeploy extends React.Component {
     let url;
     try {
       url = urls.URL.fromLegacyString(ddEntityId);
-    } catch(_) {
+    } catch (_) {
       url = urls.URL.fromString(ddEntityId);
     }
     url = this.props.generatePath({
       store: url.path()
     });
     return (
-      <a
-        className="link"
-        href={url}
-        target="_blank">
+      <a className="link" href={url} target="_blank">
         Learn more about this {this.state.isBundle ? 'bundle' : 'charm'}.
-      </a>);
+      </a>
+    );
   }
 
   /**
@@ -63,8 +60,8 @@ class DeploymentDirectDeploy extends React.Component {
   _generateImage() {
     if (this.state.isBundle) {
       return (
-        <EntityContentDiagram
-          diagramUrl={this.props.getDiagramURL(this.props.ddData.id)} />);
+        <EntityContentDiagram diagramUrl={this.props.getDiagramURL(this.props.ddData.id)} />
+      );
     } else {
       const entity = this.props.entityModel.toEntity();
       return (
@@ -73,8 +70,10 @@ class DeploymentDirectDeploy extends React.Component {
             alt={entity.displayName}
             className="deployment-direct-deploy__image-block-icon"
             src={entity.iconPath}
-            width="96" />
-        </div>);
+            width="96"
+          />
+        </div>
+      );
     }
   }
 
@@ -96,17 +95,18 @@ class DeploymentDirectDeploy extends React.Component {
     if (!entityModel) {
       content = (
         <div className="deployment-direct-deploy__content">
-          This {this.state.isBundle ? 'bundle' : 'charm'} could not be found.
-          Visit the&nbsp;
+          This {this.state.isBundle ? 'bundle' : 'charm'} could not be found. Visit the&nbsp;
           <span
             className="link"
             onClick={this._handleStoreClick.bind(this)}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             store
-          </span>&nbsp;
-          to find more charms and bundles.
-        </div>);
+          </span>
+          &nbsp; to find more charms and bundles.
+        </div>
+      );
     } else {
       const entity = entityModel.toEntity();
       const machineNumber = this.state.isBundle ? entity.machineCount : 1;
@@ -114,40 +114,33 @@ class DeploymentDirectDeploy extends React.Component {
         <div className="deployment-direct-deploy__content">
           <div className="deployment-direct-deploy__description six-col">
             <h4>You are about to deploy:</h4>
-            <h2 className="deployment-direct-deploy__title">
-              {entity.displayName}
-            </h2>
-            <EntityContentDescription
-              description={entity.description} />
+            <h2 className="deployment-direct-deploy__title">{entity.displayName}</h2>
+            <EntityContentDescription description={entity.description} />
             <ul>
               <li>
-                It will run on {machineNumber}&nbsp;
-                machine{machineNumber === 1 ? '' : 's'} in your cloud.
+                It will run on {machineNumber}
+                &nbsp; machine
+                {machineNumber === 1 ? '' : 's'} in your cloud.
               </li>
             </ul>
             {this._generateLink()}
           </div>
           <div className="six-col last-col no-margin-bottom">
-            <div className="deployment-direct-deploy__image">
-              {this._generateImage()}
-            </div>
+            <div className="deployment-direct-deploy__image">{this._generateImage()}</div>
             <div className="deployment-direct-deploy__edit-model">
-              <Button
-                action={this._handleClose.bind(this)}
-                type="inline-neutral">
+              <Button action={this._handleClose.bind(this)} type="inline-neutral">
                 Edit model
               </Button>
             </div>
           </div>
-        </div>);
+        </div>
+      );
     }
     return (
-      <DeploymentSection
-        instance="deployment-direct-deploy">
-        {content}
-      </DeploymentSection>);
+      <DeploymentSection instance="deployment-direct-deploy">{content}</DeploymentSection>
+    );
   }
-};
+}
 
 DeploymentDirectDeploy.propTypes = {
   addNotification: PropTypes.func.isRequired,

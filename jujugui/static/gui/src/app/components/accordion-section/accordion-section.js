@@ -59,24 +59,18 @@ class AccordionSection extends React.Component {
     if (!this.props.title) {
       return null;
     }
-    const chevron = this.state.open ?
-      'chevron_up_16' : 'chevron_down_16';
+    const chevron = this.state.open ? 'chevron_up_16' : 'chevron_down_16';
     const icon = this.props.children ? (
-      <SvgIcon
-        className="right"
-        name={chevron}
-        size="16" />) : null;
+      <SvgIcon className="right" name={chevron} size="16" />
+    ) : null;
     const role = this.props.children ? 'button' : null;
     const onClick = this.props.children ? this._toggle.bind(this) : null;
-    return (<div
-      className="accordion-section__title"
-      onClick={onClick}
-      role={role}>
-      <span className="accordion-section__title-content">
-        {this.props.title}
-      </span>
-      {icon}
-    </div>);
+    return (
+      <div className="accordion-section__title" onClick={onClick} role={role}>
+        <span className="accordion-section__title-content">{this.props.title}</span>
+        {icon}
+      </div>
+    );
   }
 
   /**
@@ -85,12 +79,11 @@ class AccordionSection extends React.Component {
     @return {Object} The React div element.
   */
   _generateContent() {
-    return (<div
-      className="accordion-section__content"
-      ref="content"
-      style={this._getStyle()}>
-      {this.props.children}
-    </div>);
+    return (
+      <div className="accordion-section__content" ref="content" style={this._getStyle()}>
+        {this.props.children}
+      </div>
+    );
   }
 
   render() {
@@ -101,18 +94,12 @@ class AccordionSection extends React.Component {
       </div>
     );
   }
-};
+}
 
 AccordionSection.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
+  children: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   startOpen: PropTypes.bool,
-  title: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ])
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
 module.exports = AccordionSection;

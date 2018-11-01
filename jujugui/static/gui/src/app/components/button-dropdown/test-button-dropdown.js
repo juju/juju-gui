@@ -9,28 +9,35 @@ const ButtonDropdown = require('./button-dropdown');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 describe('Button Dropdown', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ButtonDropdown
-      activeItem="i4"
-      classes={['extra-classes']}
-      disableDropdown={options.disableDropdown || false}
-      icon={options.icon || 'icon_16'}
-      listItems={options.listItems || [{
-        action: sinon.stub(),
-        label: 'item1'
-      }, {
-        label: 'item2'
-      }, {
-        element: (<span>item3</span>)
-      }, {
-        action: sinon.stub(),
-        id: 'i4',
-        label: 'item4'
-      }]}
-      tooltip="more" />
-  );
-
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ButtonDropdown
+        activeItem="i4"
+        classes={['extra-classes']}
+        disableDropdown={options.disableDropdown || false}
+        icon={options.icon || 'icon_16'}
+        listItems={
+          options.listItems || [
+            {
+              action: sinon.stub(),
+              label: 'item1'
+            },
+            {
+              label: 'item2'
+            },
+            {
+              element: <span>item3</span>
+            },
+            {
+              action: sinon.stub(),
+              id: 'i4',
+              label: 'item4'
+            }
+          ]
+        }
+        tooltip="more"
+      />
+    );
 
   it('can render closed', () => {
     const wrapper = renderComponent();
@@ -44,15 +51,11 @@ describe('Button Dropdown', function() {
           className="button-dropdown__button"
           onClick={wrapper.find('.button-dropdown__button').prop('onClick')}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="button-dropdown__icon"
-            name="icon_16"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon className="button-dropdown__icon" name="icon_16" size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              more
-            </span>
+            <span className="tooltip__inner tooltip__inner--up">more</span>
           </span>
         </span>
       </div>
@@ -68,15 +71,12 @@ describe('Button Dropdown', function() {
     const menuItems = wrapper.find('.dropdown-menu__list-item');
     const links = wrapper.find('.dropdown-menu__list-item-link');
     const children = [
-      <li
-        className="dropdown-menu__list-item"
-        key="item1"
-        role="menuitem"
-        tabIndex="0">
+      <li className="dropdown-menu__list-item" key="item1" role="menuitem" tabIndex="0">
         <a
           className="dropdown-menu__list-item-link"
           onClick={links.at(0).prop('onClick')}
-          role="button">
+          role="button"
+        >
           item1
         </a>
       </li>,
@@ -84,25 +84,24 @@ describe('Button Dropdown', function() {
         className="dropdown-menu__list-item dropdown-menu__list-item--inactive"
         key="item2"
         role="menuitem"
-        tabIndex="0">
+        tabIndex="0"
+      >
         item2
       </li>,
-      <li
-        className="dropdown-menu__list-item"
-        key="item-2"
-        role="menuitem"
-        tabIndex="0">
+      <li className="dropdown-menu__list-item" key="item-2" role="menuitem" tabIndex="0">
         <span>item3</span>
       </li>,
       <li
         className="dropdown-menu__list-item dropdown-menu__list-item--active"
         key="i4"
         role="menuitem"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <a
           className="dropdown-menu__list-item-link"
           onClick={links.at(1).prop('onClick')}
-          role="button">
+          role="button"
+        >
           item4
         </a>
       </li>

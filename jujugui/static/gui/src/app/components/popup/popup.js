@@ -23,9 +23,7 @@ class Popup extends React.Component {
   _generateButtons() {
     const buttons = this.props.buttons;
     if (buttons) {
-      return (
-        <ButtonRow
-          buttons={buttons} />);
+      return <ButtonRow buttons={buttons} />;
     }
   }
 
@@ -39,14 +37,11 @@ class Popup extends React.Component {
     if (close) {
       return (
         <div className="popup__close">
-          <Button
-            action={close}
-            type="inline-base">
-            <SvgIcon
-              name="close_16"
-              size="16" />
+          <Button action={close} type="inline-base">
+            <SvgIcon name="close_16" size="16" />
           </Button>
-        </div>);
+        </div>
+      );
     }
   }
 
@@ -58,10 +53,7 @@ class Popup extends React.Component {
   _generateTitle() {
     const title = this.props.title;
     if (title) {
-      return (
-        <h3 className="popup__title">
-          {title}
-        </h3>);
+      return <h3 className="popup__title">{title}</h3>;
     }
   }
 
@@ -81,9 +73,7 @@ class Popup extends React.Component {
 
   render() {
     return (
-      <Panel
-        instanceName="popup"
-        visible={true}>
+      <Panel instanceName="popup" visible={true}>
         <div className={this._generateClasses()}>
           {this._generateClose()}
           {this._generateTitle()}
@@ -93,14 +83,11 @@ class Popup extends React.Component {
       </Panel>
     );
   }
-};
+}
 
 Popup.propTypes = {
   buttons: PropTypes.array,
-  children: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   className: PropTypes.string,
   close: PropTypes.func,
   title: PropTypes.string,

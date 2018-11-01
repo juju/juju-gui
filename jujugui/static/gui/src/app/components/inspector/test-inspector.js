@@ -23,31 +23,32 @@ const UnitList = require('./unit-list/unit-list');
 describe('Inspector', function() {
   let acl, appState, charm, initUtils, modelAPI, relationUtils, service, services;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Inspector
-      acl={options.acl || acl}
-      addCharm={options.addCharm || sinon.stub()}
-      addNotification={options.addNotification || sinon.stub()}
-      appState={options.appState || appState}
-      charm={options.charm || charm}
-      getAvailableVersions={options.getAvailableVersions || sinon.stub()}
-      getMacaroon={options.getMacaroon || sinon.stub()}
-      initUtils={options.initUtils || initUtils}
-      modelAPI={options.modelAPI || modelAPI}
-      modelUUID={options.modelUUID || 'abc123'}
-      providerType={options.providerType}
-      relatableApplications={options.relatableApplications || []}
-      relationUtils={options.relationUtils || relationUtils}
-      service={options.service || service}
-      serviceRelations={options.serviceRelations || ['relations']}
-      services={options.services || services}
-      showActivePlan={options.showActivePlan || sinon.stub()}
-      showPlans={options.showPlans === undefined ? false : options.showPlans}
-      showSSHButtons={false}
-      unplaceServiceUnits={options.unplaceServiceUnits || sinon.stub()}
-      updateServiceUnitsDisplayname={
-        options.updateServiceUnitsDisplayname || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Inspector
+        acl={options.acl || acl}
+        addCharm={options.addCharm || sinon.stub()}
+        addNotification={options.addNotification || sinon.stub()}
+        appState={options.appState || appState}
+        charm={options.charm || charm}
+        getAvailableVersions={options.getAvailableVersions || sinon.stub()}
+        getMacaroon={options.getMacaroon || sinon.stub()}
+        initUtils={options.initUtils || initUtils}
+        modelAPI={options.modelAPI || modelAPI}
+        modelUUID={options.modelUUID || 'abc123'}
+        providerType={options.providerType}
+        relatableApplications={options.relatableApplications || []}
+        relationUtils={options.relationUtils || relationUtils}
+        service={options.service || service}
+        serviceRelations={options.serviceRelations || ['relations']}
+        services={options.services || services}
+        showActivePlan={options.showActivePlan || sinon.stub()}
+        showPlans={options.showPlans === undefined ? false : options.showPlans}
+        showSSHButtons={false}
+        unplaceServiceUnits={options.unplaceServiceUnits || sinon.stub()}
+        updateServiceUnitsDisplayname={options.updateServiceUnitsDisplayname || sinon.stub()}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -59,15 +60,18 @@ describe('Inspector', function() {
       },
       changeState: sinon.stub(),
       generatePath: sinon.stub(),
-      history: [{
-        gui: {
-          inspector: {}
+      history: [
+        {
+          gui: {
+            inspector: {}
+          }
+        },
+        {
+          gui: {
+            inspector: {}
+          }
         }
-      }, {
-        gui: {
-          inspector: {}
-        }
-      }]
+      ]
     };
     var getStub = sinon.stub();
     getStub.withArgs('icon').returns('icon.png');
@@ -124,7 +128,8 @@ describe('Inspector', function() {
           icon="icon.png"
           showLinks={true}
           title="demo"
-          type={undefined} />
+          type={undefined}
+        />
         <div className="inspector-content">
           <ServiceOverview
             acl={acl}
@@ -136,9 +141,11 @@ describe('Inspector', function() {
             service={service}
             serviceRelations={['relations']}
             showActivePlan={sinon.stub()}
-            showPlans={true} />
+            showPlans={true}
+          />
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -162,8 +169,10 @@ describe('Inspector', function() {
           envResolved={sinon.stub()}
           service={service}
           units={[]}
-          unitStatus="error" />
-      </div>);
+          unitStatus="error"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -187,8 +196,10 @@ describe('Inspector', function() {
           serviceRelations={['relations']}
           setConfig={sinon.stub()}
           unplaceServiceUnits={sinon.stub()}
-          updateServiceUnitsDisplayname={sinon.stub()} />
-      </div>);
+          updateServiceUnitsDisplayname={sinon.stub()}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -199,9 +210,11 @@ describe('Inspector', function() {
       displayName: title,
       agent_state: headerType
     };
-    service.get.withArgs('units').returns({getById: function() {
-      return unit;
-    }});
+    service.get.withArgs('units').returns({
+      getById: function() {
+        return unit;
+      }
+    });
     appState.current.gui.inspector = {
       activeComponent: 'unit',
       unit: '5'
@@ -222,8 +235,10 @@ describe('Inspector', function() {
           service={service}
           showSSHButtons={false}
           unit={unit}
-          unitStatus={null} />
-      </div>);
+          unitStatus={null}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -235,9 +250,11 @@ describe('Inspector', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
     assert.equal(instance.state.activeComponent, 'units');
-    service.get.withArgs('units').returns({getById: function() {
-      return;
-    }});
+    service.get.withArgs('units').returns({
+      getById: function() {
+        return;
+      }
+    });
     appState.current.gui.inspector = {
       activeComponent: 'unit',
       unit: '5'
@@ -253,13 +270,17 @@ describe('Inspector', function() {
           activeComponent: 'units',
           unit: null,
           unitStatus: null
-        }}});
+        }
+      }
+    });
   });
 
   it('can go back from the unit details to a status list', function() {
-    service.get.withArgs('units').returns({getById: function() {
-      return {displayName: 'spinach'};
-    }});
+    service.get.withArgs('units').returns({
+      getById: function() {
+        return {displayName: 'spinach'};
+      }
+    });
     appState.history[0].gui.inspector = {
       activeComponent: 'units',
       units: 'error',
@@ -270,7 +291,10 @@ describe('Inspector', function() {
       unit: '5'
     };
     const wrapper = renderComponent();
-    wrapper.find('InspectorHeader').props().backCallback();
+    wrapper
+      .find('InspectorHeader')
+      .props()
+      .backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
@@ -279,19 +303,26 @@ describe('Inspector', function() {
           activeComponent: 'units',
           unit: null,
           unitStatus: 'error'
-        }}});
+        }
+      }
+    });
   });
 
   it('defaults to go back from the unit details to the all list', function() {
-    service.get.withArgs('units').returns({getById: function() {
-      return {displayName: 'spinache'};
-    }});
+    service.get.withArgs('units').returns({
+      getById: function() {
+        return {displayName: 'spinache'};
+      }
+    });
     appState.current.gui.inspector = {
       activeComponent: 'unit',
       unit: '5'
     };
     const wrapper = renderComponent();
-    wrapper.find('InspectorHeader').props().backCallback();
+    wrapper
+      .find('InspectorHeader')
+      .props()
+      .backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
@@ -300,7 +331,9 @@ describe('Inspector', function() {
           activeComponent: 'units',
           unit: null,
           unitStatus: null
-        }}});
+        }
+      }
+    });
   });
 
   it('goes back to the previous service from unit details', function() {
@@ -308,9 +341,11 @@ describe('Inspector', function() {
     // that unit will take you to another services inspector. This test
     // makes sure that if the previous service was different then 'back'
     // takes to you to that service.
-    service.get.withArgs('units').returns({getById: function() {
-      return {displayName: 'spinache'};
-    }});
+    service.get.withArgs('units').returns({
+      getById: function() {
+        return {displayName: 'spinache'};
+      }
+    });
     appState.history[0].gui.inspector = {
       id: 'previousService',
       units: true
@@ -320,7 +355,10 @@ describe('Inspector', function() {
       unit: '5'
     };
     const wrapper = renderComponent();
-    wrapper.find('InspectorHeader').props().backCallback();
+    wrapper
+      .find('InspectorHeader')
+      .props()
+      .backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
@@ -329,7 +367,9 @@ describe('Inspector', function() {
           activeComponent: 'units',
           unit: null,
           unitStatus: null
-        }}});
+        }
+      }
+    });
   });
 
   it('displays Scale Service when the app state calls for it', function() {
@@ -350,9 +390,11 @@ describe('Inspector', function() {
             createMachinesPlaceUnits: sinon.stub(),
             reshape: shapeup.reshapeFunc
           }}
-          providerType='lxd'
-          serviceId={service.get('id')} />
-      </div>);
+          providerType="lxd"
+          serviceId={service.get('id')}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -378,8 +420,10 @@ describe('Inspector', function() {
             unexposeService: sinon.stub()
           }}
           service={service}
-          units={units} />
-      </div>);
+          units={units}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -398,8 +442,10 @@ describe('Inspector', function() {
           changeState={wrapper.find('InspectorRelations').prop('changeState')}
           destroyRelations={sinon.stub()}
           service={service}
-          serviceRelations={['relations']} />
-      </div>);
+          serviceRelations={['relations']}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -416,8 +462,10 @@ describe('Inspector', function() {
         <InspectorRelateTo
           application={service}
           changeState={wrapper.find('InspectorRelateTo').prop('changeState')}
-          relatableApplications={['apps']} />
-      </div>);
+          relatableApplications={['apps']}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -447,8 +495,10 @@ describe('Inspector', function() {
           }}
           changeState={wrapper.find('InspectorRelateToEndpoint').prop('changeState')}
           createRelation={sinon.stub()}
-          endpoints={[]} />
-      </div>);
+          endpoints={[]}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -464,10 +514,9 @@ describe('Inspector', function() {
     assert.equal(header.prop('title'), 'Plan');
     const expected = (
       <div className="inspector-content">
-        <InspectorPlan
-          acl={acl}
-          currentPlan={activePlan} />
-      </div>);
+        <InspectorPlan acl={acl} currentPlan={activePlan} />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -493,8 +542,10 @@ describe('Inspector', function() {
             reshape: shapeup.reshapeFunc,
             setCharm: sinon.stub()
           }}
-          service={service} />
-      </div>);
+          service={service}
+        />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
@@ -509,16 +560,18 @@ describe('Inspector', function() {
     assert.equal(header.prop('title'), 'Resources');
     const expected = (
       <div className="inspector-content">
-        <InspectorResourcesList
-          acl={acl}
-          resources={[{resource: 'one'}]} />
-      </div>);
+        <InspectorResourcesList acl={acl} resources={[{resource: 'one'}]} />
+      </div>
+    );
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
   });
 
   it('passes changeState callable to header component', function() {
     const wrapper = renderComponent();
-    wrapper.find('InspectorHeader').props().backCallback();
+    wrapper
+      .find('InspectorHeader')
+      .props()
+      .backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
@@ -533,7 +586,10 @@ describe('Inspector', function() {
       id: 'service2'
     };
     const wrapper = renderComponent();
-    wrapper.find('InspectorHeader').props().backCallback();
+    wrapper
+      .find('InspectorHeader')
+      .props()
+      .backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {
@@ -547,7 +603,10 @@ describe('Inspector', function() {
 
   it('does not go back to the inspector from the same service', function() {
     const wrapper = renderComponent();
-    wrapper.find('InspectorHeader').props().backCallback();
+    wrapper
+      .find('InspectorHeader')
+      .props()
+      .backCallback();
     assert.equal(appState.changeState.callCount, 1);
     assert.deepEqual(appState.changeState.args[0][0], {
       gui: {

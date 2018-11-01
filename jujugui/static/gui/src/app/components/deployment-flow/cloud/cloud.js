@@ -72,33 +72,30 @@ class DeploymentCloud extends React.Component {
       return (
         <div className="deployment-cloud__loading">
           <Spinner />
-        </div>);
+        </div>
+      );
     }
     if (this.props.cloud) {
       return;
     }
     var clouds = [];
     this.state.clouds.forEach((cloud, i) => {
-      var classes = classNames(
-        'deployment-cloud__cloud',
-        'four-col',
-        {'last-col': i % 3 === 2});
+      var classes = classNames('deployment-cloud__cloud', 'four-col', {
+        'last-col': i % 3 === 2
+      });
       clouds.push(
         <li
           className={classes}
           key={cloud.name}
           onClick={this.props.setCloud.bind(null, cloud)}
           role="button"
-          tabIndex="0">
-          <span className="deployment-cloud__cloud-logo">
-            {this._generateLogo(cloud)}
-          </span>
-        </li>);
+          tabIndex="0"
+        >
+          <span className="deployment-cloud__cloud-logo">{this._generateLogo(cloud)}</span>
+        </li>
+      );
     });
-    return (
-      <ul className="deployment-cloud__list">
-        {clouds}
-      </ul>);
+    return <ul className="deployment-cloud__list">{clouds}</ul>;
   }
 
   /**
@@ -112,10 +109,7 @@ class DeploymentCloud extends React.Component {
     if (!cloud) {
       return;
     }
-    return (
-      <div className="deployment-cloud__chosen">
-        {this._generateLogo(cloud)}
-      </div>);
+    return <div className="deployment-cloud__chosen">{this._generateLogo(cloud)}</div>;
   }
 
   /**
@@ -131,10 +125,10 @@ class DeploymentCloud extends React.Component {
       return cloud.name;
     }
     return info.showLogo ? (
-      <SvgIcon
-        height={info.svgHeight}
-        name={info.id}
-        width={info.svgWidth} />) : info.title;
+      <SvgIcon height={info.svgHeight} name={info.id} width={info.svgWidth} />
+    ) : (
+      info.title
+    );
   }
 
   render() {
@@ -145,7 +139,7 @@ class DeploymentCloud extends React.Component {
       </div>
     );
   }
-};
+}
 
 DeploymentCloud.propTypes = {
   acl: PropTypes.object.isRequired,

@@ -8,19 +8,20 @@ const EnvSwitcher = require('./env-switcher');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 describe('EnvSwitcher', function() {
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EnvSwitcher.WrappedComponent
-      acl={{}}
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      environmentName={options.environmentName || 'MyEnv'}
-      listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
-      modelCommitted={
-        options.modelCommitted === undefined ? false : options.modelCommitted}
-      setModelName={options.setModelName || sinon.stub()}
-      showProfile={options.showProfile || sinon.stub()}
-      switchModel={options.switchModel || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <EnvSwitcher.WrappedComponent
+        acl={{}}
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        environmentName={options.environmentName || 'MyEnv'}
+        listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
+        modelCommitted={options.modelCommitted === undefined ? false : options.modelCommitted}
+        setModelName={options.setModelName || sinon.stub()}
+        showProfile={options.showProfile || sinon.stub()}
+        switchModel={options.switchModel || sinon.stub()}
+      />
+    );
 
   it('renders the closed switcher component', () => {
     const wrapper = renderComponent();
@@ -30,7 +31,8 @@ describe('EnvSwitcher', function() {
         className="env-switcher"
         onClick={null}
         role="navigation"
-        tabIndex="0">
+        tabIndex="0"
+      >
         <div className="env-switcher__toggle editable">
           <div>
             <span
@@ -39,10 +41,11 @@ describe('EnvSwitcher', function() {
               dangerouslySetInnerHTML={{__html: 'MyEnv'}}
               onBlur={wrapper.find('.env-switcher__name').prop('onBlur')}
               onFocus={wrapper.find('.env-switcher__name').prop('onFocus')}
-              ref="name" />
+              ref="name"
+            />
             <div className="env-switcher__name-error">
-              The model name must only contain lowercase letters, numbers, and hyphens.
-              It must not start or end with a hyphen.
+              The model name must only contain lowercase letters, numbers, and hyphens. It must
+              not start or end with a hyphen.
             </div>
           </div>
           <div
@@ -55,25 +58,24 @@ describe('EnvSwitcher', function() {
             onClick={wrapper.find('.env-switcher__chevron').prop('onClick')}
             onKeyPress={wrapper.find('.env-switcher__chevron').prop('onKeyPress')}
             role="button"
-            tabIndex="0">
-            <SvgIcon
-              name="chevron_down_16"
-              size="16" />
+            tabIndex="0"
+          >
+            <SvgIcon name="chevron_down_16" size="16" />
           </div>
         </div>
         {undefined}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('should not have an editable name when the model is committed', () => {
     const wrapper = renderComponent({modelCommitted: true});
     const expected = (
-      <span
-        className="env-switcher__name"
-        ref="name">
+      <span className="env-switcher__name" ref="name">
         MyEnv
-      </span>);
+      </span>
+    );
     assert.compareJSX(wrapper.find('.env-switcher__name'), expected);
   });
 
@@ -96,7 +98,10 @@ describe('EnvSwitcher', function() {
         innerText: 'new-name'
       }
     };
-    wrapper.find('.env-switcher__name').props().onBlur();
+    wrapper
+      .find('.env-switcher__name')
+      .props()
+      .onBlur();
     assert.equal(setModelName.callCount, 1);
     assert.equal(setModelName.args[0][0], 'new-name');
   });
@@ -110,7 +115,10 @@ describe('EnvSwitcher', function() {
         innerText: '-'
       }
     };
-    wrapper.find('.env-switcher__name').props().onBlur();
+    wrapper
+      .find('.env-switcher__name')
+      .props()
+      .onBlur();
     assert.equal(setModelName.callCount, 0);
   });
 
@@ -122,7 +130,10 @@ describe('EnvSwitcher', function() {
         innerText: '-'
       }
     };
-    wrapper.find('.env-switcher__name').props().onBlur();
+    wrapper
+      .find('.env-switcher__name')
+      .props()
+      .onBlur();
     wrapper.update();
     assert.strictEqual(wrapper.prop('className').includes('env-switcher--error'), true);
   });
@@ -147,10 +158,7 @@ describe('EnvSwitcher', function() {
     const instance = wrapper.instance();
     assert.equal(listModelsWithInfo.callCount, 1);
     const err = null;
-    const models = [
-      {name: 'model1', isAlive: true},
-      {name: 'model1', isAlive: false}
-    ];
+    const models = [{name: 'model1', isAlive: true}, {name: 'model1', isAlive: false}];
     listModelsWithInfo.args[0][0](err, models);
     assert.deepEqual(instance.state.envList, [models[0]]);
   });
@@ -176,13 +184,15 @@ describe('EnvSwitcher', function() {
     // To switch environments you click on an environment list item in a sub
     // component so here we're just going to call the method that gets
     // passed down.
-    const models = [{
-      uuid: 'abc123',
-      name: 'Tardis',
-      owner: 'The Dr.',
-      password: 'buffalo',
-      isAlive: true
-    }];
+    const models = [
+      {
+        uuid: 'abc123',
+        name: 'Tardis',
+        owner: 'The Dr.',
+        password: 'buffalo',
+        isAlive: true
+      }
+    ];
     const listModelsWithInfo = sinon.stub();
     const switchModel = sinon.stub();
     const wrapper = renderComponent({listModelsWithInfo, switchModel});

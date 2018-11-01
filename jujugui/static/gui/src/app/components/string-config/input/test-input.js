@@ -7,13 +7,14 @@ const enzyme = require('enzyme');
 const StringConfigInput = require('./input');
 
 describe('StringConfigInput', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StringConfigInput
-      config={options.config || 'config value'}
-      disabled={options.disabled === undefined ? false : options.disabled}
-      setValue={options.setValue || sinon.stub()} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <StringConfigInput
+        config={options.config || 'config value'}
+        disabled={options.disabled === undefined ? false : options.disabled}
+        setValue={options.setValue || sinon.stub()}
+      />
+    );
 
   it('can render', function() {
     const wrapper = renderComponent();
@@ -24,8 +25,9 @@ describe('StringConfigInput', function() {
         dangerouslySetInnerHTML={{__html: 'config value'}}
         onBlur={wrapper.prop('onBlur')}
         onInput={wrapper.prop('onInput')}
-        ref="editableInput">
-      </div>);
+        ref="editableInput"
+      />
+    );
     assert.compareJSX(wrapper, expected);
   });
 

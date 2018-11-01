@@ -73,8 +73,7 @@ const getEndpoints = (application, controller) => {
   const provides = appEndpoints.provides.map(pdata => convert(appId, pdata));
   // Every non subordinate service implicitly provides this.
   if (!appIsSubordinate) {
-    provides.push(convert(
-      appId, {'interface': 'juju-info', 'name': 'juju-info'}));
+    provides.push(convert(appId, {interface: 'juju-info', name: 'juju-info'}));
   }
   // Now check every other application to see if it can be a valid target.
   db.services.each(target => {
@@ -89,7 +88,9 @@ const getEndpoints = (application, controller) => {
     // Ignore ourselves, peer relations are automatically established when an
     // application is deployed. The GUI only needs to concern itself with
     // client/server relations.
-    if (targetId === appId) { return; }
+    if (targetId === appId) {
+      return;
+    }
     // XXX hatch At the time of writing...When the inspector renders we generate
     // a list of valid endpoints to create relations to. This uses the endpoints
     // map controller which fetches information from the charmstore for the
@@ -98,7 +99,9 @@ const getEndpoints = (application, controller) => {
     // jujuinfo call to get the requires/provides. In the mean time we can
     // just check that if a target is not in the map then to not try and
     // use it.
-    if (!endpointsMap[targetId]) { return; }
+    if (!endpointsMap[targetId]) {
+      return;
+    }
     // Process each of the application's required endpoints.
     endpointsMap[targetId].requires.forEach(rdata => {
       const endpoint = convert(targetId, rdata);
@@ -130,13 +133,15 @@ const getEndpoints = (application, controller) => {
     // Check against the implicit interface juju-info, but not for
     // subordinates.
     if (!target.get('subordinate')) {
-      targetProvides.push({'interface': 'juju-info', 'name': 'juju-info'});
+      targetProvides.push({interface: 'juju-info', name: 'juju-info'});
     }
     targetProvides.forEach(pdata => {
       const endpoint = convert(targetId, pdata);
       requires.forEach(originEndpoint => {
-        if (originEndpoint.type !== endpoint.type ||
-            db.relations.has_relation_for_endpoint(endpoint, appId)) {
+        if (
+          originEndpoint.type !== endpoint.type ||
+          db.relations.has_relation_for_endpoint(endpoint, appId)
+        ) {
           return;
         }
         add(targetId, originEndpoint, endpoint);

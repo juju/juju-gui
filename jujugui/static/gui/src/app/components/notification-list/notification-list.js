@@ -40,11 +40,11 @@ class NotificationList extends React.Component {
     // Emiting a google tag manager event registering the notification.
     if (window.dataLayer) {
       window.dataLayer.push({
-        'event': 'GAEvent',
-        'eventCategory': 'Notification',
-        'eventAction': notification.level,
-        'eventLabel': notification.message,
-        'eventValue': undefined
+        event: 'GAEvent',
+        eventCategory: 'Notification',
+        eventAction: notification.level,
+        eventLabel: notification.message,
+        eventValue: undefined
       });
     }
 
@@ -58,8 +58,7 @@ class NotificationList extends React.Component {
     const displayed = this.state.displayed;
     nextProps.notifications.forEach(notification => {
       if (!displayed.includes(notification.timestamp.toString())) {
-        notifications[notification.timestamp] =
-          this._processNotification(notification);
+        notifications[notification.timestamp] = this._processNotification(notification);
       }
     });
     this.setState({notifications: notifications});
@@ -68,12 +67,14 @@ class NotificationList extends React.Component {
   _startTimeout(key, notification) {
     if (notification.type !== 'error') {
       // If it's not an error message then it needs to auto destroy.
-      this.timeouts.push(setTimeout(() => {
-        const item = this.refs['NotificationListItem' + key];
-        if (item) {
-          item.hide();
-        }
-      }, this.props.timeout || 3000));
+      this.timeouts.push(
+        setTimeout(() => {
+          const item = this.refs['NotificationListItem' + key];
+          if (item) {
+            item.hide();
+          }
+        }, this.props.timeout || 3000)
+      );
     }
   }
 
@@ -91,7 +92,9 @@ class NotificationList extends React.Component {
           removeNotification={this._removeNotification.bind(this)}
           timeout={this.props.timeout}
           timestamp={key}
-          type={notification.type} />);
+          type={notification.type}
+        />
+      );
     });
     return elements;
   }
@@ -128,11 +131,13 @@ class NotificationList extends React.Component {
       <ul
         className="notification-list"
         onMouseOut={this._restartTimeouts.bind(this)}
-        onMouseOver={this._clearTimeouts.bind(this)}>
+        onMouseOver={this._clearTimeouts.bind(this)}
+      >
         {this._generateNotifications()}
-      </ul>);
+      </ul>
+    );
   }
-};
+}
 
 NotificationList.propTypes = {
   notifications: PropTypes.array.isRequired,

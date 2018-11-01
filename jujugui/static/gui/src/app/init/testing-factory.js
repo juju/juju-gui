@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const {charmstore} = require('jaaslib');
 
 const factory = {
-
   /**
     Fetches the apiv4 response data for the available charms to be used in
     the tests. Many different tests use different charms and charm data
@@ -33,8 +32,15 @@ const factory = {
   */
   _fetchCharmData: function() {
     var names = [
-      'wordpress', 'mongodb', 'mysql', 'mediawiki', 'puppet', 'haproxy',
-      'puppetmaster', 'hadoop'];
+      'wordpress',
+      'mongodb',
+      'mysql',
+      'mediawiki',
+      'puppet',
+      'haproxy',
+      'puppetmaster',
+      'hadoop'
+    ];
     var charms = {};
     names.forEach(function(charmName) {
       var url = 'data/' + charmName + '-apiv4-response.json';
@@ -61,8 +67,9 @@ const factory = {
           xhr.target.responseText = charms[path];
           callback(null, xhr);
         } else {
-          xhr.target.responseText = JSON.stringify(
-            {message: 'Unable to load charm ' + path});
+          xhr.target.responseText = JSON.stringify({
+            message: 'Unable to load charm ' + path
+          });
           callback('bad wolf', xhr);
         }
       }
@@ -72,7 +79,6 @@ const factory = {
     // api responses from the server.
     return fakeCharmstore;
   }
-
 };
 
 module.exports = factory;

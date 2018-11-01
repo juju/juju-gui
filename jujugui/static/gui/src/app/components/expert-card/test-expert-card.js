@@ -9,31 +9,29 @@ const ExpertBlock = require('../expert-block/expert-block');
 const EXPERTS = require('../expert-card/experts');
 
 describe('ExpertCard', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <ExpertCard
-      expert={options.expert || EXPERTS['spiculecharms']}
-      staticURL="/media">
-      <span>Content</span>
-    </ExpertCard>
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <ExpertCard expert={options.expert || EXPERTS['spiculecharms']} staticURL="/media">
+        <span>Content</span>
+      </ExpertCard>
+    );
 
   it('can render', () => {
     const wrapper = renderComponent();
     const expected = (
-      <ExpertBlock
-        classes={undefined}
-        title="Juju expert partners">
+      <ExpertBlock classes={undefined} title="Juju expert partners">
         <div className="expert-card__logo">
           <img
             alt="spicule.png"
             className="expert-card__logo-image"
             src={
-              '/media/static/gui/build/app/assets/images/' +
-              'non-sprites/experts/spicule.png'} />
+              '/media/static/gui/build/app/assets/images/' + 'non-sprites/experts/spicule.png'
+            }
+          />
         </div>
         <span>Content</span>
-      </ExpertBlock>);
+      </ExpertBlock>
+    );
     assert.compareJSX(wrapper, expected);
   });
 });

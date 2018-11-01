@@ -25,10 +25,7 @@ class InspectorExposeUnit extends React.Component {
   */
   _getAddressList(address, portRanges) {
     if (!portRanges || !portRanges.length || !address) {
-      return (
-        <div className="inspector-expose__unit-detail">
-          No public address
-        </div>);
+      return <div className="inspector-expose__unit-detail">No public address</div>;
     }
     const items = portRanges.map(portRange => {
       if (portRange.single) {
@@ -38,10 +35,7 @@ class InspectorExposeUnit extends React.Component {
         const href = `${protocol}://${label}`;
         return (
           <li className="inspector-expose__item" key={href}>
-            <a
-              href={href}
-              onClick={this._stopBubble.bind(this)}
-              target="_blank">
+            <a href={href} onClick={this._stopBubble.bind(this)} target="_blank">
               {label}
             </a>
           </li>
@@ -60,23 +54,21 @@ class InspectorExposeUnit extends React.Component {
 
   render() {
     var unit = this.props.unit;
-    var publicList = this._getAddressList(
-      unit.public_address, unit.portRanges);
+    var publicList = this._getAddressList(unit.public_address, unit.portRanges);
     return (
       <li
         className="inspector-expose__unit"
         data-id={unit.id}
         onClick={this.props.action}
         role="button"
-        tabIndex="0">
-        <div className="inspector-expose__unit-detail">
-          {unit.displayName}
-        </div>
+        tabIndex="0"
+      >
+        <div className="inspector-expose__unit-detail">{unit.displayName}</div>
         {publicList}
       </li>
     );
   }
-};
+}
 
 InspectorExposeUnit.propTypes = {
   action: PropTypes.func.isRequired,

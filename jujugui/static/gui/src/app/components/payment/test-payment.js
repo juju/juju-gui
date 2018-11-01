@@ -14,21 +14,25 @@ const Button = require('../shared/button/button');
 describe('Payment', function() {
   let acl, payment, stripe, user;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <Payment
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      payment={options.payment || payment}
-      stripe={options.stripe || stripe}
-      username={options.spinach || 'spinach'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <Payment
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        payment={options.payment || payment}
+        stripe={options.stripe || stripe}
+        username={options.spinach || 'spinach'}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     user = {
-      paymentMethods: [{
-        name: 'Company'
-      }]
+      paymentMethods: [
+        {
+          name: 'Company'
+        }
+      ]
     };
     payment = {
       addAddress: sinon.stub(),
@@ -39,9 +43,11 @@ describe('Payment', function() {
       getCountries: sinon.stub(),
       getReceipt: sinon.stub(),
       getUser: sinon.stub().callsArgWith(1, null, {
-        paymentMethods: [{
-          name: 'Company'
-        }]
+        paymentMethods: [
+          {
+            name: 'Company'
+          }
+        ]
       }),
       removeAddress: sinon.stub(),
       removeBillingAddress: sinon.stub(),
@@ -81,7 +87,8 @@ describe('Payment', function() {
             paymentUser={user}
             stripe={stripe}
             updateUser={wrapper.find('PaymentMethods').prop('updateUser')}
-            username="spinach" />
+            username="spinach"
+          />
           <PaymentDetails
             acl={acl}
             addNotification={sinon.stub()}
@@ -97,7 +104,8 @@ describe('Payment', function() {
             }}
             paymentUser={user}
             updateUser={wrapper.find('PaymentDetails').prop('updateUser')}
-            username="spinach" />
+            username="spinach"
+          />
           <PaymentCharges
             acl={acl}
             addNotification={sinon.stub()}
@@ -106,9 +114,11 @@ describe('Payment', function() {
               getReceipt: payment.getReceipt,
               reshape: shapeup.reshapeFunc
             }}
-            username="spinach" />
+            username="spinach"
+          />
         </div>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -131,20 +141,22 @@ describe('Payment', function() {
       <div className="payment__no-user">
         <p>You are not set up to make payments.</p>
         <p>
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            type="inline-positive">
+          <Button action={wrapper.find('Button').prop('action')} type="inline-positive">
             Set up payments
           </Button>
         </p>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper.find('.payment__no-user'), expected);
   });
 
   it('can display a new user form', function() {
     payment.getUser = sinon.stub().callsArgWith(1, null, null);
     const wrapper = renderComponent();
-    wrapper.find('Button').props().action();
+    wrapper
+      .find('Button')
+      .props()
+      .action();
     wrapper.update();
     assert.equal(wrapper.find('CreatePaymentUser').length, 1);
   });

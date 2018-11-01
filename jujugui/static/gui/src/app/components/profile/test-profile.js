@@ -39,7 +39,8 @@ describe('Profile', function() {
         storeUser={options.storeUser || sinon.stub()}
         stripe={options.stripe}
         switchModel={sinon.stub()}
-        userInfo={options.userInfo || userInfo} />
+        userInfo={options.userInfo || userInfo}
+      />
     );
 
   // Return the sectionsMap stored in the given component.

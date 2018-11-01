@@ -56,7 +56,8 @@ describe('init utils', () => {
           getCurrentChangeSet: sinon.stub().returns({foo: 'bar'})
         }
       };
-      const expected = 'You have uncommitted changes to your model. You will ' +
+      const expected =
+        'You have uncommitted changes to your model. You will ' +
         'lose these changes if you continue.';
       const result = utils.unloadWindow.call(context);
       assert.strictEqual(result, expected);
@@ -67,22 +68,19 @@ describe('init utils', () => {
     it('generates the correct export file name', () => {
       let envName = 'foobar';
       let date = new Date('October 13, 2014 11:13:00');
-      let exportFilename =
-        utils._generateBundleExportFileName(envName, date);
+      let exportFilename = utils._generateBundleExportFileName(envName, date);
       assert.equal(exportFilename, 'foobar-2014-10-13.yaml');
 
       envName = 'foo-bar';
       date = new Date('January 13, 2014 11:13:00');
-      exportFilename =
-        utils._generateBundleExportFileName(envName, date);
+      exportFilename = utils._generateBundleExportFileName(envName, date);
       assert.equal(exportFilename, 'foo-bar-2014-01-13.yaml');
     });
 
     it('can generate a name when there is no model name', () => {
       let envName = '';
       let date = new Date('October 13, 2014 11:13:00');
-      let exportFilename =
-        utils._generateBundleExportFileName(envName, date);
+      let exportFilename = utils._generateBundleExportFileName(envName, date);
       assert.equal(exportFilename, 'untitled-model-2014-10-13.yaml');
     });
   });
@@ -105,12 +103,17 @@ describe('init utils', () => {
       const config = {jujushellURL: values.config || ''};
       const db = {
         environment: {
-          get: sinon.stub().withArgs('jujushellURL').returns(values.db || '')
+          get: sinon
+            .stub()
+            .withArgs('jujushellURL')
+            .returns(values.db || '')
         }
       };
       const storage = {
-        getItem: sinon.stub().withArgs('jujushell-url').returns(
-          values.storage || ''),
+        getItem: sinon
+          .stub()
+          .withArgs('jujushell-url')
+          .returns(values.storage || ''),
         setItem: sinon.stub()
       };
       return {
@@ -145,9 +148,7 @@ describe('init utils', () => {
       const url = utils.jujushellURL(params.storage, params.db, params.config);
       assert.strictEqual(url, 'wss://shell.example.com/ws/');
       assert.strictEqual(params.storage.setItem.callCount, 1);
-      assert.deepEqual(
-        params.storage.setItem.args[0],
-        ['jujushell-url', 'shell.example.com']);
+      assert.deepEqual(params.storage.setItem.args[0], ['jujushell-url', 'shell.example.com']);
     });
 
     it('does not set the URL from db if already in the storage', () => {
@@ -211,10 +212,8 @@ describe('init utils', () => {
         notifications: {
           add: attrs => {
             // The notification has the required attributes.
-            assert.equal(attrs.hasOwnProperty('title'), true,
-              'Does not have a title');
-            assert.equal(attrs.hasOwnProperty('message'), true,
-              'Does not have a message');
+            assert.equal(attrs.hasOwnProperty('title'), true, 'Does not have a title');
+            assert.equal(attrs.hasOwnProperty('message'), true, 'Does not have a message');
             // The service name is mentioned in the error message.
             assert.notEqual(attrs.message.indexOf(APPNAME, -1));
             assert.equal(attrs.level, 'important');
@@ -230,8 +229,7 @@ describe('init utils', () => {
       utils._destroyServiceCallback(service, db, null, evt);
       assert.isTrue(notificationAdded);
       // Check that relations were removed.
-      assert.equal(db.relations.remove.calledOnce, true,
-        'Remove relations not called');
+      assert.equal(db.relations.remove.calledOnce, true, 'Remove relations not called');
     });
   });
 
@@ -296,39 +294,45 @@ describe('init utils', () => {
       },
       {
         text: 'www.domain.com',
-        expected: '<a href="www.domain.com" target="_blank">www.domain.com</a>' // eslint-disable-line max-len
+        expected: '<a href="www.domain.com" target="_blank">www.domain.com</a>'
       },
       {
         text: 'thisisareallylongdomainnamewithunder62parts.co',
-        expected: '<a href="thisisareallylongdomainnamewithunder62parts.co" target="_blank">thisisareallylongdomainnamewithunder62parts.co</a>' // eslint-disable-line max-len
+        expected:
+          '<a href="thisisareallylongdomainnamewithunder62parts.co" target="_blank">thisisareallylongdomainnamewithunder62parts.co</a>'
       },
       {
         text: 'node-1.www4.example.com.jp',
-        expected: '<a href="node-1.www4.example.com.jp" target="_blank">node-1.www4.example.com.jp</a>' // eslint-disable-line max-len
+        expected:
+          '<a href="node-1.www4.example.com.jp" target="_blank">node-1.www4.example.com.jp</a>'
       },
       {
         text: 'http://domain.com',
-        expected: '<a href="http://domain.com" target="_blank">http://domain.com</a>' // eslint-disable-line max-len
+        expected: '<a href="http://domain.com" target="_blank">http://domain.com</a>'
       },
       {
         text: 'ftp://foo.1.example.com.uk',
-        expected: '<a href="ftp://foo.1.example.com.uk" target="_blank">ftp://foo.1.example.com.uk</a>' // eslint-disable-line max-len
+        expected:
+          '<a href="ftp://foo.1.example.com.uk" target="_blank">ftp://foo.1.example.com.uk</a>'
       },
       {
         text: 'example.com/?foo=bar',
-        expected: '<a href="example.com/?foo=bar" target="_blank">example.com/?foo=bar</a>' // eslint-disable-line max-len
+        expected: '<a href="example.com/?foo=bar" target="_blank">example.com/?foo=bar</a>'
       },
       {
         text: 'example.com/foo/bar?baz=true&something=%20alsotrue',
-        expected: '<a href="example.com/foo/bar?baz=true&amp;something=%20alsotrue" target="_blank">example.com/foo/bar?baz=true&amp;something=%20alsotrue</a>' // eslint-disable-line max-len
+        expected:
+          '<a href="example.com/foo/bar?baz=true&amp;something=%20alsotrue" target="_blank">example.com/foo/bar?baz=true&amp;something=%20alsotrue</a>'
       },
       {
-        text: 'http://example.com/index?foo=bar<script>alert(\'xss\')</script>', // eslint-disable-line max-len
-        expected: '<a href="http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt" target="_blank">http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt</a>;' // eslint-disable-line max-len
+        text: "http://example.com/index?foo=bar<script>alert('xss')</script>",
+        expected:
+          '<a href="http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt" target="_blank">http://example.com/index?foo=bar&lt;script&gt;alert(\'xss\')&lt;/script&gt</a>;'
       },
       {
         text: 'http://example.com/foo"bar',
-        expected: '<a href="http://example.com/foo&quot;bar" target="_blank">http://example.com/foo"bar</a>' // eslint-disable-line max-len
+        expected:
+          '<a href="http://example.com/foo&quot;bar" target="_blank">http://example.com/foo"bar</a>'
       },
       {
         text: 'Hi there John.Bob',
@@ -364,7 +368,10 @@ describe('init utils', () => {
 
     it('can switch directly if there are no uncommitted changes', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid'),
+        get: sinon
+          .stub()
+          .withArgs('modelUUID')
+          .returns('model-uuid'),
         state: {current: '42'}
       };
       const modelAPI = {
@@ -373,7 +380,7 @@ describe('init utils', () => {
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
-      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
+      const model = {id: 'uuid', name: 'mymodel', owner: 'who'};
       utils._switchModel = sinon.stub();
       utils.switchModel.call(app, modelAPI, sinon.stub(), model);
       assert.deepEqual(utils._switchModel.callCount, 1);
@@ -395,7 +402,7 @@ describe('init utils', () => {
           getCurrentChangeSet: sinon.stub().returns({})
         })
       };
-      const model = {id: 'model-uuid-1', name: 'mymodel', 'owner': 'who'};
+      const model = {id: 'model-uuid-1', name: 'mymodel', owner: 'who'};
       utils._switchModel = sinon.stub();
       utils.switchModel.call(app, env, sinon.stub(), model);
       // The underlying _switchModel is not called.
@@ -404,7 +411,10 @@ describe('init utils', () => {
 
     it('can show a confirmation if there are uncommitted changes', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+        get: sinon
+          .stub()
+          .withArgs('modelUUID')
+          .returns('model-uuid')
       };
       const env = {
         get: sinon.stub().returns({
@@ -412,7 +422,7 @@ describe('init utils', () => {
           getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
-      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
+      const model = {id: 'uuid', name: 'mymodel', owner: 'who'};
       utils._switchModel = sinon.stub();
       utils.switchModel.call(app, env, sinon.stub(), model);
       assert.deepEqual(utils._showUncommittedConfirm.callCount, 1);
@@ -421,7 +431,10 @@ describe('init utils', () => {
 
     it('does not switch when committing', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid')
+        get: sinon
+          .stub()
+          .withArgs('modelUUID')
+          .returns('model-uuid')
       };
       const env = {
         get: sinon.stub().returns({
@@ -429,7 +442,7 @@ describe('init utils', () => {
           getCurrentChangeSet: sinon.stub().returns({change: 'a change'})
         })
       };
-      const model = {id: 'uuid', name: 'mymodel', 'owner': 'who'};
+      const model = {id: 'uuid', name: 'mymodel', owner: 'who'};
       const addNotification = sinon.stub();
       utils._switchModel = sinon.stub();
       utils.switchModel.call(app, env, addNotification, model);
@@ -439,7 +452,10 @@ describe('init utils', () => {
 
     it('allows switching to disconnected state', () => {
       const app = {
-        get: sinon.stub().withArgs('modelUUID').returns('model-uuid'),
+        get: sinon
+          .stub()
+          .withArgs('modelUUID')
+          .returns('model-uuid'),
         state: {current: '42'}
       };
       const modelAPI = {
@@ -465,20 +481,21 @@ describe('init utils', () => {
     it('can switch models', () => {
       const state = {changeState: sinon.stub(), current: {}};
       const modelAPI = {set: sinon.stub()};
-      const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
+      const model = {id: 'my-uuid', name: 'mymodel', owner: 'who'};
       const clearProfileState = true;
       const updateModelUUID = sinon.stub();
-      utils._switchModel(
-        state, modelAPI, model, clearProfileState, updateModelUUID);
+      utils._switchModel(state, modelAPI, model, clearProfileState, updateModelUUID);
       assert.equal(utils._hidePopup.callCount, 1, '_hidePopup');
       assert.equal(state.changeState.callCount, 1, 'changeState');
-      assert.deepEqual(state.changeState.args[0], [{
-        profile: null,
-        gui: {status: null, inspector: null},
-        root: null,
-        hash: null,
-        model: {path: 'who/mymodel', uuid: 'my-uuid'}
-      }]);
+      assert.deepEqual(state.changeState.args[0], [
+        {
+          profile: null,
+          gui: {status: null, inspector: null},
+          root: null,
+          hash: null,
+          model: {path: 'who/mymodel', uuid: 'my-uuid'}
+        }
+      ]);
       assert.equal(modelAPI.set.callCount, 1, 'env.set');
       assert.deepEqual(modelAPI.set.args[0], ['environmentName', 'mymodel']);
       assert.equal(updateModelUUID.args[0], 'my-uuid');
@@ -488,62 +505,85 @@ describe('init utils', () => {
       const state = {changeState: sinon.stub(), current: {}};
       const clear = sinon.stub().withArgs();
       const modelAPI = {
-        get: sinon.stub().withArgs('ecs').returns({clear: clear}),
+        get: sinon
+          .stub()
+          .withArgs('ecs')
+          .returns({clear: clear}),
         set: sinon.stub()
       };
       utils._switchModel(state, modelAPI, null);
-      assert.deepEqual(state.changeState.args[0], [{
-        profile: null,
-        gui: {status: null, inspector: null},
-        root: 'new',
-        hash: null,
-        model: null
-      }]);
+      assert.deepEqual(state.changeState.args[0], [
+        {
+          profile: null,
+          gui: {status: null, inspector: null},
+          root: 'new',
+          hash: null,
+          model: null
+        }
+      ]);
       assert.equal(clear.callCount, 1, 'clear');
     });
 
     it('does not set root state to new if profile state exists', () => {
-      const state = {current: {profile: 'animal'}, changeState: sinon.stub()};
+      const state = {
+        current: {profile: 'animal'},
+        changeState: sinon.stub()
+      };
       const modelAPI = {set: sinon.stub()};
       utils._switchModel(state, modelAPI, null);
-      assert.deepEqual(state.changeState.args[0], [{
-        profile: null,
-        gui: {status: null, inspector: null},
-        hash: null,
-        root: null,
-        model: null
-      }]);
+      assert.deepEqual(state.changeState.args[0], [
+        {
+          profile: null,
+          gui: {status: null, inspector: null},
+          hash: null,
+          root: null,
+          model: null
+        }
+      ]);
     });
 
     it('does not close the status pane when switching to a model', () => {
-      const state = {current: {gui: {status: ''}}, changeState: sinon.stub()};
+      const state = {
+        current: {gui: {status: ''}},
+        changeState: sinon.stub()
+      };
       const env = {set: sinon.stub()};
-      const model = {id: 'my-uuid', name: 'mymodel', 'owner': 'who'};
+      const model = {id: 'my-uuid', name: 'mymodel', owner: 'who'};
       utils._switchModel(state, env, model);
-      assert.deepEqual(state.changeState.args[0], [{
-        profile: null,
-        gui: {status: '', inspector: null},
-        hash: null,
-        root: null,
-        model: {path: 'who/mymodel', uuid: 'my-uuid'}
-      }]);
+      assert.deepEqual(state.changeState.args[0], [
+        {
+          profile: null,
+          gui: {status: '', inspector: null},
+          hash: null,
+          root: null,
+          model: {path: 'who/mymodel', uuid: 'my-uuid'}
+        }
+      ]);
     });
 
     it('closes the status pane when switching to a new model', () => {
-      const state = {current: {gui: {status: ''}}, changeState: sinon.stub()};
+      const state = {
+        current: {gui: {status: ''}},
+        changeState: sinon.stub()
+      };
       const clear = sinon.stub().withArgs();
       const modelAPI = {
-        get: sinon.stub().withArgs('ecs').returns({clear: clear}),
+        get: sinon
+          .stub()
+          .withArgs('ecs')
+          .returns({clear: clear}),
         set: sinon.stub()
       };
       utils._switchModel(state, modelAPI, null);
-      assert.deepEqual(state.changeState.args[0], [{
-        profile: null,
-        gui: {status: null, inspector: null},
-        hash: null,
-        root: 'new',
-        model: null
-      }]);
+      assert.deepEqual(state.changeState.args[0], [
+        {
+          profile: null,
+          gui: {status: null, inspector: null},
+          hash: null,
+          root: 'new',
+          model: null
+        }
+      ]);
       assert.equal(clear.callCount, 1, 'clear');
     });
   });
@@ -553,13 +593,15 @@ describe('init utils', () => {
       const changeState = sinon.stub();
       const username = 'hatch';
       utils.showProfile(changeState, username);
-      assert.deepEqual(changeState.args[0], [{
-        profile: username,
-        root: null,
-        store: null,
-        search: null,
-        user: null
-      }]);
+      assert.deepEqual(changeState.args[0], [
+        {
+          profile: username,
+          root: null,
+          store: null,
+          search: null,
+          user: null
+        }
+      ]);
     });
   });
 
@@ -572,10 +614,14 @@ describe('init utils', () => {
         return new function() {
           return {
             store: {},
-            setItem: function(name, val) { this.store['name'] = val; },
-            getItem: function(name) { return this.store['name'] || null; }
+            setItem: function(name, val) {
+              this.store['name'] = val;
+            },
+            getItem: function(name) {
+              return this.store['name'] || null;
+            }
           };
-        };
+        }();
       };
       const userClass = new User({sessionStorage: getMockStorage()});
       userClass.controller = {user: 'user', password: 'password'};
@@ -642,19 +688,20 @@ describe('init utils', () => {
       assert.equal(appProps.controllerAPI.createModel.callCount, 0);
       // Sets the post deployment panel state to show.
       assert.equal(appProps.appState.changeState.callCount, 1);
-      assert.deepEqual(appProps.appState.changeState.args[0], [{
-        postDeploymentPanel: true
-      }]);
+      assert.deepEqual(appProps.appState.changeState.args[0], [
+        {
+          postDeploymentPanel: true
+        }
+      ]);
     });
 
     it('can create a new model', () => {
       envGet.withArgs('connected').returns(false);
-      utils.deploy(
-        appProps, sinon.stub(), callback, true, 'new-model', {
-          credential: 'the-credential',
-          cloud: 'azure',
-          region: 'north'
-        });
+      utils.deploy(appProps, sinon.stub(), callback, true, 'new-model', {
+        credential: 'the-credential',
+        cloud: 'azure',
+        region: 'north'
+      });
       assert.equal(commit.callCount, 0);
       assert.equal(callback.callCount, 0);
       assert.equal(appProps.controllerAPI.createModel.callCount, 1);
@@ -681,8 +728,7 @@ describe('init utils', () => {
       const commit = sinon.stub();
       envGet.withArgs('ecs').returns({commit});
       utils._hidePopup = sinon.stub();
-      utils.deploy(
-        appProps, sinon.stub(), callback, false, 'my-model', args);
+      utils.deploy(appProps, sinon.stub(), callback, false, 'my-model', args);
       assert.equal(appProps.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
       appProps.controllerAPI.createModel.args[0][3](null, modelData);
@@ -700,17 +746,21 @@ describe('init utils', () => {
       assert.equal(commit.callCount, 1);
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], [
-        null, {
+        null,
+        {
           id: 'abc123',
           name: 'model-name',
           owner: 'foo@external',
           uuid: 'the-uuid'
-        }]);
+        }
+      ]);
       // Check to make sure that the state was changed.
       assert.equal(appProps.appState.changeState.callCount, 2);
-      assert.deepEqual(appProps.appState.changeState.args[0], [{
-        postDeploymentPanel: true
-      }]);
+      assert.deepEqual(appProps.appState.changeState.args[0], [
+        {
+          postDeploymentPanel: true
+        }
+      ]);
     });
 
     it('calls changeState when deploying if state matches rules', () => {
@@ -729,8 +779,7 @@ describe('init utils', () => {
       const commit = sinon.stub();
       envGet.withArgs('ecs').returns({commit});
       sinon.stub(utils, '_switchModel');
-      utils.deploy(
-        appProps, sinon.stub(), callback, false, 'my-model', args);
+      utils.deploy(appProps, sinon.stub(), callback, false, 'my-model', args);
       // Call the handler for the createModel callCount
       appProps.controllerAPI.createModel.args[0][3](null, modelData);
       // Check to make sure that the state was changed.
@@ -746,18 +795,19 @@ describe('init utils', () => {
       const modelData = {uuid: 'the-uuid'};
       const args = {model: 'args'};
       envGet.withArgs('connected').returns(false);
-      utils.deploy(
-        appProps, sinon.stub(), callback, false, 'my-model', args);
+      utils.deploy(appProps, sinon.stub(), callback, false, 'my-model', args);
       assert.equal(appProps.controllerAPI.createModel.callCount, 1);
       // Call the handler for the createModel callCount
       appProps.controllerAPI.createModel.args[0][3]('it broke', modelData);
       assert.equal(appProps.db.notifications.add.callCount, 1);
       const expectedError = 'cannot create model: it broke';
-      assert.deepEqual(appProps.db.notifications.add.args[0], [{
-        title: expectedError,
-        message: expectedError,
-        level: 'error'
-      }]);
+      assert.deepEqual(appProps.db.notifications.add.args[0], [
+        {
+          title: expectedError,
+          message: expectedError,
+          level: 'error'
+        }
+      ]);
       assert.equal(callback.callCount, 1);
       assert.deepEqual(callback.args[0], [expectedError, null]);
     });
@@ -767,7 +817,8 @@ describe('init utils', () => {
     it('can generate a cloud credential name', () => {
       assert.equal(
         utils.generateCloudCredentialName('azure', 'spinach', 'super-cred'),
-        'azure_spinach_super-cred');
+        'azure_spinach_super-cred'
+      );
     });
   });
 
@@ -814,14 +865,22 @@ describe('init utils', () => {
 
     beforeEach(() => {
       genericConstraints = [
-        'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+        'cpu-power',
+        'cores',
+        'cpu-cores',
+        'mem',
+        'arch',
+        'tags',
+        'root-disk'
+      ];
     });
 
     it('can parse constraints', () => {
       assert.deepEqual(
         utils.parseConstraints(
           genericConstraints,
-          'arch=amd64 cpu-cores=2 cpu-power=10 root-disk=2048 mem=1024'),
+          'arch=amd64 cpu-cores=2 cpu-power=10 root-disk=2048 mem=1024'
+        ),
         {
           arch: 'amd64',
           cores: null,
@@ -830,7 +889,8 @@ describe('init utils', () => {
           mem: '1024',
           'root-disk': '2048',
           tags: null
-        });
+        }
+      );
     });
   });
 
@@ -839,13 +899,19 @@ describe('init utils', () => {
 
     beforeEach(() => {
       genericConstraints = [
-        'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+        'cpu-power',
+        'cores',
+        'cpu-cores',
+        'mem',
+        'arch',
+        'tags',
+        'root-disk'
+      ];
     });
 
     it('can handle no hardware or constraints', () => {
       const machine = {};
-      assert.strictEqual(
-        utils.parseMachineDetails(genericConstraints, machine), null);
+      assert.strictEqual(utils.parseMachineDetails(genericConstraints, machine), null);
     });
 
     it('can generate hardware details', () => {
@@ -857,42 +923,48 @@ describe('init utils', () => {
           'root-disk': '2048'
         }
       };
-      assert.deepEqual(
-        utils.parseMachineDetails(genericConstraints, machine),
-        [{
+      assert.deepEqual(utils.parseMachineDetails(genericConstraints, machine), [
+        {
           label: 'cores',
           value: '2'
-        }, {
+        },
+        {
           label: 'cpu',
           value: '0.1GHz'
-        }, {
+        },
+        {
           label: 'mem',
           value: '1.00GB'
-        }, {
+        },
+        {
           label: 'disk',
           value: '2.00GB'
-        }]);
+        }
+      ]);
     });
 
     it('can generate constraints', () => {
       const machine = {
         constraints: 'cpu-cores=2 cpu-power=10 root-disk=2048 mem=1024'
       };
-      assert.deepEqual(
-        utils.parseMachineDetails(genericConstraints, machine),
-        [{
+      assert.deepEqual(utils.parseMachineDetails(genericConstraints, machine), [
+        {
           label: 'cpu',
           value: '0.1GHz'
-        }, {
+        },
+        {
           label: 'cores',
           value: '2'
-        }, {
+        },
+        {
           label: 'mem',
           value: '1.00GB'
-        }, {
+        },
+        {
           label: 'disk',
           value: '2.00GB'
-        }]);
+        }
+      ]);
     });
 
     it('can correctly parse with alternate keys', () => {
@@ -904,21 +976,24 @@ describe('init utils', () => {
           disk: '2048'
         }
       };
-      assert.deepEqual(
-        utils.parseMachineDetails(genericConstraints, machine),
-        [{
+      assert.deepEqual(utils.parseMachineDetails(genericConstraints, machine), [
+        {
           label: 'cores',
           value: '2'
-        }, {
+        },
+        {
           label: 'cpu',
           value: '0.1GHz'
-        }, {
+        },
+        {
           label: 'mem',
           value: '1.00GB'
-        }, {
+        },
+        {
           label: 'disk',
           value: '2.00GB'
-        }]);
+        }
+      ]);
     });
   });
 
@@ -927,7 +1002,14 @@ describe('init utils', () => {
 
     beforeEach(() => {
       genericConstraints = [
-        'cpu-power', 'cores', 'cpu-cores', 'mem', 'arch', 'tags', 'root-disk'];
+        'cpu-power',
+        'cores',
+        'cpu-cores',
+        'mem',
+        'arch',
+        'tags',
+        'root-disk'
+      ];
       units = {
         filterByMachine: sinon.stub().returns([1, 2, 3])
       };
@@ -945,8 +1027,8 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, cores: 2, cpu: 0.1GHz, mem: 1.00GB, '+
-        'disk: 2.00GB');
+        '3 units, wily, cores: 2, cpu: 0.1GHz, mem: 1.00GB, ' + 'disk: 2.00GB'
+      );
     });
 
     it('can generate details with no hardware', () => {
@@ -955,7 +1037,8 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, hardware details not available');
+        '3 units, wily, hardware details not available'
+      );
     });
 
     it('can generate constraints', () => {
@@ -965,8 +1048,9 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, requested constraints: cpu: 0.1GHz, cores: 2'+
-        ', mem: 1.00GB, disk: 2.00GB');
+        '3 units, wily, requested constraints: cpu: 0.1GHz, cores: 2' +
+          ', mem: 1.00GB, disk: 2.00GB'
+      );
     });
 
     it('can generate details with no constraints', () => {
@@ -976,7 +1060,8 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, default constraints');
+        '3 units, wily, default constraints'
+      );
     });
 
     it('can generate details with blank constraints', () => {
@@ -987,14 +1072,16 @@ describe('init utils', () => {
       };
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, wily, default constraints');
+        '3 units, wily, default constraints'
+      );
     });
 
     it('can generate details with no series', () => {
       const machine = {};
       assert.deepEqual(
         utils.generateMachineDetails(genericConstraints, units, machine),
-        '3 units, hardware details not available');
+        '3 units, hardware details not available'
+      );
     });
   });
 
@@ -1009,15 +1096,14 @@ describe('init utils', () => {
               break;
             case 'units':
               returnVal = {
-                size: function() { return 2; },
+                size: function() {
+                  return 2;
+                },
                 toArray: function() {
                   if (applicationName === 'no-units') {
                     return [];
                   }
-                  return [
-                    {id: applicationName + '/1'},
-                    {id: applicationName + '/2'}
-                  ];
+                  return [{id: applicationName + '/1'}, {id: applicationName + '/2'}];
                 }
               };
               break;
@@ -1048,8 +1134,7 @@ describe('init utils', () => {
       const unitCount = 2;
       const callback = sinon.stub();
 
-      const units = utils.addGhostAndEcsUnits(
-        db, env, service, unitCount, callback);
+      const units = utils.addGhostAndEcsUnits(db, env, service, unitCount, callback);
       // Test the db.addUnits call.
       assert.equal(db.addUnits.callCount, 2, 'db addUnits not called');
       const addUnitsArgs = db.addUnits.args;
@@ -1060,18 +1145,26 @@ describe('init utils', () => {
       if (applicationName === 'no-units') {
         firstIndex = 0;
       }
-      assert.deepEqual(addUnitsArgs[0][0], {
-        id: applicationName + '/' + firstIndex,
-        displayName: applicationName + '/' + firstIndex,
-        charmUrl: 'I am a charm url',
-        subordinate: false
-      }, 'addUnits first not called with proper data');
-      assert.deepEqual(addUnitsArgs[1][0], {
-        id: applicationName + '/' + (firstIndex+1),
-        displayName: applicationName + '/' + (firstIndex+1),
-        charmUrl: 'I am a charm url',
-        subordinate: false
-      }, 'addUnits second not called with proper data');
+      assert.deepEqual(
+        addUnitsArgs[0][0],
+        {
+          id: applicationName + '/' + firstIndex,
+          displayName: applicationName + '/' + firstIndex,
+          charmUrl: 'I am a charm url',
+          subordinate: false
+        },
+        'addUnits first not called with proper data'
+      );
+      assert.deepEqual(
+        addUnitsArgs[1][0],
+        {
+          id: applicationName + '/' + (firstIndex + 1),
+          displayName: applicationName + '/' + (firstIndex + 1),
+          charmUrl: 'I am a charm url',
+          subordinate: false
+        },
+        'addUnits second not called with proper data'
+      );
       // Test the env.add_unit call.
       assert.equal(env.add_unit.callCount, 2, 'add unit not called');
       const add_unit_args = env.add_unit.args;
@@ -1087,28 +1180,22 @@ describe('init utils', () => {
       assert.strictEqual(add_unit_args[1][2], null);
       assert.equal(typeof add_unit_args[1][3], 'function');
       assert.deepEqual(add_unit_args[1][4], {
-        modelId: applicationName + '/' + (firstIndex+1)
+        modelId: applicationName + '/' + (firstIndex + 1)
       });
       assert.equal(units.length, 2);
     }
 
-    it('creates machines, units; places units; updates unit lists',
-      function() {
-        testScaleUp('myService');
-      }
-    );
+    it('creates machines, units; places units; updates unit lists', function() {
+      testScaleUp('myService');
+    });
 
-    it('creates machines, units; places units; updates unit lists (no units)',
-      function() {
-        testScaleUp('no-units');
-      }
-    );
+    it('creates machines, units; places units; updates unit lists (no units)', function() {
+      testScaleUp('no-units');
+    });
 
-    it('creates machines, units; places units; updates unit lists for ghosts',
-      function() {
-        testScaleUp('myGhostService$');
-      }
-    );
+    it('creates machines, units; places units; updates unit lists for ghosts', function() {
+      testScaleUp('myGhostService$');
+    });
 
     it('properly removes the ghost units on env add_unit callback', function() {
       const ghostUnit = {ghostUnit: 'I am'};
@@ -1153,9 +1240,7 @@ describe('init utils', () => {
 
     it('returns local default bundle icon location for bundles', function() {
       var path = utils.getIconPath('bundle:elasticsearch', true);
-      assert.equal(
-        path,
-        'static/gui/build/app/assets/images/non-sprites/bundle.svg');
+      assert.equal(path, 'static/gui/build/app/assets/images/non-sprites/bundle.svg');
     });
 
     it('uses staticURL if provided for bundle icon location', function() {
@@ -1163,38 +1248,28 @@ describe('init utils', () => {
         staticURL: 'static'
       };
       var path = utils.getIconPath('bundle:elasticsearch', true);
-      assert.equal(
-        path,
-        'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
+      assert.equal(path, 'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
     });
 
     it('returns a qualified charmstoreURL icon location', function() {
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
-      assert.equal(
-        path,
-        'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
+      assert.equal(path, 'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
 
     it('handles charmstoreURL with no trailing slash', function() {
       window.juju_config = {charmstoreURL: 'http://4.3.2.1'};
       var path = utils.getIconPath('~paulgear/precise/quassel-core-2');
-      assert.equal(
-        path,
-        'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
+      assert.equal(path, 'http://4.3.2.1/v5/~paulgear/precise/quassel-core-2/icon.svg');
     });
   });
 
   describe('isRedirectError', function() {
     it('returns true if it is a redirect error', function() {
-      assert.equal(
-        utils.isRedirectError('authentication failed: redirection required'),
-        true);
+      assert.equal(utils.isRedirectError('authentication failed: redirection required'), true);
     });
 
     it('returns false if it is not a redirect error', function() {
-      assert.equal(
-        utils.isRedirectError('it broke'),
-        false);
+      assert.equal(utils.isRedirectError('it broke'), false);
     });
   });
 
@@ -1226,25 +1301,28 @@ describe('init utils', () => {
   describe('arrayDedupe', function() {
     it('can remove duplicates from an array', function() {
       assert.deepEqual(
-        utils.arrayDedupe(
-          ['one', 'four', 'one', 'two', 'three', 'two', 'four']),
-        ['one', 'four', 'two', 'three']);
+        utils.arrayDedupe(['one', 'four', 'one', 'two', 'three', 'two', 'four']),
+        ['one', 'four', 'two', 'three']
+      );
     });
   });
 
   describe('arrayFlatten', function() {
     it('can flatten an array of arrays', function() {
-      assert.deepEqual(
-        utils.arrayFlatten(
-          [['one', 'two'], ['three'], 'four']),
-        ['one', 'two', 'three', 'four']);
+      assert.deepEqual(utils.arrayFlatten([['one', 'two'], ['three'], 'four']), [
+        'one',
+        'two',
+        'three',
+        'four'
+      ]);
     });
 
     it('can flatten nested arrays', function() {
-      assert.deepEqual(
-        utils.arrayFlatten(
-          [[['one', 'two'], ['three']]]),
-        ['one', 'two', 'three']);
+      assert.deepEqual(utils.arrayFlatten([[['one', 'two'], ['three']]]), [
+        'one',
+        'two',
+        'three'
+      ]);
     });
   });
 
@@ -1258,7 +1336,8 @@ describe('init utils', () => {
           disk: 2048,
           mem: 1024
         }),
-        'arch=amd64 cpuCores=2 cpuPower=10 disk=2048 mem=1024');
+        'arch=amd64 cpuCores=2 cpuPower=10 disk=2048 mem=1024'
+      );
     });
   });
 });

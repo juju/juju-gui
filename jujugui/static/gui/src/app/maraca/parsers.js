@@ -20,15 +20,17 @@
 */
 function parseAnnotation(entity) {
   return {
-    annotations: entity.annotations ? {
-      bundleURL: entity.annotations['bundle-url'],
-      guiX: entity.annotations['gui-x'],
-      guiY: entity.annotations['gui-y']
-    } : undefined,
+    annotations: entity.annotations
+      ? {
+          bundleURL: entity.annotations['bundle-url'],
+          guiX: entity.annotations['gui-x'],
+          guiY: entity.annotations['gui-y']
+        }
+      : undefined,
     modelUUID: entity['model-uuid'],
     tag: entity.tag
   };
-};
+}
 
 /**
   Parse a collection of annotations.
@@ -43,7 +45,7 @@ function parseAnnotations(response) {
     entities[key] = parseAnnotation(response[key]);
   });
   return entities;
-};
+}
 
 /**
   Parse an application.
@@ -99,16 +101,18 @@ function parseApplication(entity) {
     modelUUID: entity['model-uuid'],
     name: entity.name,
     ownerTag: entity['owner-tag'],
-    status: entity.status ? {
-      current: entity.status.current,
-      message: entity.status.message,
-      since: entity.status.since,
-      version: entity.status.version
-    } : undefined,
+    status: entity.status
+      ? {
+          current: entity.status.current,
+          message: entity.status.message,
+          since: entity.status.since,
+          version: entity.status.version
+        }
+      : undefined,
     subordinate: entity.subordinate,
     workloadVersion: entity['workload-version']
   };
-};
+}
 
 /**
   Parse a collection of applications.
@@ -123,7 +127,7 @@ function parseApplications(response) {
     entities[key] = parseApplication(response[key]);
   });
   return entities;
-};
+}
 
 /**
   Parse a machine.
@@ -188,28 +192,34 @@ function parseApplications(response) {
 */
 function parseMachine(entity) {
   return {
-    addresses: entity.addresses ? entity.addresses.map(address => ({
-      value: address.value,
-      type: address.type,
-      scope: address.scope
-    })) : undefined,
-    agentStatus: entity['agent-status'] ? {
-      current: entity['agent-status'].current,
-      message: entity['agent-status'].message,
-      since: entity['agent-status'].since,
-      version: entity['agent-status'].version
-    } : undefined,
+    addresses: entity.addresses
+      ? entity.addresses.map(address => ({
+          value: address.value,
+          type: address.type,
+          scope: address.scope
+        }))
+      : undefined,
+    agentStatus: entity['agent-status']
+      ? {
+          current: entity['agent-status'].current,
+          message: entity['agent-status'].message,
+          since: entity['agent-status'].since,
+          version: entity['agent-status'].version
+        }
+      : undefined,
     // Hardware characteristics are arbitrary so leave the keys as defined.
     hardwareCharacteristics: entity['hardware-characteristics'],
     hasVote: entity['has-vote'],
     id: entity.id,
     instanceID: entity['instance-id'],
-    instanceStatus: entity['instance-status'] ? {
-      current: entity['instance-status'].current,
-      message: entity['instance-status'].message,
-      since: entity['instance-status'].since,
-      version: entity['instance-status'].version
-    } : undefined,
+    instanceStatus: entity['instance-status']
+      ? {
+          current: entity['instance-status'].current,
+          message: entity['instance-status'].message,
+          since: entity['instance-status'].since,
+          version: entity['instance-status'].version
+        }
+      : undefined,
     jobs: entity.jobs,
     life: entity.life,
     modelUUID: entity['model-uuid'],
@@ -218,7 +228,7 @@ function parseMachine(entity) {
     supportedContainersKnown: entity['supported-containers-known'],
     wantsVote: entity['wants-vote']
   };
-};
+}
 
 /**
   Parse a collection of machines.
@@ -233,7 +243,7 @@ function parseMachines(response) {
     entities[key] = parseMachine(response[key]);
   });
   return entities;
-};
+}
 
 /**
   Parse a relation.
@@ -267,22 +277,24 @@ function parseMachines(response) {
 */
 function parseRelation(entity) {
   return {
-    endpoints: entity.endpoints ? entity.endpoints.map(endpoint => ({
-      applicationName: endpoint['application-name'],
-      relation: {
-        name: endpoint.relation.name,
-        role: endpoint.relation.role,
-        'interface': endpoint.relation.interface,
-        optional: endpoint.relation.optional,
-        limit: endpoint.relation.limit,
-        scope: endpoint.relation.scope
-      }
-    })) : undefined,
+    endpoints: entity.endpoints
+      ? entity.endpoints.map(endpoint => ({
+          applicationName: endpoint['application-name'],
+          relation: {
+            name: endpoint.relation.name,
+            role: endpoint.relation.role,
+            interface: endpoint.relation.interface,
+            optional: endpoint.relation.optional,
+            limit: endpoint.relation.limit,
+            scope: endpoint.relation.scope
+          }
+        }))
+      : undefined,
     id: entity.id,
     key: entity.key,
     modelUUID: entity['model-uuid']
   };
-};
+}
 
 /**
   Parse a collection of relations.
@@ -297,7 +309,7 @@ function parseRelations(response) {
     entities[key] = parseRelation(response[key]);
   });
   return entities;
-};
+}
 
 /**
   Parse a remote application.
@@ -331,14 +343,16 @@ function parseRemoteApplication(entity) {
     name: entity.name,
     offerURL: entity['offer-url'],
     offerUUID: entity['offer-uuid'],
-    status: entity.status ? {
-      current: entity.status.current,
-      message: entity.status.message,
-      since: entity.status.since,
-      version: entity.status.version
-    } : undefined
+    status: entity.status
+      ? {
+          current: entity.status.current,
+          message: entity.status.message,
+          since: entity.status.since,
+          version: entity.status.version
+        }
+      : undefined
   };
-};
+}
 
 /**
   Parse a collection of remote applications.
@@ -353,7 +367,7 @@ function parseRemoteApplications(response) {
     entities[key] = parseRemoteApplication(response[key]);
   });
   return entities;
-};
+}
 
 /**
   Parse a unit.
@@ -414,38 +428,46 @@ function parseRemoteApplications(response) {
 */
 function parseUnit(entity) {
   return {
-    agentStatus: entity['agent-status'] ? {
-      current: entity['agent-status'].current,
-      message: entity['agent-status'].message,
-      since: entity['agent-status'].since,
-      version: entity['agent-status'].version
-    } : undefined,
+    agentStatus: entity['agent-status']
+      ? {
+          current: entity['agent-status'].current,
+          message: entity['agent-status'].message,
+          since: entity['agent-status'].since,
+          version: entity['agent-status'].version
+        }
+      : undefined,
     application: entity.application,
     charmURL: entity['charm-url'],
     machineID: entity['machine-id'],
     modelUUID: entity['model-uuid'],
     name: entity.name,
-    portRanges: entity['port-ranges'] ? entity['port-ranges'].map(range => ({
-      fromPort: range['from-port'],
-      toPort: range['to-port'],
-      protocol: range.protocol
-    })) : undefined,
-    ports: entity.ports ? entity.ports.map(port => ({
-      protocol: port.protocol,
-      number: port.number
-    })) : undefined,
+    portRanges: entity['port-ranges']
+      ? entity['port-ranges'].map(range => ({
+          fromPort: range['from-port'],
+          toPort: range['to-port'],
+          protocol: range.protocol
+        }))
+      : undefined,
+    ports: entity.ports
+      ? entity.ports.map(port => ({
+          protocol: port.protocol,
+          number: port.number
+        }))
+      : undefined,
     privateAddress: entity['private-address'],
     publicAddress: entity['public-address'],
     series: entity.series,
     subordinate: entity.subordinate,
-    workloadStatus: entity['workload-status'] ? {
-      current: entity['workload-status'].current,
-      message: entity['workload-status'].message,
-      since: entity['workload-status'].since,
-      version: entity['workload-status'].version
-    } : undefined
+    workloadStatus: entity['workload-status']
+      ? {
+          current: entity['workload-status'].current,
+          message: entity['workload-status'].message,
+          since: entity['workload-status'].since,
+          version: entity['workload-status'].version
+        }
+      : undefined
   };
-};
+}
 
 /**
   Parse a collection of units.
@@ -460,7 +482,7 @@ function parseUnits(response) {
     entities[key] = parseUnit(response[key]);
   });
   return entities;
-};
+}
 
 /**
   Parse a full megawatcher object.
@@ -486,7 +508,7 @@ function parseMegaWatcher(response) {
     remoteApplications: parseRemoteApplications(response['remote-applications']),
     units: parseUnits(response.units)
   };
-};
+}
 
 module.exports = {
   parseAnnotation,

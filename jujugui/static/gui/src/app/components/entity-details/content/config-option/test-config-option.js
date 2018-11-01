@@ -7,11 +7,8 @@ const enzyme = require('enzyme');
 const EntityContentConfigOption = require('./config-option');
 
 describe('EntityContentConfigOption', function() {
-
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <EntityContentConfigOption
-      option={options.option} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(<EntityContentConfigOption option={options.option} />);
 
   it('can render with a default value', function() {
     var option = {

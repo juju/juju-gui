@@ -8,13 +8,9 @@ const maracaPropTypes = require('../../../../maraca/prop-types');
 const StatusLabel = require('../label/label');
 const StatusTable = require('../table/table');
 
-const {
-  getStatusClass,
-  normaliseStatus
-} = require('../../utils');
+const {getStatusClass, normaliseStatus} = require('../../utils');
 
 class StatusMachineList extends React.Component {
-
   /**
     Generate the machine rows.
     @returns {Array} The list of rows.
@@ -32,30 +28,35 @@ class StatusMachineList extends React.Component {
       });
       const agentStatus = (machine.agentStatus || {}).current;
       return {
-        classes: [getStatusClass(
-          'status-table__row--', agentStatus)],
+        classes: [getStatusClass('status-table__row--', agentStatus)],
         onClick: this.props.generateMachineOnClick(machine.id),
         clickURL: this.props.generateMachineURL(machine.id),
-        columns: [{
-          columnSize: 1,
-          content: machine.id
-        }, {
-          columnSize: 2,
-          content: agentStatus ? (
-            <StatusLabel status={agentStatus} />) : null
-        }, {
-          columnSize: 2,
-          content: publicAddress
-        }, {
-          columnSize: 3,
-          content: machine.instanceID
-        }, {
-          columnSize: 1,
-          content: machine.series
-        }, {
-          columnSize: 3,
-          content: (machine.agentStatus || {}).message
-        }],
+        columns: [
+          {
+            columnSize: 1,
+            content: machine.id
+          },
+          {
+            columnSize: 2,
+            content: agentStatus ? <StatusLabel status={agentStatus} /> : null
+          },
+          {
+            columnSize: 2,
+            content: publicAddress
+          },
+          {
+            columnSize: 3,
+            content: machine.instanceID
+          },
+          {
+            columnSize: 1,
+            content: machine.series
+          },
+          {
+            columnSize: 3,
+            content: (machine.agentStatus || {}).message
+          }
+        ],
         extraData: normaliseStatus(agentStatus),
         key: machine.id
       };
@@ -63,33 +64,41 @@ class StatusMachineList extends React.Component {
   }
 
   render() {
-    const headers = [{
-      content: 'Machine',
-      columnSize: 1
-    }, {
-      content: 'State',
-      columnSize: 2
-    }, {
-      content: 'DNS',
-      columnSize: 2
-    }, {
-      content: 'Instance ID',
-      columnSize: 3
-    }, {
-      content: 'Series',
-      columnSize: 1
-    }, {
-      content: 'Message',
-      columnSize: 3
-    }];
+    const headers = [
+      {
+        content: 'Machine',
+        columnSize: 1
+      },
+      {
+        content: 'State',
+        columnSize: 2
+      },
+      {
+        content: 'DNS',
+        columnSize: 2
+      },
+      {
+        content: 'Instance ID',
+        columnSize: 3
+      },
+      {
+        content: 'Series',
+        columnSize: 1
+      },
+      {
+        content: 'Message',
+        columnSize: 3
+      }
+    ];
     return (
       <StatusTable
         headers={headers}
         rows={this._generateRows()}
-        statusFilter={this.props.statusFilter} />
+        statusFilter={this.props.statusFilter}
+      />
     );
   }
-};
+}
 
 StatusMachineList.propTypes = {
   generateMachineOnClick: PropTypes.func.isRequired,

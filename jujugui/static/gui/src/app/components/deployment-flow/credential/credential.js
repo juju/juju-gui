@@ -48,7 +48,8 @@ class DeploymentCredential extends React.Component {
       this.setState({credentialsLoading: true}, () => {
         this.props.controllerAPI.getCloudCredentialNames(
           [[user, cloud]],
-          this._getCloudCredentialNamesCallback.bind(this, credential));
+          this._getCloudCredentialNamesCallback.bind(this, credential)
+        );
       });
     }
   }
@@ -78,9 +79,11 @@ class DeploymentCredential extends React.Component {
     // pairs were passed to getCloudCredentialNames. As we're only passing
     // one pair we can safely assume that we only need the first item in the
     // array.
-    const nameList = names.length && names[0].names || [];
+    const nameList = (names.length && names[0].names) || [];
     this.props.controllerAPI.getCloudCredentials(
-      nameList, this._getCredentialsCallback.bind(this, credential));
+      nameList,
+      this._getCredentialsCallback.bind(this, credential)
+    );
   }
 
   /**
@@ -113,16 +116,12 @@ class DeploymentCredential extends React.Component {
       credentials: credentialList,
       credentialsLoading: false,
       // If there are no credentials then display the form to add credentials.
-      showAdd: this.props.editable &&
-        (!credentials || credentialList.length === 0)
+      showAdd: this.props.editable && (!credentials || credentialList.length === 0)
     });
     this.props.sendAnalytics(
       'Select cloud',
       this.props.cloud.name,
-      ((!credentials || credentialList.length === 0) ?
-        'doesn\'t have' :
-        'has') +
-      ' credentials'
+      (!credentials || credentialList.length === 0 ? "doesn't have" : 'has') + ' credentials'
     );
     if (credentials && credentialList.length > 0) {
       let select = credentialList[0].id;
@@ -158,10 +157,7 @@ class DeploymentCredential extends React.Component {
       this.setState({savedCredential: this.props.credential});
       this.props.setCredential(null);
     } else if (cancel) {
-      this.props.sendAnalytics(
-        'Button click',
-        'Cancel add credential'
-      );
+      this.props.sendAnalytics('Button click', 'Cancel add credential');
       // Restore previous credentials.
       this.props.setCredential(this.state.savedCredential);
     }
@@ -209,12 +205,11 @@ class DeploymentCredential extends React.Component {
     @returns {Array} The list of region options.
   */
   _generateRegions() {
-    const regions = !this.props.editable ? [{name: this.props.region}] :
-      this.props.cloud && this.props.cloud.regions || [];
+    const regions = !this.props.editable
+      ? [{name: this.props.region}]
+      : (this.props.cloud && this.props.cloud.regions) || [];
     // Setup the default option.
-    let regionList = [
-      {label: 'Default', value: ''}
-    ];
+    let regionList = [{label: 'Default', value: ''}];
     if (regions.length && regions.length > 0) {
       // Setup each region option.
       const regionValues = regions.map(region => {
@@ -249,7 +244,8 @@ class DeploymentCredential extends React.Component {
             onChange={this._handleCredentialChange.bind(this)}
             options={this._generateCredentials()}
             ref="credential"
-            value={this.props.credential} />
+            value={this.props.credential}
+          />
         </div>
         <div className="four-col deployment-credential__form-region">
           <InsetSelect
@@ -257,9 +253,11 @@ class DeploymentCredential extends React.Component {
             label="Region"
             onChange={this.props.setRegion}
             options={this._generateRegions()}
-            value={this.props.region} />
+            value={this.props.region}
+          />
         </div>
-      </form>);
+      </form>
+    );
   }
 
   /**
@@ -270,8 +268,8 @@ class DeploymentCredential extends React.Component {
     // Load the credentials again so that the list will contain the newly
     // added credential.
     this._getCredentials(
-      initUtils.generateCloudCredentialName(
-        this.props.cloud.name, this.props.user, credential));
+      initUtils.generateCloudCredentialName(this.props.cloud.name, this.props.user, credential)
+    );
     this._toggleAdd();
   }
 
@@ -290,14 +288,14 @@ class DeploymentCredential extends React.Component {
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         cloud={this.props.cloud}
-        credentials={this.state.credentials.map(credential =>
-          credential.displayName)}
-        onCancel={
-          this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
+        credentials={this.state.credentials.map(credential => credential.displayName)}
+        onCancel={this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
         onCredentialUpdated={this._onCredentialUpdated.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
-        user={this.props.user} />);
+        user={this.props.user}
+      />
+    );
   }
 
   /**
@@ -311,26 +309,25 @@ class DeploymentCredential extends React.Component {
       return (
         <div className="deployment-credential__loading">
           <Spinner />
-        </div>);
+        </div>
+      );
     }
     return (
       <ExpandingRow
         classes={{'twelve-col': true, 'no-margin-bottom': true}}
         clickable={false}
-        expanded={this.state.showAdd}>
+        expanded={this.state.showAdd}
+      >
         {this._generateSelect()}
         {this._generateAdd()}
-      </ExpandingRow>);
+      </ExpandingRow>
+    );
   }
 
   render() {
-    return (
-      <div className="clearfix">
-        {this._generateContent()}
-      </div>
-    );
+    return <div className="clearfix">{this._generateContent()}</div>;
   }
-};
+}
 
 DeploymentCredential.propTypes = {
   acl: PropTypes.object.isRequired,

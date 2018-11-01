@@ -98,8 +98,8 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const currentGUI = this.props.appState.current.gui;
-    const currrentLocalType = currentGUI && currentGUI.inspector &&
-      currentGUI.inspector.localType;
+    const currrentLocalType =
+      currentGUI && currentGUI.inspector && currentGUI.inspector.localType;
     // If the local inspector has just been shown then hide the drag over message.
     if (currrentLocalType && this.state.dragOverNotificationVisible) {
       this._showDragOverNotification(false);
@@ -141,7 +141,8 @@ class App extends React.Component {
       changeState: this.props.appState.changeState.bind(this.props.appState),
       destroyModels: this.props.controllerAPI.destroyModels.bind(this.props.controllerAPI),
       listModelsWithInfo: this.props.controllerAPI.listModelsWithInfo.bind(
-        this.props.controllerAPI)
+        this.props.controllerAPI
+      )
     };
   }
 
@@ -242,16 +243,18 @@ class App extends React.Component {
     ServiceModule.deselectNodes();
     const db = this.props.db;
     return (
-      <Panel
-        instanceName="inspector-panel"
-        visible={db.services.size() > 0}>
+      <Panel instanceName="inspector-panel" visible={db.services.size() > 0}>
         <AddedServicesList
           changeState={this._bound.changeState}
           hoveredId={this.state.hoveredService}
-          serviceModule={
-            shapeup.fromShape(ServiceModule, AddedServicesList.propTypes.serviceModule)}
-          services={db.services} />
-      </Panel>);
+          serviceModule={shapeup.fromShape(
+            ServiceModule,
+            AddedServicesList.propTypes.serviceModule
+          )}
+          services={db.services}
+        />
+      </Panel>
+    );
   }
   /**
     Renders the Environment Size Display component to the page in the
@@ -264,7 +267,9 @@ class App extends React.Component {
         appState={this.props.appState}
         machineCount={db.machines.filterByParent().length}
         providerType={this.props.modelAPI.get('providerType') || ''}
-        serviceCount={db.services.size()} />);
+        serviceCount={db.services.size()}
+      />
+    );
   }
   /**
     Renders the model action components to the page in the designated
@@ -281,17 +286,19 @@ class App extends React.Component {
           changeState={this._bound.changeState}
           displayTerminalButton={this._shouldEnableTerminal()}
           exportEnvironmentFile={initUtils.exportEnvironmentFile.bind(
-            initUtils, props.db, props.sendAnalytics)}
-          hideDragOverNotification={this._showDragOverNotification.bind(
-            this, false)}
-          importBundleFile={props.bundleImporter.importBundleFile.bind(
-            props.bundleImporter)}
+            initUtils,
+            props.db,
+            props.sendAnalytics
+          )}
+          hideDragOverNotification={this._showDragOverNotification.bind(this, false)}
+          importBundleFile={props.bundleImporter.importBundleFile.bind(props.bundleImporter)}
           loadingModel={modelAPI.loading}
-          renderDragOverNotification={
-            this._showDragOverNotification.bind(this)}
+          renderDragOverNotification={this._showDragOverNotification.bind(this)}
           sharingVisibility={this._sharingVisibility.bind(this)}
-          userIsAuthenticated={modelAPI.userIsAuthenticated} />
-      </div>);
+          userIsAuthenticated={modelAPI.userIsAuthenticated}
+        />
+      </div>
+    );
   }
   /**
     Display or hide the sharing modal.
@@ -326,7 +333,9 @@ class App extends React.Component {
         closeHandler={this._sharingVisibility.bind(this, false)}
         getModelUserInfo={modelAPI.modelUserInfo.bind(modelAPI)}
         grantModelAccess={grantRevoke.bind(this, grantAccess)}
-        revokeModelAccess={grantRevoke.bind(this, revokeAccess)} />);
+        revokeModelAccess={grantRevoke.bind(this, revokeAccess)}
+      />
+    );
   }
 
   _generateTerminal(address, payload) {
@@ -367,7 +376,9 @@ class App extends React.Component {
         changeState={this._bound.changeState}
         commands={commands}
         creds={creds}
-        WebSocket={WebSocket} />);
+        WebSocket={WebSocket}
+      />
+    );
   }
 
   _displayTerminal() {
@@ -385,13 +396,16 @@ JAAS: ${config.gisf}
 Location: ${window.location.href}
 Browser: ${navigator.userAgent}`
     };
-    const githubIssueLink =
-      `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
+    const githubIssueLink = `${githubIssueHref}?${queryString.stringify(githubIssueValues)}`;
     const address = initUtils.jujushellURL(localStorage, db, config);
     if (!address) {
       // This should never happen.
       let message = 'an unexpected error has occurred please file an issue ';
-      let link = <a href={githubIssueLink} key="link" target="_blank">here</a>;
+      let link = (
+        <a href={githubIssueLink} key="link" target="_blank">
+          here
+        </a>
+      );
       const jujushell = db.services.getServicesFromCharmName('jujushell')[0];
       if (!jujushell || jujushell.get('pending')) {
         message = 'deploy and expose the "jujushell" charm and try again.';
@@ -408,7 +422,8 @@ Browser: ${navigator.userAgent}`
         message: [
           <span key="prefix">Unable to open Terminal, </span>,
           <span key="message">{message}</span>,
-          link],
+          link
+        ],
         level: 'error'
       });
       this.props.appState.changeState({terminal: null});
@@ -421,9 +436,7 @@ Browser: ${navigator.userAgent}`
     Renders the ISV profile component.
   */
   _generateISVProfile() {
-    return (
-      <ISVProfile
-        d3={yui.d3} />);
+    return <ISVProfile d3={yui.d3} />;
   }
   /**
     Renders the user profile component.
@@ -475,17 +488,25 @@ Browser: ${navigator.userAgent}`
         baseURL={this.props.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
         charmstore={charmstore}
-        controllerAPI={
-          shapeup.fromShape(this.props.controllerAPI, Profile.propTypes.controllerAPI)}
+        controllerAPI={shapeup.fromShape(
+          this.props.controllerAPI,
+          Profile.propTypes.controllerAPI
+        )}
         controllerIP={
-          this.props.controllerAPI.get('socket_url')
-            .replace('wss://', '').replace('ws://', '').split(':')[0]}
+          this.props.controllerAPI
+            .get('socket_url')
+            .replace('wss://', '')
+            .replace('ws://', '')
+            .split(':')[0]
+        }
         controllerIsReady={this._controllerIsReady.bind(this)}
         controllerUser={this.props.user.controller.user}
-        destroyModel={
-          initUtils.destroyModel.bind(
-            initUtils, this._bound.destroyModels, this.props.modelAPI,
-            this.props.switchModel)}
+        destroyModel={initUtils.destroyModel.bind(
+          initUtils,
+          this._bound.destroyModels,
+          this.props.modelAPI,
+          this.props.switchModel
+        )}
         facadesExist={facadesExist}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getModelName={this._getModelName.bind(this)}
@@ -497,7 +518,9 @@ Browser: ${navigator.userAgent}`
         storeUser={this.props.storeUser.bind(this)}
         stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
         switchModel={this.props.switchModel}
-        userInfo={shapeup.fromShape(userInfo, Profile.propTypes.userInfo)} />);
+        userInfo={shapeup.fromShape(userInfo, Profile.propTypes.userInfo)}
+      />
+    );
   }
 
   /**
@@ -508,7 +531,8 @@ Browser: ${navigator.userAgent}`
     return (
       <li className="header-banner__list-item header-banner__list-item--no-padding">
         <HeaderSearch appState={this.props.appState} />
-      </li>);
+      </li>
+    );
   }
 
   /**
@@ -523,30 +547,28 @@ Browser: ${navigator.userAgent}`
     return (
       <li
         className="header-banner__list-item header-banner__list-item--no-padding"
-        id="header-help">
+        id="header-help"
+      >
         <span
           className="header__button"
           onClick={openHelp.bind(this)}
           role="button"
-          tabIndex="0">
-          <SvgIcon
-            className="header__button-icon"
-            name="help_16"
-            size="16" />
+          tabIndex="0"
+        >
+          <SvgIcon className="header__button-icon" name="help_16" size="16" />
           <span className="tooltip__tooltip--below">
-            <span className="tooltip__inner tooltip__inner--up">
-              Help
-            </span>
+            <span className="tooltip__inner tooltip__inner--up">Help</span>
           </span>
         </span>
-      </li>);
+      </li>
+    );
   }
 
   /**
     Display the shortcuts modal.
     @param visible {Boolean} Whether the modal should be shown.
   */
-  _displayShortcutsModal(visible=true) {
+  _displayShortcutsModal(visible = true) {
     this.setState({shortcutsModalVisible: visible});
   }
 
@@ -560,14 +582,16 @@ Browser: ${navigator.userAgent}`
     return (
       <ModalShortcuts
         closeModal={this._displayShortcutsModal.bind(this, false)}
-        guiVersion={window.GUI_VERSION.version} />);
+        guiVersion={window.GUI_VERSION.version}
+      />
+    );
   }
 
   /**
     Display the settings modal.
     @param visible {Boolean} Whether the modal should be shown.
   */
-  _displaySettingsModal(visible=true) {
+  _displaySettingsModal(visible = true) {
     this.setState({settingsModalVisible: visible});
   }
 
@@ -581,7 +605,9 @@ Browser: ${navigator.userAgent}`
     return (
       <ModalGUISettings
         closeModal={this._displaySettingsModal.bind(this, false)}
-        localStorage={localStorage} />);
+        localStorage={localStorage}
+      />
+    );
   }
 
   /**
@@ -614,11 +640,10 @@ Browser: ${navigator.userAgent}`
       return null;
     }
     return (
-      <Lightbox
-        caption={lightbox.caption}
-        close={this._hideLightbox.bind(this)}>
+      <Lightbox caption={lightbox.caption} close={this._hideLightbox.bind(this)}>
         {lightbox.content}
-      </Lightbox>);
+      </Lightbox>
+    );
   }
 
   /**
@@ -629,14 +654,17 @@ Browser: ${navigator.userAgent}`
       return null;
     }
     const handler = new WebHandler();
-    return (<Help
-      changeState={this._bound.changeState}
-      displayShortcutsModal={this._displayShortcutsModal.bind(this, true)}
-      gisf={this.props.applicationConfig.gisf}
-      sendGetRequest={handler.sendGetRequest.bind(handler)}
-      staticURL={this.props.applicationConfig.staticURL || ''}
-      user={this.props.user}
-      youtubeAPIKey={this.props.applicationConfig.youtubeAPIKey} />);
+    return (
+      <Help
+        changeState={this._bound.changeState}
+        displayShortcutsModal={this._displayShortcutsModal.bind(this, true)}
+        gisf={this.props.applicationConfig.gisf}
+        sendGetRequest={handler.sendGetRequest.bind(handler)}
+        staticURL={this.props.applicationConfig.staticURL || ''}
+        user={this.props.user}
+        youtubeAPIKey={this.props.applicationConfig.youtubeAPIKey}
+      />
+    );
   }
 
   /**
@@ -656,14 +684,15 @@ Browser: ${navigator.userAgent}`
       // A specific URL was provided so pass that through
       entityURLs.push(postDeploymentPanel);
     } else {
-      entityURLs = entityURLs.concat(this.props.db.services.toArray().reduce(
-        (accumulator, app) => {
+      entityURLs = entityURLs.concat(
+        this.props.db.services.toArray().reduce((accumulator, app) => {
           const url = app.get('annotations').bundleURL;
           if (url) {
             accumulator.push(url);
           }
           return accumulator;
-        }, []));
+        }, [])
+      );
     }
     if (entityURLs.length === 0) {
       return null;
@@ -671,25 +700,28 @@ Browser: ${navigator.userAgent}`
     return (
       <PostDeployment
         changeState={this._bound.changeState}
-        charmstore={
-          shapeup.fromShape(this.props.charmstore, PostDeployment.propTypes.charmstore)}
-        entityURLs={entityURLs} />);
+        charmstore={shapeup.fromShape(
+          this.props.charmstore,
+          PostDeployment.propTypes.charmstore
+        )}
+        entityURLs={entityURLs}
+      />
+    );
   }
 
   _generateHeaderLogo() {
     const userName = this.props.user.displayName;
     const gisf = this.props.applicationConfig.gisf;
-    const homePath = gisf ? '/' :
-      this.props.appState.generatePath({profile: userName});
+    const homePath = gisf ? '/' : this.props.appState.generatePath({profile: userName});
     return (
-      <div
-        className="header-banner__logo"
-        id="header-logo" >
+      <div className="header-banner__logo" id="header-logo">
         <HeaderLogo
           gisf={gisf}
           homePath={homePath}
-          showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)} />
-      </div>);
+          showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)}
+        />
+      </div>
+    );
   }
 
   /**
@@ -710,8 +742,7 @@ Browser: ${navigator.userAgent}`
         addToModel={this.props.addToModel.bind(this, charmstore)}
         appState={this.props.appState}
         charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
-        charmstoreURL={
-          initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
+        charmstoreURL={initUtils.ensureTrailingSlash(window.juju_config.charmstoreURL)}
         clearLightbox={this._hideLightbox.bind(this)}
         deployService={this.props.deployService.bind(this)}
         displayLightbox={this._displayLightbox.bind(this)}
@@ -719,12 +750,15 @@ Browser: ${navigator.userAgent}`
         getModelName={this._getModelName.bind(this)}
         gisf={this.props.applicationConfig.gisf}
         importBundleYAML={this.props.bundleImporter.importBundleYAML.bind(
-          this.props.bundleImporter)}
+          this.props.bundleImporter
+        )}
         listPlansForCharm={this.props.plans.listPlansForCharm.bind(this.props.plans)}
         sendAnalytics={this.props.sendAnalytics}
         setPageTitle={this.props.setPageTitle.bind(this)}
         showTerms={this.props.terms.showTerms.bind(this.props.terms)}
-        staticURL={this.props.applicationConfig.staticURL || ''} />);
+        staticURL={this.props.applicationConfig.staticURL || ''}
+      />
+    );
   }
 
   /**
@@ -763,8 +797,7 @@ Browser: ${navigator.userAgent}`
         acl={shapeup.fromShape(this.props.acl, propTypes.acl)}
         changeState={this._bound.changeState}
         dbAPI={shapeup.addReshape({
-          addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
-            this, db, modelAPI),
+          addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(this, db, modelAPI),
           applications: db.services,
           modelName: db.environment.get('name') || '',
           machines: db.machines,
@@ -783,13 +816,19 @@ Browser: ${navigator.userAgent}`
           updateMachineSeries: ecs.updateMachineSeries.bind(ecs)
         })}
         parseConstraints={initUtils.parseConstraints.bind(
-          initUtils, modelAPI.genericConstraints)}
+          initUtils,
+          modelAPI.genericConstraints
+        )}
         parseMachineDetails={initUtils.parseMachineDetails.bind(
-          initUtils, modelAPI.genericConstraints)}
+          initUtils,
+          modelAPI.genericConstraints
+        )}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
         sendAnalytics={this.props.sendAnalytics}
         series={urls.CHARM_SERIES}
-        showSSHButtons={this._shouldEnableTerminal()} />);
+        showSSHButtons={this._shouldEnableTerminal()}
+      />
+    );
   }
 
   /**
@@ -807,7 +846,9 @@ Browser: ${navigator.userAgent}`
         changeState={this._bound.changeState}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         model={shapeup.fromShape(this.props.modelAPI.getAttrs(), propTypes.model)}
-        valueStore={shapeup.fromShape(this.props.valueStore, propTypes.valueStore)} />);
+        valueStore={shapeup.fromShape(this.props.valueStore, propTypes.valueStore)}
+      />
+    );
   }
 
   /**
@@ -847,7 +888,9 @@ Browser: ${navigator.userAgent}`
       topo.modules.ServiceModule.selectService(service.get('id'));
       const charm = db.charms.getById(service.get('charm'));
       const relatableApplications = relationUtils.getRelatableApplications(
-        db, endpointUtils.getEndpoints(service, this.props.endpointsController));
+        db,
+        endpointUtils.getEndpoints(service, this.props.endpointsController)
+      );
       const ecs = modelAPI.get('ecs');
       const addCharm = (url, callback, options) => {
         modelAPI.addCharm(url, charmstore, callback, options);
@@ -863,11 +906,18 @@ Browser: ${navigator.userAgent}`
           getAvailableVersions={charmstore.getAvailableVersions.bind(charmstore)}
           initUtils={shapeup.addReshape({
             addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
-              this, db, modelAPI, service),
+              this,
+              db,
+              modelAPI,
+              service
+            ),
             createMachinesPlaceUnits: initUtils.createMachinesPlaceUnits.bind(
-              this, db, modelAPI, service),
-            destroyService: initUtils.destroyService.bind(
-              this, db, modelAPI, service)
+              this,
+              db,
+              modelAPI,
+              service
+            ),
+            destroyService: initUtils.destroyService.bind(this, db, modelAPI, service)
           })}
           modelAPI={shapeup.addReshape({
             destroyUnits: modelAPI.remove_units.bind(modelAPI),
@@ -883,21 +933,23 @@ Browser: ${navigator.userAgent}`
           relatableApplications={relatableApplications}
           relationUtils={shapeup.addReshape({
             createRelation: relationUtils.createRelation.bind(this, db, modelAPI),
-            destroyRelations: relationUtils.destroyRelations.bind(
-              this, db, modelAPI),
+            destroyRelations: relationUtils.destroyRelations.bind(this, db, modelAPI),
             getAvailableEndpoints: relationUtils.getAvailableEndpoints.bind(
-              this, this.props.endpointsController, db, endpointUtils.getEndpoints)
+              this,
+              this.props.endpointsController,
+              db,
+              endpointUtils.getEndpoints
+            )
           })}
           service={service}
-          serviceRelations={
-            relationUtils.getRelationDataForService(db, service)}
+          serviceRelations={relationUtils.getRelationDataForService(db, service)}
           services={shapeup.fromShape(db.services, propTypes.services)}
           showActivePlan={this.props.plans.showActivePlan.bind(this.props.plans)}
           showPlans={window.juju_config.flags.plans || false}
           showSSHButtons={this._shouldEnableTerminal()}
           unplaceServiceUnits={ecs.unplaceServiceUnits.bind(ecs)}
-          updateServiceUnitsDisplayname={
-            db.updateServiceUnitsDisplayname.bind(db)} />
+          updateServiceUnitsDisplayname={db.updateServiceUnitsDisplayname.bind(db)}
+        />
       );
     } else if (localType && window.localCharmFile) {
       inspector = (
@@ -908,23 +960,23 @@ Browser: ${navigator.userAgent}`
           localType={localType}
           series={initUtils.getSeriesList()}
           services={db.services}
-          upgradeServiceUsingLocalCharm={
-            localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
-              this, modelAPI, db)}
-          uploadLocalCharm={
-            localCharmHelpers.uploadLocalCharm.bind(
-              this, modelAPI, db)} />
+          upgradeServiceUsingLocalCharm={localCharmHelpers.upgradeServiceUsingLocalCharm.bind(
+            this,
+            modelAPI,
+            db
+          )}
+          uploadLocalCharm={localCharmHelpers.uploadLocalCharm.bind(this, modelAPI, db)}
+        />
       );
     } else {
       this.props.appState.changeState({gui: {inspector: null}});
       return;
     }
     return (
-      <Panel
-        instanceName="inspector-panel"
-        visible={true}>
+      <Panel instanceName="inspector-panel" visible={true}>
         {inspector}
-      </Panel>);
+      </Panel>
+    );
   }
 
   /**
@@ -975,7 +1027,9 @@ Browser: ${navigator.userAgent}`
       return this.props.user.username;
     };
     const loginToController = controllerAPI.loginWithMacaroon.bind(
-      controllerAPI, this.props.bakery);
+      controllerAPI,
+      this.props.bakery
+    );
     const charmstore = this.props.charmstore;
     const isLoggedIn = () => this.props.controllerAPI.userIsAuthenticated;
     const autoPlaceUnits = autodeploy.autoPlaceUnits.bind(null, db, modelAPI);
@@ -988,15 +1042,20 @@ Browser: ${navigator.userAgent}`
         changes={currentChangeSet}
         changeState={this._bound.changeState}
         changesUtils={shapeup.addReshape({
-          generateAllChangeDescriptions:
-            changesUtils.generateAllChangeDescriptions.bind(
-              changesUtils, services, db.units),
-          generateChangeDescription:
-            changesUtils.generateChangeDescription.bind(
-              changesUtils, services, db.units),
-          sortDescriptionsByApplication:
-            changesUtils.sortDescriptionsByApplication.bind(null,
-              services.getById.bind(services))
+          generateAllChangeDescriptions: changesUtils.generateAllChangeDescriptions.bind(
+            changesUtils,
+            services,
+            db.units
+          ),
+          generateChangeDescription: changesUtils.generateChangeDescription.bind(
+            changesUtils,
+            services,
+            db.units
+          ),
+          sortDescriptionsByApplication: changesUtils.sortDescriptionsByApplication.bind(
+            null,
+            services.getById.bind(services)
+          )
         })}
         charms={db.charms}
         charmsGetById={db.charms.getById.bind(db.charms)}
@@ -1009,8 +1068,7 @@ Browser: ${navigator.userAgent}`
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getCurrentChangeSet={ecs.getCurrentChangeSet.bind(ecs)}
         getServiceByName={services.getServiceByName.bind(services)}
-        getSLAMachineRates={
-          this.props.rates.getSLAMachineRates.bind(this.props.rates)}
+        getSLAMachineRates={this.props.rates.getSLAMachineRates.bind(this.props.rates)}
         getUserName={getUserName}
         gisf={this.props.gisf}
         gtmEnabled={this.props.applicationConfig.GTM_enabled}
@@ -1019,7 +1077,10 @@ Browser: ${navigator.userAgent}`
           deploy: initUtils.deploy.bind(initUtils, this.props, autoPlaceUnits),
           formatConstraints: initUtils.formatConstraints.bind(initUtils),
           generateMachineDetails: initUtils.generateMachineDetails.bind(
-            initUtils, modelAPI.genericConstraints, db.units)
+            initUtils,
+            modelAPI.genericConstraints,
+            db.units
+          )
         })}
         isLoggedIn={isLoggedIn}
         loginToController={loginToController}
@@ -1027,7 +1088,8 @@ Browser: ${navigator.userAgent}`
         modelCommitted={connected}
         modelName={modelName}
         payment={
-          this.props.payment && shapeup.fromShape(this.props.payment, propTypes.payment)}
+          this.props.payment && shapeup.fromShape(this.props.payment, propTypes.payment)
+        }
         plans={this.props.plans && shapeup.fromShape(this.props.plans, propTypes.plans)}
         profileUsername={this.props.getUserInfo(state).profile}
         region={modelAPI.get('region')}
@@ -1040,7 +1102,9 @@ Browser: ${navigator.userAgent}`
         terms={shapeup.fromShape(this.props.terms, propTypes.terms)}
         username={this.props.user ? this.props.user.displayName : undefined}
         WebHandler={WebHandler}
-        withPlans={false} />);
+        withPlans={false}
+      />
+    );
   }
   /**
     Report whether the controller API connection is ready, connected and
@@ -1073,13 +1137,17 @@ Browser: ${navigator.userAgent}`
           acl={this.props.acl}
           changeState={this._bound.changeState}
           currentChangeSet={ecs.getCurrentChangeSet()}
-          generateChangeDescription={
-            changesUtils.generateChangeDescription.bind(
-              changesUtils, services, units)}
+          generateChangeDescription={changesUtils.generateChangeDescription.bind(
+            changesUtils,
+            services,
+            units
+          )}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
           modelCommitted={this.props.modelAPI.get('connected')}
-          sendAnalytics={this.props.sendAnalytics} />
-      </div>);
+          sendAnalytics={this.props.sendAnalytics}
+        />
+      </div>
+    );
   }
 
   /**
@@ -1107,8 +1175,10 @@ Browser: ${navigator.userAgent}`
           errorMessage={err}
           gisf={this.props.applicationConfig.gisf}
           loginToAPIs={this.props.loginToAPIs}
-          loginToController={loginToController} />
-      </div>);
+          loginToController={loginToController}
+        />
+      </div>
+    );
   }
 
   /**
@@ -1129,8 +1199,9 @@ Browser: ${navigator.userAgent}`
       <USSOLoginLink
         addNotification={this._bound.addNotification}
         displayType="text"
-        loginToController={
-          controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
+        loginToController={controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)}
+      />
+    );
     let logoutUrl = '/logout';
     const applicationConfig = this.props.applicationConfig;
     if (applicationConfig.baseUrl) {
@@ -1139,13 +1210,16 @@ Browser: ${navigator.userAgent}`
     const doCharmstoreLogout = () => {
       return this.props.getUser('charmstore') && !applicationConfig.gisf;
     };
-    const LogoutLink = (<Logout
-      charmstoreLogoutUrl={charmstore.getLogoutUrl()}
-      doCharmstoreLogout={doCharmstoreLogout}
-      locationAssign={window.location.assign.bind(window.location)}
-      logoutUrl={logoutUrl}
-      // If the charmbrowser is open then do not show the logout link.
-      visible={!this.props.appState.current.store} />);
+    const LogoutLink = (
+      <Logout
+        charmstoreLogoutUrl={charmstore.getLogoutUrl()}
+        doCharmstoreLogout={doCharmstoreLogout}
+        locationAssign={window.location.assign.bind(window.location)}
+        logoutUrl={logoutUrl}
+        // If the charmbrowser is open then do not show the logout link.
+        visible={!this.props.appState.current.store}
+      />
+    );
 
     const navigateUserProfile = () => {
       const username = this.props.user.displayName;
@@ -1164,14 +1238,17 @@ Browser: ${navigator.userAgent}`
     return (
       <li
         className="header-banner__list-item header-banner__list-item--no-padding"
-        id="profile-link-container">
+        id="profile-link-container"
+      >
         <UserMenu
           controllerAPI={controllerAPI}
           LogoutLink={LogoutLink}
           navigateUserProfile={navigateUserProfile}
           showHelp={showHelp}
-          USSOLoginLink={_USSOLoginLink} />
-      </li>);
+          USSOLoginLink={_USSOLoginLink}
+        />
+      </li>
+    );
   }
 
   /**
@@ -1196,8 +1273,7 @@ Browser: ${navigator.userAgent}`
     // we've connected but have not yet successfully logged in. This will
     // prevent the model switcher from rendering but after the login this
     // component will be re-rendered.
-    if (controllerAPI &&
-      controllerAPI.findFacadeVersion('ModelManager') === null) {
+    if (controllerAPI && controllerAPI.findFacadeVersion('ModelManager') === null) {
       showEnvSwitcher = false;
     }
     return (
@@ -1216,8 +1292,10 @@ Browser: ${navigator.userAgent}`
           showEnvSwitcher={showEnvSwitcher}
           showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
           switchModel={this.props.switchModel}
-          user={this.props.user} />
-      </div>);
+          user={this.props.user}
+        />
+      </div>
+    );
   }
   /**
     Renders the logo for the current cloud provider.
@@ -1226,7 +1304,7 @@ Browser: ${navigator.userAgent}`
     const cloudProvider = this.props.modelAPI.get('providerType');
     let providerDetails = initUtils.getCloudProviderDetails(cloudProvider);
     const currentState = this.props.appState.current || {};
-    const isDisabled = (
+    const isDisabled =
       // There is no provider.
       !cloudProvider ||
       // It's not possible to get provider details.
@@ -1234,15 +1312,11 @@ Browser: ${navigator.userAgent}`
       // We are in the profile page.
       currentState.profile ||
       // We are in the account page.
-      currentState.root === 'account'
-    );
-    const classes = classNames(
-      'provider-logo',
-      {
-        'provider-logo--disabled': isDisabled,
-        [`provider-logo--${cloudProvider}`]: cloudProvider
-      }
-    );
+      currentState.root === 'account';
+    const classes = classNames('provider-logo', {
+      'provider-logo--disabled': isDisabled,
+      [`provider-logo--${cloudProvider}`]: cloudProvider
+    });
     const scale = 0.65;
     if (!providerDetails) {
       // It's possible that the GUI is being run on a provider that we have
@@ -1255,19 +1329,20 @@ Browser: ${navigator.userAgent}`
           <SvgIcon
             height={providerDetails.svgHeight * scale}
             name={providerDetails.id || ''}
-            width={providerDetails.svgWidth * scale} />
+            width={providerDetails.svgWidth * scale}
+          />
         </div>
-      </div>);
+      </div>
+    );
   }
   /**
     Renders the notification component to the page in the designated element.
   */
   _generateNotifications() {
-    const notifications = this.props.db.notifications.toArray().map(
-      notification => notification.getAttrs());
-    return (
-      <NotificationList
-        notifications={notifications} />);
+    const notifications = this.props.db.notifications
+      .toArray()
+      .map(notification => notification.getAttrs());
+    return <NotificationList notifications={notifications} />;
   }
 
   /**
@@ -1279,8 +1354,7 @@ Browser: ${navigator.userAgent}`
     if (!this.state.dragOverNotificationVisible) {
       return null;
     }
-    return (
-      <ExpandingProgress />);
+    return <ExpandingProgress />;
   }
 
   /**
@@ -1299,9 +1373,9 @@ Browser: ${navigator.userAgent}`
   _generateZoom() {
     return (
       <div id="zoom-container">
-        <Zoom
-          topo={this.props.topology.topo} />
-      </div>);
+        <Zoom topo={this.props.topology.topo} />
+      </div>
+    );
   }
 
   /**
@@ -1328,16 +1402,22 @@ Browser: ${navigator.userAgent}`
     const content = (
       <span>
         To proceed with the authentication, please accept the pop up window or&nbsp;
-        <a href={loginNotificiationURL} target="_blank">click here</a>.
-      </span>);
+        <a href={loginNotificiationURL} target="_blank">
+          click here
+        </a>
+        .
+      </span>
+    );
     return (
       <div id="login-notification">
         <Notification
           content={content}
           dismiss={dismiss}
           extraClasses="four-col"
-          isBlocking={true} />
-      </div>);
+          isBlocking={true}
+        />
+      </div>
+    );
   }
 
   /**
@@ -1350,13 +1430,11 @@ Browser: ${navigator.userAgent}`
     }
     return (
       <li className="header-banner__list-item">
-        <a
-          className="header-banner__link"
-          href={maasServer}
-          target="_blank">
+        <a className="header-banner__link" href={maasServer} target="_blank">
           MAAS UI
         </a>
-      </li>);
+      </li>
+    );
   }
 
   /**
@@ -1367,24 +1445,26 @@ Browser: ${navigator.userAgent}`
     if (!popupAction) {
       return null;
     }
-    const buttons = [{
-      title: 'Cancel',
-      action: this.setState.bind(this, {popupAction: null}),
-      type: 'inline-neutral'
-    }, {
-      title: 'Continue',
-      action: popupAction,
-      type: 'destructive'
-    }];
+    const buttons = [
+      {
+        title: 'Cancel',
+        action: this.setState.bind(this, {popupAction: null}),
+        type: 'inline-neutral'
+      },
+      {
+        title: 'Continue',
+        action: popupAction,
+        type: 'destructive'
+      }
+    ];
     return (
-      <Popup
-        buttons={buttons}
-        title="Uncommitted changes">
+      <Popup buttons={buttons} title="Uncommitted changes">
         <p>
-          You have uncommitted changes to your model. You will
-          lose these changes if you continue.
+          You have uncommitted changes to your model. You will lose these changes if you
+          continue.
         </p>
-      </Popup>);
+      </Popup>
+    );
   }
 
   render() {
@@ -1432,7 +1512,7 @@ Browser: ${navigator.userAgent}`
       </div>
     );
   }
-};
+}
 
 App.propTypes = {
   acl: PropTypes.object.isRequired,

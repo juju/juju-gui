@@ -28,7 +28,7 @@ class InspectorRelateToEndpoint extends React.Component {
         }
       }
     });
-    this.setState({'activeCount': activeCount});
+    this.setState({activeCount: activeCount});
   }
 
   /**
@@ -43,14 +43,18 @@ class InspectorRelateToEndpoint extends React.Component {
       return (
         <li className="inspector-relate-to-endpoint__message">
           No relatable endpoints for these applications.
-        </li>);
+        </li>
+      );
     }
     return relations.map((relation, index) => {
-      return (<CheckListItem
-        key={index}
-        label={`${relation[0].name} → ${relation[1].name}`}
-        ref={`InspectorRelateToEndpoint-${index}`}
-        whenChanged={this._updateActiveCount.bind(this)} />);
+      return (
+        <CheckListItem
+          key={index}
+          label={`${relation[0].name} → ${relation[1].name}`}
+          ref={`InspectorRelateToEndpoint-${index}`}
+          whenChanged={this._updateActiveCount.bind(this)}
+        />
+      );
     });
   }
 
@@ -67,17 +71,22 @@ class InspectorRelateToEndpoint extends React.Component {
       if (isInstance && refs[ref].state.checked) {
         var relationName = ref.slice(ref.indexOf('-') + 1);
         var relations = props.endpoints[relationName];
-        props.createRelation([[
-          relations[0].service, {
-            name: relations[0].name,
-            role: 'client'
-          }
-        ], [
-          relations[1].service, {
-            name: relations[1].name,
-            role: 'server'
-          }
-        ]]);
+        props.createRelation([
+          [
+            relations[0].service,
+            {
+              name: relations[0].name,
+              role: 'client'
+            }
+          ],
+          [
+            relations[1].service,
+            {
+              name: relations[1].name,
+              role: 'server'
+            }
+          ]
+        ]);
       }
     });
     props.changeState(props.backState);
@@ -101,22 +110,18 @@ class InspectorRelateToEndpoint extends React.Component {
       action: this._handleCreateRelation.bind(this),
       disabled: disabled
     });
-    return (
-      <ButtonRow
-        buttons={buttons} />);
+    return <ButtonRow buttons={buttons} />;
   }
 
   render() {
     return (
       <div className="inspector-relate-to-endpoint">
-        <ul className="inspector-relate-to-endpoint__list">
-          {this._generateRelations()}
-        </ul>
+        <ul className="inspector-relate-to-endpoint__list">{this._generateRelations()}</ul>
         {this._generateButtons()}
       </div>
     );
   }
-};
+}
 
 InspectorRelateToEndpoint.propTypes = {
   backState: PropTypes.object.isRequired,

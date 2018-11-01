@@ -12,24 +12,28 @@ const InspectorChangeVersionItem = require('./item/item');
 describe('InspectorChangeVersion', function() {
   let acl, modelAPI;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <InspectorChangeVersion
-      acl={options.acl || acl}
-      addCharm={options.addCharm || sinon.stub()}
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      charmId={options.charmId || 'cs:django-5'}
-      getAvailableVersions={
-        options.getAvailableVersions || sinon.stub().callsArgWith(1, null, [
-          'cs:django-4', 'cs:django-5', 'cs:django-6'
-        ])}
-      getMacaroon={options.getMacaroon || sinon.stub()}
-      modelAPI={options.modelAPI || modelAPI}
-      service={options.service || {
-        get: sinon.stub().returns('django'),
-        set: sinon.stub()
-      }} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <InspectorChangeVersion
+        acl={options.acl || acl}
+        addCharm={options.addCharm || sinon.stub()}
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        charmId={options.charmId || 'cs:django-5'}
+        getAvailableVersions={
+          options.getAvailableVersions ||
+          sinon.stub().callsArgWith(1, null, ['cs:django-4', 'cs:django-5', 'cs:django-6'])
+        }
+        getMacaroon={options.getMacaroon || sinon.stub()}
+        modelAPI={options.modelAPI || modelAPI}
+        service={
+          options.service || {
+            get: sinon.stub().returns('django'),
+            set: sinon.stub()
+          }
+        }
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -49,10 +53,9 @@ describe('InspectorChangeVersion', function() {
     const wrapper = renderComponent({getAvailableVersions});
     const expected = (
       <ul className="inspector-change-version__versions">
-        <li className="inspector-change-version__none">
-          No other versions found.
-        </li>
-      </ul>);
+        <li className="inspector-change-version__none">No other versions found.</li>
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.inspector-change-version__versions'), expected);
   });
 
@@ -65,10 +68,12 @@ describe('InspectorChangeVersion', function() {
           Current version:
           <div
             className="inspector-change-version__current-version"
-            onClick={
-              wrapper.find('.inspector-change-version__current-version').prop('onClick')}
+            onClick={wrapper
+              .find('.inspector-change-version__current-version')
+              .prop('onClick')}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+          >
             django/5
           </div>
         </div>
@@ -79,16 +84,19 @@ describe('InspectorChangeVersion', function() {
             downgrade={true}
             itemAction={items.at(0).prop('itemAction')}
             key="cs:django-4"
-            url={urls.URL.fromString('django/4')} />
+            url={urls.URL.fromString('django/4')}
+          />
           <InspectorChangeVersionItem
             acl={acl}
             buttonAction={items.at(1).prop('buttonAction')}
             downgrade={false}
             itemAction={items.at(1).prop('itemAction')}
             key="cs:django-6"
-            url={urls.URL.fromString('django/6')} />
+            url={urls.URL.fromString('django/6')}
+          />
         </ul>
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -97,17 +105,19 @@ describe('InspectorChangeVersion', function() {
     const wrapper = renderComponent({getAvailableVersions});
     const expected = (
       <ul className="inspector-change-version__versions">
-        <li className="inspector-change-version__none">
-          No other versions found.
-        </li>
-      </ul>);
+        <li className="inspector-change-version__none">No other versions found.</li>
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.inspector-change-version__versions'), expected);
   });
 
   it('can navigate to the current charm version details', function() {
     var changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('.inspector-change-version__current-version').props().onClick();
+    wrapper
+      .find('.inspector-change-version__current-version')
+      .props()
+      .onClick();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       store: 'django/5'
@@ -117,7 +127,11 @@ describe('InspectorChangeVersion', function() {
   it('can navigate to another charm version details', function() {
     var changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('InspectorChangeVersionItem').at(0).props().itemAction();
+    wrapper
+      .find('InspectorChangeVersionItem')
+      .at(0)
+      .props()
+      .itemAction();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       store: 'django/4'
@@ -137,7 +151,11 @@ describe('InspectorChangeVersion', function() {
       addCharm,
       service
     });
-    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
+    wrapper
+      .find('InspectorChangeVersionItem')
+      .at(0)
+      .props()
+      .buttonAction();
     // The charm needs to be added to the model first.
     assert.equal(addCharm.callCount, 1);
     assert.equal(addCharm.args[0][0], 'cs:django-4');
@@ -154,7 +172,11 @@ describe('InspectorChangeVersion', function() {
       addNotification,
       addCharm
     });
-    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
+    wrapper
+      .find('InspectorChangeVersionItem')
+      .at(0)
+      .props()
+      .buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
 
@@ -167,7 +189,11 @@ describe('InspectorChangeVersion', function() {
       addNotification,
       addCharm
     });
-    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
+    wrapper
+      .find('InspectorChangeVersionItem')
+      .at(0)
+      .props()
+      .buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
 
@@ -180,7 +206,11 @@ describe('InspectorChangeVersion', function() {
       addNotification,
       addCharm
     });
-    wrapper.find('InspectorChangeVersionItem').at(0).props().buttonAction();
+    wrapper
+      .find('InspectorChangeVersionItem')
+      .at(0)
+      .props()
+      .buttonAction();
     assert.equal(addNotification.callCount, 1);
   });
 

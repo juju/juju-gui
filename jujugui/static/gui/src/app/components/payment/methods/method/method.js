@@ -40,22 +40,26 @@ class PaymentMethod extends React.Component {
         onPaymentMethodRemoved={this.props.updateUser}
         removePaymentMethod={this.props.payment.removePaymentMethod}
         updatePaymentMethod={this._toggleForm.bind(this)}
-        username={this.props.username} />);
+        username={this.props.username}
+      />
+    );
   }
 
   /**
     Update a payment method.
   */
   _updatePaymentMethod() {
-    const valid = initUtils.validateForm(
-      ['expiry', 'cardAddress'], this.refs);
+    const valid = initUtils.validateForm(['expiry', 'cardAddress'], this.refs);
     if (!valid) {
       return;
     }
     const address = this.refs.cardAddress.getValue();
     const expiry = this.refs.expiry.getValue();
     const xhr = this.props.payment.updatePaymentMethod(
-      this.props.username, this.props.paymentMethod.id, address, expiry,
+      this.props.username,
+      this.props.paymentMethod.id,
+      address,
+      expiry,
       error => {
         if (error) {
           const message = 'Could not update the payment method';
@@ -70,7 +74,8 @@ class PaymentMethod extends React.Component {
         this._toggleForm();
         // Reload the user to get the new payment method.
         this.props.updateUser();
-      });
+      }
+    );
     this.xhrs.push(xhr);
   }
 
@@ -99,55 +104,57 @@ class PaymentMethod extends React.Component {
           getCountries={this.props.payment.getCountries}
           ref="cardAddress"
           showName={false}
-          showPhone={false} />
+          showPhone={false}
+        />
         <div className="twelve-col">
           <GenericInput
             disabled={this.props.acl.isReadOnly()}
             label="Expiry MM/YY"
             ref="expiry"
             required={true}
-            validate={[{
-              regex: /\S+/,
-              error: 'This field is required.'
-            }, {
-              regex: /[\d]{2}\/[\d]{2}/,
-              error: 'The expiry must be in the format MM/YY'
-            }]}
-            value={`${month}/${paymentMethod.year}`} />
+            validate={[
+              {
+                regex: /\S+/,
+                error: 'This field is required.'
+              },
+              {
+                regex: /[\d]{2}\/[\d]{2}/,
+                error: 'The expiry must be in the format MM/YY'
+              }
+            ]}
+            value={`${month}/${paymentMethod.year}`}
+          />
         </div>
         <div className="twelve-col payment-method__buttons">
-          <Button
-            action={this._toggleForm.bind(this)}
-            type="inline-neutral">
+          <Button action={this._toggleForm.bind(this)} type="inline-neutral">
             Cancel
           </Button>
-          <Button
-            action={this._updatePaymentMethod.bind(this)}
-            type="inline-positive">
+          <Button action={this._updatePaymentMethod.bind(this)} type="inline-positive">
             Update
           </Button>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   render() {
-    const content = this.state.showForm ?
-      this._generateEditForm() : this._generatePaymentMethod();
+    const content = this.state.showForm
+      ? this._generateEditForm()
+      : this._generatePaymentMethod();
     return (
       <ExpandingRow
         classes={{
           'user-profile__list-row': true
         }}
         clickable={false}
-        expanded={true}>
-        <div></div>
-        <div className="payment-method">
-          {content}
-        </div>
+        expanded={true}
+      >
+        <div />
+        <div className="payment-method">{content}</div>
       </ExpandingRow>
     );
   }
-};
+}
 
 PaymentMethod.propTypes = {
   acl: PropTypes.object.isRequired,

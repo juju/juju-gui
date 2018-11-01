@@ -13,17 +13,19 @@ const Constraints = require('../../constraints/constraints');
 describe('MachineViewAddMachine', function() {
   let acl, dbAPI, modelAPI, unit;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <MachineViewAddMachine
-      acl={options.acl || acl}
-      close={options.close || sinon.stub()}
-      dbAPI={options.dbAPI}
-      modelAPI={options.modelAPI || modelAPI}
-      parentId={options.parentId}
-      selectMachine={options.selectMachine}
-      series={options.series}
-      unit={options.unit} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <MachineViewAddMachine
+        acl={options.acl || acl}
+        close={options.close || sinon.stub()}
+        dbAPI={options.dbAPI}
+        modelAPI={options.modelAPI || modelAPI}
+        parentId={options.parentId}
+        selectMachine={options.selectMachine}
+        series={options.series}
+        unit={options.unit}
+      />
+    );
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -34,18 +36,22 @@ describe('MachineViewAddMachine', function() {
     };
     dbAPI = {
       machines: {
-        filterByParent: sinon.stub().returns([{
-          id: 'new0',
-          displayName: 'new0'
-        }, {
-          id: 'new1',
-          displayName: 'new1'
-        }, {
-          // Deleted machines should not appear in the list of options.
-          id: 'new2',
-          deleted: true,
-          displayName: 'new2'
-        }])
+        filterByParent: sinon.stub().returns([
+          {
+            id: 'new0',
+            displayName: 'new0'
+          },
+          {
+            id: 'new1',
+            displayName: 'new1'
+          },
+          {
+            // Deleted machines should not appear in the list of options.
+            id: 'new2',
+            deleted: true,
+            displayName: 'new2'
+          }
+        ])
       }
     };
     unit = {id: 'unit1'};
@@ -53,62 +59,66 @@ describe('MachineViewAddMachine', function() {
 
   it('can render for creating a machine', function() {
     const wrapper = renderComponent();
-    const buttons = [{
-      title: 'Cancel',
-      type: 'base',
-      action: sinon.stub()
-    }, {
-      title: 'Create',
-      action: wrapper.find('ButtonRow').prop('buttons')[1].action,
-      type: 'neutral',
-      disabled: undefined
-    }];
+    const buttons = [
+      {
+        title: 'Cancel',
+        type: 'base',
+        action: sinon.stub()
+      },
+      {
+        title: 'Create',
+        action: wrapper.find('ButtonRow').prop('buttons')[1].action,
+        type: 'neutral',
+        disabled: undefined
+      }
+    ];
     const expected = (
       <div className="add-machine">
         <div className="add-machine__constraints" key="constraints">
-          <h4 className="add-machine__title">
-            Define constraints
-          </h4>
+          <h4 className="add-machine__title">Define constraints</h4>
           <Constraints
             containerType={''}
             disabled={false}
             hasUnit={false}
             providerType={'ec2'}
             series={undefined}
-            valuesChanged={wrapper.find('Constraints').prop('valuesChanged')} />
+            valuesChanged={wrapper.find('Constraints').prop('valuesChanged')}
+          />
         </div>
-        <ButtonRow
-          buttons={buttons}
-          key="buttons" />
-      </div>);
+        <ButtonRow buttons={buttons} key="buttons" />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can disable the controls when read only', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => true});
     const wrapper = renderComponent();
-    assert.equal(
-      wrapper.find('ButtonRow').prop('buttons')[1].disabled, true);
+    assert.equal(wrapper.find('ButtonRow').prop('buttons')[1].disabled, true);
   });
 
   it('can render for creating a container', function() {
     const wrapper = renderComponent({parentId: 'new0'});
     const expected = (
-      <div className="add-machine">{[
-        <select
-          className="add-machine__container"
-          defaultValue=""
-          disabled={false}
-          key="containers"
-          onChange={wrapper.find('select').prop('onChange')}>
-          <option disabled={true} value="">
-            Choose container type...
-          </option>
-          {undefined}
-          <option value="lxd">LXD</option>
-          <option value="kvm">KVM</option>
-        </select>
-      ]}</div>);
+      <div className="add-machine">
+        {[
+          <select
+            className="add-machine__container"
+            defaultValue=""
+            disabled={false}
+            key="containers"
+            onChange={wrapper.find('select').prop('onChange')}
+          >
+            <option disabled={true} value="">
+              Choose container type...
+            </option>
+            {undefined}
+            <option value="lxd">LXD</option>
+            <option value="kvm">KVM</option>
+          </select>
+        ]}
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -123,40 +133,42 @@ describe('MachineViewAddMachine', function() {
         defaultValue=""
         disabled={false}
         key="machines"
-        onChange={wrapper.find('select').prop('onChange')}>
+        onChange={wrapper.find('select').prop('onChange')}
+      >
         <option disabled={true} value="">
           Move to...
         </option>
-        <option value="new">
-          New machine
-        </option>
+        <option value="new">New machine</option>
         {[
-          <option
-            key="new0"
-            value="new0">
+          <option key="new0" value="new0">
             new0
           </option>,
-          <option
-            key="new1"
-            value="new1">
+          <option key="new1" value="new1">
             new1
           </option>
         ]}
-      </select>);
+      </select>
+    );
     assert.compareJSX(wrapper.find('select'), expected);
   });
 
   it('can call the cancel method', function() {
     const close = sinon.stub();
     const wrapper = renderComponent({close});
-    wrapper.find('ButtonRow').prop('buttons')[0].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[0]
+      .action();
     assert.equal(close.callCount, 1);
   });
 
   it('can create a machine', function() {
     const wrapper = renderComponent();
     const instance = wrapper.instance();
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     const createMachine = modelAPI.createMachine;
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], null);
@@ -171,7 +183,10 @@ describe('MachineViewAddMachine', function() {
         value: 'lxd'
       }
     });
-    wrapper.find('ButtonRow').prop('buttons')[1].action();
+    wrapper
+      .find('ButtonRow')
+      .prop('buttons')[1]
+      .action();
     const createMachine = modelAPI.createMachine;
     assert.equal(createMachine.callCount, 1);
     assert.equal(createMachine.args[0][0], 'lxd');

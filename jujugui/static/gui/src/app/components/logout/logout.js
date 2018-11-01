@@ -13,13 +13,9 @@ class Logout extends React.Component {
     @returns {String} The collection of class names.
   */
   _generateClasses() {
-    return classNames(
-      'logout-link',
-      'dropdown-menu__list-item-link',
-      {
-        'logout-link--hidden': !this.props.visible
-      }
-    );
+    return classNames('logout-link', 'dropdown-menu__list-item-link', {
+      'logout-link--hidden': !this.props.visible
+    });
   }
 
   _handleClick() {
@@ -43,12 +39,13 @@ class Logout extends React.Component {
         className={this._generateClasses()}
         href={logoutUrl}
         onClick={this._handleClick.bind(this)}
-        target={target}>
+        target={target}
+      >
         Logout
       </a>
     );
   }
-};
+}
 
 Logout.propTypes = {
   charmstoreLogoutUrl: PropTypes.string.isRequired,

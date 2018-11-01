@@ -9,19 +9,23 @@ const StatusApplicationList = require('./application-list');
 describe('StatusApplicationList', () => {
   let applications, units;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StatusApplicationList
-      applications={options.applications || applications}
-      generateApplicationOnClick={
-        options.generateApplicationOnClick || sinon.stub().returns(sinon.stub())}
-      generateApplicationURL={
-        options.generateApplicationURL || sinon.stub().returns('http://example.com')}
-      generateCharmURL={options.generateCharmURL || sinon.stub()}
-      getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
-      onCharmClick={options.onCharmClick || sinon.stub()}
-      statusFilter={options.statusFilter}
-      units={options.units || units} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <StatusApplicationList
+        applications={options.applications || applications}
+        generateApplicationOnClick={
+          options.generateApplicationOnClick || sinon.stub().returns(sinon.stub())
+        }
+        generateApplicationURL={
+          options.generateApplicationURL || sinon.stub().returns('http://example.com')
+        }
+        generateCharmURL={options.generateCharmURL || sinon.stub()}
+        getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
+        onCharmClick={options.onCharmClick || sinon.stub()}
+        statusFilter={options.statusFilter}
+        units={options.units || units}
+      />
+    );
 
   beforeEach(() => {
     applications = {
@@ -59,15 +63,19 @@ describe('StatusApplicationList', () => {
         publicAddress: '13.211.141.188',
         privateAddress: '172.31.6.46',
         machineID: '2',
-        ports: [{
-          protocol: 'tcp',
-          number: 2379
-        }],
-        portRanges: [{
-          fromPort: 2379,
-          toPort: 2379,
-          protocol: 'tcp'
-        }],
+        ports: [
+          {
+            protocol: 'tcp',
+            number: 2379
+          }
+        ],
+        portRanges: [
+          {
+            fromPort: 2379,
+            toPort: 2379,
+            protocol: 'tcp'
+          }
+        ],
         subordinate: false,
         workloadStatus: {
           current: 'active',

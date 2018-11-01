@@ -7,11 +7,10 @@ const classNames = require('classnames');
 
 const ExpertBlock = props => (
   <div className={classNames('expert-block', props.classes)}>
-    <div className="expert-block__top-title">
-      {props.title}
-    </div>
+    <div className="expert-block__top-title">{props.title}</div>
     {props.children}
-  </div>);
+  </div>
+);
 
 ExpertBlock.propTypes = {
   children: PropTypes.any.isRequired,

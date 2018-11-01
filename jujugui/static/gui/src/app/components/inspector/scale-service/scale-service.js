@@ -46,12 +46,9 @@ class ScaleService extends React.Component {
     @method _generateClasses
   */
   _generateClasses() {
-    return classNames(
-      'scale-service--constraints',
-      {
-        hidden: !this.state.constraintsVisibility
-      }
-    );
+    return classNames('scale-service--constraints', {
+      hidden: !this.state.constraintsVisibility
+    });
   }
 
   /**
@@ -102,16 +99,16 @@ class ScaleService extends React.Component {
   render() {
     const props = this.props;
     const disabled = props.acl.isReadOnly();
-    const buttons = [{
-      disabled: disabled,
-      title: 'Confirm',
-      submit: true
-    }];
+    const buttons = [
+      {
+        disabled: disabled,
+        title: 'Confirm',
+        submit: true
+      }
+    ];
 
     return (
-      <form
-        className="scale-service"
-        onSubmit={this._scaleUpService.bind(this)}>
+      <form className="scale-service" onSubmit={this._scaleUpService.bind(this)}>
         <div className="scale-service--units">
           <input
             autoComplete="off"
@@ -122,7 +119,8 @@ class ScaleService extends React.Component {
             onChange={this._updateState.bind(this)}
             ref="numUnitsInput"
             step="1"
-            type="number" />
+            type="number"
+          />
           <span className="scale-service--units__span">units</span>
         </div>
         <div className="scale-service--selector">
@@ -134,7 +132,8 @@ class ScaleService extends React.Component {
               name="placement"
               onChange={this._toggleConstraints.bind(this)}
               ref="autoPlaceUnitsToggle"
-              type="radio" />
+              type="radio"
+            />
             <label htmlFor="auto-place-units">1 unit per machine</label>
           </div>
           <div>
@@ -145,7 +144,8 @@ class ScaleService extends React.Component {
               id="manually-place-units"
               name="placement"
               onChange={this._toggleConstraints.bind(this)}
-              type="radio" />
+              type="radio"
+            />
             <label htmlFor="manually-place-units">Manually place</label>
           </div>
         </div>
@@ -154,7 +154,8 @@ class ScaleService extends React.Component {
             disabled={disabled}
             hasUnit={true}
             providerType={props.providerType}
-            valuesChanged={this._updateConstraints.bind(this)} />
+            valuesChanged={this._updateConstraints.bind(this)}
+          />
         </div>
         <ButtonRow buttons={buttons} />
       </form>
@@ -164,7 +165,7 @@ class ScaleService extends React.Component {
   componentDidMount() {
     this.refs.numUnitsInput.focus();
   }
-};
+}
 
 ScaleService.propTypes = {
   acl: PropTypes.object.isRequired,

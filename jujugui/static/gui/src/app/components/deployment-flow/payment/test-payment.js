@@ -14,30 +14,36 @@ const Spinner = require('../../spinner/spinner');
 describe('DeploymentPayment', function() {
   let acl, getUser, payment, stripe, user;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentPayment
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      generatePath={options.generatePath || sinon.stub()}
-      payment={payment}
-      paymentUser={options.paymentUser}
-      setPaymentUser={options.setPaymentUser || sinon.stub()}
-      stripe={stripe}
-      username={options.username || 'spinach'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentPayment
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        generatePath={options.generatePath || sinon.stub()}
+        payment={payment}
+        paymentUser={options.paymentUser}
+        setPaymentUser={options.setPaymentUser || sinon.stub()}
+        stripe={stripe}
+        username={options.username || 'spinach'}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
     user = {
-      paymentMethods: [{
-        name: 'Company'
-      }]
+      paymentMethods: [
+        {
+          name: 'Company'
+        }
+      ]
     };
     getUser = sinon.stub().callsArgWith(1, null, {
-      paymentMethods: [{
-        name: 'Company'
-      }]
+      paymentMethods: [
+        {
+          name: 'Company'
+        }
+      ]
     });
     payment = {
       createUser: sinon.stub(),
@@ -56,7 +62,8 @@ describe('DeploymentPayment', function() {
     const expected = (
       <div className="deployment-payment">
         <Spinner />
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -71,13 +78,13 @@ describe('DeploymentPayment', function() {
     const wrapper = renderComponent({paymentUser: user});
     const expected = (
       <ul className="deployment-payment__methods twelve-col">
-        {[<li
-          className="deployment-payment__method"
-          key="Company0">
-          <PaymentMethodCard
-            card={{name: 'Company'}} />
-        </li>]}
-      </ul>);
+        {[
+          <li className="deployment-payment__method" key="Company0">
+            <PaymentMethodCard card={{name: 'Company'}} />
+          </li>
+        ]}
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.deployment-payment__methods'), expected);
   });
 
@@ -98,10 +105,13 @@ describe('DeploymentPayment', function() {
             hash: 'payment',
             profile: 'spinach'
           }}
-          generatePath={sinon.stub()}>
+          generatePath={sinon.stub()}
+        >
           Profile
-        </Link>.
-      </div>);
+        </Link>
+        .
+      </div>
+    );
     assert.compareJSX(wrapper.find('.deployment-payment__no-methods'), expected);
   });
 
@@ -134,8 +144,10 @@ describe('DeploymentPayment', function() {
             getCountries: payment.getCountries.bind(payment)
           })}
           stripe={stripe}
-          username="spinach" />
-      </div>);
+          username="spinach"
+        />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 

@@ -49,11 +49,10 @@ class InsetSelect extends React.Component {
     if (label) {
       id = label.replace(' ', '-');
       element = (
-        <label
-          className="inset-select__label"
-          htmlFor={id}>
+        <label className="inset-select__label" htmlFor={id}>
           {label}
-        </label>);
+        </label>
+      );
     }
     return {
       labelElement: element,
@@ -70,9 +69,7 @@ class InsetSelect extends React.Component {
   _generateOptions() {
     return this.props.options.map((option, i) => {
       return (
-        <option
-          key={option.value + i}
-          value={option.value}>
+        <option key={option.value + i} value={option.value}>
           {option.label}
         </option>
       );
@@ -86,15 +83,11 @@ class InsetSelect extends React.Component {
     @returns {String} The list classes.
   */
   _generateClasses() {
-    const label = this.props.label ?
-      this.props.label.replace(/\W/g, '').toLowerCase() : null;
-    return classNames(
-      'inset-select',
-      {
-        [`inset-select--${label}`]: this.props.label,
-        'inset-select--disabled': this.props.disabled
-      }
-    );
+    const label = this.props.label ? this.props.label.replace(/\W/g, '').toLowerCase() : null;
+    return classNames('inset-select', {
+      [`inset-select--${label}`]: this.props.label,
+      'inset-select--disabled': this.props.disabled
+    });
   }
 
   render() {
@@ -109,13 +102,14 @@ class InsetSelect extends React.Component {
           id={id}
           onChange={this._callOnChange.bind(this)}
           ref="field"
-          required={this.props.required}>
+          required={this.props.required}
+        >
           {this._generateOptions()}
         </select>
       </div>
     );
   }
-};
+}
 
 InsetSelect.propTypes = {
   disabled: PropTypes.bool,

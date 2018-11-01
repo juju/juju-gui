@@ -12,7 +12,10 @@ assert.compareJSX = function(actual, expected) {
   // compare the two outputs. By wrapping the expected in a div we stop
   // enzyme from rendering the supplied component and then we compare against
   // the actual output.
-  const expectedOutput = enzyme.shallow(<div>{expected}</div>).children().debug();
+  const expectedOutput = enzyme
+    .shallow(<div>{expected}</div>)
+    .children()
+    .debug();
   const diff = JsDiff.diffLines(actualOutput, expectedOutput);
   if (!diff.some(part => part.added || part.removed)) {
     return;

@@ -24,24 +24,29 @@ const User = require('../user/user');
 const utils = require('../init/testing-utils');
 
 describe('Model Controller Promises', function() {
-  var cleanups, conn, db, env, environment,
-      getApplicationConfig, load, modelController, serviceError, yui;
+  var cleanups,
+    conn,
+    db,
+    env,
+    environment,
+    getApplicationConfig,
+    load,
+    modelController,
+    serviceError,
+    yui;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use([],
-      function(Y) {
-        yui = Y;
-        window.yui = Y;
-        require('../yui-modules');
-        window.yui.use(
-          window.MODULES,
-          function() {
-            var goenv = window.yui.juju.environments.GoEnvironment;
-            load = window.yui.juju.models.Charm.prototype.load;
-            getApplicationConfig = goenv.prototype.getApplicationConfig;
-            done();
-          });
+    YUI(GlobalConfig).use([], function(Y) {
+      yui = Y;
+      window.yui = Y;
+      require('../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        var goenv = window.yui.juju.environments.GoEnvironment;
+        load = window.yui.juju.models.Charm.prototype.load;
+        getApplicationConfig = goenv.prototype.getApplicationConfig;
+        done();
       });
+    });
   });
 
   beforeEach(function() {
@@ -49,18 +54,25 @@ describe('Model Controller Promises', function() {
       return new function() {
         return {
           store: {},
-          setItem: function(name, val) { this.store['name'] = val; },
-          getItem: function(name) { return this.store['name'] || null; }
+          setItem: function(name, val) {
+            this.store['name'] = val;
+          },
+          getItem: function(name) {
+            return this.store['name'] || null;
+          }
         };
-      };
+      }();
     };
     const userClass = new User({sessionStorage: getMockStorage()});
     userClass.controller = {user: 'user', password: 'password'};
     conn = new utils.SocketStub();
     environment = env = new yui.juju.environments.GoEnvironment({
-      conn: conn, user: userClass});
-    db = new yui.juju.models.Database(
-      {getECS: sinon.stub().returns({changeSet: {}})});
+      conn: conn,
+      user: userClass
+    });
+    db = new yui.juju.models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     env.connect();
     modelController = new ModelController({
       db: db,
@@ -148,7 +160,7 @@ describe('Model Controller Promises', function() {
   it('will return a promise with a stored loaded charm', function(done) {
     // this tests the first resolve path
     var charmId = 'cs:precise/wordpress-7',
-        charm = db.charms.add({id: charmId});
+      charm = db.charms.add({id: charmId});
     charm.loaded = true;
     var promise = modelController.getCharm(charmId);
     assert(promise instanceof Promise, true);
@@ -162,7 +174,8 @@ describe('Model Controller Promises', function() {
       function() {
         assert.fail('This should not have failed.');
         done();
-      });
+      }
+    );
   });
 
   it('will return a promise with a loaded charm', function(done) {
@@ -185,7 +198,8 @@ describe('Model Controller Promises', function() {
       function() {
         assert.fail('This should not have failed.');
         done();
-      });
+      }
+    );
   });
 
   it('will return a promise with a stored loaded service', function(done) {
@@ -193,7 +207,8 @@ describe('Model Controller Promises', function() {
     var serviceId = 'wordpress';
     db.services.add({
       id: serviceId,
-      loaded: true});
+      loaded: true
+    });
     var promise = modelController.getService(serviceId);
     assert(promise instanceof Promise, true);
     assert(!!db.services.getById(serviceId), true);
@@ -206,15 +221,15 @@ describe('Model Controller Promises', function() {
       function() {
         assert.fail('This should not have failed.');
         done();
-      });
-
+      }
+    );
   });
 
   it('will return a promise with a loaded service', function(done) {
     // This tests the second resolve path
     clobberGetApplicationConfig();
     var serviceId = 'wordpress',
-        promise = modelController.getService(serviceId);
+      promise = modelController.getService(serviceId);
     assert(promise instanceof Promise, true);
     assert(db.services.getById(serviceId), null);
     promise.then(
@@ -226,14 +241,15 @@ describe('Model Controller Promises', function() {
       function() {
         assert.fail('This should not have failed.');
         done();
-      });
+      }
+    );
   });
 
   it('will reject the promise if the service does not exist', function(done) {
     serviceError = true;
     clobberGetApplicationConfig();
     var serviceId = 'wordpress',
-        promise = modelController.getService(serviceId);
+      promise = modelController.getService(serviceId);
     assert(promise instanceof Promise, true);
     assert(db.services.getById(serviceId), null);
     promise.then(
@@ -244,33 +260,34 @@ describe('Model Controller Promises', function() {
       function(err) {
         assert(err.err, true);
         done();
-      });
+      }
+    );
   });
 
-  it('will return a promise with a loaded charm and service',
-    function(done) {
-      clobberLoad();
-      clobberGetApplicationConfig();
-      var serviceId = 'wordpress',
-          charmId = 'cs:precise/wordpress-7';
-      db.services.add({
-        id: serviceId,
-        loaded: true,
-        charm: charmId
-      });
-      var promise = modelController.getServiceWithCharm(serviceId);
-      assert(promise instanceof Promise, true);
-      promise.then(
-        function(result) {
-          assert(result.service.get('id'), serviceId);
-          assert(result.charm.get('id'), charmId);
-          assert(!!db.services.getById(serviceId), true);
-          assert(!!db.charms.getById(charmId), true);
-          done();
-        },
-        function() {
-          assert.fail('This should not have failed.');
-          done();
-        });
+  it('will return a promise with a loaded charm and service', function(done) {
+    clobberLoad();
+    clobberGetApplicationConfig();
+    var serviceId = 'wordpress',
+      charmId = 'cs:precise/wordpress-7';
+    db.services.add({
+      id: serviceId,
+      loaded: true,
+      charm: charmId
     });
+    var promise = modelController.getServiceWithCharm(serviceId);
+    assert(promise instanceof Promise, true);
+    promise.then(
+      function(result) {
+        assert(result.service.get('id'), serviceId);
+        assert(result.charm.get('id'), charmId);
+        assert(!!db.services.getById(serviceId), true);
+        assert(!!db.charms.getById(charmId), true);
+        done();
+      },
+      function() {
+        assert.fail('This should not have failed.');
+        done();
+      }
+    );
+  });
 });

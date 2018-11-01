@@ -31,25 +31,19 @@ class ExpertContactCard extends React.Component {
   _generateInitial() {
     const expert = EXPERTS[this.props.expert];
     const highlights = expert.highlights.map(highlight => (
-      <li
-        className="expert-contact-card__highlight"
-        key={highlight}>
-        <SvgIcon
-          name="bullet"
-          size="14" />
+      <li className="expert-contact-card__highlight" key={highlight}>
+        <SvgIcon name="bullet" size="14" />
         {highlight}
-      </li>));
+      </li>
+    ));
     return (
       <div className="expert-contact-card__initial">
-        <ul className="expert-contact-card__highlights">
-          {highlights}
-        </ul>
-        <Button
-          action={this._showContact.bind(this)}
-          type="positive">
+        <ul className="expert-contact-card__highlights">{highlights}</ul>
+        <Button action={this._showContact.bind(this)} type="positive">
           Show contact details&hellip;
         </Button>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -58,39 +52,29 @@ class ExpertContactCard extends React.Component {
   _generateContact() {
     const expert = EXPERTS[this.props.expert];
     const phoneNumbers = expert.phoneNumbers.map(number => (
-      <li
-        className="expert-contact-card__phone-number"
-        key={number}>
+      <li className="expert-contact-card__phone-number" key={number}>
         {number}
-      </li>));
+      </li>
+    ));
     return (
       <div className="expert-contact-card__contact">
-        <p className="expert-contact-card__contact-description">
-          {expert.contactDescription}
-        </p>
+        <p className="expert-contact-card__contact-description">{expert.contactDescription}</p>
         <ul className="expert-contact-card__contact-items">
           <li className="expert-contact-card__contact-item">
-            <SvgIcon
-              name="web"
-              size="16" />
+            <SvgIcon name="web" size="16" />
             {expert.website}
           </li>
           <li className="expert-contact-card__contact-item">
-            <SvgIcon
-              name="email"
-              size="16" />
+            <SvgIcon name="email" size="16" />
             {expert.email}
           </li>
           <li className="expert-contact-card__contact-item">
-            <SvgIcon
-              name="phone"
-              size="16" />
-            <ul className="expert-contact-card__phone-numbers">
-              {phoneNumbers}
-            </ul>
+            <SvgIcon name="phone" size="16" />
+            <ul className="expert-contact-card__phone-numbers">{phoneNumbers}</ul>
           </li>
         </ul>
-      </div>);
+      </div>
+    );
   }
 
   render() {
@@ -99,16 +83,14 @@ class ExpertContactCard extends React.Component {
       return null;
     }
     return (
-      <ExpertCard
-        expert={expert}
-        staticURL={this.props.staticURL}>
+      <ExpertCard expert={expert} staticURL={this.props.staticURL}>
         <div className="expert-contact-card">
           {this.state.showContact ? this._generateContact() : this._generateInitial()}
         </div>
       </ExpertCard>
     );
   }
-};
+}
 
 ExpertContactCard.propTypes = {
   expert: PropTypes.string.isRequired,

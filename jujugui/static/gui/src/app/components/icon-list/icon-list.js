@@ -24,7 +24,7 @@ class IconList extends React.Component {
     try {
       const url = urls.URL.fromAnyString(id);
       path = url.path();
-    } catch(err) {
+    } catch (err) {
       // This is probably due to new series introduced and not yet supported.
       console.error(err);
       path = null;
@@ -60,24 +60,18 @@ class IconList extends React.Component {
   _generateIcons() {
     let components = [];
     this.props.applications.forEach(app => {
-      const src = app.iconPath ||
-          'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
+      const src =
+        app.iconPath || 'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
       components.push(
-        <li
-          className="icon-list__item tooltip"
-          key={app.displayName}>
+        <li className="icon-list__item tooltip" key={app.displayName}>
           <a
             className="icon-list__link"
             href={this._generateStoreURL(app.id)}
-            onClick={this._handleItemClick.bind(this, app.id)}>
-            <img
-              alt={app.displayName}
-              className="icon-list__image"
-              src={src} />
+            onClick={this._handleItemClick.bind(this, app.id)}
+          >
+            <img alt={app.displayName} className="icon-list__image" src={src} />
             <span className="tooltip__tooltip">
-              <span className="tooltip__inner tooltip__inner--down">
-                {app.displayName}
-              </span>
+              <span className="tooltip__inner tooltip__inner--down">{app.displayName}</span>
             </span>
           </a>
         </li>
@@ -87,20 +81,18 @@ class IconList extends React.Component {
   }
 
   render() {
-    return (
-      <ul className="icon-list">
-        {this._generateIcons()}
-      </ul>);
+    return <ul className="icon-list">{this._generateIcons()}</ul>;
   }
-
-};
+}
 
 IconList.propTypes = {
-  applications: PropTypes.arrayOf(PropTypes.shape({
-    displayName: PropTypes.string.isRequired,
-    iconPath: PropTypes.string,
-    id: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  applications: PropTypes.arrayOf(
+    PropTypes.shape({
+      displayName: PropTypes.string.isRequired,
+      iconPath: PropTypes.string,
+      id: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
   changeState: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired
 };

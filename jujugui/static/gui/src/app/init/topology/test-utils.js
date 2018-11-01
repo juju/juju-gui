@@ -12,8 +12,7 @@ describe('topology utils', () => {
       blue: {x: 200, y: 200}
     };
     const mungedBoxes = utils.serviceBoxesToVertices(serviceBoxes);
-    assert.deepEqual(mungedBoxes,
-      [[100, 100], [200, 100], [100, 200], [200, 200]]);
+    assert.deepEqual(mungedBoxes, [[100, 100], [200, 100], [100, 200], [200, 200]]);
   });
 
   it('translates service boxes to centers coordinates', () => {
@@ -77,61 +76,44 @@ describe('topology utils', () => {
 
   it('finds the center of a line between two points', () => {
     const point_one = [0, 10],
-        point_two = [0, 20];
+      point_two = [0, 20];
 
     assert.deepEqual([0, 15], utils.findCenterPoint(point_one, point_two));
   });
 
   it('finds the center of a non-flat line', () => {
     const point_one = [0, 0],
-        point_two = [13, 23];
+      point_two = [13, 23];
 
-    assert.deepEqual(
-      [6.5, 11.5],
-      utils.findCenterPoint(point_one, point_two)
-    );
+    assert.deepEqual([6.5, 11.5], utils.findCenterPoint(point_one, point_two));
   });
 
   it('finds the center a line given decimal endpoints', () => {
     const point_one = [0, 0],
-        point_two = [13.3, 23.54];
+      point_two = [13.3, 23.54];
 
-    assert.deepEqual(
-      [6.65, 11.77],
-      utils.findCenterPoint(point_one, point_two)
-    );
+    assert.deepEqual([6.65, 11.77], utils.findCenterPoint(point_one, point_two));
   });
 
   it('repositions the coordinate based on offset and scale.', () => {
     const endpoint = {x: 10, y: 20, w: 5},
-        offset = [13, 23],
-        scale = 1.5;
+      offset = [13, 23],
+      scale = 1.5;
 
     // X = 15 + 7.5 + 13
     // Y = 20 * 1.5 + 23
-    assert.deepEqual(
-      [35.5, 53],
-      utils.locateRelativePointOnCanvas(endpoint, offset, scale)
-    );
+    assert.deepEqual([35.5, 53], utils.locateRelativePointOnCanvas(endpoint, offset, scale));
   });
 
   it('sets the appropriate visibility classes', () => {
-    const flags = [
-      'show',
-      'fade',
-      'hide',
-      'highlight',
-      'unhighlight'
-    ];
+    const flags = ['show', 'fade', 'hide', 'highlight', 'unhighlight'];
     function checkFlags(trueFlag) {
       const css = utils.getVisibilityClasses(trueFlag);
       const label = trueFlag + 'ed: ';
-      assert.equal(css[trueFlag], true,
-        label + trueFlag + ' should be true');
+      assert.equal(css[trueFlag], true, label + trueFlag + ' should be true');
       flags.forEach(function(flag) {
         if (trueFlag !== flag) {
-          assert.equal(css[flag], false,
-            label + flag + ' should be false');
+          assert.equal(css[flag], false, label + flag + ' should be false');
         }
       });
     }

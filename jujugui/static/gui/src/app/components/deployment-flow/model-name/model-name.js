@@ -7,7 +7,6 @@ const React = require('react');
 const GenericInput = require('../../generic-input/generic-input');
 
 class DeploymentModelName extends React.Component {
-
   componentDidMount() {
     const modelName = this.refs.modelName;
     if (modelName && this.props.focusName) {
@@ -49,20 +48,25 @@ class DeploymentModelName extends React.Component {
           onChange={_updateModelName}
           ref="modelName"
           required={true}
-          validate={[{
-            regex: /\S+/,
-            error: 'This field is required.'
-          }, {
-            regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
-            error: 'This field must only contain lowercase ' +
-              'letters, numbers, and hyphens. It must not start or ' +
-              'end with a hyphen.'
-          }]}
-          value={value} />
+          validate={[
+            {
+              regex: /\S+/,
+              error: 'This field is required.'
+            },
+            {
+              regex: /^([a-z0-9]([a-z0-9-]*[a-z0-9])?)?$/,
+              error:
+                'This field must only contain lowercase ' +
+                'letters, numbers, and hyphens. It must not start or ' +
+                'end with a hyphen.'
+            }
+          ]}
+          value={value}
+        />
       </div>
     );
   }
-};
+}
 
 DeploymentModelName.propTypes = {
   acl: PropTypes.object.isRequired,

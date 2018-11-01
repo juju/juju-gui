@@ -15,11 +15,10 @@ class SearchResultsSelectFilter extends React.Component {
     var components = [];
     this.props.items.forEach(function(item) {
       components.push(
-        <option
-          key={item.value}
-          value={item.value}>
+        <option key={item.value} value={item.value}>
           {item.label}
-        </option>);
+        </option>
+      );
     }, this);
     return components;
   }
@@ -45,13 +44,14 @@ class SearchResultsSelectFilter extends React.Component {
         {this.props.label}:
         <select
           defaultValue={this.props.currentValue}
-          onChange={this._handleChange.bind(this)}>
+          onChange={this._handleChange.bind(this)}
+        >
           {this._generateItems()}
         </select>
       </div>
     );
   }
-};
+}
 
 SearchResultsSelectFilter.propTypes = {
   changeState: PropTypes.func.isRequired,

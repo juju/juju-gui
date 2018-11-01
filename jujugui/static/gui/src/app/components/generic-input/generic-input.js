@@ -28,8 +28,10 @@ class GenericInput extends React.Component {
     var value = this.getValue();
     var errors = [];
     this.props.validate.forEach(validator => {
-      if ((validator.check && validator.check(value)) ||
-        (validator.regex && !validator.regex.test(value))) {
+      if (
+        (validator.check && validator.check(value)) ||
+        (validator.regex && !validator.regex.test(value))
+      ) {
         errors.push(validator.error);
       }
     });
@@ -143,17 +145,12 @@ class GenericInput extends React.Component {
     }
     const components = errors.map(error => {
       return (
-        <li
-          className="generic-input__error"
-          key={error}
-          role="alert">
+        <li className="generic-input__error" key={error} role="alert">
           {error}
-        </li>);
+        </li>
+      );
     });
-    return (
-      <ul className="generic-input__errors">
-        {components}
-      </ul>);
+    return <ul className="generic-input__errors">{components}</ul>;
   }
 
   /**
@@ -163,22 +160,18 @@ class GenericInput extends React.Component {
   _generateLabel() {
     var label = this.props.label;
     var element, id;
-    var classes = classNames(
-      'generic-input__label', {
-        'generic-input__label--focus': this.state.focus,
-        'generic-input__label--value-present': !!this.getValue() ||
-          this.props.value,
-        'generic-input__label--placeholder-present': !!this.props.placeholder
-      }
-    );
+    var classes = classNames('generic-input__label', {
+      'generic-input__label--focus': this.state.focus,
+      'generic-input__label--value-present': !!this.getValue() || this.props.value,
+      'generic-input__label--placeholder-present': !!this.props.placeholder
+    });
     if (label) {
       id = label.replace(' ', '-');
       element = (
-        <label
-          className={classes}
-          htmlFor={id}>
+        <label className={classes} htmlFor={id}>
           {label}
-        </label>);
+        </label>
+      );
     }
     return {
       labelElement: element,
@@ -195,9 +188,9 @@ class GenericInput extends React.Component {
     const disabled = this.props.disabled;
     const errors = this.state.errors.length > 0;
     if (this.props.multiLine) {
-      const classes = classNames(
-        'generic-input__multiline-field',
-        {'generic-input__multiline-field--disabled': disabled});
+      const classes = classNames('generic-input__multiline-field', {
+        'generic-input__multiline-field--disabled': disabled
+      });
       return (
         <div
           aria-invalid={errors}
@@ -209,8 +202,9 @@ class GenericInput extends React.Component {
           onChange={this._handleDIVOnchange.bind(this)}
           onFocus={this._focusHandler.bind(this)}
           onKeyUp={this._keyUpHandler.bind(this)}
-          ref="field">
-        </div>);
+          ref="field"
+        />
+      );
     }
     return (
       <input
@@ -227,24 +221,25 @@ class GenericInput extends React.Component {
         placeholder={this.props.placeholder}
         ref="field"
         required={this.props.required}
-        type={this.props.type} />);
+        type={this.props.type}
+      />
+    );
   }
 
   render() {
-    const showErrors = this.state.errors.length > 0 ||
-      this.props.hasExternalError;
+    const showErrors = this.state.errors.length > 0 || this.props.hasExternalError;
     var {labelElement, id} = this._generateLabel();
-    var classes = classNames(
-      'generic-input', {
-        'generic-input--no-label': !this.props.label,
-        'has-error': showErrors
-      }
-    );
+    var classes = classNames('generic-input', {
+      'generic-input--no-label': !this.props.label,
+      'has-error': showErrors
+    });
     // If there's an error and an inline icon has been explicitly asked for.
-    const errorIcon = showErrors && this.props.inlineErrorIcon ?
-      (<SvgIcon
-        name="relation-icon-error"
-        size={16} />) : undefined;
+    const errorIcon =
+      showErrors && this.props.inlineErrorIcon ? (
+        <SvgIcon name="relation-icon-error" size={16} />
+      ) : (
+        undefined
+      );
     return (
       <div className={classes}>
         {labelElement}
@@ -254,7 +249,7 @@ class GenericInput extends React.Component {
       </div>
     );
   }
-};
+}
 
 GenericInput.propTypes = {
   autocomplete: PropTypes.bool,
@@ -271,10 +266,7 @@ GenericInput.propTypes = {
   required: PropTypes.bool,
   type: PropTypes.string,
   validate: PropTypes.array,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ])
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 GenericInput.defaultProps = {

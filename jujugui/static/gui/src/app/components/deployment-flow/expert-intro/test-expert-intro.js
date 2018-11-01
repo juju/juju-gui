@@ -9,21 +9,29 @@ const DeploymentExpertIntro = require('./expert-intro');
 describe('DeploymentExpertIntro', () => {
   let charm;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <DeploymentExpertIntro
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      ddData={options.ddData || {
-        id: 'cs:apache-21'
-      }}
-      entityModel={options.entityModel === undefined ? {
-        toEntity: sinon.stub().returns(charm)
-      } : options.entityModel}
-      generatePath={options.generatePath || sinon.stub()}
-      getDiagramURL={options.getDiagramURL || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      staticURL={options.staticURL || '/static/url'} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <DeploymentExpertIntro
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        ddData={
+          options.ddData || {
+            id: 'cs:apache-21'
+          }
+        }
+        entityModel={
+          options.entityModel === undefined
+            ? {
+                toEntity: sinon.stub().returns(charm)
+              }
+            : options.entityModel
+        }
+        generatePath={options.generatePath || sinon.stub()}
+        getDiagramURL={options.getDiagramURL || sinon.stub()}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        staticURL={options.staticURL || '/static/url'}
+      />
+    );
 
   beforeEach(() => {
     charm = {

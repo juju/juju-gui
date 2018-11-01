@@ -21,7 +21,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 const DeployerMixin = require('./deployer-mixin');
 
 describe('Ghost Deployer Extension', function() {
-
   var Y, ghostDeployer, models;
 
   beforeAll(function(done) {
@@ -76,7 +75,7 @@ describe('Ghost Deployer Extension', function() {
   });
 
   // Create and return a charm model instance.
-  var makeCharm = function(id='cs:trusty/django-42') {
+  var makeCharm = function(id = 'cs:trusty/django-42') {
     return new Y.Model({
       id: id,
       name: 'django',
@@ -132,8 +131,11 @@ describe('Ghost Deployer Extension', function() {
       assert.deepEqual(opt, {
         applicationId: 'ghost-service-id'
       });
-      assert.equal(ghostDeployer.modelAPI.deploy.callCount, 0,
-        'deploy should not have been called before charm was added');
+      assert.equal(
+        ghostDeployer.modelAPI.deploy.callCount,
+        0,
+        'deploy should not have been called before charm was added'
+      );
     };
     ghostDeployer.deployService(charm);
     assert.equal(addCharmCalled, true);
@@ -369,7 +371,8 @@ describe('Ghost Deployer Extension', function() {
     assert.equal(notification.title, 'Error adding unit django/42');
     assert.equal(
       notification.message,
-      'Could not add the requested unit. Server responded with: bad wolf');
+      'Could not add the requested unit. Server responded with: bad wolf'
+    );
     assert.equal(notification.level, 'error');
   });
 
@@ -381,9 +384,7 @@ describe('Ghost Deployer Extension', function() {
     assert.strictEqual(notifications.add.calledOnce, true);
     var notification = notifications.add.lastCall.args[0];
     assert.equal(notification.title, 'Added unit django/42');
-    assert.equal(
-      notification.message,
-      'Successfully created the requested unit.');
+    assert.equal(notification.message, 'Successfully created the requested unit.');
     assert.equal(notification.level, 'info');
   });
 
@@ -401,5 +402,4 @@ describe('Ghost Deployer Extension', function() {
     };
     assert.deepEqual(args[0], expectedUnit);
   });
-
 });

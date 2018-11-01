@@ -29,7 +29,8 @@ class EntityContentDiagram extends React.PureComponent {
         <button
           className="entity-content__diagram-expand"
           onClick={this._handleExpand.bind(this)}
-          role="button">
+          role="button"
+        >
           <SvgIcon name="fullscreen-grey_16" size="12" />
         </button>
       );
@@ -38,22 +39,22 @@ class EntityContentDiagram extends React.PureComponent {
   }
 
   render() {
-    const classes = classNames(
-      'entity-content__diagram',
-      {'row row--grey': this.props.isRow}
-    );
+    const classes = classNames('entity-content__diagram', {
+      'row row--grey': this.props.isRow
+    });
     return (
       <div className={classes}>
         <object
           className="entity-content__diagram-image"
           data={this.props.diagramUrl}
           title={this.props.title}
-          type="image/svg+xml" />
+          type="image/svg+xml"
+        />
         {this._generateExpandButton()}
       </div>
     );
   }
-};
+}
 
 EntityContentDiagram.propTypes = {
   clearLightbox: PropTypes.func,

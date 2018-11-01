@@ -18,10 +18,7 @@ class ButtonRow extends React.Component {
     var buttonsLength = this.props.buttons.length;
     classes['button-row--multiple'] = buttonsLength > 0;
     classes['button-row--count-' + buttonsLength] = true;
-    return classNames(
-      'button-row',
-      classes
-    );
+    return classNames('button-row', classes);
   }
 
   /**
@@ -39,22 +36,20 @@ class ButtonRow extends React.Component {
           disabled={button.disabled}
           key={button.title}
           submit={button.submit}
-          type={button.type}>
+          type={button.type}
+        >
           {button.title}
-        </Button>);
+        </Button>
+      );
     });
     return components;
   }
 
   render() {
     var buttons = this._generateButtons(this.props.buttons);
-    return (
-      <div className={this._generateClasses()}>
-        {buttons}
-      </div>
-    );
+    return <div className={this._generateClasses()}>{buttons}</div>;
   }
-};
+}
 
 ButtonRow.propTypes = {
   buttons: PropTypes.array.isRequired

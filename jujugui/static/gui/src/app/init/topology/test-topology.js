@@ -10,7 +10,6 @@ const ViewportModule = require('./viewport');
 const utils = require('../testing-utils');
 const initUtils = require('../utils');
 
-
 describe('topology', function() {
   let TestModule, container, db, models, state, topo;
 
@@ -30,7 +29,7 @@ describe('topology', function() {
     button2.classList.add('target');
     container.appendChild(button2);
     TestModule = class {
-      constructor(options={}) {
+      constructor(options = {}) {
         this.name = 'TestModule';
         this.container = container;
         this.events = {
@@ -79,7 +78,9 @@ describe('topology', function() {
   });
 
   function createStandardTopo() {
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
     topo = new Topology();
     topo.container = container;
     topo.db = db;
@@ -90,13 +91,12 @@ describe('topology', function() {
     return topo;
   }
 
-  it('should be able to create a topology with standard env view modules',
-    function() {
-      topo = createStandardTopo();
-      topo.render();
-      // Verify that we have built the default scene.
-      initUtils.isValue(topo.vis).should.equal(true);
-    });
+  it('should be able to create a topology with standard env view modules', function() {
+    topo = createStandardTopo();
+    topo.render();
+    // Verify that we have built the default scene.
+    initUtils.isValue(topo.vis).should.equal(true);
+  });
 
   describe('servicePointOutside', function() {
     var padding = 200;
@@ -122,7 +122,6 @@ describe('topology', function() {
       var coords = topo.servicePointOutside([[150, 20]]);
       assert.deepEqual(coords, [padding + 150, 20]);
     });
-
   });
 
   describe('annotateBoxPosition', function() {
@@ -165,5 +164,4 @@ describe('topology', function() {
       assert.equal(update_annotations.calledOnce, true);
     });
   });
-
 });

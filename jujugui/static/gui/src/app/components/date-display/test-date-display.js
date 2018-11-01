@@ -11,9 +11,9 @@ describe('DateDisplay', () => {
 
   const renderComponent = (options = {}, renderOptions = {}) => {
     const wrapper = enzyme.shallow(
-      <DateDisplay
-        date={options.date}
-        relative={options.relative} />, renderOptions);
+      <DateDisplay date={options.date} relative={options.relative} />,
+      renderOptions
+    );
     instance = wrapper.instance();
     // Mock the method that returns the current datetime to return a preset
     // datetime.
@@ -39,22 +39,20 @@ describe('DateDisplay', () => {
   it('can display a date in the correct format', () => {
     const wrapper = renderComponent({date: relative});
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 21:07">
+      <time dateTime="19/01/2020" title="19/01/2020 21:07">
         19/01/2020
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can parse a date from a string', () => {
     const wrapper = renderComponent({date: 'Mon, 19 Jan 2020 21:07:24 GMT'});
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 21:07">
+      <time dateTime="19/01/2020" title="19/01/2020 21:07">
         19/01/2020
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -65,11 +63,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 21:07">
+      <time dateTime="19/01/2020" title="19/01/2020 21:07">
         just now
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -80,11 +77,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 21:06">
+      <time dateTime="19/01/2020" title="19/01/2020 21:06">
         1 minute ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -95,11 +91,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 20:48">
+      <time dateTime="19/01/2020" title="19/01/2020 20:48">
         19 minutes ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -110,11 +105,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 20:07">
+      <time dateTime="19/01/2020" title="19/01/2020 20:07">
         1 hour ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -125,11 +119,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="19/01/2020"
-        title="19/01/2020 10:07">
+      <time dateTime="19/01/2020" title="19/01/2020 10:07">
         11 hours ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -140,11 +133,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="18/01/2020"
-        title="18/01/2020 21:07">
+      <time dateTime="18/01/2020" title="18/01/2020 21:07">
         1 day ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -155,11 +147,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="13/01/2020"
-        title="13/01/2020 21:07">
+      <time dateTime="13/01/2020" title="13/01/2020 21:07">
         6 days ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -170,11 +161,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="11/01/2020"
-        title="11/01/2020 21:07">
+      <time dateTime="11/01/2020" title="11/01/2020 21:07">
         1 week ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -185,11 +175,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="25/12/2019"
-        title="25/12/2019 21:07">
+      <time dateTime="25/12/2019" title="25/12/2019 21:07">
         3 weeks ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -200,11 +189,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="18/12/2019"
-        title="18/12/2019 21:07">
+      <time dateTime="18/12/2019" title="18/12/2019 21:07">
         1 month ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -215,11 +203,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="11/10/2019"
-        title="11/10/2019 21:07">
+      <time dateTime="11/10/2019" title="11/10/2019 21:07">
         3 months ago
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -230,11 +217,10 @@ describe('DateDisplay', () => {
       relative: true
     });
     const expected = (
-      <time
-        dateTime="26/10/2018"
-        title="26/10/2018 21:07">
+      <time dateTime="26/10/2018" title="26/10/2018 21:07">
         26/10/2018
-      </time>);
+      </time>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
@@ -252,10 +238,13 @@ describe('DateDisplay', () => {
   });
 
   it('updates relative dates every minute', () => {
-    const wrapper = renderComponent({
-      date: relative,
-      relative: true
-    }, {disableLifecycleMethods: true});
+    const wrapper = renderComponent(
+      {
+        date: relative,
+        relative: true
+      },
+      {disableLifecycleMethods: true}
+    );
     const instance = wrapper.instance();
     var forceUpdate = sinon.stub(instance, 'forceUpdate');
     instance.componentDidMount();
@@ -269,9 +258,7 @@ describe('DateDisplay', () => {
       date: 'today',
       relative: true
     });
-    const expected = (
-      <span>today</span>
-    );
+    const expected = <span>today</span>;
     assert.compareJSX(wrapper, expected);
   });
 

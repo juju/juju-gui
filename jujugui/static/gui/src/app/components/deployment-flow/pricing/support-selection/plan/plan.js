@@ -8,22 +8,14 @@ const React = require('react');
 const SvgIcon = require('../../../../svg-icon/svg-icon');
 
 class DeploymentSupportSelectionPlan extends React.Component {
-
   _generateFeatures() {
     const features = this.props.features.map((feature, i) => (
-      <li
-        className="deployment-support-select-plan__feature"
-        key={feature + i}>
-        <SvgIcon
-          name="bullet"
-          size="14" />
+      <li className="deployment-support-select-plan__feature" key={feature + i}>
+        <SvgIcon name="bullet" size="14" />
         {feature}
       </li>
     ));
-    return (
-      <ul className="deployment-support-select-plan__features">
-        {features}
-      </ul>);
+    return <ul className="deployment-support-select-plan__features">{features}</ul>;
   }
 
   _calculateCost() {
@@ -38,14 +30,16 @@ class DeploymentSupportSelectionPlan extends React.Component {
       this.props.classes,
       {
         'deployment-support-select-plan--selected': this.props.selected
-      });
+      }
+    );
     return (
       <div className={classes}>
         <div
           className="deployment-support-select-plan__card"
           onClick={this.props.onSelect}
           role="button"
-          tabIndex="0">
+          tabIndex="0"
+        >
           <h3>{this.props.title}</h3>
           {this._generateFeatures()}
           <div className="deployment-support-select-plan__price">
@@ -61,8 +55,7 @@ class DeploymentSupportSelectionPlan extends React.Component {
       </div>
     );
   }
-};
-
+}
 
 DeploymentSupportSelectionPlan.propTypes = {
   classes: PropTypes.array,

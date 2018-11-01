@@ -34,7 +34,9 @@ describe('Juju delta handlers', function() {
   });
 
   beforeEach(function() {
-    db = new models.Database({getECS: sinon.stub().returns({changeSet: {}})});
+    db = new models.Database({
+      getECS: sinon.stub().returns({changeSet: {}})
+    });
   });
 
   describe('unitInfo handler', function() {
@@ -60,11 +62,18 @@ describe('Juju delta handlers', function() {
           'public-address': 'example.com',
           'private-address': '10.0.0.1',
           subordinate: false,
-          'port-ranges': [{
-            'from-port': 9000, 'to-port': 10000, protocol: 'udp'
-          }, {
-            'from-port': 443, 'to-port': 443, protocol: 'tcp'
-          }],
+          'port-ranges': [
+            {
+              'from-port': 9000,
+              'to-port': 10000,
+              protocol: 'udp'
+            },
+            {
+              'from-port': 443,
+              'to-port': 443,
+              protocol: 'tcp'
+            }
+          ],
           ports: [{number: 80, protocol: 'tcp'}, {number: 42, protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
@@ -80,11 +89,20 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '10.0.0.1');
         assert.strictEqual(unit.subordinate, false, 'subordinate');
-        assert.deepEqual(unit.portRanges, [{
-          from: 9000, to: 10000, protocol: 'udp', single: false
-        }, {
-          from: 443, to: 443, protocol: 'tcp', single: true
-        }]);
+        assert.deepEqual(unit.portRanges, [
+          {
+            from: 9000,
+            to: 10000,
+            protocol: 'udp',
+            single: false
+          },
+          {
+            from: 443,
+            to: 443,
+            protocol: 'tcp',
+            single: true
+          }
+        ]);
       };
 
       it('creates a unit in the database (global list)', function() {
@@ -134,18 +152,15 @@ describe('Juju delta handlers', function() {
         var unit = list.getById('django/2');
         if (!workloadInError) {
           assert.strictEqual(unit.agent_state, 'pending');
-          assert.strictEqual(
-            unit.workloadStatusMessage, 'installing charm software');
+          assert.strictEqual(unit.workloadStatusMessage, 'installing charm software');
         } else {
           assert.equal(unit.agent_state, 'error');
           assert.equal(unit.agent_state_info, 'hook run error');
           assert.deepEqual(unit.agent_state_data, {foo: 'bar'});
           assert.strictEqual(unit.workloadStatusMessage, 'hook run error');
         }
-        assert.strictEqual(
-          unit.agentStatus, workloadInError ? 'executing' : 'idle');
-        assert.strictEqual(
-          unit.workloadStatus, workloadInError ? 'error' : 'maintenance');
+        assert.strictEqual(unit.agentStatus, workloadInError ? 'executing' : 'idle');
+        assert.strictEqual(unit.workloadStatus, workloadInError ? 'error' : 'maintenance');
         assert.strictEqual(unit.public_address, 'example.com');
         assert.strictEqual(unit.private_address, '192.168.0.1');
         assert.strictEqual(unit.subordinate, true, 'subordinate');
@@ -247,7 +262,6 @@ describe('Juju delta handlers', function() {
         assert.strictEqual(db.units.size(), 0);
         assert.strictEqual(django.get('units').size(), 0);
       });
-
     });
   });
 
@@ -397,8 +411,9 @@ describe('Juju delta handlers', function() {
       assert.strictEqual(1, db.services.size());
       // Retrieve the application from the database.
       var application = db.services.getById('wordpress');
-      assert.deepEqual(
-        application.get('constraints'), {tags: 'tag1,tag2,tag3'});
+      assert.deepEqual(application.get('constraints'), {
+        tags: 'tag1,tag2,tag3'
+      });
     });
 
     it('handle empty tags constraint', function() {
@@ -445,7 +460,7 @@ describe('Juju delta handlers', function() {
         exposed: true,
         constraints: constraints
       });
-      var changedConstraints = {'arch': 'i386'};
+      var changedConstraints = {arch: 'i386'};
       var change = {
         name: 'wordpress',
         'charm-url': 'cs:quantal/wordpress-11',
@@ -495,7 +510,6 @@ describe('Juju delta handlers', function() {
       // The hooks have been garbage collected.
       assert.deepEqual(models._applicationChangedHooks, {});
     });
-
   });
 
   describe('remoteApplicationInfo handler', function() {
@@ -590,7 +604,6 @@ describe('Juju delta handlers', function() {
       // The remote application has been removed.
       assert.strictEqual(db.remoteServices.size(), 0);
     });
-
   });
 
   describe('relationInfo handler', function() {
@@ -652,12 +665,12 @@ describe('Juju delta handlers', function() {
       db.services.add({id: 'mysql'});
       db.relations.add({
         id: relationKey,
-        'interface': 'http',
+        interface: 'http',
         scope: 'global',
         endpoints: dbEndpoints
       });
       var firstEndpoint = deltaEndpoints[0],
-          firstRelation = firstEndpoint.relation;
+        firstRelation = firstEndpoint.relation;
       firstEndpoint['application-name'] = 'mysql';
       firstRelation.name = 'db';
       firstRelation.interface = 'mysql';
@@ -683,7 +696,7 @@ describe('Juju delta handlers', function() {
     it('removes a relation from the database', function() {
       db.relations.add({
         id: relationKey,
-        'interface': 'http',
+        interface: 'http',
         scope: 'global',
         endpoints: dbEndpoints
       });
@@ -699,17 +712,19 @@ describe('Juju delta handlers', function() {
       db.services.reset();
       var change = {
         key: 'haproxy:peer',
-        endpoints: [{
-          relation: {
-            interface: 'haproxy-peer',
-            limit: 1,
-            name: 'peer',
-            optional: false,
-            role: 'peer',
-            scope: 'global'
-          },
-          'application-name': 'haproxy'
-        }]
+        endpoints: [
+          {
+            relation: {
+              interface: 'haproxy-peer',
+              limit: 1,
+              name: 'peer',
+              optional: false,
+              role: 'peer',
+              scope: 'global'
+            },
+            'application-name': 'haproxy'
+          }
+        ]
       };
       relationInfo(db, 'change', change);
       // The relation is not yet included in the database.
@@ -725,7 +740,6 @@ describe('Juju delta handlers', function() {
       assert.isNotNull(relation);
       assert.strictEqual(relation.get('interface'), 'haproxy-peer');
     });
-
   });
 
   describe('machineInfo handler', function() {
@@ -898,7 +912,6 @@ describe('Juju delta handlers', function() {
       var machine = db.machines.getById('42');
       assert.isNull(machine.supportedContainers);
     });
-
   });
 
   describe('annotationInfo handler', function() {
@@ -926,7 +939,7 @@ describe('Juju delta handlers', function() {
       var djangoUnits = django.get('units');
       var unitData = {id: 'django/2', service: 'django'};
       db.addUnits(unitData);
-      var annotations = {'foo': '42', 'bar': '47'};
+      var annotations = {foo: '42', bar: '47'};
       var change = {
         tag: 'unit-django-2',
         annotations: annotations
@@ -943,7 +956,7 @@ describe('Juju delta handlers', function() {
 
     it('stores annotations on a machine', function() {
       db.machines.add({id: '1'});
-      var annotations = {'foo': '42', 'bar': '47'};
+      var annotations = {foo: '42', bar: '47'};
       var change = {
         tag: 'machine-1',
         annotations: annotations
@@ -955,7 +968,7 @@ describe('Juju delta handlers', function() {
     });
 
     it('stores annotations on the model', function() {
-      var annotations = {'foo': '42', 'bar': '47'};
+      var annotations = {foo: '42', bar: '47'};
       var change = {
         tag: 'model-foo',
         annotations: annotations
@@ -967,8 +980,8 @@ describe('Juju delta handlers', function() {
 
     it('correctly updates annotations', function() {
       var initial = {'gui-x': '42'},
-          next = {'gui-y': '47', 'gui-z': 'Now in 3D!'},
-          expected = {'gui-x': '42', 'gui-y': '47', 'gui-z': 'Now in 3D!'};
+        next = {'gui-y': '47', 'gui-z': 'Now in 3D!'},
+        expected = {'gui-x': '42', 'gui-y': '47', 'gui-z': 'Now in 3D!'};
       db.services.add({id: 'django', annotations: initial});
       var change = {
         tag: 'application-django',
@@ -997,8 +1010,8 @@ describe('Juju delta handlers', function() {
     it('does not override the unit relation_errors attr', function() {
       var django = db.services.add({id: 'django'});
       var djangoUnits = django.get('units');
-      var relation_errors = {'cache': ['memcached']};
-      var annotations = {'foo': '42', 'bar': '47'};
+      var relation_errors = {cache: ['memcached']};
+      var annotations = {foo: '42', bar: '47'};
       var unitData = {
         id: 'django/2',
         service: 'django',
@@ -1027,9 +1040,7 @@ describe('Juju delta handlers', function() {
       annotationInfo(db, 'add', change);
       assert.strictEqual(0, db.services.size());
     });
-
   });
-
 });
 
 describe('Juju delta handlers utilities', function() {
@@ -1052,12 +1063,10 @@ describe('Juju delta handlers utilities', function() {
     it('cleans up tags from Go juju', function() {
       // Clean up application tags.
       assert.equal('mysql', cleanUpEntityTags('application-mysql'));
-      assert.equal(
-        'buildbot-master', cleanUpEntityTags('application-buildbot-master'));
+      assert.equal('buildbot-master', cleanUpEntityTags('application-buildbot-master'));
       // Clean up unit tags.
       assert.equal('mysql/47', cleanUpEntityTags('unit-mysql-47'));
-      assert.equal(
-        'buildbot-master/0', cleanUpEntityTags('unit-buildbot-master-0'));
+      assert.equal('buildbot-master/0', cleanUpEntityTags('unit-buildbot-master-0'));
       // Clean up machine tags.
       assert.equal('0', cleanUpEntityTags('machine-0'));
       assert.equal('42', cleanUpEntityTags('machine-42'));
@@ -1072,7 +1081,6 @@ describe('Juju delta handlers utilities', function() {
         assert.equal(item, cleanUpEntityTags(item));
       });
     });
-
   });
 
   describe('Go Juju endpoints converter', function() {
@@ -1117,7 +1125,6 @@ describe('Juju delta handlers utilities', function() {
     it('returns an empty list if there are no endpoints', function() {
       assert.deepEqual([], createEndpoints([]));
     });
-
   });
 
   describe('Go Juju convertConstraints', function() {
@@ -1150,11 +1157,9 @@ describe('Juju delta handlers utilities', function() {
       });
       assert.deepEqual(constraints, {arch: 'i386', tags: 'tag1,tag2,tag3'});
     });
-
   });
 
   describe('handleGUIServices', function() {
-
     // Create and return a fake db.
     const makeDB = (dnsName, exposed) => {
       const get = sinon.stub();
@@ -1163,7 +1168,10 @@ describe('Juju delta handlers utilities', function() {
       return {
         environment: {set: sinon.stub()},
         services: {
-          getById: sinon.stub().withArgs('myshell').returns({get: get})
+          getById: sinon
+            .stub()
+            .withArgs('myshell')
+            .returns({get: get})
         }
       };
     };
@@ -1245,7 +1253,6 @@ describe('Juju delta handlers utilities', function() {
       utils.handleGUIServices(unit, db);
       assert.strictEqual(db.environment.set.callCount, 0, 'set call count');
     });
-
   });
 
   describe('translateToLegacyAgentState', function() {
@@ -1264,35 +1271,41 @@ describe('Juju delta handlers utilities', function() {
     });
 
     describe('rebooting, executing, idle, lost, failed', function() {
-
       var states = ['rebooting', 'executing', 'idle', 'lost', 'failed'];
 
       states.forEach(function(state) {
-
         it('returns error when in error: ' + state, function() {
-          assert.equal(translate(state, 'error'), 'error',
-            state + ' did not return the correct value');
+          assert.equal(
+            translate(state, 'error'),
+            'error',
+            state + ' did not return the correct value'
+          );
         });
 
         it('returns stopped when terminated: ' + state, function() {
-          assert.equal(translate(state, 'terminated'), 'stopped',
-            state + ' did not return the correct value');
+          assert.equal(
+            translate(state, 'terminated'),
+            'stopped',
+            state + ' did not return the correct value'
+          );
         });
 
         it('returns pending when in maintenance: ' + state, function() {
-          assert.equal(translate(state, 'maintenance'), 'pending',
-            state + ' did not return the correct value');
+          assert.equal(
+            translate(state, 'maintenance'),
+            'pending',
+            state + ' did not return the correct value'
+          );
         });
 
         it('returns started as a default: ' + state, function() {
-          assert.equal(translate(state, 'foobar'), 'started',
-            state + ' did not return the correct value');
+          assert.equal(
+            translate(state, 'foobar'),
+            'started',
+            state + ' did not return the correct value'
+          );
         });
-
       });
-
     });
-
   });
-
 });

@@ -9,21 +9,21 @@ const StatusUnitList = require('./unit-list');
 describe('StatusUnitList', () => {
   let applications, units;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <StatusUnitList
-      applications={options.applications || applications}
-      changeState={options.changeState || sinon.stub()}
-      generateMachineURL={options.generateCharmURL || sinon.stub()}
-      generatePath={options.generatePath || sinon.stub()}
-      generateUnitOnClick={
-        options.generateUnitOnClick || sinon.stub().returns(sinon.stub())}
-      generateUnitURL={
-        options.generateUnitURL || sinon.stub().returns('http://example.com')}
-      getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
-      onMachineClick={options.onCharmClick || sinon.stub()}
-      statusFilter={options.statusFilter}
-      units={options.units || units} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <StatusUnitList
+        applications={options.applications || applications}
+        changeState={options.changeState || sinon.stub()}
+        generateMachineURL={options.generateCharmURL || sinon.stub()}
+        generatePath={options.generatePath || sinon.stub()}
+        generateUnitOnClick={options.generateUnitOnClick || sinon.stub().returns(sinon.stub())}
+        generateUnitURL={options.generateUnitURL || sinon.stub().returns('http://example.com')}
+        getIconPath={options.getIconPath || sinon.stub().returns('icon.svg')}
+        onMachineClick={options.onCharmClick || sinon.stub()}
+        statusFilter={options.statusFilter}
+        units={options.units || units}
+      />
+    );
 
   beforeEach(() => {
     applications = {
@@ -61,15 +61,19 @@ describe('StatusUnitList', () => {
         publicAddress: '13.211.141.188',
         privateAddress: '172.31.6.46',
         machineID: '2',
-        ports: [{
-          protocol: 'tcp',
-          number: 2379
-        }],
-        portRanges: [{
-          fromPort: 2379,
-          toPort: 2379,
-          protocol: 'tcp'
-        }],
+        ports: [
+          {
+            protocol: 'tcp',
+            number: 2379
+          }
+        ],
+        portRanges: [
+          {
+            fromPort: 2379,
+            toPort: 2379,
+            protocol: 'tcp'
+          }
+        ],
         subordinate: false,
         workloadStatus: {
           current: 'active',
@@ -113,6 +117,7 @@ describe('StatusUnitList', () => {
     const wrapper = renderComponent();
     assert.equal(
       wrapper.prop('rows')[0].columns[4].content.props.className.includes('status-view__link'),
-      true);
+      true
+    );
   });
 });

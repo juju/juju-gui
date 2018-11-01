@@ -94,16 +94,9 @@ class EntityContent extends React.Component {
     Object.keys(options).forEach(function(name) {
       var option = options[name];
       option.name = name;
-      optionsList.push(
-        <EntityContentConfigOption
-          key={name}
-          option={option} />
-      );
+      optionsList.push(<EntityContentConfigOption key={name} option={option} />);
     }, this);
-    return (
-      <dl>
-        {optionsList}
-      </dl>);
+    return <dl>{optionsList}</dl>;
   }
 
   /**
@@ -135,18 +128,13 @@ class EntityContent extends React.Component {
       // Generate the list of options for this application.
       let optionsList = Object.keys(options).map((name, i) => {
         return (
-          <div
-            className="entity-content__config-option"
-            key={name + i}>
-            <dt className="entity-content__config-name">
-              {name}
-            </dt>
+          <div className="entity-content__config-option" key={name + i}>
+            <dt className="entity-content__config-name">{name}</dt>
             <dd className="entity-content__config-description">
-              <p>
-                {options[name]}
-              </p>
+              <p>{options[name]}</p>
             </dd>
-          </div>);
+          </div>
+        );
       });
       if (optionsList.length === 0) {
         optionsList = null;
@@ -157,24 +145,21 @@ class EntityContent extends React.Component {
             alt={application}
             className="entity-content__config-image"
             src={applicationIcons[id]}
-            width="26" />
-          {application}</span>
+            width="26"
+          />
+          {application}
+        </span>
       );
       if (optionsList) {
-        optionsList = (
-          <div className="entity-content__config-description">
-            {optionsList}
-          </div>
-        );
+        optionsList = <div className="entity-content__config-description">{optionsList}</div>;
       }
       return (
-        <AccordionSection
-          key={application}
-          title={title}>
+        <AccordionSection key={application} title={title}>
           {optionsList}
-        </AccordionSection>);
+        </AccordionSection>
+      );
     });
-    return (<div>{applicationsList}</div>);
+    return <div>{applicationsList}</div>;
   }
 
   /**
@@ -195,9 +180,7 @@ class EntityContent extends React.Component {
     if (optionsList) {
       const title = isCharm ? 'Configuration' : 'Bundle configuration';
       return (
-        <div
-          className="entity-content__configuration"
-          id="configuration">
+        <div className="entity-content__configuration" id="configuration">
           <h3 className="entity-content__header">{title}</h3>
           {optionsList}
         </div>
@@ -232,8 +215,8 @@ class EntityContent extends React.Component {
   _generateTags() {
     // Have to convert {0: 'database'} to ['database'].
     var tags = [],
-        entityTags = this.props.entityModel.get('tags'),
-        index;
+      entityTags = this.props.entityModel.get('tags'),
+      index;
     if (!entityTags) {
       return;
     }
@@ -242,9 +225,11 @@ class EntityContent extends React.Component {
     }
     return (
       <div className="entity-content__metadata">
-        <h4 className="entity-content__metadata-title">Tags:</h4>&nbsp;
+        <h4 className="entity-content__metadata-title">Tags:</h4>
+        &nbsp;
         {this._generateList(tags, this._handleTagClick.bind(this))}
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -284,7 +269,8 @@ class EntityContent extends React.Component {
           <a
             className="link link--cold"
             key={item.name}
-            onClick={this._toggleTerms.bind(this, item)}>
+            onClick={this._toggleTerms.bind(this, item)}
+          >
             {item.name}
           </a>
         );
@@ -292,9 +278,11 @@ class EntityContent extends React.Component {
     }
     return (
       <div className="entity-content__metadata">
-        <h4 className="entity-content__metadata-title">Terms:</h4>&nbsp;
+        <h4 className="entity-content__metadata-title">Terms:</h4>
+        &nbsp;
         {content}
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -303,7 +291,7 @@ class EntityContent extends React.Component {
     @method _toggleTerms
     @param {Object} terms The terms to display.
   */
-  _toggleTerms(terms=null) {
+  _toggleTerms(terms = null) {
     this.setState({showTerms: terms});
   }
 
@@ -318,10 +306,7 @@ class EntityContent extends React.Component {
     if (!terms) {
       return null;
     }
-    return (
-      <TermsPopup
-        close={this._toggleTerms.bind(this)}
-        terms={[terms]} />);
+    return <TermsPopup close={this._toggleTerms.bind(this)} terms={[terms]} />;
   }
 
   /**
@@ -332,10 +317,13 @@ class EntityContent extends React.Component {
     @return {Object} The description markup.
   */
   _generateDescription(entityModel) {
-    return (<EntityContentDescription
-      changeState={this.props.changeState}
-      description={entityModel.get('description')}
-      includeHeading={true} />);
+    return (
+      <EntityContentDescription
+        changeState={this.props.changeState}
+        description={entityModel.get('description')}
+        includeHeading={true}
+      />
+    );
   }
 
   /**
@@ -356,7 +344,9 @@ class EntityContent extends React.Component {
         displayLightbox={this.props.displayLightbox}
         isExpandable={true}
         isRow={false}
-        title={entity.displayName} />);
+        title={entity.displayName}
+      />
+    );
   }
 
   /**
@@ -368,7 +358,7 @@ class EntityContent extends React.Component {
   */
   _generateTagsAndTerms(entityModel) {
     if (this.props.entityModel.get('entityType') === 'charm') {
-      return(
+      return (
         <div className="entity-content__terms">
           {this._generateTags()}
           {this._generateTerms()}
@@ -390,7 +380,9 @@ class EntityContent extends React.Component {
         <EntityResources
           apiUrl={this.props.charmstore.url}
           entityId={entityModel.get('id')}
-          resources={entityModel.get('resources')} />);
+          resources={entityModel.get('resources')}
+        />
+      );
     }
   }
 
@@ -413,9 +405,8 @@ class EntityContent extends React.Component {
       var relationsList = Object.keys(requires).concat(Object.keys(provides));
       if (relationsList.length > 0) {
         return (
-          <EntityContentRelations
-            changeState={this.props.changeState}
-            relations={relations} />);
+          <EntityContentRelations changeState={this.props.changeState} relations={relations} />
+        );
       }
     }
   }
@@ -430,38 +421,36 @@ class EntityContent extends React.Component {
     let bugLink = entity.bugUrl;
     let homepageLink = entity.homepage;
     if (entity.entityType === 'bundle' && !homepageLink) {
-      homepageLink = 'https://code.launchpad.net/' +
-        `~charmers/charms/bundles/${entity.name}/bundle`;
+      homepageLink =
+        'https://code.launchpad.net/' + `~charmers/charms/bundles/${entity.name}/bundle`;
     } else if (entity.entityType === 'charm' && !bugLink) {
-      bugLink = 'https://bugs.launchpad.net/charms/' +
-        `+source/${entity.name}`;
+      bugLink = 'https://bugs.launchpad.net/charms/' + `+source/${entity.name}`;
     }
     return (
       <div className="section section__contribute">
-        <h3 className="section__title">
-          Contribute
-        </h3>
+        <h3 className="section__title">Contribute</h3>
         <ul className="section__list">
           {bugLink ? (
             <li className="section__list-item">
-              <a
-                className="link link--cold"
-                href={bugLink}
-                target="_blank">
+              <a className="link link--cold" href={bugLink} target="_blank">
                 Submit a bug
               </a>
-            </li>) : undefined}
+            </li>
+          ) : (
+            undefined
+          )}
           {homepageLink ? (
             <li className="section__list-item">
-              <a
-                className="link link--cold"
-                href={homepageLink}
-                target="_blank">
+              <a className="link link--cold" href={homepageLink} target="_blank">
                 Project homepage
               </a>
-            </li>) : undefined}
+            </li>
+          ) : (
+            undefined
+          )}
         </ul>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -476,7 +465,9 @@ class EntityContent extends React.Component {
       <ExpertContactCard
         expert={entityModel.get('owner')}
         sendAnalytics={this.props.sendAnalytics}
-        staticURL={this.props.staticURL} />);
+        staticURL={this.props.staticURL}
+      />
+    );
   }
 
   /**
@@ -498,19 +489,15 @@ class EntityContent extends React.Component {
       var quantityItem;
       if (quantity) {
         quantityItem = (
-          <span className="entity-content__plan-price-quantity">
-          / {quantity}
-          </span>);
+          <span className="entity-content__plan-price-quantity">/ {quantity}</span>
+        );
       }
       priceList.push(
-        <li
-          className="entity-content__plan-price-item"
-          key={amount + (quantity || '') + i}>
-          <span className="entity-content__plan-price-amount">
-            {amount}
-          </span>
+        <li className="entity-content__plan-price-item" key={amount + (quantity || '') + i}>
+          <span className="entity-content__plan-price-amount">{amount}</span>
           {quantityItem}
-        </li>);
+        </li>
+      );
     });
     return priceList;
   }
@@ -522,8 +509,7 @@ class EntityContent extends React.Component {
   */
   _generatePlans() {
     var props = this.props;
-    if (props.entityModel.get('entityType') !== 'charm' ||
-      !this.props.hasPlans) {
+    if (props.entityModel.get('entityType') !== 'charm' || !this.props.hasPlans) {
       return;
     }
     var plans = props.plans;
@@ -537,41 +523,32 @@ class EntityContent extends React.Component {
     }
     var plansList = [];
     plans.forEach((plan, i) => {
-      var classes = classNames(
-        'entity-content__plan',
-        'four-col',
-        {'last-col': (i + 1) % 3 === 0});
+      var classes = classNames('entity-content__plan', 'four-col', {
+        'last-col': (i + 1) % 3 === 0
+      });
 
       plansList.push(
-        <div
-          className={classes}
-          key={plan.url + i}>
+        <div className={classes} key={plan.url + i}>
           <div className="entity-content__plan-content">
-            <h3 className="entity-content__plan-title">
-              {plan.url}
-            </h3>
+            <h3 className="entity-content__plan-title">{plan.url}</h3>
             <ul className="entity-content__plan-price">
               {this._generatePriceList(plan.price)}
             </ul>
-            <p className="entity-content__plan-description">
-              {plan.description}
-            </p>
+            <p className="entity-content__plan-description">{plan.description}</p>
           </div>
-        </div>);
+        </div>
+      );
     });
     return (
-      <div
-        className="row entity-content__plans"
-        id="plans">
+      <div className="row entity-content__plans" id="plans">
         <div className="inner-wrapper">
           <div className="twelve-col">
             <h2 className="entity-content__header">Plans</h2>
-            <div className="equal-height">
-              {plansList}
-            </div>
+            <div className="equal-height">{plansList}</div>
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   /**
@@ -582,38 +559,37 @@ class EntityContent extends React.Component {
   _generateCard() {
     const entityModel = this.props.entityModel;
     const entity = entityModel.toEntity();
-    const storeId = entity.type === 'charm' ?
-      entity.storeId : entity.id.split('cs:').join('');
+    const storeId = entity.type === 'charm' ? entity.storeId : entity.id.split('cs:').join('');
     const ddeploy = this.props.flags['test.ddeploy'];
     const dataDD = ddeploy ? 'data-dd' : '';
-    const script = '<script ' +
-    'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
-    `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
-    let cardElement = <div className="juju-card" data-id={storeId}></div>;
+    const script =
+      '<script ' +
+      'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
+      `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
+    let cardElement = <div className="juju-card" data-id={storeId} />;
     if (ddeploy) {
-      cardElement = <div className="juju-card" data-dd data-id={storeId}></div>;
+      cardElement = <div className="juju-card" data-dd data-id={storeId} />;
     }
 
     return (
       <div className="entity-content__card section clearfix">
-        <h3 className="section__title">
-          Embed this charm
-        </h3>
+        <h3 className="section__title">Embed this charm</h3>
         <p>
           Add this card to your website by copying the code below.&nbsp;
           <a
             className="entity-content__card-cta"
             href="https://jujucharms.com/community/cards"
-            target="_blank">
+            target="_blank"
+          >
             Learn more
-          </a>.
+          </a>
+          .
         </p>
-        <CopyToClipboard
-          className="copy-to-clipboard"
-          value={script} />
+        <CopyToClipboard className="copy-to-clipboard" value={script} />
         <h4>Preview</h4>
         {cardElement}
-      </div>);
+      </div>
+    );
   }
 
   componentDidMount() {
@@ -639,7 +615,8 @@ class EntityContent extends React.Component {
                 entityModel={entityModel}
                 getFile={this.props.charmstore.getFile}
                 hash={this.props.hash}
-                scrollCharmbrowser={this.props.scrollCharmbrowser} />
+                scrollCharmbrowser={this.props.scrollCharmbrowser}
+              />
               {this._generateOptionsList(entityModel)}
             </div>
             <div className="four-col last-col">
@@ -647,9 +624,7 @@ class EntityContent extends React.Component {
               {this._generateActions()}
               {this._generateResources()}
               {this._showEntityRelations()}
-              <EntityFiles
-                apiUrl={this.props.charmstore.url}
-                entityModel={entityModel} />
+              <EntityFiles apiUrl={this.props.charmstore.url} entityModel={entityModel} />
               {this._generateCard()}
             </div>
           </div>
@@ -658,7 +633,7 @@ class EntityContent extends React.Component {
       </div>
     );
   }
-};
+}
 
 EntityContent.defaultProps = {
   flags: {}

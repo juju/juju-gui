@@ -25,8 +25,9 @@ function check(doc, state) {
   @returns {Boolean} Whether the notification should be showed.
 */
 function shouldShowNotification(doc) {
-  return _getCookie(doc, '_cookies_accepted') !== 'true' &&
-    !localStorage.getItem('disable-cookie');
+  return (
+    _getCookie(doc, '_cookies_accepted') !== 'true' && !localStorage.getItem('disable-cookie')
+  );
 }
 
 /**
@@ -52,7 +53,7 @@ function _getCookie(doc, cookie) {
   doc.cookie.split(';').some(pair => {
     const parts = pair.split('=');
     if (parts[0].trim() === cookie) {
-      value = parts.length == 2 && parts[1].trim() || '';
+      value = (parts.length == 2 && parts[1].trim()) || '';
       return true;
     }
   });
@@ -82,20 +83,20 @@ function _setCookie(doc, cookie, value, expiry) {
 function _renderNotification(doc, state) {
   const content = (
     <span>
-      We use cookies to improve your experience. By your continued use
-      of this application you accept such use. To change your settings
-      please&nbsp;
-      <a
-        href="http://www.ubuntu.com/privacy-policy#cookies"
-        target="_blank">
+      We use cookies to improve your experience. By your continued use of this application you
+      accept such use. To change your settings please&nbsp;
+      <a href="http://www.ubuntu.com/privacy-policy#cookies" target="_blank">
         see our policy
       </a>
-    </span>);
+    </span>
+  );
   return (
     <Notification
       content={content}
       dismiss={close.bind(this, doc, state)}
-      extraClasses="p-notification--center-bottom" />);
+      extraClasses="p-notification--center-bottom"
+    />
+  );
 }
 
 module.exports = {check, close, shouldShowNotification};

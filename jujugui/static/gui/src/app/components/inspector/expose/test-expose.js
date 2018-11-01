@@ -12,15 +12,17 @@ const InspectorExposeUnit = require('./unit/unit');
 describe('InspectorExpose', function() {
   var acl, service, modelAPI, units;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    <InspectorExpose
-      acl={options.acl || acl}
-      addNotification={options.addNotification || sinon.stub()}
-      changeState={options.changeState || sinon.stub()}
-      modelAPI={options.modelAPI || modelAPI}
-      service={options.service || service}
-      units={options.units || units} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      <InspectorExpose
+        acl={options.acl || acl}
+        addNotification={options.addNotification || sinon.stub()}
+        changeState={options.changeState || sinon.stub()}
+        modelAPI={options.modelAPI || modelAPI}
+        service={options.service || service}
+        units={options.units || units}
+      />
+    );
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
@@ -50,46 +52,57 @@ describe('InspectorExpose', function() {
             label="Expose application"
             onChange={wrapper.find('BooleanConfig').prop('onChange')}
             option={toggle}
-            ref={toggle.key} />
+            ref={toggle.key}
+          />
         </div>
         <p className="inspector-expose__warning">
-          Exposing this application may make it publicly accessible from
-          the web
+          Exposing this application may make it publicly accessible from the web
         </p>
         {undefined}
-      </div>);
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can render correctly if exposed', function() {
-    var unitList = [
-      {id: 'django/1'},
-      {id: 'django/2'}
-    ];
+    var unitList = [{id: 'django/1'}, {id: 'django/2'}];
     var units = {toArray: sinon.stub().returns(unitList)};
     const wrapper = renderComponent({units});
     const expected = (
       <ul className="inspector-expose__units">
         <InspectorExposeUnit
-          action={wrapper.find('InspectorExposeUnit').at(0).prop('action')}
+          action={wrapper
+            .find('InspectorExposeUnit')
+            .at(0)
+            .prop('action')}
           key={unitList[0].id}
-          unit={unitList[0]} />
+          unit={unitList[0]}
+        />
         <InspectorExposeUnit
-          action={wrapper.find('InspectorExposeUnit').at(1).prop('action')}
+          action={wrapper
+            .find('InspectorExposeUnit')
+            .at(1)
+            .prop('action')}
           key={unitList[1].id}
-          unit={unitList[1]} />
-      </ul>);
+          unit={unitList[1]}
+        />
+      </ul>
+    );
     assert.compareJSX(wrapper.find('.inspector-expose__units'), expected);
   });
 
   it('can navigate to a unit', function() {
     var changeState = sinon.stub();
     const wrapper = renderComponent({changeState});
-    wrapper.find('InspectorExposeUnit').at(0).props().action({
-      currentTarget: {
-        getAttribute: sinon.stub().returns('django/1')
-      }
-    });
+    wrapper
+      .find('InspectorExposeUnit')
+      .at(0)
+      .props()
+      .action({
+        currentTarget: {
+          getAttribute: sinon.stub().returns('django/1')
+        }
+      });
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {
       gui: {
@@ -105,14 +118,20 @@ describe('InspectorExpose', function() {
   it('can expose the service', function() {
     service.get.withArgs('exposed').returns(false);
     const wrapper = renderComponent();
-    wrapper.find('BooleanConfig').props().onChange();
+    wrapper
+      .find('BooleanConfig')
+      .props()
+      .onChange();
     assert.equal(modelAPI.exposeService.callCount, 1);
     assert.deepEqual(modelAPI.exposeService.args[0][0], 'demo');
   });
 
   it('can unexpose the service', function() {
     const wrapper = renderComponent();
-    wrapper.find('BooleanConfig').props().onChange();
+    wrapper
+      .find('BooleanConfig')
+      .props()
+      .onChange();
     assert.equal(modelAPI.unexposeService.callCount, 1);
     assert.deepEqual(modelAPI.unexposeService.args[0][0], 'demo');
   });
@@ -122,7 +141,10 @@ describe('InspectorExpose', function() {
     var addNotification = sinon.stub();
     service.get.withArgs('exposed').returns(false);
     const wrapper = renderComponent({addNotification});
-    wrapper.find('BooleanConfig').props().onChange();
+    wrapper
+      .find('BooleanConfig')
+      .props()
+      .onChange();
     assert.equal(addNotification.callCount, 1);
     assert.equal(addNotification.args[0][0].title, 'Exposing charm failed');
   });

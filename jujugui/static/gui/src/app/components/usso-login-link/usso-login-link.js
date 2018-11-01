@@ -54,12 +54,10 @@ class USSOLoginLink extends React.Component {
   */
   _renderTextLink() {
     return (
-      <a
-        className="usso-login__action"
-        onClick={this.handleLogin.bind(this)}
-        target="_blank">
+      <a className="usso-login__action" onClick={this.handleLogin.bind(this)} target="_blank">
         {this._generateContent('Login')}
-      </a>);
+      </a>
+    );
   }
 
   /**
@@ -70,7 +68,8 @@ class USSOLoginLink extends React.Component {
       <Button
         action={this.handleLogin.bind(this)}
         extraClasses="usso-login__action"
-        type="positive">
+        type="positive"
+      >
         {this._generateContent('Sign up/Log in with USSO')}
       </Button>
     );
@@ -83,12 +82,9 @@ class USSOLoginLink extends React.Component {
     } else {
       ele = this._renderTextLink();
     }
-    return(
-      <div className="usso-login">
-        {ele}
-      </div>);
+    return <div className="usso-login">{ele}</div>;
   }
-};
+}
 
 USSOLoginLink.propTypes = {
   addNotification: PropTypes.func.isRequired,

@@ -14,20 +14,22 @@ const jsTestUtils = require('../../../utils/component-test-utils');
 describe('MachineViewMachineUnit', function() {
   let acl, unit;
 
-  const renderComponent = (options = {}) => enzyme.shallow(
-    // The component is wrapped to handle drag and drop, but we just want to
-    // test the internal component so we access it via DecoratedComponent.
-    <MachineViewMachineUnit.DecoratedComponent
-      acl={options.acl || acl}
-      canDrag={options.canDrag === undefined ? false : options.canDrag}
-      connectDragSource={jsTestUtils.connectDragSource}
-      icon={options.icon || 'icon.svg'}
-      isDragging={options.isDragging === undefined ? false : options.isDragging}
-      machineType={options.machineType || 'machine'}
-      removeUnit={options.removeUnit || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      unit={options.unit || unit} />
-  );
+  const renderComponent = (options = {}) =>
+    enzyme.shallow(
+      // The component is wrapped to handle drag and drop, but we just want to
+      // test the internal component so we access it via DecoratedComponent.
+      <MachineViewMachineUnit.DecoratedComponent
+        acl={options.acl || acl}
+        canDrag={options.canDrag === undefined ? false : options.canDrag}
+        connectDragSource={jsTestUtils.connectDragSource}
+        icon={options.icon || 'icon.svg'}
+        isDragging={options.isDragging === undefined ? false : options.isDragging}
+        machineType={options.machineType || 'machine'}
+        removeUnit={options.removeUnit || sinon.stub()}
+        sendAnalytics={options.sendAnalytics || sinon.stub()}
+        unit={options.unit || unit}
+      />
+    );
 
   beforeEach(function() {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
@@ -41,43 +43,43 @@ describe('MachineViewMachineUnit', function() {
     const wrapper = renderComponent();
     const expected = (
       <div className="machine-view__machine-unit">
-        <MachineUnit
-          icon="icon.svg"
-          menuItems={undefined}
-          name="django/7"
-          status="started" />
-      </div>);
+        <MachineUnit icon="icon.svg" menuItems={undefined} name="django/7" status="started" />
+      </div>
+    );
     assert.compareJSX(wrapper, expected);
   });
 
   it('can render for a container', function() {
     const wrapper = renderComponent({machineType: 'container'});
     const menuItems = wrapper.find('MachineUnit').prop('menuItems');
-    assert.deepEqual(menuItems, [{
-      label: 'Destroy',
-      action: menuItems[0].action
-    }]);
+    assert.deepEqual(menuItems, [
+      {
+        label: 'Destroy',
+        action: menuItems[0].action
+      }
+    ]);
   });
 
   it('can disable the destroy when read only', function() {
     acl = shapeup.deepFreeze({isReadOnly: () => true});
     const wrapper = renderComponent({machineType: 'container'});
-    assert.strictEqual(
-      wrapper.find('MachineUnit').prop('menuItems')[0].action, null);
+    assert.strictEqual(wrapper.find('MachineUnit').prop('menuItems')[0].action, null);
   });
 
   it('can display in dragged mode', function() {
     const wrapper = renderComponent({isDragging: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__machine-unit--dragged'),
-      true);
+      true
+    );
   });
 
   it('can display in draggable mode', function() {
     const wrapper = renderComponent({canDrag: true});
     assert.equal(
       wrapper.prop('className').includes('machine-view__machine-unit--draggable'),
-      true);
+      true
+    );
   });
 
   it('can remove a unit', function() {
@@ -86,7 +88,10 @@ describe('MachineViewMachineUnit', function() {
       machineType: 'container',
       removeUnit
     });
-    wrapper.find('MachineUnit').prop('menuItems')[0].action();
+    wrapper
+      .find('MachineUnit')
+      .prop('menuItems')[0]
+      .action();
     assert.equal(removeUnit.callCount, 1);
   });
 });
