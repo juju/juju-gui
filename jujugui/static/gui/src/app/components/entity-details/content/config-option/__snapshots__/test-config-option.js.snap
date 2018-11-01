@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntityContentConfigOption can render with a default value 1`] = `
+<div
+  className="entity-content__config-option"
+>
+  <dt
+    className="entity-content__config-name"
+    id="charm-config-password"
+  >
+    password
+  </dt>
+  <dd
+    className="entity-content__config-description"
+  >
+    <p>
+      <span
+        className="entity-content__config-type"
+      >
+        (
+        string
+        )
+      </span>
+       
+      Required password
+    </p>
+  </dd>
+  <dd
+    className="entity-content__config-default"
+  >
+    abc123
+  </dd>
+</div>
+`;

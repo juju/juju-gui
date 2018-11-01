@@ -1,0 +1,219 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sharing handles revoke/grant errors 1`] = `
+<div>
+  <Popup
+    className="sharing__popup"
+    close={[Function]}
+    title="Share"
+    type="narrow"
+  >
+    <div
+      className="sharing__invite"
+    >
+      <div
+        className="sharing__invite--header"
+      >
+        Add a user
+      </div>
+      <form
+        onSubmit={[Function]}
+      >
+        <div
+          className="sharing__invite--username"
+        >
+          <GenericInput
+            autocomplete={true}
+            inlineErrorIcon={true}
+            label="Username"
+            onKeyUp={[Function]}
+            placeholder="Username"
+            required={true}
+            type="text"
+          />
+        </div>
+        <div
+          className="sharing__invite--access"
+        >
+          <InsetSelect
+            label="Access"
+            options={
+              Array [
+                Object {
+                  "label": "Read",
+                  "value": "read",
+                },
+                Object {
+                  "label": "Write",
+                  "value": "write",
+                },
+                Object {
+                  "label": "Admin",
+                  "value": "admin",
+                },
+              ]
+            }
+          />
+        </div>
+        <div
+          className="sharing__invite--grant-button"
+        >
+          <Button
+            disabled={true}
+            submit={true}
+            tooltip="Add user"
+            type="positive"
+          >
+            Add
+          </Button>
+        </div>
+        <div
+          className="sharing__invite--error"
+        >
+          <b>
+            Error:
+          </b>
+           
+          boom
+        </div>
+      </form>
+    </div>
+    <div
+      className="sharing__users-header"
+    >
+      <div
+        className="sharing__users-header-user"
+      >
+        User
+      </div>
+      <div
+        className="sharing__users-header-access"
+      >
+        Access
+      </div>
+    </div>
+    <div
+      className="sharing__users"
+    >
+      <div
+        className="sharing__user"
+        key="drwho@external"
+      >
+        <div
+          className="sharing__user-details"
+        >
+          <div
+            className="sharing__user-name"
+          >
+            drwho
+          </div>
+          <div
+            className="sharing__user-display-name"
+          >
+            Ubuntu SSO
+             user
+          </div>
+          <div
+            className="sharing__user-last-connection"
+          >
+            <span>
+              last connection: 
+              <DateDisplay
+                date={2020-01-19T21:07:24.000Z}
+                relative={true}
+              />
+            </span>
+          </div>
+        </div>
+        <div
+          className="sharing__user-access"
+        >
+          admin
+        </div>
+        <div
+          className="sharing__user-revoke"
+        >
+          <Button
+            action={[Function]}
+            tooltip="Remove user"
+          >
+            <SvgIcon
+              name="close_16"
+              size="16"
+            />
+          </Button>
+        </div>
+      </div>
+      <div
+        className="sharing__user"
+        key="rose"
+      >
+        <div
+          className="sharing__user-details"
+        >
+          <div
+            className="sharing__user-name"
+          >
+            Rose
+          </div>
+          <div
+            className="sharing__user-display-name"
+          >
+            local
+             user
+          </div>
+          <div
+            className="sharing__user-last-connection"
+          >
+            never connected
+          </div>
+        </div>
+        <div
+          className="sharing__user-access"
+        >
+          write
+        </div>
+        <div
+          className="sharing__user-revoke"
+        >
+          <Button
+            action={[Function]}
+            tooltip="Remove user"
+          >
+            <SvgIcon
+              name="close_16"
+              size="16"
+            />
+          </Button>
+        </div>
+      </div>
+      <div
+        className="sharing__user"
+        key="dalek"
+      >
+        <div
+          className="sharing__user-details"
+        >
+          <div
+            className="sharing__user-name"
+          >
+            Dalek
+          </div>
+          <div
+            className="sharing__user-display-name"
+          >
+            exterminate!
+          </div>
+        </div>
+      </div>
+    </div>
+    <Button
+      action={[Function]}
+      extraClasses="right"
+      type="inline-neutral"
+    >
+      Done
+    </Button>
+  </Popup>
+</div>
+`;

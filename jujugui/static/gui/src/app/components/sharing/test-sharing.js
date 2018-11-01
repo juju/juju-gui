@@ -252,10 +252,7 @@ describe('Sharing', () => {
     const instance = wrapper.instance();
     instance._modifyModelAccessCallback('boom');
     wrapper.update();
-    const expected = (
-      <div className="sharing__invite--error"><b>Error:</b>{' '}boom</div>
-    );
-    assert.compareJSX(wrapper.find('.sharing__invite--error'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   describe('add button states', () => {

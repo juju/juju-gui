@@ -18,27 +18,7 @@ describe('EntityContentConfigOption', function() {
       default: 'abc123'
     };
     const wrapper = renderComponent({option});
-    const expected = (
-      <div className="entity-content__config-option">
-        <dt
-          className="entity-content__config-name"
-          id="charm-config-password">
-            password
-        </dt>
-        <dd className="entity-content__config-description">
-          <p>
-            <span className="entity-content__config-type">
-                ({'string'})
-            </span>
-            {' '}
-              Required password
-          </p>
-        </dd>
-        <dd className="entity-content__config-default">
-            abc123
-        </dd>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render without a default value', function() {
