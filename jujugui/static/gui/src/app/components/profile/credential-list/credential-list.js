@@ -38,17 +38,19 @@ class ProfileCredentialList extends React.Component {
     // it to reopen after the credentials load.
     this.setState({loading: true, editCredential: null});
     try {
-      const clouds = await this._listClouds();
-      const credentialMap = await this._getCloudCredentialNames(props.username, clouds);
-      const credentialToModel = await this._fetchAndFilterModelsByCredential();
-      credentialToModel.forEach((modelNames, credentialKey) => {
-        if (!credentialMap.has(credentialKey)) {
-          // A model was created with a key which no longer exists so we cannot
-          // assign the models to that non-existent key.
-          return;
-        }
-        credentialKey = credentialMap.get(credentialKey).models = modelNames;
+      const clouds = await this.props.cloudFacade.clouds();
+      const credentialList = await this._getCloudCredentialNames(props.userName, clouds);
+      const modelList = await this.props.modelManager.listModelSummaries();
+      const flattenedCredentialList = credentialList.results.map(cloud => cloud.result).flat();
+
+      const credentialMap = new Map();
+      flattenedCredentialList.forEach(cred => {
+        const credentialData = this._parseCredentialName(cred);
+        credentialData.models = modelList.results.filter(model =>
+          model.result.cloudCredentialTag === cred);
+        credentialMap.set(cred, credentialData);
       });
+
       this.setState({
         credentialMap,
         loading: false
@@ -66,76 +68,33 @@ class ProfileCredentialList extends React.Component {
   }
 
   /**
-    List the clouds available to the current user.
-    @returns {Promise} Resolves to an array of cloud names.
+    Parses the credential name into its parts.
+    @param {String} credentialName The fully qualified credential name
+      ie) cloudcred-aws_username@external_default
+    @returns {Object} The various portions of the credential.
   */
-  _listClouds() {
-    return new Promise((resolve, reject) => {
-      this.props.controllerAPI.listClouds((error, clouds) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(Object.keys(clouds));
-      });
-    });
+  _parseCredentialName(credentialName) {
+    const parts = credentialName.split('_');
+    return {
+      cloud: parts[0].split('-')[1],
+      displayName: parts[2],
+      user: parts[1]
+    };
   }
 
   /**
     Requests the cloud names for the supplied clouds
     @param {String} username The username on the controller.
-    @param {Array} clouds An array of cloud names to fetch the credentials for.
+    @param {Array} cloudsData An array of cloud names to fetch the credentials for.
     @returns {Promise} Resolves to a Map of credential data with the key being
       the credential key.
   */
-  _getCloudCredentialNames(username, clouds) {
-    return new Promise((resolve, reject) => {
-      this.props.controllerAPI.getCloudCredentialNames(
-        clouds.map(cloudName => [username, cloudName]),
-        (error, namesData) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          const credentials = new Map();
-          Object.values(namesData).forEach(data => {
-            data.names.forEach((name, index) => {
-              credentials.set(name, {
-                cloud: name.split('_')[0],
-                displayName: data.displayNames[index]
-              });
-            });
-          });
-          resolve(credentials);
-        });
-    });
-  }
-
-  /**
-    List the models that the current user has access to with information.
-    @returns {Promise} Resolves to the model data sorted by credential key.
-  */
-  _fetchAndFilterModelsByCredential() {
-    const props = this.props;
-    return new Promise((resolve, reject) => {
-      props.controllerAPI.listModelsWithInfo((error, modelData) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        const sorted = new Map();
-        modelData
-          .filter(model => model.owner === props.username)
-          .forEach(model => {
-            const key = model.credential;
-            const modelName = model.name;
-            sorted.has(key) ?
-              sorted.get(key).push(modelName) :
-              sorted.set(key, [modelName]);
-          });
-        resolve(sorted);
-      });
-    });
+  _getCloudCredentialNames(username, cloudsData) {
+    const userClouds = Object.keys(cloudsData.clouds).map(key => ({
+      userTag: `user-${username}@external`,
+      cloudTag: key
+    }));
+    return this.props.cloudFacade.userCredentials({userClouds});
   }
 
   /**
@@ -181,16 +140,16 @@ class ProfileCredentialList extends React.Component {
 
   /**
     Generates the edit credential UI elements.
-    @param name {Object} The name of the credential being edited.
+    @param credentialData {Object} The name of the credential being edited.
     @param id {Object} The id of the credential being edited.
     @return {Array} The elements for the edit credential UI.
   */
-  _generateEditCredentials(name, id) {
+  _generateEditCredentials(credentialData, id) {
     if (id !== this.state.editCredential) {
       return null;
     }
     return this._generateCredentialForm({
-      credential: name,
+      credential: credentialData,
       onCancel: this._setEditCredential.bind(this),
       onCredentialUpdated: this._onCredentialEdited.bind(this)
     });
@@ -252,7 +211,7 @@ class ProfileCredentialList extends React.Component {
         onCredentialUpdated={
           overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
         sendAnalytics={this.props.sendAnalytics}
-        username={this.props.username} />);
+        username={this.props.userName} />);
   }
 
   /**
@@ -385,6 +344,7 @@ ProfileCredentialList.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).isRequired,
   addNotification: PropTypes.func.isRequired,
+  cloudFacade: PropTypes.object,
   controllerAPI: shapeup.shape({
     getCloudCredentialNames: PropTypes.func.isRequired,
     listClouds: PropTypes.func.isRequired,
@@ -394,8 +354,9 @@ ProfileCredentialList.propTypes = {
   }),
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
+  modelManager: PropTypes.object.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired
+  userName: PropTypes.string.isRequired
 };
 
 module.exports = ProfileCredentialList;
