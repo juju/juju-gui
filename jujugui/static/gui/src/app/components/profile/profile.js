@@ -106,6 +106,14 @@ class Profile extends React.Component {
     const controllerConnection = props.controllerConnection;
     const sectionsMap = new Map();
     const sectionInfo = this._getSectionInfo();
+    let cloudFacade = null;
+    let modelManager = null;
+    let userName = null;
+    if (controllerConnection) {
+      cloudFacade = controllerConnection.facades.cloud;
+      modelManager = controllerConnection.facades.modelManager;
+      userName = controllerConnection.info.user.displayName;
+    }
 
     if (profileUrl.full === 'revenue-statement') {
       return (
@@ -131,12 +139,6 @@ class Profile extends React.Component {
       sectionsMap.set('models', {
         label: 'Models',
         getComponent: () => {
-          let modelManager = null;
-          let userName = null;
-          if (controllerConnection) {
-            modelManager = controllerConnection.facades.modelManager;
-            userName = controllerConnection.info.user.displayName;
-          }
           return (
             <ProfileModelList
               acl={props.acl}
@@ -205,11 +207,13 @@ class Profile extends React.Component {
             <ProfileCredentialList
               acl={props.acl}
               addNotification={props.addNotification}
+              cloudFacade={cloudFacade}
               controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
+              modelManager={modelManager}
               sendAnalytics={this._sendAnalytics.bind(this)}
-              username={props.controllerUser} />
+              userName={userName} />
           );
         }
       });
