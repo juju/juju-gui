@@ -342,6 +342,7 @@ class GUIApp {
       debug: true,
       facades: [
         // Sort facades alphabetically.
+        require('jujulib/api/facades/cloud-v2.js'),
         require('jujulib/api/facades/model-manager-v4.js'),
         require('jujulib/api/facades/pinger-v1.js')
       ],
@@ -359,8 +360,7 @@ class GUIApp {
           this.controllerConnection = await juju.login({});
           // Setup pinger, if it's not running then the controller will
           // automatically disconnect after 1 minute.
-          const pinger = this.controllerConnection.facades.pinger;
-          pinger.pingForever(30000);
+          this.controllerConnection.facades.pinger.pingForever(30000);
           // After logging in redirect to their profile if they
           // weren't already going elsewhere.
           if (Object.keys(this.state.current).length === 0) {
