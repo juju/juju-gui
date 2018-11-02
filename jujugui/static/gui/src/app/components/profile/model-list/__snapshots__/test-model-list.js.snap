@@ -109,6 +109,9 @@ exports[`Profile Model List can render 1`] = `
               />,
             },
             Object {
+              "classes": Array [
+                "u-align--center",
+              ],
               "content": <a
                 onClick={[Function]}
               >
@@ -175,7 +178,9 @@ exports[`Profile Model List can render 1`] = `
                 relative={true}
               />
             </td>
-            <td>
+            <td
+              className="u-align--center"
+            >
               <a
                 onClick={[Function]}
               >
@@ -244,6 +249,9 @@ exports[`Profile Model List can render 1`] = `
               />,
             },
             Object {
+              "classes": Array [
+                "u-align--center",
+              ],
               "content": <a
                 onClick={[Function]}
               >
@@ -310,7 +318,9 @@ exports[`Profile Model List can render 1`] = `
                 relative={true}
               />
             </td>
-            <td>
+            <td
+              className="u-align--center"
+            >
               <a
                 onClick={[Function]}
               >
@@ -379,6 +389,9 @@ exports[`Profile Model List can render 1`] = `
               />,
             },
             Object {
+              "classes": Array [
+                "u-align--center",
+              ],
               "content": null,
             },
           ],
@@ -435,7 +448,9 @@ exports[`Profile Model List can render 1`] = `
                 relative={true}
               />
             </td>
-            <td />
+            <td
+              className="u-align--center"
+            />
           </React.Fragment>,
           "key": "test-db",
         },
@@ -495,6 +510,9 @@ exports[`Profile Model List can render 1`] = `
               />,
             },
             Object {
+              "classes": Array [
+                "u-align--center",
+              ],
               "content": <a
                 onClick={[Function]}
               >
@@ -558,7 +576,9 @@ exports[`Profile Model List can render 1`] = `
                 relative={true}
               />
             </td>
-            <td>
+            <td
+              className="u-align--center"
+            >
               <a
                 onClick={[Function]}
               >
