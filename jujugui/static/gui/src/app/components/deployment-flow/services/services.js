@@ -99,7 +99,6 @@ class DeploymentServices extends React.Component {
       const change = this.props.changesUtils.generateChangeDescription(item);
       return {
         columns: [{
-          columnSize: 12,
           content: (
             <DeploymentChangeItem
               change={change}
@@ -110,12 +109,13 @@ class DeploymentServices extends React.Component {
       };
     });
     return (
-      <BasicTable
-        headers={[{
-          content: 'Machines',
-          columnSize: 12
-        }]}
-        rows={machines} />);
+      <div className="v1">
+        <BasicTable
+          headers={[{
+            content: 'Machines'
+          }]}
+          rows={machines} />
+      </div>);
   }
 
   render() {
