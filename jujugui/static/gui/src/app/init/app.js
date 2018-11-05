@@ -460,8 +460,6 @@ Browser: ${navigator.userAgent}`
         baseURL={this.props.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
         charmstore={charmstore}
-        controllerAPI={
-          shapeup.fromShape(this.props.controllerAPI, Profile.propTypes.controllerAPI)}
         controllerConnection={this.props.controllerConnection}
         controllerIP={
           this.props.controllerAPI.get('socket_url')

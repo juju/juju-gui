@@ -297,14 +297,6 @@ Profile.propTypes = {
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
-  controllerAPI: shapeup.shape({
-    getCloudCredentialNames: PropTypes.func.isRequired,
-    listClouds: PropTypes.func.isRequired,
-    listModelsWithInfo: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
-    revokeCloudCredential: PropTypes.func.isRequired,
-    updateCloudCredential: PropTypes.func.isRequired
-  }).isRequired,
   controllerConnection: PropTypes.object,
   controllerIP: PropTypes.string,
   controllerUser: PropTypes.string.isRequired,

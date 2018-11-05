@@ -30,7 +30,6 @@ class CredentialAddEdit extends React.Component {
   _getClouds() {
     this.setState({loading: true}, () => {
       this.props.cloudFacade.clouds((error, clouds) => {
-        console.log(error, clouds);
         if (error) {
           const message = 'Unable to list clouds';
           this.props.addNotification({
