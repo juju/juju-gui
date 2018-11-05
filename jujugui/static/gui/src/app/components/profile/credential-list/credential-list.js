@@ -192,17 +192,12 @@ class ProfileCredentialList extends React.Component {
     @return {Object} React component for DeploymentCredentialAdd
   */
   _generateCredentialForm(overrides={}) {
-    const controllerAPI = this.props.controllerAPI;
     const credentials = this.state.credentialMap;
     return (
       <CredentialAddEdit
         acl={this.props.acl}
         addNotification={this.props.addNotification}
-        controllerAPI={shapeup.addReshape({
-          listClouds: controllerAPI.listClouds.bind(controllerAPI),
-          updateCloudCredential: controllerAPI.updateCloudCredential.bind(controllerAPI)
-        })}
-        controllerIsReady={this.props.controllerIsReady}
+        cloudFacade={this.props.cloudFacade}
         credential={overrides.credential}
         credentials={
           credentials ? Array.from(credentials).map(credential => credential[0]) : []}
@@ -346,14 +341,6 @@ ProfileCredentialList.propTypes = {
   }).isRequired,
   addNotification: PropTypes.func.isRequired,
   cloudFacade: PropTypes.object,
-  controllerAPI: shapeup.shape({
-    getCloudCredentialNames: PropTypes.func.isRequired,
-    listClouds: PropTypes.func.isRequired,
-    listModelsWithInfo: PropTypes.func.isRequired,
-    revokeCloudCredential: PropTypes.func.isRequired,
-    updateCloudCredential: PropTypes.func.isRequired
-  }),
-  controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
   modelManager: PropTypes.object.isRequired,
   sendAnalytics: PropTypes.func.isRequired,

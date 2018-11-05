@@ -202,14 +202,11 @@ class Profile extends React.Component {
       sectionsMap.set('credentials', {
         label: 'Cloud credentials',
         getComponent: () => {
-          const propTypes = ProfileCredentialList.propTypes;
           return (
             <ProfileCredentialList
               acl={props.acl}
               addNotification={props.addNotification}
               cloudFacade={cloudFacade}
-              controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
-              controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
               modelManager={modelManager}
               sendAnalytics={this._sendAnalytics.bind(this)}
@@ -310,7 +307,6 @@ Profile.propTypes = {
   }).isRequired,
   controllerConnection: PropTypes.object,
   controllerIP: PropTypes.string,
-  controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,

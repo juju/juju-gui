@@ -466,7 +466,6 @@ Browser: ${navigator.userAgent}`
         controllerIP={
           this.props.controllerAPI.get('socket_url')
             .replace('wss://', '').replace('ws://', '').split(':')[0]}
-        controllerIsReady={this._controllerIsReady.bind(this)}
         controllerUser={this.props.user.controller.user}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         getModelName={this._getModelName.bind(this)}
