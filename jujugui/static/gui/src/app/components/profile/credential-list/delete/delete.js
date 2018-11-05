@@ -13,7 +13,7 @@ class ProfileCredentialListDelete extends React.Component {
     @method _deleteCredential
   */
   _deleteCredential() {
-    const credential = this.props.credential;
+    const credential = {entities: [{tag: this.props.credential}]};
     this.props.revokeCloudCredential(credential, error => {
       if (error) {
         const message = 'Unable to revoke the cloud credential';

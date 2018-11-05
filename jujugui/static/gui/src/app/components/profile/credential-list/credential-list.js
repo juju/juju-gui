@@ -222,6 +222,7 @@ class ProfileCredentialList extends React.Component {
     if (!credential) {
       return null;
     }
+    const cloudFacade = this.props.cloudFacade;
     return (
       <div className="profile-credential-list__delete">
         <ProfileCredentialListDelete
@@ -229,7 +230,7 @@ class ProfileCredentialList extends React.Component {
           credential={credential}
           onCancel={this._setDeleteCredential.bind(this)}
           onCredentialDeleted={this._onCredentialDeleted.bind(this)}
-          revokeCloudCredential={this.props.controllerAPI.revokeCloudCredential} />
+          revokeCloudCredential={cloudFacade.revokeCredentials.bind(cloudFacade)} />
       </div>);
   }
 
