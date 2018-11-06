@@ -71,6 +71,7 @@
     "mkdirp": "0.5.1",
     "mocha": "^5.2.0",
     "mutation-observer": "^1.0.3",
+    "node-sass": "^4.10.0",
     "prettier": "1.15.1",
     "pretty-quick": "^1.8.0",
     "prop-types": "^15.6.2",
@@ -82,6 +83,7 @@
     "should": "^13.2.3",
     "sinon": "^6.3.5",
     "sinon-chai": "^3.2.0",
+    "through2": "^2.0.3",
     "watchify": "3.11.0"
   },
   "husky": {
