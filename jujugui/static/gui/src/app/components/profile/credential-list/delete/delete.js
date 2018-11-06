@@ -35,7 +35,7 @@ class ProfileCredentialListDelete extends React.Component {
       action: this.props.onCancel.bind(this),
       type: 'inline-neutral'
     }, {
-      title: 'Continue',
+      title: 'Remove',
       action: this._deleteCredential.bind(this),
       type: 'destructive'
     }];
