@@ -62,7 +62,7 @@ module.exports = function(config) {
     browserify: {
       debug: true,
       plugin: ['proxyquire-universal'],
-      transform: [ 'babelify' ]
+      transform: [ 'babelify', './browserify/ignore-scss.js' ]
     },
 
     // test results reporter to use
