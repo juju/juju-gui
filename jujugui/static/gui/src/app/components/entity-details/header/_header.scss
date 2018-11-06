@@ -1,6 +1,6 @@
 .entity-header {
   $social-icon-size: 36px;
-  $sticky-height: 100px;
+  $sticky-height: 120px;
   $icon-size: 96px;
 
   margin-bottom: 0;
@@ -80,8 +80,8 @@
       }
 
       &__select {
-        width: 150px;
-        margin: 0 10px 0 0;
+        width: 100%;
+        margin: 0 0.5rem 0.5rem 0;
       }
 
       &__right {
