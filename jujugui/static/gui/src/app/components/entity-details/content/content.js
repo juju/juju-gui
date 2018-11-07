@@ -538,22 +538,20 @@ class EntityContent extends React.Component {
     var plansList = [];
     plans.forEach((plan, i) => {
       var classes = classNames(
-        'entity-content__plan',
-        'four-col',
-        {'last-col': (i + 1) % 3 === 0});
+        'entity-content__plan'
+      );
 
       plansList.push(
         <div
           className={classes}
           key={plan.url + i}>
+          <div className="plan-block__top-title">Managed solution</div>
           <div className="entity-content__plan-content">
             <h3 className="entity-content__plan-title">
-              {plan.url}
+              {plan.price}
             </h3>
-            <ul className="entity-content__plan-price">
-              {this._generatePriceList(plan.price)}
-            </ul>
             <p className="entity-content__plan-description">
+              <span className="entity-content__plan-url">{plan.url}</span>
               {plan.description}
             </p>
           </div>
@@ -561,16 +559,9 @@ class EntityContent extends React.Component {
     });
     return (
       <div
-        className="row entity-content__plans"
+        className="entity-content__plans"
         id="plans">
-        <div className="inner-wrapper">
-          <div className="twelve-col">
-            <h2 className="entity-content__header">Plans</h2>
-            <div className="equal-height">
-              {plansList}
-            </div>
-          </div>
-        </div>
+        {plansList}
       </div>);
   }
 
@@ -632,7 +623,6 @@ class EntityContent extends React.Component {
               {this._generateDescription(entityModel)}
               {this._generateDiagram(entityModel)}
               {this._generateTagsAndTerms(entityModel)}
-              {this._generatePlans()}
               <EntityContentReadme
                 addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
@@ -643,6 +633,7 @@ class EntityContent extends React.Component {
               {this._generateOptionsList(entityModel)}
             </div>
             <div className="four-col last-col">
+              {this._generatePlans()}
               {this._generateExpert()}
               {this._generateActions()}
               {this._generateResources()}

@@ -25,7 +25,7 @@ function generateScript(isBundle, isDD) {
   const dataDD = isDD ? 'data-dd' : '';
   return '<script ' +
     'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
-    '<div class="juju-card" '+dataDD+' data-id="'+id+'"></div>';
+    '<div class="juju-card" ' + dataDD + ' data-id="' + id + '"></div>';
 }
 
 describe('EntityContent', function() {
@@ -210,13 +210,13 @@ describe('EntityContent', function() {
           className="link link--cold"
           key="terms1"
           onClick={links.at(0).prop('onClick')}>
-            terms1
+          terms1
         </a>{', '}
         <a
           className="link link--cold"
           key="terms2"
           onClick={links.at(1).prop('onClick')}>
-            terms2
+          terms2
         </a>
       </div>);
     assert.compareJSX(terms, expected);
@@ -389,99 +389,7 @@ describe('EntityContent', function() {
       hasPlans: true,
       plans
     });
-    const expected = (
-      <div
-        className="row entity-content__plans"
-        id="plans">
-        <div className="inner-wrapper">
-          <div className="twelve-col">
-            <h2 className="entity-content__header">Plans</h2>
-            <div className="equal-height">
-              {[
-                <div
-                  className="entity-content__plan four-col"
-                  key="plan10">
-                  <div className="entity-content__plan-content">
-                    <h3 className="entity-content__plan-title">
-                      plan1
-                    </h3>
-                    <ul className="entity-content__plan-price">
-                      {[<li
-                        className="entity-content__plan-price-item"
-                        key="testprice10">
-                        <span className="entity-content__plan-price-amount">
-                          test
-                        </span>
-                        <span className="entity-content__plan-price-quantity">
-                          / {'price1'}
-                        </span>
-                      </li>]}
-                    </ul>
-                    <p className="entity-content__plan-description">
-                      description1
-                    </p>
-                  </div>
-                </div>,
-                <div
-                  className="entity-content__plan four-col"
-                  key="plan21">
-                  <div className="entity-content__plan-content">
-                    <h3 className="entity-content__plan-title">
-                      plan2
-                    </h3>
-                    <ul className="entity-content__plan-price">
-                      {[<li
-                        className="entity-content__plan-price-item"
-                        key="price20">
-                        <span className="entity-content__plan-price-amount">
-                          price2
-                        </span>
-                        {undefined}
-                      </li>]}
-                    </ul>
-                    <p className="entity-content__plan-description">
-                      description2
-                    </p>
-                  </div>
-                </div>,
-                <div
-                  className="entity-content__plan four-col last-col"
-                  key="plan32">
-                  <div className="entity-content__plan-content">
-                    <h3 className="entity-content__plan-title">
-                      plan3
-                    </h3>
-                    <ul className="entity-content__plan-price">
-                      <li
-                        className="entity-content__plan-price-item"
-                        key="testprice30">
-                        <span className="entity-content__plan-price-amount">
-                          test
-                        </span>
-                        <span className="entity-content__plan-price-quantity">
-                          / {'price3'}
-                        </span>
-                      </li>
-                      <li
-                        className="entity-content__plan-price-item"
-                        key="price3b1">
-                        <span className="entity-content__plan-price-amount">
-                          price3b
-                        </span>
-                        {undefined}
-                      </li>
-                    </ul>
-                    <p className="entity-content__plan-description">
-                      description3
-                    </p>
-                  </div>
-                </div>
-              ]}
-            </div>
-          </div>
-        </div>
-      </div>);
-    assert.compareJSX(wrapper.find('.entity-content__plans'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can display loading plans', function() {
