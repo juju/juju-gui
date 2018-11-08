@@ -5,10 +5,9 @@ GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 ASSETS_DIR := $(GUISRC)/app/assets
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
-STATIC_CSS := $(GUIBUILD)/app/assets/css
+BUILD_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
-SCSS_FILE := $(GUISRC)/app/assets/css/base.scss
 CSS_FILE := $(GUIBUILD)/app/assets/juju-gui.css
 BUILT_JS_ASSETS := $(GUIBUILD)/app/assets/javascripts
 JUJUGUI := lib/python*/site-packages/jujugui.egg-link
@@ -34,7 +33,6 @@ VPART ?= patch
 RAWJSFILES = $(shell find $(GUISRC)/app -type f -name '*.js')
 BUILT_RAWJSFILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(RAWJSFILES))
 MIN_JS_FILES = $(patsubst %.js, %-min.js, $(BUILT_RAWJSFILES))
-SCSS_FILES := $(shell find $(GUISRC)/app/assets/css $(GUISRC)/app/components -type f -name "*.scss")
 FONT_FILES := $(shell find $(GUISRC)/app/assets/fonts -type f -name "*.woff" -or -name "*.woff2")
 STATIC_FONT_FILES = $(patsubst $(GUISRC)/app/%, $(GUIBUILD)/app/%, $(FONT_FILES))
 
@@ -143,13 +141,6 @@ $(STATIC_FONT_FILES): $(FONT_FILES)
 	mkdir -p $(GUIBUILD)/app/assets/fonts
 	cp $(patsubst $(GUIBUILD)/app/assets/%, $(GUISRC)/app/assets/%, $@) $@
 
-$(CSS_FILE): $(PYRAMID) $(SCSS_FILES)
-	mkdir -p $(GUIBUILD)/app/assets/css
-	bin/sassc -I node_modules -s compressed $(SCSS_FILE) $@
-
-.phony: css
-css: $(CSS_FILE)
-
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
@@ -173,15 +164,17 @@ svg-sprite: $(SVG_SPRITE_MODULE)
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 .PHONY: gui-deps
-gui-deps: $(JUJUGUI) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(CSS_FILE) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
+gui-deps: $(JUJUGUI) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)
 
 .PHONY: gui
 gui: gui-deps
-	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ]
+	mkdir -p $(BUILD_CSS)
+	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -p [ ./browserify/scss.js --build-dir=./$(BUILD_CSS) ]
+	cat $(BUILD_CSS)/*.scss > $(CSS_FILE)
 
 .PHONY: prod-gui
 prod-gui: gui-deps
-	BABEL_ENV=production $(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -g [ envify purge --NODE_ENV production ] -g uglifyify
+	BABEL_ENV=production $(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -g [ envify purge --NODE_ENV production ] -g uglifyify -p [ ./browserify/scss.js --file=$(CSS_FILE) --prod=true ]
 
 .PHONY: watch
 watch:

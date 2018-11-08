@@ -1,5 +1,5 @@
 .icon-list {
-  @extend list-style;
+  @extend %list-style;
   margin: 0;
 
   &__item {
