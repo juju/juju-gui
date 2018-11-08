@@ -1,5 +1,4 @@
 .env-switcher {
-
   &--error {
     .env-switcher__toggle {
       border: 1px solid $error;
@@ -17,7 +16,7 @@
     margin-left: 3px;
     padding: 4px 36px 4px 9px;
     background-color: $canvas-background;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
     position: relative;
     height: 40px;
     cursor: pointer;
@@ -68,7 +67,7 @@
       &:before {
         @include diamond($error, 10px, 'up');
         left: 20px;
-       }
+      }
     }
 
     // Hide line breaks to make the contenteditable a single line input.

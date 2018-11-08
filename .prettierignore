@@ -1,0 +1,7 @@
+jujugui/static/gui/src/app/assets/css/plugins/
+**/*.js
+**/*.json
+**/*.md
+**/*.yml
+**/*.txt
+

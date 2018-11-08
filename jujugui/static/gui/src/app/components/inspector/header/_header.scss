@@ -51,7 +51,7 @@
   &__inline-list {
     margin-left: 1.25rem;
     margin-bottom: 0;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     padding-left: 0;
 
     .inspector-header__list-item {
@@ -71,8 +71,8 @@
         font-size: 1.4rem;
         line-height: 0;
         position: absolute;
-        right: -.8rem;
-        top: .55rem;
+        right: -0.8rem;
+        top: 0.55rem;
       }
 
       &:hover::after {

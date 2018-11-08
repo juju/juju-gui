@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.14.2] - 2018-XX-XX
+### Changed
+- Add Prettier to codebase to auto-format all `.scss` files
+
+ ### Fixed
+
 ## [2.14.1] - 2018-10-26
 ### Changed
 - Updated React to 16.5.2 and remaining dependencies.

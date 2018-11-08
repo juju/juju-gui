@@ -1,10 +1,10 @@
 .plus-service {
   cursor: pointer;
-  transition: opacity .4s ease;
+  transition: opacity 0.4s ease;
 
   &.fade {
-    opacity: .2;
-    stroke-opacity: .2;
+    opacity: 0.2;
+    stroke-opacity: 0.2;
     visibility: visible;
   }
 
@@ -18,10 +18,8 @@
 
   &__halo {
     opacity: 0;
-    // scss-lint:disable PropertySpelling
     r: 60;
-    // scss-lint:enable PropertySpelling
-    transition: all .3s;
+    transition: all 0.3s;
   }
 
   &__plus-circle {
@@ -33,9 +31,7 @@
   &:hover {
     .plus-service__halo {
       opacity: 1;
-      // scss-lint:disable PropertySpelling
       r: 80;
-      // scss-lint:enable PropertySpelling
     }
 
     .plus-service__inner-circle {

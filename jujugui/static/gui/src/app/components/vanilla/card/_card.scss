@@ -22,7 +22,7 @@
 
 %p-card--highlighted {
   @extend %p-card;
-  box-shadow: 0 1px 5px 1px transparentize($color-dark, .8);
+  box-shadow: 0 1px 5px 1px transparentize($color-dark, 0.8);
 }
 
 @mixin vf-p-card {
@@ -51,7 +51,7 @@
 @mixin vf-p-card-overlay {
   .p-card--overlay {
     @extend %p-card;
-    background: transparentize($color-x-light, .15);
+    background: transparentize($color-x-light, 0.15);
     border-radius: 0;
   }
 }
