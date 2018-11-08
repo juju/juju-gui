@@ -42,8 +42,10 @@ $box-shadow: 0 1px 4.85px 0.15px rgba(0, 0, 0, 0.2);
 $box-shadow-dark: 0 1px 4.85px 0.15px rgba(0, 0, 0, 1);
 
 // z-indexing
-// Lower in the list, higher in the z
-// sass-lint:disable indentation
+
+// prettier-ignoring the next code block as it more useful as a stack than an
+// inline-list to help visualise the z-index panel stack. Lower in the list,
+// the higher in the z-index.
 /* prettier-ignore */
 $z-indexed-elements: search-results-list-block__tags,
   environment-drop-message,
