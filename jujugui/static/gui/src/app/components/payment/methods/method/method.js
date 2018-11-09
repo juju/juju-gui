@@ -12,6 +12,8 @@ const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
 const AddressForm = require('../../../address-form/address-form');
 const PaymentMethodCard = require('../card/card');
 
+require('./_method.scss');
+
 class PaymentMethod extends React.Component {
   constructor() {
     super();

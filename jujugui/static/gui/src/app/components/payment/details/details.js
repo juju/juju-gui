@@ -9,6 +9,8 @@ const Button = require('../../shared/button/button');
 const GenericInput = require('../../generic-input/generic-input');
 const PaymentDetailsAddress = require('./address/address');
 
+require('./_details.scss');
+
 class PaymentDetails extends React.Component {
   constructor() {
     super();

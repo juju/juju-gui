@@ -7,6 +7,8 @@ const React = require('react');
 const Spinner = require('../../../spinner/spinner');
 const Popup = require('../../../popup/popup');
 
+require('./_receipt-popup.scss');
+
 class ReceiptPopup extends React.Component {
   constructor() {
     super();

@@ -9,6 +9,8 @@ const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
 const Button = require('../../../shared/button/button');
 const initUtils = require('../../../../init/utils');
 
+require('./_address.scss');
+
 class PaymentDetailsAddress extends React.Component {
   constructor() {
     super();

@@ -11,6 +11,8 @@ const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const Button = require('../../shared/button/button');
 const Spinner = require('../../spinner/spinner');
 
+require('./_charges.scss');
+
 class PaymentCharges extends React.Component {
   constructor() {
     super();
