@@ -1,3 +1,6 @@
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/variables';
+
 .machine-view__column {
   @extend %scroll-children;
   overflow-y: hidden;

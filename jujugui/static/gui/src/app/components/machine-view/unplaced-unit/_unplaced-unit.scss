@@ -1,3 +1,6 @@
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/variables';
+
 .machine-view__unplaced-unit {
   @extend %floating-panel;
   position: relative;

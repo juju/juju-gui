@@ -8,6 +8,8 @@ const shapeup = require('shapeup');
 const ButtonRow = require('../../shared/button-row/button-row');
 const Constraints = require('../../constraints/constraints');
 
+require('./_add-machine.scss');
+
 class MachineViewAddMachine extends React.Component {
   constructor(props) {
     super(props);

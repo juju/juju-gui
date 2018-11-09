@@ -10,6 +10,8 @@ const shapeup = require('shapeup');
 const SvgIcon = require('../../svg-icon/svg-icon');
 const MachineViewHeader = require('../header/header');
 
+require('./_column.scss');
+
 const MachineViewColumnGlobals = {};
 
 MachineViewColumnGlobals.dropTarget = {
