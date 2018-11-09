@@ -7,6 +7,7 @@ const shapeup = require('shapeup');
 
 const Button = require('../../shared/button/button');
 
+require('./_charmstore-login.scss');
 
 class ProfileCharmstoreLogin extends React.Component {
   /**

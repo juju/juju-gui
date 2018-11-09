@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_navigation.scss');
+
 /** Navigation React component for use in the Profile component. */
 class ProfileNavigation extends React.Component {
   constructor(props) {
