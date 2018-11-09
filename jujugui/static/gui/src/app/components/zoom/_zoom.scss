@@ -1,3 +1,6 @@
+@import '../../assets/css/mixins';
+@import '../../assets/css/variables';
+
 .zoom {
   @extend %floating-panel;
   z-index: index($z-indexed-elements, zoom);

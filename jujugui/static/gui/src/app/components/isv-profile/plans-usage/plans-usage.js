@@ -10,6 +10,8 @@ charms and bundles. You can only see this page is you have access.
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_plans-usage.scss');
+
 class PlansUsage extends React.Component {
   constructor() {
     super();

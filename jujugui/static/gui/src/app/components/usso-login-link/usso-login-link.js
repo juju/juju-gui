@@ -6,6 +6,8 @@ const React = require('react');
 
 const Button = require('../shared/button/button');
 
+require('./_usso-login-link.scss');
+
 class USSOLoginLink extends React.Component {
   /**
     Handle the login form the user click.

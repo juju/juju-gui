@@ -5,6 +5,9 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
+
+require('./_accordion-section.scss');
+
 /**
   A single accordion section, with clickable header and collapsable content.
   Providing a height will animate the opening and closing.

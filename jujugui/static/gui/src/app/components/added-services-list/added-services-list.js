@@ -8,6 +8,8 @@ const shapeup = require('shapeup');
 const AddedServicesListItem = require('./item/item');
 const AddedServicesLabel = require('./label/label');
 
+require('./_added-services-list.scss');
+
 const addToObj = (obj, key, value) => {
   if (!obj[key]) {
     obj[key] = [];

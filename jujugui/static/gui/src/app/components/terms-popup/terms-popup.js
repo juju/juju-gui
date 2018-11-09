@@ -7,6 +7,8 @@ const React = require('react');
 const Spinner = require('../spinner/spinner');
 const Popup = require('../popup/popup');
 
+require('./_terms-popup.scss');
+
 class TermsPopup extends React.Component {
   render() {
     let content;

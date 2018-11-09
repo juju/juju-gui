@@ -7,6 +7,8 @@ const React = require('react');
 const DeploymentBarNotification = require('./notification/notification');
 const Button = require('../shared/button/button');
 
+require('./_deployment-bar.scss');
+
 class DeploymentBar extends React.Component {
   constructor() {
     super();

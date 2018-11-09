@@ -5,6 +5,8 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
+require('./_card.scss');
+
 class VanillaCard extends React.Component {
   _generateHeader() {
     if (this.props.headerContent) {

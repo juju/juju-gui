@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_svg-icon.scss');
+
 class SvgIcon extends React.PureComponent {
   constructor(props) {
     super(props);

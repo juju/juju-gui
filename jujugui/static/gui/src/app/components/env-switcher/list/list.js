@@ -8,6 +8,8 @@ const CreateModelButton = require('../../create-model-button/create-model-button
 const DateDisplay = require('../../date-display/date-display');
 const Panel = require('../../shared/panel/panel');
 
+require('./_list.scss');
+
 class EnvList extends React.Component {
   constructor(props) {
     super(props);

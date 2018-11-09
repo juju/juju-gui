@@ -8,6 +8,8 @@ const enhanceWithClickOutside = require('../../init/react-click-outside');
 
 const Panel = require('../shared/panel/panel');
 
+require('./_dropdown-menu.scss');
+
 /**
   Creates a dropdown menu with the supplied children as items.
 */

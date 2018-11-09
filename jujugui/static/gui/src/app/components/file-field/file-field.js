@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./file-field.scss');
+
 class FileField extends React.Component {
   constructor() {
     super();

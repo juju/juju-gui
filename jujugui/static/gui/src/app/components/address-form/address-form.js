@@ -9,6 +9,8 @@ const initUtils = require('../../init/utils');
 const InsetSelect = require('../inset-select/inset-select');
 const GenericInput = require('../generic-input/generic-input');
 
+require('./_address-form.scss');
+
 class AddressForm extends React.Component {
   constructor() {
     super();

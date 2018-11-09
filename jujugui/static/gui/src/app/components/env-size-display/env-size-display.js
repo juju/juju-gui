@@ -7,6 +7,8 @@ const React = require('react');
 
 const initUtils = require('../../init/utils');
 
+require('./_env-size-display.scss');
+
 class EnvSizeDisplay extends React.Component {
   /**
     Click handler for the service | machine links which calls the changeState

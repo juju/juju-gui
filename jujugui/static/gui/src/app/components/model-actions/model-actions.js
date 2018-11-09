@@ -7,6 +7,8 @@ const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_model-actions.scss');
+
 class ModelActions extends React.Component {
   /**
     Export the env when the button is clicked.

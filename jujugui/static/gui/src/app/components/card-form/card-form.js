@@ -7,6 +7,8 @@ const React = require('react');
 const GenericInput = require('../generic-input/generic-input');
 const initUtils = require('../../init/utils');
 
+require('./_card-form.scss');
+
 class CardForm extends React.Component {
   componentDidMount() {
     this.props.createCardElement(card => {

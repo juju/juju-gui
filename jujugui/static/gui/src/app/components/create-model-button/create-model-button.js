@@ -6,6 +6,8 @@ const React = require('react');
 
 const Button = require('../shared/button/button');
 
+require('./_create-model-button.scss');
+
 class CreateModelButton extends React.Component {
   _createNewModel() {
     const props = this.props;

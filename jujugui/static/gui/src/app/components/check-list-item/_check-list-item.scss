@@ -1,3 +1,7 @@
+@import '../../assets/css/animations';
+@import '../../assets/css/mixins';
+@import '../../assets/css/variables';
+
 .check-list-item {
   @extend %stagger-fade-in;
   height: 48px;

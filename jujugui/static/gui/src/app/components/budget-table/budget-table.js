@@ -6,6 +6,8 @@ const React = require('react');
 
 const BudgetTableRow = require('./row/row');
 
+require('./_budget-table.scss');
+
 class BudgetTable extends React.Component {
   /**
    Generate the list of services.
