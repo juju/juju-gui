@@ -52,7 +52,6 @@
   }
 
   .list-block {
-
     .list-block__list {
       margin: 0 10px;
       border: 0;
@@ -63,7 +62,7 @@
         border-width: 1px;
         border-radius: 2px;
 
-        @media only screen and (min-width : 768px) {
+        @media only screen and (min-width: 768px) {
           padding-bottom: 8px;
         }
 
@@ -107,7 +106,7 @@
       display: inline-block;
       float: left;
 
-      @media only screen and (min-width : 768px) {
+      @media only screen and (min-width: 768px) {
         padding: 8px 20px 4px;
       }
 
@@ -272,7 +271,7 @@
         margin-bottom: 4px;
         margin-right: 6px;
 
-        @media only screen and (min-width : 768px) {
+        @media only screen and (min-width: 768px) {
           float: right;
           margin-left: 6px;
         }
@@ -307,11 +306,11 @@
       left: -3px;
       top: -6px;
 
-      @media only screen and (max-width : 768px) {
+      @media only screen and (max-width: 768px) {
         width: auto;
       }
 
-      @media only screen and (min-width : 768px) {
+      @media only screen and (min-width: 768px) {
         top: 9px;
         left: 0;
       }

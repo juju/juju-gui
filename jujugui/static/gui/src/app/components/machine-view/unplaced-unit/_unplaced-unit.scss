@@ -45,7 +45,7 @@
   // degreee of specificity. Since the styling is shared elsewhere, it's been
   // pulled into a placeholder.
   .constraints .constraints__select {
-    @extend %constraints-select
+    @extend %constraints-select;
   }
 
   &-dropdown {

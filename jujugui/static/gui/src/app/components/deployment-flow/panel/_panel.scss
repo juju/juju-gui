@@ -10,7 +10,7 @@
 
     &--dark {
       background-color: $dark-header;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     &-name {
@@ -25,7 +25,6 @@
   }
 
   &__close {
-    @extend %link;
     display: inline-block;
     color: $cool-grey;
 

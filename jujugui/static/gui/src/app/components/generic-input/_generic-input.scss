@@ -5,8 +5,8 @@
   &--no-label {
     .generic-input {
       &__multiline-field,
-      &__field[type=text],
-      &__field[type=password] {
+      &__field[type='text'],
+      &__field[type='password'] {
         padding-top: 8px;
       }
     }
@@ -19,7 +19,7 @@
     left: 8px;
     position: absolute;
     top: 18px;
-    transition: all .25s;
+    transition: all 0.25s;
     user-select: none;
 
     &--focus,
@@ -34,8 +34,8 @@
   }
 
   &__multiline-field,
-  &__field[type=text],
-  &__field[type=password] {
+  &__field[type='text'],
+  &__field[type='password'] {
     @extend %input;
     width: calc(100% - 20px);
     margin-bottom: 20px;
@@ -66,5 +66,5 @@
     position: absolute;
     right: 0.625rem;
     top: 1.375rem;
- }
+  }
 }

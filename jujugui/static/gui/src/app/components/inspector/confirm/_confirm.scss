@@ -3,7 +3,7 @@
   display: none;
   height: 0;
   padding: 10px;
-  transition: height .5s, opacity 1s;
+  transition: height 0.5s, opacity 1s;
 
   &--open {
     display: block;

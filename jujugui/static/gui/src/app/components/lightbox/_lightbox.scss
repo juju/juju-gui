@@ -1,5 +1,5 @@
 .lightbox {
-  background: rgba(0,0,0,.8);
+  background: rgba(0, 0, 0, 0.8);
   z-index: index($z-indexed-elements, lightbox);
   position: fixed;
   top: 0;
@@ -10,9 +10,9 @@
   &__close {
     position: absolute;
     top: 3rem;
-    margin-top: -.5rem;
+    margin-top: -0.5rem;
     right: 3rem;
-    padding: .5rem;
+    padding: 0.5rem;
     background: transparent;
     border: none;
 
@@ -90,7 +90,7 @@
       margin-top: -1.5rem;
 
       &[disabled] {
-        opacity: .5;
+        opacity: 0.5;
         cursor: default;
       }
 
@@ -121,9 +121,9 @@
       color: $white;
       font-size: 2rem;
       display: inline;
-      opacity: .3;
+      opacity: 0.3;
       cursor: pointer;
-      margin-left: .3rem;
+      margin-left: 0.3rem;
 
       &:first-child {
         margin-left: 0;
