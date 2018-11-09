@@ -8,6 +8,8 @@ const ButtonRow = require('../../shared/button-row/button-row');
 const Link = require('../../link/link');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_unit-details.scss');
+
 class UnitDetails extends React.Component {
   /**
     Handle removing a unit if the button has been clicked.

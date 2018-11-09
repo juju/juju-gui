@@ -20,6 +20,8 @@ const ServiceOverview = require('./service-overview/service-overview');
 const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
+require('./_inspector.scss');
+
 class Inspector extends React.Component {
   constructor(props) {
     super(props);

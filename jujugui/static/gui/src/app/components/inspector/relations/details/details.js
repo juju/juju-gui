@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_details.scss');
+
 class InspectorRelationDetails extends React.Component {
   render() {
     var relation = this.props.relation;

@@ -6,6 +6,8 @@ const React = require('react');
 
 const Button = require('../../../shared/button/button');
 
+require('./_item.scss');
+
 class InspectorChangeVersionItem extends React.Component {
   /**
     Generate the button label for a downgrade or upgrade.

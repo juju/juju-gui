@@ -7,6 +7,8 @@ const React = require('react');
 const ButtonRow = require('../../../shared/button-row/button-row');
 const CheckListItem = require('../../../check-list-item/check-list-item');
 
+require('./_endpoint.scss');
+
 class InspectorRelateToEndpoint extends React.Component {
   constructor() {
     super();

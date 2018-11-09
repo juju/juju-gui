@@ -9,6 +9,8 @@ const shapeup = require('shapeup');
 const ButtonRow = require('../../shared/button-row/button-row');
 const Constraints = require('../../constraints/constraints');
 
+require('./_scale-service.scss');
+
 class ScaleService extends React.Component {
   constructor() {
     super();

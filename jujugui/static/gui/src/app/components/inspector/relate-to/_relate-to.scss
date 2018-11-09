@@ -1,3 +1,5 @@
+@import '../../../assets/css/mixins';
+
 .inspector-relate-to {
   @extend %scroll-children;
 }

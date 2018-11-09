@@ -7,6 +7,8 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const {urls} = require('jaaslib');
 
+require('./_header.scss');
+
 class InspectorHeader extends React.Component {
   /**
     Returns the supplied classes with the type class applied if it

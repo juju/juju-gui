@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_unit.scss');
+
 class InspectorExposeUnit extends React.Component {
   /**
     Don't bubble the click event to the parent.
