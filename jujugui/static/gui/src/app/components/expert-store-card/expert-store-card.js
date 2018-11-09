@@ -7,6 +7,8 @@ const React = require('react');
 const EXPERTS = require('../expert-card/experts');
 const ExpertCard = require('../expert-card/expert-card');
 
+require('./_expert-store-card.scss');
+
 class ExpertStoreCard extends React.Component {
   render() {
     const expert = EXPERTS[this.props.expert];

@@ -9,6 +9,8 @@ const ExpertCard = require('../expert-card/expert-card');
 const Button = require('../shared/button/button');
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_expert-contact-card.scss');
+
 class ExpertContactCard extends React.Component {
   constructor(props) {
     super(props);
