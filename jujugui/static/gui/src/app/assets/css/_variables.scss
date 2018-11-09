@@ -1,3 +1,6 @@
+@import './plugins/vanilla-framework/scss/global-settings';
+@import './plugins/cloud-vanilla-theme/scss/global-settings';
+
 // Global color settings
 $color-transparent: transparent !default;
 
@@ -29,3 +32,90 @@ $states: (
   success: $color-positive,
   information: $color-information
 );
+
+$font-family-mono: 'Ubuntu Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
+
+// Vanilla overrides
+$error: #c7162b;
+$warning: #f99b11;
+$success: #0e8420;
+
+// Shades of grey
+$light-grey: #f7f7f7;
+$light-mid-grey: #d4d4d4;
+$dark-grey: #9fa7aa;
+$dark-warm-grey: #666;
+
+// Status colours.
+$uncommitted: #19b6ee;
+$service-erroring: #ed3146;
+$service-pending: #f99b0f;
+$service-uncommitted: $uncommitted;
+
+// Brand colours.
+$ubuntu-orange: #dd4814;
+$link-blue: #007aa6;
+
+// Other colours.
+$canvas-background: $light-grey;
+$hover-background: $light-grey;
+$dark-header: #002835;
+
+// Spacing.
+$base: 16px;
+$base-line-height: 21px;
+$border-radius: 2px;
+$deployer-bar-height: 90px;
+$environment-header-height: 40px;
+$left-panel-width: 290px;
+$navbar-height: 60px;
+$panel-space: 10px;
+
+// Other.
+$box-shadow: 0 1px 4.85px 0.15px rgba(0, 0, 0, 0.2);
+$box-shadow-dark: 0 1px 4.85px 0.15px rgba(0, 0, 0, 1);
+
+// z-indexing
+
+// prettier-ignoring the next code block as it more useful as a stack than an
+// inline-list to help visualise the z-index panel stack. Lower in the list,
+// the higher in the z-index.
+/* prettier-ignore */
+$z-indexed-elements: search-results-list-block__tags,
+  environment-drop-message,
+  environment-help,
+  search-results-list-block__tags-links,
+  search-results-cell,
+  search-results-cell--hover,
+  boolean-config--handle,
+  boolean-config--label,
+  zoom,
+  post-deployment,
+  machine-view,
+  inspector-view,
+  env-size-display,
+  header-banner-breadcrumbs,
+  env-list-panel,
+  footer,
+  white-box,
+  entity-sticky-header,
+  header-banner-search,
+  top-page,
+  deployment-panel,
+  notification-list,
+  modal,
+  usso-login-link,
+  header-search--active,
+  environment-drop-message-active,
+  expanding-progress,
+  popup,
+  full-screen-mask,
+  centered-column,
+  notification,
+  lightbox,
+  back-to-help,
+  invoice,
+  revenue-statement;
+
+// Asset path used by Vanilla to load fonts instead of asset server
+$asset-path: 'static/gui/build/app/assets/';

@@ -13,6 +13,28 @@
   @include cloud-base-button;
 }
 
+%button--inline-neutral {
+  @extend %button-pattern;
+  color: $cool-grey;
+  background-color: transparent;
+  border: 1px solid $mid-grey;
+
+  &:focus,
+  &:active,
+  &:hover {
+    background-color: rgba(0, 0, 0, .1);
+  }
+
+  &:disabled,
+  &.button--disabled {
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
 /// Neutral button styling
 /// @group Buttons
 /// @example
@@ -22,25 +44,7 @@
 @mixin cloud-neutral-button {
   .button--neutral,
   .button--inline-neutral {
-    @extend %button-pattern;
-    color: $cool-grey;
-    background-color: transparent;
-    border: 1px solid $mid-grey;
-
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: rgba(0, 0, 0, .1);
-    }
-
-    &:disabled,
-    &.button--disabled {
-      &:focus,
-      &:active,
-      &:hover {
-        background-color: transparent;
-      }
-    }
+    @extend %button--inline-neutral;
   }
 
   .button--inline-neutral {

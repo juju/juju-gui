@@ -1,3 +1,7 @@
+@import './mixins';
+@import './sprites';
+@import './variables';
+
 $pre-background: #fdf6f2;
 
 // Generic unclassed HTML elements
@@ -147,14 +151,7 @@ $pre-background: #fdf6f2;
   }
 
   .link {
-    text-decoration: none;
-    font-weight: normal;
-    cursor: pointer;
-
-    &:hover {
-      color: $link-blue;
-      text-decoration: underline;
-    }
+    @extend %link;
   }
 
   [contenteditable='true'] {
