@@ -9,6 +9,8 @@ const Button = require('../../shared/button/button');
 const Panel = require('../../shared/panel/panel');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_panel.scss');
+
 class DeploymentPanel extends React.Component {
   /**
     Handle closing the panel when the close button is clicked.

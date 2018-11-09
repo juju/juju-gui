@@ -10,6 +10,8 @@ const Link = require('../../link/link');
 const PaymentMethodCard = require('../../payment/methods/card/card');
 const Spinner = require('../../spinner/spinner');
 
+require('./payment.scss');
+
 class DeploymentPayment extends React.Component {
   constructor() {
     super();

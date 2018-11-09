@@ -11,6 +11,8 @@ const GenericInput = require('../../../generic-input/generic-input');
 const ButtonRow = require('../../../shared/button-row/button-row');
 const FileField = require('../../../file-field/file-field');
 
+require('./_add.scss');
+
 class DeploymentCredentialAdd extends React.Component {
   constructor(props) {
     super(props);

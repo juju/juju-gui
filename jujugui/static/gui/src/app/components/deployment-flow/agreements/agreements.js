@@ -7,6 +7,8 @@ const React = require('react');
 
 const Button = require('../../shared/button/button');
 const TermsPopup = require('../../terms-popup/terms-popup');
+
+require('./_agreements.scss');
 /**
   A component for the user to agree to terms in the deployment flow.
 */

@@ -7,6 +7,8 @@ const React = require('react');
 const GenericInput = require('../../generic-input/generic-input');
 const Button = require('../../shared/button/button');
 
+require('./_expert-budget.scss');
+
 class DeploymentExpertBudget extends React.Component {
   constructor(props) {
     super(props);

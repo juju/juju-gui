@@ -6,6 +6,8 @@ const React = require('react');
 
 const BasicTable = require('../../../shared/basic-table/basic-table');
 
+require('./_plan-table.scss');
+
 class DeploymentPlanTable extends React.Component {
   constructor(props) {
     super(props);

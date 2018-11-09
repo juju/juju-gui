@@ -10,6 +10,7 @@ const EntityContentDiagram = require('../../entity-details/content/diagram/diagr
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const DeploymentSection = require('../section/section');
 
+require('./_direct-deploy.scss');
 
 class DeploymentDirectDeploy extends React.Component {
   constructor(props) {

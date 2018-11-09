@@ -8,6 +8,8 @@ const DeploymentSection = require('../section/section');
 const SvgIcon = require('../../svg-icon/svg-icon');
 const USSOLoginLink = require('../../usso-login-link/usso-login-link');
 
+require('./_login.scss');
+
 class DeploymentLogin extends React.Component {
   /**
    Generate the tick icon.

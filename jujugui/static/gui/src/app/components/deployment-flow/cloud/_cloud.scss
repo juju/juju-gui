@@ -1,3 +1,7 @@
+@import '../../../assets/css/animations';
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/variables';
+
 .deployment-cloud {
   &__list {
     @extend %list-style;

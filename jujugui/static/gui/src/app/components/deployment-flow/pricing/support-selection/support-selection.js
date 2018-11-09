@@ -7,6 +7,8 @@ const PropTypes = require('prop-types');
 const DeploymentSupportSelectionPlan = require('./plan/plan');
 const Spinner = require('../../../spinner/spinner');
 
+require('./_support-selection.scss');
+
 class DeploymentSupportSelection extends React.Component {
   constructor(props) {
     super(props);

@@ -5,6 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
+require('./_machines.scss');
+
 class DeploymentMachines extends React.Component {
   /**
     Generate the list of machines

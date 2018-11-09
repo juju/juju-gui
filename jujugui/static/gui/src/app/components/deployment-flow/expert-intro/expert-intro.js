@@ -12,6 +12,8 @@ const EntityContentDiagram = require('../../entity-details/content/diagram/diagr
 const ExpertContactCard = require('../../expert-contact-card/expert-contact-card');
 const Link = require('../../link/link');
 
+require('./_expert-intro.scss');
+
 class DeploymentExpertIntro extends React.Component {
   constructor(props) {
     super(props);
