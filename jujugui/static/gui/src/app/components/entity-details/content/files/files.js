@@ -7,6 +7,7 @@ const {urls} = require('jaaslib');
 
 const initUtils = require('../../../../init/utils');
 
+require('./_files.scss');
 
 class EntityFiles extends React.Component {
 
