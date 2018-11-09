@@ -6,6 +6,8 @@ const React = require('react');
 
 const BasicTable = require('../../basic-table/basic-table');
 
+require('./_table.scss');
+
 class StatusTable extends React.Component {
   /**
     A function to be supplied to sort methods to sort by key.

@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_expanding-row.scss');
+
 class ExpandingRow extends React.Component {
   constructor() {
     super();
