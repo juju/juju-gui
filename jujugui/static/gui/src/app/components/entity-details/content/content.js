@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
@@ -303,7 +302,7 @@ class EntityContent extends React.Component {
     @method _toggleTerms
     @param {Object} terms The terms to display.
   */
-  _toggleTerms(terms=null) {
+  _toggleTerms(terms = null) {
     this.setState({showTerms: terms});
   }
 
@@ -368,7 +367,7 @@ class EntityContent extends React.Component {
   */
   _generateTagsAndTerms(entityModel) {
     if (this.props.entityModel.get('entityType') === 'charm') {
-      return(
+      return (
         <div className="entity-content__terms">
           {this._generateTags()}
           {this._generateTerms()}
@@ -499,7 +498,7 @@ class EntityContent extends React.Component {
       if (quantity) {
         quantityItem = (
           <span className="entity-content__plan-price-quantity">
-          / {quantity}
+            / {quantity}
           </span>);
       }
       priceList.push(
@@ -537,23 +536,18 @@ class EntityContent extends React.Component {
     }
     var plansList = [];
     plans.forEach((plan, i) => {
-      var classes = classNames(
-        'entity-content__plan',
-        'four-col',
-        {'last-col': (i + 1) % 3 === 0});
 
       plansList.push(
         <div
-          className={classes}
+          className="entity-content__plan"
           key={plan.url + i}>
+          <div className="plan-block__top-title">Managed solution</div>
           <div className="entity-content__plan-content">
             <h3 className="entity-content__plan-title">
-              {plan.url}
+              {plan.price}
             </h3>
-            <ul className="entity-content__plan-price">
-              {this._generatePriceList(plan.price)}
-            </ul>
             <p className="entity-content__plan-description">
+              <span className="entity-content__plan-url">{plan.url}</span>
               {plan.description}
             </p>
           </div>
@@ -561,16 +555,9 @@ class EntityContent extends React.Component {
     });
     return (
       <div
-        className="row entity-content__plans"
+        className="entity-content__plans"
         id="plans">
-        <div className="inner-wrapper">
-          <div className="twelve-col">
-            <h2 className="entity-content__header">Plans</h2>
-            <div className="equal-height">
-              {plansList}
-            </div>
-          </div>
-        </div>
+        {plansList}
       </div>);
   }
 
@@ -587,8 +574,8 @@ class EntityContent extends React.Component {
     const ddeploy = this.props.flags['test.ddeploy'];
     const dataDD = ddeploy ? 'data-dd' : '';
     const script = '<script ' +
-    'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
-    `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
+      'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
+      `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
     let cardElement = <div className="juju-card" data-id={storeId}></div>;
     if (ddeploy) {
       cardElement = <div className="juju-card" data-dd data-id={storeId}></div>;
@@ -632,7 +619,6 @@ class EntityContent extends React.Component {
               {this._generateDescription(entityModel)}
               {this._generateDiagram(entityModel)}
               {this._generateTagsAndTerms(entityModel)}
-              {this._generatePlans()}
               <EntityContentReadme
                 addNotification={this.props.addNotification}
                 changeState={this.props.changeState}
@@ -643,6 +629,7 @@ class EntityContent extends React.Component {
               {this._generateOptionsList(entityModel)}
             </div>
             <div className="four-col last-col">
+              {this._generatePlans()}
               {this._generateExpert()}
               {this._generateActions()}
               {this._generateResources()}
