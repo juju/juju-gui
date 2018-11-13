@@ -41,8 +41,12 @@ class ProfileCredentialList extends React.Component {
       const clouds = await this.props.cloudFacade.clouds();
       const credentialList = await this._getCloudCredentialNames(props.userName, clouds);
       const modelList = await this.props.modelManager.listModelSummaries();
-      const flattenedCredentialList = credentialList.results.map(cloud => cloud.result).flat();
-
+      const multiCredentialList = credentialList.results.map(cloud => cloud.result);
+      // This following line can be replaced with a .flat() call on the above
+      // `multiCredentialList` value. At the time of writing .flat() is not
+      // supported in nodejs where our tests run.
+      const flattenedCredentialList = multiCredentialList.reduce(
+        (acc, val) => acc.concat(val), []);
       const credentialMap = new Map();
       flattenedCredentialList.forEach(cred => {
         const credentialData = this._parseCredentialName(cred);
@@ -50,7 +54,6 @@ class ProfileCredentialList extends React.Component {
           model.result.cloudCredentialTag === cred);
         credentialMap.set(cred, credentialData);
       });
-
       this.setState({
         credentialMap,
         loading: false
@@ -244,7 +247,6 @@ class ProfileCredentialList extends React.Component {
     }
     let rows = [];
     const selectedCredential = this.props.credential;
-
     credentials.forEach((credential, key) => {
       rows.push({
         classes: key === selectedCredential ? ['profile-credential-list--highlighted'] : null,
