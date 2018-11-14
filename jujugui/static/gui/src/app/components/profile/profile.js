@@ -141,7 +141,6 @@ class Profile extends React.Component {
         getComponent: () => {
           return (
             <ProfileModelList
-              acl={props.acl}
               addNotification={props.addNotification}
               baseURL={props.baseURL}
               changeState={props.changeState}

@@ -57,11 +57,6 @@ exports[`Profile can render 1`] = `
         className="col-9"
       >
         <ProfileModelList
-          acl={
-            Object {
-              "isReadOnly": [Function],
-            }
-          }
           addNotification={[Function]}
           baseURL="/gui/"
           changeState={[Function]}
