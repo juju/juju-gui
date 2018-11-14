@@ -55,7 +55,9 @@ describe('ProfileCredentialListDelete', () => {
     wrapper.find('Popup').prop('buttons')[1].action();
     assert.equal(revokeCloudCredential.callCount, 1);
     assert.equal(onCredentialDeleted.callCount, 1);
-    assert.equal(onCredentialDeleted.args[0][0], 'google_foo@external_admin');
+    assert.deepEqual(
+      onCredentialDeleted.args[0],
+      [{entities: [{tag: 'google_foo@external_admin'}]}]);
   });
 
   it('can handle errors when removing credentials', () => {
