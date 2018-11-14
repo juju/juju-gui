@@ -14,9 +14,6 @@ rules:
   id-name-format:
     - 1
     - convention: hyphenatedbem
-  indentation:
-    - 2
-    - size: 2
   nesting-depth: 0
   no-ids: 1
   no-vendor-prefixes: 0

@@ -28,7 +28,6 @@
         stroke: $light-grey;
         fill: $light-grey;
       }
-
     }
   }
 
@@ -41,8 +40,7 @@
   }
 
   // xterm.scss styles and overrides.
-  .terminal .xterm-viewport::-webkit-scrollbar-track  {
+  .terminal .xterm-viewport::-webkit-scrollbar-track {
     background-color: $color-dark;
   }
-
 }

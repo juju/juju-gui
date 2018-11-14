@@ -42,7 +42,6 @@ $pending-relation--dragging: #fa6a40;
 
 .connector1,
 .connector2 {
-
   &.error {
     fill: $error;
   }
@@ -82,9 +81,7 @@ $pending-relation--dragging: #fa6a40;
 }
 
 .rel-group {
-  // scss-lint:disable PlaceholderInExtend
   @extend .visibility-classes;
-  // scss-lint:enable PlaceholderInExtend
 }
 
 .rel-indicator {

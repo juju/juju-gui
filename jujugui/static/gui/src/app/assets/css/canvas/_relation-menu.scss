@@ -2,7 +2,7 @@
 .environment-menu {
   background-color: $white;
   border-radius: $border-radius;
-  box-shadow: 0 0 2px rgba(0, 0, 0, .3);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
   color: $cool-grey;
   display: none;
   left: 0;
@@ -100,9 +100,8 @@
   }
 }
 
-// scss-lint:disable IdSelector
-#relation-menu { // sass-lint:disable-line no-ids, id-name-format
-  // scss-lint:enable IdSelector
+// sass-lint:disable-block no-ids, id-name-format
+#relation-menu {
   $icon-size: 16px;
   $height: 30px;
   $gutter: 10px;

@@ -252,7 +252,8 @@ class ProfileModelList extends React.Component {
               content: dateContent,
               classes: ['u-hide--small']
             }, {
-              content: destroyContent
+              content: destroyContent,
+              classes: ['u-align--center']
             }
           ],
           expandedContent: (
@@ -265,7 +266,7 @@ class ProfileModelList extends React.Component {
               </td>
               <td>{accessContent}</td>
               <td>{dateContent}</td>
-              <td>{destroyContent}</td>
+              <td className="u-align--center">{destroyContent}</td>
             </React.Fragment>
           ),
           key: model.name

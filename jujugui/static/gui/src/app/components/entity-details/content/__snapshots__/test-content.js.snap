@@ -199,3 +199,255 @@ exports[`EntityContent can display a bundle for Juju 2 1`] = `
   </div>
 </div>
 `;
+
+exports[`EntityContent can display plans 1`] = `
+<div
+  className="entity-content"
+>
+  <div
+    className="row"
+  >
+    <div
+      className="inner-wrapper"
+    >
+      <div
+        className="eight-col"
+      >
+        <EntityContentDescription
+          changeState={[Function]}
+          description="Django framework."
+          includeHeading={true}
+        />
+        <div
+          className="entity-content__terms"
+        >
+          <div
+            className="entity-content__metadata"
+          >
+            <h4
+              className="entity-content__metadata-title"
+            >
+              Tags:
+            </h4>
+             
+            <a
+              className="link link--cold"
+              data-id="database"
+              key="database0"
+              onClick={[Function]}
+            >
+              database
+            </a>
+          </div>
+        </div>
+        <EntityContentReadme
+          addNotification={[Function]}
+          changeState={[Function]}
+          entityModel={
+            Object {
+              "get": [Function],
+              "getAttrs": [Function],
+              "set": [Function],
+              "toEntity": [Function],
+            }
+          }
+          getFile={[Function]}
+          hash="readme"
+          scrollCharmbrowser={[Function]}
+        />
+      </div>
+      <div
+        className="four-col last-col"
+      >
+        <div
+          className="entity-content__plans"
+          id="plans"
+        >
+          <div
+            className="entity-content__plan"
+            key="plan10"
+          >
+            <div
+              className="plan-block__top-title"
+            >
+              Managed solution
+            </div>
+            <div
+              className="entity-content__plan-content"
+            >
+              <h3
+                className="entity-content__plan-title"
+              >
+                test/price1
+              </h3>
+              <p
+                className="entity-content__plan-description"
+              >
+                <span
+                  className="entity-content__plan-url"
+                >
+                  plan1
+                </span>
+                description1
+              </p>
+            </div>
+          </div>
+          <div
+            className="entity-content__plan"
+            key="plan21"
+          >
+            <div
+              className="plan-block__top-title"
+            >
+              Managed solution
+            </div>
+            <div
+              className="entity-content__plan-content"
+            >
+              <h3
+                className="entity-content__plan-title"
+              >
+                price2;
+              </h3>
+              <p
+                className="entity-content__plan-description"
+              >
+                <span
+                  className="entity-content__plan-url"
+                >
+                  plan2
+                </span>
+                description2
+              </p>
+            </div>
+          </div>
+          <div
+            className="entity-content__plan"
+            key="plan32"
+          >
+            <div
+              className="plan-block__top-title"
+            >
+              Managed solution
+            </div>
+            <div
+              className="entity-content__plan-content"
+            >
+              <h3
+                className="entity-content__plan-title"
+              >
+                test/price3;price3b
+              </h3>
+              <p
+                className="entity-content__plan-description"
+              >
+                <span
+                  className="entity-content__plan-url"
+                >
+                  plan3
+                </span>
+                description3
+              </p>
+            </div>
+          </div>
+        </div>
+        <ExpertContactCard
+          expert="test-owner"
+          sendAnalytics={[Function]}
+          staticURL="http://example.com"
+        />
+        <div
+          className="section section__contribute"
+        >
+          <h3
+            className="section__title"
+          >
+            Contribute
+          </h3>
+          <ul
+            className="section__list"
+          >
+            <li
+              className="section__list-item"
+            >
+              <a
+                className="link link--cold"
+                href="https://bugs.launchpad.net/charms/+source/django"
+                target="_blank"
+              >
+                Submit a bug
+              </a>
+            </li>
+          </ul>
+        </div>
+        <EntityResources
+          apiUrl="http://example.com"
+          entityId="cs:django"
+        />
+        <EntityContentRelations
+          changeState={[Function]}
+          relations={
+            Object {
+              "provides": Object {
+                "http": Object {
+                  "interface": "http",
+                  "name": "http",
+                },
+              },
+              "requires": Object {
+                "cache": Object {
+                  "interface": "cache",
+                  "name": "cache",
+                },
+              },
+            }
+          }
+        />
+        <EntityFiles
+          apiUrl="http://example.com"
+          entityModel={
+            Object {
+              "get": [Function],
+              "getAttrs": [Function],
+              "set": [Function],
+              "toEntity": [Function],
+            }
+          }
+        />
+        <div
+          className="entity-content__card section clearfix"
+        >
+          <h3
+            className="section__title"
+          >
+            Embed this charm
+          </h3>
+          <p>
+            Add this card to your website by copying the code below. 
+            <a
+              className="entity-content__card-cta"
+              href="https://jujucharms.com/community/cards"
+              target="_blank"
+            >
+              Learn more
+            </a>
+            .
+          </p>
+          <CopyToClipboard
+            className="copy-to-clipboard"
+            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js\\"></script>
+<div class=\\"juju-card\\"  data-id=\\"trusty/django-123\\"></div>"
+          />
+          <h4>
+            Preview
+          </h4>
+          <div
+            className="juju-card"
+            data-id="trusty/django-123"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

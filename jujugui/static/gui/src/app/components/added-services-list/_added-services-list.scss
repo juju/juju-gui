@@ -2,7 +2,8 @@
   @extend %fade-in;
   @extend %floating-panel;
   @extend %scroll-children;
-  $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space + 30px + 44px; //44px for the beta logo
+  $extra-space: $navbar-height + $panel-space + $environment-header-height + $panel-space +
+    30px + 44px; //44px for the beta logo
   position: absolute;
   z-index: index($z-indexed-elements, inspector-view);
   top: $environment-header-height + ($panel-space * 2) + $navbar-height;
@@ -54,7 +55,6 @@
         color: $link-blue;
       }
     }
-
   }
 
   &__item-icon {

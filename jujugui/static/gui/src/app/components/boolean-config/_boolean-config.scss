@@ -31,7 +31,7 @@
     text-align: center;
     line-height: 20px;
     font-size: 16px;
-    transition: left .1s ease-in-out;
+    transition: left 0.1s ease-in-out;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -95,6 +95,6 @@
   &--description {
     margin-top: 15px;
     color: $cool-grey;
-    font-size: .875em;
+    font-size: 0.875em;
   }
 }

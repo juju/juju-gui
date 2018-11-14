@@ -33,7 +33,7 @@
 
   &__metadata {
     display: block;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
 
     &-title {
       font-size: 1rem;
@@ -50,36 +50,42 @@
     box-sizing: border-box;
     border: 1px solid $light-mid-grey;
     border-radius: $border-radius;
+    margin-bottom: 1rem;
+    position: relative;
 
     &-content {
       padding: 20px;
     }
 
-    &-price,
     &-title {
-      text-align: center;
+      border-bottom: 1px solid $color-mid-light;
+      padding-bottom: 1rem;
     }
 
-    &-price {
-      @extend %list-style;
-      margin: 20px 0;
-      padding: 20px 0;
-      border-width: 1px 0;
-      border-style: solid;
-      border-color: $light-mid-grey;
+    &-url {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
 
-      &-amount {
-        font-size: 2em;
-        color: $ubuntu-orange;
-      }
+    .plan-block__top-title {
+      position: relative;
+      height: 32px;
+      padding: 10px 12px;
+      background-color: #f7f7f7;
+      font-size: 14px;
+      line-height: 13px;
+      text-transform: uppercase;
+      width: 100%;
 
-      &-quantity {
-        font-size: 1.1em;
-        color: $dark-warm-grey;
-      }
-
-      &-item:last-child {
-        margin-bottom: 0;
+      &:after {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        height: 33px;
+        border-left: 3px solid $ubuntu-orange;
+        border-top-left-radius: 2px;
       }
     }
   }
@@ -96,7 +102,7 @@
     h4,
     h5,
     h6 {
-      margin: .8rem 0;
+      margin: 0.8rem 0;
     }
 
     h1 {
@@ -151,7 +157,7 @@
     }
 
     pre {
-      padding: .625rem 1rem;
+      padding: 0.625rem 1rem;
       background-color: $color-light;
       border: 1px solid $color-mid-light;
       border-radius: 2px;
@@ -229,7 +235,7 @@
 
     &-meta {
       color: $dark-warm-grey;
-      margin-bottom: .2em;
+      margin-bottom: 0.2em;
       font-size: 14px;
     }
 
@@ -245,9 +251,7 @@
 
   .btn__see--more,
   .btn__see--less {
-    // scss-lint:disable PlaceholderInExtend
     @extend .button--inline-neutral;
-    // scss-lint:enable PlaceholderInExtend
   }
 
   .list__controls {

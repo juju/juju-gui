@@ -12,8 +12,8 @@
   .lightbox {
     &__close {
       @media screen and (max-width: $tour-max-width - 1) {
-        top: .5rem;
-        right: .5rem;
+        top: 0.5rem;
+        right: 0.5rem;
       }
     }
 
@@ -70,11 +70,11 @@
         z-index: 1;
       }
       &__navigation-previous {
-        left: -.5rem;
+        left: -0.5rem;
       }
 
       &__navigation-next {
-        right: -.5rem;
+        right: -0.5rem;
       }
 
       &__navigation-bullets {
@@ -129,6 +129,6 @@
   &__icon {
     transform: rotate(90deg);
     stroke: $white;
-    margin-right: .25rem;
+    margin-right: 0.25rem;
   }
 }

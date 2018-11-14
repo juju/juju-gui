@@ -1,5 +1,5 @@
-// scss-lint:disable IdSelector
-#model-actions-container { // sass-lint:disable-line no-ids, id-name-format
+// sass-lint:disable-block no-ids, id-name-format
+#model-actions-container {
   @media only screen and (min-width: 600px) {
     position: relative;
     margin: 10px 0 10px 20px;
@@ -7,7 +7,6 @@
 
   float: left;
 }
-// scss-lint:enable IdSelector
 
 .model-actions {
   // A delay here means the model actions will show up at the same time as the
@@ -21,17 +20,13 @@
   &__share {
     padding: 11px;
     border: 1px solid $color-mid-light;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
     background-color: $canvas-background;
-    // scss-lint:disable ImportantRule
     color: $warm-grey !important;
-    // scss-lint:disable ImportantRule
 
     &:hover {
       background-color: $white;
-      // scss-lint:disable ImportantRule
       color: $dark-warm-grey !important;
-      // scss-lint:disable ImportantRule
     }
   }
 
