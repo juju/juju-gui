@@ -69,8 +69,23 @@ class ProfileModelList extends React.Component {
       modelTag: `model-${modelUUID}`,
       // TODO Allow for selecting not to destroy storage.
       destroyStorage: true
-    }]}, (errors, data) => {
-      if (errors) {
+    }]}, (error, data) => {
+      let errors = [];
+      if (error) {
+        errors.push(error);
+      }
+      let dataErrors = [];
+      if (data && data.results) {
+        dataErrors = data.results.reduce((accumulator, result) => {
+          if (result.error) {
+            return accumulator.concat([result.error.message]);
+          }
+        }, []);
+      }
+      if (dataErrors.length) {
+        errors = errors.concat(dataErrors);
+      }
+      if (errors.length) {
         errors.forEach(error => {
           this.props.addNotification({
             title: 'Error destroying model',
@@ -120,14 +135,6 @@ class ProfileModelList extends React.Component {
   _destroyModel(model, bdRef, e) {
     e.preventDefault();
     e.stopPropagation();
-    if (model.isController) {
-      this.props.addNotification({
-        title: 'Cannot destroy model',
-        message: 'The controller model cannot be destroyed.',
-        level: 'error'
-      });
-      return;
-    }
     this._showConfirmation(model);
   }
 
@@ -207,7 +214,7 @@ class ProfileModelList extends React.Component {
             relative={true} />
         );
         const destroyContent =
-          userIsAdmin && !model.isController ? (
+          userIsAdmin ? (
             <a onClick={this._destroyModel.bind(this, model, bdRef)}>
               <SvgIcon
                 name="delete_16"
@@ -338,12 +345,10 @@ class ProfileModelList extends React.Component {
 }
 
 ProfileModelList.propTypes = {
-  acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   modelManager: PropTypes.object.isRequired,
-  models: PropTypes.array,
   switchModel: PropTypes.func.isRequired,
   userName: PropTypes.string
 };
