@@ -32,11 +32,18 @@ describe('ProfileCredentialList', () => {
       ]
     };
 
-    jujulibTestHelper.makeConnection(assert, options, (conn, ws) => {
-      jujuConnection = conn;
-      jujuWebsocket = ws;
-      done();
-    });
+    const responseFacades = [{
+      name: 'Cloud', versions: [2]
+    }, {
+      name: 'ModelManager', versions: [4]
+    }];
+
+    jujulibTestHelper.makeConnectionWithResponse(
+      assert, options, responseFacades, (conn, ws) => {
+        jujuConnection = conn;
+        jujuWebsocket = ws;
+        done();
+      });
   });
 
   afterEach(() => {
