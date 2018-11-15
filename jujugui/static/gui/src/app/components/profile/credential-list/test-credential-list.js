@@ -32,14 +32,16 @@ describe('ProfileCredentialList', () => {
       ]
     };
 
-    const responseFacades = [{
-      name: 'Cloud', versions: [2]
-    }, {
-      name: 'ModelManager', versions: [4]
-    }];
+    const loginResponse = {
+      facades: [{
+        name: 'Cloud', versions: [2]
+      }, {
+        name: 'ModelManager', versions: [4]
+      }]
+    };
 
     jujulibTestHelper.makeConnectionWithResponse(
-      assert, options, responseFacades, (conn, ws) => {
+      assert, options, loginResponse, (conn, ws) => {
         jujuConnection = conn;
         jujuWebsocket = ws;
         done();
@@ -68,7 +70,7 @@ describe('ProfileCredentialList', () => {
   const shallowRenderComponent = options => enzyme.shallow(getComponent(options));
 
   function setupDefaultReplies() {
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, cloudResponse.clouds],
       [3, cloudResponse.userCredentials],
       [4, modelResponse.listModelSummaries]
@@ -126,7 +128,7 @@ describe('ProfileCredentialList', () => {
       credential: 'a missing credential',
       name: 'modelwithmissingcred'
     }});
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, cloudResponse.clouds],
       [3, cloudResponse.userCredentials],
       [4, updatedModelSummaries]
