@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Added Prettier to the codebase to format `.scss` files
+- Update to Xterm 3.8.0.
 
 ### Fixed
-- Fixed styling issue with Plans selector in sticky header on entity pages
-
+- Styling issue with Plans selector in sticky header on entity pages
+- Broken GCP cloud logo in Firefox.
+- Repeating port values on Status pane.
+- Broken styles on the Status pane.
 
 ## [2.14.1] - 2018-10-26
 ### Changed
