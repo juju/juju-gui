@@ -6,6 +6,8 @@ const React = require('react');
 
 const NotificationListItem = require('./item/item');
 
+require('./_notification-list.scss');
+
 class NotificationList extends React.Component {
   constructor(props) {
     super(props);

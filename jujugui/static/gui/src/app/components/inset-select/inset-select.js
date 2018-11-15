@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_inset-select.scss');
+
 class InsetSelect extends React.Component {
   /**
     Get the value of the field.

@@ -5,6 +5,9 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const ButtonDropdown = require('../button-dropdown/button-dropdown');
+
+require('./_user-menu.scss');
+
 /**
   Provides a user menu to the header - shows Profile, help and Logout links.
   If user is not logged in the user icon is replaced with a login button.

@@ -9,6 +9,8 @@ const Button = require('../shared/button/button');
 const SvgIcon = require('../svg-icon/svg-icon');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
+require('./_login.scss');
+
 class Login extends React.Component {
   componentDidMount() {
     if (this.props.gisf) {

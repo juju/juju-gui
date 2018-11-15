@@ -10,6 +10,9 @@ const WebfontLoader = require('xterm-webfont');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_terminal.scss');
+require('./xterm.scss');
+
 // xterm.js loads plugins by requiring them. This changes the prototype of the
 // xterm object. This is inherently dirty, but not really up to us, and perhaps
 // not something we can change.

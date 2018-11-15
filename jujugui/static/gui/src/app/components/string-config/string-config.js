@@ -7,6 +7,8 @@ const React = require('react');
 
 const StringConfigInput = require('./input/input');
 
+require('./_string-config.scss');
+
 class StringConfig extends React.Component {
   constructor(props) {
     super(props);

@@ -1,3 +1,7 @@
+@import '../../assets/css/mixins';
+@import '../../assets/css/tooltip';
+@import '../../assets/css/variables';
+
 // sass-lint:disable-block no-ids, id-name-format
 #model-actions-container {
   @media only screen and (min-width: 600px) {

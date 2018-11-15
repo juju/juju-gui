@@ -8,6 +8,8 @@ const React = require('react');
 const ButtonRow = require('../../shared/button-row/button-row');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_section.scss');
+
 class DeploymentSection extends React.Component {
   /**
     Generate the actions.

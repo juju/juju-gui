@@ -1,3 +1,6 @@
+@import '../../../../assets/css/animations';
+@import '../../../../assets/css/variables';
+
 .inspector-expose__unit {
   @extend %stagger-fade-in;
   padding: 10px 20px;

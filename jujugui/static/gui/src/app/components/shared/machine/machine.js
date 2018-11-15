@@ -10,6 +10,8 @@ const Button = require('../../shared/button/button');
 const MachineUnit = require('../machine-unit/machine-unit');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_machine.scss');
+
 class Machine extends React.Component {
   /**
     Generate the hardware/constraints for a machine.

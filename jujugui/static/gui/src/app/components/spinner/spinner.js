@@ -3,6 +3,8 @@
 
 const React = require('react');
 
+require('./_spinner.scss');
+
 class Spinner extends React.PureComponent {
   render() {
     return (

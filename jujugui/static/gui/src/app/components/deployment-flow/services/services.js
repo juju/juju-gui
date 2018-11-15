@@ -10,6 +10,8 @@ const BudgetTable = require('../../budget-table/budget-table');
 const changesUtils = require('../../../init/changes-utils');
 const DeploymentChangeItem = require('../change-item/change-item');
 
+require('./_services.scss');
+
 class DeploymentServices extends React.Component {
 
   /**

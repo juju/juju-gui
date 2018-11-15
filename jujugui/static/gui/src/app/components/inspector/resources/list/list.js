@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_list.scss');
+
 class InspectorResourcesList extends React.Component {
   /**
     Generate a list of resources to display.

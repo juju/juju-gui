@@ -7,6 +7,8 @@ const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_generic-input.scss');
+
 class GenericInput extends React.Component {
   constructor() {
     super();

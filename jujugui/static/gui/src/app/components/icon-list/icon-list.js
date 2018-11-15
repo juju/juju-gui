@@ -6,6 +6,8 @@ const React = require('react');
 
 const {urls} = require('jaaslib');
 
+require('./_icon-list.scss');
+
 /**
   Display a list of icons for an entity.
 */

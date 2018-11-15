@@ -1,5 +1,7 @@
-// The main header above the canvas
+@import './mixins';
+@import './variables';
 
+// The main header above the canvas
 .header-banner {
   position: absolute;
   top: 0;

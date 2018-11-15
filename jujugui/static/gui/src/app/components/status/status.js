@@ -9,6 +9,8 @@ const initUtils = require('../../init/utils');
 const maracaPropTypes = require('../../maraca/prop-types');
 const SharedStatus = require('../shared/status/status/status');
 
+require('./_status.scss');
+
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
 

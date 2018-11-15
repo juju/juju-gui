@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_config-option.scss');
+
 class EntityContentConfigOption extends React.Component {
   /**
     Create the markup for default value.

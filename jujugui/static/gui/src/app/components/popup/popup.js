@@ -10,6 +10,8 @@ const Button = require('../shared/button/button');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_popup.scss');
+
 /**
   Popup provides a React component for modal confirmation of an
   action.

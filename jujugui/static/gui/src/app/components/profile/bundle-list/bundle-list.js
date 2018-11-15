@@ -12,6 +12,8 @@ const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const Spinner = require('../../spinner/spinner');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 
+require('./_bundle-list.scss');
+
 /**
   Charm list React component used to display a list of the users bundles in
   their profile.

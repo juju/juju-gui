@@ -9,6 +9,8 @@ const enhanceWithClickOutside = require('../../init/react-click-outside');
 const EnvList = require('./list/list');
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_env-switcher.scss');
+
 class EnvSwitcher extends React.Component {
   constructor() {
     super();

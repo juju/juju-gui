@@ -11,6 +11,8 @@ const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_model-list.scss');
+
 /**
   Model list React component used to display a list of the users models in
   their profile.

@@ -9,6 +9,8 @@ const shapeup = require('shapeup');
 
 const MachineUnit = require('../../shared/machine-unit/machine-unit');
 
+require('./_machine-unit.scss');
+
 const dragSource = {
   /**
     Called when the component starts the drag.

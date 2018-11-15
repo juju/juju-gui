@@ -7,6 +7,8 @@ const React = require('react');
 
 const SvgIcon = require('../../../../svg-icon/svg-icon');
 
+require('./_plan.scss');
+
 class DeploymentSupportSelectionPlan extends React.Component {
 
   _generateFeatures() {

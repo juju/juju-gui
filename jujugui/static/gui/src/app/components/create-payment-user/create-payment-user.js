@@ -11,6 +11,8 @@ const initUtils = require('../../init/utils');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
 
+require('./_create-payment-user.scss');
+
 class CreatePaymentUser extends React.Component {
   constructor() {
     super();

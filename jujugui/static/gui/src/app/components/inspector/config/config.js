@@ -11,6 +11,8 @@ const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
 const ButtonRow = require('../../shared/button-row/button-row');
 
+require('./_config.scss');
+
 class Configuration extends React.Component {
   constructor(props) {
     super(props);

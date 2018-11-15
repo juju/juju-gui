@@ -7,6 +7,8 @@ const React = require('react');
 const ButtonRow = require('../shared/button-row/button-row');
 const InspectorHeader = require('../inspector/header/header');
 
+require('./_local-inspector.scss');
+
 class LocalInspector extends React.Component {
   constructor(props) {
     super(props);

@@ -7,6 +7,8 @@ const classNames = require('classnames');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_lightbox.scss');
+
 /**
   Renders a modal like overlay with a darkened background.
   A caption is displayed in white below the content if present.

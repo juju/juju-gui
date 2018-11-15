@@ -8,6 +8,8 @@ const React = require('react');
 const Lightbox = require('../../lightbox/lightbox');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_tour.scss');
+
 class Tour extends React.PureComponent {
   render() {
     const staticURL = this.props.staticURL;

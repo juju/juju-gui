@@ -8,6 +8,8 @@ const shapeup = require('shapeup');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const InspectorExposeUnit = require('./unit/unit');
 
+require('./_expose.scss');
+
 class InspectorExpose extends React.Component {
   /**
     The callable to be passed to the unit items for navigating to the unit

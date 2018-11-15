@@ -9,6 +9,8 @@ const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add')
 const Button = require('../shared/button/button');
 const Spinner = require('../spinner/spinner');
 
+require('./_credential-add-edit.scss');
+
 // List, add and remove cloud credentials in the account page.
 class CredentialAddEdit extends React.Component {
   constructor(props) {

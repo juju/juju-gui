@@ -8,6 +8,8 @@ const Button = require('../../shared/button/button');
 const DeploymentPanel = require('../panel/panel');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_signup.scss');
+
 class DeploymentSignup extends React.Component {
   /**
     Set the cookie for hiding the sign-up page.

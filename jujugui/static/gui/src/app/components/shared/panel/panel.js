@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_panel.scss');
+
 class Panel extends React.Component {
   componentDidMount() {
     // Set the keyboard focus on the component so it can be scrolled with the

@@ -1,3 +1,5 @@
+@import '../../assets/css/variables';
+
 .post-deployment {
   max-height: calc(100% - 140px - 100px);
   z-index: index($z-indexed-elements, post-deployment);

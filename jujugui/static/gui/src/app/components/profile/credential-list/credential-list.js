@@ -13,6 +13,8 @@ const Button = require('../../shared/button/button');
 const ProfileCredentialListDelete = require('./delete/delete');
 const Spinner = require('../../spinner/spinner');
 
+require('./_credential-list.scss');
+
 // Define the name of the lxd cloud.
 const LOCAL_CLOUD = 'localhost';
 

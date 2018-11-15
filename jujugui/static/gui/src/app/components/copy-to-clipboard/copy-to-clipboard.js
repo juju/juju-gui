@@ -8,6 +8,8 @@ const ReactDOM = require('react-dom');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_copy-to-clipboard.scss');
+
 class CopyToClipboard extends React.Component {
   constructor() {
     super();

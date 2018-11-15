@@ -9,6 +9,8 @@ const initUtils = require('../../../init/utils');
 const Spinner = require('../../spinner/spinner');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_cloud.scss');
+
 class DeploymentCloud extends React.Component {
   constructor() {
     super();

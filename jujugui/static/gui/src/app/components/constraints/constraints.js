@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_constraints.scss');
+
 class Constraints extends React.Component {
   /**
     Called when the component is first mounted.

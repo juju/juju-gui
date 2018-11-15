@@ -6,6 +6,8 @@ const React = require('react');
 
 const Popup = require('../../../popup/popup');
 
+require('./_delete.scss');
+
 class ProfileCredentialListDelete extends React.Component {
   /**
     Handle deleting a credential.

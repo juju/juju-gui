@@ -6,6 +6,8 @@ const React = require('react');
 const Spinner = require('../spinner/spinner');
 const BasicTable = require('../shared/basic-table/basic-table');
 
+require('./_invoice.scss');
+
 /**
   React component used to display a list of the users invoices in their profile.
 */

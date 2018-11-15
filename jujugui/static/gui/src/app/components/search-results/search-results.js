@@ -13,6 +13,8 @@ const SearchResultsSelectFilter = require('./select-filter/select-filter');
 const SearchResultsTypeFilter = require('./type-filter/type-filter');
 const Spinner = require('../spinner/spinner');
 
+require('./_search-results.scss');
+
 class SearchResults extends React.Component {
   constructor(props) {
     super(props);

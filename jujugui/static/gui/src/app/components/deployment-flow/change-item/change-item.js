@@ -6,6 +6,8 @@ const React = require('react');
 
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_change-item.scss');
+
 class DeploymentChangeItem extends React.Component {
   /**
     Generate the icon node.

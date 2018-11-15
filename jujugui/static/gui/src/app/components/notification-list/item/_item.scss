@@ -1,3 +1,6 @@
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/variables';
+
 .notification-list-item {
   @extend %floating-panel;
   position: relative;

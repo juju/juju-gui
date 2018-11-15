@@ -8,6 +8,8 @@ const {charmstore} = require('jaaslib');
 
 const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 
+require('./_store.scss');
+
 class Store extends React.Component {
   componentDidMount() {
     this.props.setPageTitle('Store');

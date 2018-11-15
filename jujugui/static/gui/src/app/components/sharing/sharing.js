@@ -12,6 +12,8 @@ const Spinner = require('../spinner/spinner');
 const Popup = require('../popup/popup');
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_sharing.scss');
+
 /**
   Modal component for viewing which users have access to the model, as well
   as sharing access with other users.

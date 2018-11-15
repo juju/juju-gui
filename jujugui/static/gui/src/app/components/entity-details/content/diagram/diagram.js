@@ -7,6 +7,8 @@ const React = require('react');
 
 const SvgIcon = require('../../../svg-icon/svg-icon');
 
+require('./_diagram.scss');
+
 class EntityContentDiagram extends React.PureComponent {
   /**
     If expandable, open image in lightbox.

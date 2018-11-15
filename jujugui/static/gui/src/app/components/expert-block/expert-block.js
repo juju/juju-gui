@@ -5,6 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
 
+require('./_expert-block.scss');
+
 const ExpertBlock = props => (
   <div className={classNames('expert-block', props.classes)}>
     <div className="expert-block__top-title">

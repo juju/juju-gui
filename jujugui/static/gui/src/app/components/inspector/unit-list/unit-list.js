@@ -8,6 +8,8 @@ const ButtonRow = require('../../shared/button-row/button-row');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const OverviewAction = require('../overview-action/overview-action');
 
+require('./_unit-list.scss');
+
 class UnitList extends React.Component {
   constructor() {
     super();
