@@ -97,7 +97,7 @@ describe('Profile Model List', function() {
 
     // It should only show the single model that they explicitly own.
     assert.equal(
-      component.find('.profile__title-count').html().includes('(4)'),
+      component.find('.profile__title-count').html().includes('(5)'),
       true);
   });
 
@@ -128,7 +128,7 @@ describe('Profile Model List', function() {
       [2, updatedModelSummaries]
     ]));
     const component = renderComponent();
-    assert.equal(component.find('.profile__title-count').html().includes('(3)'), true);
+    assert.equal(component.find('.profile__title-count').html().includes('(4)'), true);
   });
 
   it('displays an error when destroying a model fails', () => {

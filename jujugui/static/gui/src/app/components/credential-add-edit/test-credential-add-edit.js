@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const CredentialAddEdit = require('./credential-add-edit');
 
 describe('CredentialAddEdit', () => {
-  let acl, controllerAPI;
+  let acl;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};

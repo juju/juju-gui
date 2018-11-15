@@ -263,7 +263,7 @@ class ProfileCredentialList extends React.Component {
                 return '-';
                 break;
               case 1:
-                return `${credential.models[0]}`;
+                return `${credential.models[0].result.name}`;
                 break;
               default:
                 return `${modelCount} Models`;

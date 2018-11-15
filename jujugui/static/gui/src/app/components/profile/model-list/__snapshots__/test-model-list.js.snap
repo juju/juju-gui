@@ -15,7 +15,7 @@ exports[`Profile Model List can render 1`] = `
         className="profile__title-count"
       >
         (
-        4
+        5
         )
       </span>
     </h4>
@@ -320,6 +320,140 @@ exports[`Profile Model List can render 1`] = `
             </td>
           </React.Fragment>,
           "key": "mymodel",
+        },
+        Object {
+          "columns": Array [
+            Object {
+              "content": <a
+                href="/gui/u/thedr/single-cred"
+                onClick={[Function]}
+              >
+                single-cred
+              </a>,
+            },
+            Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
+              "content": "Me",
+            },
+            Object {
+              "content": <React.Fragment>
+                <span
+                  className="profile-model-list__machine-number"
+                />
+                google
+                /us-central1
+              </React.Fragment>,
+            },
+            Object {
+              "content": <span
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </span>,
+            },
+            Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
+              "content": <DateDisplay
+                date="--"
+                relative={true}
+              />,
+            },
+            Object {
+              "classes": Array [
+                "u-align--center",
+              ],
+              "content": <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>,
+            },
+          ],
+          "expandedContent": <React.Fragment>
+            <td>
+              <a
+                href="/gui/u/thedr/single-cred"
+                onClick={[Function]}
+              >
+                single-cred
+              </a>
+            </td>
+            <td>
+              Me
+            </td>
+            <td>
+              <React.Fragment>
+                <span
+                  className="profile-model-list__machine-number"
+                />
+                google
+                /us-central1
+              </React.Fragment>
+              <a
+                className="profile-model-list__link u-no-padding--bottom"
+                onClick={[Function]}
+                role="button"
+                tabIndex="0"
+              />
+            </td>
+            <td>
+              <span
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </span>
+            </td>
+            <td>
+              <DateDisplay
+                date="--"
+                relative={true}
+              />
+            </td>
+            <td
+              className="u-align--center"
+            >
+              <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>
+            </td>
+          </React.Fragment>,
+          "key": "single-cred",
         },
         Object {
           "columns": Array [
