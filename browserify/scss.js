@@ -13,16 +13,21 @@ module.exports = (browserify, options) => {
       return through();
     }
     return through((buffer, encoding, next) => {
-      const compiled = sass.renderSync({
-        data: buffer.toString('utf8'),
-        includePaths: [
-          './node_modules',
-          // Include the file's path so that relative css @imports work.
-          path.dirname(file)
-        ],
-        outputStyle: prod ? 'compressed' : 'nested'
-      });
-      files[file] = compiled.css;
+      try {
+        const compiled = sass.renderSync({
+          data: buffer.toString('utf8'),
+          includePaths: [
+            './node_modules',
+            // Include the file's path so that relative css @imports work.
+            path.dirname(file)
+          ],
+          outputStyle: prod ? 'compressed' : 'nested'
+        });
+        files[file] = compiled.css;
+      } catch(err) {
+        console.log(
+          err.formatted.replace('of stdin', `of ${err.file === 'stdin' ? file : err.file}`));
+      }
       next();
     });
   });

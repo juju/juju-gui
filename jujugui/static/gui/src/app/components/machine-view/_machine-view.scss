@@ -1,3 +1,7 @@
+@import '../../assets/css/animations';
+@import '../../assets/css/mixins';
+@import '../../assets/css/variables';
+
 .machine-view {
   @include customize-scrollbar($canvas-background);
   position: absolute;

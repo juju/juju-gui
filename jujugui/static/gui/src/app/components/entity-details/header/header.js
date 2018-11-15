@@ -11,6 +11,8 @@ const Button = require('../../shared/button/button');
 const initUtils = require('../../../init/utils');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_header.scss');
+
 class EntityHeader extends React.Component {
   constructor() {
     super();

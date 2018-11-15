@@ -12,6 +12,8 @@ const PaymentMethods = require('./methods/methods');
 const CreatePaymentUser = require('../create-payment-user/create-payment-user');
 const Button = require('../shared/button/button');
 
+require('./_payment.scss');
+
 class Payment extends React.Component {
   constructor() {
     super();

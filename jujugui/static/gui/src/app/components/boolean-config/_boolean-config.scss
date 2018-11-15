@@ -1,3 +1,7 @@
+@import '../../assets/css/animations';
+@import '../../assets/css/sprites';
+@import '../../assets/css/variables';
+
 .boolean-config {
   @extend %stagger-fade-in;
   margin: 10px 20px 14px;

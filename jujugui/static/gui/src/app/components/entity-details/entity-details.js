@@ -12,6 +12,8 @@ const EntityHeader = require('./header/header');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
 
+require('./_entity-details.scss');
+
 class EntityDetails extends React.Component {
   constructor(props) {
     super(props);

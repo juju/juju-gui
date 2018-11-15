@@ -1,3 +1,6 @@
+@import './plugins/cloud-vanilla-theme/scss/global-settings';
+@import './variables';
+
 @mixin customize-scrollbar($background) {
   ::-webkit-scrollbar {
     width: 10px;
@@ -29,6 +32,17 @@
     bottom: -4px;
   } @else if $direction == 'up' {
     top: -4px;
+  }
+}
+
+%link {
+  text-decoration: none;
+  font-weight: normal;
+  cursor: pointer;
+
+  &:hover {
+    color: $link-blue;
+    text-decoration: underline;
   }
 }
 

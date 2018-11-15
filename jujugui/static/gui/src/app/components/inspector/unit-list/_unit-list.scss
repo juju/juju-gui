@@ -1,3 +1,6 @@
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/variables';
+
 .unit-list {
   @extend %scroll-children;
 

@@ -4,6 +4,8 @@
 const classNames = require('classnames');
 const React = require('react');
 
+require('./_expanding-progress.scss');
+
 class ExpandingProgress extends React.Component {
   constructor() {
     super();

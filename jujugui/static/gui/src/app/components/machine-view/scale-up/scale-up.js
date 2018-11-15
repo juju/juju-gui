@@ -8,6 +8,8 @@ const shapeup = require('shapeup');
 
 const ButtonRow = require('../../shared/button-row/button-row');
 
+require('./_scale-up.scss');
+
 class MachineViewScaleUp extends React.Component {
   /**
     Display a list of applications.

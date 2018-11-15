@@ -13,6 +13,8 @@ const React = require('react');
 const Panel = require('../shared/panel/panel');
 const PlansUsage = require('./plans-usage/plans-usage');
 
+require('./_isv-profile.scss');
+
 class ISVProfile extends React.Component {
   /**
     Placeholder function to get the data to render the plan usage chart

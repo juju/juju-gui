@@ -11,6 +11,8 @@ const GenericInput = require('../../generic-input/generic-input');
 const githubSSHKeys = require('../../../utils/github-ssh-keys');
 const Notification = require('../../notification/notification');
 
+require('./_sshkey.scss');
+
 /**
   This component allows users to provide their public SSH keys.
   Providing SSH keys when creating a model is important as it allows accessing

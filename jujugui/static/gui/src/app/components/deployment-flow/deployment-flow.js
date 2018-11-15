@@ -31,6 +31,8 @@ const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
 const Button = require('../shared/button/button');
 
+require('./_deployment-flow.scss');
+
 // Define the VPC ID zero value.
 const INITIAL_VPC_ID = null;
 

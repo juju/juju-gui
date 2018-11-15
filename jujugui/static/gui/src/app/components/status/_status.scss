@@ -1,3 +1,7 @@
+@import '../../assets/css/animations';
+@import '../../assets/css/mixins';
+@import '../../assets/css/variables';
+
 .status-view {
   @include customize-scrollbar($canvas-background);
   position: absolute;
@@ -55,7 +59,7 @@
   }
 
   &__link {
-    @extend .link;
+    @extend %link;
     position: relative;
     // Raise all links above the main row link.
     z-index: 2;

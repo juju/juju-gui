@@ -12,6 +12,8 @@ const CardForm = require('../../card-form/card-form');
 const AddressForm = require('../../address-form/address-form');
 const PaymentMethod = require('./method/method');
 
+require('./_methods.scss');
+
 class PaymentMethods extends React.Component {
   constructor() {
     super();

@@ -11,6 +11,8 @@ const Button = require('../../shared/button/button');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
+require('./_budget.scss');
+
 class DeploymentBudget extends React.Component {
   constructor() {
     super();

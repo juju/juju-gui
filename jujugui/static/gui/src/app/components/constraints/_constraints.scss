@@ -1,3 +1,6 @@
+@import '../../assets/css/animations';
+@import '../../assets/css/mixins';
+
 .constraints {
   &__label {
     @extend %stagger-fade-in;

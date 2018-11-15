@@ -6,6 +6,8 @@ const React = require('react');
 
 const ExpertBlock = require('../expert-block/expert-block');
 
+require('./_expert-card.scss');
+
 class ExpertCard extends React.Component {
   render() {
     const {expert} = this.props;

@@ -6,6 +6,8 @@ const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_zoom.scss');
+
 class Zoom extends React.Component {
   /**
     Fires the zoom function with an increased zoom value

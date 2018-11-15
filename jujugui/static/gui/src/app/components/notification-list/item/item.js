@@ -7,6 +7,8 @@ const React = require('react');
 
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_item.scss');
+
 class NotificationListItem extends React.Component {
   constructor() {
     super();

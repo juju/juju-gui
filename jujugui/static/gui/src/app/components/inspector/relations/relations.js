@@ -8,6 +8,8 @@ const CheckListItem = require('../../check-list-item/check-list-item');
 const ButtonRow = require('../../shared/button-row/button-row');
 const OverviewAction = require('../overview-action/overview-action');
 
+require('./_relations.scss');
+
 class InspectorRelations extends React.Component {
   constructor() {
     super();

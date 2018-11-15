@@ -7,6 +7,8 @@ const React = require('react');
 
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 
+require('./_machine-unit.scss');
+
 class MachineUnit extends React.Component {
   /**
     Generate the classes for the unit.

@@ -11,6 +11,8 @@ const Button = require('../shared/button/button');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_post-deployment.scss');
+
 const GET_STARTED = 'getstarted.md';
 const POST_DEPLOYMENT = 'post-deployment.sh';
 

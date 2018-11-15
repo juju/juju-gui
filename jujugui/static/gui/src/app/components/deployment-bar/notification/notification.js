@@ -5,6 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
 
+require('./_notification.scss');
+
 class DeploymentBarNotification extends React.Component {
   constructor() {
     super();

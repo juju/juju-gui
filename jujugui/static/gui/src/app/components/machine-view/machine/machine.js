@@ -11,6 +11,7 @@ const Constraints = require('../../constraints/constraints');
 const Machine = require('../../shared/machine/machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
+require('./_machine.scss');
 
 const dropTarget = {
   /**

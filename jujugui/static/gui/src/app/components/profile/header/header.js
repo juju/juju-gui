@@ -7,6 +7,8 @@ const shapeup = require('shapeup');
 
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_header.scss');
+
 /** Header React component for use in the Profile component. */
 class ProfileHeader extends React.Component {
   constructor() {

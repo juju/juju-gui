@@ -8,6 +8,8 @@ const React = require('react');
 const Button = require('../../../shared/button/button');
 const SvgIcon = require('../../../svg-icon/svg-icon');
 
+require('./_card.scss');
+
 class PaymentMethodCard extends React.Component {
   constructor() {
     super();

@@ -11,6 +11,8 @@ const Button = require('../../shared/button/button');
 const ButtonDropdown = require('../../button-dropdown/button-dropdown');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
+require('./_header.scss');
+
 const MachineViewHeaderGlobals = {};
 
 MachineViewHeaderGlobals.dropTarget = {

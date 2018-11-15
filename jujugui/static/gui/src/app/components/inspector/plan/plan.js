@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_plan.scss');
+
 class InspectorPlan extends React.Component {
   /**
     Generates the elements if the applicaton has a plan selected.

@@ -7,6 +7,8 @@ const React = require('react');
 
 const ButtonRow = require('../../shared/button-row/button-row');
 
+require('./_confirm.scss');
+
 class InspectorConfirm extends React.Component {
   constructor(props) {
     super(props);

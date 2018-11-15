@@ -6,9 +6,10 @@ const PropTypes = require('prop-types');
 
 const DeploymentPlanTable = require('./plan-table/plan-table');
 const DeploymentSupportSelection = require('./support-selection/support-selection');
+const initUtils = require('../../../init/utils');
 const Link = require('../../link/link');
 
-const initUtils = require('../../../init/utils');
+require('./_pricing.scss');
 
 const DeploymentPricing = props => {
   const machineLabel = initUtils.pluralize('machine', parseInt(props.machineCount, 10));

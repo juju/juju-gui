@@ -7,6 +7,8 @@ const React = require('react');
 
 const EnvSwitcher = require('../env-switcher/env-switcher');
 
+require('./_header-breadcrumb.scss');
+
 // Define the name of the uncommitted model.
 const NO_MODEL = 'untitled-model';
 

@@ -10,6 +10,8 @@ const SvgIcon = require('../svg-icon/svg-icon');
 const VanillaCard = require('../vanilla/card/card');
 const Tour = require('./tour/tour');
 
+require('./_help.scss');
+
 class Help extends React.Component {
   constructor() {
     super();

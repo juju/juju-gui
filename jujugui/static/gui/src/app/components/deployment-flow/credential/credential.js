@@ -11,6 +11,8 @@ const InsetSelect = require('../../inset-select/inset-select');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const DeploymentCredentialAdd = require('./add/add');
 
+require('./_credential.scss');
+
 class DeploymentCredential extends React.Component {
   constructor(props) {
     super(props);

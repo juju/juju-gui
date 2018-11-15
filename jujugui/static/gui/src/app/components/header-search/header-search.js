@@ -7,6 +7,8 @@ const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
 
+require('./_header-search.scss');
+
 class HeaderSearch extends React.Component {
   constructor(props) {
     super(props);

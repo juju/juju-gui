@@ -5,6 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
+
+require('./_hash-link.scss');
 /*
   This component can be used to add in-page links to ids e.g. it could be used
   within a readme heading to link to .../#readme.

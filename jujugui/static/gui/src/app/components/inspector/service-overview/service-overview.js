@@ -10,6 +10,8 @@ const initUtils = require('../../../init/utils');
 const InspectorConfirm = require('../confirm/confirm');
 const OverviewAction = require('../overview-action/overview-action');
 
+require('./_service-overview.scss');
+
 class ServiceOverview extends React.Component {
   constructor() {
     super();

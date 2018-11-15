@@ -1,8 +1,12 @@
+@import '../../assets/css/mixins';
+@import '../../assets/css/tooltip';
+@import '../../assets/css/variables';
+
 .button-dropdown {
   position: relative;
 
   &__button {
-    @extend .link;
+    @extend %link;
     @extend .tooltip;
     display: inline-block;
     transition: background-color 0.2s;

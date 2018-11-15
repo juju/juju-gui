@@ -7,6 +7,8 @@ const classNames = require('classnames');
 
 const {getStatusClass} = require('../../utils');
 
+require('./_label.scss');
+
 const StatusLabel = props => {
   const status = props.status;
   const classes = classNames(

@@ -8,6 +8,8 @@ const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const Button = require('../../shared/button/button');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
+require('./_row.scss');
+
 class BudgetTableRow extends React.Component {
   constructor() {
     super();

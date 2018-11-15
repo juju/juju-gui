@@ -11,6 +11,8 @@ const shapeup = require('shapeup');
 const SvgIcon = require('../svg-icon/svg-icon');
 const DropdownMenu = require('../dropdown-menu/dropdown-menu');
 
+require('./_button-dropdown.scss');
+
 /**
   Creates a component that has an icon, which when clicked, opens a dropdown
   menu with list items.

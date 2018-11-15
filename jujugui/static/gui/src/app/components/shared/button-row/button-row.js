@@ -7,6 +7,8 @@ const React = require('react');
 
 const Button = require('../button/button');
 
+require('./_button-row.scss');
+
 class ButtonRow extends React.Component {
   /**
     Returns the classes for the footer based on the provided props.

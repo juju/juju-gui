@@ -18,6 +18,8 @@ const EntityResources = require('./resources/resources');
 const Spinner = require('../../spinner/spinner');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
+require('./_content.scss');
+
 class EntityContent extends React.Component {
   constructor() {
     super();

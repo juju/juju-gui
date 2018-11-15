@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_check-list-item.scss');
+
 class CheckListItem extends React.Component {
   constructor() {
     super();

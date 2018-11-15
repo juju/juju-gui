@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_boolean-config.scss');
+
 class BooleanConfig extends React.Component {
   constructor(props) {
     super(props);

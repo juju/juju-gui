@@ -5,6 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_button.scss');
+
 class Button extends React.Component {
   /**
     Returns the classes for the button based on the provided props.

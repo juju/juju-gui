@@ -18,6 +18,8 @@ const Panel = require('../shared/panel/panel');
 const RevenueStatement = require('../revenue-statement/revenue-statement');
 const Link = require('../link/link');
 
+require('./_profile.scss');
+
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
   /**

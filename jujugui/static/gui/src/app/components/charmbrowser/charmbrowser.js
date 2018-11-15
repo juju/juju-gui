@@ -11,6 +11,8 @@ const Panel = require('../shared/panel/panel');
 const SearchResults = require('../search-results/search-results');
 const Store = require('../store/store');
 
+require('./_charmbrowser.scss');
+
 class Charmbrowser extends React.Component {
   /**
     Get the current state of the charmbrowser.

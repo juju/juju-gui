@@ -5,6 +5,9 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const SvgIcon = require('../svg-icon/svg-icon');
+
+require('./_notification.scss');
+
 /**
   Renders a new vanilla style notification
   (https://docs.vanillaframework.io/en/patterns/notification). Can be

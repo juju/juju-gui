@@ -9,6 +9,8 @@ const {urls} = require('jaaslib');
 const Spinner = require('../../spinner/spinner');
 const InspectorChangeVersionItem = require('./item/item');
 
+require('./_change-version.scss');
+
 class InspectorChangeVersion extends React.Component {
   constructor() {
     super();

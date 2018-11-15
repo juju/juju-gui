@@ -15,6 +15,8 @@ const MachineViewUnplacedUnit = require('./unplaced-unit/unplaced-unit');
 const SvgIcon = require('../svg-icon/svg-icon');
 const Button = require('../shared/button/button');
 
+require('./_machine-view.scss');
+
 class MachineView extends React.Component {
   constructor(props) {
     super(props);

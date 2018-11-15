@@ -1,3 +1,7 @@
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/plugins/cloud-vanilla-theme/scss/modules/buttons';
+@import '../../../assets/css/variables';
+
 .entity-content {
   clear: both;
 
@@ -251,7 +255,9 @@
 
   .btn__see--more,
   .btn__see--less {
-    @extend .button--inline-neutral;
+    @extend %button--inline-neutral;
+    display: inline-block;
+    width: auto;
   }
 
   .list__controls {

@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_relate-to.scss');
+
 class InspectorRelateTo extends React.Component {
   /**
     The callable to be passed to the relate to items for navigating to the

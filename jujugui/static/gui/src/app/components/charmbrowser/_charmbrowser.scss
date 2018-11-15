@@ -1,3 +1,6 @@
+@import '../../assets/css/mixins';
+@import '../../assets/css/variables';
+
 .charmbrowser {
   @extend %floating-panel;
   $bottom-space: $deployer-bar-height + $panel-space;

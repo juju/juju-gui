@@ -4,6 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
+require('./_budget-chart.scss');
+
 class BudgetChart extends React.Component {
   /**
     Generate the widths for the chart bars.
