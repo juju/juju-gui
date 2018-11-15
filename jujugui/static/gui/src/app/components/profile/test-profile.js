@@ -23,7 +23,17 @@ describe('Profile', function() {
           list: sinon.stub(),
           url: '/charmstore'
         }}
-        controllerAPI={controllerAPI}
+        controllerConnection={{
+          facades: {
+            cloud: {},
+            modelManager: {}
+          },
+          info: {
+            user: {
+              displayName: 'spinach'
+            }
+          }
+        }}
         controllerIP={'1.2.3.4'}
         controllerIsReady={sinon.stub()}
         controllerUser={options.controllerUser || 'spinach'}
@@ -33,6 +43,8 @@ describe('Profile', function() {
         getModelName={options.getModelName || sinon.stub()}
         getUser={options.getUser || sinon.stub()}
         gisf={true}
+        isActiveUsersProfile={
+          options.isActiveUsersProfile !== undefined ? options.isActiveUsersProfile : true}
         payment={options.payment}
         sendAnalytics={sinon.stub()}
         showPay={options.showPay || false}
@@ -49,18 +61,10 @@ describe('Profile', function() {
     // return navigation.props.sectionsMap;
   }
 
-  let acl, controllerAPI, userInfo;
+  let acl, userInfo;
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
-    controllerAPI = {
-      getCloudCredentialNames: sinon.stub(),
-      listClouds: sinon.stub(),
-      listModelsWithInfo: sinon.stub(),
-      reshape: shapeup.reshapeFunc,
-      revokeCloudCredential: sinon.stub(),
-      updateCloudCredential: sinon.stub()
-    };
     userInfo = {
       isCurrent: true,
       profile: 'spinach'
@@ -85,7 +89,7 @@ describe('Profile', function() {
   });
 
   it('hides certain sections when viewing others profile pages', () => {
-    const wrapper = renderComponent({controllerUser: 'foo'});
+    const wrapper = renderComponent({isActiveUsersProfile: false});
     const sectionsMap = getSectionsMap(wrapper);
     const allowedKeys = ['charms', 'bundles'];
     assert.deepEqual(Array.from(sectionsMap.keys()), allowedKeys);

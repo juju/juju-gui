@@ -15,7 +15,7 @@ exports[`Profile Model List can render 1`] = `
         className="profile__title-count"
       >
         (
-        4
+        5
         )
       </span>
     </h4>
@@ -57,10 +57,10 @@ exports[`Profile Model List can render 1`] = `
           "columns": Array [
             Object {
               "content": <a
-                href="/gui/u/tester/mymodel"
+                href="/gui/u/thedr/group-test"
                 onClick={[Function]}
               >
-                mymodel
+                group-test
               </a>,
             },
             Object {
@@ -73,11 +73,9 @@ exports[`Profile Model List can render 1`] = `
               "content": <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
-                aws
-                /eu-west-1
+                />
+                google
+                /us-central1
               </React.Fragment>,
             },
             Object {
@@ -104,7 +102,7 @@ exports[`Profile Model List can render 1`] = `
                 "u-hide--small",
               ],
               "content": <DateDisplay
-                date="2017-07-06T14:47:03.000Z"
+                date="--"
                 relative={true}
               />,
             },
@@ -125,10 +123,10 @@ exports[`Profile Model List can render 1`] = `
           "expandedContent": <React.Fragment>
             <td>
               <a
-                href="/gui/u/tester/mymodel"
+                href="/gui/u/thedr/group-test"
                 onClick={[Function]}
               >
-                mymodel
+                group-test
               </a>
             </td>
             <td>
@@ -138,20 +136,16 @@ exports[`Profile Model List can render 1`] = `
               <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
-                aws
-                /eu-west-1
+                />
+                google
+                /us-central1
               </React.Fragment>
               <a
                 className="profile-model-list__link u-no-padding--bottom"
                 onClick={[Function]}
                 role="button"
                 tabIndex="0"
-              >
-                base
-              </a>
+              />
             </td>
             <td>
               <span
@@ -174,7 +168,141 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <DateDisplay
-                date="2017-07-06T14:47:03.000Z"
+                date="--"
+                relative={true}
+              />
+            </td>
+            <td
+              className="u-align--center"
+            >
+              <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>
+            </td>
+          </React.Fragment>,
+          "key": "group-test",
+        },
+        Object {
+          "columns": Array [
+            Object {
+              "content": <a
+                href="/gui/u/thedr/mymodel"
+                onClick={[Function]}
+              >
+                mymodel
+              </a>,
+            },
+            Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
+              "content": "Me",
+            },
+            Object {
+              "content": <React.Fragment>
+                <span
+                  className="profile-model-list__machine-number"
+                />
+                google
+                /us-central1
+              </React.Fragment>,
+            },
+            Object {
+              "content": <span
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </span>,
+            },
+            Object {
+              "classes": Array [
+                "u-hide--small",
+              ],
+              "content": <DateDisplay
+                date="--"
+                relative={true}
+              />,
+            },
+            Object {
+              "classes": Array [
+                "u-align--center",
+              ],
+              "content": <a
+                onClick={[Function]}
+              >
+                <SvgIcon
+                  name="delete_16"
+                  size="16"
+                />
+              </a>,
+            },
+          ],
+          "expandedContent": <React.Fragment>
+            <td>
+              <a
+                href="/gui/u/thedr/mymodel"
+                onClick={[Function]}
+              >
+                mymodel
+              </a>
+            </td>
+            <td>
+              Me
+            </td>
+            <td>
+              <React.Fragment>
+                <span
+                  className="profile-model-list__machine-number"
+                />
+                google
+                /us-central1
+              </React.Fragment>
+              <a
+                className="profile-model-list__link u-no-padding--bottom"
+                onClick={[Function]}
+                role="button"
+                tabIndex="0"
+              />
+            </td>
+            <td>
+              <span
+                className="profile-model-list__access tooltip"
+              >
+                <span
+                  className="tooltip__tooltip"
+                >
+                  <span
+                    className="tooltip__inner tooltip__inner--down"
+                  >
+                    admin
+                  </span>
+                </span>
+                <SvgIcon
+                  name="user_16"
+                  size="16"
+                />
+              </span>
+            </td>
+            <td>
+              <DateDisplay
+                date="--"
                 relative={true}
               />
             </td>
@@ -197,10 +325,10 @@ exports[`Profile Model List can render 1`] = `
           "columns": Array [
             Object {
               "content": <a
-                href="/gui/u/tester/mymodel2"
+                href="/gui/u/thedr/single-cred"
                 onClick={[Function]}
               >
-                mymodel2
+                single-cred
               </a>,
             },
             Object {
@@ -213,9 +341,7 @@ exports[`Profile Model List can render 1`] = `
               "content": <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
+                />
                 google
                 /us-central1
               </React.Fragment>,
@@ -244,7 +370,7 @@ exports[`Profile Model List can render 1`] = `
                 "u-hide--small",
               ],
               "content": <DateDisplay
-                date="2017-07-06T16:26:47.000Z"
+                date="--"
                 relative={true}
               />,
             },
@@ -265,10 +391,10 @@ exports[`Profile Model List can render 1`] = `
           "expandedContent": <React.Fragment>
             <td>
               <a
-                href="/gui/u/tester/mymodel2"
+                href="/gui/u/thedr/single-cred"
                 onClick={[Function]}
               >
-                mymodel2
+                single-cred
               </a>
             </td>
             <td>
@@ -278,9 +404,7 @@ exports[`Profile Model List can render 1`] = `
               <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
+                />
                 google
                 /us-central1
               </React.Fragment>
@@ -289,9 +413,7 @@ exports[`Profile Model List can render 1`] = `
                 onClick={[Function]}
                 role="button"
                 tabIndex="0"
-              >
-                admin
-              </a>
+              />
             </td>
             <td>
               <span
@@ -314,7 +436,7 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <DateDisplay
-                date="2017-07-06T16:26:47.000Z"
+                date="--"
                 relative={true}
               />
             </td>
@@ -331,31 +453,29 @@ exports[`Profile Model List can render 1`] = `
               </a>
             </td>
           </React.Fragment>,
-          "key": "mymodel2",
+          "key": "single-cred",
         },
         Object {
           "columns": Array [
             Object {
               "content": <a
-                href="/gui/u/tester2/test-db"
+                href="/gui/u/radman/kpi"
                 onClick={[Function]}
               >
-                test-db
+                kpi
               </a>,
             },
             Object {
               "classes": Array [
                 "u-hide--small",
               ],
-              "content": "tester2",
+              "content": "radman",
             },
             Object {
               "content": <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  2
-                </span>
+                />
                 google
                 /us-east1
               </React.Fragment>,
@@ -398,22 +518,20 @@ exports[`Profile Model List can render 1`] = `
           "expandedContent": <React.Fragment>
             <td>
               <a
-                href="/gui/u/tester2/test-db"
+                href="/gui/u/radman/kpi"
                 onClick={[Function]}
               >
-                test-db
+                kpi
               </a>
             </td>
             <td>
-              tester2
+              radman
             </td>
             <td>
               <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  2
-                </span>
+                />
                 google
                 /us-east1
               </React.Fragment>
@@ -452,31 +570,29 @@ exports[`Profile Model List can render 1`] = `
               className="u-align--center"
             />
           </React.Fragment>,
-          "key": "test-db",
+          "key": "kpi",
         },
         Object {
           "columns": Array [
             Object {
               "content": <a
-                href="/gui/u/tester3/website"
+                href="/gui/u/bigboss/ci"
                 onClick={[Function]}
               >
-                website
+                ci
               </a>,
             },
             Object {
               "classes": Array [
                 "u-hide--small",
               ],
-              "content": "tester3",
+              "content": "bigboss",
             },
             Object {
               "content": <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  25
-                </span>
+                />
                 google
                 /us-east1
               </React.Fragment>,
@@ -505,7 +621,7 @@ exports[`Profile Model List can render 1`] = `
                 "u-hide--small",
               ],
               "content": <DateDisplay
-                date="2017-07-05T01:42:05.000Z"
+                date="--"
                 relative={true}
               />,
             },
@@ -526,22 +642,20 @@ exports[`Profile Model List can render 1`] = `
           "expandedContent": <React.Fragment>
             <td>
               <a
-                href="/gui/u/tester3/website"
+                href="/gui/u/bigboss/ci"
                 onClick={[Function]}
               >
-                website
+                ci
               </a>
             </td>
             <td>
-              tester3
+              bigboss
             </td>
             <td>
               <React.Fragment>
                 <span
                   className="profile-model-list__machine-number"
-                >
-                  25
-                </span>
+                />
                 google
                 /us-east1
               </React.Fragment>
@@ -572,7 +686,7 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <DateDisplay
-                date="2017-07-05T01:42:05.000Z"
+                date="--"
                 relative={true}
               />
             </td>
@@ -589,10 +703,28 @@ exports[`Profile Model List can render 1`] = `
               </a>
             </td>
           </React.Fragment>,
-          "key": "website",
+          "key": "ci",
         },
       ]
     }
   />
 </div>
+`;
+
+exports[`Profile Model List displays a spinner when loading 1`] = `
+<div
+  className="profile-model-list"
+>
+  <Spinner />
+</div>
+`;
+
+exports[`Profile Model List switches to a model that has been clicked on 1`] = `
+Array [
+  Object {
+    "id": "57650e3c-815f-4540-89df-81fd5d70b7ef",
+    "name": "group-test",
+    "owner": "thedr",
+  },
+]
 `;

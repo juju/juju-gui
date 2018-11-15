@@ -106,6 +106,14 @@ class Profile extends React.Component {
     const controllerConnection = props.controllerConnection;
     const sectionsMap = new Map();
     const sectionInfo = this._getSectionInfo();
+    let cloudFacade = null;
+    let modelManager = null;
+    let userName = null;
+    if (controllerConnection) {
+      cloudFacade = controllerConnection.facades.cloud;
+      modelManager = controllerConnection.facades.modelManager;
+      userName = controllerConnection.info.user.displayName;
+    }
 
     if (profileUrl.full === 'revenue-statement') {
       return (
@@ -131,19 +139,11 @@ class Profile extends React.Component {
       sectionsMap.set('models', {
         label: 'Models',
         getComponent: () => {
-          let modelManager = null;
-          let userName = null;
-          if (controllerConnection) {
-            modelManager = controllerConnection.facades.modelManager;
-            userName = controllerConnection.info.user.displayName;
-          }
           return (
             <ProfileModelList
-              acl={props.acl}
               addNotification={props.addNotification}
               baseURL={props.baseURL}
               changeState={props.changeState}
-              destroyModel={props.destroyModel}
               modelManager={modelManager}
               switchModel={props.switchModel}
               userName={userName} />
@@ -201,16 +201,15 @@ class Profile extends React.Component {
       sectionsMap.set('credentials', {
         label: 'Cloud credentials',
         getComponent: () => {
-          const propTypes = ProfileCredentialList.propTypes;
           return (
             <ProfileCredentialList
               acl={props.acl}
               addNotification={props.addNotification}
-              controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
-              controllerIsReady={props.controllerIsReady}
+              cloudFacade={cloudFacade}
               credential={this._getSectionInfo().sub}
+              modelManager={modelManager}
               sendAnalytics={this._sendAnalytics.bind(this)}
-              username={props.controllerUser} />
+              userName={userName} />
           );
         }
       });
@@ -297,19 +296,9 @@ Profile.propTypes = {
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: PropTypes.object.isRequired,
-  controllerAPI: shapeup.shape({
-    getCloudCredentialNames: PropTypes.func.isRequired,
-    listClouds: PropTypes.func.isRequired,
-    listModelsWithInfo: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
-    revokeCloudCredential: PropTypes.func.isRequired,
-    updateCloudCredential: PropTypes.func.isRequired
-  }).isRequired,
   controllerConnection: PropTypes.object,
   controllerIP: PropTypes.string,
-  controllerIsReady: PropTypes.func.isRequired,
   controllerUser: PropTypes.string.isRequired,
-  destroyModel: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   getModelName: PropTypes.func.isRequired,
   getUser: PropTypes.func.isRequired,

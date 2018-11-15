@@ -4,78 +4,76 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
+const deepmerge = require('deepmerge');
 const enzyme = require('enzyme');
+
+const jujulibTestHelper = require('jujulib/api/test-helpers');
+const jujulibCloudFacade = require('jujulib/api/facades/cloud-v2.js');
+const jujulibModelManager = require('jujulib/api/facades/model-manager-v4.js');
+const cloudResponse = require('jujulib/tests/data/cloud-response');
+const modelResponse = require('jujulib/tests/data/modelmanager-response');
 
 const ProfileCredentialList = require('./credential-list');
 
 describe('ProfileCredentialList', () => {
-  let acl, cloudData, controllerAPI, credentialData, modelData;
+  let acl;
 
-  beforeEach(() => {
+  let jujuConnection = null;
+  let jujuWebsocket = null;
+
+  beforeEach(done => {
     acl = {
       isReadOnly: sinon.stub()
     };
-    cloudData = {
-      aws: {cloudType: 'ec2'},
-      azure: {cloudType: 'azure'},
-      google: {cloudType: 'gce'}
+    const options = {
+      facades: [
+        jujulibCloudFacade,
+        jujulibModelManager
+      ]
     };
 
-    credentialData = [{
-      names: ['aws_foo@external_cred1', 'aws_foo@external_testcred'],
-      displayNames: ['cred1', 'testcred']
+    const responseFacades = [{
+      name: 'Cloud', versions: [2]
     }, {
-      names: ['azure_foo@external_cred1'],
-      displayNames: ['cred1']
-    }, {
-      names: ['google_foo@external_admin'],
-      displayNames: ['admin']
+      name: 'ModelManager', versions: [4]
     }];
 
-    modelData = [{
-      owner: 'foo@external',
-      credential: credentialData[0].names[0],
-      name: 'testmodel1'
-    }, {
-      owner: 'foo@external',
-      credential: credentialData[1].names[0],
-      name: 'testmodel2'
-    }, {
-      owner: 'bar@external',
-      credential: 'some other credential',
-      name: 'sharedmodel1'
-    }];
-    controllerAPI = {
-      listClouds: callback => callback(null, cloudData),
-      getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
-      listModelsWithInfo: callback => callback(null, modelData),
-      revokeCloudCredential: sinon.stub(),
-      updateCloudCredential: sinon.stub()
-    };
+    jujulibTestHelper.makeConnectionWithResponse(
+      assert, options, responseFacades, (conn, ws) => {
+        jujuConnection = conn;
+        jujuWebsocket = ws;
+        done();
+      });
   });
 
-  function renderComponentToDOM(options = {}) {
-    const component = ReactTestUtils.renderIntoDocument(
+  afterEach(() => {
+    jujuConnection = null;
+    jujuWebsocket = null;
+  });
+
+  function getComponent(options = {}) {
+    return (
       <ProfileCredentialList
         acl={acl}
         addNotification={options.addNotification || sinon.stub()}
-        controllerAPI={options.controllerAPI || controllerAPI}
-        controllerIsReady={options.controllerIsReady || sinon.stub()}
+        cloudFacade={options.cloudFacade || jujuConnection.facades.cloud}
+        modelManager={options.modelManager || jujuConnection.facades.modelManager}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
-        username={options.username || 'foo@external'} />);
-    return component;
+        userName={options.username || 'foo@external'} />);
   }
 
-  const shallowRenderComponent = (options = {}) => enzyme.shallow(
-    <ProfileCredentialList
-      acl={acl}
-      addNotification={options.addNotification || sinon.stub()}
-      controllerAPI={options.controllerAPI || controllerAPI}
-      controllerIsReady={options.controllerIsReady || sinon.stub()}
-      credential="azure_foo@external_cred1"
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
-      username={options.username || 'foo@external'} />
-  );
+  const renderComponentToDOM =
+    options => ReactTestUtils.renderIntoDocument(getComponent(options));
+
+  const shallowRenderComponent = options => enzyme.shallow(getComponent(options));
+
+  function setupDefaultReplies() {
+    jujuWebsocket.queueReplies(new Map([
+      [2, cloudResponse.clouds],
+      [3, cloudResponse.userCredentials],
+      [4, modelResponse.listModelSummaries]
+    ]));
+  }
 
   /**
     Some tasks are done async in the component. This method checks to see when
@@ -109,23 +107,11 @@ describe('ProfileCredentialList', () => {
   }
 
   it('fetches the necessary data on mount', done => {
+    setupDefaultReplies();
     const component = renderComponentToDOM();
     loopCheck(component, () => {
       assert.equal(component.state.loading, false);
-      // Check that the map has the proper values.
-      const map = component.state.credentialMap;
-      assert.deepEqual(
-        map.get('aws_foo@external_cred1'),
-        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
-      assert.deepEqual(
-        map.get('aws_foo@external_testcred'),
-        {cloud: 'aws', displayName: 'testcred'});
-      assert.deepEqual(
-        map.get('azure_foo@external_cred1'),
-        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
-      assert.deepEqual(
-        map.get('google_foo@external_admin'),
-        {cloud: 'google', displayName: 'admin'});
+      expect(Array.from(component.state.credentialMap)).toMatchSnapshot();
       removeComponent(component);
       done();
     });
@@ -134,36 +120,34 @@ describe('ProfileCredentialList', () => {
   it('does not fail if models exist with unkonwn credentials', done => {
     // Add a non-shared model without a matching credential. This is not-shared
     // because the owner is the owner defined in these tests foo@external.
-    modelData.push({
+    const updatedModelSummaries = deepmerge({}, modelResponse.listModelSummaries);
+    updatedModelSummaries.response.results.push({result: {
       owner: 'foo@external',
       credential: 'a missing credential',
       name: 'modelwithmissingcred'
-    });
+    }});
+    jujuWebsocket.queueReplies(new Map([
+      [2, cloudResponse.clouds],
+      [3, cloudResponse.userCredentials],
+      [4, updatedModelSummaries]
+    ]));
     const component = renderComponentToDOM();
     loopCheck(component, () => {
       assert.equal(component.state.loading, false);
-      // Check that the map has the proper values.
-      const map = component.state.credentialMap;
-      assert.deepEqual(
-        map.get('aws_foo@external_cred1'),
-        {cloud: 'aws', displayName: 'cred1', models: ['testmodel1']});
-      assert.deepEqual(
-        map.get('aws_foo@external_testcred'),
-        {cloud: 'aws', displayName: 'testcred'});
-      assert.deepEqual(
-        map.get('azure_foo@external_cred1'),
-        {cloud: 'azure', displayName: 'cred1', models: ['testmodel2']});
-      assert.deepEqual(
-        map.get('google_foo@external_admin'),
-        {cloud: 'google', displayName: 'admin'});
+      expect(Array.from(component.state.credentialMap)).toMatchSnapshot();
       removeComponent(component);
       done();
     });
   });
 
-  function testRequestErrorNotification(controllerAPI, done) {
+  it('throws a notification if transport requests fail', done => {
+    // set the readystate in the websocket to something other than 1 so the
+    // request fails.
+    jujuWebsocket.readyState = 0;
     const addNotification = sinon.stub();
-    const component = renderComponentToDOM({addNotification, controllerAPI});
+    const component = renderComponentToDOM({
+      addNotification
+    });
     loopCheck(component, () => {
       const errorMsg = 'Unable to fetch credential data';
       // As this is using renderIntoDocument then presumably child components
@@ -177,62 +161,54 @@ describe('ProfileCredentialList', () => {
       removeComponent(component);
       done();
     });
-  }
-
-  it('throws a notification if listClouds request fail', done => {
-    controllerAPI.listClouds = callback => callback('error', null);
-    testRequestErrorNotification(controllerAPI, done);
   });
 
-  it('throws a notification if getCloudCredentialNames request fail', done => {
-    controllerAPI.getCloudCredentialNames = (clouds, callback) =>
-      callback('error', credentialData);
-    testRequestErrorNotification(controllerAPI, done);
-  });
-
-  it('throws a notification if listModelsWithInfo request fail', done => {
-    const controllerAPI = {
-      listClouds: callback => callback(null, cloudData),
-      getCloudCredentialNames: (clouds, callback) => callback(null, credentialData),
-      listModelsWithInfo: callback => callback('error', modelData),
-      revokeCloudCredential: sinon.stub(),
-      updateCloudCredential: sinon.stub()
-    };
-    testRequestErrorNotification(controllerAPI, done);
-  });
-
-  it('can render', () => {
-    const wrapper = shallowRenderComponent({gisf: true});
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  it('can show the add form', () => {
-    const wrapper = shallowRenderComponent();
-    const instance = wrapper.instance();
-    return instance._getClouds().then(() => {
-      wrapper.find('Button').props().action();
-      wrapper.update();
-      expect(wrapper).toMatchSnapshot();
+  it('can render', done => {
+    setupDefaultReplies();
+    const component = shallowRenderComponent();
+    loopCheck(component, () => {
+      component.update();
+      expect(component).toMatchSnapshot();
+      done();
     });
   });
 
-  it('can show the edit form', () => {
-    const wrapper = shallowRenderComponent();
-    const instance = wrapper.instance();
-    return instance._getClouds().then(() => {
-      instance._setEditCredential('aws_foo@external_cred1');
-      wrapper.update();
-      expect(wrapper).toMatchSnapshot();
+  it('can show the add form', done => {
+    setupDefaultReplies();
+    const component = shallowRenderComponent();
+    component.instance().componentDidMount();
+    loopCheck(component, () => {
+      component.find('Button').props().action();
+      component.update();
+      expect(component).toMatchSnapshot();
+      done();
     });
   });
 
-  it('can show the UI to delete a credential', () => {
-    const wrapper = shallowRenderComponent();
-    const instance = wrapper.instance();
-    instance._setDeleteCredential('google_foo@external_admin');
-    return instance._getClouds().then(() => {
-      wrapper.update();
-      expect(wrapper).toMatchSnapshot();
+  it('can show the edit form', done => {
+    setupDefaultReplies();
+    const component = shallowRenderComponent();
+    const instance = component.instance();
+    loopCheck(component, () => {
+      component.update();
+      instance._setEditCredential('cloudcred-google_thedr@external_default');
+      component.update();
+      expect(component).toMatchSnapshot();
+      done();
     });
+  });
+
+  it('can show the UI to delete a credential', done => {
+    setupDefaultReplies();
+    const component = shallowRenderComponent();
+    const instance = component.instance();
+    loopCheck(component, () => {
+      component.update();
+      instance._setDeleteCredential('cloudcred-google_thedr@external_default');
+      component.update();
+      expect(component).toMatchSnapshot();
+      done();
+    });
+
   });
 });

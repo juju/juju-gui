@@ -277,27 +277,6 @@ utils._destroyServiceCallback = (service, db, callback, evt) => {
 };
 
 /**
-  Remove a model.
-  @param destroyModels {Function} The controller API method to destroy models.
-  @param modelAPI {Object} The model API.
-  @param switchModel {Function} The method for switching models.
-  @param modelUUID {String} The UUID for the model to destroy.
-  @param callback {Function} The function to call after destroying the model.
-  @param {Boolean} clearProfileState Whether to close the profile if the model
-    is destroyed.
-*/
-utils.destroyModel = (
-  destroyModels, modelAPI, switchModel, modelUUID, callback=null, clearProfileState=true) => {
-  // If the current model is being destroyed then disconnect first.
-  if (modelAPI.get('modelUUID') === modelUUID) {
-    switchModel(null, false, clearProfileState);
-  }
-  destroyModels([modelUUID], (error, data) => {
-    callback && callback(error, data);
-  });
-};
-
-/**
   Calculate the number of units per status.
   @param {Array} units An array of units.
   @returns {Object} The unit statuses.

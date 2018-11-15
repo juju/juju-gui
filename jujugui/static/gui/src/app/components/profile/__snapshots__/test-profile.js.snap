@@ -57,24 +57,12 @@ exports[`Profile can render 1`] = `
         className="col-9"
       >
         <ProfileModelList
-          acl={
-            Object {
-              "isReadOnly": [Function],
-            }
-          }
           addNotification={[Function]}
           baseURL="/gui/"
           changeState={[Function]}
-          destroyModel={[Function]}
-          facadesExist={true}
-          listModelsWithInfo={[Function]}
+          modelManager={Object {}}
           switchModel={[Function]}
-          userInfo={
-            Object {
-              "isCurrent": true,
-              "profile": "spinach",
-            }
-          }
+          userName="spinach"
         />
       </div>
     </div>

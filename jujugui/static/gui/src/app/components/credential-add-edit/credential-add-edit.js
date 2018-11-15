@@ -3,7 +3,6 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-const shapeup = require('shapeup');
 
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
@@ -30,7 +29,7 @@ class CredentialAddEdit extends React.Component {
   */
   _getClouds() {
     this.setState({loading: true}, () => {
-      this.props.controllerAPI.listClouds((error, clouds) => {
+      this.props.cloudFacade.clouds((error, clouds) => {
         if (error) {
           const message = 'Unable to list clouds';
           this.props.addNotification({
@@ -62,14 +61,15 @@ class CredentialAddEdit extends React.Component {
     @returns {Object} React component for DeploymentCloud.
   */
   _generateChooseCloud() {
+    const cloudFacade = this.props.cloudFacade;
     return (
       <DeploymentCloud
         acl={this.props.acl}
         addNotification={this.props.addNotification}
         cloud={this.state.cloud}
-        controllerIsReady={this.props.controllerIsReady}
+        controllerIsReady={() => true}
         key="deployment-cloud"
-        listClouds={this.props.controllerAPI.listClouds}
+        listClouds={cloudFacade.clouds.bind(cloudFacade)}
         setCloud={this._setCloud.bind(this)} />);
   }
 
@@ -80,6 +80,7 @@ class CredentialAddEdit extends React.Component {
   */
   _generateCredentialForm() {
     const credential = this.props.credential;
+    const cloudFacade = this.props.cloudFacade;
     return (
       <DeploymentCredentialAdd
         acl={this.props.acl}
@@ -94,7 +95,7 @@ class CredentialAddEdit extends React.Component {
         onCancel={this.props.onCancel}
         onCredentialUpdated={this.props.onCredentialUpdated}
         sendAnalytics={this.props.sendAnalytics}
-        updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
+        updateCloudCredential={cloudFacade.updateCredentials.bind(cloudFacade)}
         user={this.props.username} />);
   }
 
@@ -150,12 +151,7 @@ class CredentialAddEdit extends React.Component {
 CredentialAddEdit.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
-  controllerAPI: shapeup.shape({
-    listClouds: PropTypes.func.isRequired,
-    reshape: shapeup.reshapeFunc,
-    updateCloudCredential: PropTypes.func.isRequired
-  }).isRequired,
-  controllerIsReady: PropTypes.func.isRequired,
+  cloudFacade: PropTypes.object,
   credential: PropTypes.object,
   credentials: PropTypes.arrayOf(PropTypes.string.isRequired),
   onCancel: PropTypes.func,
