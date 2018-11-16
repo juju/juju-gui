@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Prettier to the codebase to format `.scss` files.
 - Update to Xterm 3.8.0.
 - SCSS files are now built using Browserify and included in components with require().
+- Added error boundaries to Profile components
 
 ### Fixed
 - Styling issue with Plans selector in sticky header on entity pages.
