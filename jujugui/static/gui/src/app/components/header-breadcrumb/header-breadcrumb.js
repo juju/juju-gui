@@ -35,7 +35,7 @@ class HeaderBreadcrumb extends React.Component {
   */
   _renderEnvSwitcher() {
     const props = this.props;
-    if (!props.showEnvSwitcher) {
+    if (!props.listModelSummaries) {
       return null;
     }
     return (
@@ -45,7 +45,7 @@ class HeaderBreadcrumb extends React.Component {
           addNotification={this.props.addNotification}
           changeState={this.props.changeState}
           environmentName={this.props.modelName}
-          listModelsWithInfo={this.props.listModelsWithInfo}
+          listModelSummaries={this.props.listModelSummaries}
           modelCommitted={this.props.modelCommitted}
           setModelName={this.props.setModelName}
           switchModel={this.props.switchModel}
@@ -63,10 +63,6 @@ class HeaderBreadcrumb extends React.Component {
   */
   _handleProfileClick(username, evt) {
     evt.preventDefault();
-    if (!this.props.showEnvSwitcher) {
-      // Nothing to be done: we are already in the profile view.
-      return;
-    }
     this.props.showProfile(username);
   }
 
@@ -117,15 +113,12 @@ class HeaderBreadcrumb extends React.Component {
   */
   _buildProfile(username) {
     const props = this.props;
-    const linkClasses = classNames('header-breadcrumb--link', {
-      'profile-disabled': !props.showEnvSwitcher
-    });
     const onClick = this._handleProfileClick.bind(this, username);
     const profileUrl = props.appState.generatePath({profile: username});
     return (
       <li className="header-breadcrumb__list-item">
         <a
-          className={linkClasses}
+          className="header-breadcrumb--link"
           href={profileUrl}
           onClick={onClick}
           title={username}>
@@ -159,13 +152,12 @@ HeaderBreadcrumb.propTypes = {
   addNotification: PropTypes.func.isRequired,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
-  listModelsWithInfo: PropTypes.func,
+  listModelSummaries: PropTypes.func,
   loadingModel: PropTypes.bool,
   modelCommitted: PropTypes.bool,
   modelName: PropTypes.string,
   modelOwner: PropTypes.string,
   setModelName: PropTypes.func.isRequired,
-  showEnvSwitcher: PropTypes.bool.isRequired,
   showProfile: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,
   user: PropTypes.object
