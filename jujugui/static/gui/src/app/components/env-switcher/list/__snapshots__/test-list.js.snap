@@ -1,0 +1,231 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnvList orders the model list, and handles never connected ones 1`] = `
+<Panel
+  focus={true}
+  instanceName="env-list-panel"
+  visible={true}
+>
+  <ul
+    aria-expanded="true"
+    aria-hidden="false"
+    aria-labelledby="environmentSwitcherToggle"
+    className="env-list"
+    id="environmentSwitcherMenu"
+    role="menubar"
+  >
+    <li
+      className="env-list__environment"
+      data-id="57650e3c-815f-4540-89df-81fd5d70b7ef"
+      data-name="group-test"
+      key="57650e3c-815f-4540-89df-81fd5d70b7ef"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      thedr/group-test
+      <div
+        className="env-list__last-connected"
+      >
+        <span>
+          Last accessed 
+          <DateDisplay
+            date="1969-07-20T00:20:18.000Z"
+            relative={true}
+          />
+        </span>
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="9ed7302e-6f22-4c87-8ac5-68bb38efb843"
+      data-name="single-cred"
+      key="9ed7302e-6f22-4c87-8ac5-68bb38efb843"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      thedr/single-cred
+      <div
+        className="env-list__last-connected"
+      >
+        <span>
+          Last accessed 
+          <DateDisplay
+            date="1969-07-20T00:10:18.000Z"
+            relative={true}
+          />
+        </span>
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="9ed7302e-6f44-4c87-8ac5-68bb38efb843"
+      data-name="mymodel"
+      key="9ed7302e-6f44-4c87-8ac5-68bb38efb843"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      thedr/mymodel
+      <div
+        className="env-list__last-connected"
+      >
+        <span>
+          Last accessed 
+          <DateDisplay
+            date="1969-07-20T00:00:18.000Z"
+            relative={true}
+          />
+        </span>
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="06b11eb5-abd6-48f3-8910-b54cf5905e60"
+      data-name="kpi"
+      key="06b11eb5-abd6-48f3-8910-b54cf5905e60"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      radman/kpi
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="4e8a5213-c34a-4ac9-83fa-1175165467d7"
+      data-name="ci"
+      key="4e8a5213-c34a-4ac9-83fa-1175165467d7"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      bigboss/ci
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+  </ul>
+  <CreateModelButton
+    action={[Function]}
+    changeState={[Function]}
+    disabled={false}
+    switchModel={[Function]}
+    title="Start a new model"
+    type="neutral"
+  />
+</Panel>
+`;
+
+exports[`EnvList renders a list of models 1`] = `
+<Panel
+  focus={true}
+  instanceName="env-list-panel"
+  visible={true}
+>
+  <ul
+    aria-expanded="true"
+    aria-hidden="false"
+    aria-labelledby="environmentSwitcherToggle"
+    className="env-list"
+    id="environmentSwitcherMenu"
+    role="menubar"
+  >
+    <li
+      className="env-list__environment"
+      data-id="57650e3c-815f-4540-89df-81fd5d70b7ef"
+      data-name="group-test"
+      key="57650e3c-815f-4540-89df-81fd5d70b7ef"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      thedr/group-test
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="9ed7302e-6f44-4c87-8ac5-68bb38efb843"
+      data-name="mymodel"
+      key="9ed7302e-6f44-4c87-8ac5-68bb38efb843"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      thedr/mymodel
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="9ed7302e-6f22-4c87-8ac5-68bb38efb843"
+      data-name="single-cred"
+      key="9ed7302e-6f22-4c87-8ac5-68bb38efb843"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      thedr/single-cred
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="06b11eb5-abd6-48f3-8910-b54cf5905e60"
+      data-name="kpi"
+      key="06b11eb5-abd6-48f3-8910-b54cf5905e60"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      radman/kpi
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="4e8a5213-c34a-4ac9-83fa-1175165467d7"
+      data-name="ci"
+      key="4e8a5213-c34a-4ac9-83fa-1175165467d7"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      bigboss/ci
+      <div
+        className="env-list__last-connected"
+      >
+        Unknown last connection
+      </div>
+    </li>
+  </ul>
+  <CreateModelButton
+    action={[Function]}
+    changeState={[Function]}
+    disabled={false}
+    switchModel={[Function]}
+    title="Start a new model"
+    type="neutral"
+  />
+</Panel>
+`;

@@ -5,7 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const EnvSwitcher = require('./env-switcher');
-const SvgIcon = require('../svg-icon/svg-icon');
+
+const modelResponse = require('jujulib/tests/data/modelmanager-response');
 
 describe('EnvSwitcher', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
@@ -14,67 +15,22 @@ describe('EnvSwitcher', function() {
       addNotification={options.addNotification || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
       environmentName={options.environmentName || 'MyEnv'}
-      listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
+      listModelSummaries={options.listModelSummaries || sinon.stub()}
       modelCommitted={
         options.modelCommitted === undefined ? false : options.modelCommitted}
       setModelName={options.setModelName || sinon.stub()}
-      showProfile={options.showProfile || sinon.stub()}
-      switchModel={options.switchModel || sinon.stub()} />
+      switchModel={options.switchModel || sinon.stub()}
+      user={{}} />
   );
 
   it('renders the closed switcher component', () => {
     const wrapper = renderComponent();
-    const expected = (
-      <div
-        aria-label="Model switcher"
-        className="env-switcher"
-        onClick={null}
-        role="navigation"
-        tabIndex="0">
-        <div className="env-switcher__toggle editable">
-          <div>
-            <span
-              className="env-switcher__name"
-              contentEditable={true}
-              dangerouslySetInnerHTML={{__html: 'MyEnv'}}
-              onBlur={wrapper.find('.env-switcher__name').prop('onBlur')}
-              onFocus={wrapper.find('.env-switcher__name').prop('onFocus')}
-              ref="name" />
-            <div className="env-switcher__name-error">
-              The model name must only contain lowercase letters, numbers, and hyphens.
-              It must not start or end with a hyphen.
-            </div>
-          </div>
-          <div
-            aria-controls="environmentSwitcherMenu"
-            aria-expanded="false"
-            aria-haspopup="true"
-            aria-owns="environmentSwitcherMenu"
-            className="env-switcher__chevron"
-            id="environmentSwitcherToggle"
-            onClick={wrapper.find('.env-switcher__chevron').prop('onClick')}
-            onKeyPress={wrapper.find('.env-switcher__chevron').prop('onKeyPress')}
-            role="button"
-            tabIndex="0">
-            <SvgIcon
-              name="chevron_down_16"
-              size="16" />
-          </div>
-        </div>
-        {undefined}
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('should not have an editable name when the model is committed', () => {
     const wrapper = renderComponent({modelCommitted: true});
-    const expected = (
-      <span
-        className="env-switcher__name"
-        ref="name">
-        MyEnv
-      </span>);
-    assert.compareJSX(wrapper.find('.env-switcher__name'), expected);
+    expect(wrapper.find('.env-switcher__name')).toMatchSnapshot();
   });
 
   it('defaults to "untitled-model"', () => {
@@ -127,10 +83,12 @@ describe('EnvSwitcher', function() {
     assert.strictEqual(wrapper.prop('className').includes('env-switcher--error'), true);
   });
 
-  it('opens the list on click', () => {
-    const models = [{isAlive: true}, {isAlive: true}];
-    const listModelsWithInfo = sinon.stub().callsArgWith(0, null, models);
-    const wrapper = renderComponent({listModelsWithInfo});
+  it('opens the list and fetches models on click', () => {
+    const listModelSummaries =
+      sinon
+        .stub()
+        .callsArgWith(1, null, modelResponse.listModelSummaries.response);
+    const wrapper = renderComponent({listModelSummaries});
     assert.equal(wrapper.find('EnvList').length, 0);
     wrapper.find('.env-switcher__chevron').simulate('click', {
       preventDefault: () => null
@@ -138,56 +96,20 @@ describe('EnvSwitcher', function() {
     const envList = wrapper.find('EnvList');
     assert.equal(envList.length, 1);
     assert.equal(envList.prop('environmentName'), 'MyEnv');
-    assert.deepEqual(envList.prop('envs'), models);
-  });
-
-  it('fetches a list of environments on mount', () => {
-    const listModelsWithInfo = sinon.stub();
-    const wrapper = renderComponent({listModelsWithInfo});
-    const instance = wrapper.instance();
-    assert.equal(listModelsWithInfo.callCount, 1);
-    const err = null;
-    const models = [
-      {name: 'model1', isAlive: true},
-      {name: 'model1', isAlive: false}
-    ];
-    listModelsWithInfo.args[0][0](err, models);
-    assert.deepEqual(instance.state.envList, [models[0]]);
-  });
-
-  it('fetches the env list when opening', () => {
-    const listModelsWithInfo = sinon.stub();
-    const wrapper = renderComponent({listModelsWithInfo});
-    const instance = wrapper.instance();
-    // Click the toggler
-    wrapper.find('.env-switcher__chevron').simulate('click', {
-      preventDefault: () => null
-    });
-    // The listModelsWithInfo should be called on componentDidMount and the
-    // click.
-    assert.equal(listModelsWithInfo.callCount, 2);
-    const err = null;
-    const models = [{name: 'm1', isAlive: true}];
-    listModelsWithInfo.args[0][0](err, models);
-    assert.deepEqual(instance.state.envList, models);
+    expect(envList.prop('envs')).toMatchSnapshot();
   });
 
   it('can call to switch models', () => {
     // To switch environments you click on an environment list item in a sub
     // component so here we're just going to call the method that gets
     // passed down.
-    const models = [{
-      uuid: 'abc123',
-      name: 'Tardis',
-      owner: 'The Dr.',
-      password: 'buffalo',
-      isAlive: true
-    }];
-    const listModelsWithInfo = sinon.stub();
+    const listModelSummaries =
+      sinon
+        .stub()
+        .callsArgWith(1, null, modelResponse.listModelSummaries.response);
     const switchModel = sinon.stub();
-    const wrapper = renderComponent({listModelsWithInfo, switchModel});
+    const wrapper = renderComponent({listModelSummaries, switchModel});
     const instance = wrapper.instance();
-    listModelsWithInfo.args[0][0](null, models);
     const model = {
       id: 'abc123',
       name: 'Tardis',
@@ -200,8 +122,8 @@ describe('EnvSwitcher', function() {
 
   it('handles errors when getting models', function() {
     const addNotification = sinon.stub();
-    const listModelsWithInfo = sinon.stub().callsArgWith(0, 'Uh oh!', null);
-    renderComponent({listModelsWithInfo, addNotification});
+    const listModelSummaries = sinon.stub().callsArgWith(1, 'Uh oh!', null);
+    renderComponent({listModelSummaries, addNotification});
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(addNotification.args[0][0], {
       title: 'unable to retrieve model list',

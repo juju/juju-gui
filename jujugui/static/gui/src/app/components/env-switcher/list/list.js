@@ -27,10 +27,11 @@ class EnvList extends React.Component {
     @return {Object} The JSX elements for the list of models.
   */
   generateModelList() {
-    const models = this.state.envs;
+    const models = this.state.envs.map(item => item.result);
     if (!models.length) {
       return false;
     }
+
     const currentUser = this.props.user ? this.props.user.username : null;
     const sortedModels = models
       .sort((a, b) => {
@@ -40,12 +41,13 @@ class EnvList extends React.Component {
         if (!a.lastConnection) {
           return 1;
         }
-        return b.lastConnection.getTime() - a.lastConnection.getTime();
+        return new Date(b.lastConnection).getTime() - new Date(a.lastConnection).getTime();
       })
       .map(model => {
         let name = model.name;
-        let owner = model.owner;
-        let lastConnected = 'Never accessed';
+        // Remove the tag from the owner key value.
+        let owner = model.ownerTag.split('user-')[1];
+        let lastConnected = 'Unknown last connection';
         if (model.lastConnection) {
           lastConnected = (
             <span>

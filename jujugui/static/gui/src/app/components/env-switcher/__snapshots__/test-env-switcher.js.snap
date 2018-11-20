@@ -1,0 +1,234 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnvSwitcher opens the list and fetches models on click 1`] = `
+Array [
+  Object {
+    "result": Object {
+      "agent-version": "2.4.5",
+      "cloud-credential-tag": "cloudcred-google_thedr@external_admin",
+      "cloud-region": "us-central1",
+      "cloud-tag": "cloud-google",
+      "controller-uuid": "a030379b-940f-4760-9fcf-3062b41a04e7",
+      "counts": Array [
+        Object {
+          "count": 0,
+          "entity": "machines",
+        },
+        Object {
+          "count": 0,
+          "entity": "cores",
+        },
+      ],
+      "default-series": "bionic",
+      "last-connection": null,
+      "life": "alive",
+      "name": "group-test",
+      "owner-tag": "user-thedr@external",
+      "provider-type": "gce",
+      "sla": null,
+      "status": Object {
+        "info": "",
+        "since": "2018-11-07T05:02:42.436Z",
+        "status": "available",
+      },
+      "type": "",
+      "user-access": "admin",
+      "uuid": "57650e3c-815f-4540-89df-81fd5d70b7ef",
+    },
+  },
+  Object {
+    "result": Object {
+      "agent-version": "2.4.5",
+      "cloud-credential-tag": "cloudcred-google_thedr@external_admin",
+      "cloud-region": "us-central1",
+      "cloud-tag": "cloud-google",
+      "controller-uuid": "a030379b-940f-4760-9fcf-3062b41a04e7",
+      "counts": Array [
+        Object {
+          "count": 0,
+          "entity": "machines",
+        },
+        Object {
+          "count": 0,
+          "entity": "cores",
+        },
+      ],
+      "default-series": "xenial",
+      "last-connection": null,
+      "life": "alive",
+      "name": "mymodel",
+      "owner-tag": "user-thedr@external",
+      "provider-type": "gce",
+      "sla": null,
+      "status": Object {
+        "info": "",
+        "since": "2018-11-07T05:02:41.712Z",
+        "status": "available",
+      },
+      "type": "",
+      "user-access": "admin",
+      "uuid": "9ed7302e-6f44-4c87-8ac5-68bb38efb843",
+    },
+  },
+  Object {
+    "result": Object {
+      "agent-version": "2.4.5",
+      "cloud-credential-tag": "cloudcred-google_thedr@external_juju",
+      "cloud-region": "us-central1",
+      "cloud-tag": "cloud-google",
+      "controller-uuid": "a030379b-940f-4760-9fcf-3022b41a04e7",
+      "counts": Array [
+        Object {
+          "count": 0,
+          "entity": "machines",
+        },
+        Object {
+          "count": 0,
+          "entity": "cores",
+        },
+      ],
+      "default-series": "xenial",
+      "last-connection": null,
+      "life": "alive",
+      "name": "single-cred",
+      "owner-tag": "user-thedr@external",
+      "provider-type": "gce",
+      "sla": null,
+      "status": Object {
+        "info": "",
+        "since": "2018-11-07T05:02:41.712Z",
+        "status": "available",
+      },
+      "type": "",
+      "user-access": "admin",
+      "uuid": "9ed7302e-6f22-4c87-8ac5-68bb38efb843",
+    },
+  },
+  Object {
+    "result": Object {
+      "agent-version": "2.4.3",
+      "cloud-credential-tag": "cloudcred-google_radman@external_google-radmanbot",
+      "cloud-region": "us-east1",
+      "cloud-tag": "cloud-google",
+      "controller-uuid": "a030379b-940f-4760-9fcf-3062b41a04e7",
+      "counts": Array [
+        Object {
+          "count": 13,
+          "entity": "machines",
+        },
+        Object {
+          "count": 13,
+          "entity": "cores",
+        },
+      ],
+      "default-series": "xenial",
+      "last-connection": null,
+      "life": "alive",
+      "name": "kpi",
+      "owner-tag": "user-radman@external",
+      "provider-type": "gce",
+      "sla": null,
+      "status": Object {
+        "info": "",
+        "since": "2018-10-29T08:12:59.512Z",
+        "status": "available",
+      },
+      "type": "",
+      "user-access": "read",
+      "uuid": "06b11eb5-abd6-48f3-8910-b54cf5905e60",
+    },
+  },
+  Object {
+    "result": Object {
+      "agent-version": "2.2.6",
+      "cloud-credential-tag": "cloudcred-google_bigboss@external_gce",
+      "cloud-region": "us-east1",
+      "cloud-tag": "cloud-google",
+      "controller-uuid": "a030379b-940f-4760-9fcf-3062b41a04e7",
+      "counts": Array [
+        Object {
+          "count": 3,
+          "entity": "machines",
+        },
+        Object {
+          "count": 5,
+          "entity": "cores",
+        },
+      ],
+      "default-series": "xenial",
+      "last-connection": null,
+      "life": "alive",
+      "name": "ci",
+      "owner-tag": "user-bigboss@external",
+      "provider-type": "gce",
+      "sla": null,
+      "status": Object {
+        "info": "",
+        "since": "2018-10-29T08:12:58.792Z",
+        "status": "available",
+      },
+      "type": "",
+      "user-access": "admin",
+      "uuid": "4e8a5213-c34a-4ac9-83fa-1175165467d7",
+    },
+  },
+]
+`;
+
+exports[`EnvSwitcher renders the closed switcher component 1`] = `
+<div
+  aria-label="Model switcher"
+  className="env-switcher"
+  onClick={null}
+  role="navigation"
+  tabIndex="0"
+>
+  <div
+    className="env-switcher__toggle editable"
+  >
+    <div>
+      <span
+        className="env-switcher__name"
+        contentEditable={true}
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "MyEnv",
+          }
+        }
+        onBlur={[Function]}
+        onFocus={[Function]}
+      />
+      <div
+        className="env-switcher__name-error"
+      >
+        The model name must only contain lowercase letters, numbers, and hyphens. It must not start or end with a hyphen.
+      </div>
+    </div>
+    <div
+      aria-controls="environmentSwitcherMenu"
+      aria-expanded="false"
+      aria-haspopup="true"
+      aria-owns="environmentSwitcherMenu"
+      className="env-switcher__chevron"
+      id="environmentSwitcherToggle"
+      onClick={[Function]}
+      onKeyPress={[Function]}
+      role="button"
+      tabIndex="0"
+    >
+      <SvgIcon
+        name="chevron_down_16"
+        size="16"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EnvSwitcher should not have an editable name when the model is committed 1`] = `
+<span
+  className="env-switcher__name"
+>
+  MyEnv
+</span>
+`;
