@@ -7,9 +7,9 @@ const deepmerge = require('deepmerge');
 
 const ProfileModelList = require('./model-list');
 
-const jujulibTestHelper = require('jujulib/api/test-helpers');
-const jujulibModelManager = require('jujulib/api/facades/model-manager-v4.js');
-const modelResponse = require('jujulib/tests/data/modelmanager-response');
+const jujulibTestHelper = require('@canonical/jujulib/api/test-helpers');
+const jujulibModelManager = require('@canonical/jujulib/api/facades/model-manager-v4.js');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 describe('Profile Model List', function() {
 

@@ -7,11 +7,11 @@ const ReactTestUtils = require('react-dom/test-utils');
 const deepmerge = require('deepmerge');
 const enzyme = require('enzyme');
 
-const jujulibTestHelper = require('jujulib/api/test-helpers');
-const jujulibCloudFacade = require('jujulib/api/facades/cloud-v2.js');
-const jujulibModelManager = require('jujulib/api/facades/model-manager-v4.js');
-const cloudResponse = require('jujulib/tests/data/cloud-response');
-const modelResponse = require('jujulib/tests/data/modelmanager-response');
+const jujulibTestHelper = require('@canonical/jujulib/api/test-helpers');
+const jujulibCloudFacade = require('@canonical/jujulib/api/facades/cloud-v2.js');
+const jujulibModelManager = require('@canonical/jujulib/api/facades/model-manager-v4.js');
+const cloudResponse = require('@canonical/jujulib/tests/data/cloud-response');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 const ProfileCredentialList = require('./credential-list');
 

@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const jujulib = require('jujulib');
+const jujulib = require('@canonical/jujulib');
 const mixwith = require('mixwith');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -349,9 +349,9 @@ class GUIApp {
       debug: true,
       facades: [
         // Sort facades alphabetically.
-        require('jujulib/api/facades/cloud-v2.js'),
-        require('jujulib/api/facades/model-manager-v4.js'),
-        require('jujulib/api/facades/pinger-v1.js')
+        require('@canonical/jujulib/api/facades/cloud-v2.js'),
+        require('@canonical/jujulib/api/facades/model-manager-v4.js'),
+        require('@canonical/jujulib/api/facades/pinger-v1.js')
       ],
       wsclass: WebSocket,
       bakery: this.bakery

@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const EnvSwitcher = require('./env-switcher');
 
-const modelResponse = require('jujulib/tests/data/modelmanager-response');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 describe('EnvSwitcher', function() {
   const renderComponent = (options = {}) => enzyme.shallow(

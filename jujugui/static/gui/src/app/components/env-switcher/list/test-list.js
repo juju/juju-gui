@@ -6,9 +6,9 @@ const enzyme = require('enzyme');
 
 const EnvList = require('./list');
 
-const jujulibTestHelper = require('jujulib/api/test-helpers');
-const jujulibModelManager = require('jujulib/api/facades/model-manager-v4.js');
-const modelResponse = require('jujulib/tests/data/modelmanager-response');
+const jujulibTestHelper = require('@canonical/jujulib/api/test-helpers');
+const jujulibModelManager = require('@canonical/jujulib/api/facades/model-manager-v4.js');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 describe('EnvList', function() {
   const acl = {canAddModels: sinon.stub().returns(true)};
