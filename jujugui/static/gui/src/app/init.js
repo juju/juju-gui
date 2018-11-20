@@ -338,6 +338,13 @@ class GUIApp {
     */
     this.controllerConnection = null;
 
+    /**
+      Once the controller is connected this will hold the reference to the
+      juju client.
+      @type {Object}
+    */
+    this.jujuClient = null;
+
     const connectionOptions = {
       debug: true,
       facades: [
@@ -353,6 +360,7 @@ class GUIApp {
     jujulib
       .connect('wss://jimm.jujucharms.com/api', connectionOptions)
       .then(async juju => {
+        this.jujuClient = juju;
         // Connected, dispatch the UI as normal.
         const result = this.state.bootstrap();
         if (this.applicationConfig.gisf) {

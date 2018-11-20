@@ -1098,21 +1098,16 @@ Browser: ${navigator.userAgent}`
     modelAPIironment the GUI is executing in.
   */
   _generateUserMenu() {
-    const controllerAPI = this.props.controllerAPI;
-    // XXX Jeff - We only check for the existance of the controller API here
-    // because the application doesn't always re-dispatch when the controller
-    // connects. This race condition will disappear with the jujulib update.
-    if (!controllerAPI) {
-      return null;
-    }
     const charmstore = this.props.charmstore;
-    const bakery = this.props.bakery;
-    const _USSOLoginLink = (
-      <USSOLoginLink
-        addNotification={this._bound.addNotification}
-        displayType="text"
-        loginToController={
-          controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
+    let _USSOLoginLink = null;
+    if (this.jujuClient) {
+      _USSOLoginLink = (
+        <USSOLoginLink
+          addNotification={this._bound.addNotification}
+          displayType="text"
+          loginToController={this.jujuClient.login.bind(this.jujuClient)} />);
+    }
+
     let logoutUrl = '/logout';
     const applicationConfig = this.props.applicationConfig;
     if (applicationConfig.baseUrl) {
@@ -1130,7 +1125,7 @@ Browser: ${navigator.userAgent}`
       visible={!this.props.appState.current.store} />);
 
     const navigateUserProfile = () => {
-      const username = this.props.user.displayName;
+      const username = this.props.controllerConnection.info.user.displayName;
       if (!username) {
         return;
       }
@@ -1148,10 +1143,10 @@ Browser: ${navigator.userAgent}`
         className="header-banner__list-item header-banner__list-item--no-padding"
         id="profile-link-container">
         <UserMenu
-          controllerAPI={controllerAPI}
           LogoutLink={LogoutLink}
           navigateUserProfile={navigateUserProfile}
           showHelp={showHelp}
+          showLogin={!!this.controllerConnection}
           USSOLoginLink={_USSOLoginLink} />
       </li>);
   }
