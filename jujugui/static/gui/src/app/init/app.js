@@ -1156,26 +1156,12 @@ Browser: ${navigator.userAgent}`
   */
   _generateBreadcrumb() {
     const modelAPI = this.props.modelAPI;
-    const controllerAPI = this.props.controllerAPI;
-    let showEnvSwitcher = true;
-    let listModelsWithInfo = controllerAPI && this._bound.listModelsWithInfo;
-    // If controller is undefined then do not render the switcher because
-    // there is no controller to connect to. It will be undefined when the
-    // breadcrumb is initially rendered because it hasn't yet been given
-    // time to connect and login.
-    if (!controllerAPI) {
-      // We do not want to show the model switcher if it isn't supported as
-      // it throws an error in the browser console and confuses the user
-      // as it's visible but not functional.
-      showEnvSwitcher = false;
-    }
-    // It's possible that we have a controller instance and no facade if
-    // we've connected but have not yet successfully logged in. This will
-    // prevent the model switcher from rendering but after the login this
-    // component will be re-rendered.
-    if (controllerAPI &&
-      controllerAPI.findFacadeVersion('ModelManager') === null) {
-      showEnvSwitcher = false;
+    const controllerConnection = this.props.controllerConnection;
+    let listModelSummaries = null;
+    let user = null;
+    if (controllerConnection) {
+      listModelSummaries = controllerConnection.facades.modelManager.listModelSummaries;
+      user = controllerConnection.info.user;
     }
     return (
       <div id="header-breadcrumb">
@@ -1184,16 +1170,15 @@ Browser: ${navigator.userAgent}`
           addNotification={this._bound.addNotification}
           appState={this.props.appState}
           changeState={this._bound.changeState}
-          listModelsWithInfo={listModelsWithInfo}
+          listModelSummaries={listModelSummaries}
           loadingModel={modelAPI.loading}
           modelCommitted={!!modelAPI.get('modelUUID')}
           modelName={this.props.db.environment.get('name')}
           modelOwner={modelAPI.get('modelOwner')}
           setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
-          showEnvSwitcher={showEnvSwitcher}
           showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
           switchModel={this.props.switchModel}
-          user={this.props.user} />
+          user={user} />
       </div>);
   }
   /**
