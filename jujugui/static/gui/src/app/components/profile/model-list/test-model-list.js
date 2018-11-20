@@ -7,9 +7,9 @@ const deepmerge = require('deepmerge');
 
 const ProfileModelList = require('./model-list');
 
-const jujulibTestHelper = require('jujulib/api/test-helpers');
-const jujulibModelManager = require('jujulib/api/facades/model-manager-v4.js');
-const modelResponse = require('jujulib/tests/data/modelmanager-response');
+const jujulibTestHelper = require('@canonical/jujulib/api/test-helpers');
+const jujulibModelManager = require('@canonical/jujulib/api/facades/model-manager-v4.js');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 describe('Profile Model List', function() {
 
@@ -23,19 +23,20 @@ describe('Profile Model List', function() {
       ]
     };
 
-    const responseFacades = [{
-      name: 'Cloud', versions: [2]
-    }, {
-      name: 'ModelManager', versions: [4]
-    }];
+    const loginResponse = {
+      facades: [{
+        name: 'Cloud', versions: [2]
+      }, {
+        name: 'ModelManager', versions: [4]
+      }]
+    };
 
     jujulibTestHelper.makeConnectionWithResponse(
-      assert, options, responseFacades, (conn, ws) => {
+      assert, options, loginResponse, (conn, ws) => {
         jujuConnection = conn;
         jujuWebsocket = ws;
         done();
       });
-
   });
 
   const renderComponent = (options = {}) =>
@@ -50,7 +51,7 @@ describe('Profile Model List', function() {
     );
 
   function setupDefaultReplies() {
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, modelResponse.listModelSummaries]
     ]));
   }
@@ -94,7 +95,7 @@ describe('Profile Model List', function() {
       'agent-version': '2.4.5'
     };
     updatedModelSummaries.response.results.push({result: newModel});
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, updatedModelSummaries]
     ]));
 
@@ -111,7 +112,7 @@ describe('Profile Model List', function() {
   it('can render without any models', () => {
     const updatedModelSummaries = deepmerge({}, modelResponse.listModelSummaries);
     updatedModelSummaries.response.results = [];
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, updatedModelSummaries]
     ]));
     const component = renderComponent();
@@ -120,7 +121,7 @@ describe('Profile Model List', function() {
   });
 
   it('does not break with model data in an unexpected format', () => {
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, {}]
     ]));
     const component = renderComponent();
@@ -131,7 +132,7 @@ describe('Profile Model List', function() {
   it('does not show models that are being destroyed', () => {
     const updatedModelSummaries = deepmerge({}, modelResponse.listModelSummaries);
     updatedModelSummaries.response.results[0].result.life = 'dying';
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, updatedModelSummaries]
     ]));
     const component = renderComponent();
@@ -139,7 +140,7 @@ describe('Profile Model List', function() {
   });
 
   it('displays an error when destroying a model fails', () => {
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, modelResponse.listModelSummaries],
       [3, modelResponse.destroyModelsError],
       [4, modelResponse.listModelSummaries]

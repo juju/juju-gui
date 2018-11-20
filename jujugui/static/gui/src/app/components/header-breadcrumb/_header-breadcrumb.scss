@@ -23,16 +23,6 @@
     display: block;
     white-space: nowrap;
     max-width: 300px;
-
-    &.profile-disabled {
-      cursor: default;
-      border-bottom: 0;
-
-      &:before {
-        // Hide the / after the logo when there is no username.
-        display: none;
-      }
-    }
   }
 
   &__list {

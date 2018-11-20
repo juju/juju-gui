@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserMenu can render 1`] = `
+<div>
+  <ButtonDropdown
+    classes={
+      Array [
+        "user-menu",
+      ]
+    }
+    disableDropdown={true}
+    icon={
+      <div
+        className="login"
+      />
+    }
+    listItems={
+      Array [
+        Object {
+          "action": [Function],
+          "label": "Profile",
+        },
+        Object {
+          "action": [Function],
+          "label": "GUI help",
+        },
+        Object {
+          "element": <div
+            className="logout"
+          />,
+        },
+      ]
+    }
+    tooltip=""
+  />
+</div>
+`;

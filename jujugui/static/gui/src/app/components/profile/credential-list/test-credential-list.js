@@ -7,11 +7,11 @@ const ReactTestUtils = require('react-dom/test-utils');
 const deepmerge = require('deepmerge');
 const enzyme = require('enzyme');
 
-const jujulibTestHelper = require('jujulib/api/test-helpers');
-const jujulibCloudFacade = require('jujulib/api/facades/cloud-v2.js');
-const jujulibModelManager = require('jujulib/api/facades/model-manager-v4.js');
-const cloudResponse = require('jujulib/tests/data/cloud-response');
-const modelResponse = require('jujulib/tests/data/modelmanager-response');
+const jujulibTestHelper = require('@canonical/jujulib/api/test-helpers');
+const jujulibCloudFacade = require('@canonical/jujulib/api/facades/cloud-v2.js');
+const jujulibModelManager = require('@canonical/jujulib/api/facades/model-manager-v4.js');
+const cloudResponse = require('@canonical/jujulib/tests/data/cloud-response');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 const ProfileCredentialList = require('./credential-list');
 
@@ -32,14 +32,16 @@ describe('ProfileCredentialList', () => {
       ]
     };
 
-    const responseFacades = [{
-      name: 'Cloud', versions: [2]
-    }, {
-      name: 'ModelManager', versions: [4]
-    }];
+    const loginResponse = {
+      facades: [{
+        name: 'Cloud', versions: [2]
+      }, {
+        name: 'ModelManager', versions: [4]
+      }]
+    };
 
     jujulibTestHelper.makeConnectionWithResponse(
-      assert, options, responseFacades, (conn, ws) => {
+      assert, options, loginResponse, (conn, ws) => {
         jujuConnection = conn;
         jujuWebsocket = ws;
         done();
@@ -68,7 +70,7 @@ describe('ProfileCredentialList', () => {
   const shallowRenderComponent = options => enzyme.shallow(getComponent(options));
 
   function setupDefaultReplies() {
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, cloudResponse.clouds],
       [3, cloudResponse.userCredentials],
       [4, modelResponse.listModelSummaries]
@@ -126,7 +128,7 @@ describe('ProfileCredentialList', () => {
       credential: 'a missing credential',
       name: 'modelwithmissingcred'
     }});
-    jujuWebsocket.queueReplies(new Map([
+    jujuWebsocket.queueResponses(new Map([
       [2, cloudResponse.clouds],
       [3, cloudResponse.userCredentials],
       [4, updatedModelSummaries]

@@ -40,7 +40,7 @@
   }
 
   .header-banner__list--right {
-    @extend %list-style;
+    list-style: none;
     float: right;
     margin-right: 10px;
   }

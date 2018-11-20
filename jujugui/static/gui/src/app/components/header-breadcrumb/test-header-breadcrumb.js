@@ -4,7 +4,6 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const EnvSwitcher = require('../env-switcher/env-switcher');
 const HeaderBreadcrumb = require('./header-breadcrumb');
 
 describe('HeaderBreadcrumb', () => {
@@ -17,13 +16,12 @@ describe('HeaderBreadcrumb', () => {
       addNotification={options.addNotification || sinon.stub()}
       appState={options.appState || appState}
       changeState={options.changeState || sinon.stub()}
-      listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
+      listModelSummaries={options.listModelSummaries || sinon.stub()}
       loadingModel={options.loadingModel}
       modelCommitted={options.modelCommitted}
       modelName={options.modelName}
       modelOwner={options.modelOwner}
       setModelName={options.setModelName || sinon.stub()}
-      showEnvSwitcher={options.showEnvSwitcher}
       showProfile={options.showProfile || sinon.stub()}
       switchModel={options.switchModel || sinon.stub()}
       user={options.user} />
@@ -43,38 +41,9 @@ describe('HeaderBreadcrumb', () => {
       user: {username: 'who@external', displayName: 'who'},
       modelCommitted: true,
       modelName: 'mymodel',
-      modelOwner: '',
-      showEnvSwitcher: true
+      modelOwner: ''
     });
-    const expected = (
-      <div className="header-breadcrumb">
-        <div className="header-breadcrumb__loading">Loading model</div>
-        <ul className="header-breadcrumb__list" data-username="who">
-          <li className="header-breadcrumb__list-item">
-            <a
-              className="header-breadcrumb--link"
-              href="/u/who"
-              onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
-              title="who">
-              who
-            </a>
-          </li>
-          <li className="header-breadcrumb__list-item">
-            <EnvSwitcher
-              acl={acl}
-              addNotification={sinon.stub()}
-              changeState={sinon.stub()}
-              environmentName={'mymodel'}
-              listModelsWithInfo={sinon.stub()}
-              modelCommitted={true}
-              setModelName={sinon.stub()}
-              switchModel={sinon.stub()}
-              user={{username: 'who@external', displayName: 'who'}} />
-          </li>
-        </ul>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('renders properly with the model owner', () => {
@@ -82,8 +51,7 @@ describe('HeaderBreadcrumb', () => {
       user: {username: 'dalek@external', displayName: 'dalek'},
       modelCommitted: true,
       modelName: 'mymodel',
-      modelOwner: 'rose',
-      showEnvSwitcher: true
+      modelOwner: 'rose'
     });
     const expected = (
       <a
@@ -104,8 +72,7 @@ describe('HeaderBreadcrumb', () => {
       user: user,
       modelCommitted: true,
       modelName: 'mymodel',
-      modelOwner: 'rose',
-      showEnvSwitcher: true
+      modelOwner: 'rose'
     });
     const expected = (
       <a
@@ -122,40 +89,9 @@ describe('HeaderBreadcrumb', () => {
   it('removes user name from breadcrumbs if none is provided', () => {
     const wrapper = renderComponent({
       modelName: 'mymodel',
-      modelOwner: '',
-      showEnvSwitcher: true
+      modelOwner: ''
     });
     assert.equal(wrapper.find('.header-breadcrumb--link').length, 0);
-  });
-
-  it('does not render the model switcher if told not to', () => {
-    const wrapper = renderComponent({
-      user: {username: 'who@external', displayName: 'who'},
-      modelName: 'mymodel',
-      modelOwner: '',
-      showEnvSwitcher: false
-    });
-    assert.equal(wrapper.find('EnvSwitcher').length, 0);
-  });
-
-  it('does not make the username linkable if we hide model switcher', () => {
-    const showProfile = sinon.stub();
-    const wrapper = renderComponent({
-      user: {username: 'who@external', displayName: 'who'},
-      modelName: 'mymodel',
-      modelOwner: '',
-      showEnvSwitcher: false,
-      showProfile
-    });
-    assert.equal(
-      wrapper.find('.header-breadcrumb--link').prop('className').includes(
-        'profile-disabled'),
-      true);
-    // Manually call the onClick handler and make sure it doesn't navigate
-    // to show the profile.
-    wrapper.find('.header-breadcrumb--link').props().onClick(
-      {preventDefault: sinon.stub()});
-    assert.equal(showProfile.callCount, 0, 'showProfile called');
   });
 
   it('calls the profile view when the current user link is clicked', () => {

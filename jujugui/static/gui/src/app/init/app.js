@@ -1098,21 +1098,16 @@ Browser: ${navigator.userAgent}`
     modelAPIironment the GUI is executing in.
   */
   _generateUserMenu() {
-    const controllerAPI = this.props.controllerAPI;
-    // XXX Jeff - We only check for the existance of the controller API here
-    // because the application doesn't always re-dispatch when the controller
-    // connects. This race condition will disappear with the jujulib update.
-    if (!controllerAPI) {
-      return null;
-    }
     const charmstore = this.props.charmstore;
-    const bakery = this.props.bakery;
-    const _USSOLoginLink = (
-      <USSOLoginLink
-        addNotification={this._bound.addNotification}
-        displayType="text"
-        loginToController={
-          controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
+    let _USSOLoginLink = null;
+    if (this.jujuClient) {
+      _USSOLoginLink = (
+        <USSOLoginLink
+          addNotification={this._bound.addNotification}
+          displayType="text"
+          loginToController={this.jujuClient.login.bind(this.jujuClient)} />);
+    }
+
     let logoutUrl = '/logout';
     const applicationConfig = this.props.applicationConfig;
     if (applicationConfig.baseUrl) {
@@ -1130,7 +1125,7 @@ Browser: ${navigator.userAgent}`
       visible={!this.props.appState.current.store} />);
 
     const navigateUserProfile = () => {
-      const username = this.props.user.displayName;
+      const username = this.props.controllerConnection.info.user.displayName;
       if (!username) {
         return;
       }
@@ -1148,10 +1143,10 @@ Browser: ${navigator.userAgent}`
         className="header-banner__list-item header-banner__list-item--no-padding"
         id="profile-link-container">
         <UserMenu
-          controllerAPI={controllerAPI}
           LogoutLink={LogoutLink}
           navigateUserProfile={navigateUserProfile}
           showHelp={showHelp}
+          showLogin={!!this.controllerConnection}
           USSOLoginLink={_USSOLoginLink} />
       </li>);
   }
@@ -1161,26 +1156,12 @@ Browser: ${navigator.userAgent}`
   */
   _generateBreadcrumb() {
     const modelAPI = this.props.modelAPI;
-    const controllerAPI = this.props.controllerAPI;
-    let showEnvSwitcher = true;
-    let listModelsWithInfo = controllerAPI && this._bound.listModelsWithInfo;
-    // If controller is undefined then do not render the switcher because
-    // there is no controller to connect to. It will be undefined when the
-    // breadcrumb is initially rendered because it hasn't yet been given
-    // time to connect and login.
-    if (!controllerAPI) {
-      // We do not want to show the model switcher if it isn't supported as
-      // it throws an error in the browser console and confuses the user
-      // as it's visible but not functional.
-      showEnvSwitcher = false;
-    }
-    // It's possible that we have a controller instance and no facade if
-    // we've connected but have not yet successfully logged in. This will
-    // prevent the model switcher from rendering but after the login this
-    // component will be re-rendered.
-    if (controllerAPI &&
-      controllerAPI.findFacadeVersion('ModelManager') === null) {
-      showEnvSwitcher = false;
+    const controllerConnection = this.props.controllerConnection;
+    let listModelSummaries = null;
+    let user = null;
+    if (controllerConnection) {
+      listModelSummaries = controllerConnection.facades.modelManager.listModelSummaries;
+      user = controllerConnection.info.user;
     }
     return (
       <div id="header-breadcrumb">
@@ -1189,16 +1170,15 @@ Browser: ${navigator.userAgent}`
           addNotification={this._bound.addNotification}
           appState={this.props.appState}
           changeState={this._bound.changeState}
-          listModelsWithInfo={listModelsWithInfo}
+          listModelSummaries={listModelSummaries}
           loadingModel={modelAPI.loading}
           modelCommitted={!!modelAPI.get('modelUUID')}
           modelName={this.props.db.environment.get('name')}
           modelOwner={modelAPI.get('modelOwner')}
           setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
-          showEnvSwitcher={showEnvSwitcher}
           showProfile={initUtils.showProfile.bind(this, this._bound.changeState)}
           switchModel={this.props.switchModel}
-          user={this.props.user} />
+          user={user} />
       </div>);
   }
   /**

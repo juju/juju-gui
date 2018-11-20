@@ -13,8 +13,7 @@ require('./_user-menu.scss');
   If user is not logged in the user icon is replaced with a login button.
 */
 const UserMenu = props => {
-  const controllerAPI = props.controllerAPI;
-  const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
+  const showLogin = props.showLogin && !!props.USSOLoginLink;
   return (
     <div>
       <ButtonDropdown
@@ -37,9 +36,9 @@ const UserMenu = props => {
 UserMenu.propTypes = {
   LogoutLink: PropTypes.object,
   USSOLoginLink: PropTypes.object,
-  controllerAPI: PropTypes.object,
   navigateUserProfile: PropTypes.func.isRequired,
-  showHelp: PropTypes.func.isRequired
+  showHelp: PropTypes.func.isRequired,
+  showLogin: PropTypes.bool
 };
 
 module.exports = UserMenu;

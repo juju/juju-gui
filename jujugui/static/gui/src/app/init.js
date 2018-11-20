@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const jujulib = require('jujulib');
+const jujulib = require('@canonical/jujulib');
 const mixwith = require('mixwith');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -338,13 +338,20 @@ class GUIApp {
     */
     this.controllerConnection = null;
 
+    /**
+      Once the controller is connected this will hold the reference to the
+      juju client.
+      @type {Object}
+    */
+    this.jujuClient = null;
+
     const connectionOptions = {
       debug: true,
       facades: [
         // Sort facades alphabetically.
-        require('jujulib/api/facades/cloud-v2.js'),
-        require('jujulib/api/facades/model-manager-v4.js'),
-        require('jujulib/api/facades/pinger-v1.js')
+        require('@canonical/jujulib/api/facades/cloud-v2.js'),
+        require('@canonical/jujulib/api/facades/model-manager-v4.js'),
+        require('@canonical/jujulib/api/facades/pinger-v1.js')
       ],
       wsclass: WebSocket,
       bakery: this.bakery
@@ -353,6 +360,7 @@ class GUIApp {
     jujulib
       .connect('wss://jimm.jujucharms.com/api', connectionOptions)
       .then(async juju => {
+        this.jujuClient = juju;
         // Connected, dispatch the UI as normal.
         const result = this.state.bootstrap();
         if (this.applicationConfig.gisf) {

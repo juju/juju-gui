@@ -43,7 +43,7 @@ class EnvSwitcher extends React.Component {
     @method updateEnvList
   */
   updateEnvList() {
-    this.props.listModelsWithInfo(this._updateModelListCallback.bind(this));
+    this.props.listModelSummaries(null, this._updateModelListCallback.bind(this));
   }
 
   /**
@@ -52,9 +52,9 @@ class EnvSwitcher extends React.Component {
 
     @method _updateModelListCallback
     @param {String} err The possible error from the call, or null.
-    @param {Array} models The list of models returned by the call.
+    @param {Object} response The response from the listModels call.
   */
-  _updateModelListCallback(err, models) {
+  _updateModelListCallback(err, response) {
     if (err) {
       const message = 'unable to retrieve model list';
       this.props.addNotification({
@@ -65,9 +65,7 @@ class EnvSwitcher extends React.Component {
       console.error(message, err);
       return;
     }
-    const modelList = models.filter(model => {
-      return model.isAlive;
-    });
+    const modelList = response.results.filter(item => item.result.life === 'alive');
     this.setState({envList: modelList});
   }
 
@@ -255,7 +253,7 @@ EnvSwitcher.propTypes = {
   addNotification: PropTypes.func.isRequired,
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
-  listModelsWithInfo: PropTypes.func,
+  listModelSummaries: PropTypes.func,
   modelCommitted: PropTypes.bool,
   setModelName: PropTypes.func.isRequired,
   switchModel: PropTypes.func.isRequired,

@@ -4,11 +4,36 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const DateDisplay = require('../../date-display/date-display');
 const EnvList = require('./list');
+
+const jujulibTestHelper = require('@canonical/jujulib/api/test-helpers');
+const jujulibModelManager = require('@canonical/jujulib/api/facades/model-manager-v4.js');
+const modelResponse = require('@canonical/jujulib/tests/data/modelmanager-response');
 
 describe('EnvList', function() {
   const acl = {canAddModels: sinon.stub().returns(true)};
+
+  let jujuConnection = null;
+  let jujuWebsocket = null;
+
+  beforeEach(done => {
+    const options = {
+      facades: [
+        jujulibModelManager
+      ]
+    };
+
+    const loginResponse = {
+      facades: [{name: 'ModelManager', versions: [4]}]
+    };
+
+    jujulibTestHelper.makeConnectionWithResponse(
+      assert, options, loginResponse, (conn, ws) => {
+        jujuConnection = conn;
+        jujuWebsocket = ws;
+        done();
+      });
+  });
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EnvList
@@ -21,249 +46,31 @@ describe('EnvList', function() {
       user={options.user || {username: 'who@external', displayName: 'who'}} />
   );
 
-  it('renders a list of models', function() {
-    const models = [
-      {
-        uuid: 'model-uuid-1',
-        name: 'model-name-1',
-        owner: 'who@external',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
-      },
-      {
-        uuid: 'model-uuid-2',
-        name: 'model-name-2',
-        owner: 'dalek@external',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
-      }
-    ];
-    const wrapper = renderComponent({envs: models});
+  const getModelsStub = () => {
+    jujuWebsocket.queueResponses(new Map([
+      [2, modelResponse.listModelSummaries]
+    ]));
+    return jujuConnection.facades.modelManager.listModelSummaries();
+  };
 
-    const expected = (
-      <ul
-        aria-expanded="true"
-        aria-hidden="false"
-        aria-labelledby="environmentSwitcherToggle"
-        className="env-list"
-        id="environmentSwitcherMenu"
-        role="menubar">
-        <li
-          className="env-list__environment"
-          data-id={models[0].uuid}
-          data-name={models[0].name}
-          data-owner={models[0].owner}
-          key={models[0].uuid}
-          onClick={wrapper.find('.env-list__environment').at(0).prop('onClick')}
-          role="menuitem"
-          tabIndex="0">
-          model-name-1
-          <div className="env-list__last-connected">
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={models[0].lastConnection}
-                relative={true} />
-            </span>
-          </div>
-        </li>
-        <li
-          className="env-list__environment"
-          data-id={models[1].uuid}
-          data-name={models[1].name}
-          data-owner={models[1].owner}
-          key={models[1].uuid}
-          onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
-          role="menuitem"
-          tabIndex="0">
-          dalek/model-name-2
-          <div className="env-list__last-connected">
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={models[1].lastConnection}
-                relative={true} />
-            </span>
-          </div>
-        </li>
-      </ul>);
-    assert.compareJSX(wrapper.find('.env-list'), expected);
+  it('renders a list of models', async function() {
+    const models = await getModelsStub();
+    const wrapper = renderComponent({envs: models.results});
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('orders the model list, and handles never connected ones', function() {
-    const models = [
-      {
-        uuid: 'model-uuid-1',
-        name: 'model-name-1',
-        owner: 'who@external',
-        lastConnection: new Date('July 20, 69 00:20:18 GMT+00:00')
-      },
-      {
-        uuid: 'model-uuid-2',
-        name: 'model-name-2',
-        owner: 'dalek@external',
-        lastConnection: new Date('July 20, 69 00:00:18 GMT+00:00')
-      },
-      {
-        uuid: 'model-uuid-3',
-        name: 'model-name-3',
-        owner: 'who@external',
-        lastConnection: new Date('July 20, 69 00:10:18 GMT+00:00')
-      },
-      {
-        uuid: 'model-uuid-4',
-        name: 'model-name-4',
-        owner: 'dalek@external'
-      }
-    ];
-    const wrapper = renderComponent({envs: models});
-    const expected = (
-      <ul
-        aria-expanded="true"
-        aria-hidden="false"
-        aria-labelledby="environmentSwitcherToggle"
-        className="env-list"
-        id="environmentSwitcherMenu"
-        role="menubar">
-        {[
-          <li
-            className="env-list__environment"
-            data-id={models[0].uuid}
-            data-name={models[0].name}
-            data-owner={models[0].owner}
-            key={models[0].uuid}
-            onClick={wrapper.find('.env-list__environment').at(3).prop('onClick')}
-            role="menuitem"
-            tabIndex="0">
-            {'model-name-1'}
-            <div className="env-list__last-connected">
-              <span>
-                Last accessed&nbsp;
-                <DateDisplay
-                  date={models[0].lastConnection}
-                  relative={true} />
-              </span>
-            </div>
-          </li>,
-          <li
-            className="env-list__environment"
-            data-id={models[1].uuid}
-            data-name={models[1].name}
-            data-owner={models[1].owner}
-            key={models[1].uuid}
-            onClick={wrapper.find('.env-list__environment').at(2).prop('onClick')}
-            role="menuitem"
-            tabIndex="0">
-            {'model-name-3'}
-            <div className="env-list__last-connected">
-              <span>
-                Last accessed&nbsp;
-                <DateDisplay
-                  date={models[1].lastConnection}
-                  relative={true} />
-              </span>
-            </div>
-          </li>,
-          <li
-            className="env-list__environment"
-            data-id={models[2].uuid}
-            data-name={models[2].name}
-            data-owner={models[2].owner}
-            key={models[2].uuid}
-            onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
-            role="menuitem"
-            tabIndex="0">
-            {'dalek/model-name-2'}
-            <div className="env-list__last-connected">
-              <span>
-                Last accessed&nbsp;
-                <DateDisplay
-                  date={models[2].lastConnection}
-                  relative={true} />
-              </span>
-            </div>
-          </li>,
-          <li
-            className="env-list__environment"
-            data-id={models[3].uuid}
-            data-name={models[3].name}
-            data-owner={models[3].owner}
-            key={models[3].uuid}
-            onClick={wrapper.find('.env-list__environment').at(0).prop('onClick')}
-            role="menuitem"
-            tabIndex="0">
-            {'dalek/model-name-4'}
-            <div className="env-list__last-connected">
-              {'Never accessed'}
-            </div>
-          </li>
-        ]}
-      </ul>);
-    assert.compareJSX(wrapper.find('.env-list'), expected);
-  });
-
-  it('handles local model owners', function() {
-    const models = [
-      {
-        uuid: 'model-uuid-1',
-        name: 'model-name-1',
-        owner: 'who',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
-      },
-      {
-        uuid: 'model-uuid-2',
-        name: 'model-name-2',
-        owner: 'dalek',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
-      }
-    ];
-    const wrapper = renderComponent({envs: models});
-    const expected = (
-      <ul
-        aria-expanded="true"
-        aria-hidden="false"
-        aria-labelledby="environmentSwitcherToggle"
-        className="env-list"
-        id="environmentSwitcherMenu"
-        role="menubar">
-        {[<li
-          className="env-list__environment"
-          data-id="model-uuid-1"
-          data-name="model-name-1"
-          data-owner="who"
-          key="model-uuid-1"
-          onClick={wrapper.find('.env-list__environment').at(0).prop('onClick')}
-          role="menuitem"
-          tabIndex="0">
-          who/model-name-1
-          <div className="env-list__last-connected">
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={models[0].lastConnection}
-                relative={true} />
-            </span>
-          </div>
-        </li>,
-        <li
-          className="env-list__environment"
-          data-id="model-uuid-2"
-          data-name="model-name-2"
-          data-owner="dalek"
-          key="model-uuid-2"
-          onClick={wrapper.find('.env-list__environment').at(1).prop('onClick')}
-          role="menuitem"
-          tabIndex="0">
-          dalek/model-name-2
-          <div className="env-list__last-connected">
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={models[1].lastConnection}
-                relative={true} />
-            </span>
-          </div>
-        </li>]}
-      </ul>);
-    assert.compareJSX(wrapper.find('.env-list'), expected);
+  it('orders the model list, and handles never connected ones', async function() {
+    const response = modelResponse.listModelSummaries;
+    const results = response.response.results;
+    results[0].result['last-connection'] = new Date('July 20, 69 00:20:18 GMT+00:00');
+    results[1].result['last-connection'] = new Date('July 20, 69 00:00:18 GMT+00:00');
+    results[2].result['last-connection'] = new Date('July 20, 69 00:10:18 GMT+00:00');
+    jujuWebsocket.queueResponses(new Map([
+      [2, response]
+    ]));
+    const models = await jujuConnection.facades.modelManager.listModelSummaries();
+    const wrapper = renderComponent({envs: models.results});
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('displays only the create new button if there are no models', function() {
@@ -271,15 +78,15 @@ describe('EnvList', function() {
     assert.strictEqual(wrapper.find('EnvList').length, 0);
   });
 
-  it('clicking a model calls the handleModelClick prop', function() {
-    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+  it('clicking a model calls the handleModelClick prop', async function() {
+    const models = await getModelsStub();
     const handleModelClick = sinon.stub();
     const getAttribute = sinon.stub();
     getAttribute.withArgs('data-id').returns('abc123');
     getAttribute.withArgs('data-name').returns('the name');
     getAttribute.withArgs('data-owner').returns('who@external');
-    const wrapper = renderComponent({envs: models, handleModelClick});
-    wrapper.find('.env-list__environment').simulate('click', {
+    const wrapper = renderComponent({envs: models.results, handleModelClick});
+    wrapper.find('.env-list__environment').at(0).simulate('click', {
       currentTarget: {
         getAttribute: getAttribute
       }
@@ -287,10 +94,10 @@ describe('EnvList', function() {
     assert.equal(handleModelClick.callCount, 1);
   });
 
-  it('new model call is made when clicking on the createm model button', function() {
+  it('new model call is made when clicking on the create model button', async function() {
+    const models = await getModelsStub();
     const handleModelClick = sinon.stub();
-    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
-    const wrapper = renderComponent({envs: models, handleModelClick});
+    const wrapper = renderComponent({envs: models.results, handleModelClick});
     wrapper.find('CreateModelButton').props().action();
     assert.equal(handleModelClick.callCount, 1);
   });
