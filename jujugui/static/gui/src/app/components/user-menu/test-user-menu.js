@@ -5,7 +5,6 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const UserMenu = require('./user-menu');
-const ButtonDropdown = require('../button-dropdown/button-dropdown');
 
 describe('UserMenu', () => {
 
@@ -14,13 +13,10 @@ describe('UserMenu', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <UserMenu
-      controllerAPI={{
-        userIsAuthenticated: options.userIsAuthenticated !== undefined ?
-          options.userIsAuthenticated : true
-      }}
       LogoutLink={options.LogoutLink || logoutLink}
       navigateUserProfile={options.navigateUserProfile || sinon.stub()}
       showHelp={sinon.stub()}
+      showLogin={options.showLogin !== undefined ? options.showLogin : true}
       USSOLoginLink={
         options.USSOLoginLink !== undefined ?
           options.USSOLoginLink : loginLink} />
@@ -30,25 +26,7 @@ describe('UserMenu', () => {
     const wrapper = renderComponent({
       userIsAuthenticated: false
     });
-    const expected = (
-      <div>
-        <ButtonDropdown
-          classes={['user-menu']}
-          disableDropdown={true}
-          icon={loginLink}
-          listItems={[{
-            action: sinon.stub(),
-            label: 'Profile'
-          }, {
-            action: sinon.stub(),
-            label: 'GUI help'
-          }, {
-            element: logoutLink
-          }]}
-          tooltip={''} />
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('renders the login link if supplied', () => {
