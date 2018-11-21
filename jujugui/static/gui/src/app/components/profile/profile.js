@@ -17,6 +17,7 @@ const Invoice = require('../invoice/invoice');
 const Panel = require('../shared/panel/panel');
 const RevenueStatement = require('../revenue-statement/revenue-statement');
 const Link = require('../link/link');
+const ErrorBoundary = require('../error-boundary/error-boundary');
 
 require('./_profile.scss');
 
@@ -122,7 +123,9 @@ class Profile extends React.Component {
         <Panel
           instanceName="revenue-statement"
           visible={true}>
-          <RevenueStatement />
+          <ErrorBoundary>
+            <RevenueStatement />
+          </ErrorBoundary>
         </Panel>
       );
     }
@@ -132,7 +135,9 @@ class Profile extends React.Component {
         <Panel
           instanceName="invoice"
           visible={true}>
-          <Invoice />
+          <ErrorBoundary>
+            <Invoice />
+          </ErrorBoundary>
         </Panel>
       );
     }
@@ -142,13 +147,15 @@ class Profile extends React.Component {
         label: 'Models',
         getComponent: () => {
           return (
-            <ProfileModelList
-              addNotification={props.addNotification}
-              baseURL={props.baseURL}
-              changeState={props.changeState}
-              modelManager={modelManager}
-              switchModel={props.switchModel}
-              userName={userName} />
+            <ErrorBoundary>
+              <ProfileModelList
+                addNotification={props.addNotification}
+                baseURL={props.baseURL}
+                changeState={props.changeState}
+                modelManager={modelManager}
+                switchModel={props.switchModel}
+                userName={userName} />
+            </ErrorBoundary>
           );
         }
       });
@@ -158,21 +165,23 @@ class Profile extends React.Component {
       getComponent: () => {
         const propTypes = ProfileCharmList.propTypes;
         return (
-          <ProfileCharmList
-            acl={props.acl}
-            addNotification={props.addNotification}
-            addToModel={props.addToModel}
-            bakery={props.bakery}
-            baseURL={props.baseURL}
-            changeState={props.changeState}
-            charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
-            generatePath={props.generatePath}
-            generatePermissions={this._generatePermissions}
-            getModelName={props.getModelName}
-            handleDeploy={this._handleDeploy}
-            isActiveUsersProfile={isActiveUsersProfile}
-            storeUser={props.storeUser}
-            user={props.userInfo.external} />
+          <ErrorBoundary>
+            <ProfileCharmList
+              acl={props.acl}
+              addNotification={props.addNotification}
+              addToModel={props.addToModel}
+              bakery={props.bakery}
+              baseURL={props.baseURL}
+              changeState={props.changeState}
+              charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
+              generatePath={props.generatePath}
+              generatePermissions={this._generatePermissions}
+              getModelName={props.getModelName}
+              handleDeploy={this._handleDeploy}
+              isActiveUsersProfile={isActiveUsersProfile}
+              storeUser={props.storeUser}
+              user={props.userInfo.external} />
+          </ErrorBoundary>
         );
       }
     });
@@ -181,21 +190,23 @@ class Profile extends React.Component {
       getComponent: () => {
         const propTypes = ProfileBundleList.propTypes;
         return (
-          <ProfileBundleList
-            acl={props.acl}
-            addNotification={props.addNotification}
-            addToModel={props.addToModel}
-            bakery={props.bakery}
-            baseURL={props.baseURL}
-            changeState={props.changeState}
-            charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
-            generatePath={props.generatePath}
-            generatePermissions={this._generatePermissions}
-            getModelName={props.getModelName}
-            handleDeploy={this._handleDeploy}
-            isActiveUsersProfile={isActiveUsersProfile}
-            storeUser={props.storeUser}
-            user={props.userInfo.external} />
+          <ErrorBoundary>
+            <ProfileBundleList
+              acl={props.acl}
+              addNotification={props.addNotification}
+              addToModel={props.addToModel}
+              bakery={props.bakery}
+              baseURL={props.baseURL}
+              changeState={props.changeState}
+              charmstore={shapeup.fromShape(props.charmstore, propTypes.charmstore)}
+              generatePath={props.generatePath}
+              generatePermissions={this._generatePermissions}
+              getModelName={props.getModelName}
+              handleDeploy={this._handleDeploy}
+              isActiveUsersProfile={isActiveUsersProfile}
+              storeUser={props.storeUser}
+              user={props.userInfo.external} />
+          </ErrorBoundary>
         );
       }
     });
@@ -204,14 +215,16 @@ class Profile extends React.Component {
         label: 'Cloud credentials',
         getComponent: () => {
           return (
-            <ProfileCredentialList
-              acl={props.acl}
-              addNotification={props.addNotification}
-              cloudFacade={cloudFacade}
-              credential={this._getSectionInfo().sub}
-              modelManager={modelManager}
-              sendAnalytics={this._sendAnalytics.bind(this)}
-              userName={userName} />
+            <ErrorBoundary>
+              <ProfileCredentialList
+                acl={props.acl}
+                addNotification={props.addNotification}
+                cloudFacade={cloudFacade}
+                credential={this._getSectionInfo().sub}
+                modelManager={modelManager}
+                sendAnalytics={this._sendAnalytics.bind(this)}
+                userName={userName} />
+            </ErrorBoundary>
           );
         }
       });
@@ -221,29 +234,39 @@ class Profile extends React.Component {
         label: 'Payment',
         getComponent: () => {
           return (
-            <Payment
-              acl={props.acl}
-              addNotification={props.addNotification}
-              payment={props.payment}
-              stripe={props.stripe}
-              username={props.userInfo.profile} />
+            <ErrorBoundary>
+              <Payment
+                acl={props.acl}
+                addNotification={props.addNotification}
+                payment={props.payment}
+                stripe={props.stripe}
+                username={props.userInfo.profile} />
+            </ErrorBoundary>
           );
         }
       });
       sectionsMap.set('invoices', {
         label: 'Invoices',
         getComponent: () => {
-          return (<ProfileInvoiceList
-            baseURL={props.baseURL}
-            user={props.userInfo.external} />);
+          return (
+            <ErrorBoundary>
+              <ProfileInvoiceList
+                baseURL={props.baseURL}
+                user={props.userInfo.external} />
+            </ErrorBoundary>
+          );
         }
       });
       sectionsMap.set('revenue-statement', {
         label: 'Revenue Statements',
         getComponent: () => {
-          return (<ProfileInvoiceList
-            baseURL={props.baseURL}
-            user={props.userInfo.external} />);
+          return (
+            <ErrorBoundary>
+              <ProfileInvoiceList
+                baseURL={props.baseURL}
+                user={props.userInfo.external} />
+            </ErrorBoundary>
+          );
         }
       });
     }
@@ -262,12 +285,14 @@ class Profile extends React.Component {
         extraClasses="v1"
         instanceName="profile"
         visible={true}>
-        <ProfileHeader
-          changeState={props.changeState}
-          controllerIP={props.controllerIP}
-          getUser={props.getUser}
-          gisf={props.gisf}
-          userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
+        <ErrorBoundary>
+          <ProfileHeader
+            changeState={props.changeState}
+            controllerIP={props.controllerIP}
+            getUser={props.getUser}
+            gisf={props.gisf}
+            userInfo={shapeup.fromShape(props.userInfo, ProfileHeader.propTypes.userInfo)} />
+        </ErrorBoundary>
         <div className="p-strip--light is-shallow">
           <div className="row profile__main">
             <div className="col-3 u-no-margin--left">
