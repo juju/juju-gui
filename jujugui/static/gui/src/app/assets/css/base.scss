@@ -102,6 +102,7 @@ a {
   // Include base Vanilla styles
   @include vf-base;
   // Include components as they are used
+  @include vf-p-buttons;
   @include vf-p-grid;
   @include vf-p-strip;
   @include vf-p-lists;
