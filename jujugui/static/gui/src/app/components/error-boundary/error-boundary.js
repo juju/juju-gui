@@ -24,18 +24,17 @@ class errorBoundary extends React.Component {
           <div className="row">
             <div className="col-12">
               <div className="p-notification--negative">
-                {error.message &&
-                  <p className="p-notification__response">
-                    <strong>{error.message}</strong>
-                  </p>
-                }
                 <p className="p-notification__response">
                   Hmm.. something has went wrong with this part of the application.
                   If this problem persists, please <a
                     className="p-link--external"
                     href="https://github.com/CanonicalLtd/jujucharms.com">
-                    raise an issue.
-                  </a>
+                    raise an issue</a> with the contents of the error message below.
+                  {error.message &&
+                    <pre className="error_boundary__code-snippet">
+                      <code>{error.message} </code>
+                    </pre>
+                  }
                 </p>
               </div>
             </div>
