@@ -32,7 +32,7 @@ class ProfileModelList extends React.Component {
   }
 
   /**
-    Makes a request of the controller to fetch the user's availble models.
+    Makes a request of the controller to fetch the user's available models.
   */
   _fetchModels() {
     this.setState({loadingModels: true}, () => {
