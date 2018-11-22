@@ -4,7 +4,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 
-require('./_error_boundary.scss');
+require('./_error-boundary.scss');
 
 class errorBoundary extends React.Component {
   constructor(props) {
