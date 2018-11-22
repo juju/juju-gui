@@ -7,18 +7,20 @@ exports[`Profile can render 1`] = `
   instanceName="profile"
   visible={true}
 >
-  <ProfileHeader
-    changeState={[Function]}
-    controllerIP="1.2.3.4"
-    getUser={[Function]}
-    gisf={true}
-    userInfo={
-      Object {
-        "isCurrent": true,
-        "profile": "spinach",
+  <errorBoundary>
+    <ProfileHeader
+      changeState={[Function]}
+      controllerIP="1.2.3.4"
+      getUser={[Function]}
+      gisf={true}
+      userInfo={
+        Object {
+          "isCurrent": true,
+          "profile": "spinach",
+        }
       }
-    }
-  />
+    />
+  </errorBoundary>
   <div
     className="p-strip--light is-shallow"
   >
@@ -56,14 +58,16 @@ exports[`Profile can render 1`] = `
       <div
         className="col-9"
       >
-        <ProfileModelList
-          addNotification={[Function]}
-          baseURL="/gui/"
-          changeState={[Function]}
-          modelManager={Object {}}
-          switchModel={[Function]}
-          userName="spinach"
-        />
+        <errorBoundary>
+          <ProfileModelList
+            addNotification={[Function]}
+            baseURL="/gui/"
+            changeState={[Function]}
+            modelManager={Object {}}
+            switchModel={[Function]}
+            userName="spinach"
+          />
+        </errorBoundary>
       </div>
     </div>
   </div>
