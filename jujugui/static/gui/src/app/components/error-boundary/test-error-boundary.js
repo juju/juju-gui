@@ -22,21 +22,21 @@ class ComponentWithError extends React.Component {
 describe('Error boundary', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
-    <ErrorBoundary />
+    <ErrorBoundary>
+      {options.content || null}
+    </ErrorBoundary>
   );
 
-  it('can render', () => {
+  it('should not show if no error thrown', () => {
     const wrapper = renderComponent({
       content: (<span>Children content!</span>)
     });
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('should show error message if available', () => {
-    const renderComponentWithError = (options = {}) => enzyme.shallow(
-      <ErrorBoundary />
-    );
-    const wrapper = renderComponentWithError({
+  it('should show fallback UI if error thrown', () => {
+
+    const wrapper = renderComponent({
       content: (<ComponentWithError />)
     });
     expect(wrapper).toMatchSnapshot();

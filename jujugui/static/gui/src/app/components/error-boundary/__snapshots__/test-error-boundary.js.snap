@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Error boundary can render 1`] = `""`;
+exports[`Error boundary should not show if no error thrown 1`] = `
+<span>
+  Children content!
+</span>
+`;
 
-exports[`Error boundary should show error message if available 1`] = `""`;
+exports[`Error boundary should show fallback UI if error thrown 1`] = `<ComponentWithError />`;
