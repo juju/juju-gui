@@ -739,7 +739,6 @@ class GUIApp {
             console.log('cannot watch model:', err);
             process.exit(1);
           }
-          console.log(result);
           this._processDeltas(result);
           this.modelConnectionStatus = 'ready';
         });
