@@ -195,8 +195,8 @@ class GUIApp {
     */
     this.modelController = new ModelController({
       db: this.db,
-      env: this.modelAPI,
-      charmstore: this.charmstore
+      charmstore: this.charmstore,
+      getModelConnection: () => this.modelConnection
     });
     /**
       Application instance of the endpointsController.
@@ -333,10 +333,44 @@ class GUIApp {
     this.topology = this._renderTopology();
 
     /**
-      Once login is complete this will hold the connection to the controller
+      Once login is complete this will hold the connection to the controller.
       @type {Object}
     */
     this.controllerConnection = null;
+
+    /**
+      Once login is complete this will hold the connection to the model.
+      @type {Object}
+    */
+    this.modelConnection = null;
+
+    /**
+      The model uuid that is currently connected to.
+      @type {string}
+    */
+    this.activeModelUUID = null;
+
+    /**
+      Stores the status of the model connection so we can intellegently
+      determine what to do with the modelConnection. This is required even
+      though the connection is asynchronous because we want to block dispatching
+      the application until the model connection is completely ready and
+      native promises do not allow external inspection on its status.
+
+      Allowed values are:
+        null
+        'ready'
+        'connecting'
+      @type {String}
+    */
+    this.modelConnectionStatus = null;
+
+    /**
+      Stores the handler to the active models watcher handle so that it can be
+      stopped when switching or disconnecting models.
+      @type {Object}
+    */
+    this.activeModelWatcherHandle = null;
 
     /**
       Once the controller is connected this will hold the reference to the
@@ -358,7 +392,7 @@ class GUIApp {
     };
 
     jujulib
-      .connect('wss://jimm.jujucharms.com/api', connectionOptions)
+      .connect(`wss://${this.applicationConfig.apiAddress}/api`, connectionOptions)
       .then(async juju => {
         this.jujuClient = juju;
         // Connected, dispatch the UI as normal.
@@ -659,13 +693,98 @@ class GUIApp {
     @param {Function} next - Run the next route handler, if any.
   */
   _handleModelState(state, next) {
-    const modelAPI = this.modelAPI;
-    if (this.modelUUID !== state.model.uuid ||
-        (!modelAPI.get('connected') && !modelAPI.get('connecting') &&
-        !modelAPI.loading)) {
-      this._switchModelToUUID(state.model.uuid);
+    const newModelUUID = state.model.uuid;
+    if (this.activeModelUUID === newModelUUID) {
+      if (this.modelConnectionStatus === 'ready') {
+        next();
+        return;
+      } else if (this.modelConnectionStatus === 'connecting') {
+        // If we get in here it's because the application has dispatched multiple
+        // times but we do not want to connect multiple times.
+        return;
+      }
     }
-    next();
+
+    const modelURL = jujulib.generateModelURL(
+      this.applicationConfig.apiAddress, newModelUUID);
+
+    const connectionOptions = {
+      debug: true,
+      facades: [
+        // Sort facades alphabetically.
+        require('@canonical/jujulib/api/facades/application-v6.js'),
+        require('@canonical/jujulib/api/facades/all-watcher-v1.js'),
+        require('@canonical/jujulib/api/facades/charms-v2.js'),
+        require('@canonical/jujulib/api/facades/client-v1.js'),
+        require('@canonical/jujulib/api/facades/pinger-v1.js')
+      ],
+      wsclass: WebSocket,
+      bakery: this.bakery
+    };
+
+    this.activeModelUUID = newModelUUID;
+    this.modelConnectionStatus = 'connecting';
+
+    jujulib
+      .connectAndLogin(modelURL, {}, connectionOptions)
+      .then(juju => {
+        this.modelConnection = juju.conn;
+        const facades = juju.conn.facades;
+        // Setup pinger, if it's not running then the model will
+        // automatically disconnect after 1 minute.
+        facades.pinger.pingForever(30000);
+
+        this.activeModelWatcherHandle = facades.client.watch((err, result) => {
+          if (err) {
+            console.log('cannot watch model:', err);
+            process.exit(1);
+          }
+          console.log(result);
+          this._processDeltas(result);
+          this.modelConnectionStatus = 'ready';
+        });
+
+      });
+  }
+
+  /**
+    Process the deltas that are returned from the megawatcher. This code
+    was moved over from the old model api handler and can be improved once we
+    remove the YUI db and replace it with maraca.
+    @param {Object} result The data result from the watch jujulib calls.
+  */
+  _processDeltas(result) {
+    const deltas = [];
+    const cmp = {
+      applicationInfo: 1,
+      relationInfo: 2,
+      unitInfo: 3,
+      machineInfo: 4,
+      annotationInfo: 5,
+      remoteapplicationInfo: 100
+    };
+    result.deltas.forEach(delta => {
+      const [kind, operation, entityInfo] = delta;
+      deltas.push([kind + 'Info', operation, entityInfo]);
+    });
+    deltas.sort((a, b) => {
+      // Sort items not in our hierarchy last.
+      if (!cmp[a[0]]) {
+        return 1;
+      }
+      if (!cmp[b[0]]) {
+        return -1;
+      }
+      let scoreA = cmp[a[0]];
+      let scoreB = cmp[b[0]];
+      // Reverse the sort order for removes.
+      if (a[1] === 'remove') { scoreA = -scoreA; }
+      if (b[1] === 'remove') { scoreB = -scoreB; }
+      return scoreA - scoreB;
+    });
+    document.dispatchEvent(new CustomEvent('delta', {
+      detail: {data: {result: deltas}}
+    }));
   }
 
   /**
