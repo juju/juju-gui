@@ -15,9 +15,13 @@ describe('topology', function() {
   let TestModule, container, db, models, state, topo;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
-      done();
+    YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 

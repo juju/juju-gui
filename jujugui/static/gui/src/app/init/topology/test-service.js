@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const proxyquire = require('proxyquire');
+let d3 = require('d3');
 const {charmstore} = require('jaaslib');
 
 const utils = require('../testing-utils');
@@ -10,11 +10,12 @@ const findCharmEntries = sinon.stub();
 const getEntries = sinon.stub();
 const readCharmEntries = sinon.stub();
 const jsYamlMock = sinon.stub();
-const EnvironmentView = proxyquire('./environment', {
-  './service': proxyquire('./service', {
-    'd3': {
-      mouse: sinon.stub().returns([0, 0])
-    },
+const EnvironmentViewInjector = require('inject-loader!./environment');
+const serviceInjector = require('inject-loader!./service');
+d3.mouse = sinon.stub().returns([0, 0]);
+const EnvironmentView = EnvironmentViewInjector({
+  './service': serviceInjector({
+    'd3': d3,
     'js-yaml': {
       safeLoad: jsYamlMock
     },
@@ -31,10 +32,13 @@ describe('service module annotations', function() {
   let called, location;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      done();
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 
@@ -120,10 +124,13 @@ describe('service updates', function() {
   let db, models, view, viewContainer, serviceModule;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      done();
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 
@@ -188,11 +195,14 @@ describe('service module events', function() {
       view, viewContainer;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      window.models = models;
-      done();
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        window.models = models;
+        done();
+      });
     });
   });
 
@@ -763,10 +773,13 @@ describe('canvasDropHandler', function() {
   // Requiring this much setup (beforeAll() and beforeEach() to call a single
   // method on a single object is obscene.
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      done();
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 
@@ -822,10 +835,13 @@ describe('_canvasDropHandler', function() {
   // Requiring this much setup (beforeAll() and beforeEach() to call a single
   // method on a single object is obscene.
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      done();
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 
@@ -888,10 +904,13 @@ describe('updateElementVisibility', function() {
   let cleanups, models, serviceModule, view, viewContainer;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(['juju-models'], function(Y) {
-      models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
       window.yui = Y;
-      done();
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
+        done();
+      });
     });
   });
 
