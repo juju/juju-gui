@@ -2,7 +2,11 @@
 'use strict';
 
 const clonedeep = require('lodash.clonedeep');
-const deepmerge = require('deepmerge').default;
+let deepmerge = require('deepmerge');
+// Handle differences between how the tests load this code.
+if (deepmerge.default) {
+  deepmerge = deepmerge.default;
+}
 
 const {processDeltas} = require('./delta-handlers');
 
