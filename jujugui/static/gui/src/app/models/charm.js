@@ -140,14 +140,15 @@ window.yui.add('juju-charm-models', function(Y) {
       this.set('storeId', url.legacyPath());
     },
 
-    sync: function(action, options, callback) {
+    sync: function(action, modelConnection, callback) {
       if (action !== 'read') {
         throw (
           'Only use the "read" action; "' + action + '" not supported.');
       }
-      if (utils.isValue(options.get_charm)) {
+      const charmInfo = modelConnection.facades.charms.charmInfo;
+      if (utils.isValue(charmInfo)) {
         // This is an env.
-        options.get_charm(this.get('id'), function(response) {
+        charmInfo({url: this.get('id')}, function(err, response) {
           if (response.err) {
             callback(true, response);
           } else if (response.result) {

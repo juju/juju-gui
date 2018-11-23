@@ -37,7 +37,7 @@ class ModelController {
     this._servicePromises = {};
     this._serviceCharmPromises = {};
     this.db = options.db;
-    this.env = options.env;
+    this.getModelConnection = options.getModelConnection;
     this.charmstore = options.charmstore;
   }
 
@@ -75,7 +75,6 @@ class ModelController {
   */
   getCharm(charmId) {
     const db = this.db;
-    const env = this.env;
     const charmstore = this.charmstore;
 
     return this._getPromise(
@@ -85,7 +84,8 @@ class ModelController {
         if (charm && charm.loaded) {
           resolve(charm);
         } else {
-          charm = db.charms.add({url: charmId}).load(env,
+          charm = db.charms.add({url: charmId}).load(
+            this.getModelConnection(),
             // If views are bound to the charm model, firing "update" is
             // unnecessary, and potentially even mildly harmful.
             (err, data) => {
@@ -110,12 +110,11 @@ class ModelController {
     @return {Promise} A promise for fully populated service data.
   */
   getService(serviceId) {
-    var db = this.db,
-        env = this.env;
+    var db = this.db;
 
     return this._getPromise(
       serviceId, this._servicePromises,
-      function(resolve, reject) {
+      (resolve, reject) => {
         // `this` points to the serviceList
         var service = db.services.getById(serviceId);
         // If the service and all data has already been loaded, or if the
@@ -125,17 +124,18 @@ class ModelController {
           return;
         }
         if (!service || !service.get('loaded')) {
-          env.getApplicationConfig(serviceId, function(result) {
+          const modelConn = this.getModelConnection();
+          modelConn.facades.application.get({application: serviceId}, (err, result) => {
             if (result.err) {
               // The service doesn't exist
               reject(result);
             } else {
-              var service = db.services.getById(result.applicationName);
+              var service = db.services.getById(result.application);
               service.setAttrs({
-                config: result.result.config,
-                constraints: result.result.constraints,
+                config: result.config,
+                constraints: result.constraints,
                 loaded: true,
-                series: result.result.series
+                series: result.series
               });
               resolve(service);
             }
