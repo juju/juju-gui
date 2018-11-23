@@ -272,11 +272,11 @@ test-python: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: test-js
-test-js: gui
+test-js: gui-deps
 	./scripts/test-js.sh
 
 .PHONY: test-js-old
-test-js-old: gui
+test-js-old: gui-deps
 	./scripts/test-js-old.sh
 
 .PHONY: start-karma
@@ -284,15 +284,15 @@ start-karma:
 	MULTI_RUN=true ./scripts/test-js.sh
 
 .PHONY: test-jest
-test-jest: gui
+test-jest: gui-deps
 	$(JEST)
 
 .PHONY: watch-jest
-watch-jest: gui
+watch-jest: gui-deps
 	$(JEST) --watchAll
 
 .PHONY: update-jest-snapshots
-update-jest-snapshots: gui
+update-jest-snapshots: gui-deps
 	$(JEST) -u
 
 .PHONY: test-selenium

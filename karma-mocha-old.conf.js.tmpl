@@ -1,6 +1,9 @@
 // Karma configuration
 // Generated on Tue Sep 01 2015 11:00:43 GMT-0600 (CST)
 'use strict';
+
+const webpackConfig = require('./webpack.test');
+
 module.exports = function(config) {
   config.set({
 
@@ -17,7 +20,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['browserify', 'mocha', 'chai-sinon'],
+    frameworks: ['mocha', 'chai-sinon'],
 
     // List of files / patterns to load in the browser; Karma is smart enough,
     // with the preprocessors, to watch the source files and serve the compiled
@@ -59,15 +62,12 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'jujugui/static/gui/src/test/test_*.js': ['browserify'],
-      'jujugui/static/gui/src/test/globalconfig.js': ['browserify'],
-      'jujugui/static/gui/src/test/utils.js': ['browserify']
+      'jujugui/static/gui/src/test/test_*.js': ['webpack'],
+      'jujugui/static/gui/src/test/globalconfig.js': ['webpack'],
+      'jujugui/static/gui/src/test/utils.js': ['webpack']
     },
 
-    browserify: {
-      debug: true,
-      transform: ['babelify']
-    },
+    webpack: webpackConfig,
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
