@@ -207,9 +207,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             });
           };
           {{if .debug}}
-          script.src = '${convoy_url}?app/init-pkg.js';
+          script.src = '{{.comboURL}}?app/init-pkg.js';
           {{else}}
-          script.src = '${convoy_url}?app/init-pkg-min.js';
+          script.src = '{{.comboURL}}?app/init-pkg-min.js';
           {{end}}
           document.head.appendChild(script);
 
