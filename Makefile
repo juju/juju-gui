@@ -125,9 +125,7 @@ $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(BUILT_JS_ASSETS)
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
-	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
-		sed s/\.js$$//g | \
-		xargs -I {} BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments {}.js -o {}-min.js
+	$(MAKE) prod-gui
 
 $(YUI): $(NODE_MODULES)
 
@@ -322,13 +320,6 @@ version:
 .PHONY: dist
 dist: clean-all deps prod-gui test-deps collect-requirements version
 	# We are only minifying the init bundle here because it takes considerable time.
-	BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
-	$(PY) setup.py sdist --formats=bztar\
-
-.PHONY: fast-dist
-fast-dist: deps gui test-deps collect-requirements version
-	# We are only minifying the init bundle here because it takes considerable time.
-	BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
 	$(PY) setup.py sdist --formats=bztar\
 
 #######
