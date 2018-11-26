@@ -375,14 +375,29 @@ class GUIApp {
     */
     this.jujuClient = null;
 
+    /**
+      A list of require statements for the required jujulib model facades.
+      @type {Array}
+    */
+    this._defaultModelFacades = [
+      // Sort facades alphabetically.
+      require('@canonical/jujulib/api/facades/application-v6.js'),
+      require('@canonical/jujulib/api/facades/all-watcher-v1.js'),
+      require('@canonical/jujulib/api/facades/charms-v2.js'),
+      require('@canonical/jujulib/api/facades/client-v1.js'),
+      require('@canonical/jujulib/api/facades/pinger-v1.js')
+    ];
+
+    this._defaultControllerFacades = [
+      // Sort facades alphabetically.
+      require('@canonical/jujulib/api/facades/cloud-v2.js'),
+      require('@canonical/jujulib/api/facades/model-manager-v4.js'),
+      require('@canonical/jujulib/api/facades/pinger-v1.js')
+    ];
+
     const connectionOptions = {
       debug: true,
-      facades: [
-        // Sort facades alphabetically.
-        require('@canonical/jujulib/api/facades/cloud-v2.js'),
-        require('@canonical/jujulib/api/facades/model-manager-v4.js'),
-        require('@canonical/jujulib/api/facades/pinger-v1.js')
-      ],
+      facades: this._defaultControllerFacades,
       wsclass: WebSocket,
       bakery: this.bakery
     };
@@ -718,14 +733,7 @@ valid values are [${validValues.map(i => String(i)).join(', ')}]`;
 
     const connectionOptions = {
       debug: true,
-      facades: [
-        // Sort facades alphabetically.
-        require('@canonical/jujulib/api/facades/application-v6.js'),
-        require('@canonical/jujulib/api/facades/all-watcher-v1.js'),
-        require('@canonical/jujulib/api/facades/charms-v2.js'),
-        require('@canonical/jujulib/api/facades/client-v1.js'),
-        require('@canonical/jujulib/api/facades/pinger-v1.js')
-      ],
+      facades: this._defaultModelFacades,
       wsclass: WebSocket,
       bakery: this.bakery
     };
@@ -775,7 +783,7 @@ valid values are [${validValues.map(i => String(i)).join(', ')}]`;
       deltas.push([kind + 'Info', operation, entityInfo]);
     });
     deltas.sort((a, b) => {
-      // Sort items not in our hierarchy last.
+      // Sort items that are not not in our hierarchy last.
       if (!cmp[a[0]]) {
         return 1;
       }
