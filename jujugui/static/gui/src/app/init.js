@@ -53,13 +53,6 @@ class GUIApp {
     */
     this.applicationConfig = this._processApplicationConfig(config);
     /**
-      Holds the modelUUID the application should connect to. It's possible that
-      this value and the value in the modelAPI instance will differ as another
-      portion of the application has set this value prior to switching models.
-      @type {String}
-    */
-    this.modelUUID = config.jujuEnvUUID || null;
-    /**
       The default web page title.
       @type {String}
     */
@@ -348,7 +341,7 @@ class GUIApp {
       The model uuid that is currently connected to.
       @type {string}
     */
-    this.activeModelUUID = null;
+    this.activeModelUUID = config.jujuEnvUUID || null;
 
     /**
       Stores the status of the model connection so we can intellegently
@@ -357,13 +350,16 @@ class GUIApp {
       the application until the model connection is completely ready and
       native promises do not allow external inspection on its status.
 
+      Use the public property `modelConnectionStatus` to take advantage of the
+      setter with validation.
+
       Allowed values are:
         null
         'ready'
         'connecting'
       @type {String}
     */
-    this.modelConnectionStatus = null;
+    this._modelConnectionStatus = null;
 
     /**
       Stores the handler to the active models watcher handle so that it can be
@@ -424,6 +420,18 @@ class GUIApp {
       });
   }
 
+  set modelConnectionStatus(value) {
+    const validValues = [null, 'ready', 'connecting'];
+    if (!validValues.includes(value)) {
+      throw `Invalid value "${value}" set to modelConnectionStatus, \
+valid values are [${validValues.map(i => String(i)).join(', ')}]`;
+    }
+    this._modelConnectionStatus = value;
+  }
+
+  get modelConnectionStatus() {
+    return this._modelConnectionStatus;
+  }
 
   /**
     Perform any processing or modification on the application config values.
@@ -589,7 +597,7 @@ class GUIApp {
         maasServer={this._getMaasServer()}
         maskVisibility={this.maskVisibility.bind(this)}
         modelAPI={this.modelAPI}
-        modelUUID={this.modelUUID}
+        modelUUID={this.activeModelUUID}
         payment={this.payment}
         plans={this.plans}
         rates={this.rates}
@@ -795,7 +803,7 @@ class GUIApp {
     let socketURL = undefined;
     if (uuid) {
       console.log('switching to model: ', uuid);
-      this.modelUUID = uuid;
+      this.activeModelUUID = uuid;
       const config = this.applicationConfig;
       socketURL = utils.createSocketURL({
         protocol: config.socket_protocol,
@@ -804,7 +812,7 @@ class GUIApp {
         uuid});
     } else {
       console.log('switching to disconnected mode');
-      this.modelUUID = null;
+      this.activeModelUUID = null;
     }
     this.switchEnv(socketURL);
   }
@@ -814,7 +822,7 @@ class GUIApp {
     @param {String} uuid The uuid of the model to switch to, or none.
   */
   _setModelUUID(uuid) {
-    this.modelUUID = uuid;
+    this.activeModelUUID = uuid;
   }
 
   /**
@@ -1781,7 +1789,7 @@ class GUIApp {
     if (topology) {
       topology.topo.update();
     }
-    this.modelUUID = '';
+    this.activeModelUUID = null;
     this.loggedIn = false;
     const controllerAPI = this.controllerAPI;
     const closeController = controllerAPI.close.bind(controllerAPI);
