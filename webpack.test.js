@@ -1,10 +1,10 @@
 'use strict';
 
-
 module.exports = {
   mode: 'development',
   module: {
     rules: [
+      // Use Babel on all our files, but not node_modules.
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -12,6 +12,7 @@ module.exports = {
           loader: 'babel-loader'
         }
       },
+      // Load all the require()ed scss.
       {
         test: /\.(sa|sc|c)ss$/,
         use: [{
@@ -29,6 +30,8 @@ module.exports = {
     ]
   },
   node: {
+    // Let Webpack handle the fs for the web as we're not building for node.
+    // See: https://webpack.js.org/configuration/node/#other-node-core-libraries
     fs: 'empty'
   }
 };

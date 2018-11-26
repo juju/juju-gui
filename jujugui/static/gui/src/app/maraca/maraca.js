@@ -3,7 +3,8 @@
 
 const clonedeep = require('lodash.clonedeep');
 let deepmerge = require('deepmerge');
-// Handle differences between how the tests load this code.
+// Due to our use of require() (which requires .default) and how Jest loads the
+// module we have to handle both cases. See https://github.com/KyleAMathews/deepmerge/issues/87
 if (deepmerge.default) {
   deepmerge = deepmerge.default;
 }
