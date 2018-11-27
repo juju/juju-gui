@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
+    "@canonical/juju-react-components": "^0.3.0",
     "babel-cli": "6.26.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",
