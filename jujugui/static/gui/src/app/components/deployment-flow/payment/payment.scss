@@ -2,6 +2,6 @@
 
 .deployment-payment {
   &__methods {
-    @extend %list-style;
+    @include list-style;
   }
 }

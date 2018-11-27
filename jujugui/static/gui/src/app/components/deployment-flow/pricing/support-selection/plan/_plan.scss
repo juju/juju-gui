@@ -24,7 +24,7 @@
   }
 
   &__features {
-    @extend %list-style;
+    @include list-style;
     flex: auto;
     margin: 20px 0;
   }

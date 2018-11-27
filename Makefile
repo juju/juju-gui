@@ -5,7 +5,6 @@ GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 ASSETS_DIR := $(GUISRC)/app/assets
 SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
-BUILD_CSS := $(GUIBUILD)/app/assets/css
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
 CSS_FILE := $(GUIBUILD)/app/assets/juju-gui.css
@@ -20,6 +19,7 @@ YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
 JEST := $(NODE_MODULES)/.bin/jest
+WEBPACK := $(NODE_MODULES)/.bin/webpack
 
 CACHE := $(shell pwd)/downloadcache
 PYTHON_FILES := $(CACHE)/python
@@ -80,7 +80,7 @@ sysdeps:
 	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 	sudo apt install -y nodejs
 	sudo apt update
-	sudo apt install -y chromium-browser coreutils g++ git inotify-tools python-dev python-virtualenv xvfb
+	sudo apt install -y chromium-browser coreutils g++ git python-dev python-virtualenv xvfb
 	realpath --version || sudo apt-get install -y realpath # realpath is already present on bionic.
 
 #######
@@ -93,7 +93,7 @@ $(NODE_MODULES):
 	npm install
 
 .PHONY: server
-server: gui
+server: gui-deps
 	bin/pserve --reload development.ini
 
 .PHONY: qa-server
@@ -101,7 +101,7 @@ qa-server: gui
 	bin/pserve qa.ini
 
 .PHONY: run
-run: gui
+run: gui-deps
 	@echo
 	@echo "=============================================================="
 	@echo "To run the GUI you must point it at a running Juju controller."
@@ -125,9 +125,6 @@ $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(BUILT_JS_ASSETS)
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
-	find $(BUILT_JS_ASSETS) -type f -name "*.js" \
-		sed s/\.js$$//g | \
-		xargs -I {} BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments {}.js -o {}-min.js
 
 $(YUI): $(NODE_MODULES)
 
@@ -168,21 +165,15 @@ gui-deps: $(JUJUGUI) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(STATIC_IMAGES) $(FAVICON)
 
 .PHONY: gui
 gui: gui-deps
-	mkdir -p $(BUILD_CSS)
-	$(NODE_MODULES)/.bin/browserifyinc -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -p [ ./browserify/scss.js --build-dir=./$(BUILD_CSS) ]
-	cat $(BUILD_CSS)/*.scss > $(CSS_FILE)
+	$(WEBPACK) --config webpack.dev.js
 
 .PHONY: prod-gui
 prod-gui: gui-deps
-	BABEL_ENV=production $(NODE_MODULES)/.bin/browserify -r ./$(GUISRC)/app/init.js:init -o ./$(GUIBUILD)/app/init-pkg.js -t [ babelify --plugins [ transform-react-jsx ] ] -g [ envify purge --NODE_ENV production ] -g uglifyify -p [ ./browserify/scss.js --file=$(CSS_FILE) --prod=true ]
+	$(WEBPACK) --config webpack.prod.js
 
 .PHONY: watch
 watch:
-	while true; do \
-		inotifywait -q -r --exclude=".*sw[px]$$" -e modify -e create -e delete -e move $(GUISRC); \
-		$(MAKE) gui; \
-		echo "\033[1;32m-- Done rebuilding\033[0m"; \
-	done
+	$(WEBPACK) --config webpack.dev.js --watch
 
 ################
 # Download cache
@@ -278,11 +269,11 @@ test-python: $(JUJUGUI) $(PYTEST)
 	$(PYTEST) -s jujugui/tests
 
 .PHONY: test-js
-test-js: gui
+test-js: gui-deps
 	./scripts/test-js.sh
 
 .PHONY: test-js-old
-test-js-old: gui
+test-js-old: gui-deps
 	./scripts/test-js-old.sh
 
 .PHONY: start-karma
@@ -290,15 +281,15 @@ start-karma:
 	MULTI_RUN=true ./scripts/test-js.sh
 
 .PHONY: test-jest
-test-jest: gui
+test-jest: gui-deps
 	$(JEST)
 
 .PHONY: watch-jest
-watch-jest: gui
+watch-jest: gui-deps
 	$(JEST) --watchAll
 
 .PHONY: update-jest-snapshots
-update-jest-snapshots: gui
+update-jest-snapshots: gui-deps
 	$(JEST) -u
 
 .PHONY: test-selenium
@@ -328,13 +319,6 @@ version:
 .PHONY: dist
 dist: clean-all deps prod-gui test-deps collect-requirements version
 	# We are only minifying the init bundle here because it takes considerable time.
-	BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
-	$(PY) setup.py sdist --formats=bztar\
-
-.PHONY: fast-dist
-fast-dist: deps gui test-deps collect-requirements version
-	# We are only minifying the init bundle here because it takes considerable time.
-	BABEL_ENV=production $(NODE_MODULES)/.bin/babel --minified --no-comments ./$(GUIBUILD)/app/init-pkg.js -o ./$(GUIBUILD)/app/init-pkg-min.js
 	$(PY) setup.py sdist --formats=bztar\
 
 #######
@@ -357,8 +341,6 @@ clean-pyc:
 .PHONY: clean-gui
 clean-gui:
 	- rm -rf jujugui/static/gui/build
-	- rm .last-transpile
-	- rm browserify-cache.json
 
 .PHONY: clean-all
 clean-all: clean-venv clean-pyc clean-gui clean-dist clean-uitest

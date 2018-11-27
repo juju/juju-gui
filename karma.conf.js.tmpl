@@ -1,6 +1,9 @@
 // Karma configuration
 // Generated on Tue Sep 01 2015 11:00:43 GMT-0600 (CST)
 'use strict';
+
+const webpackConfig = require('./webpack.test');
+
 module.exports = function(config) {
   config.set({
 
@@ -12,7 +15,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['browserify', 'jasmine', 'chai-sinon'],
+    frameworks: ['jasmine', 'chai-sinon'],
 
     // List of files / patterns to load in the browser; Karma is smart enough,
     // with the preprocessors, to watch the source files and serve the compiled
@@ -41,16 +44,16 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'jujugui/static/gui/src/app/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/d3-components/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/init/**/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/init/topology/environment-utils.js': ['browserify'],
-      'jujugui/static/gui/src/app/models/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/app/state/*.js': ['browserify'],
-      'jujugui/static/gui/src/app/user/*.js': ['browserify'],
-      'jujugui/static/gui/src/app/utils/*.js': ['browserify'],
-      'jujugui/static/gui/src/app/store/env/test-*.js': ['browserify'],
-      'jujugui/static/gui/src/test/globalconfig.js': ['browserify']
+      'jujugui/static/gui/src/app/test-*.js': ['webpack'],
+      'jujugui/static/gui/src/app/d3-components/test-*.js': ['webpack'],
+      'jujugui/static/gui/src/app/init/**/test-*.js': ['webpack'],
+      'jujugui/static/gui/src/app/init/topology/environment-utils.js': ['webpack'],
+      'jujugui/static/gui/src/app/models/test-*.js': ['webpack'],
+      'jujugui/static/gui/src/app/state/*.js': ['webpack'],
+      'jujugui/static/gui/src/app/user/*.js': ['webpack'],
+      'jujugui/static/gui/src/app/utils/*.js': ['webpack'],
+      'jujugui/static/gui/src/app/store/env/test-*.js': ['webpack'],
+      'jujugui/static/gui/src/test/globalconfig.js': ['webpack']
     },
 
     proxies: {
@@ -59,11 +62,7 @@ module.exports = function(config) {
       '/base/jujugui/static/gui/src/test/': 'http://0.0.0.0:{TEST_PORT}/test/'
     },
 
-    browserify: {
-      debug: true,
-      plugin: ['proxyquire-universal'],
-      transform: [ 'babelify', './browserify/ignore-scss.js' ]
-    },
+    webpack: webpackConfig,
 
     // test results reporter to use
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter

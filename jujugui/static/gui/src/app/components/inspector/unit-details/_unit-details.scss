@@ -22,7 +22,7 @@
 
   &__action-list,
   &__list {
-    @extend %list-style;
+    @include list-style;
   }
 
   &__list {

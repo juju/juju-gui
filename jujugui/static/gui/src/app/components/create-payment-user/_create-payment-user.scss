@@ -16,7 +16,7 @@
     }
 
     &-type {
-      @extend %list-style;
+      @include list-style;
       margin-bottom: 1rem;
 
       &-option {

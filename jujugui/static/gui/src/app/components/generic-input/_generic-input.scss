@@ -54,7 +54,7 @@
   }
 
   &__errors {
-    @extend %list-style;
+    @include list-style;
     margin: -10px 0 30px;
   }
 

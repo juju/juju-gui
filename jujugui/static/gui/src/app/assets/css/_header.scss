@@ -39,13 +39,13 @@
     margin-left: 20px;
   }
 
-  .header-banner__list--right {
-    @extend %list-style;
+  &__list--right {
+    @include list-style;
     float: right;
     margin-right: 10px;
   }
 
-  .header-banner__list-item {
+  &__list-item {
     float: left;
     padding: 21px 8px;
     margin-bottom: 0;

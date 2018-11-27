@@ -1,25 +1,19 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const zipUtils = require('./zip-utils');
+const entries = ['readme', 'version'];
+
+const zipUtilsInjector = require('inject-loader!./zip-utils');
+const zipUtils = zipUtilsInjector({
+  'zip': {
+    Reader: sinon.stub().returns({
+      toObject: sinon.stub().returns(entries)
+    }),
+    createReader: null
+  }
+});
 
 describe('Zip utils', function() {
-  let entries;
-
-  beforeEach(function() {
-    entries = ['readme', 'version'];
-    const ReaderStub = sinon.stub().returns({
-      toObject: sinon.stub().returns(entries)
-    });
-    zipUtils.__Rewire__('zip', {
-      Reader: ReaderStub,
-      createReader: null
-    });
-  });
-
-  afterEach(function() {
-    zipUtils.__ResetDependency__('zip');
-  });
 
   describe('getEntries', function() {
     let addEventListenerMock, callback, errback, _FileReader;

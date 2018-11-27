@@ -207,10 +207,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     % if raw:
     <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
-    <script src="${convoy_url}?app/init-pkg.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui.js"></script>
     % else:
-    <script src="${convoy_url}?app/init-pkg-min.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/version.js"></script>
     <script src="${convoy_url}?app/assets/javascripts/yui/yui/yui-min.js"></script>
     % endif
@@ -222,19 +220,27 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       startTheApp = function() {
         YUI().use([], function(Y) {
           window.yui = Y;
-          const JujuGUI = require('init');
-          window.yui.use([
-              'juju-charm-models',
-              'juju-bundle-models',
-              'juju-controller-api',
-              'juju-env-base',
-              'juju-env-api',
-              'juju-models',
-              'base',
-              'model'
-          ], function () {
-            window.JujuGUI = new JujuGUI(juju_config);
-          });
+          const script = document.createElement('script');
+          script.onload = function () {
+            window.yui.use([
+                'juju-charm-models',
+                'juju-bundle-models',
+                'juju-controller-api',
+                'juju-env-base',
+                'juju-env-api',
+                'juju-models',
+                'base',
+                'model'
+            ], function () {
+              window.JujuGUI = new JujuGUI(juju_config);
+            });
+          };
+          % if raw:
+          script.src = '${convoy_url}?app/init-pkg.js';
+          % else:
+          script.src = '${convoy_url}?app/init-pkg-min.js';
+          % endif
+          document.head.appendChild(script);
 
           const stopHandler = () => {
             document.removeEventListener('login', stopHandler);

@@ -1,11 +1,14 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const jest = require('jest');
 const React = require('react');
 const enzyme = require('enzyme');
 
 const Configuration = require('./config');
 const initUtils = require('../../../init/utils');
+
+jest.mock('../../../init/utils');
 
 describe('Configuration', function() {
   let acl, charm, getYAMLConfig, service;
@@ -44,10 +47,8 @@ describe('Configuration', function() {
 
   beforeEach(() => {
     getYAMLConfig = sinon.stub();
-    Configuration.__Rewire__('initUtils', {
-      getYAMLConfig: getYAMLConfig,
-      linkify: initUtils.linkify
-    });
+    initUtils.getYAMLConfig = getYAMLConfig;
+    initUtils.linkify = val => val;
     acl = {isReadOnly: sinon.stub().returns(false)};
     const option1 = {
       key: 'option1key',
@@ -77,10 +78,6 @@ describe('Configuration', function() {
       get: serviceGet,
       set: sinon.stub()
     };
-  });
-
-  afterEach(() => {
-    Configuration.__ResetDependency__('initUtils');
   });
 
   it('renders binary and string config inputs', function() {

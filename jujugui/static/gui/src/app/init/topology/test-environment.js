@@ -1,8 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const d3 = require('d3');
-const proxyquire = require('proxyquire');
+let d3 = require('d3');
 const {charmstore} = require('jaaslib');
 
 const EnvironmentChangeSet = require('../environment-change-set');
@@ -13,11 +12,12 @@ const User = require('../../user/user');
 
 const getEndpoints = sinon.stub();
 
-const EnvironmentView = proxyquire('./environment', {
-  './relation': proxyquire('./relation', {
-    'd3': {
-      mouse: sinon.stub().returns([0, 0])
-    },
+const EnvironmentViewInjector = require('inject-loader!./environment');
+const relationInjector = require('inject-loader!./relation');
+d3.mouse = sinon.stub().returns([0, 0]);
+const EnvironmentView = EnvironmentViewInjector({
+  './relation': relationInjector({
+    'd3': d3,
     '../endpoint-utils': {
       getEndpoints: getEndpoints
     }
@@ -1484,13 +1484,14 @@ describe('EnvironmentView', function() {
     var models, module, service;
 
     beforeAll(function(done) {
-      YUI(GlobalConfig).use(
-        ['juju-models'],
-        function(Y) {
-          models = Y.namespace('juju.models');
-          window.yui = Y;
+      YUI(GlobalConfig).use([], function(Y) {
+        window.yui = Y;
+        require('../../yui-modules');
+        window.yui.use(window.MODULES, function() {
+          models = window.yui.namespace('juju.models');
           done();
         });
+      });
     });
 
     beforeEach(function() {
