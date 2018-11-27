@@ -40,4 +40,8 @@ describe('Error boundary', function() {
     });
     expect(wrapper).toMatchSnapshot();
   });
+
+  afterEach(() => {
+    renderComponent.unmount();
+  });
 });
