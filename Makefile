@@ -125,7 +125,6 @@ $(GUIBUILD)/app/%.js $(GUIBUILD)/app/%-min.js: $(GUISRC)/app/%.js
 $(BUILT_JS_ASSETS): $(NODE_MODULES)
 	mkdir -p $(BUILT_JS_ASSETS)
 	echo 'window.GUI_VERSION = {"version": "$(CURRENT_VERSION)", "commit": "$(CURRENT_COMMIT)"};' > $(GUIBUILD)/app/assets/javascripts/version.js
-	$(MAKE) prod-gui
 
 $(YUI): $(NODE_MODULES)
 
