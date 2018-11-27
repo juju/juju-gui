@@ -29,7 +29,7 @@ class errorBoundary extends React.Component {
                   If this problem persists, please <a
                     className="p-link--external"
                     href="https://github.com/CanonicalLtd/jujucharms.com">
-                    raise an issue</a> with the contents of the error message below.
+                    raise an issue</a>.
                   {error.message &&
                     <pre className="error_boundary__code-snippet">
                       <code>{error.message} </code>
