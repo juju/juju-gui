@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Error boundary should not show if no error thrown 1`] = `
+<errorBoundary>
+  <span>
+    Children content!
+  </span>
+</errorBoundary>
+`;
+
+exports[`Error boundary should show fallback UI if error thrown 1`] = `
+<errorBoundary>
+  <div
+    className="v1"
+  >
+    <div
+      className="row"
+    >
+      <div
+        className="col-12"
+      >
+        <div
+          className="p-notification--negative"
+        >
+          <p
+            className="p-notification__response"
+          >
+            Hmm.. something has went wrong with this part of the application. If this problem persists, please 
+            <a
+              className="p-link--external"
+              href="https://github.com/CanonicalLtd/jujucharms.com"
+            >
+              raise an issue
+            </a>
+             with the contents of the error message below.
+            <pre
+              className="error_boundary__code-snippet"
+            >
+              <code>
+                Error!
+                 
+              </code>
+            </pre>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</errorBoundary>
+`;

@@ -102,12 +102,16 @@ a {
   // Include base Vanilla styles
   @include vf-base;
   // Include components as they are used
+  @include vf-p-buttons;
   @include vf-p-grid;
   @include vf-p-strip;
+  @include vf-p-links;
   @include vf-p-lists;
   @include vf-p-media-object;
   @include vf-p-divider;
   @include vf-p-tooltips;
+  @include vf-p-notification;
+  @include vf-p-icons;
   // Include utilities as they are used
   @include vf-u-align;
   @include vf-u-padding-collapse;
