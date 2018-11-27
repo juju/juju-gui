@@ -21,7 +21,7 @@ class ComponentWithError extends React.Component {
 
 describe('Error boundary', function() {
 
-  const renderComponent = (options = {}) => enzyme.shallow(
+  const renderComponent = (options = {}) => enzyme.mount(
     <ErrorBoundary>
       {options.content || null}
     </ErrorBoundary>
