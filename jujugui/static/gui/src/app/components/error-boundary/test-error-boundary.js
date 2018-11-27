@@ -27,6 +27,10 @@ describe('Error boundary', function() {
     </ErrorBoundary>
   );
 
+  afterEach(() => {
+    renderComponent.unmount();
+  });
+
   it('should not show if no error thrown', () => {
     const wrapper = renderComponent({
       content: (<span>Children content!</span>)
@@ -39,9 +43,5 @@ describe('Error boundary', function() {
       content: (<ComponentWithError />)
     });
     expect(wrapper).toMatchSnapshot();
-  });
-
-  afterEach(() => {
-    renderComponent.unmount();
   });
 });
