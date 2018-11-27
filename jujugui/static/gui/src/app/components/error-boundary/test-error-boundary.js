@@ -35,7 +35,6 @@ describe('Error boundary', function() {
   });
 
   it('should show fallback UI if error thrown', () => {
-
     const wrapper = renderComponent({
       content: (<ComponentWithError />)
     });
