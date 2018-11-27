@@ -28,7 +28,7 @@
   }
 
   &__plans {
-    @extend %list-style;
+    @include list-style;
     padding: 20px 20px 0;
   }
 

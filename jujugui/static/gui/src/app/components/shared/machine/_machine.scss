@@ -49,7 +49,7 @@
 
   &__details,
   &__hardware {
-    @extend %list-style;
+    @include list-style;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 5px;
@@ -65,7 +65,7 @@
   }
 
   &__hardware {
-    @extend %list-style;
+    @include list-style;
     display: grid;
     grid-template-columns: 1fr 1fr;
     margin: 10px 30px 0 0;
@@ -98,7 +98,7 @@
   }
 
   &__units {
-    @extend %list-style;
+    @include list-style;
     margin: 5px 0 0 0;
   }
 

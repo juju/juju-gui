@@ -215,7 +215,7 @@
     }
 
     &__links {
-      @extend %list-style;
+      @include list-style;
 
       li:last-child {
         margin-bottom: 0;

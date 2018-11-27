@@ -4,7 +4,7 @@
 
 .deployment-cloud {
   &__list {
-    @extend %list-style;
+    @include list-style;
   }
 
   &__loading {

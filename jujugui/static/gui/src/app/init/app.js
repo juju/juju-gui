@@ -8,6 +8,10 @@ const React = require('react');
 const shapeup = require('shapeup');
 const jaaslib = require('jaaslib');
 
+// This CSS needs to be imported before the components below so that the order
+// of CSS is correct.
+require('../assets/css/base.scss');
+
 const urls = jaaslib.urls;
 
 const yui = window.yui;
@@ -55,7 +59,6 @@ const UserMenu = require('../components/user-menu/user-menu');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
 
-require('../assets/css/base.scss');
 
 /**
     A component to render the app.

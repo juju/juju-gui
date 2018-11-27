@@ -2,7 +2,7 @@
 
 .payment-details {
   &-addresses {
-    @extend %list-style;
+    @include list-style;
 
     .inset-select--disabled {
       margin-bottom: 20px;
