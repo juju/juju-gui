@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const InspectorRelations = require('./relations');
 const CheckListItem = require('../../check-list-item/check-list-item');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const OverviewAction = require('../overview-action/overview-action');
 
 describe('InspectorRelations', function() {

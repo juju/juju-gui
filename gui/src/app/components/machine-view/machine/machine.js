@@ -6,7 +6,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
 const Machine = require('../../shared/machine/machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');

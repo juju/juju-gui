@@ -6,7 +6,7 @@ const React = require('react');
 
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 
 require('./_scale-up.scss');
 

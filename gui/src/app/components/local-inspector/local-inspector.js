@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const InspectorHeader = require('../inspector/header/header');
 
 require('./_local-inspector.scss');
