@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const initUtils = require('../../init/utils');
 const maracaPropTypes = require('../../maraca/prop-types');
-const SharedStatus = require('../shared/status/status/status');
+const SharedStatus = require('@canonical/juju-react-components').Status;
 
 require('./_status.scss');
 
