@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const PaymentDetailsAddress = require('./address');
 const AddressForm = require('../../../address-form/address-form');
-const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
 
 describe('PaymentDetailsAddress', () => {

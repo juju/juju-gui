@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const BudgetTableRow = require('./row');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
 
 describe('BudgetTableRow', function() {

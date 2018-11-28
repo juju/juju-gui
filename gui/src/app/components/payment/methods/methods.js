@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const CardForm = require('../../card-form/card-form');
 const AddressForm = require('../../address-form/address-form');
 const PaymentMethod = require('./method/method');

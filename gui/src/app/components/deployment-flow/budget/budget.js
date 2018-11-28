@@ -8,7 +8,7 @@ const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
 const GenericInput = require('../../generic-input/generic-input');
 const {Button} = require('@canonical/juju-react-components');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
 require('./_budget.scss');

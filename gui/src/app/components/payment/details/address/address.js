@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const AddressForm = require('../../../address-form/address-form');
-const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../../init/utils');
 
