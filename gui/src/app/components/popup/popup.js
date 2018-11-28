@@ -7,7 +7,7 @@ const React = require('react');
 
 const {ButtonRow} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
-const Panel = require('../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 const SvgIcon = require('../svg-icon/svg-icon');
 
 require('./_popup.scss');

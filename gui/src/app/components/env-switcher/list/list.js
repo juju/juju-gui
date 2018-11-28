@@ -6,7 +6,7 @@ const React = require('react');
 
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
-const Panel = require('../../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 
 require('./_list.scss');
 
