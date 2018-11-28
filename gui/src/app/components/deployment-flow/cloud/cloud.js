@@ -7,7 +7,7 @@ const React = require('react');
 
 const initUtils = require('../../../init/utils');
 const Spinner = require('../../spinner/spinner');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_cloud.scss');
 

@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentCredentialAdd = require('./add');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
 const {ButtonRow} = require('@canonical/juju-react-components');

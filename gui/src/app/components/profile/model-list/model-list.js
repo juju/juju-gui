@@ -9,7 +9,7 @@ const CreateModelButton = require('../../create-model-button/create-model-button
 const DateDisplay = require('../../date-display/date-display');
 const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_model-list.scss');
 

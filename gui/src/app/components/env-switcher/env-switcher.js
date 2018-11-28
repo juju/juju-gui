@@ -7,7 +7,7 @@ const React = require('react');
 const enhanceWithClickOutside = require('../../init/react-click-outside');
 
 const EnvList = require('./list/list');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_env-switcher.scss');
 

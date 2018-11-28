@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const PaymentMethodCard = require('./card');
 const {Button} = require('@canonical/juju-react-components');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('PaymentMethodCard', () => {
   let card;

@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const HashLink = require('./hash-link');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('HashLink', () => {
 

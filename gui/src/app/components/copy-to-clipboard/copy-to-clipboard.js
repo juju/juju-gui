@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_copy-to-clipboard.scss');
 

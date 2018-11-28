@@ -6,7 +6,7 @@ const React = require('react');
 
 const {Button} = require('@canonical/juju-react-components');
 const DeploymentPanel = require('../panel/panel');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_signup.scss');
 

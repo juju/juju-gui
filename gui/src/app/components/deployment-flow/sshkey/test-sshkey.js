@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentSSHKey = require('./sshkey');
 const InsetSelect = require('../../inset-select/inset-select');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 const Notification = require('../../notification/notification');

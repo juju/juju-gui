@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const InsetSelect = require('../../inset-select/inset-select');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 const githubSSHKeys = require('../../../utils/github-ssh-keys');

@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
 const SearchResultsItem = require('./item');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('SearchResultsItem', function() {
   let acl, item, generatePath;

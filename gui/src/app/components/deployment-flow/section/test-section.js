@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentSection = require('./section');
 const {ButtonRow} = require('@canonical/juju-react-components');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('DeploymentSection', function() {
 

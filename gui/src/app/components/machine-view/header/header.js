@@ -9,7 +9,7 @@ const shapeup = require('shapeup');
 
 const {Button} = require('@canonical/juju-react-components');
 const {ButtonDropdown} = require('@canonical/juju-react-components');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 

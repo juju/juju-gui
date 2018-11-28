@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const {Button} = require('@canonical/juju-react-components');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_card.scss');
 

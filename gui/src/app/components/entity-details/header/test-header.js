@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const EntityHeader = require('./header');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 

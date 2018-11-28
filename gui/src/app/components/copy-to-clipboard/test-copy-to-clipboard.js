@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const enzyme = require('enzyme');
 
 const CopyToClipboard = require('./copy-to-clipboard');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 const testUtils = require('react-dom/test-utils');
 

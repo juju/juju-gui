@@ -7,7 +7,7 @@ const React = require('react');
 const EXPERTS = require('../expert-card/experts');
 const ExpertCard = require('../expert-card/expert-card');
 const {Button} = require('@canonical/juju-react-components');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_expert-contact-card.scss');
 

@@ -9,7 +9,7 @@ const {urls} = require('jaaslib');
 
 const {Button} = require('@canonical/juju-react-components');
 const {Panel} = require('@canonical/juju-react-components');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_post-deployment.scss');
 

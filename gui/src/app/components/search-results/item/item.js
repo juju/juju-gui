@@ -8,7 +8,7 @@ const {urls} = require('jaaslib');
 
 const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 class SearchResultsItem extends React.Component {
   /**

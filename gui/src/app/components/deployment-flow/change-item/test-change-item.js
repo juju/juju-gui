@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentChangeItem = require('./change-item');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('DeploymentChangeItem', function() {
   let change;

@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 // Handle global GUI settings to be saved on a storage like the local storage.
 class ModalGUISettings extends React.Component {

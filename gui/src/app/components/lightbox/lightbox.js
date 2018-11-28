@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const classNames = require('classnames');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_lightbox.scss');
 

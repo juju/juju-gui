@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const Login = require('./login');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 

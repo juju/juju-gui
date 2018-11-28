@@ -10,7 +10,7 @@ const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Spinner = require('../spinner/spinner');
 const Popup = require('../popup/popup');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_sharing.scss');
 

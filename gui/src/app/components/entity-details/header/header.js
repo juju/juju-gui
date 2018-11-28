@@ -8,7 +8,7 @@ const {urls} = require('jaaslib');
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 

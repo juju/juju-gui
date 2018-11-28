@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const Popup = require('./popup');
 const {ButtonRow} = require('@canonical/juju-react-components');
 const {Button} = require('@canonical/juju-react-components');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('Popup', () => {
 

@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 
 const MachineView = require('./machine-view');
 const MachineViewColumn = require('./column/column');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('MachineView', function() {
   let acl, dbAPI, machineList, machines, modelAPI, parseMachineName, units;
