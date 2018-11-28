@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const MachineUnit = require('../../shared/machine-unit/machine-unit');
+const {MachineUnit} = require('@canonical/juju-react-components');
 
 require('./_machine-unit.scss');
 
