@@ -54,7 +54,7 @@ const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
 const {SvgIcon} = require('@canonical/juju-react-components');
-const Terminal = require('../components/terminal/terminal');
+const {Terminal} = require('@canonical/juju-react-components');
 const UserMenu = require('../components/user-menu/user-menu');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
@@ -369,7 +369,9 @@ class App extends React.Component {
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
         address={address}
-        changeState={this._bound.changeState}
+        close={this.props.appState.changeState.bind(this.props.appState.changeState, {
+          terminal: null
+        })}
         commands={commands}
         creds={creds}
         WebSocket={WebSocket} />);
