@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 const MachineViewAddMachine = require('../add-machine/add-machine');
 
 require('./_unplaced-unit.scss');

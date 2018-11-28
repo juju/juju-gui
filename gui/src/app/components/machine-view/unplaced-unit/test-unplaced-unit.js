@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
 const MachineViewUnplacedUnit = require('./unplaced-unit');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 

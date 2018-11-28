@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const {BasicTable} = require('@canonical/juju-react-components');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const Button = require('../../shared/button/button');

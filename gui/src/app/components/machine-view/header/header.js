@@ -8,7 +8,7 @@ const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
 const Button = require('../../shared/button/button');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 require('./_header.scss');
