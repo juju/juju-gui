@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const Spinner = require('../spinner/spinner');
 
 require('./_credential-add-edit.scss');

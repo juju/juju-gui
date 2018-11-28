@@ -16,7 +16,7 @@ const DeploymentPanel = require('./panel/panel');
 const DeploymentSection = require('./section/section');
 const DeploymentServices = require('./services/services');
 const DeploymentSSHKey = require('./sshkey/sshkey');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentFlow', function() {
   let acl, applications, changesUtils, controllerAPI, charmstore, initUtils,

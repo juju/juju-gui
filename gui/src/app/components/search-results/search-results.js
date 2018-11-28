@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../init/utils');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const SearchResultsItem = require('./item/item');

@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
 const CardForm = require('../../card-form/card-form');

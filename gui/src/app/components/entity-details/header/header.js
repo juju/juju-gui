@@ -6,7 +6,7 @@ const React = require('react');
 const {urls} = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
 const SvgIcon = require('../../svg-icon/svg-icon');
 

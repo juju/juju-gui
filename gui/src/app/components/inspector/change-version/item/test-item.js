@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 const {urls} = require('jaaslib');
 
 const InspectorChangeVersionItem = require('./item');
-const Button = require('../../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('InspectorChangeVersionItem', function() {
   let acl;

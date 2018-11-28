@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const CardForm = require('../../card-form/card-form');
 const PaymentMethod = require('./method/method');
 const PaymentMethods = require('./methods');

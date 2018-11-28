@@ -5,7 +5,7 @@ const enzyme = require('enzyme');
 const React = require('react');
 
 const DeploymentAgreements = require('./agreements');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentAgreements', function() {
   let acl, terms;

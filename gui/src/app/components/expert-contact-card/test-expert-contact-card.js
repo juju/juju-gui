@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const SvgIcon = require('../svg-icon/svg-icon');
 const ExpertContactCard = require('../expert-contact-card/expert-contact-card');
 

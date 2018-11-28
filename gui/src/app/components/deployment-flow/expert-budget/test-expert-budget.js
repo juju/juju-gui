@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentExpertBudget = require('./expert-budget');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 
 describe('DeploymentExpertBudget', () => {

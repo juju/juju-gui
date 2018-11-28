@@ -9,7 +9,7 @@ const {BasicTable} = require('@canonical/juju-react-components');
 const {ButtonDropdown} = require('@canonical/juju-react-components');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const ProfileCredentialListDelete = require('./delete/delete');
 const Spinner = require('../../spinner/spinner');
 

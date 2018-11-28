@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const SearchResults = require('./search-results');
 const SearchResultsItem = require('./item/item');
 const SearchResultsSelectFilter = require('./select-filter/select-filter');

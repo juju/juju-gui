@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const {ButtonRow} = require('@canonical/juju-react-components');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 

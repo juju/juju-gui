@@ -7,7 +7,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const Panel = require('../shared/panel/panel');
 const SvgIcon = require('../svg-icon/svg-icon');
 

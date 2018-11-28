@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const CreatePaymentUser = require('./create-payment-user');
 const GenericInput = require('../generic-input/generic-input');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
 

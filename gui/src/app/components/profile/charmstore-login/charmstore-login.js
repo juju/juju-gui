@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_charmstore-login.scss');
 

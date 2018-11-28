@@ -29,7 +29,7 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const DeploymentVPC = require('./vpc/vpc');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_deployment-flow.scss');
 

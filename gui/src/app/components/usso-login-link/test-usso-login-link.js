@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const USSOLoginLink = require('./usso-login-link');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('USSOLoginLink', () => {
 

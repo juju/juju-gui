@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentPanel = require('./panel');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('DeploymentPanel', function() {

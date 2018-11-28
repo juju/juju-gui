@@ -6,7 +6,7 @@ const React = require('react');
 
 const AddressForm = require('../../../address-form/address-form');
 const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
-const Button = require('../../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../../init/utils');
 
 require('./_address.scss');

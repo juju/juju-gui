@@ -8,7 +8,7 @@ const enzyme = require('enzyme');
 const PaymentCharges = require('./charges');
 const DateDisplay = require('../../date-display/date-display');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('PaymentCharges', function() {
   let acl, payment;

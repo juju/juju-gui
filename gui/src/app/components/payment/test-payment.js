@@ -9,7 +9,7 @@ const Payment = require('./payment');
 const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
 const PaymentMethods = require('./methods/methods');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('Payment', function() {
   let acl, payment, stripe, user;

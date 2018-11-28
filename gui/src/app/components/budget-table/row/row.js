@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
 require('./_row.scss');

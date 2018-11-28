@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentDirectDeploy = require('./direct-deploy');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 

@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const BudgetTableRow = require('./row');
 const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('BudgetTableRow', function() {
   var acl, addNotification, listPlansForCharm, parseTermId, service;

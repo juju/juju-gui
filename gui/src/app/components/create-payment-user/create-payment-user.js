@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const GenericInput = require('../generic-input/generic-input');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../init/utils');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');

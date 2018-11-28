@@ -10,7 +10,7 @@ const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
 const PaymentMethods = require('./methods/methods');
 const CreatePaymentUser = require('../create-payment-user/create-payment-user');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_payment.scss');
 

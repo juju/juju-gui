@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DateDisplay = require('../date-display/date-display');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Spinner = require('../spinner/spinner');

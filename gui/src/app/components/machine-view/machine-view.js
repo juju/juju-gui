@@ -13,7 +13,7 @@ const MachineViewMachine = require('./machine/machine');
 const MachineViewScaleUp = require('./scale-up/scale-up');
 const MachineViewUnplacedUnit = require('./unplaced-unit/unplaced-unit');
 const SvgIcon = require('../svg-icon/svg-icon');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_machine-view.scss');
 

@@ -8,7 +8,7 @@ const enzyme = require('enzyme');
 const CredentialAddEdit = require('./credential-add-edit');
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const Spinner = require('../spinner/spinner');
 
 describe('CredentialAddEdit', () => {

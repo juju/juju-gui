@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericInput = require('../../generic-input/generic-input');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_expert-budget.scss');
 

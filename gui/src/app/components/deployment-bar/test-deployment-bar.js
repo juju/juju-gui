@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentBar = require('./deployment-bar');
 const DeploymentBarNotification = require('./notification/notification');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;

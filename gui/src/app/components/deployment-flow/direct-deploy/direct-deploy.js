@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const {urls} = require('jaaslib');
 const React = require('react');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 const DeploymentSection = require('../section/section');
