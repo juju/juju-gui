@@ -17,7 +17,7 @@ const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const Maraca = require('./maraca/maraca');
 const ModelController = require('./models/model-controller');
-const State = require('./state/state');
+const StateChangeHandlers = require('./state/handlers');
 const StatsClient = require('./utils/statsd');
 const User = require('./user/user');
 const WebHandler = require('./store/env/web-handler');
@@ -225,7 +225,12 @@ class GUIApp {
       the URL path.
       @type {Object}
     */
-    this.state = this._setupState(baseURL);
+    const {state} = StateChangeHandlers.setupState({
+      app: this,
+      baseURL,
+      sendAnalytics: this.sendAnalytics
+    });
+    this.state = state;
 
     this._setupControllerAPI();
 
@@ -344,49 +349,11 @@ class GUIApp {
     this.activeModelUUID = config.jujuEnvUUID || null;
 
     /**
-      Stores the status of the model connection so we can intellegently
-      determine what to do with the modelConnection. This is required even
-      though the connection is asynchronous because we want to block dispatching
-      the application until the model connection is completely ready and
-      native promises do not allow external inspection on its status.
-
-      Use the public property `modelConnectionStatus` to take advantage of the
-      setter with validation.
-
-      Allowed values are:
-        null
-        'ready'
-        'connecting'
-      @type {String}
-    */
-    this._modelConnectionStatus = null;
-
-    /**
-      Stores the handler to the active models watcher handle so that it can be
-      stopped when switching or disconnecting models.
-      @type {Object}
-    */
-    this.activeModelWatcherHandle = null;
-
-    /**
       Once the controller is connected this will hold the reference to the
       juju client.
       @type {Object}
     */
     this.jujuClient = null;
-
-    /**
-      A list of require statements for the required jujulib model facades.
-      @type {Array}
-    */
-    this._defaultModelFacades = [
-      // Sort facades alphabetically.
-      require('@canonical/jujulib/api/facades/application-v6.js'),
-      require('@canonical/jujulib/api/facades/all-watcher-v1.js'),
-      require('@canonical/jujulib/api/facades/charms-v2.js'),
-      require('@canonical/jujulib/api/facades/client-v1.js'),
-      require('@canonical/jujulib/api/facades/pinger-v1.js')
-    ];
 
     this._defaultControllerFacades = [
       // Sort facades alphabetically.
@@ -433,19 +400,6 @@ class GUIApp {
       .catch(err => {
         // XXX Render application with error notification about unable to connect.
       });
-  }
-
-  set modelConnectionStatus(value) {
-    const validValues = [null, 'ready', 'connecting'];
-    if (!validValues.includes(value)) {
-      throw `Invalid value "${value}" set to modelConnectionStatus, \
-valid values are [${validValues.map(i => String(i)).join(', ')}]`;
-    }
-    this._modelConnectionStatus = value;
-  }
-
-  get modelConnectionStatus() {
-    return this._modelConnectionStatus;
   }
 
   /**
@@ -634,46 +588,6 @@ valid values are [${validValues.map(i => String(i)).join(', ')}]`;
   }
 
   /**
-    Creates a new instance of the State and registers the necessary dispatchers.
-    This method is idempotent.
-    @param {String} baseURL The path the application is served from.
-    @return {Object} The state instance.
-  */
-  _setupState(baseURL) {
-    if (this.state) {
-      return this.state;
-    }
-    const state = new State({
-      baseURL: baseURL,
-      seriesList: urls.SERIES,
-      sendAnalytics: this.sendAnalytics
-    });
-    state.register([
-      ['*', this._renderApp.bind(this)],
-      ['*', this.checkUserCredentials.bind(this)],
-      ['root',
-        this._rootDispatcher.bind(this)],
-      ['user',
-        this._handleUserEntity.bind(this)],
-      ['model',
-        this._handleModelState.bind(this)],
-      ['special.deployTarget', this._deployTarget.bind(this)],
-      // The follow states are handled by app.js and do not need to do anything
-      // special. These are only here to suppress warnings about dispatchers not found.
-      ['profile'],
-      ['store'],
-      ['search'],
-      ['help'],
-      ['gui'],
-      ['postDeploymentPanel'],
-      ['terminal'],
-      ['hash'],
-      ['special.dd']
-    ]);
-    return state;
-  }
-
-  /**
     The dispatcher for the root state path.
     @param {Object} state - The application state.
     @param {Function} next - Run the next route handler, if any.
@@ -708,98 +622,6 @@ valid values are [${validValues.map(i => String(i)).join(', ')}]`;
         next();
         break;
     }
-  }
-
-  /**
-    Handles the state changes for the model key.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _handleModelState(state, next) {
-    const newModelUUID = state.model.uuid;
-    if (this.activeModelUUID === newModelUUID) {
-      if (this.modelConnectionStatus === 'ready') {
-        next();
-        return;
-      } else if (this.modelConnectionStatus === 'connecting') {
-        // If we get in here it's because the application has dispatched multiple
-        // times but we do not want to connect multiple times.
-        return;
-      }
-    }
-
-    const modelURL = jujulib.generateModelURL(
-      this.applicationConfig.apiAddress, newModelUUID);
-
-    const connectionOptions = {
-      debug: true,
-      facades: this._defaultModelFacades,
-      wsclass: WebSocket,
-      bakery: this.bakery
-    };
-
-    this.activeModelUUID = newModelUUID;
-    this.modelConnectionStatus = 'connecting';
-
-    jujulib
-      .connectAndLogin(modelURL, {}, connectionOptions)
-      .then(juju => {
-        this.modelConnection = juju.conn;
-        const facades = juju.conn.facades;
-        // Setup pinger, if it's not running then the model will
-        // automatically disconnect after 1 minute.
-        facades.pinger.pingForever(30000);
-
-        this.activeModelWatcherHandle = facades.client.watch((err, result) => {
-          if (err) {
-            console.log('cannot watch model:', err);
-            process.exit(1);
-          }
-          this._processDeltas(result);
-          this.modelConnectionStatus = 'ready';
-        });
-
-      });
-  }
-
-  /**
-    Process the deltas that are returned from the megawatcher. This code
-    was moved over from the old model api handler and can be improved once we
-    remove the YUI db and replace it with maraca.
-    @param {Object} result The data result from the watch jujulib calls.
-  */
-  _processDeltas(result) {
-    const deltas = [];
-    const cmp = {
-      applicationInfo: 1,
-      relationInfo: 2,
-      unitInfo: 3,
-      machineInfo: 4,
-      annotationInfo: 5,
-      remoteapplicationInfo: 100
-    };
-    result.deltas.forEach(delta => {
-      const [kind, operation, entityInfo] = delta;
-      deltas.push([kind + 'Info', operation, entityInfo]);
-    });
-    deltas.sort((a, b) => {
-      // Sort items that are not not in our hierarchy last.
-      if (!cmp[a[0]]) {
-        return 1;
-      }
-      if (!cmp[b[0]]) {
-        return -1;
-      }
-      let scoreA = cmp[a[0]];
-      let scoreB = cmp[b[0]];
-      // Reverse the sort order for removes.
-      if (a[1] === 'remove') { scoreA = -scoreA; }
-      if (b[1] === 'remove') { scoreB = -scoreB; }
-      return scoreA - scoreB;
-    });
-    document.dispatchEvent(new CustomEvent('delta', {
-      detail: {data: {result: deltas}}
-    }));
   }
 
   /**

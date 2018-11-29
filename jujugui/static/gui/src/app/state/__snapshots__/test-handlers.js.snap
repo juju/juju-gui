@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StateChangeHandlers setupState can return a setup state instance 1`] = `
+Object {
+  "*": Array [
+    Array [
+      [Function],
+      undefined,
+    ],
+    Array [
+      [Function],
+      undefined,
+    ],
+  ],
+  "gui": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "hash": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "help": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "model": Array [
+    Array [
+      [Function],
+      undefined,
+    ],
+  ],
+  "postDeploymentPanel": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "profile": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "root": Array [
+    Array [
+      [Function],
+      undefined,
+    ],
+  ],
+  "search": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "special.dd": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "special.deployTarget": Array [
+    Array [
+      [Function],
+      undefined,
+    ],
+  ],
+  "store": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "terminal": Array [
+    Array [
+      undefined,
+      undefined,
+    ],
+  ],
+  "user": Array [
+    Array [
+      [Function],
+      undefined,
+    ],
+  ],
+}
+`;
