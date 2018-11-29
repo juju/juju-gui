@@ -16,6 +16,7 @@ const config = {
     '**/components/**/test-*.js',
     '**/init/test-app.js',
     '**/init/test-cookie-util.js',
+    '**/state/test-*.js',
     '**/maraca/test-*.js'
   ]
 };

@@ -70,6 +70,7 @@
     "fail": true,
     "GlobalConfig": true,
     "it": true,
+    "jest": true,
     "jsTestUtils": true,
     "juju": true,
     "jujulib": true,
