@@ -17,7 +17,7 @@ const BundleImporter = require('./init/bundle-importer');
 const EndpointsController = require('./init/endpoints-controller');
 const Maraca = require('./maraca/maraca');
 const ModelController = require('./models/model-controller');
-const State = require('./state/state');
+const StateChangeHandlers = require('./state/handlers');
 const StatsClient = require('./utils/statsd');
 const User = require('./user/user');
 const WebHandler = require('./store/env/web-handler');
@@ -52,13 +52,6 @@ class GUIApp {
       @type {Object}
     */
     this.applicationConfig = this._processApplicationConfig(config);
-    /**
-      Holds the modelUUID the application should connect to. It's possible that
-      this value and the value in the modelAPI instance will differ as another
-      portion of the application has set this value prior to switching models.
-      @type {String}
-    */
-    this.modelUUID = config.jujuEnvUUID || null;
     /**
       The default web page title.
       @type {String}
@@ -195,8 +188,8 @@ class GUIApp {
     */
     this.modelController = new ModelController({
       db: this.db,
-      env: this.modelAPI,
-      charmstore: this.charmstore
+      charmstore: this.charmstore,
+      getModelConnection: () => this.modelConnection
     });
     /**
       Application instance of the endpointsController.
@@ -232,7 +225,12 @@ class GUIApp {
       the URL path.
       @type {Object}
     */
-    this.state = this._setupState(baseURL);
+    const {state} = StateChangeHandlers.setupState({
+      app: this,
+      baseURL,
+      sendAnalytics: this.sendAnalytics
+    });
+    this.state = state;
 
     this._setupControllerAPI();
 
@@ -333,10 +331,22 @@ class GUIApp {
     this.topology = this._renderTopology();
 
     /**
-      Once login is complete this will hold the connection to the controller
+      Once login is complete this will hold the connection to the controller.
       @type {Object}
     */
     this.controllerConnection = null;
+
+    /**
+      Once login is complete this will hold the connection to the model.
+      @type {Object}
+    */
+    this.modelConnection = null;
+
+    /**
+      The model uuid that is currently connected to.
+      @type {string}
+    */
+    this.activeModelUUID = config.jujuEnvUUID || null;
 
     /**
       Once the controller is connected this will hold the reference to the
@@ -345,20 +355,22 @@ class GUIApp {
     */
     this.jujuClient = null;
 
+    this._defaultControllerFacades = [
+      // Sort facades alphabetically.
+      require('@canonical/jujulib/api/facades/cloud-v2.js'),
+      require('@canonical/jujulib/api/facades/model-manager-v4.js'),
+      require('@canonical/jujulib/api/facades/pinger-v1.js')
+    ];
+
     const connectionOptions = {
       debug: true,
-      facades: [
-        // Sort facades alphabetically.
-        require('@canonical/jujulib/api/facades/cloud-v2.js'),
-        require('@canonical/jujulib/api/facades/model-manager-v4.js'),
-        require('@canonical/jujulib/api/facades/pinger-v1.js')
-      ],
+      facades: this._defaultControllerFacades,
       wsclass: WebSocket,
       bakery: this.bakery
     };
 
     jujulib
-      .connect('wss://jimm.jujucharms.com/api', connectionOptions)
+      .connect(`wss://${this.applicationConfig.apiAddress}/api`, connectionOptions)
       .then(async juju => {
         this.jujuClient = juju;
         // Connected, dispatch the UI as normal.
@@ -389,7 +401,6 @@ class GUIApp {
         // XXX Render application with error notification about unable to connect.
       });
   }
-
 
   /**
     Perform any processing or modification on the application config values.
@@ -555,7 +566,7 @@ class GUIApp {
         maasServer={this._getMaasServer()}
         maskVisibility={this.maskVisibility.bind(this)}
         modelAPI={this.modelAPI}
-        modelUUID={this.modelUUID}
+        modelUUID={this.activeModelUUID}
         payment={this.payment}
         plans={this.plans}
         rates={this.rates}
@@ -574,46 +585,6 @@ class GUIApp {
       document.getElementById('app')
     );
     next();
-  }
-
-  /**
-    Creates a new instance of the State and registers the necessary dispatchers.
-    This method is idempotent.
-    @param {String} baseURL The path the application is served from.
-    @return {Object} The state instance.
-  */
-  _setupState(baseURL) {
-    if (this.state) {
-      return this.state;
-    }
-    const state = new State({
-      baseURL: baseURL,
-      seriesList: urls.SERIES,
-      sendAnalytics: this.sendAnalytics
-    });
-    state.register([
-      ['*', this._renderApp.bind(this)],
-      ['*', this.checkUserCredentials.bind(this)],
-      ['root',
-        this._rootDispatcher.bind(this)],
-      ['user',
-        this._handleUserEntity.bind(this)],
-      ['model',
-        this._handleModelState.bind(this)],
-      ['special.deployTarget', this._deployTarget.bind(this)],
-      // The follow states are handled by app.js and do not need to do anything
-      // special. These are only here to suppress warnings about dispatchers not found.
-      ['profile'],
-      ['store'],
-      ['search'],
-      ['help'],
-      ['gui'],
-      ['postDeploymentPanel'],
-      ['terminal'],
-      ['hash'],
-      ['special.dd']
-    ]);
-    return state;
   }
 
   /**
@@ -654,21 +625,6 @@ class GUIApp {
   }
 
   /**
-    Handles the state changes for the model key.
-    @param {Object} state - The application state.
-    @param {Function} next - Run the next route handler, if any.
-  */
-  _handleModelState(state, next) {
-    const modelAPI = this.modelAPI;
-    if (this.modelUUID !== state.model.uuid ||
-        (!modelAPI.get('connected') && !modelAPI.get('connecting') &&
-        !modelAPI.loading)) {
-      this._switchModelToUUID(state.model.uuid);
-    }
-    next();
-  }
-
-  /**
     Switches to the specified UUID, or if none is provided then
     switches to the unconnected mode.
     @param {String} uuid The uuid of the model to switch to, or none.
@@ -677,7 +633,7 @@ class GUIApp {
     let socketURL = undefined;
     if (uuid) {
       console.log('switching to model: ', uuid);
-      this.modelUUID = uuid;
+      this.activeModelUUID = uuid;
       const config = this.applicationConfig;
       socketURL = utils.createSocketURL({
         protocol: config.socket_protocol,
@@ -686,7 +642,7 @@ class GUIApp {
         uuid});
     } else {
       console.log('switching to disconnected mode');
-      this.modelUUID = null;
+      this.activeModelUUID = null;
     }
     this.switchEnv(socketURL);
   }
@@ -696,7 +652,7 @@ class GUIApp {
     @param {String} uuid The uuid of the model to switch to, or none.
   */
   _setModelUUID(uuid) {
-    this.modelUUID = uuid;
+    this.activeModelUUID = uuid;
   }
 
   /**
@@ -1663,7 +1619,7 @@ class GUIApp {
     if (topology) {
       topology.topo.update();
     }
-    this.modelUUID = '';
+    this.activeModelUUID = null;
     this.loggedIn = false;
     const controllerAPI = this.controllerAPI;
     const closeController = controllerAPI.close.bind(controllerAPI);
