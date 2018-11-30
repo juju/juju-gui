@@ -101,12 +101,8 @@ describe('StateChangeHandlers', () => {
       }, next);
       expect(next).toHaveBeenCalledTimes(0);
       expect(jujuPromise instanceof Promise).toBe(true);
-      ws.queueResponses(new Map([
-        [2, AllWatcherResponse.watchAll],
-        [3, AllWatcherResponse.next]
-      ]));
-      ws.open();
-      jujulibTestHelper.replyToLogin(ws, {
+
+      const loginResponse = jujulibTestHelper.makeLoginResponse({
         facades: [{
           name: 'AllWatcher', versions: [1]
         }, {
@@ -115,6 +111,12 @@ describe('StateChangeHandlers', () => {
           name: 'Pinger', versions: [1]
         }]
       });
+      ws.queueResponses(new Map([
+        [1, loginResponse],
+        [2, AllWatcherResponse.watchAll],
+        [3, AllWatcherResponse.next]
+      ]));
+      ws.open();
 
       jujuPromise.then(() => {
         expect(typeof stateChangeHandlers.activeModelWatcherHandle.stop).toBe('function');
