@@ -1,7 +1,7 @@
 @import '../../assets/css/mixins';
 
 .icon-list {
-  @extend %list-style;
+  @include list-style;
   margin: 0;
 
   &__item {

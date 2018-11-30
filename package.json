@@ -32,7 +32,6 @@
     "react-dnd-html5-backend": "^5.0.1",
     "react-dom": "^16.5.2",
     "shapeup": "0.2.5",
-    "uglifyify": "^5.0.1",
     "vanilla-framework": "^1.8.0",
     "xterm": "^3.8.0",
     "xterm-webfont": "^1.1.1",
@@ -40,17 +39,18 @@
     "zip": "1.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.6",
     "babel-cli": "6.26.0",
     "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "babel-minify-webpack-plugin": "^0.3.1",
     "babel-plugin-rewire": "^1.2.0",
     "babel-plugin-transform-react-jsx": "6.24.1",
     "babel-preset-babili": "0.1.4",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "babelify": "https://registry.npmjs.org/babelify/-/babelify-7.3.0.tgz",
-    "browserify": "^16.2.3",
-    "browserify-incremental": "3.1.1",
     "chai": "^4.2.0",
+    "css-loader": "^1.0.1",
     "diff": "3.5.0",
     "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.5.0",
@@ -59,37 +59,42 @@
     "eslint-plugin-react": "^7.11.1",
     "expect.js": "0.3.1",
     "husky": "^1.1.3",
+    "inject-loader": "^4.0.1",
     "jasmine-core": "^3.2.1",
     "jest": "^23.6.0",
     "karma": "^3.0.0",
-    "karma-browserify": "^5.3.0",
     "karma-chai-sinon": "0.1.5",
     "karma-chrome-launcher": "2.2.0",
-    "karma-jasmine": "^1.1.2",
+    "karma-jasmine": "2.0.1",
     "karma-mocha": "1.3.0",
     "karma-spec-reporter": "0.0.32",
+    "karma-webpack": "^3.0.5",
     "keysim": "^2.1.0",
+    "mini-css-extract-plugin": "^0.4.5",
     "mkdirp": "0.5.1",
     "mocha": "^5.2.0",
     "mutation-observer": "^1.0.3",
     "node-sass": "^4.10.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "1.15.1",
     "pretty-quick": "^1.8.0",
     "prop-types": "^15.6.2",
-    "proxyquire": "^2.1.0",
-    "proxyquire-universal": "1.0.8",
-    "proxyquireify": "3.2.1",
     "react-test-renderer": "^16.5.2",
     "sass-lint": "1.12.1",
+    "sass-loader": "^7.1.0",
     "should": "^13.2.3",
     "sinon": "^6.3.5",
     "sinon-chai": "^3.2.0",
-    "through2": "^2.0.3",
-    "watchify": "3.11.0"
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-merge": "^4.1.4"
   },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
-  }
+  },
+  "browserslist": [
+    "last 1 Chrome version"
+  ]
 }

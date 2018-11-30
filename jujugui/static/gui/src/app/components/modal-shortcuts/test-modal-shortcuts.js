@@ -1,11 +1,19 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const jest = require('jest');
 const React = require('react');
 const enzyme = require('enzyme');
 
 const ModalShortcuts = require('./modal-shortcuts');
 const SvgIcon = require('../svg-icon/svg-icon');
+
+jest.mock('../../init/hotkeys', () => ({
+  keyBindings: {
+    test: {label: 'test', help: 'a test item'},
+    test2: {label: 'test2', help: 'a second test item'}
+  }
+}));
 
 describe('ModalSortcuts', function() {
 
@@ -14,19 +22,6 @@ describe('ModalSortcuts', function() {
       closeModal={options.closeModal || sinon.stub()}
       guiVersion={options.guiVersion || '1.2.3'} />
   );
-
-  beforeEach(function() {
-    ModalShortcuts.__Rewire__('hotkeys', {
-      keyBindings: {
-        test: {label: 'test', help: 'a test item'},
-        test2: {label: 'test2', help: 'a second test item'}
-      }
-    });
-  });
-
-  afterEach(function() {
-    ModalShortcuts.__ResetDependency__('hotkeys');
-  });
 
   it('renders', function() {
     const wrapper = renderComponent();

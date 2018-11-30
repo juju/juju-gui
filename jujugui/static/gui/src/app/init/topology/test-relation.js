@@ -1,27 +1,33 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const RelationModule = require('./relation');
 const utils = require('../testing-utils');
 
+let locateRelativePointOnCanvas = sinon.stub();
+const relationInjector = require('inject-loader!./relation');
+const RelationModule = relationInjector({
+  './utils': {
+    locateRelativePointOnCanvas
+  }
+});
+
 describe('topology relation module', function() {
-  var cleanups, view, container, locateRelativePointOnCanvas, topo, models;
+  var cleanups, view, container, topo, models;
 
   beforeAll(function(done) {
-    YUI(GlobalConfig).use(
-      ['juju-models'],
-      function(Y) {
-        models = Y.namespace('juju.models');
+    YUI(GlobalConfig).use([], function(Y) {
+      window.yui = Y;
+      require('../../yui-modules');
+      window.yui.use(window.MODULES, function() {
+        models = window.yui.namespace('juju.models');
         done();
       });
+    });
   });
 
   beforeEach(function() {
     cleanups = [];
-    locateRelativePointOnCanvas = sinon.stub();
-    RelationModule.__Rewire__('topoUtils', {
-      locateRelativePointOnCanvas
-    });
+    // locateRelativePointOnCanvas = sinon.stub();
     container = utils.makeContainer(this);
     view = new RelationModule();
   });
@@ -32,7 +38,6 @@ describe('topology relation module', function() {
     if (topo) {
       topo.unbind();
     }
-    RelationModule.__ResetDependency__('topoUtils');
   });
 
   // XXX: this test fails when the full test suite is run.

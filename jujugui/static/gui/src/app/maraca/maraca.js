@@ -2,7 +2,12 @@
 'use strict';
 
 const clonedeep = require('lodash.clonedeep');
-const deepmerge = require('deepmerge');
+let deepmerge = require('deepmerge');
+// Due to our use of require() (which requires .default) and how Jest loads the
+// module we have to handle both cases. See https://github.com/KyleAMathews/deepmerge/issues/87
+if (deepmerge.default) {
+  deepmerge = deepmerge.default;
+}
 
 const {processDeltas} = require('./delta-handlers');
 

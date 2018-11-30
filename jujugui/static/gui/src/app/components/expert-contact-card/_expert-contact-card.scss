@@ -3,7 +3,7 @@
 
 .expert-contact-card {
   &__highlights {
-    @extend %list-style;
+    @include list-style;
     margin-bottom: 30px;
   }
 
@@ -19,7 +19,7 @@
     }
 
     &-items {
-      @extend %list-style;
+      @include list-style;
     }
 
     &-item {
@@ -32,7 +32,7 @@
   }
 
   &__phone-numbers {
-    @extend %list-style;
+    @include list-style;
     display: inline-block;
   }
 
