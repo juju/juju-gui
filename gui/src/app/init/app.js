@@ -47,17 +47,17 @@ const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-set
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const Notification = require('../components/notification/notification');
 const NotificationList = require('../components/notification-list/notification-list');
-const Panel = require('../components/shared/panel/panel');
 const Popup = require('../components/popup/popup');
 const PostDeployment = require('../components/post-deployment/post-deployment');
 const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
-const {SvgIcon} = require('@canonical/juju-react-components');
-const {Terminal} = require('@canonical/juju-react-components');
 const UserMenu = require('../components/user-menu/user-menu');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Terminal} = require('@canonical/juju-react-components');
 
 
 /**
