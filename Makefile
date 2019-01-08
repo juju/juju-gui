@@ -141,7 +141,6 @@ $(STATIC_FONT_FILES): $(FONT_FILES)
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
-	cp -r $(GUISRC)/app/assets/svgs $(GUIBUILD)/app/assets/svgs
 	mkdir -p $(GUIBUILD)/app/assets/stack/svg
 	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
