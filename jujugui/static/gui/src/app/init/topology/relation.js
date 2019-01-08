@@ -297,11 +297,6 @@ class RelationModule {
     // Add a labelgroup.
     const self = this;
     const topo = this.topo;
-    let staticURL = topo.staticURL || '';
-    if (staticURL) {
-      staticURL += '/';
-    };
-    const basePath = `${staticURL}static/gui/build/app`;
     const vis = topo.vis;
     const parentId = topo._yuid;
     const imageSize = 20;
@@ -349,32 +344,38 @@ class RelationModule {
       });
     enter.append('g')
       .classed('rel-indicator', true)
-      .append('image')
+      .append('svg')
       .attr({
+        'viewBox': `0 0 ${imageSize} ${imageSize}`,
+        'style': `width:${imageSize}px; height:${imageSize}px;`,
         'width': imageSize,
         'height': imageSize,
         'x': imageSize / -2,
         'y': imageSize / -2,
         'rx': imageSize / 2,
         'ry': imageSize / 2
+      })
+      .append('use')
+      .attr({
+        'xlink:href': ''
       });
     enter.append('text')
       .append('tspan')
       .text(function(d) {return d.display_name; });
 
     g.filter(function(d) {
-      let currStatus = d3.select(this).select('image')
+      let currStatus = d3.select(this).select('use')
         .attr('xlink:href') || '';
       currStatus = currStatus.split('relation-icon-')
         .reverse()[0]
         .split('.')[0];
       return currStatus !== d.aggregatedStatus;
     })
-      .selectAll('image')
+      .selectAll('use')
       .attr('xlink:href', function(d) {
         return (
-          basePath + '/assets/svgs/relation-icon-' +
-            d.aggregatedStatus + '.svg');
+          '#relation-icon-' +
+            d.aggregatedStatus);
       });
     return g;
   }
@@ -527,11 +528,6 @@ class RelationModule {
     // Only start a new drag line if no an active dragline. Sometimes a line
     // a relation begins while dragging which shouldnt start a new line.
     if (!this.dragline) {
-      let staticURL = this.topo.staticURL || '';
-      if (staticURL) {
-        staticURL += '/';
-      }
-      const basePath = `${staticURL}static/gui/build/app`;
       const d = evt.service;
       // Create a pending drag-line.
       const vis = this.topo.vis;
@@ -547,10 +543,15 @@ class RelationModule {
           stroke: '#888888',
           'stroke-width': 1.1
         });
-      dragline.append('image')
+      dragline.append('svg')
+        .attr({
+          'viewBox': '0 0 16 16',
+          'style': 'width:16px; height:16px;'
+        })
+        .append('use')
         .attr('class', 'dragline__indicator-image')
         .attr({
-          'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
+          'xlink:href': '#build-relation_16',
           width: 16,
           height: 16,
           transform: 'translate(-8, -8)'
