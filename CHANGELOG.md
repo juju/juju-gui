@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Prettier to the codebase to format `.scss` files.
 - Update to Xterm 3.8.0.
 - Browserify has been replaced with Webpack which also now builds the SCSS files.
+- Update the canvas to use the existing svg sprites.
+- Removed svg assets from the build/dist.
 
 ### Fixed
 - Styling issue with Plans selector in sticky header on entity pages.
