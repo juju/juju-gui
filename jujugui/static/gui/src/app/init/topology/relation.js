@@ -543,18 +543,21 @@ class RelationModule {
           stroke: '#888888',
           'stroke-width': 1.1
         });
-      dragline.append('svg')
+      dragline.append('g')
+        .attr({
+          transform: 'translate(-8, -8)'
+        })
+        .attr('class', 'dragline__indicator-image')
+        .append('svg')
         .attr({
           'viewBox': '0 0 16 16',
-          'style': 'width:16px; height:16px;'
+          'style': 'width:16px; height:16px;',
+          width: 16,
+          height: 16
         })
         .append('use')
-        .attr('class', 'dragline__indicator-image')
         .attr({
-          'xlink:href': '#build-relation_16',
-          width: 16,
-          height: 16,
-          transform: 'translate(-8, -8)'
+          'xlink:href': '#build-relation_16'
         });
 
       // Start the line between the cursor and the nearest connector
@@ -575,7 +578,7 @@ class RelationModule {
       dragline.select('circle')
         .attr('cx', point[0][0])
         .attr('cy', point[0][1]);
-      dragline.select('image')
+      dragline.select('.dragline__indicator-image')
         .attr('transform',
           'translate(' + imagePos + ')');
       this.dragline = dragline;
@@ -626,7 +629,7 @@ class RelationModule {
       this.dragline.select('circle')
         .attr('cx', mouseX)
         .attr('cy', mouseY);
-      this.dragline.select('image')
+      this.dragline.select('.dragline__indicator-image')
         .attr('transform',
           'translate(' + imagePos + ')');
     }
