@@ -46,14 +46,12 @@
     "react-dom": "^16.5.2",
     "shapeup": "0.2.5",
     "vanilla-framework": "^1.8.0",
-    "xterm": "^3.8.0",
-    "xterm-webfont": "^1.1.1",
     "yui": "3.18.1",
     "zip": "1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
-    "@canonical/juju-react-components": "^0.3.0",
+    "@canonical/juju-react-components": "0.4.0",
     "babel-cli": "6.26.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",

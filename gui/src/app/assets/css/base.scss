@@ -19,7 +19,7 @@
 @import 'loading';
 @import 'modal';
 @import 'tooltip';
-@import '../../components/shared/button/_button.scss';
+@import 'button';
 
 // Include required modules from Vanilla
 @mixin required-vanilla-modules {
