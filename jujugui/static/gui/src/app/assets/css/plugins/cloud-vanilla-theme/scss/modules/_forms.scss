@@ -16,7 +16,7 @@
     -webkit-appearance: none;
     background: transparent;
     background-color: $white;
-    background-image: url('#{$asset-path}svgs/chevron_down_16.svg');
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' width='16'%3E%3Cpath d='M10.18 9.705A41.164 41.164 0 0 0 16 5h-2.466a34.65 34.65 0 0 1-1.516 1.27 27.97 27.97 0 0 1-1.87 1.357C9.51 8.05 8.608 8.569 8 8.9a32.55 32.55 0 0 1-2.147-1.274A27.94 27.94 0 0 1 3.982 6.27 34.583 34.583 0 0 1 2.466 5H0c.216.212.437.423.665.635a41.2 41.2 0 0 0 5.156 4.07c.829.548 1.555.98 2.179 1.295.624-.315 1.35-.747 2.18-1.295' fill='#7f8183'/%3E%3C/svg%3E");;
     background-position: calc(100% - 10px) center;
     background-repeat: no-repeat;
     background-size: 12px;

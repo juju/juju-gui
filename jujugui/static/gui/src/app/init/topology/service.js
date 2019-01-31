@@ -1546,11 +1546,6 @@ class ServiceModule {
    * @method createServiceNode
    */
   createServiceNode(node, self) {
-    var staticURL = self.topo.staticURL || '';
-    if (staticURL) {
-      staticURL += '/';
-    }
-    var basePath = `${staticURL}static/gui/build/app`;
     node.attr({'data-name': function(d) { return d.name; }});
 
     // Draw a relation button.
@@ -1604,13 +1599,22 @@ class ServiceModule {
         }));
       });
 
-    relationButton.append('image')
+    const imageSize = 16;
+    relationButton.append('svg')
       .classed('relation-button__image', true)
       .attr({
-        'xlink:href': `${basePath}/assets/svgs/build-relation_16.svg`,
-        width: 16,
-        height: 16,
-        transform: 'translate(-8, -8)'
+        'viewBox': `0 0 ${imageSize} ${imageSize}`,
+        'style': `width:${imageSize}px; height:${imageSize}px;`,
+        'width': imageSize,
+        'height': imageSize,
+        'x': imageSize / -2,
+        'y': imageSize / -2,
+        'rx': imageSize / 2,
+        'ry': imageSize / 2
+      })
+      .append('use')
+      .attr({
+        'xlink:href': '#build-relation_16'
       });
 
     node.append('circle')
