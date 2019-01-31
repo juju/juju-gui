@@ -268,6 +268,15 @@ window.yui.add('juju-models', function(Y) {
     }
   }, {
     ATTRS: {
+      supported: {
+        value: false
+      },
+      price: {
+        value: ''
+      },
+      supportedDescription: {
+        value: ''
+      },
       /**
         Stores the fields changed by the ECS system. It is set and cleared by
         the environment-change-set.
