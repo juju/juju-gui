@@ -60,11 +60,11 @@ describe('USSOLoginLink', () => {
   it('can render a button link', () => {
     const wrapper = renderComponent({displayType: 'button'});
     var expected = (
-      <div className="usso-login">
+      <div className="usso-login v1">
         <Button
           action={wrapper.find('Button').prop('action')}
           extraClasses="usso-login__action"
-          type="positive" >
+          modifier="positive" >
           Sign up/Log in with USSO
         </Button>
       </div>);

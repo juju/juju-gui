@@ -132,11 +132,13 @@ class Login extends React.Component {
                 ref="password"
                 type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
-              Login
-            </Button>
+            <span className="v1">
+              <Button
+                submit={true}
+                modifier="positive">
+                Login
+              </Button>
+            </span>
             {this._generateUSSOLink()}
           </form>
         </div>

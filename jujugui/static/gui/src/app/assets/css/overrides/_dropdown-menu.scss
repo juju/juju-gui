@@ -1,0 +1,10 @@
+.v1 .dropdown-menu {
+  &__list {
+    margin: 0;
+    padding-left: 0;
+
+    &-item--inactive {
+      padding-left: 0.5rem;
+    }
+  }
+}

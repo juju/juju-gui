@@ -41,11 +41,11 @@ describe('DeploymentExpertBudget', () => {
               value={99} />
           </span>
         </div>
-        <div className="deployment-expert-budget__row">
+        <div className="deployment-expert-budget__row v1">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
-            type="inline-positive">
+            extraClasses="is-inline" modifier="positive">
             Set budget
           </Button>
         </div>

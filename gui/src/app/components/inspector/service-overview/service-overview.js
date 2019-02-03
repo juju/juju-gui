@@ -261,7 +261,7 @@ class ServiceOverview extends React.Component {
         action: this._destroyService.bind(this)
       }];
       return (
-        <div className="service-overview__delete">
+        <div className="service-overview__delete v1">
           <ButtonRow
             buttons={buttons} />
         </div>

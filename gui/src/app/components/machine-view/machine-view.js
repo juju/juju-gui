@@ -191,12 +191,14 @@ class MachineView extends React.Component {
     return (
       <div>
         <div className="machine-view__auto-place">
-          <Button
-            action={props.modelAPI.autoPlaceUnits}
-            disabled={props.acl.isReadOnly()}
-            type="inline-neutral">
-            Auto place
-          </Button>
+          <span className="v1">
+            <Button
+              action={props.modelAPI.autoPlaceUnits}
+              disabled={props.acl.isReadOnly()}
+              extraClasses="is-inline" modifier="neutral">
+              Auto place
+            </Button>
+          </span>
           <p>
             You can also drag and drop unplaced units to customise your
             deployment.

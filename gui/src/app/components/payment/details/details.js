@@ -69,26 +69,26 @@ class PaymentDetails extends React.Component {
               label="Business name"
               value={user.businessName} />) : null}
         </div>
-        <h4>
+        <h4 className="v1">
           Addresses
           {this.state.addressEdit ? null : (
             <Button
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
               extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              extraClasses="is-inline" modifier="neutral">
               Edit
             </Button>)}
         </h4>
         {this._generateAddresses(user.addresses)}
-        <h4>
+        <h4 className="v1">
           Billing addresses
           {this.state.billingAddressEdit ? null : (
             <Button
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
               extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              extraClasses="is-inline" modifier="neutral">
               Edit
             </Button>)}
         </h4>

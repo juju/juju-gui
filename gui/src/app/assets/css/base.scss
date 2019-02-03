@@ -20,6 +20,7 @@
 @import 'modal';
 @import 'tooltip';
 @import 'button';
+@import 'overrides/overrides';
 
 // Include required modules from Vanilla
 @mixin required-vanilla-modules {

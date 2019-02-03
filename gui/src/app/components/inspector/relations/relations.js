@@ -187,13 +187,15 @@ class InspectorRelations extends React.Component {
     var buttons = [];
     buttons.push({
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: this._handleRemoveRelation.bind(this),
       disabled: disabled
     });
     return (
-      <ButtonRow
-        buttons={buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>);
   }
 
   /**

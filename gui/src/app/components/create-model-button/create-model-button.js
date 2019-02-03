@@ -30,7 +30,7 @@ class CreateModelButton extends React.Component {
   render() {
     const disabled = this.props.disabled || false;
     return (
-      <div className="create-new-model">
+      <div className="create-new-model v1">
         <Button
           action={this._createNewModel.bind(this)}
           disabled={disabled}
@@ -52,7 +52,7 @@ CreateModelButton.propTypes = {
 };
 
 CreateModelButton.defaultProps = {
-  type: 'inline-neutral',
+  extraClasses: 'is-inline', modifier: 'neutral',
   title: 'Create new'
 };
 

@@ -26,8 +26,10 @@ class Popup extends React.Component {
     const buttons = this.props.buttons;
     if (buttons) {
       return (
-        <ButtonRow
-          buttons={buttons} />);
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>);
     }
   }
 
@@ -40,10 +42,10 @@ class Popup extends React.Component {
     const close = this.props.close;
     if (close) {
       return (
-        <div className="popup__close">
+        <div className="popup__close v1">
           <Button
             action={close}
-            type="inline-base">
+            extraClasses="is-inline" modifier="base">
             <SvgIcon
               name="close_16"
               size="16" />

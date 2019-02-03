@@ -76,17 +76,17 @@ class PaymentDetailsAddress extends React.Component {
               getCountries={this.props.getCountries}
               ref="addressForm" />
             <div className={
-              'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
+              'twelve-col payment-details-address__buttons u-no-margin--bottom v1'}>
               <Button
                 action={this.props.close}
                 disabled={disabled}
-                type="inline-neutral">
+                extraClasses="is-inline" modifier="neutral">
                 Cancel
               </Button>
               <Button
                 action={this._updateAddress.bind(this)}
                 disabled={disabled}
-                type="inline-positive">
+                extraClasses="is-inline" modifier="positive">
                 Update
               </Button>
             </div>

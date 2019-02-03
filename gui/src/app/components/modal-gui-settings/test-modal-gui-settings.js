@@ -91,13 +91,15 @@ describe('ModalGUISettings', function() {
               NOTE: You will need to reload for changes to take effect.
             </small>
           </p>
-          <input
-            className="button--positive"
-            id="save-settings"
-            name="save-settings"
-            onClick={wrapper.find('#save-settings').prop('onClick')}
-            type="button"
-            value="Save" />
+          <span className="v1">
+            <input
+              className="p-button--positive"
+              id="save-settings"
+              name="save-settings"
+              onClick={wrapper.find('#save-settings').prop('onClick')}
+              type="button"
+              value="Save" />
+          </span>
         </div>
       </div>);
     assert.compareJSX(wrapper, expected);

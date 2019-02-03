@@ -154,11 +154,11 @@ class DeploymentBudget extends React.Component {
                 options={this._generateBudgetOptions()} />
             </div>
             <div className="three-col">
-              <span className="deployment-budget__increase-button">
+              <span className="deployment-budget__increase-button v1">
                 <Button
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
-                  type="base">
+                  modifier="base">
                   Increase budget
                 </Button>
               </span>
@@ -198,19 +198,19 @@ class DeploymentBudget extends React.Component {
                 <div className="eight-col">
                   <span className="link">Manage all budgets</span>
                 </div>
-                <div className="two-col">
+                <div className="two-col v1">
                   <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
-                    type="base">
+                    modifier="base">
                     Cancel
                   </Button>
                 </div>
-                <div className="two-col last-col">
+                <div className="two-col last-col v1">
                   <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
-                    type="neutral">
+                    modifier="neutral">
                     Confirm
                   </Button>
                 </div>

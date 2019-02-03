@@ -75,17 +75,17 @@ describe('PaymentDetailsAddress', () => {
               getCountries={sinon.stub()}
               ref="addressForm" />
             <div className={
-              'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
+              'twelve-col payment-details-address__buttons u-no-margin--bottom v1'}>
               <Button
                 action={sinon.stub()}
                 disabled={false}
-                type="inline-neutral">
+                extraClasses="is-inline" modifier="neutral">
                 Cancel
               </Button>
               <Button
                 action={wrapper.find('Button').at(1).prop('action')}
                 disabled={false}
-                type="inline-positive">
+                extraClasses="is-inline" modifier="positive">
                 Update
               </Button>
             </div>

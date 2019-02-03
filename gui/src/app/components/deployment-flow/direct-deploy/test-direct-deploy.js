@@ -106,10 +106,10 @@ describe('DirectDeploy', function() {
                 width="96" />
             </div>
           </div>
-          <div className="deployment-direct-deploy__edit-model">
+          <div className="deployment-direct-deploy__edit-model v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+              extraClasses="is-inline" modifier="neutral">
               Edit model
             </Button>
           </div>
@@ -160,10 +160,10 @@ describe('DirectDeploy', function() {
             <EntityContentDiagram
               diagramUrl="imageLink" />
           </div>
-          <div className="deployment-direct-deploy__edit-model">
+          <div className="deployment-direct-deploy__edit-model v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+              extraClasses="is-inline" modifier="neutral">
               Edit model
             </Button>
           </div>

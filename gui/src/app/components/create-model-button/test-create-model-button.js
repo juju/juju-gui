@@ -22,11 +22,11 @@ describe('CreateModelButton', () => {
   it('renders a button with default values', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="create-new-model">
+      <div className="create-new-model v1">
         <Button
           action={wrapper.find('Button').prop('action')}
           disabled={false}
-          type="inline-neutral">
+          extraClasses="is-inline" modifier="neutral">
           Create new
         </Button>
       </div>
@@ -37,7 +37,7 @@ describe('CreateModelButton', () => {
   it('renders a button with provided values', () => {
     const wrapper = renderComponent({
       title: 'test',
-      type: 'positive'
+      modifier: 'positive'
     });
     const button = wrapper.find('Button');
     assert.equal(button.prop('type'), 'positive');

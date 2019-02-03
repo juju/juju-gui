@@ -28,12 +28,14 @@ class EntityContentDiagram extends React.PureComponent {
   _generateExpandButton() {
     if (this.props.isExpandable) {
       return (
-        <button
-          className="entity-content__diagram-expand"
-          onClick={this._handleExpand.bind(this)}
-          role="button">
-          <SvgIcon name="fullscreen-grey_16" size="12" />
-        </button>
+        <span className="v1">
+          <button
+            className="entity-content__diagram-expand"
+            onClick={this._handleExpand.bind(this)}
+            role="button">
+            <SvgIcon name="fullscreen-grey_16" size="12" />
+          </button>
+        </span>
       );
     }
     return null;

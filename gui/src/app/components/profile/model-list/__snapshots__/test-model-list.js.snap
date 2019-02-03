@@ -23,7 +23,7 @@ exports[`Profile Model List can render 1`] = `
       changeState={[Function]}
       switchModel={[Function]}
       title="Start a new model"
-      type="inline-neutral"
+      extraClasses="is-inline" modifier="neutral"
     />
   </div>
   <BasicTable

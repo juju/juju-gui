@@ -129,7 +129,7 @@ class PostDeployment extends React.Component {
   */
   _renderPostDeploymentScriptButton() {
     if (this.state[POST_DEPLOYMENT]) {
-      return (<div>
+      return (<div className="v1">
         <Button
           action={this._executePostDeploymentScript.bind(this)}>
             Execute post-deployment script

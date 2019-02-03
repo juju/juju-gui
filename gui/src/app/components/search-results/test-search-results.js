@@ -272,11 +272,11 @@ describe('SearchResults', function() {
                     </ul>
                   </div>
                   <div className="clearfix community-results">
-                    <div className="button-wrapper--ruled">
+                    <div className="button-wrapper--ruled v1">
                       <Button
                         action={wrapper.find('Button').prop('action')}
                         extraClasses="show-community-button"
-                        type="inline-neutral">
+                        extraClasses="is-inline" modifier="neutral">
                         Show 2 community results
                       </Button>
                     </div>

@@ -166,11 +166,11 @@ class PaymentCharges extends React.Component {
             <div className="two-col last-col no-margin-bottom">
               {(charge.price + charge.vat) / 100} {charge.currency}
             </div>
-            <div className="two-col last-col no-margin-bottom">
+            <div className="two-col last-col no-margin-bottom v1">
               <Button
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
-                type="inline-neutral">
+                extraClasses="is-inline" modifier="neutral">
                 Show receipt
               </Button>
             </div>

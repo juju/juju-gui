@@ -288,7 +288,7 @@ class ProfileCharmList extends React.Component {
                   {props.generatePermissions(charm.perm.read, props)}
                 </span>
               </td>
-              <td className="entity__release">
+              <td className="entity__release v1">
                 <span>
                   {version}
                 </span>

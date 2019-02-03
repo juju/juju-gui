@@ -71,18 +71,20 @@ class Lightbox extends React.Component {
 
     return (
       <div className="lightbox__navigation">
-        <button
-          className="lightbox__navigation-previous"
-          disabled={this.state.activeSlide === 0}
-          onClick={this._goToSlide.bind(this, -1)}>
-          <SvgIcon name="chevron_down_16" width="16" />
-        </button>
-        <button
-          className="lightbox__navigation-next"
-          disabled={this.state.activeSlide === this.state.lastSlide}
-          onClick={this._goToSlide.bind(this, 1)}>
-          <SvgIcon name="chevron_down_16" width="16" />
-        </button>
+        <span className="v1">
+          <button
+            className="lightbox__navigation-previous"
+            disabled={this.state.activeSlide === 0}
+            onClick={this._goToSlide.bind(this, -1)}>
+            <SvgIcon name="chevron_down_16" width="16" />
+          </button>
+          <button
+            className="lightbox__navigation-next"
+            disabled={this.state.activeSlide === this.state.lastSlide}
+            onClick={this._goToSlide.bind(this, 1)}>
+            <SvgIcon name="chevron_down_16" width="16" />
+          </button>
+        </span>
         <ul className="lightbox__navigation-bullets">
           {bullets}
         </ul>

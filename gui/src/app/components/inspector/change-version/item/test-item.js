@@ -37,13 +37,15 @@ describe('InspectorChangeVersionItem', function() {
           title="django/xenial/5">
           version {5}
         </span>
-        <Button
-          action={wrapper.find('Button').prop('action')}
-          disabled={false}
-          key="django/xenial/5"
-          type="inline-neutral">
-          Upgrade
-        </Button>
+        <span className="v1">
+          <Button
+            action={wrapper.find('Button').prop('action')}
+            disabled={false}
+            key="django/xenial/5"
+            extraClasses="is-inline" modifier="neutral">
+            Upgrade
+          </Button>
+        </span>
       </li>);
     assert.compareJSX(wrapper, expected);
   });

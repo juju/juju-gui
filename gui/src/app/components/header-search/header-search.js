@@ -217,14 +217,16 @@ class HeaderSearch extends React.Component {
     return (
       <div className={this._generateClasses()} ref="headerSearchContainer">
         <form className="header-search__form">
-          <button
-            className="header-search__submit"
-            onClick={this._handleSubmit.bind(this)}
-            type="submit">
-            <SvgIcon
-              name="search_16"
-              size="16" />
-          </button>
+          <span className="v1">
+            <button
+              className="header-search__submit"
+              onClick={this._handleSubmit.bind(this)}
+              type="submit">
+              <SvgIcon
+                name="search_16"
+                size="16" />
+            </button>
+          </span>
           <input
             className="header-search__input"
             name="query"

@@ -99,10 +99,10 @@ describe('PaymentMethods', () => {
     const expected = (
       <div className="payment-methods__no-methods">
         <p>You do not have a payment method.</p>
-        <p>
+        <p className="v1">
           <Button
             action={wrapper.find('Button').prop('action')}
-            type="inline-positive">
+            extraClasses="is-inline" modifier="positive">
             Add payment method
           </Button>
         </p>
@@ -145,15 +145,15 @@ describe('PaymentMethods', () => {
           </label>
           {null}
         </div>
-        <div className="twelve-col payment-methods__form-buttons">
+        <div className="twelve-col payment-methods__form-buttons v1">
           <Button
             action={wrapper.find('Button').at(0).prop('action')}
-            type="inline-neutral">
+            extraClasses="is-inline" modifier="neutral">
             Cancel
           </Button>
           <Button
             action={wrapper.find('Button').at(1).prop('action')}
-            type="inline-positive">
+            extraClasses="is-inline" modifier="positive">
             Add
           </Button>
         </div>

@@ -33,13 +33,15 @@ describe('CopyToClipboard', function() {
           ref="input"
           type="text"
           value="" />
-        <button
-          className="copy-to-clipboard__btn"
-          ref="btn">
-          <SvgIcon
-            name="copy-to-clipboard-16"
-            size="16" />
-        </button>
+        <span className="v1">
+          <button
+            className="copy-to-clipboard__btn"
+            ref="btn">
+            <SvgIcon
+              name="copy-to-clipboard-16"
+              size="16" />
+          </button>
+        </span>
       </div>
     );
     assert.compareJSX(wrapper, expected);

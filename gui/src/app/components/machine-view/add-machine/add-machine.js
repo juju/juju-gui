@@ -242,20 +242,22 @@ class MachineViewAddMachine extends React.Component {
     const buttons = [{
       title: 'Cancel',
       action: props.close,
-      type: 'base'
+      modifier: 'base'
     }, {
       title: props.unit ? 'Place' : 'Create',
       action: this._submitForm.bind(this),
-      type: 'neutral',
+      modifier: 'neutral',
       // In the add-container mode disable the Create button until a container
       // type has been selected.
       disabled: props.acl.isReadOnly() || (!props.unit && !props.dbAPI
         && props.parentId && !this.state.selectedContainer)
     }];
     return (
-      <ButtonRow
-        buttons={buttons}
-        key="buttons" />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons}
+          key="buttons" />
+      </span>);
   }
 
   render() {

@@ -25,10 +25,10 @@ describe('Popup', () => {
     const wrapper = renderComponent();
     const expected = (
       <div className="popup__panel popup__panel--narrow">
-        <div className="popup__close">
+        <div className="popup__close v1">
           <Button
             action={sinon.stub()}
-            type="inline-base">
+            extraClasses="is-inline" modifier="base">
             <SvgIcon
               name="close_16"
               size="16" />
@@ -38,8 +38,10 @@ describe('Popup', () => {
           A title
         </h3>
         <span>Content</span>
-        <ButtonRow
-          buttons={['one', 'two']} />
+        <span className="v1">
+          <ButtonRow
+            buttons={['one', 'two']} />
+        </span>
       </div>
     );
     assert.compareJSX(wrapper.find('.popup__panel'), expected);

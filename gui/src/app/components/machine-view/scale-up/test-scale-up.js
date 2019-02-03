@@ -137,16 +137,18 @@ describe('MachineViewScaleUp', function() {
               type="number" />
           </li>
         </ul>
-        <ButtonRow buttons={[{
-          action: buttons[0].action,
-          title: 'Cancel',
-          type: 'base'
-        }, {
-          action: buttons[1].action,
-          disabled: false,
-          title: 'Add units',
-          type: 'neutral'
-        }]} />
+        <span className="v1">
+          <ButtonRow buttons={[{
+            action: buttons[0].action,
+            title: 'Cancel',
+            modifier: 'base'
+          }, {
+            action: buttons[1].action,
+            disabled: false,
+            title: 'Add units',
+            modifier: 'neutral'
+          }]} />
+        </span>
       </form>);
     assert.compareJSX(wrapper, expected);
   });

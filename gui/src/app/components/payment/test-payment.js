@@ -130,10 +130,10 @@ describe('Payment', function() {
     const expected = (
       <div className="payment__no-user">
         <p>You are not set up to make payments.</p>
-        <p>
+        <p className="v1">
           <Button
             action={wrapper.find('Button').prop('action')}
-            type="inline-positive">
+            extraClasses="is-inline" modifier="positive">
             Set up payments
           </Button>
         </p>

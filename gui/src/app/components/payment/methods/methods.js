@@ -41,10 +41,10 @@ class PaymentMethods extends React.Component {
       return (
         <div className="payment-methods__no-methods">
           <p>You do not have a payment method.</p>
-          <p>
+          <p className="v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              type="inline-positive">
+              extraClasses="is-inline" modifier="positive">
               Add payment method
             </Button>
           </p>
@@ -214,15 +214,15 @@ class PaymentMethods extends React.Component {
             </label>
             {this._generateCardAddressFields()}
           </div>
-          <div className="twelve-col payment-methods__form-buttons">
+          <div className="twelve-col payment-methods__form-buttons v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              type="inline-neutral">
+              extraClasses="is-inline" modifier="neutral">
               Cancel
             </Button>
             <Button
               action={this._createToken.bind(this)}
-              type="inline-positive">
+              extraClasses="is-inline" modifier="positive">
               Add
             </Button>
           </div>

@@ -377,11 +377,11 @@ class DeploymentSSHKey extends React.Component {
     const title = this.state.addSource === 'manual' ? 'Add key' : 'Add keys';
     const disabled = this.state.buttonDisabled;
     return (
-      <div className="deployment-ssh-key__add-key right">
+      <div className="deployment-ssh-key__add-key right v1">
         <Button
           action={this._handleAddMoreKeys.bind(this)}
           disabled={disabled}
-          type="positive">
+          modifier="positive">
           {title}
         </Button>
       </div>);

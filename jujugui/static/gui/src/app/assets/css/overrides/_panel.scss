@@ -1,0 +1,90 @@
+@import '../../../assets/css/mixins';
+@import '../../../assets/css/variables';
+
+.panel-component {
+  &.inspector-panel {
+    position: static;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    z-index: index($z-indexed-elements, inspector-panel);
+
+    li {
+      margin-bottom: 0;
+      line-height: 1.3125em;
+    }
+  }
+
+  &.white-box {
+    z-index: index($z-indexed-elements, white-box);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(247, 247, 247, 0.7);
+    border-radius: none;
+    box-shadow: none;
+  }
+
+  &.deployment-flow-panel,
+  &.deployment-panel {
+    z-index: index($z-indexed-elements, deployment-panel);
+    border-radius: 0;
+    box-shadow: none;
+
+    .panel-component__inner {
+      height: 100%;
+    }
+  }
+
+  &.deployment-flow-panel {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $white;
+  }
+
+  &.env-list-panel {
+    top: 65px;
+    right: -260px;
+  }
+
+  &.account,
+  &.isv-profile,
+  &.profile,
+  &.user-profile {
+    @extend %scroll-children;
+    z-index: index($z-indexed-elements, top-page);
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(247, 247, 247, 0.7);
+    box-shadow: none;
+
+    & > .panel-component__inner {
+      position: absolute;
+      top: $navbar-height;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: $canvas-background;
+      border-top: 1px solid $mid-grey;
+      // Clearfix.
+      overflow: auto;
+    }
+  }
+
+  &.popup {
+    position: fixed;
+    z-index: index($z-indexed-elements, popup);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(247, 247, 247, 0.7);
+    border-radius: none;
+    box-shadow: none;
+  }
+}

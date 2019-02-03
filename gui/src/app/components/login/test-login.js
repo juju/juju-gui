@@ -78,11 +78,13 @@ describe('LoginComponent', function() {
                 ref="password"
                 type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
-              Login
-            </Button>
+            <span className="v1">
+              <Button
+                submit={true}
+                modifier="positive">
+                Login
+              </Button>
+            </span>
             <USSOLoginLink
               addNotification={sinon.stub()}
               displayType="button"

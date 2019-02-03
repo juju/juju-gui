@@ -265,26 +265,28 @@ class UnitList extends React.Component {
     if (this.props.unitStatus === 'error') {
       buttons.push({
         title: 'Resolve',
-        type: 'neutral',
+        modifier: 'neutral',
         action: this._handleUpdateUnits.bind(this, 'resolve'),
         disabled: disabled
       });
       buttons.push({
         title: 'Retry',
-        type: 'neutral',
+        modifier: 'neutral',
         action: this._handleUpdateUnits.bind(this, 'retry'),
         disabled: disabled
       });
     }
     buttons.push({
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: this._handleUpdateUnits.bind(this, 'remove'),
       disabled: disabled
     });
     return (
-      <ButtonRow
-        buttons={buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>);
   }
 
   /**

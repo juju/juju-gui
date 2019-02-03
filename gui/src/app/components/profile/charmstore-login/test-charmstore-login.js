@@ -25,10 +25,10 @@ describe('ProfileCharmstoreLogin ', function() {
     const links = wrapper.find('.link');
     const expected = (
       <div className="profile-charmstore-login">
-        <div className="profile-charmstore-login__button">
+        <div className="profile-charmstore-login__button v1">
           <Button
             action={wrapper.find('Button').prop('action')}
-            type="neutral">
+            modifier="neutral">
             Login to the charm store
           </Button>
         </div>

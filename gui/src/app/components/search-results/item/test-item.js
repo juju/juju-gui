@@ -118,12 +118,12 @@ describe('SearchResultsItem', function() {
             </a>
           </p>
         </div>
-        <div className="one-col last-col list-block__list--item-deploy">
+        <div className="one-col last-col list-block__list--item-deploy v1">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
             extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
+            extraClasses="is-inline" modifier="neutral">
             <SvgIcon
               name="add-icon"
               size="16" />

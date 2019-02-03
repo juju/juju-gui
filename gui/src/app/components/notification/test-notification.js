@@ -31,7 +31,7 @@ describe('Notification', function() {
   });
 
   it('renders type', () => {
-    const wrapper = renderComponent({type: 'positive'});
+    const wrapper = renderComponent({modifier: 'positive'});
     assert.equal(wrapper.prop('className'), 'p-notification--positive');
   });
 

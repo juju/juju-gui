@@ -194,16 +194,16 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
           <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom v1'}>
             <ButtonRow
               buttons={[{
                 action: sinon.stub(),
                 title: 'Cancel',
-                type: 'inline-neutral'
+                extraClasses: 'is-inline', modifier: 'neutral'
               }, {
                 submit: true,
                 title: 'Add cloud credential',
-                type: 'inline-positive'
+                extraClasses: 'is-inline', modifier: 'positive'
               }]} />
           </div>
         </form>
@@ -219,7 +219,7 @@ describe('DeploymentCredentialAdd', function() {
     assert.deepEqual(buttons, [{
       submit: true,
       title: 'Add cloud credential',
-      type: 'inline-positive'
+      extraClasses: 'is-inline', modifier: 'positive'
     }]);
   });
 

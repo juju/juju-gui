@@ -88,18 +88,18 @@ describe('EntityFiles', function() {
           {fileItems}
         </ul>
         <ul className="section__list">
-          <li className="section__list-item entity-files__code-link">
+          <li className="section__list-item entity-files__code-link v1">
             <a
-              className="button--inline-neutral entity-files__link"
+              className="p-button--neutral is-inline entity-files__link"
               href="https://code.launchpad.net/django/code"
               ref="codeLink"
               target="_blank">
               View code
             </a>
           </li>
-          <li className="section__list-item">
+          <li className="section__list-item v1">
             <a
-              className="button--inline-neutral entity-files__link"
+              className="p-button--neutral is-inline entity-files__link"
               href={archiveUrl}
               target="_blank">
               Download .zip

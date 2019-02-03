@@ -14,53 +14,26 @@
 ///   ...
 /// </a>
 @mixin juju-gui-deployment-button {
-  .button--deployment,
-  .button--inline-deployment {
-    @extend %button-pattern;
-    color: $white;
-    background-color: $uncommitted;
+  .v1 .p-button {
+    &[type='inline-deployment'] {
+      background-color: $uncommitted;
+      border: none;
+      color: $white;
 
-    &:focus,
-    &:active,
-    &:hover {
-      background-color: darken($uncommitted, 10%);
-    }
-
-    &:disabled,
-    &.button--disabled {
       &:focus,
       &:active,
       &:hover {
-        background-color: $uncommitted;
+        background-color: darken($uncommitted, 10%);
+      }
+
+      &:disabled {
+        &:focus,
+        &:active,
+        &:hover {
+          background-color: $uncommitted;
+        }
       }
     }
-  }
-
-  .button--inline-deployment {
-    display: inline-block;
-    width: auto;
-  }
-}
-
-%button-pattern {
-  font-size: 1em;
-  box-sizing: border-box;
-  width: 100%;
-  margin: 0;
-  padding: 12px 24px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.2s;
-  border-radius: 2px;
-  outline: none;
-  font-weight: 300;
-  cursor: pointer;
-  line-height: 1em;
-
-  &:disabled,
-  &.button--disabled {
-    opacity: 0.5;
-    cursor: default;
   }
 }
 

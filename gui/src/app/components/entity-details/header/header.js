@@ -119,16 +119,18 @@ class EntityHeader extends React.Component {
     const title = `Add to ${modelName || 'model'}`;
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
-        <Button
-          action={this._handleDeployClick.bind(this)}
-          disabled={this.props.acl.isReadOnly()}
-          ref="deployAction"
-          tooltip={
-            `Add this ${entity.type} to ` +
-            `${modelName ? 'your current' : 'a new'} model`}
-          type="positive">
-          {title}
-        </Button>
+        <span className="v1">
+          <Button
+            action={this._handleDeployClick.bind(this)}
+            disabled={this.props.acl.isReadOnly()}
+            ref="deployAction"
+            tooltip={
+              `Add this ${entity.type} to ` +
+              `${modelName ? 'your current' : 'a new'} model`}
+            modifier="positive">
+            {title}
+          </Button>
+        </span>
       );
     } else {
       deployAction = (

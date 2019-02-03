@@ -96,10 +96,12 @@ describe('EntityContentRelations', function() {
       };
       const wrapper = renderComponent();
       const expected = (
-        <button
-          className="button--inline-neutral"
-          onClick={wrapper.find('button').prop('onClick')}
-          role="button">View more relations</button>);
+        <span className="v1">
+          <button
+            className="p-button--neutral is-inline"
+            onClick={wrapper.find('button').prop('onClick')}
+            role="button">View more relations</button>
+        </span>);
       assert.compareJSX(wrapper.find('button'), expected);
     }
   );

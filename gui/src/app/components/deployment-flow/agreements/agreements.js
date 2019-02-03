@@ -52,11 +52,13 @@ class DeploymentAgreements extends React.Component {
     const terms = this.props.terms;
     if (terms && terms.length) {
       return (
-        <Button
-          action={this._toggleTerms.bind(this)}
-          type="inline-base">
-          View terms
-        </Button>);
+        <span className="v1">
+          <Button
+            action={this._toggleTerms.bind(this)}
+            extraClasses="is-inline" modifier="base">
+            View terms
+          </Button>
+        </span>);
     }
   }
 

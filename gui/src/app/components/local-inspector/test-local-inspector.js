@@ -58,12 +58,12 @@ describe('LocalInspector', function() {
     var buttons = [{
       title: 'Cancel',
       action: buttonList[0].action,
-      type: 'base'
+      modifier: 'base'
     }, {
       title: 'Upload',
       action: buttonList[1].action,
       disabled: false,
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     var inputs = wrapper.find('input');
     var expected = (
@@ -112,8 +112,10 @@ describe('LocalInspector', function() {
             </select>
           </div>
         </div>
-        <ButtonRow
-          buttons={buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

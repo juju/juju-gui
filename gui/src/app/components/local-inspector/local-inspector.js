@@ -169,13 +169,13 @@ class LocalInspector extends React.Component {
     var buttons = [{
       title: 'Cancel',
       action: this._close.bind(this),
-      type: 'base'
+      modifier: 'base'
     }, {
       title: 'Upload',
       action: this.state.activeComponent === 'new' ?
         this._handleUpload.bind(this) : this._handleUpdate.bind(this),
       disabled: isReadOnly,
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     return (
       <div className="inspector-view local-inspector">
@@ -214,8 +214,10 @@ class LocalInspector extends React.Component {
           </ul>
           {this._generateComponent(this.state.activeComponent)}
         </div>
-        <ButtonRow
-          buttons={buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>
       </div>
     );
   }

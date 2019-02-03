@@ -96,15 +96,15 @@ describe('PaymentMethodCard', () => {
       removePaymentMethod: sinon.stub()
     });
     const expected = (
-      <div className="payment-card-actions">
+      <div className="payment-card-actions v1">
         <Button
           action={sinon.stub()}
-          type="inline-neutral">
+          extraClasses="is-inline" modifier="neutral">
           Update payment details
         </Button>
         <Button
           action={wrapper.find('Button').at(1).prop('action')}
-          type="inline-neutral">
+          extraClasses="is-inline" modifier="neutral">
           Remove payment details
         </Button>
       </div>);

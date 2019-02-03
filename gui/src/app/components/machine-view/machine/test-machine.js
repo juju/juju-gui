@@ -375,18 +375,20 @@ describe('MachineViewMachine', function() {
           providerType="aws"
           series={['wily']}
           valuesChanged={wrapper.find('Constraints').prop('valuesChanged')} />
-        <ButtonRow
-          buttons={[{
-            title: 'Cancel',
-            action: buttons[0].action,
-            type: 'base'
-          }, {
-            title: 'Update',
-            action: buttons[1].action,
-            type: 'neutral',
-            disabled: false
-          }]}
-          key="buttons" />
+        <span className="v1">
+          <ButtonRow
+            buttons={[{
+              title: 'Cancel',
+              action: buttons[0].action,
+              modifier: 'base'
+            }, {
+              title: 'Update',
+              action: buttons[1].action,
+              modifier: 'neutral',
+              disabled: false
+            }]}
+            key="buttons" />
+        </span>
       </div>);
     assert.compareJSX(wrapper.find('.add-machine__constraints'), expected);
   });

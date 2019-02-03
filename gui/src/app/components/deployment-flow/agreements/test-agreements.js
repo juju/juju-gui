@@ -58,11 +58,13 @@ describe('DeploymentAgreements', function() {
     terms = [{}, {}];
     const wrapper = renderComponent({showTerms: true});
     const expected = (
-      <Button
-        action={wrapper.find('Button').prop('action')}
-        type="inline-base">
-        View terms
-      </Button>);
+      <span className="v1">
+        <Button
+          action={wrapper.find('Button').prop('action')}
+          extraClasses="is-inline" modifier="base">
+          View terms
+        </Button>
+      </span>);
     assert.compareJSX(wrapper.find('Button'), expected);
   });
 

@@ -223,11 +223,11 @@ describe('BudgetTableRow', function() {
                 <div className="two-col">
                   Recommended allocation: $550.
                 </div>
-                <div className="two-col last-col">
+                <div className="two-col last-col v1">
                   <Button
                     action={wrapper.find('Button').at(1).prop('action')}
                     disabled={false}
-                    type="neutral">
+                    modifier="neutral">
                     Select plan
                   </Button>
                 </div>
@@ -243,11 +243,11 @@ describe('BudgetTableRow', function() {
                 <div className="two-col">
                   Recommended allocation: $550.
                 </div>
-                <div className="two-col last-col">
+                <div className="two-col last-col v1">
                   <Button
                     action={wrapper.find('Button').at(2).prop('action')}
                     disabled={false}
-                    type="neutral">
+                    modifier="neutral">
                     Select plan
                   </Button>
                 </div>
@@ -262,11 +262,11 @@ describe('BudgetTableRow', function() {
       </div>);
     assert.compareJSX(wrapper.find('.budget-table-row__change-plan-wrapper'), expected);
     assert.compareJSX(wrapper.find('.budget-table__edit'), (
-      <div className="budget-table__edit">
+      <div className="budget-table__edit v1">
         <Button
           action={wrapper.find('Button').at(0).prop('action')}
           disabled={false}
-          type="neutral">
+          modifier="neutral">
           Change plan
         </Button>
       </div>));
@@ -310,10 +310,10 @@ describe('BudgetTableRow', function() {
     const expected = (
       <div className={
         'two-col prepend-five no-margin-bottom budget-table-row__link ' +
-        'budget-table-row__terms-link'}>
+        'budget-table-row__terms-link v1'}>
         <Button
           action={wrapper.find('.budget-table-row__terms-link Button').prop('action')}
-          type="base">
+          modifier="base">
           Terms
         </Button>
       </div>);

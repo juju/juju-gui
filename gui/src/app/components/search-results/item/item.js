@@ -268,12 +268,12 @@ class SearchResultsItem extends React.Component {
             </a>
           </p>
         </div>
-        <div className="one-col last-col list-block__list--item-deploy">
+        <div className="one-col last-col list-block__list--item-deploy v1">
           <Button
             action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
             extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
+            extraClasses="is-inline" modifier="neutral">
             <SvgIcon
               name="add-icon"
               size="16" />

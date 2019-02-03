@@ -51,12 +51,12 @@ exports[`DeploymentSSHKey can disable and enable the add 1`] = `
       />
     </div>
     <div
-      className="deployment-ssh-key__add-key right"
+      className="deployment-ssh-key__add-key right v1"
     >
       <Button
         action={[Function]}
         disabled={true}
-        type="positive"
+        modifier="positive"
       >
         Add keys
       </Button>
@@ -116,12 +116,12 @@ exports[`DeploymentSSHKey can disable and enable the add 2`] = `
       />
     </div>
     <div
-      className="deployment-ssh-key__add-key right"
+      className="deployment-ssh-key__add-key right v1"
     >
       <Button
         action={[Function]}
         disabled={false}
-        type="positive"
+        modifier="positive"
       >
         Add keys
       </Button>

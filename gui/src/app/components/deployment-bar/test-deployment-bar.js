@@ -41,7 +41,7 @@ describe('DeploymentBar', function() {
       <div className="deployment-bar">
         <DeploymentBarNotification
           change={null} />
-        <div className="deployment-bar__deploy">
+        <div className="deployment-bar__deploy v1">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}

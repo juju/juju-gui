@@ -124,9 +124,11 @@ class MachineViewUnplacedUnit extends React.Component {
           className="machine-view__unplaced-unit-icon"
           src={unitAPI.icon} />
         {unit.displayName}
-        <ButtonDropdown
-          classes={['machine-view__unplaced-unit-dropdown']}
-          listItems={menuItems} />
+        <span className="v1">
+          <ButtonDropdown
+            classes={['machine-view__unplaced-unit-dropdown']}
+            listItems={menuItems} />
+        </span>
         {this._generatePlaceUnit()}
         <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>

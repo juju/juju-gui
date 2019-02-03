@@ -16,7 +16,7 @@ const UserMenu = props => {
   const controllerAPI = props.controllerAPI;
   const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
   return (
-    <div>
+    <div className="v1">
       <ButtonDropdown
         classes={['user-menu']}
         disableDropdown={showLogin}

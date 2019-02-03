@@ -117,15 +117,15 @@ class PaymentMethod extends React.Component {
             }]}
             value={`${month}/${paymentMethod.year}`} />
         </div>
-        <div className="twelve-col payment-method__buttons">
+        <div className="twelve-col payment-method__buttons v1">
           <Button
             action={this._toggleForm.bind(this)}
-            type="inline-neutral">
+            extraClasses="is-inline" modifier="neutral">
             Cancel
           </Button>
           <Button
             action={this._updatePaymentMethod.bind(this)}
-            type="inline-positive">
+            extraClasses="is-inline" modifier="positive">
             Update
           </Button>
         </div>

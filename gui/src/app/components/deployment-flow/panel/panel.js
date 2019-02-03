@@ -50,10 +50,10 @@ class DeploymentPanel extends React.Component {
     } else {
       return (
         <div className="deployment-panel__header">
-          <div className="deployment-panel__close">
+          <div className="deployment-panel__close v1">
             <Button
               action={this._handleClose.bind(this)}
-              type="neutral">
+              modifier="neutral">
               Back to canvas
             </Button>
           </div>

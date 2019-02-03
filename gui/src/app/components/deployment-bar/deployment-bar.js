@@ -86,7 +86,7 @@ class DeploymentBar extends React.Component {
         </div>);
     }
     return (
-      <div className="deployment-bar__deploy">
+      <div className="deployment-bar__deploy v1">
         <Button
           action={this._deployAction.bind(this)}
           disabled={changeCount === 0}

@@ -369,7 +369,7 @@ class App extends React.Component {
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
         address={address}
-        close={this.props.appState.changeState.bind(this.props.appState.changeState, {
+        close={this.props.appState.changeState.bind(this.props.appState, {
           terminal: null
         })}
         commands={commands}
@@ -1377,11 +1377,11 @@ Browser: ${navigator.userAgent}`
     const buttons = [{
       title: 'Cancel',
       action: this.setState.bind(this, {popupAction: null}),
-      type: 'inline-neutral'
+      extraClasses: 'is-inline', modifier: 'neutral'
     }, {
       title: 'Continue',
       action: popupAction,
-      type: 'destructive'
+      modifier: 'negative'
     }];
     return (
       <Popup

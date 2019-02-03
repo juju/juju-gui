@@ -238,7 +238,7 @@ describe('UnitList', () => {
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }];
@@ -250,17 +250,17 @@ describe('UnitList', () => {
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Resolve',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }, {
       title: 'Retry',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[1].action,
       disabled: true
     }, {
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[2].action,
       disabled: true
     }];

@@ -35,7 +35,7 @@ describe('InspectorConfirm', function() {
   it('generates the correct classes if it is closed', function() {
     const wrapper = renderComponent();
     const expected = (
-      <div className="inspector-confirm">
+      <div className="inspector-confirm v1">
         <p className="inspector-confirm__message">
           My message
         </p>

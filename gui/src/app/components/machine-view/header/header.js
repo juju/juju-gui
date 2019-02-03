@@ -71,21 +71,26 @@ class MachineViewHeader extends React.Component {
     var toggle = this.props.toggle;
     if (menuItems) {
       return (
-        <ButtonDropdown
-          activeItem={this.props.activeMenuItem}
-          classes={['machine-view__header-dropdown']}
-          listItems={menuItems} />);
+        <span className="v1">
+          <ButtonDropdown
+            activeItem={this.props.activeMenuItem}
+            classes={['machine-view__header-dropdown']}
+            listItems={menuItems} />
+        </span>);
     } else if (toggle) {
       var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
       return (
-        <Button
-          action={toggle.action}
-          disabled={toggle.disabled}
-          type='inline-positive'>
-          <SvgIcon
-            name={icon}
-            size="16" />
-        </Button>);
+        <span className="v1">
+          <Button
+            action={toggle.action}
+            disabled={toggle.disabled}
+            extraClasses="is-inline"
+            modifier="positive">
+            <SvgIcon
+              name={icon}
+              size="16" />
+          </Button>
+        </span>);
     }
   }
 

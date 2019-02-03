@@ -40,8 +40,10 @@ class DeploymentSection extends React.Component {
       return;
     }
     return (
-      <ButtonRow
-        buttons={this.props.buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={this.props.buttons} />
+      </span>);
   }
 
   /**

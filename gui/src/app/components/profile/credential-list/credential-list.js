@@ -316,15 +316,17 @@ class ProfileCredentialList extends React.Component {
           }()
         }, {
           content: (
-            <ButtonDropdown
-              icon="contextual-menu-horizontal"
-              listItems={[{
-                label: 'Edit',
-                action: this._setEditCredential.bind(this, key)
-              }, {
-                label: 'Delete',
-                action: this._setDeleteCredential.bind(this, key)
-              }]} />),
+            <span className="v1">
+              <ButtonDropdown
+                icon="contextual-menu-horizontal"
+                listItems={[{
+                  label: 'Edit',
+                  action: this._setEditCredential.bind(this, key)
+                }, {
+                  label: 'Delete',
+                  action: this._setDeleteCredential.bind(this, key)
+                }]} />
+            </span>),
           classes: ['u-align-text--right']
         }],
         expandedContent: this._generateEditCredentials(credential, key),
@@ -355,11 +357,13 @@ class ProfileCredentialList extends React.Component {
   render() {
     const clouds = this.state.clouds;
     let addButton = (
-      <Button
-        action={this._toggleAdd.bind(this)}
-        type="p-button--neutral">
-        Add credentials
-      </Button>);
+      <span className="v1">
+        <Button
+          action={this._toggleAdd.bind(this)}
+          modifier="neutral">
+          Add credentials
+        </Button>
+      </span>);
     if (clouds && clouds[LOCAL_CLOUD]) {
       addButton = null;
     }

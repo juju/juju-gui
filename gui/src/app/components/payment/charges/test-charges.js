@@ -100,11 +100,11 @@ describe('PaymentCharges', function() {
                 <div className="two-col last-col no-margin-bottom">
                   {120} {'USD'}
                 </div>
-                <div className="two-col last-col no-margin-bottom">
+                <div className="two-col last-col no-margin-bottom v1">
                   <Button
                     action={wrapper.find('Button').prop('action')}
                     disabled={false}
-                    type="inline-neutral">
+                    extraClasses="is-inline" modifier="neutral">
                     Show receipt
                   </Button>
                 </div>

@@ -65,7 +65,7 @@ describe('InspectorRelations', function() {
     var buttons = [];
     buttons.push({
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: wrapper.find('ButtonRow').prop('buttons')[0].action,
       disabled: true
     });
@@ -100,8 +100,10 @@ describe('InspectorRelations', function() {
           ref='CheckListItem-postgresql'
           whenChanged={items.at(2).prop('whenChanged')} />
       </ul>
-      <ButtonRow
-        buttons={buttons} />
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>
     </div>);
     assert.compareJSX(wrapper, expected);
   });

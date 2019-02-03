@@ -55,12 +55,12 @@ describe('MachineViewAddMachine', function() {
     const wrapper = renderComponent();
     const buttons = [{
       title: 'Cancel',
-      type: 'base',
+      modifier: 'base',
       action: sinon.stub()
     }, {
       title: 'Create',
       action: wrapper.find('ButtonRow').prop('buttons')[1].action,
-      type: 'neutral',
+      modifier: 'neutral',
       disabled: undefined
     }];
     const expected = (
@@ -77,9 +77,11 @@ describe('MachineViewAddMachine', function() {
             series={undefined}
             valuesChanged={wrapper.find('Constraints').prop('valuesChanged')} />
         </div>
-        <ButtonRow
-          buttons={buttons}
-          key="buttons" />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons}
+            key="buttons" />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

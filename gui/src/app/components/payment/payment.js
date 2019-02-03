@@ -176,10 +176,10 @@ class Payment extends React.Component {
         <h4 className="profile__title">Payment details</h4>
         <div className="payment__no-user">
           <p>You are not set up to make payments.</p>
-          <p>
+          <p className="v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              type="inline-positive">
+              extraClasses="is-inline" modifier="positive">
               Set up payments
             </Button>
           </p>

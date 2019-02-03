@@ -147,7 +147,7 @@ class EnvList extends React.Component {
           disabled={!canAddModels}
           switchModel={this.props.switchModel}
           title="Start a new model"
-          type="neutral" />);
+          modifier="neutral" />);
     }
     return (
       <Panel

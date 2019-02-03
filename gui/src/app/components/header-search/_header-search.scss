@@ -47,7 +47,7 @@
     position: relative;
   }
 
-  &__submit {
+  &__submit[type='submit'] {
     background: transparent;
     border: 0;
     left: 10px;

@@ -24,9 +24,11 @@ describe('Lightbox', function() {
       <div
         className="lightbox"
         onClick={wrapper.prop('onClick')}>
-        <button className="lightbox__close">
-          <SvgIcon name="close_16_white" width="16" />
-        </button>
+        <span className="v1">
+          <button className="lightbox__close">
+            <SvgIcon name="close_16_white" width="16" />
+          </button>
+        </span>
         <div
           className="lightbox__wrapper"
           onClick={wrapper.find('.lightbox__wrapper').prop('onClick')}>
@@ -74,18 +76,20 @@ describe('Lightbox', function() {
       const expected = (
         <div className="lightbox__content">
           <div className="lightbox__navigation">
-            <button
-              className="lightbox__navigation-previous"
-              disabled={true}
-              onClick={wrapper.find('.lightbox__navigation-previous').prop('onClick')}>
-              <SvgIcon name="chevron_down_16" width="16" />
-            </button>
-            <button
-              className="lightbox__navigation-next"
-              disabled={false}
-              onClick={wrapper.find('.lightbox__navigation-next').prop('onClick')}>
-              <SvgIcon name="chevron_down_16" width="16" />
-            </button>
+            <span className="v1">
+              <button
+                className="lightbox__navigation-previous"
+                disabled={true}
+                onClick={wrapper.find('.lightbox__navigation-previous').prop('onClick')}>
+                <SvgIcon name="chevron_down_16" width="16" />
+              </button>
+              <button
+                className="lightbox__navigation-next"
+                disabled={false}
+                onClick={wrapper.find('.lightbox__navigation-next').prop('onClick')}>
+                <SvgIcon name="chevron_down_16" width="16" />
+              </button>
+            </span>
             <ul className="lightbox__navigation-bullets">
               <li
                 className="lightbox__navigation-bullet is-active"

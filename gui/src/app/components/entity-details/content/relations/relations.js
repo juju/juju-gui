@@ -87,9 +87,9 @@ class EntityContentRelations extends React.Component {
         'View fewer relations' :
         'View more relations';
       components.push(
-        <li className="section__list-item" key="show-more">
+        <li className="section__list-item v1" key="show-more">
           <button
-            className="button--inline-neutral"
+            className="p-button--neutral is-inline"
             onClick={this._handleViewMore.bind(this)}
             role="button">
             {buttonText}

@@ -83,15 +83,15 @@ class PaymentMethodCard extends React.Component {
       return null;
     }
     return (
-      <div className="payment-card-actions">
+      <div className="payment-card-actions v1">
         <Button
           action={this.props.updatePaymentMethod}
-          type="inline-neutral">
+          extraClasses="is-inline" modifier="neutral">
           Update payment details
         </Button>
         <Button
           action={this._removePaymentMethod.bind(this)}
-          type="inline-neutral">
+          extraClasses="is-inline" modifier="neutral">
           Remove payment details
         </Button>
       </div>);

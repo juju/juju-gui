@@ -31,13 +31,15 @@ class InspectorChangeVersionItem extends React.Component {
         <span className="inspector-current-version__title" title={path}>
           version {props.url.revision}
         </span>
-        <Button
-          action={props.buttonAction}
-          disabled={props.acl.isReadOnly()}
-          key={path}
-          type='inline-neutral'>
-          {this._generateButtonLabel()}
-        </Button>
+        <span className="v1">
+          <Button
+            action={props.buttonAction}
+            disabled={props.acl.isReadOnly()}
+            key={path}
+            type='inline-neutral'>
+            {this._generateButtonLabel()}
+          </Button>
+        </span>
       </li>
     );
   }

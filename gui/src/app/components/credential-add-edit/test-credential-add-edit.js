@@ -82,10 +82,10 @@ describe('CredentialAddEdit', () => {
     const expected = (
       <div className="credential-add-edit">
         <div>
-          <div className="credential-add-edit__choose-cloud">
+          <div className="credential-add-edit__choose-cloud v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+              extraClasses="is-inline" modifier="neutral">
               Change cloud
             </Button>
           </div>

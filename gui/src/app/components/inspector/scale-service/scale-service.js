@@ -158,7 +158,9 @@ class ScaleService extends React.Component {
             providerType={props.providerType}
             valuesChanged={this._updateConstraints.bind(this)} />
         </div>
-        <ButtonRow buttons={buttons} />
+        <span className="v1">
+          <ButtonRow buttons={buttons} />
+        </span>
       </form>
     );
   }

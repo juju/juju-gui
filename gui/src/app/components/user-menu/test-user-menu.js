@@ -31,7 +31,7 @@ describe('UserMenu', () => {
       userIsAuthenticated: false
     });
     const expected = (
-      <div>
+      <div className="v1">
         <ButtonDropdown
           classes={['user-menu']}
           disableDropdown={true}

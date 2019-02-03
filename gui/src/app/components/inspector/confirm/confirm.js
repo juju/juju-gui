@@ -56,8 +56,10 @@ class InspectorConfirm extends React.Component {
     let buttonRow;
     if (buttons && buttons.length > 0) {
       buttonRow = (
-        <ButtonRow
-          buttons={this.props.buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={this.props.buttons} />
+        </span>
       );
     }
     return (

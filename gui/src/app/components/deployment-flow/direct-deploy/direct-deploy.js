@@ -132,10 +132,10 @@ class DeploymentDirectDeploy extends React.Component {
             <div className="deployment-direct-deploy__image">
               {this._generateImage()}
             </div>
-            <div className="deployment-direct-deploy__edit-model">
+            <div className="deployment-direct-deploy__edit-model v1">
               <Button
                 action={this._handleClose.bind(this)}
-                type="inline-neutral">
+                extraClasses="is-inline" modifier="neutral">
                 Edit model
               </Button>
             </div>

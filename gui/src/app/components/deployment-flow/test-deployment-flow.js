@@ -289,11 +289,11 @@ describe('DeploymentFlow', function() {
             <div className="twelve-col">
               <div className="inner-wrapper deployment-flow__deploy">
                 {undefined}
-                <div className="deployment-flow__deploy-action">
+                <div className="deployment-flow__deploy-action v1">
                   <Button
                     action={wrapper.find('Button').prop('action')}
                     disabled={true}
-                    type="positive">
+                    modifier="positive">
                     Deploy
                   </Button>
                 </div>
@@ -567,7 +567,7 @@ describe('DeploymentFlow', function() {
       action: buttons[0].action,
       disabled: false,
       title: 'Change cloud',
-      type: 'neutral'
+      modifier: 'neutral'
     }]);
   });
 

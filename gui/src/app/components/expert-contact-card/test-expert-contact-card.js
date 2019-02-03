@@ -50,11 +50,13 @@ describe('ExpertContactCard', function() {
               </li>
             ]}
           </ul>
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            type="positive">
-            Show contact details&hellip;
-          </Button>
+          <span className="v1">
+            <Button
+              action={wrapper.find('Button').prop('action')}
+              modifier="positive">
+              Show contact details&hellip;
+            </Button>
+          </span>
         </div>
       </div>);
     assert.compareJSX(wrapper.find('.expert-contact-card'), expected);

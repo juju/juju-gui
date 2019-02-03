@@ -82,11 +82,11 @@ describe('DeploymentSSHKey', function() {
               required={false}
               type="text" />
           </div>
-          <div className="deployment-ssh-key__add-key right">
+          <div className="deployment-ssh-key__add-key right v1">
             <Button
               action={wrapper.find('Button').prop('action')}
               disabled
-              type="positive">Add keys</Button>
+              modifier="positive">Add keys</Button>
           </div>
         </div>
       </div>

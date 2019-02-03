@@ -99,13 +99,15 @@ class InspectorRelateToEndpoint extends React.Component {
     var buttons = [];
     buttons.push({
       title: 'Relate',
-      type: 'neutral',
+      modifier: 'neutral',
       action: this._handleCreateRelation.bind(this),
       disabled: disabled
     });
     return (
-      <ButtonRow
-        buttons={buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>);
   }
 
   render() {

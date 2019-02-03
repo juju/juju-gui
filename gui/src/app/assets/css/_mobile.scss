@@ -100,7 +100,7 @@
   }
 
   // Inspector - change version
-  .inspector-current-version__item .button--inline-neutral {
+  .inspector-current-version__item .p-button--neutral.is-inline {
     display: inline-block;
   }
 
@@ -206,7 +206,7 @@
     padding-bottom: 40px;
   }
 
-  .user-profile-header .button--inline-neutral {
+  .user-profile-header .p-button--neutral {
     float: none;
     margin: 0 0 20px;
     display: block;

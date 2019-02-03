@@ -505,11 +505,11 @@ class SearchResults extends React.Component {
     const buttonTitle = this.state.showCommunity ?
       'Hide community results' : `Show ${community.length} community results`;
     const button = hasPromulgated ? (
-      <div className="button-wrapper--ruled">
+      <div className="button-wrapper--ruled v1">
         <Button
           action={this._toggleCommunityResults.bind(this)}
           extraClasses="show-community-button"
-          type="inline-neutral">
+          extraClasses="is-inline" modifier="neutral">
           {buttonTitle}
         </Button>
       </div>) : null;

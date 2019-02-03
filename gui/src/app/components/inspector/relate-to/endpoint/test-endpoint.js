@@ -37,13 +37,15 @@ describe('InspectorRelateToEndpoint', () => {
             ref="InspectorRelateToEndpoint-0"
             whenChanged={wrapper.find('CheckListItem').prop('whenChanged')} />]}
         </ul>
-        <ButtonRow
-          buttons={[{
-            title: 'Relate',
-            type: 'neutral',
-            action: wrapper.find('ButtonRow').prop('buttons')[0].action,
-            disabled: true
-          }]} />
+        <span className="v1">
+          <ButtonRow
+            buttons={[{
+              title: 'Relate',
+              modifier: 'neutral',
+              action: wrapper.find('ButtonRow').prop('buttons')[0].action,
+              disabled: true
+            }]} />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

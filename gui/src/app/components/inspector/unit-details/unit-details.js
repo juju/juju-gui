@@ -271,7 +271,7 @@ class UnitDetails extends React.Component {
           {this._generateAddressList()}
         </div>
         {this._generateTerminalActions()}
-        <div className="twelve-col no-margin-bottom">
+        <div className="twelve-col no-margin-bottom v1">
           <ButtonRow buttons={[{
             disabled: props.acl.isReadOnly(),
             title: 'Remove',

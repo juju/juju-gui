@@ -245,7 +245,7 @@ class ProfileBundleList extends React.Component {
               <td className="u-align-text--right">
                 {bundle.unitCount}
               </td>
-              <td className="entity__release u-align-text--right">
+              <td className="entity__release u-align-text--right v1">
                 <span>
                   {version}
                 </span>

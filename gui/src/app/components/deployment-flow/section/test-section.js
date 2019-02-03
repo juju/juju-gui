@@ -45,7 +45,7 @@ describe('DeploymentSection', function() {
     var buttons = [{
       action: sinon.stub(),
       title: 'Add credential',
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     const wrapper = renderComponent({
       buttons: buttons,
@@ -65,8 +65,10 @@ describe('DeploymentSection', function() {
               <div className="deployment-section__extra">
                 <span>extra</span>
               </div>
-              <ButtonRow
-                buttons={buttons} />
+              <span className="v1">
+                <ButtonRow
+                  buttons={buttons} />
+              </span>
             </div>
             <h3 className="deployment-section__title">
               <SvgIcon

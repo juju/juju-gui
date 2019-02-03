@@ -26,10 +26,10 @@ describe('DeploymentPanel', function() {
     const expected = (
       <div className="deployment-panel">
         <div className="deployment-panel__header">
-          <div className="deployment-panel__close">
+          <div className="deployment-panel__close v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="neutral">
+              modifier="neutral">
               Back to canvas
             </Button>
           </div>
