@@ -28,7 +28,8 @@ describe('Popup', () => {
         <div className="popup__close v1">
           <Button
             action={sinon.stub()}
-            extraClasses="is-inline" modifier="base">
+            extraClasses="is-inline"
+            modifier="base">
             <SvgIcon
               name="close_16"
               size="16" />

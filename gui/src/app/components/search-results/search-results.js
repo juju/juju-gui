@@ -508,8 +508,8 @@ class SearchResults extends React.Component {
       <div className="button-wrapper--ruled v1">
         <Button
           action={this._toggleCommunityResults.bind(this)}
-          extraClasses="show-community-button"
-          extraClasses="is-inline" modifier="neutral">
+          extraClasses="is-inline show-community-button"
+          modifier="neutral">
           {buttonTitle}
         </Button>
       </div>) : null;

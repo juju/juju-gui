@@ -112,7 +112,8 @@ class CredentialAddEdit extends React.Component {
       <div className="credential-add-edit__choose-cloud v1">
         <Button
           action={this._setCloud.bind(this, null)}
-          extraClasses="is-inline" modifier="neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Change cloud
         </Button>
       </div>);

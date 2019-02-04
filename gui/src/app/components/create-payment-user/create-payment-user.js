@@ -340,7 +340,8 @@ class CreatePaymentUser extends React.Component {
               <Button
                 action={this._handleAddUser.bind(this)}
                 disabled={disabled}
-                extraClasses="is-inline" modifier="positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Add payment details
               </Button>
             </div>

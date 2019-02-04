@@ -120,12 +120,14 @@ class PaymentMethod extends React.Component {
         <div className="twelve-col payment-method__buttons v1">
           <Button
             action={this._toggleForm.bind(this)}
-            extraClasses="is-inline" modifier="neutral">
+            extraClasses="is-inline"
+            modifier="neutral">
             Cancel
           </Button>
           <Button
             action={this._updatePaymentMethod.bind(this)}
-            extraClasses="is-inline" modifier="positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Update
           </Button>
         </div>

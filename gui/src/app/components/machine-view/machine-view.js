@@ -195,7 +195,8 @@ class MachineView extends React.Component {
             <Button
               action={props.modelAPI.autoPlaceUnits}
               disabled={props.acl.isReadOnly()}
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Auto place
             </Button>
           </span>

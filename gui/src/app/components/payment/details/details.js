@@ -75,8 +75,8 @@ class PaymentDetails extends React.Component {
             <Button
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
-              extraClasses="payment-details-title-button"
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>)}
         </h4>
@@ -87,8 +87,8 @@ class PaymentDetails extends React.Component {
             <Button
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
-              extraClasses="payment-details-title-button"
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>)}
         </h4>

@@ -85,7 +85,8 @@ describe('CredentialAddEdit', () => {
           <div className="credential-add-edit__choose-cloud v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Change cloud
             </Button>
           </div>

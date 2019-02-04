@@ -26,7 +26,8 @@ describe('CreateModelButton', () => {
         <Button
           action={wrapper.find('Button').prop('action')}
           disabled={false}
-          extraClasses="is-inline" modifier="neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Create new
         </Button>
       </div>

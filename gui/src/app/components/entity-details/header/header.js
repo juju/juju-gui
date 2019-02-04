@@ -123,11 +123,11 @@ class EntityHeader extends React.Component {
           <Button
             action={this._handleDeployClick.bind(this)}
             disabled={this.props.acl.isReadOnly()}
+            modifier="positive"
             ref="deployAction"
             tooltip={
               `Add this ${entity.type} to ` +
-              `${modelName ? 'your current' : 'a new'} model`}
-            modifier="positive">
+              `${modelName ? 'your current' : 'a new'} model`}>
             {title}
           </Button>
         </span>

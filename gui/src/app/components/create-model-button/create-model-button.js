@@ -52,7 +52,8 @@ CreateModelButton.propTypes = {
 };
 
 CreateModelButton.defaultProps = {
-  extraClasses: 'is-inline', modifier: 'neutral',
+  extraClasses: 'is-inline',
+  modifier: 'neutral',
   title: 'Create new'
 };
 

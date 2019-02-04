@@ -135,7 +135,8 @@ class DeploymentDirectDeploy extends React.Component {
             <div className="deployment-direct-deploy__edit-model v1">
               <Button
                 action={this._handleClose.bind(this)}
-                extraClasses="is-inline" modifier="neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Edit model
               </Button>
             </div>

@@ -80,13 +80,15 @@ class PaymentDetailsAddress extends React.Component {
               <Button
                 action={this.props.close}
                 disabled={disabled}
-                extraClasses="is-inline" modifier="neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Cancel
               </Button>
               <Button
                 action={this._updateAddress.bind(this)}
                 disabled={disabled}
-                extraClasses="is-inline" modifier="positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Update
               </Button>
             </div>

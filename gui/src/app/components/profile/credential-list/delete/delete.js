@@ -35,7 +35,8 @@ class ProfileCredentialListDelete extends React.Component {
     const buttons = [{
       title: 'Cancel',
       action: this.props.onCancel.bind(this),
-      extraClasses: 'is-inline', modifier: 'neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Remove credentials',
       action: this._deleteCredential.bind(this),

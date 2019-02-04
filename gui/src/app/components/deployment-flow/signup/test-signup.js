@@ -50,7 +50,8 @@ describe('DeploymentSignup', function() {
               Continue to the&nbsp;
               <Button
                 action={wrapper.find('Button').prop('action')}
-                extraClasses="is-inline" modifier="neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Deployment demo of Juju
               </Button>
             </p>

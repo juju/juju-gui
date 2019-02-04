@@ -102,7 +102,8 @@ describe('PaymentMethods', () => {
         <p className="v1">
           <Button
             action={wrapper.find('Button').prop('action')}
-            extraClasses="is-inline" modifier="positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Add payment method
           </Button>
         </p>
@@ -148,12 +149,14 @@ describe('PaymentMethods', () => {
         <div className="twelve-col payment-methods__form-buttons v1">
           <Button
             action={wrapper.find('Button').at(0).prop('action')}
-            extraClasses="is-inline" modifier="neutral">
+            extraClasses="is-inline"
+            modifier="neutral">
             Cancel
           </Button>
           <Button
             action={wrapper.find('Button').at(1).prop('action')}
-            extraClasses="is-inline" modifier="positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Add
           </Button>
         </div>

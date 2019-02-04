@@ -275,8 +275,8 @@ describe('SearchResults', function() {
                     <div className="button-wrapper--ruled v1">
                       <Button
                         action={wrapper.find('Button').prop('action')}
-                        extraClasses="show-community-button"
-                        extraClasses="is-inline" modifier="neutral">
+                        extraClasses="is-inline show-community-button"
+                        modifier="neutral">
                         Show 2 community results
                       </Button>
                     </div>

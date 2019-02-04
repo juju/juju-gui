@@ -44,7 +44,8 @@ class PaymentMethods extends React.Component {
           <p className="v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              extraClasses="is-inline" modifier="positive">
+              extraClasses="is-inline"
+              modifier="positive">
               Add payment method
             </Button>
           </p>
@@ -217,12 +218,14 @@ class PaymentMethods extends React.Component {
           <div className="twelve-col payment-methods__form-buttons v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Cancel
             </Button>
             <Button
               action={this._createToken.bind(this)}
-              extraClasses="is-inline" modifier="positive">
+              extraClasses="is-inline"
+              modifier="positive">
               Add
             </Button>
           </div>

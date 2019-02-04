@@ -1377,7 +1377,8 @@ Browser: ${navigator.userAgent}`
     const buttons = [{
       title: 'Cancel',
       action: this.setState.bind(this, {popupAction: null}),
-      extraClasses: 'is-inline', modifier: 'neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Continue',
       action: popupAction,

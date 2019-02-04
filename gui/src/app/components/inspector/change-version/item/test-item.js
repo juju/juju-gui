@@ -41,8 +41,9 @@ describe('InspectorChangeVersionItem', function() {
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
+            extraClasses="is-inline" 
             key="django/xenial/5"
-            extraClasses="is-inline" modifier="neutral">
+            modifier="neutral">
             Upgrade
           </Button>
         </span>

@@ -99,12 +99,14 @@ describe('PaymentMethodCard', () => {
       <div className="payment-card-actions v1">
         <Button
           action={sinon.stub()}
-          extraClasses="is-inline" modifier="neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Update payment details
         </Button>
         <Button
           action={wrapper.find('Button').at(1).prop('action')}
-          extraClasses="is-inline" modifier="neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Remove payment details
         </Button>
       </div>);

@@ -104,7 +104,8 @@ class ProfileModelList extends React.Component {
     const buttons = [{
       title: 'Cancel',
       action: () => this.setState({notification: null}),
-      extraClasses: 'is-inline', modifier: 'neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Destroy',
       action: this._confirmDestroy.bind(this, model.uuid),

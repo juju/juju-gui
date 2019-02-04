@@ -54,7 +54,8 @@ class DeploymentExpertBudget extends React.Component {
           <Button
             action={this.props.setBudget.bind(this, this.state.budget)}
             disabled={!changed}
-            extraClasses="is-inline" modifier="positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Set budget
           </Button>
         </div>

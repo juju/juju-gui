@@ -133,7 +133,8 @@ describe('Payment', function() {
         <p className="v1">
           <Button
             action={wrapper.find('Button').prop('action')}
-            extraClasses="is-inline" modifier="positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Set up payments
           </Button>
         </p>

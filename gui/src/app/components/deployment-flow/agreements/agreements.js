@@ -55,7 +55,8 @@ class DeploymentAgreements extends React.Component {
         <span className="v1">
           <Button
             action={this._toggleTerms.bind(this)}
-            extraClasses="is-inline" modifier="base">
+            extraClasses="is-inline"
+            modifier="base">
             View terms
           </Button>
         </span>);

@@ -170,7 +170,8 @@ class PaymentCharges extends React.Component {
               <Button
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
-                extraClasses="is-inline" modifier="neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Show receipt
               </Button>
             </div>

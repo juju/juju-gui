@@ -61,7 +61,8 @@ describe('DeploymentAgreements', function() {
       <span className="v1">
         <Button
           action={wrapper.find('Button').prop('action')}
-          extraClasses="is-inline" modifier="base">
+          extraClasses="is-inline"
+          modifier="base">
           View terms
         </Button>
       </span>);

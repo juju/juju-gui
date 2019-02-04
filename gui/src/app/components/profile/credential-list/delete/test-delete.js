@@ -26,7 +26,8 @@ describe('ProfileCredentialListDelete', () => {
           buttons={[{
             title: 'Cancel',
             action: sinon.stub(),
-            extraClasses: 'is-inline', modifier: 'neutral'
+            extraClasses: 'is-inline',
+            modifier: 'neutral'
           }, {
             title: 'Continue',
             action: sinon.stub(),

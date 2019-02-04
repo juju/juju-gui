@@ -144,7 +144,8 @@ describe('CreatePaymentUser', function() {
               <Button
                 action={wrapper.find('Button').prop('action')}
                 disabled={false}
-                extraClasses="is-inline" modifier="positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Add payment details
               </Button>
             </div>

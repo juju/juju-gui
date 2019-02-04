@@ -109,7 +109,8 @@ describe('DirectDeploy', function() {
           <div className="deployment-direct-deploy__edit-model v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Edit model
             </Button>
           </div>
@@ -163,7 +164,8 @@ describe('DirectDeploy', function() {
           <div className="deployment-direct-deploy__edit-model v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Edit model
             </Button>
           </div>

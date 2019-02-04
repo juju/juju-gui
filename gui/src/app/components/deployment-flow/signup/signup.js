@@ -91,7 +91,8 @@ class DeploymentSignup extends React.Component {
                 Continue to the&nbsp;
                 <Button
                   action={this._displayFlow.bind(this)}
-                  extraClasses="is-inline" modifier="neutral">
+                  extraClasses="is-inline"
+                  modifier="neutral">
                   Deployment demo of Juju
                 </Button>
               </p>

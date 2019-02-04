@@ -71,8 +71,8 @@ describe('Sharing', () => {
           <span className="v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              extraClasses="right"
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline right"
+              modifier="neutral">
               Done
             </Button>
           </span>
@@ -195,10 +195,10 @@ describe('Sharing', () => {
           <div className="sharing__invite--grant-button v1">
             <Button
               disabled={true}
+              modifier="positive"
               ref="grantButton"
               submit={true}
-              tooltip="Add user"
-              modifier="positive">
+              tooltip="Add user">
               Add
             </Button>
           </div>

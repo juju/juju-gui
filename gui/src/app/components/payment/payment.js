@@ -179,7 +179,8 @@ class Payment extends React.Component {
           <p className="v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              extraClasses="is-inline" modifier="positive">
+              extraClasses="is-inline"
+              modifier="positive">
               Set up payments
             </Button>
           </p>

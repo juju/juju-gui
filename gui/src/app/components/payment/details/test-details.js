@@ -95,8 +95,8 @@ describe('PaymentDetails', () => {
             <Button
               action={wrapper.find('Button').at(0).prop('action')}
               disabled={false}
-              extraClasses="payment-details-title-button"
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>
           </h4>
@@ -129,8 +129,8 @@ describe('PaymentDetails', () => {
             <Button
               action={wrapper.find('Button').at(1).prop('action')}
               disabled={false}
-              extraClasses="payment-details-title-button"
-              extraClasses="is-inline" modifier="neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>
           </h4>

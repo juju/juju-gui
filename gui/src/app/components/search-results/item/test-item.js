@@ -122,8 +122,8 @@ describe('SearchResultsItem', function() {
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
-            extraClasses="list-block__list--item-deploy-link"
-            extraClasses="is-inline" modifier="neutral">
+            extraClasses="is-inline list-block__list--item-deploy-link"
+            modifier="neutral">
             <SvgIcon
               name="add-icon"
               size="16" />

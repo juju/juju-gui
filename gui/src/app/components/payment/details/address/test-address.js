@@ -79,13 +79,15 @@ describe('PaymentDetailsAddress', () => {
               <Button
                 action={sinon.stub()}
                 disabled={false}
-                extraClasses="is-inline" modifier="neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Cancel
               </Button>
               <Button
                 action={wrapper.find('Button').at(1).prop('action')}
                 disabled={false}
-                extraClasses="is-inline" modifier="positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Update
               </Button>
             </div>
