@@ -14,9 +14,9 @@ describe('CreateModelButton', () => {
       action={options.action || sinon.stub()}
       changeState={options.changeState || sinon.stub()}
       disabled={options.disabled === undefined ? false : options.disabled}
+      modifier={options.modifier}
       switchModel={options.switchModel || sinon.stub()}
-      title={options.title}
-      type={options.type} />
+      title={options.title} />
   );
 
   it('renders a button with default values', () => {
@@ -26,7 +26,6 @@ describe('CreateModelButton', () => {
         <Button
           action={wrapper.find('Button').prop('action')}
           disabled={false}
-          extraClasses="is-inline"
           modifier="neutral">
           Create new
         </Button>
@@ -41,7 +40,7 @@ describe('CreateModelButton', () => {
       modifier: 'positive'
     });
     const button = wrapper.find('Button');
-    assert.equal(button.prop('type'), 'positive');
+    assert.equal(button.prop('modifier'), 'positive');
     assert.equal(button.children().text(), 'test');
   });
 

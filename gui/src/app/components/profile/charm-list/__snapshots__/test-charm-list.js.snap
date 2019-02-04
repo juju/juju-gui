@@ -113,7 +113,7 @@ exports[`Profile Charm List can render 1`] = `
               </span>
             </td>
             <td
-              className="entity__release"
+              className="entity__release v1"
             >
               <span>
                 #7
@@ -241,7 +241,7 @@ exports[`Profile Charm List can render 1`] = `
               </span>
             </td>
             <td
-              className="entity__release"
+              className="entity__release v1"
             >
               <span>
                 #3
@@ -338,7 +338,7 @@ exports[`Profile Charm List can render 1`] = `
               </span>
             </td>
             <td
-              className="entity__release"
+              className="entity__release v1"
             >
               <span>
                 #1

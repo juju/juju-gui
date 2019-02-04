@@ -35,12 +35,14 @@ describe('InspectorConfirm', function() {
   it('generates the correct classes if it is closed', function() {
     const wrapper = renderComponent();
     const expected = (
-      <div className="inspector-confirm v1">
+      <div className="inspector-confirm">
         <p className="inspector-confirm__message">
           My message
         </p>
-        <ButtonRow
-          buttons={buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

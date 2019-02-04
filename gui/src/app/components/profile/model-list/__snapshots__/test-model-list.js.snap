@@ -21,9 +21,9 @@ exports[`Profile Model List can render 1`] = `
     </h4>
     <CreateModelButton
       changeState={[Function]}
+      modifier="neutral"
       switchModel={[Function]}
       title="Start a new model"
-      extraClasses="is-inline" modifier="neutral"
     />
   </div>
   <BasicTable

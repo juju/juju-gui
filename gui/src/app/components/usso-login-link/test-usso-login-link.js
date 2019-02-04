@@ -23,7 +23,7 @@ describe('USSOLoginLink', () => {
   it('can render a text link', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="usso-login">
+      <div className="usso-login v1">
         <a
           className="usso-login__action"
           onClick={wrapper.find('.usso-login__action').prop('onClick')}

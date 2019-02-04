@@ -138,7 +138,7 @@ describe('EntityHeader', function() {
   it('displays an add to model button', function() {
     const wrapper = renderComponent();
     const deployAction = wrapper.find('Button');
-    assert.equal(deployAction.prop('type'), 'positive');
+    assert.equal(deployAction.prop('modifier'), 'positive');
     assert.equal(deployAction.children().text(), 'Add to model');
   });
 
@@ -147,7 +147,7 @@ describe('EntityHeader', function() {
       getModelName: sinon.stub().returns('porkchop')
     });
     const deployAction = wrapper.find('Button');
-    assert.equal(deployAction.prop('type'), 'positive');
+    assert.equal(deployAction.prop('modifier'), 'positive');
     assert.equal(deployAction.children().text(), 'Add to porkchop');
   });
 

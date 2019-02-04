@@ -24,11 +24,9 @@ describe('Lightbox', function() {
       <div
         className="lightbox"
         onClick={wrapper.prop('onClick')}>
-        <span className="v1">
-          <button className="lightbox__close">
-            <SvgIcon name="close_16_white" width="16" />
-          </button>
-        </span>
+        <button className="lightbox__close">
+          <SvgIcon name="close_16_white" width="16" />
+        </button>
         <div
           className="lightbox__wrapper"
           onClick={wrapper.find('.lightbox__wrapper').prop('onClick')}>

@@ -35,8 +35,9 @@ class InspectorChangeVersionItem extends React.Component {
           <Button
             action={props.buttonAction}
             disabled={props.acl.isReadOnly()}
+            extraClasses="is-inline"
             key={path}
-            type='inline-neutral'>
+            modifier="neutral">
             {this._generateButtonLabel()}
           </Button>
         </span>

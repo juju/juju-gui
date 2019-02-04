@@ -221,7 +221,6 @@ describe('DeploymentCredentialAdd', function() {
     assert.deepEqual(buttons, [{
       submit: true,
       title: 'Add cloud credential',
-      extraClasses: 'is-inline',
       modifier: 'positive'
     }]);
   });
