@@ -6,7 +6,7 @@ const path = require('path');
 module.exports = {
   entry: './jujugui/static/gui/src/app/init.js',
   output: {
-    path: path.resolve(__dirname, 'jujugui/static/gui/build/app'),
+    path: path.resolve(__dirname, 'static/build'),
     filename: 'init-pkg.js',
     // Build the package so that when it is loaded in the browser it can be accessed
     // via variable named JujuGUI.
@@ -54,8 +54,8 @@ module.exports = {
   plugins: [
     // Output the CSS to the build dir.
     new MiniCssExtractPlugin({
-      // This file is relatiev to output.path above.
-      filename: 'assets/juju-gui.css',
+      // This file is relative to output.path above.
+      filename: 'juju-gui.css',
       chunkFilename: '[id].css'
     })
   ],
