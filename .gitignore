@@ -50,3 +50,7 @@ yui-macaroon.js
 .DS_Store
 .pip.*
 .yarn.*
+static/yui
+static/build
+.docker-project
+__pycache__
