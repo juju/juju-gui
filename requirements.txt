@@ -1,4 +1,4 @@
+talisker==0.11.1
 Flask==1.0.2
 python-dateutil==2.8.0
 raven[flask]==6.5.0
-talisker==0.11.1
