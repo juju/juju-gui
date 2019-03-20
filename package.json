@@ -9,7 +9,8 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "scripts": {
-    "build": "webpack --config webpack.dev.js && cp -r node_modules/yui static && rm -rf static/yui/node_modules",
+    "build": "webpack --config webpack.dev.js && cp -r node_modules/yui static && rm -rf static/yui/node_modules && ./scripts/version.sh",
+    "clean": "rm -rf static/yui static/build node_modules webapp/__pycache__",
     "watch": "webpack --config webpack.dev.js --watch",
     "lint-js": "eslint --rulesdir eslint-rules jujugui/static/gui/src",
     "lint": "npm run lint-js",
