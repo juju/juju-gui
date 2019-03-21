@@ -1,0 +1,22 @@
+{% extends "_base/base.html" %} {% block title %}500: Server Error | Juju{% endblock %} {%
+block header %}
+<div class="p-strip">
+  <div class="row">
+    <div class="col-6">
+      <img
+        src="https://res.cloudinary.com/canonical/image/fetch/q_auto,f_auto/https://assets.ubuntu.com/v1/94daa2fb-error404-hero-full-canonical.png"
+        alt=""
+      />
+    </div>
+    <div class="col-6">
+      <h1>500: Server Error</h1>
+      <p class="p-heading--five">Sorry, there is a problem with the server.</p>
+      <p>Please refresh the page.</p>
+      <p>
+        If you continue to see this error page, please
+        <a href="https://github.com/juju/juju-gui/issues">file a bug</a>.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
