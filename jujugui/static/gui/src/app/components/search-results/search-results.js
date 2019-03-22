@@ -259,11 +259,12 @@ class SearchResults extends React.Component {
     @param {Object} nextProps The next set of properties.
   */
   _shouldSearch(nextProps) {
-    if (!this.state.data || !this.state.data.text) {
-      return true;
+    let currentText = '';
+    if (this.state.data && this.state.data.text) {
+      currentText = this.state.data.text;
     }
-    var nextQuery = JSON.stringify(nextProps.query),
-        currentQuery = JSON.stringify(this.state.data.text);
+    var nextQuery = JSON.stringify(nextProps.query || ''),
+        currentQuery = JSON.stringify(currentText || '');
     return nextQuery !== currentQuery ||
         nextProps.type !== this.props.type ||
         nextProps.tags !== this.props.tags ||

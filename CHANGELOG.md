@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Broken GCP cloud logo in Firefox.
 - Repeating port values on Status pane.
 - Broken styles on the Status pane.
+- Searches without query text would reload forever.
 
 ## [2.14.1] - 2018-10-26
 ### Changed

@@ -619,6 +619,25 @@ describe('SearchResults', function() {
       assert.equal(spy.getCall(0).args[0], nextProps.query);
     });
 
+    it('triggers a search request when a search param changes', function() {
+      var nextProps = {type: 'bundle'};
+      searchResults.props = {query: 'spinach'};
+      searchResults._searchRequest = sinon.spy();
+      var spy = searchResults._searchRequest;
+      searchResults.componentWillReceiveProps(nextProps);
+      assert.equal(spy.getCall(0).args[2], nextProps.type);
+    });
+
+    it('handles search param changes without a query', function() {
+      var nextProps = {type: 'bundle'};
+      searchResults.props = {type: 'bundle'};
+      searchResults.state.data = {};
+      searchResults._searchRequest = sinon.spy();
+      var spy = searchResults._searchRequest;
+      searchResults.componentWillReceiveProps(nextProps);
+      assert.equal(spy.callCount, 0);
+    });
+
     it('re-renders only after a new search has finished', function() {
       searchResults._shouldSearch = sinon.stub().returns(true);
       searchResults.state = {waitingForSearch: false};
