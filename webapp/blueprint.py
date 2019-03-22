@@ -10,7 +10,7 @@ gui = flask.Blueprint(
 
 @gui.route("/")
 @gui.route("/<path:path>")
-def homepage(path):
+def homepage(path = ""):
     return flask.render_template("index.html")
 
 @gui.route("/robots.txt")
