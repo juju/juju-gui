@@ -13,11 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed unused svg assets from the build/dist.
 
 ### Fixed
-- Styling issue with Plans selector in sticky header on entity pages.
 - Broken GCP cloud logo in Firefox.
 - Repeating port values on Status pane.
 - Broken styles on the Status pane.
 - Searches without query text would reload forever.
+
+### Removed
+- Entity details pages no longer have sticky headers.
 
 ## [2.14.1] - 2018-10-26
 ### Changed

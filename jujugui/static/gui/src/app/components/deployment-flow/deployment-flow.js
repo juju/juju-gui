@@ -1166,7 +1166,7 @@ class DeploymentFlow extends React.Component {
       '.deployment-panel__content');
     if (target && deploymentFlow) {
       // Set the scroll position to the element's top position taking into
-      // account the sticky header size.
+      // account the canvas header size.
       deploymentFlow.scrollTop += target.getBoundingClientRect().top - 100;
     }
   }

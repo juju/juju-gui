@@ -14,15 +14,6 @@ const SvgIcon = require('../../svg-icon/svg-icon');
 require('./_header.scss');
 
 class EntityHeader extends React.Component {
-  constructor() {
-    super();
-    this.state = {headerHeight: 0};
-  }
-
-  componentDidMount() {
-    this.setState({headerHeight: this.refs.headerWrapper.clientHeight});
-  }
-
   /**
     Add a service for this charm to the canvas.
 
@@ -111,35 +102,6 @@ class EntityHeader extends React.Component {
     url.push(entity.series);
     url.push(entity.revision);
     return encodeURIComponent(url.join('/'));
-  }
-
-  /**
-    Generate the styles for the header wrapper.
-
-    @method _generateWrapperStyles
-  */
-  _generateWrapperStyles() {
-    if (this.state.headerHeight > 0) {
-      // Set the height of the wrapper so that it doesn't collapse when the
-      // header becomes sticky.
-      return {height: this.state.headerHeight + 'px'};
-    }
-    return {};
-  }
-
-  /**
-    Generate the classes for the component.
-
-    @method _generateClasses
-  */
-  _generateClasses() {
-    return classNames(
-      'entity-header',
-      {
-        'entity-header--sticky':
-          this.props.scrollPosition > this.state.headerHeight
-      }
-    );
   }
 
   /**
@@ -391,11 +353,8 @@ class EntityHeader extends React.Component {
         width="96" />);
     }
     return (
-      <div
-        className="row-hero"
-        ref="headerWrapper"
-        style={this._generateWrapperStyles()}>
-        <header className={this._generateClasses()}>
+      <div className="row-hero">
+        <header className="entity-header">
           <div className="inner-wrapper">
             <div className="eight-col no-margin-bottom">
               {icon}
@@ -470,8 +429,7 @@ EntityHeader.propTypes = {
   getModelName: PropTypes.func.isRequired,
   hasPlans: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
-  plans: PropTypes.array,
-  scrollPosition: PropTypes.number.isRequired
+  plans: PropTypes.array
 };
 
 module.exports = EntityHeader;

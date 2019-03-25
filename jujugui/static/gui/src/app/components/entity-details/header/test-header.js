@@ -25,9 +25,7 @@ describe('EntityHeader', function() {
       getModelName={options.getModelName || sinon.stub()}
       hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
       importBundleYAML={options.importBundleYAML || sinon.stub()}
-      plans={options.plans}
-      scrollPosition={
-        options.scrollPosition === undefined ? 0 : options.scrollPosition} />,
+      plans={options.plans} />,
     {disableLifecycleMethods: true}
   );
 
@@ -45,98 +43,7 @@ describe('EntityHeader', function() {
 
   it('renders the latest entity properly', function() {
     const wrapper = renderComponent();
-    const expected = (
-      <div
-        className="row-hero"
-        ref="headerWrapper"
-        style={{}}>
-        <header className="entity-header">
-          <div className="inner-wrapper">
-            <div className="eight-col no-margin-bottom">
-              <img
-                alt="django"
-                className="entity-header__icon"
-                src="data:image/gif;base64,"
-                width="96" />
-              <h1
-                className="entity-header__title"
-                itemProp="name"
-                ref="entityHeaderTitle">
-                django{' '}
-                <span className="entity-header__version">
-                  {'#'}{123}
-                </span>
-              </h1>
-              <ul className="bullets inline entity-header__properties">
-                <li className="entity-header__by">
-                  By&nbsp;
-                  <span
-                    className="link"
-                    onClick={wrapper.find('.entity-header__by .link').prop('onClick')}>
-                    test-owner
-                  </span>
-                </li>
-                <li className="entity-header__series">
-                  <span
-                    className="link"
-                    onClick={wrapper.find('.entity-header__series .link').prop('onClick')}>
-                    Latest version (#{42})
-                  </span>
-                </li>
-                {[<li className="entity-header__series" key="trusty">
-                  trusty
-                </li>]}
-                {undefined}
-                {<li
-                  className="entity-header__channels"
-                  key="Stable, Candidate">
-                  Stable, Candidate
-                </li>}
-              </ul>
-              <ul className="entity-header__social-list">
-                <li>
-                  <a
-                    href={'https://twitter.com/intent/tweet?text=django%20' +
-                      'charm&via=ubuntu_cloud&url=https%3A%2F%2Fjujucharms' +
-                      '.com%2Fdjango%2Ftrusty%2F'}
-                    id="item-twitter"
-                    target="_blank">
-                    <SvgIcon
-                      name="icon-social-twitter"
-                      size="36" />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={'https://plus.google.com/share?url=https%3A%2F%2F' +
-                      'jujucharms.com%2Fdjango%2Ftrusty%2F'}
-                    id="item-googleplus"
-                    target="_blank">
-                    <SvgIcon
-                      name="icon-social-google"
-                      size="36" />
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className={
-              'entity-header__right four-col last-col no-margin-bottom'}>
-              {undefined}
-              <CopyToClipboard
-                value="juju deploy cs:django" />
-              <Button
-                action={wrapper.find('Button').prop('action')}
-                disabled={false}
-                ref="deployAction"
-                tooltip="Add this charm to a new model"
-                type="positive">
-                Add to model
-              </Button>
-            </div>
-          </div>
-        </header>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('renders an old entity properly', function() {
@@ -332,33 +239,6 @@ describe('EntityHeader', function() {
     assert.equal(addNotification.callCount, 1);
     assert.deepEqual(
       addNotification.args[0][0].title, 'Bundle failed to deploy');
-  });
-
-  it('can display as sticky', function() {
-    const wrapper = renderComponent({
-      scrollPosition: 100
-    });
-    const instance = wrapper.instance();
-    instance.refs = {
-      headerWrapper: {
-        clientHeight: 99
-      }
-    };
-    instance.componentDidMount();
-    wrapper.update();
-    // const expected = (
-    //   <div className="row-hero"
-    //     ref="headerWrapper"
-    //     style={{height: '99px'}}>
-    //     <header className="entity-header entity-header--sticky">
-    //       {output.props.children.props.children}
-    //     </header>
-    //   </div>
-    // );
-    assert.deepEqual(wrapper.find('.row-hero').prop('style'), {height: '99px'});
-    assert.equal(
-      wrapper.find('header').prop('className').includes('entity-header--sticky'),
-      true);
   });
 
   it('goes to the profile page when the owner is clicked', function() {

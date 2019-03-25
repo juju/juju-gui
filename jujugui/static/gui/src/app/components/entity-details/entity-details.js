@@ -106,8 +106,7 @@ class EntityDetails extends React.Component {
               getModelName={this.props.getModelName}
               hasPlans={this.state.hasPlans}
               importBundleYAML={this.props.importBundleYAML}
-              plans={this.state.plans}
-              scrollPosition={this.props.scrollPosition} />
+              plans={this.state.plans} />
             <EntityContent
               addNotification={this.props.addNotification}
               changeState={this.props.changeState}
@@ -293,7 +292,6 @@ EntityDetails.propTypes = {
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
-  scrollPosition: PropTypes.number.isRequired,
   sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
