@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repeating port values on Status pane.
 - Broken styles on the Status pane.
 - Searches without query text would reload forever.
+- Replaced Juju mailing list with Discourse link.
 
 ### Removed
 - Entity details pages no longer have sticky headers.
