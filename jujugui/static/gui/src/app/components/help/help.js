@@ -253,13 +253,13 @@ ${this.props.youtubeAPIKey}`,
                 #juju
               </a>
             </p>
-            <p>Mailing lists</p>
+            <p>Forums</p>
             <p>
               <a
                 className="link external"
-                href="https://lists.ubuntu.com/mailman/listinfo/juju"
+                href="https://discourse.jujucharms.com/"
                 target="_blank">
-                The Juju project
+                Juju Discourse
               </a>
             </p>
           </div>
