@@ -4,9 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const EntityHeader = require('./header');
-const Button = require('../../shared/button/button');
 const SvgIcon = require('../../svg-icon/svg-icon');
 
 const jsTestUtils = require('../../../utils/component-test-utils');

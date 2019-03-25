@@ -1,7 +1,6 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
