@@ -24,23 +24,7 @@ class Charmbrowser extends React.Component {
     super(props);
     // Setting a default state object.
     var state = this.generateState(this.props);
-    state.scrollPosition = 0;
     this.state = state;
-  }
-
-  componentDidMount() {
-    // The ref cannot exist at this point in the tests.
-    if (this.refs.charmbrowser) {
-      this.refs.charmbrowser.addEventListener(
-        'scroll', this._onScroll.bind(this));
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.refs.charmbrowser) {
-      this.refs.charmbrowser.removeEventListener(
-        'scroll', this._onScroll.bind(this));
-    }
   }
 
   /**
@@ -58,20 +42,8 @@ class Charmbrowser extends React.Component {
       '.charmbrowser');
     if (target && charmbrowser) {
       // Set the scroll position to the element's top position taking into
-      // account the sticky header size.
-      charmbrowser.scrollTop += target.getBoundingClientRect().top - 200;
-    }
-  }
-
-  /**
-    Set the scroll position state.
-
-    @method _onScroll
-    @param {Object} e The scroll event
-  */
-  _onScroll(e) {
-    if (this.state.activeComponent === 'entity-details') {
-      this.setState({scrollPosition: e.target.scrollTop});
+      // account the canvas header size.
+      charmbrowser.scrollTop += target.getBoundingClientRect().top - 70;
     }
   }
 
@@ -109,7 +81,6 @@ class Charmbrowser extends React.Component {
     // container to the top.
     if (this.state && activeComponent !== this.state.activeComponent) {
       this.refs.charmbrowser.scrollTop = 0;
-      state.scrollPosition = 0;
     }
     state.activeComponent = activeComponent;
     return state;
@@ -179,7 +150,6 @@ class Charmbrowser extends React.Component {
             key={id}
             listPlansForCharm={this.props.listPlansForCharm}
             scrollCharmbrowser={this._scrollCharmbrowser.bind(this)}
-            scrollPosition={this.state.scrollPosition}
             sendAnalytics={this.props.sendAnalytics}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}

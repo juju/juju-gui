@@ -2,7 +2,6 @@
 
 .entity-header {
   $social-icon-size: 36px;
-  $sticky-height: 120px;
   $icon-size: 96px;
 
   margin-bottom: 0;
@@ -11,90 +10,6 @@
   color: $cool-grey;
   overflow: hidden;
   border-bottom: 1px solid $color-mid-light;
-
-  @keyframes slideIn {
-    0% {
-      height: 0;
-    }
-
-    100% {
-      height: $sticky-height;
-    }
-  }
-
-  &--sticky {
-    position: fixed;
-    z-index: index($z-indexed-elements, entity-sticky-header);
-    top: $navbar-height;
-    left: $panel-space;
-    right: 0;
-    height: $sticky-height;
-    padding: 0;
-    background-color: $white;
-    border-bottom: 1px solid $light-mid-grey;
-    border-top-left-radius: $border-radius;
-    animation: slideIn 0.5s;
-    // This ensures that scrolling works when the mouse is hovering over the
-    // sticky header. The styles below target interactive elements within
-    // the header.
-    pointer-events: none;
-
-    a,
-    button,
-    input,
-    select,
-    .link {
-      pointer-events: auto;
-    }
-
-    .inner-wrapper {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px 10px;
-    }
-
-    .entity-header {
-      $sticky-icon-size: 26px;
-
-      &__icon {
-        width: $sticky-icon-size;
-        height: $sticky-icon-size;
-        margin: 15px 10px 0 0;
-        border-radius: 50%;
-      }
-
-      &__title {
-        font-size: 20px;
-        line-height: $sticky-icon-size;
-        min-height: $sticky-icon-size;
-      }
-
-      &__properties {
-        margin-top: 14px;
-      }
-
-      &__social-list,
-      &__actions-list,
-      &__properties + .entity-header__properties {
-        display: none;
-      }
-
-      &__select {
-        width: 100%;
-        margin: 0 0.5rem 0.5rem 0;
-      }
-
-      &__right {
-        padding-top: 15px;
-      }
-    }
-
-    .copy-to-clipboard {
-      display: none;
-    }
-  }
 
   .no-margin-bottom {
     margin-bottom: 0;

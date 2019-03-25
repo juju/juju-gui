@@ -31,7 +31,6 @@ describe('EntityDetails', function() {
         importBundleYAML={options.importBundleYAML || sinon.stub()}
         listPlansForCharm={options.listPlansForCharm || sinon.stub()}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
-        scrollPosition={options.scrollPosition || 100}
         sendAnalytics={options.sendAnalytics || sinon.stub()}
         setPageTitle={options.setPageTitle || sinon.stub()}
         showTerms={options.showTerms || sinon.stub()}
@@ -95,8 +94,7 @@ describe('EntityDetails', function() {
             getModelName={sinon.stub()}
             hasPlans={false}
             importBundleYAML={sinon.stub()}
-            plans={null}
-            scrollPosition={100} />
+            plans={null} />
           {undefined}
           <EntityContent
             addNotification={sinon.stub()}

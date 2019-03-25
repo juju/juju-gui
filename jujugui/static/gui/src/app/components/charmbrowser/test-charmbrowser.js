@@ -170,7 +170,6 @@ describe('Charmbrowser', function() {
           importBundleYAML={importBundleYAML}
           listPlansForCharm={listPlansForCharm}
           scrollCharmbrowser={entityDetails.prop('scrollCharmbrowser')}
-          scrollPosition={0}
           sendAnalytics={sinon.stub()}
           setPageTitle={setPageTitle}
           showTerms={showTerms}
