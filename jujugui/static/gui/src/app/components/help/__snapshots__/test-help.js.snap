@@ -170,15 +170,15 @@ exports[`Help renders 1`] = `
           </a>
         </p>
         <p>
-          Mailing lists
+          Forums
         </p>
         <p>
           <a
             className="link external"
-            href="https://lists.ubuntu.com/mailman/listinfo/juju"
+            href="https://discourse.jujucharms.com/"
             target="_blank"
           >
-            The Juju project
+            Juju Discourse
           </a>
         </p>
       </div>
