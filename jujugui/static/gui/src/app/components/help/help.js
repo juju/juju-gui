@@ -253,7 +253,7 @@ ${this.props.youtubeAPIKey}`,
                 #juju
               </a>
             </p>
-            <p>Forums</p>
+            <p>Forum</p>
             <p>
               <a
                 className="link external"
