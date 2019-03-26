@@ -59,47 +59,7 @@
       Make sure the config is loaded before other JS for use in the page
       below.
     -->
-    <!-- <script data="config" src="${config_url}"></script> -->
-    <script>
-      var juju_config = {
-        charmstoreMacaroons: null,
-        plansURL: 'https://api.jujucharms.com/omnibus/',
-        ratesURL: 'https://api.jujucharms.com/omnibus/',
-        jujuCoreVersion: '2.0.0',
-        socket_protocol: 'wss',
-        apiAddress: 'jimm.jujucharms.com:443',
-        gisf: true,
-        auth: null,
-        paymentURL: 'https://api.jujucharms.com/payment/',
-        readOnly: false,
-        jujuEnvUUID: '',
-        bundleServiceURL: 'https://api.jujucharms.com/bundleservice/',
-        user: null,
-        GTM_enabled: true,
-        transitions: false,
-        socketTemplate: 'wss://$server:$port/model/$uuid/api',
-        viewContainer: '#main',
-        password: null,
-        termsURL: 'https://api.jujucharms.com/terms/',
-        container: '#main',
-        consoleEnabled: true,
-        dischargeToken: null,
-        charmstoreURL: 'https://api.jujucharms.com/charmstore/',
-        interactiveLogin: true,
-        serverRouting: false,
-        baseUrl: '/',
-        jujushellURL: 'wss://shell.jujugui.org/ws/',
-        stripeKey: '',
-        cachedFonts: false,
-        flags: {terminal: true, support: true, anssr: true, expert: true},
-        controllerSocketTemplate: 'wss://$server:$port/api',
-        plansMacaroons: null,
-        statsURL: 'https://jujucharms.com/_stats/',
-        termsMacaroons: null,
-        staticURL: '/static_gui',
-        gisfLogout: '/_logout'
-      };
-    </script>
+    <script data="config" src="/config.js"></script>
     <script type="text/javascript">
       window.GUI_VERSION = {version: '', commit: ''};
     </script>
@@ -238,7 +198,7 @@
       to download an app the user might not be able to use anyway.
     -->
 
-    <script src="/static/build/version.json"></script>
+    <script src="/static/build/version.json" type="application/json"></script>
     <script src="/static/yui/yui/yui-min.js"></script>
 
     <script>
