@@ -14,7 +14,7 @@
     "watch": "webpack --config webpack.dev.js --watch",
     "lint-python": "flake8 --exclude '*env*,node_modules' && black --line-length 79 --check --exclude '(node_modules/.*|[^/]*env[0-9]?/.*)' .",
     "lint-js": "eslint --rulesdir eslint-rules jujugui/static/gui/src",
-    "lint": "npm run lint-js",
+    "lint": "yarn run lint-js",
     "serve": "./entrypoint 0.0.0.0:$PORT",
     "test-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
     "test-js": "jest",
