@@ -9,8 +9,6 @@ from werkzeug.debug import DebuggedApplication
 from werkzeug.routing import BaseConverter
 
 from webapp.blueprint import gui
-from webapp.handlers import set_handlers
-
 
 class RegexConverter(BaseConverter):
     def __init__(self, url_map, *items):
@@ -34,7 +32,6 @@ if app.debug:
 
 talisker.flask.register(app)
 
-set_handlers(app)
 app.register_blueprint(gui)
 
 if __name__ == "__main__":
