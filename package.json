@@ -13,7 +13,7 @@
     "clean": "rm -rf static/yui static/build node_modules webapp/__pycache__",
     "watch": "webpack --config webpack.dev.js --watch",
     "lint-js": "eslint --rulesdir eslint-rules jujugui/static/gui/src",
-    "lint": "npm run lint-js",
+    "lint": "yarn run lint-js",
     "serve": "./entrypoint 0.0.0.0:$PORT",
     "test-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
     "test": "jest"
