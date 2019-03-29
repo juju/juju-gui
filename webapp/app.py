@@ -10,6 +10,7 @@ from werkzeug.routing import BaseConverter
 
 from webapp.blueprint import gui
 
+
 class RegexConverter(BaseConverter):
     def __init__(self, url_map, *items):
         super(RegexConverter, self).__init__(url_map)
@@ -17,9 +18,7 @@ class RegexConverter(BaseConverter):
 
 
 app = flask.Flask(
-    __name__,
-    template_folder="../templates",
-    static_folder="../static"
+    __name__, template_folder="../templates", static_folder="../static"
 )
 
 
