@@ -1783,9 +1783,9 @@ class ServiceModule {
     var image, href;
     selection.each(function(d) {
       image = d3.select(this).select('.service-block-image');
-      href = 'static/gui/build/app/assets/svgs/service_module.svg';
+      href = '/static/assets/svgs/service_module.svg';
       if (d.pending || d.deleted) {
-        href = 'static/gui/build/app/assets/svgs/service_module_pending.svg';
+        href = '/static/assets/svgs/service_module_pending.svg';
       }
       image.attr('href', href);
     });

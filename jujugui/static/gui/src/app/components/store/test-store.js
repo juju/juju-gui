@@ -88,7 +88,7 @@ describe('Store', function() {
         </div>
         <div>
           <img
-            src="/static/gui/build/app/assets/images/store/write-your-own.png" />
+            src="/static/assets/images/store/write-your-own.png" />
         </div>
       </div>
     </div>);

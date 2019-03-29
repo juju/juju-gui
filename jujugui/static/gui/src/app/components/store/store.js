@@ -24,7 +24,7 @@ class Store extends React.Component {
   */
   _generateLocalImagePath(filename) {
     const staticURL = this.props.staticURL || '';
-    const basePath = `${staticURL}/static/gui/build/app/assets/images/store/`;
+    const basePath = `${staticURL}/assets/images/store/`;
     return basePath + filename;
   }
 

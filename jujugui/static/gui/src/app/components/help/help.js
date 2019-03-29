@@ -135,7 +135,7 @@ ${this.props.youtubeAPIKey}`,
     }
 
     const staticURL = this.props.staticURL;
-    const basePath = `${staticURL}/static/gui/build/app/assets/images/non-sprites/tour`;
+    const basePath = `${staticURL}/assets/images/non-sprites/tour`;
 
     return (<Lightbox
       close={this._handleClose.bind(this)}
