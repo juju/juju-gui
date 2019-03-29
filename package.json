@@ -12,12 +12,12 @@
     "build": "webpack --config webpack.dev.js && cp -r node_modules/yui static && rm -rf static/yui/node_modules && ./scripts/version.sh",
     "clean": "rm -rf static/yui static/build node_modules webapp/__pycache__",
     "watch": "webpack --config webpack.dev.js --watch",
-    "lint-python": "flake8 --exclude '*env*,node_modules' && black --line-length 79 --check --exclude '(node_modules/.*|[^/]*env[0-9]?/.*)' .",
+    "lint-python": "flake8 --exclude '*env*,node_modules,jujugui/static,scripts/lib' && black --line-length 79 --check --exclude '(jujugui/.*|scripts/.*|node_modules/.*|[^/]*env[0-9]?/.*)' .",
     "lint-js": "eslint --rulesdir eslint-rules jujugui/static/gui/src",
     "lint": "yarn run lint-js",
     "serve": "./entrypoint 0.0.0.0:$PORT",
     "test-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
-    "test-js": "jest",
+    "test-js": "jest && yarn run test-old",
     "test": "yarn run lint-python && yarn run lint-js && yarn run test-js"
   },
   "dependencies": {
