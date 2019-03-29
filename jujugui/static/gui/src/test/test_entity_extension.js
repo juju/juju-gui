@@ -161,7 +161,7 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     assert.deepEqual(
       entity.iconPath,
-      'static/static/assets/images/non-sprites/bundle.svg');
+      'static/assets/images/non-sprites/bundle.svg');
   });
 
   it('uses the correct name for the canonical-kubernetes bundle', function() {
