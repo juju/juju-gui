@@ -55,7 +55,7 @@ describe('IconList', function() {
             <img
               alt='wordpress'
               className="icon-list__image"
-              src="static/gui/build/app/assets/images/non-sprites/charm_160.svg" />
+              src="static/assets/images/non-sprites/charm_160.svg" />
             <span className="tooltip__tooltip">
               <span className="tooltip__inner tooltip__inner--down">
                 wordpress

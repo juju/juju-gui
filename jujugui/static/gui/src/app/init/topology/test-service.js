@@ -308,13 +308,13 @@ describe('service module events', function() {
     serviceModule.highlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, true);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
-      '/static/gui/build/app/assets/svgs/service_module_selected.svg');
+      '/static/assets/svgs/service_module_selected.svg');
     assert.notEqual(topo.vis.select('.service.highlight')[0][0],
       null, 'Highlight class not found');
     serviceModule.unhighlight({serviceName: 'haproxy'});
     assert.equal(topo.service_boxes.haproxy.highlighted, false);
     assert.equal(topo.vis.select('.service-block-image').attr('href'),
-      '/static/gui/build/app/assets/svgs/service_module.svg');
+      '/static/assets/svgs/service_module.svg');
     assert.notEqual(topo.vis.select('.service.unhighlight')[0][0],
       null, 'Unhighlight class not found');
   });
@@ -364,7 +364,7 @@ describe('service module events', function() {
   });
 
   it('should deploy a service on charm token drop events', function(done) {
-    const src = '/static/gui/build/app/assets/svgs/service_health_mask.svg';
+    const src = '/static/assets/svgs/service_health_mask.svg';
     const fakeEventObject = {
       dataTransfer: {
         getData: function(name) {
@@ -403,7 +403,7 @@ describe('service module events', function() {
   });
 
   it('should deploy a bundle on bundle token drop events', function(done) {
-    const src = '/static/gui/build/app/assets/svgs/service_health_mask.svg';
+    const src = '/static/assets/svgs/service_health_mask.svg';
     const fakeEventObject = {
       dataTransfer: {
         getData: function(name) {

@@ -137,7 +137,7 @@ describe('Entity Extension', function() {
       url: 'http://example.com/',
       // no staticURL is defined on window.juju_config.staticURL so this
       // path should not include a staticURL prefix.
-      iconPath: 'static/gui/build/app/assets/images/non-sprites/bundle.svg',
+      iconPath: 'static/assets/images/non-sprites/bundle.svg',
       serviceCount: 3,
       applications: [],
       unitCount: 5
@@ -161,7 +161,7 @@ describe('Entity Extension', function() {
     var entity = entityModel.toEntity();
     assert.deepEqual(
       entity.iconPath,
-      'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
+      'static/assets/images/non-sprites/bundle.svg');
   });
 
   it('uses the correct name for the canonical-kubernetes bundle', function() {

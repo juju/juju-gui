@@ -1158,8 +1158,7 @@ utils.getIconPath = function(charmId, isBundle, env) {
         // associated path for GISF but a root path for GiJoe.
         staticURL = window.juju_config.staticURL + '/';
       }
-      var basePath = `${staticURL}static/gui/build/app`;
-      path = `${basePath}/assets/images/non-sprites/bundle.svg`;
+      path = `${staticURL}/assets/images/non-sprites/bundle.svg`;
     } else {
       // Get the charm ID from the service.  In some cases, this will be
       // the charm URL with a protocol, which will need to be removed.
@@ -1177,7 +1176,7 @@ utils.getIconPath = function(charmId, isBundle, env) {
     }
   } else {
     // If no env is provided as necessary then return the default icon.
-    path = 'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
+    path = 'static/assets/images/non-sprites/charm_160.svg';
   }
   return path;
 };

@@ -14,7 +14,8 @@ describe('Store', function() {
       charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
       gisf={options.gisf === undefined ? true : options.gisf}
       setPageTitle={options.setPageTitle || sinon.stub()}
-      showExperts={options.showExperts} />
+      showExperts={options.showExperts}
+      staticURL="/static" />
   );
 
   it('can render the right items for gij', function() {
@@ -88,7 +89,7 @@ describe('Store', function() {
         </div>
         <div>
           <img
-            src="/static/gui/build/app/assets/images/store/write-your-own.png" />
+            src="/static/assets/images/store/write-your-own.png" />
         </div>
       </div>
     </div>);

@@ -13,7 +13,7 @@ require('./_tour.scss');
 class Tour extends React.PureComponent {
   render() {
     const staticURL = this.props.staticURL;
-    const basePath = `${staticURL}/static/gui/build/app/assets/images/non-sprites/tour`;
+    const basePath = `${staticURL}/assets/images/non-sprites/tour`;
     return (
       <div>
         <span

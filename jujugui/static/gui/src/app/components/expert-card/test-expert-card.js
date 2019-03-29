@@ -29,7 +29,7 @@ describe('ExpertCard', function() {
             alt="spicule.png"
             className="expert-card__logo-image"
             src={
-              '/media/static/gui/build/app/assets/images/' +
+              '/media/assets/images/' +
               'non-sprites/experts/spicule.png'} />
         </div>
         <span>Content</span>

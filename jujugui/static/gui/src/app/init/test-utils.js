@@ -1155,7 +1155,7 @@ describe('init utils', () => {
       var path = utils.getIconPath('bundle:elasticsearch', true);
       assert.equal(
         path,
-        'static/gui/build/app/assets/images/non-sprites/bundle.svg');
+        'static/assets/images/non-sprites/bundle.svg');
     });
 
     it('uses staticURL if provided for bundle icon location', function() {
@@ -1165,7 +1165,7 @@ describe('init utils', () => {
       var path = utils.getIconPath('bundle:elasticsearch', true);
       assert.equal(
         path,
-        'static/static/gui/build/app/assets/images/non-sprites/bundle.svg');
+        'static/assets/images/non-sprites/bundle.svg');
     });
 
     it('returns a qualified charmstoreURL icon location', function() {

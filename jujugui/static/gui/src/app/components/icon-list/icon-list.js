@@ -63,7 +63,7 @@ class IconList extends React.Component {
     let components = [];
     this.props.applications.forEach(app => {
       const src = app.iconPath ||
-          'static/gui/build/app/assets/images/non-sprites/charm_160.svg';
+          'static/assets/images/non-sprites/charm_160.svg';
       components.push(
         <li
           className="icon-list__item tooltip"
