@@ -1,0 +1,35 @@
+---
+defaults: &defaults
+  docker:
+    - image: canonicalwebteam/dev
+  environment:
+  working_directory: ~/project
+
+version: 2
+jobs:
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip3 install -r requirements.txt && yarn
+      - run:
+          name: Lint
+          command: yarn run lint
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: yarn
+      - run:
+          name: Test
+          command: yarn run test-js
+workflows:
+  version: 2
+  build:
+    jobs:
+      - lint
+      - test
