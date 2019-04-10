@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: './jujugui/static/gui/src/app/init.js',
+  entry: './gui/src/app/init.js',
   output: {
     path: path.resolve(__dirname, 'static/build'),
     filename: 'init-pkg.js',
