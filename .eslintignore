@@ -1,4 +1,4 @@
-jujugui/static/gui/src/app/assets
-jujugui/static/gui/src/test/assets/
-jujugui/static/gui/src/test/globalconfig.js
-jujugui/static/gui/src/test/test-setup.js
+gui/src/app/assets
+gui/src/test/assets/
+gui/src/test/globalconfig.js
+gui/src/test/test-setup.js
