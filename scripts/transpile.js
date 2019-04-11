@@ -37,10 +37,10 @@ if (FILE_LIST) {
 } else {
   // If no files were provided then we need to determine what files need to be built.
   if (fs.existsSync(LAST_TRANSPILE)) {
-    fileList = childProcess.execSync(`find jujugui/static/gui/src/app -type f -name "*.js" -cnewer ${LAST_TRANSPILE}`); //eslint-disable-line max-len
+    fileList = childProcess.execSync(`find gui/src/app -type f -name "*.js" -cnewer ${LAST_TRANSPILE}`); //eslint-disable-line max-len
   } else {
     console.log('Building all files, no last-transpile time found.');
-    fileList = childProcess.execSync('find jujugui/static/gui/src/app -type f -name "*.js"');
+    fileList = childProcess.execSync('find gui/src/app -type f -name "*.js"');
   }
   fileList = fileList.toString().split('\n');
   // There is an extra newline at the end of the string
@@ -74,7 +74,7 @@ for (let i = 1; i <= cpuCount; i+=1) {
   const transpiler = childProcess.spawn(
     'node', ['scripts/transpile.js', '--spawned', '--files', filesSubset]);
   const onData = data => console.log(`${data}`);
-  transpiler.stdout.on('data',onData);
+  transpiler.stdout.on('data', onData);
   transpiler.stderr.on('data', onData);
   transpiler.on('close', code => {
     console.log(`child process exited with code ${code}`);
@@ -82,7 +82,7 @@ for (let i = 1; i <= cpuCount; i+=1) {
   });
 }
 
-function transpile (fileList) {
+function transpile(fileList) {
   fileList.forEach(file => {
     const fileParts = file.split('/');
     const fileName = fileParts.pop();
@@ -94,7 +94,7 @@ function transpile (fileList) {
     }, (err, data) => {
       console.log('Transpiling', fullPath);
       mkdirp.sync(directory);
-      const full = babel.transform(data, { plugins, compact: false });
+      const full = babel.transform(data, {plugins, compact: false});
       fs.writeFile(fullPath, full.code, writeHandler);
       const min = babel.transform(data, {
         presets: ['babel-preset-babili'],

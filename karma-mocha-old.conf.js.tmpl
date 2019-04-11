@@ -26,21 +26,21 @@ module.exports = function(config) {
     // with the preprocessors, to watch the source files and serve the compiled
     // files.
     files: [
-      'jujugui/static/gui/src/test/test-setup.js',
-      'jujugui/static/gui/src/test/globalconfig.js',
+      'gui/src/test/test-setup.js',
+      'gui/src/test/globalconfig.js',
 
-      'jujugui/static/gui/build/app/assets/javascripts/yui/yui/yui.js',
-      'jujugui/static/gui/build/app/assets/javascripts/yui/loader/loader.js',
+      'gui/build/app/assets/javascripts/yui/yui/yui.js',
+      'gui/build/app/assets/javascripts/yui/loader/loader.js',
 
-      'jujugui/static/gui/src/test/test_entity_extension.js',
-      'jujugui/static/gui/src/test/test_env_api.js',
-      'jujugui/static/gui/src/test/test_controller_api.js',
-      'jujugui/static/gui/src/test/test_env.js',
-      'jujugui/static/gui/src/test/test_login.js',
+      'gui/src/test/test_entity_extension.js',
+      'gui/src/test/test_env_api.js',
+      'gui/src/test/test_controller_api.js',
+      'gui/src/test/test_env.js',
+      'gui/src/test/test_login.js',
 
       // Test Assets
       {
-        pattern: 'jujugui/static/gui/src/test/data/*.json',
+        pattern: 'gui/src/test/data/*.json',
         watched: false,
         included: false,
         served: true,
@@ -51,20 +51,20 @@ module.exports = function(config) {
     proxies: {
       '/dev/combo': 'http://0.0.0.0:{TEST_PORT}/dev/combo?',
       '/data': 'http://0.0.0.0:{TEST_PORT}/test/data',
-      '/base/jujugui/static/gui/src/test/': 'http://0.0.0.0:{TEST_PORT}/test/'
+      '/base/gui/src/test/': 'http://0.0.0.0:{TEST_PORT}/test/'
     },
 
     // list of files to exclude
     exclude: [
-      'jujugui/static/gui/build/app/components/**/*-min.js'
+      'gui/build/app/components/**/*-min.js'
     ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'jujugui/static/gui/src/test/test_*.js': ['webpack'],
-      'jujugui/static/gui/src/test/globalconfig.js': ['webpack'],
-      'jujugui/static/gui/src/test/utils.js': ['webpack']
+      'gui/src/test/test_*.js': ['webpack'],
+      'gui/src/test/globalconfig.js': ['webpack'],
+      'gui/src/test/utils.js': ['webpack']
     },
 
     webpack: webpackConfig,

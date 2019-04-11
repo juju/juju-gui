@@ -20,8 +20,6 @@ gui.sublime-project
 gui.sublime-workspace
 include/
 jujugui.egg-info/
-jujugui/static/build/*
-jujugui/static/gui/build/
 karma-mocha-old.conf.js
 karma.conf.js
 lib/

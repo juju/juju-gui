@@ -1,9 +1,9 @@
 files:
   include:
-    - 'jujugui/static/gui/src/app/assets/css/**/*.scss'
-    - 'jujugui/static/gui/src/app/components/**/*.scss'
+    - 'gui/src/app/assets/css/**/*.scss'
+    - 'gui/src/app/components/**/*.scss'
   ignore:
-    - 'jujugui/static/gui/src/app/assets/css/plugins/**/*.scss'
+    - 'gui/src/app/assets/css/plugins/**/*.scss'
 options:
   formatter: stylish
   merge-default-rules: false
