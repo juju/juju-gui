@@ -17,7 +17,8 @@
     "lint-js": "eslint --rulesdir eslint-rules gui/src",
     "lint": "yarn run lint-js && yarn run lint-python",
     "serve": "./entrypoint 0.0.0.0:$PORT",
-    "test-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
+    "test-js-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
+    "test-js-ci": "jest --maxWorkers=2",
     "test-js": "jest",
     "test": "yarn run lint-python && yarn run lint-js && yarn run test-js"
   },
