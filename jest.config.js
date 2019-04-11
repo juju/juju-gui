@@ -2,14 +2,14 @@
 
 const config = {
   moduleNameMapper: {
-    '.scss$': '<rootDir>/jujugui/static/gui/src/test/proxy-module.js'
+    '.scss$': '<rootDir>/gui/src/test/proxy-module.js'
   },
-  roots: ['<rootDir>/jujugui/static/gui/src/app'],
+  roots: ['<rootDir>/gui/src/app'],
   setupFiles: [
-    '<rootDir>/jujugui/static/gui/src/test/jest-setup.js',
-    '<rootDir>/jujugui/static/gui/src/test/chai-setup.js',
-    '<rootDir>/jujugui/static/gui/src/test/enzyme-setup.js',
-    '<rootDir>/jujugui/static/gui/src/test/globalconfig.js'
+    '<rootDir>/gui/src/test/jest-setup.js',
+    '<rootDir>/gui/src/test/chai-setup.js',
+    '<rootDir>/gui/src/test/enzyme-setup.js',
+    '<rootDir>/gui/src/test/globalconfig.js'
   ],
   snapshotSerializers: ['enzyme-to-json/serializer'],
   testMatch: [
