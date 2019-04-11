@@ -52,8 +52,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script type="text/javascript">
         window.GUI_VERSION = {'version': '', 'commit': ''};
     </script>
-    <link rel="shortcut icon" href="{{.staticURL}}/static/gui/build/app/favicon.ico">
-    <link rel="stylesheet" href="{{.comboURL}}?app/assets/juju-gui.css">
+    <link rel="shortcut icon" href="{{.staticURL}}/static/assets/favicon.ico">
+    <link rel="stylesheet" href="{{.staticURL}}/static/build/juju-gui.css">
 
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -180,8 +180,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
     <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js"></script>
     {{else}}
-    <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui-min.js"></script>
+    <script src="{{.staticURL}}/static/build/version.json"></script>
+    <script src="{{.staticURL}}/static/yui/yui/yui-min.js"></script>
     {{end}}
 
     <script>
@@ -207,9 +207,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             });
           };
           {{if .debug}}
-          script.src = '{{.comboURL}}?app/init-pkg.js';
+          script.src = '{{.comboURL}}?app/-pkg.js';
           {{else}}
-          script.src = '{{.comboURL}}?app/init-pkg-min.js';
+          script.src = '{{.staticURL}}/static/build/init-pkg.js';
           {{end}}
           document.head.appendChild(script);
 
