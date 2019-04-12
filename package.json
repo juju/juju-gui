@@ -8,6 +8,20 @@
     "type": "git",
     "url": "https://github.com/juju/juju-gui.git"
   },
+  "scripts": {
+    "build": "webpack --config webpack.dev.js && cp -r node_modules/yui static && rm -rf static/yui/node_modules && ./scripts/version.sh",
+    "build-dist": "yarn run clean && yarn && yarn build && ./scripts/build-dist.js",
+    "clean": "rm -rf static/yui static/build node_modules webapp/__pycache__ dist/",
+    "watch": "webpack --config webpack.dev.js --watch",
+    "lint-python": "flake8 --exclude '*env*,node_modules,gui,scripts/lib' && black --line-length 79 --check --exclude '(jujugui/.*|scripts/.*|node_modules/.*|[^/]*env[0-9]?/.*)' .",
+    "lint-js": "eslint --rulesdir eslint-rules gui/src",
+    "lint": "yarn run lint-js && yarn run lint-python",
+    "serve": "./entrypoint 0.0.0.0:$PORT",
+    "test-js-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
+    "test-js-ci": "jest --maxWorkers=2",
+    "test-js": "jest",
+    "test": "yarn run lint-python && yarn run lint-js && yarn run test-js"
+  },
   "dependencies": {
     "classnames": "^2.2.6",
     "clipboard": "^1.7.1",

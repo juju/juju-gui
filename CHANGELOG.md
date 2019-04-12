@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Browserify has been replaced with Webpack which also now builds the SCSS files.
 - Update the canvas to use the existing svg sprites.
 - Removed unused svg assets from the build/dist.
+- GUI is now being served by Flask.
 
 ### Fixed
 - Broken GCP cloud logo in Firefox.

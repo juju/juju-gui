@@ -20,8 +20,6 @@ gui.sublime-project
 gui.sublime-workspace
 include/
 jujugui.egg-info/
-jujugui/static/build/*
-jujugui/static/gui/build/
 karma-mocha-old.conf.js
 karma.conf.js
 lib/
@@ -48,3 +46,9 @@ yuidoc
 yui-macaroon.js
 ._.DS_Store
 .DS_Store
+.pip.*
+.yarn.*
+static/yui
+static/build
+.docker-project
+__pycache__
