@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_charmstore-login.scss');
 
@@ -45,10 +45,10 @@ class ProfileCharmstoreLogin extends React.Component {
   render() {
     return (
       <div className="profile-charmstore-login">
-        <div className="profile-charmstore-login__button">
+        <div className="profile-charmstore-login__button v1">
           <Button
             action={this._interactiveLogin.bind(this)}
-            type="neutral">
+            modifier="neutral">
             Login to the charm store
           </Button>
         </div>

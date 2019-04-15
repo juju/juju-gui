@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DeploymentSection = require('../section/section');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const USSOLoginLink = require('../../usso-login-link/usso-login-link');
 
 require('./_login.scss');

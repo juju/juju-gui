@@ -9,7 +9,7 @@ const {urls} = require('jaaslib');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 
 require('./_config.scss');
 
@@ -383,16 +383,17 @@ class Configuration extends React.Component {
     const actionButtons = [{
       disabled: disabled,
       title: 'Cancel',
-      type: 'base',
+      modifier: 'base',
       action: this._showInspectorIndex.bind(this)
     }, {
       disabled: disabled,
-      title: 'Save changes',
-      type: 'neutral',
+      title: 'Save',
+      modifier: 'positive',
       action: this._saveConfig.bind(this)
     }];
     const classes = classNames(
       'inspector-config__buttons',
+      'v1',
       {'inspector-config__buttons--hidden': !this.state.changed});
     return (
       <div className={classes}>
@@ -420,7 +421,7 @@ class Configuration extends React.Component {
               ref="file"
               type="file" />
           </form>
-          <div className="inspector-config__config-file">
+          <div className="inspector-config__config-file v1">
             <ButtonRow buttons={importButton} />
           </div>
           {this._generateConfigElements()}

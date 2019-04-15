@@ -4,11 +4,11 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const initUtils = require('../../../../init/utils');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
-const ButtonRow = require('../../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const FileField = require('../../../file-field/file-field');
 
 require('./_add.scss');
@@ -232,13 +232,13 @@ class DeploymentCredentialAdd extends React.Component {
     let buttons = [{
       submit: true,
       title: `${prefix} cloud credential`,
-      type: 'inline-positive'
+      modifier: 'positive'
     }];
     if (props.onCancel) {
       buttons.unshift({
         action: props.onCancel,
         title: 'Cancel',
-        type: 'inline-neutral'
+        modifier: 'neutral'
       });
     }
     // If no cloud has been selected we set a default so that the disabled
@@ -302,7 +302,7 @@ class DeploymentCredentialAdd extends React.Component {
           </h3>
           {this._generateCredentialsFields()}
           <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom v1'}>
             <ButtonRow
               buttons={buttons} />
           </div>

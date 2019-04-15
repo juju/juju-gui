@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentBar = require('./deployment-bar');
 const DeploymentBarNotification = require('./notification/notification');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
@@ -41,7 +41,7 @@ describe('DeploymentBar', function() {
       <div className="deployment-bar">
         <DeploymentBarNotification
           change={null} />
-        <div className="deployment-bar__deploy">
+        <div className="deployment-bar__deploy v1">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}

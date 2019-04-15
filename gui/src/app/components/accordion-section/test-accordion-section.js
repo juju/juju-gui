@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const AccordionSection = require('./accordion-section');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('AccordionSection', () => {
   const renderComponent = (options = {}) => enzyme.shallow(

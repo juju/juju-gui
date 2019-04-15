@@ -7,9 +7,9 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const Button = require('../shared/button/button');
-const Panel = require('../shared/panel/panel');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_post-deployment.scss');
 
@@ -129,7 +129,7 @@ class PostDeployment extends React.Component {
   */
   _renderPostDeploymentScriptButton() {
     if (this.state[POST_DEPLOYMENT]) {
-      return (<div>
+      return (<div className="v1">
         <Button
           action={this._executePostDeploymentScript.bind(this)}>
             Execute post-deployment script

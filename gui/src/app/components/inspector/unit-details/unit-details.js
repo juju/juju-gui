@@ -4,9 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Link = require('../../link/link');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_unit-details.scss');
 
@@ -271,7 +271,7 @@ class UnitDetails extends React.Component {
           {this._generateAddressList()}
         </div>
         {this._generateTerminalActions()}
-        <div className="twelve-col no-margin-bottom">
+        <div className="twelve-col no-margin-bottom v1">
           <ButtonRow buttons={[{
             disabled: props.acl.isReadOnly(),
             title: 'Remove',

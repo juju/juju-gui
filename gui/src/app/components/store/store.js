@@ -233,46 +233,61 @@ class Store extends React.Component {
     if (lastCol) {
       sharedClasses.push('last-col');
     }
-    let kubernetesButton = (<a
-      className="button--inline-neutral"
-      href="https://jujucharms.com/kubernetes"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-          Find out more
-    </a>);
-    let openstackButton = (<a
-      className="button--inline-neutral"
-      href="https://jujucharms.com/openstack"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-          Find out more
-    </a>);
-    let bigdataButton = (<a
-      className="button--inline-neutral"
-      href="https://jujucharms.com/big-data"
-      onClick={this._stopPropagation.bind(this)}
-      target="_blank">
-      Find out more
-    </a>);
-    if (!this.props.gisf) {
-      kubernetesButton = (<span
-        className="button--inline-neutral"
-        data-query="kubernetes"
-        onClick={this._handleSearchClick.bind(this)}>
-        View
+    let kubernetesButton = (
+      <span className="v1">
+        <a
+          className="p-button--neutral"
+          href="https://jujucharms.com/kubernetes"
+          onClick={this._stopPropagation.bind(this)}
+          target="_blank">
+              Find out more
+        </a>
       </span>);
+    let openstackButton = (
+      <span className="v1">
+        <a
+          className="p-button--neutral"
+          href="https://jujucharms.com/openstack"
+          onClick={this._stopPropagation.bind(this)}
+          target="_blank">
+              Find out more
+        </a>
+      </span>);
+    let bigdataButton = (
+      <span className="v1">
+        <a
+          className="p-button--neutral"
+          href="https://jujucharms.com/big-data"
+          onClick={this._stopPropagation.bind(this)}
+          target="_blank">
+          Find out more
+        </a>
+      </span>);
+    if (!this.props.gisf) {
+      kubernetesButton = (
+        <span className="v1">
+          <span
+            className="p-button--neutral"
+            data-query="kubernetes"
+            onClick={this._handleSearchClick.bind(this)}>
+            View
+          </span>
+        </span>);
       openstackButton = (<span
-        className="button--inline-neutral"
+        className="p-button--neutral"
         data-query="openstack"
         onClick={this._handleSearchClick.bind(this)}>
           View
       </span>);
-      bigdataButton = (<span
-        className="button--inline-neutral"
-        data-query="hadoop"
-        onClick={this._handleSearchClick.bind(this)}>
-        View
-      </span>);
+      bigdataButton = (
+        <span className="v1">
+          <span
+            className="p-button--neutral"
+            data-query="hadoop"
+            onClick={this._handleSearchClick.bind(this)}>
+            View
+          </span>
+        </span>);
     }
     switch (name) {
       case 'kubernetes':
@@ -431,12 +446,12 @@ class Store extends React.Component {
               alt=""
               src={this._generateLocalImagePath('charm-icon.png')} />
           </div>
-          <div className="five-col no-margin-bottom last-col">
+          <div className="five-col no-margin-bottom last-col v1">
             <p>Charms are sets of scripts that simplify the
                   deployment and management tasks of a service. They
                   are regularly reviewed and updated.</p>
             <span
-              className="button--inline-neutral"
+              className="p-button--neutral"
               data-filterkey="type"
               data-filtervalue="charm"
               onClick={this._handleSearchClick.bind(this)}>
@@ -450,12 +465,12 @@ class Store extends React.Component {
               alt=""
               src={this._generateLocalImagePath('bundle-icon.png')} />
           </div>
-          <div className="five-col no-margin-bottom last-col">
+          <div className="five-col no-margin-bottom last-col v1">
             <p>Bundles are collections of charms that link
                   applications together, so you can deploy whole
                   chunks of infrastructure in one go.</p>
             <span
-              className="button--inline-neutral"
+              className="p-button--neutral"
               data-filterkey="type"
               data-filtervalue="bundle"
               onClick={this._handleSearchClick.bind(this)}>
@@ -497,11 +512,14 @@ class Store extends React.Component {
             <p>Nagios offers complete monitoring, management
                   and alerting of any service from the charm store
                   that is related to it.</p>
-            <span
-              className="button--inline-neutral"
-              data-entity="nagios"
-              onClick={this._handleEntityClick.bind(this)}>
-                      View the charm
+
+            <span className="v1">
+              <span
+                className="p-button--neutral"
+                data-entity="nagios"
+                onClick={this._handleEntityClick.bind(this)}>
+                        View the charm
+              </span>
             </span>
           </div>
         </div>
@@ -698,8 +716,8 @@ class Store extends React.Component {
             <p>Juju makes it easy to deploy container management solutions
             by provisioning, installing and configuring all the systems in
             the cluster.</p>
-            <p><span
-              className="button--inline-neutral"
+            <p className="v1"><span
+              className="p-button--neutral"
               data-query="containers"
               onClick={this._handleSearchClick.bind(this)}>
               View bundles
@@ -747,11 +765,13 @@ class Store extends React.Component {
                   components, it offers a repeatable and reliable way
                   to setup complex software across multiple
                   substrates.</p>
-            <span
-              className="button--inline-neutral"
-              data-entity="realtime-syslog-analytics"
-              onClick={this._handleEntityClick.bind(this)}>
-                      View the bundle
+            <span className="v1">
+              <span
+                className="p-button--neutral"
+                data-entity="realtime-syslog-analytics"
+                onClick={this._handleEntityClick.bind(this)}>
+                        View the bundle
+              </span>
             </span>
           </div>
         </div>
@@ -926,11 +946,13 @@ class Store extends React.Component {
             <p>MySQL is a fast, stable and true multi-user,
                   multi-threaded SQL database server. Its main goals
                   are speed, robustness and ease of use.</p>
-            <span
-              className="button--inline-neutral"
-              data-entity="mysql"
-              onClick={this._handleEntityClick.bind(this)}>
-                      View the charm
+            <span className="v1">
+              <span
+                className="p-button--neutral"
+                data-entity="mysql"
+                onClick={this._handleEntityClick.bind(this)}>
+                        View the charm
+              </span>
             </span>
           </div>
         </div>

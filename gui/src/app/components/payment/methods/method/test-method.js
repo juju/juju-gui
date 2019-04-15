@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const Button = require('../../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../../generic-input/generic-input');
 const AddressForm = require('../../../address-form/address-form');
 const PaymentMethodCard = require('../card/card');
@@ -116,15 +116,17 @@ describe('PaymentMethod', () => {
             }]}
             value="04/22" />
         </div>
-        <div className="twelve-col payment-method__buttons">
+        <div className="twelve-col payment-method__buttons v1">
           <Button
             action={wrapper.find('Button').at(0).prop('action')}
-            type="inline-neutral">
+            extraClasses="is-inline"
+            modifier="neutral">
             Cancel
           </Button>
           <Button
             action={wrapper.find('Button').at(1).prop('action')}
-            type="inline-positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Update
           </Button>
         </div>

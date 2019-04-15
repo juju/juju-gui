@@ -6,9 +6,9 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
-const Machine = require('../../shared/machine/machine');
+const {Machine} = require('@canonical/juju-react-components');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
 require('./_machine.scss');
@@ -106,11 +106,11 @@ class MachineViewMachine extends React.Component {
     const buttons = [{
       title: 'Cancel',
       action: this._toggleForm.bind(this),
-      type: 'base'
+      modifier: 'base'
     }, {
       title: 'Update',
       action: this._setConstraints.bind(this),
-      type: 'neutral',
+      modifier: 'neutral',
       disabled: disabled
     }];
     return (
@@ -126,9 +126,11 @@ class MachineViewMachine extends React.Component {
           providerType={this.props.modelAPI.providerType}
           series={this.props.machineAPI.series}
           valuesChanged={this._updateConstraints.bind(this)} />
-        <ButtonRow
-          buttons={buttons}
-          key="buttons" />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons}
+            key="buttons" />
+        </span>
       </div>);
   }
 

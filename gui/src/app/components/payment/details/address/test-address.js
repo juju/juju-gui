@@ -6,8 +6,8 @@ const enzyme = require('enzyme');
 
 const PaymentDetailsAddress = require('./address');
 const AddressForm = require('../../../address-form/address-form');
-const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
-const Button = require('../../../shared/button/button');
+const {ExpandingRow} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('PaymentDetailsAddress', () => {
   let acl, address, newAddress;
@@ -75,17 +75,19 @@ describe('PaymentDetailsAddress', () => {
               getCountries={sinon.stub()}
               ref="addressForm" />
             <div className={
-              'twelve-col payment-details-address__buttons u-no-margin--bottom'}>
+              'twelve-col payment-details-address__buttons u-no-margin--bottom v1'}>
               <Button
                 action={sinon.stub()}
                 disabled={false}
-                type="inline-neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Cancel
               </Button>
               <Button
                 action={wrapper.find('Button').at(1).prop('action')}
                 disabled={false}
-                type="inline-positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Update
               </Button>
             </div>

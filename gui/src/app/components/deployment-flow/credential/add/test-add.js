@@ -5,10 +5,10 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentCredentialAdd = require('./add');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
-const ButtonRow = require('../../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const FileField = require('../../../file-field/file-field');
 
 describe('DeploymentCredentialAdd', function() {
@@ -194,16 +194,18 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
           <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom v1'}>
             <ButtonRow
               buttons={[{
                 action: sinon.stub(),
                 title: 'Cancel',
-                type: 'inline-neutral'
+                extraClasses: 'is-inline',
+                modifier: 'neutral'
               }, {
                 submit: true,
                 title: 'Add cloud credential',
-                type: 'inline-positive'
+                extraClasses: 'is-inline',
+                modifier: 'positive'
               }]} />
           </div>
         </form>
@@ -219,7 +221,7 @@ describe('DeploymentCredentialAdd', function() {
     assert.deepEqual(buttons, [{
       submit: true,
       title: 'Add cloud credential',
-      type: 'inline-positive'
+      modifier: 'positive'
     }]);
   });
 

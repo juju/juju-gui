@@ -26,11 +26,12 @@ describe('ProfileCredentialListDelete', () => {
           buttons={[{
             title: 'Cancel',
             action: sinon.stub(),
-            type: 'inline-neutral'
+            extraClasses: 'is-inline',
+            modifier: 'neutral'
           }, {
             title: 'Continue',
             action: sinon.stub(),
-            type: 'destructive'
+            modifier: 'negative'
           }]}
           title="Remove credentials">
           <p>

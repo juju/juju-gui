@@ -5,8 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 require('./_login.scss');
@@ -132,11 +132,13 @@ class Login extends React.Component {
                 ref="password"
                 type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
-              Login
-            </Button>
+            <span className="v1">
+              <Button
+                modifier="positive"
+                submit={true}>
+                Login
+              </Button>
+            </span>
             {this._generateUSSOLink()}
           </form>
         </div>

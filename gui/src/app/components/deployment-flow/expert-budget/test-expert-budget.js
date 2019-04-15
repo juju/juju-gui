@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentExpertBudget = require('./expert-budget');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 
 describe('DeploymentExpertBudget', () => {
@@ -41,11 +41,12 @@ describe('DeploymentExpertBudget', () => {
               value={99} />
           </span>
         </div>
-        <div className="deployment-expert-budget__row">
+        <div className="deployment-expert-budget__row v1">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
-            type="inline-positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Set budget
           </Button>
         </div>

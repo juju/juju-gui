@@ -8,7 +8,7 @@
     line-height: 1.5;
     cursor: pointer;
 
-    .button--inline-neutral {
+    .p-button--neutral {
       display: none;
       float: right;
       margin-top: -3px;
@@ -20,7 +20,7 @@
     &:hover {
       background-color: $hover-background;
 
-      .button--inline-neutral {
+      .p-button--neutral {
         display: block;
       }
     }

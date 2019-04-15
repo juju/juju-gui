@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const OverviewAction = require('../overview-action/overview-action');
 
@@ -265,26 +265,28 @@ class UnitList extends React.Component {
     if (this.props.unitStatus === 'error') {
       buttons.push({
         title: 'Resolve',
-        type: 'neutral',
+        modifier: 'neutral',
         action: this._handleUpdateUnits.bind(this, 'resolve'),
         disabled: disabled
       });
       buttons.push({
         title: 'Retry',
-        type: 'neutral',
+        modifier: 'neutral',
         action: this._handleUpdateUnits.bind(this, 'retry'),
         disabled: disabled
       });
     }
     buttons.push({
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: this._handleUpdateUnits.bind(this, 'remove'),
       disabled: disabled
     });
     return (
-      <ButtonRow
-        buttons={buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>);
   }
 
   /**

@@ -1,7 +1,8 @@
 {
   "presets": [],
   "plugins": [
-    "transform-react-jsx"
+    "transform-react-jsx",
+    "transform-react-stateless-component-name"
   ],
   "env": {
     "production": {

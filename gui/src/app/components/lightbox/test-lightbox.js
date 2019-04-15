@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const Lightbox = require('./lightbox');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('Lightbox', function() {
 
@@ -74,18 +74,20 @@ describe('Lightbox', function() {
       const expected = (
         <div className="lightbox__content">
           <div className="lightbox__navigation">
-            <button
-              className="lightbox__navigation-previous"
-              disabled={true}
-              onClick={wrapper.find('.lightbox__navigation-previous').prop('onClick')}>
-              <SvgIcon name="chevron_down_16" width="16" />
-            </button>
-            <button
-              className="lightbox__navigation-next"
-              disabled={false}
-              onClick={wrapper.find('.lightbox__navigation-next').prop('onClick')}>
-              <SvgIcon name="chevron_down_16" width="16" />
-            </button>
+            <span className="v1">
+              <button
+                className="lightbox__navigation-previous"
+                disabled={true}
+                onClick={wrapper.find('.lightbox__navigation-previous').prop('onClick')}>
+                <SvgIcon name="chevron_down_16" width="16" />
+              </button>
+              <button
+                className="lightbox__navigation-next"
+                disabled={false}
+                onClick={wrapper.find('.lightbox__navigation-next').prop('onClick')}>
+                <SvgIcon name="chevron_down_16" width="16" />
+              </button>
+            </span>
             <ul className="lightbox__navigation-bullets">
               <li
                 className="lightbox__navigation-bullet is-active"

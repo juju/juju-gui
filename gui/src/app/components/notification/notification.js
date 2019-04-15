@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_notification.scss');
 
@@ -54,13 +54,15 @@ class Notification extends React.Component {
       return;
     }
     return (
-      <button
-        className="p-notification__action"
-        onClick={this._dismiss.bind(this)}>
-        <SvgIcon
-          name="close_16"
-          size="16" />
-      </button>);
+      <span className="v1">
+        <button
+          className="p-notification__action"
+          onClick={this._dismiss.bind(this)}>
+          <SvgIcon
+            name="close_16"
+            size="16" />
+        </button>
+      </span>);
   }
 
   render() {

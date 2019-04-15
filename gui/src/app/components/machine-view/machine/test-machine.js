@@ -6,9 +6,9 @@ const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
-const Machine = require('../../shared/machine/machine');
+const {Machine} = require('@canonical/juju-react-components');
 const MachineViewMachine = require('./machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
@@ -375,18 +375,20 @@ describe('MachineViewMachine', function() {
           providerType="aws"
           series={['wily']}
           valuesChanged={wrapper.find('Constraints').prop('valuesChanged')} />
-        <ButtonRow
-          buttons={[{
-            title: 'Cancel',
-            action: buttons[0].action,
-            type: 'base'
-          }, {
-            title: 'Update',
-            action: buttons[1].action,
-            type: 'neutral',
-            disabled: false
-          }]}
-          key="buttons" />
+        <span className="v1">
+          <ButtonRow
+            buttons={[{
+              title: 'Cancel',
+              action: buttons[0].action,
+              modifier: 'base'
+            }, {
+              title: 'Update',
+              action: buttons[1].action,
+              modifier: 'neutral',
+              disabled: false
+            }]}
+            key="buttons" />
+        </span>
       </div>);
     assert.compareJSX(wrapper.find('.add-machine__constraints'), expected);
   });

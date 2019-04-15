@@ -5,11 +5,11 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {BasicTable} = require('@canonical/juju-react-components');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 const CredentialAddEdit = require('../../credential-add-edit/credential-add-edit');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {ExpandingRow} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 const ProfileCredentialListDelete = require('./delete/delete');
 const Spinner = require('../../spinner/spinner');
 
@@ -316,15 +316,17 @@ class ProfileCredentialList extends React.Component {
           }()
         }, {
           content: (
-            <ButtonDropdown
-              icon="contextual-menu-horizontal"
-              listItems={[{
-                label: 'Edit',
-                action: this._setEditCredential.bind(this, key)
-              }, {
-                label: 'Delete',
-                action: this._setDeleteCredential.bind(this, key)
-              }]} />),
+            <span className="v1">
+              <ButtonDropdown
+                icon="contextual-menu-horizontal"
+                listItems={[{
+                  label: 'Edit',
+                  action: this._setEditCredential.bind(this, key)
+                }, {
+                  label: 'Delete',
+                  action: this._setDeleteCredential.bind(this, key)
+                }]} />
+            </span>),
           classes: ['u-align-text--right']
         }],
         expandedContent: this._generateEditCredentials(credential, key),
@@ -355,11 +357,13 @@ class ProfileCredentialList extends React.Component {
   render() {
     const clouds = this.state.clouds;
     let addButton = (
-      <Button
-        action={this._toggleAdd.bind(this)}
-        type="p-button--neutral">
-        Add credentials
-      </Button>);
+      <span className="v1">
+        <Button
+          action={this._toggleAdd.bind(this)}
+          modifier="neutral">
+          Add credentials
+        </Button>
+      </span>);
     if (clouds && clouds[LOCAL_CLOUD]) {
       addButton = null;
     }

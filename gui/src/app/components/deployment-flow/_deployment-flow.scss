@@ -11,7 +11,7 @@
   }
 
   &-panel {
-    .button--neutral {
+    .p-button--neutral {
       background-color: $white;
     }
 
@@ -23,7 +23,7 @@
   }
 
   &__service-title {
-    .button--inline-neutral {
+    .p-button--neutral {
       font-size: $base;
       margin-bottom: 20px;
     }
@@ -55,7 +55,8 @@
     &-action {
       padding-top: 20px;
 
-      .button--positive {
+      .p-button--positive {
+        width: 100%;
         padding-top: 20px;
         padding-bottom: 20px;
       }

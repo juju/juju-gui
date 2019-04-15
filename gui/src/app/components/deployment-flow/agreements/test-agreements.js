@@ -5,7 +5,7 @@ const enzyme = require('enzyme');
 const React = require('react');
 
 const DeploymentAgreements = require('./agreements');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentAgreements', function() {
   let acl, terms;
@@ -60,7 +60,8 @@ describe('DeploymentAgreements', function() {
     const expected = (
       <Button
         action={wrapper.find('Button').prop('action')}
-        type="inline-base">
+        extraClasses="is-inline"
+        modifier="base">
         View terms
       </Button>);
     assert.compareJSX(wrapper.find('Button'), expected);

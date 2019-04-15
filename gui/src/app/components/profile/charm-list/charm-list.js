@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const Spinner = require('../../spinner/spinner');
 
@@ -288,7 +288,7 @@ class ProfileCharmList extends React.Component {
                   {props.generatePermissions(charm.perm.read, props)}
                 </span>
               </td>
-              <td className="entity__release">
+              <td className="entity__release v1">
                 <span>
                   {version}
                 </span>

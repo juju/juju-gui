@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_copy-to-clipboard.scss');
 
@@ -39,13 +39,15 @@ class CopyToClipboard extends React.Component {
           ref="input"
           type="text"
           value={this.props.value} />
-        <button
-          className={className + '__btn'}
-          ref="btn">
-          <SvgIcon
-            name="copy-to-clipboard-16"
-            size="16" />
-        </button>
+        <span className="v1">
+          <button
+            className={className + '__btn'}
+            ref="btn">
+            <SvgIcon
+              name="copy-to-clipboard-16"
+              size="16" />
+          </button>
+        </span>
       </div>
     );
   }

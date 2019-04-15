@@ -5,8 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentPanel = require('./panel');
-const Button = require('../../shared/button/button');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('DeploymentPanel', function() {
 
@@ -26,10 +26,10 @@ describe('DeploymentPanel', function() {
     const expected = (
       <div className="deployment-panel">
         <div className="deployment-panel__header">
-          <div className="deployment-panel__close">
+          <div className="deployment-panel__close v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="neutral">
+              modifier="neutral">
               Back to canvas
             </Button>
           </div>

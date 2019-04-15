@@ -83,9 +83,9 @@ class EntityFiles extends React.Component {
     if (codeUrl) {
       codeUrl = codeUrl.replace('lp:', 'https://code.launchpad.net/');
       codeLink = (
-        <li className="section__list-item entity-files__code-link">
+        <li className="section__list-item entity-files__code-link v1">
           <a
-            className="button--inline-neutral entity-files__link"
+            className="p-button--neutral is-inline entity-files__link"
             href={codeUrl}
             ref="codeLink"
             target="_blank">
@@ -199,9 +199,9 @@ class EntityFiles extends React.Component {
         </ul>
         <ul className="section__list">
           {this._generateCodeLink(entityModel.get('code_source'))}
-          <li className="section__list-item">
+          <li className="section__list-item v1">
             <a
-              className="button--inline-neutral entity-files__link"
+              className="p-button--neutral is-inline entity-files__link"
               href={archiveUrl}
               target="_blank">
               Download .zip

@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../init/utils');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const SearchResultsItem = require('./item/item');
@@ -505,11 +505,11 @@ class SearchResults extends React.Component {
     const buttonTitle = this.state.showCommunity ?
       'Hide community results' : `Show ${community.length} community results`;
     const button = hasPromulgated ? (
-      <div className="button-wrapper--ruled">
+      <div className="button-wrapper--ruled v1">
         <Button
           action={this._toggleCommunityResults.bind(this)}
-          extraClasses="show-community-button"
-          type="inline-neutral">
+          extraClasses="is-inline show-community-button"
+          modifier="neutral">
           {buttonTitle}
         </Button>
       </div>) : null;

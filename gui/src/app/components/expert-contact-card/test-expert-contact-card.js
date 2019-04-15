@@ -4,8 +4,8 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../shared/button/button');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const ExpertContactCard = require('../expert-contact-card/expert-contact-card');
 
 describe('ExpertContactCard', function() {
@@ -50,11 +50,13 @@ describe('ExpertContactCard', function() {
               </li>
             ]}
           </ul>
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            type="positive">
-            Show contact details&hellip;
-          </Button>
+          <span className="v1">
+            <Button
+              action={wrapper.find('Button').prop('action')}
+              modifier="positive">
+              Show contact details&hellip;
+            </Button>
+          </span>
         </div>
       </div>);
     assert.compareJSX(wrapper.find('.expert-contact-card'), expected);

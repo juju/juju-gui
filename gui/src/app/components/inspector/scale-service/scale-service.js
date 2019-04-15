@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
 
 require('./_scale-service.scss');
@@ -158,7 +158,9 @@ class ScaleService extends React.Component {
             providerType={props.providerType}
             valuesChanged={this._updateConstraints.bind(this)} />
         </div>
-        <ButtonRow buttons={buttons} />
+        <span className="v1">
+          <ButtonRow buttons={buttons} />
+        </span>
       </form>
     );
   }

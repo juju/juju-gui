@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 const Spinner = require('../../spinner/spinner');
 const initUtils = require('../../../init/utils');
 const InsetSelect = require('../../inset-select/inset-select');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const DeploymentCredentialAdd = require('./add/add');
 
 require('./_credential.scss');

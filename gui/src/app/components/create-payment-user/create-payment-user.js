@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 
 const GenericInput = require('../generic-input/generic-input');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../init/utils');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
@@ -336,11 +336,12 @@ class CreatePaymentUser extends React.Component {
             </label>
             {this._generateCardAddressFields()}
             {this._generateBillingAddressFields()}
-            <div className="create-payment-user__add">
+            <div className="create-payment-user__add v1">
               <Button
                 action={this._handleAddUser.bind(this)}
                 disabled={disabled}
-                type="inline-positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Add payment details
               </Button>
             </div>

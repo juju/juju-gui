@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonDropdown = require('../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 
 require('./_user-menu.scss');
 
@@ -16,7 +16,7 @@ const UserMenu = props => {
   const controllerAPI = props.controllerAPI;
   const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
   return (
-    <div>
+    <div className="v1">
       <ButtonDropdown
         classes={['user-menu']}
         disableDropdown={showLogin}

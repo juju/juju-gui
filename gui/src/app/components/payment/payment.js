@@ -10,7 +10,7 @@ const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
 const PaymentMethods = require('./methods/methods');
 const CreatePaymentUser = require('../create-payment-user/create-payment-user');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_payment.scss');
 
@@ -176,10 +176,11 @@ class Payment extends React.Component {
         <h4 className="profile__title">Payment details</h4>
         <div className="payment__no-user">
           <p>You are not set up to make payments.</p>
-          <p>
+          <p className="v1">
             <Button
               action={this._toggleAdd.bind(this)}
-              type="inline-positive">
+              extraClasses="is-inline"
+              modifier="positive">
               Set up payments
             </Button>
           </p>

@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentLogin = require('./login');
 const DeploymentSection = require('../section/section');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const USSOLoginLink = require('../../usso-login-link/usso-login-link');
 
 describe('DeploymentLogin', function() {

@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_diagram.scss');
 
@@ -28,12 +28,14 @@ class EntityContentDiagram extends React.PureComponent {
   _generateExpandButton() {
     if (this.props.isExpandable) {
       return (
-        <button
-          className="entity-content__diagram-expand"
-          onClick={this._handleExpand.bind(this)}
-          role="button">
-          <SvgIcon name="fullscreen-grey_16" size="12" />
-        </button>
+        <span className="v1">
+          <button
+            className="entity-content__diagram-expand"
+            onClick={this._handleExpand.bind(this)}
+            role="button">
+            <SvgIcon name="fullscreen-grey_16" size="12" />
+          </button>
+        </span>
       );
     }
     return null;

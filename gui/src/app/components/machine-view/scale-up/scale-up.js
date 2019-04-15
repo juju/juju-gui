@@ -6,7 +6,7 @@ const React = require('react');
 
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 
 require('./_scale-up.scss');
 
@@ -79,19 +79,21 @@ class MachineViewScaleUp extends React.Component {
     var buttons = [{
       action: this.props.toggleScaleUp,
       title: 'Cancel',
-      type: 'base'
+      modifier: 'base'
     }, {
       action: this._handleAddUnits.bind(this),
       disabled: this.props.acl.isReadOnly(),
       title: 'Add units',
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     return (
       <form
         className="machine-view__scale-up"
         onSubmit={this._handleAddUnits.bind(this)}>
         {this._generateServices()}
-        <ButtonRow buttons={buttons} />
+        <span className="v1">
+          <ButtonRow buttons={buttons} />
+        </span>
       </form>
     );
   }

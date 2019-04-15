@@ -23,12 +23,14 @@ describe('ExpertStoreCard', function() {
         Learn how Spicule and Canonical can help solve your Big Data
         challenges with JAAS:
         </p>
-        <a
-          className="button--inline-neutral"
-          href="http://jujucharms.com/experts/"
-          target="_blank">
-          Learn about Big Data expertise&hellip;
-        </a>
+        <span className="v1">
+          <a
+            className="p-button--neutral is-inline"
+            href="http://jujucharms.com/experts/"
+            target="_blank">
+            Learn about Big Data expertise&hellip;
+          </a>
+        </span>
       </div>);
     assert.compareJSX(wrapper.find('.expert-store-card'), expected);
   });

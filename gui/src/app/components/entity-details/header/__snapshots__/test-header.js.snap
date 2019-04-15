@@ -108,14 +108,18 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
           className="copy-to-clipboard"
           value="juju deploy cs:django"
         />
-        <Button
-          action={[Function]}
-          disabled={false}
-          tooltip="Add this charm to a new model"
-          type="positive"
+        <span
+          className="v1"
         >
-          Add to model
-        </Button>
+          <Button
+            action={[Function]}
+            disabled={false}
+            modifier="positive"
+            tooltip="Add this charm to a new model"
+          >
+            Add to model
+          </Button>
+        </span>
       </div>
     </div>
   </header>

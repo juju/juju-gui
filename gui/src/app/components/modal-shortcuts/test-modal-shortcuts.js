@@ -6,7 +6,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const ModalShortcuts = require('./modal-shortcuts');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 jest.mock('../../init/hotkeys', () => ({
   keyBindings: {

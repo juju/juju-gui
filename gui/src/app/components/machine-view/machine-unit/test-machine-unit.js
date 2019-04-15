@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
-const MachineUnit = require('../../shared/machine-unit/machine-unit');
+const {MachineUnit} = require('@canonical/juju-react-components');
 const MachineViewMachineUnit = require('./machine-unit');
 
 const jsTestUtils = require('../../../utils/component-test-utils');

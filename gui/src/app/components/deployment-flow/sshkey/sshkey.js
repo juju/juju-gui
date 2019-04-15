@@ -5,8 +5,8 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const InsetSelect = require('../../inset-select/inset-select');
-const SvgIcon = require('../../svg-icon/svg-icon');
-const Button = require('../../shared/button/button');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 const githubSSHKeys = require('../../../utils/github-ssh-keys');
 const Notification = require('../../notification/notification');
@@ -377,11 +377,11 @@ class DeploymentSSHKey extends React.Component {
     const title = this.state.addSource === 'manual' ? 'Add key' : 'Add keys';
     const disabled = this.state.buttonDisabled;
     return (
-      <div className="deployment-ssh-key__add-key right">
+      <div className="deployment-ssh-key__add-key right v1">
         <Button
           action={this._handleAddMoreKeys.bind(this)}
           disabled={disabled}
-          type="positive">
+          modifier="positive">
           {title}
         </Button>
       </div>);
