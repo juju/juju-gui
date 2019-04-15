@@ -11,6 +11,8 @@
   "scripts": {
     "build": "webpack --config webpack.dev.js && ./scripts/version.sh",
     "build-dist": "yarn run clean && yarn && yarn build && ./scripts/build-dist.js",
+    "build-prod": "webpack --config webpack.prod.js && ./scripts/version.sh",
+    "build-prod-dist": "yarn run clean && yarn && yarn build-prod && ./scripts/build-dist.js",
     "clean": "rm -rf static/build node_modules webapp/__pycache__ dist/",
     "watch": "webpack --config webpack.dev.js --watch",
     "lint-python": "flake8 --exclude '*env*,node_modules,gui,scripts/lib' && black --line-length 79 --check --exclude '(jujugui/.*|scripts/.*|node_modules/.*|[^/]*env[0-9]?/.*)' .",
