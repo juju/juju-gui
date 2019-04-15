@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
 const InspectorConfirm = require('../confirm/confirm');
 const OverviewAction = require('../overview-action/overview-action');
@@ -261,7 +261,7 @@ class ServiceOverview extends React.Component {
         action: this._destroyService.bind(this)
       }];
       return (
-        <div className="service-overview__delete">
+        <div className="service-overview__delete v1">
           <ButtonRow
             buttons={buttons} />
         </div>

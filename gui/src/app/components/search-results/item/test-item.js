@@ -4,10 +4,10 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
 const SearchResultsItem = require('./item');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('SearchResultsItem', function() {
   let acl, item, generatePath;
@@ -118,12 +118,12 @@ describe('SearchResultsItem', function() {
             </a>
           </p>
         </div>
-        <div className="one-col last-col list-block__list--item-deploy">
+        <div className="one-col last-col list-block__list--item-deploy v1">
           <Button
             action={wrapper.find('Button').prop('action')}
             disabled={false}
-            extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
+            extraClasses="is-inline list-block__list--item-deploy-link"
+            modifier="neutral">
             <SvgIcon
               name="add-icon"
               size="16" />

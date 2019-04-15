@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const Spinner = require('../../spinner/spinner');
 
 require('./_invoice-list.scss');

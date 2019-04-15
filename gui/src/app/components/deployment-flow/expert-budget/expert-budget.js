@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const GenericInput = require('../../generic-input/generic-input');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_expert-budget.scss');
 
@@ -50,11 +50,12 @@ class DeploymentExpertBudget extends React.Component {
               value={this.props.budget} />
           </span>
         </div>
-        <div className="deployment-expert-budget__row">
+        <div className="deployment-expert-budget__row v1">
           <Button
             action={this.props.setBudget.bind(this, this.state.budget)}
             disabled={!changed}
-            type="inline-positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Set budget
           </Button>
         </div>

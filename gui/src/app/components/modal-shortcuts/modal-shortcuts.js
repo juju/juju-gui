@@ -6,7 +6,7 @@ const React = require('react');
 
 const enhanceWithClickOutside = require('../../init/react-click-outside');
 const hotkeys = require('../../init/hotkeys');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 class ModalShortcuts extends React.Component {
 

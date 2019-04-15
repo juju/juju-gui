@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update the canvas to use the existing svg sprites.
 - Removed unused svg assets from the build/dist.
 - GUI is now being served by Flask.
+- Replace components with juju-react-components.
 
 ### Fixed
 - Broken GCP cloud logo in Firefox.

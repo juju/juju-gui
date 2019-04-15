@@ -29,7 +29,7 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const DeploymentVPC = require('./vpc/vpc');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_deployment-flow.scss');
 
@@ -626,7 +626,7 @@ class DeploymentFlow extends React.Component {
       action: this._clearCloud.bind(this),
       disabled: this.props.acl.isReadOnly(),
       title: 'Change cloud',
-      type: 'neutral'
+      modifier: 'neutral'
     }];
   }
 
@@ -1093,11 +1093,11 @@ class DeploymentFlow extends React.Component {
       <div className="twelve-col">
         <div className={classes}>
           {this._generateAgreementsSection()}
-          <div className="deployment-flow__deploy-action">
+          <div className="deployment-flow__deploy-action v1">
             <Button
               action={this._handleDeploy.bind(this)}
               disabled={!this._deploymentAllowed()}
-              type="positive">
+              modifier="positive">
               {deployTitle}
             </Button>
           </div>

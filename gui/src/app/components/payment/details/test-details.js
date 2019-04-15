@@ -6,7 +6,7 @@ const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
 const PaymentDetails = require('./details');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 const PaymentDetailsAddress = require('./address/address');
 
@@ -90,13 +90,13 @@ describe('PaymentDetails', () => {
               label="Business name"
               value="Spinachy business" />
           </div>
-          <h4>
+          <h4 className="v1">
             Addresses
             <Button
               action={wrapper.find('Button').at(0).prop('action')}
               disabled={false}
-              extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>
           </h4>
@@ -124,13 +124,13 @@ describe('PaymentDetails', () => {
               updated={sinon.stub()}
               username="spinach" />]}
           </ul>
-          <h4>
+          <h4 className="v1">
             Billing addresses
             <Button
               action={wrapper.find('Button').at(1).prop('action')}
               disabled={false}
-              extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>
           </h4>

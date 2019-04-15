@@ -13,31 +13,10 @@
   float: right;
   right: 20px;
 
-  &__deploy {
-    @extend %floating-panel;
-    display: inline-block;
-    margin-left: 10px;
-
-    .button--inline-deployment {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-  }
-
   &__read-only {
     padding: 10px 15px;
     background-color: #fff;
     border-radius: $border-radius;
-  }
-
-  .button--inline-neutral {
-    padding-left: 10px;
-    padding-right: 10px;
-    background-color: $canvas-background;
-
-    &:hover {
-      background-color: darken($canvas-background, 10%);
-    }
   }
 }
 

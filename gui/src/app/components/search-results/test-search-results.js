@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const SearchResults = require('./search-results');
 const SearchResultsItem = require('./item/item');
 const SearchResultsSelectFilter = require('./select-filter/select-filter');
@@ -272,11 +272,11 @@ describe('SearchResults', function() {
                     </ul>
                   </div>
                   <div className="clearfix community-results">
-                    <div className="button-wrapper--ruled">
+                    <div className="button-wrapper--ruled v1">
                       <Button
                         action={wrapper.find('Button').prop('action')}
-                        extraClasses="show-community-button"
-                        type="inline-neutral">
+                        extraClasses="is-inline show-community-button"
+                        modifier="neutral">
                         Show 2 community results
                       </Button>
                     </div>

@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 const PaymentDetailsAddress = require('./address/address');
 
@@ -69,26 +69,26 @@ class PaymentDetails extends React.Component {
               label="Business name"
               value={user.businessName} />) : null}
         </div>
-        <h4>
+        <h4 className="v1">
           Addresses
           {this.state.addressEdit ? null : (
             <Button
               action={this._toggleAddressEdit.bind(this)}
               disabled={disabled}
-              extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>)}
         </h4>
         {this._generateAddresses(user.addresses)}
-        <h4>
+        <h4 className="v1">
           Billing addresses
           {this.state.billingAddressEdit ? null : (
             <Button
               action={this._toggleBillingAddressEdit.bind(this)}
               disabled={disabled}
-              extraClasses="payment-details-title-button"
-              type="inline-neutral">
+              extraClasses="is-inline payment-details-title-button"
+              modifier="neutral">
               Edit
             </Button>)}
         </h4>

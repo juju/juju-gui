@@ -6,9 +6,9 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 class SearchResultsItem extends React.Component {
   /**
@@ -268,12 +268,12 @@ class SearchResultsItem extends React.Component {
             </a>
           </p>
         </div>
-        <div className="one-col last-col list-block__list--item-deploy">
+        <div className="one-col last-col list-block__list--item-deploy v1">
           <Button
             action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
-            extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
+            extraClasses="is-inline list-block__list--item-deploy-link"
+            modifier="neutral">
             <SvgIcon
               name="add-icon"
               size="16" />

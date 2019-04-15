@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DeploymentBarNotification = require('./notification/notification');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_deployment-bar.scss');
 
@@ -86,7 +86,7 @@ class DeploymentBar extends React.Component {
         </div>);
     }
     return (
-      <div className="deployment-bar__deploy">
+      <div className="deployment-bar__deploy v1">
         <Button
           action={this._deployAction.bind(this)}
           disabled={changeCount === 0}

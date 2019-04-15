@@ -4,12 +4,12 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
 const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_model-list.scss');
 
@@ -104,11 +104,12 @@ class ProfileModelList extends React.Component {
     const buttons = [{
       title: 'Cancel',
       action: () => this.setState({notification: null}),
-      type: 'inline-neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Destroy',
       action: this._confirmDestroy.bind(this, model.uuid),
-      type: 'destructive'
+      modifier: 'negative'
     }];
     const message =
       `Are you sure you want to destroy ${model.name}?` +

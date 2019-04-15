@@ -7,7 +7,7 @@ const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
 const MachineViewScaleUp = require('./scale-up');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 
 describe('MachineViewScaleUp', function() {
   let acl, dbAPI;
@@ -137,16 +137,18 @@ describe('MachineViewScaleUp', function() {
               type="number" />
           </li>
         </ul>
-        <ButtonRow buttons={[{
-          action: buttons[0].action,
-          title: 'Cancel',
-          type: 'base'
-        }, {
-          action: buttons[1].action,
-          disabled: false,
-          title: 'Add units',
-          type: 'neutral'
-        }]} />
+        <span className="v1">
+          <ButtonRow buttons={[{
+            action: buttons[0].action,
+            title: 'Cancel',
+            modifier: 'base'
+          }, {
+            action: buttons[1].action,
+            disabled: false,
+            title: 'Add units',
+            modifier: 'neutral'
+          }]} />
+        </span>
       </form>);
     assert.compareJSX(wrapper, expected);
   });

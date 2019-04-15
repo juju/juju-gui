@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const DeploymentCloud = require('./cloud');
 const Spinner = require('../../spinner/spinner');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('DeploymentCloud', function() {
   let acl, cloudList;

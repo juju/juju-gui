@@ -6,8 +6,8 @@ const React = require('react');
 
 const EXPERTS = require('../expert-card/experts');
 const ExpertCard = require('../expert-card/expert-card');
-const Button = require('../shared/button/button');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_expert-contact-card.scss');
 
@@ -46,11 +46,13 @@ class ExpertContactCard extends React.Component {
         <ul className="expert-contact-card__highlights">
           {highlights}
         </ul>
-        <Button
-          action={this._showContact.bind(this)}
-          type="positive">
-          Show contact details&hellip;
-        </Button>
+        <span className="v1">
+          <Button
+            action={this._showContact.bind(this)}
+            modifier="positive">
+            Show contact details&hellip;
+          </Button>
+        </span>
       </div>);
   }
 

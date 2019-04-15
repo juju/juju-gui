@@ -5,8 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const Login = require('./login');
-const SvgIcon = require('../svg-icon/svg-icon');
-const Button = require('../shared/button/button');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 describe('LoginComponent', function() {
@@ -78,11 +78,13 @@ describe('LoginComponent', function() {
                 ref="password"
                 type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
-              Login
-            </Button>
+            <span className="v1">
+              <Button
+                modifier="positive"
+                submit={true}>
+                Login
+              </Button>
+            </span>
             <USSOLoginLink
               addNotification={sinon.stub()}
               displayType="button"

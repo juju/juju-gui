@@ -12,8 +12,8 @@ const MachineViewColumn = require('./column/column');
 const MachineViewMachine = require('./machine/machine');
 const MachineViewScaleUp = require('./scale-up/scale-up');
 const MachineViewUnplacedUnit = require('./unplaced-unit/unplaced-unit');
-const SvgIcon = require('../svg-icon/svg-icon');
-const Button = require('../shared/button/button');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_machine-view.scss');
 
@@ -191,12 +191,15 @@ class MachineView extends React.Component {
     return (
       <div>
         <div className="machine-view__auto-place">
-          <Button
-            action={props.modelAPI.autoPlaceUnits}
-            disabled={props.acl.isReadOnly()}
-            type="inline-neutral">
-            Auto place
-          </Button>
+          <span className="v1">
+            <Button
+              action={props.modelAPI.autoPlaceUnits}
+              disabled={props.acl.isReadOnly()}
+              extraClasses="is-inline"
+              modifier="neutral">
+              Auto place
+            </Button>
+          </span>
           <p>
             You can also drag and drop unplaced units to customise your
             deployment.

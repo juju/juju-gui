@@ -8,7 +8,7 @@ const enzyme = require('enzyme');
 const CredentialAddEdit = require('./credential-add-edit');
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const Spinner = require('../spinner/spinner');
 
 describe('CredentialAddEdit', () => {
@@ -82,10 +82,11 @@ describe('CredentialAddEdit', () => {
     const expected = (
       <div className="credential-add-edit">
         <div>
-          <div className="credential-add-edit__choose-cloud">
+          <div className="credential-add-edit__choose-cloud v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Change cloud
             </Button>
           </div>

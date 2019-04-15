@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const InspectorConfirm = require('./confirm');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 
 describe('InspectorConfirm', function() {
   let buttons;
@@ -39,8 +39,10 @@ describe('InspectorConfirm', function() {
         <p className="inspector-confirm__message">
           My message
         </p>
-        <ButtonRow
-          buttons={buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

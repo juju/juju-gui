@@ -2,14 +2,6 @@
 @import '../../../assets/css/variables';
 
 .panel-component {
-  @extend %floating-panel;
-  position: absolute;
-
-  &__inner {
-    display: flex;
-    flex-direction: column;
-  }
-
   &.inspector-panel {
     position: static;
     background-color: transparent;

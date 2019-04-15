@@ -24,12 +24,14 @@ class ExpertStoreCard extends React.Component {
           <p className="expert-store-card__description">
             {expert.storeDescription}
           </p>
-          <a
-            className="button--inline-neutral"
-            href="http://jujucharms.com/experts/"
-            target="_blank">
-            Learn about Big Data expertise&hellip;
-          </a>
+          <span className="v1">
+            <a
+              className="p-button--neutral is-inline"
+              href="http://jujucharms.com/experts/"
+              target="_blank">
+              Learn about Big Data expertise&hellip;
+            </a>
+          </span>
         </div>
       </ExpertCard>
     );

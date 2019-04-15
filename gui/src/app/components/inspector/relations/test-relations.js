@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const InspectorRelations = require('./relations');
 const CheckListItem = require('../../check-list-item/check-list-item');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const OverviewAction = require('../overview-action/overview-action');
 
 describe('InspectorRelations', function() {
@@ -65,7 +65,7 @@ describe('InspectorRelations', function() {
     var buttons = [];
     buttons.push({
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: wrapper.find('ButtonRow').prop('buttons')[0].action,
       disabled: true
     });
@@ -100,8 +100,10 @@ describe('InspectorRelations', function() {
           ref='CheckListItem-postgresql'
           whenChanged={items.at(2).prop('whenChanged')} />
       </ul>
-      <ButtonRow
-        buttons={buttons} />
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>
     </div>);
     assert.compareJSX(wrapper, expected);
   });

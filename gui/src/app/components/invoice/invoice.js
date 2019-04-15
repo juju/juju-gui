@@ -4,7 +4,7 @@
 const React = require('react');
 
 const Spinner = require('../spinner/spinner');
-const BasicTable = require('../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 
 require('./_invoice.scss');
 

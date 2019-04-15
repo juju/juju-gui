@@ -8,7 +8,7 @@ const shapeup = require('shapeup');
 
 const MachineViewColumn = require('./column');
 const MachineViewHeader = require('../header/header');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 

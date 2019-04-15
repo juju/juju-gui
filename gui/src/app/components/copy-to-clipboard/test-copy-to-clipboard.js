@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const enzyme = require('enzyme');
 
 const CopyToClipboard = require('./copy-to-clipboard');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 const testUtils = require('react-dom/test-utils');
 
@@ -33,13 +33,15 @@ describe('CopyToClipboard', function() {
           ref="input"
           type="text"
           value="" />
-        <button
-          className="copy-to-clipboard__btn"
-          ref="btn">
-          <SvgIcon
-            name="copy-to-clipboard-16"
-            size="16" />
-        </button>
+        <span className="v1">
+          <button
+            className="copy-to-clipboard__btn"
+            ref="btn">
+            <SvgIcon
+              name="copy-to-clipboard-16"
+              size="16" />
+          </button>
+        </span>
       </div>
     );
     assert.compareJSX(wrapper, expected);

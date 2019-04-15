@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const UserMenu = require('./user-menu');
-const ButtonDropdown = require('../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 
 describe('UserMenu', () => {
 
@@ -31,7 +31,7 @@ describe('UserMenu', () => {
       userIsAuthenticated: false
     });
     const expected = (
-      <div>
+      <div className="v1">
         <ButtonDropdown
           classes={['user-menu']}
           disableDropdown={true}

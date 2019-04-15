@@ -10,7 +10,7 @@ charms and bundles. You can only see this page is you have access.
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Panel = require('../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 const PlansUsage = require('./plans-usage/plans-usage');
 
 require('./_isv-profile.scss');

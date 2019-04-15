@@ -7,9 +7,9 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const Button = require('../../shared/button/button');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 
@@ -71,21 +71,26 @@ class MachineViewHeader extends React.Component {
     var toggle = this.props.toggle;
     if (menuItems) {
       return (
-        <ButtonDropdown
-          activeItem={this.props.activeMenuItem}
-          classes={['machine-view__header-dropdown']}
-          listItems={menuItems} />);
+        <span className="v1">
+          <ButtonDropdown
+            activeItem={this.props.activeMenuItem}
+            classes={['machine-view__header-dropdown']}
+            listItems={menuItems} />
+        </span>);
     } else if (toggle) {
       var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
       return (
-        <Button
-          action={toggle.action}
-          disabled={toggle.disabled}
-          type='inline-positive'>
-          <SvgIcon
-            name={icon}
-            size="16" />
-        </Button>);
+        <span className="v1">
+          <Button
+            action={toggle.action}
+            disabled={toggle.disabled}
+            extraClasses="is-inline"
+            modifier="positive">
+            <SvgIcon
+              name={icon}
+              size="16" />
+          </Button>
+        </span>);
     }
   }
 

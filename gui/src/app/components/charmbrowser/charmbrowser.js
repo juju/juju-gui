@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 
 const EntityDetails = require('../entity-details/entity-details');
-const Panel = require('../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 const SearchResults = require('../search-results/search-results');
 const Store = require('../store/store');
 

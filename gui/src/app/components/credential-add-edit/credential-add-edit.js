@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const DeploymentCloud = require('../deployment-flow/cloud/cloud');
 const DeploymentCredentialAdd = require('../deployment-flow/credential/add/add');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const Spinner = require('../spinner/spinner');
 
 require('./_credential-add-edit.scss');
@@ -109,10 +109,11 @@ class CredentialAddEdit extends React.Component {
       return null;
     }
     return (
-      <div className="credential-add-edit__choose-cloud">
+      <div className="credential-add-edit__choose-cloud v1">
         <Button
           action={this._setCloud.bind(this, null)}
-          type="inline-neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Change cloud
         </Button>
       </div>);

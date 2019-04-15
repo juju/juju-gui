@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 const {urls} = require('jaaslib');
 
 const InspectorChangeVersionItem = require('./item');
-const Button = require('../../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('InspectorChangeVersionItem', function() {
   let acl;
@@ -37,13 +37,16 @@ describe('InspectorChangeVersionItem', function() {
           title="django/xenial/5">
           version {5}
         </span>
-        <Button
-          action={wrapper.find('Button').prop('action')}
-          disabled={false}
-          key="django/xenial/5"
-          type="inline-neutral">
-          Upgrade
-        </Button>
+        <span className="v1">
+          <Button
+            action={wrapper.find('Button').prop('action')}
+            disabled={false}
+            extraClasses="is-inline"
+            key="django/xenial/5"
+            modifier="neutral">
+            Upgrade
+          </Button>
+        </span>
       </li>);
     assert.compareJSX(wrapper, expected);
   });

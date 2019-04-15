@@ -6,9 +6,9 @@ const React = require('react');
 const {urls} = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 
@@ -119,16 +119,18 @@ class EntityHeader extends React.Component {
     const title = `Add to ${modelName || 'model'}`;
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
-        <Button
-          action={this._handleDeployClick.bind(this)}
-          disabled={this.props.acl.isReadOnly()}
-          ref="deployAction"
-          tooltip={
-            `Add this ${entity.type} to ` +
-            `${modelName ? 'your current' : 'a new'} model`}
-          type="positive">
-          {title}
-        </Button>
+        <span className="v1">
+          <Button
+            action={this._handleDeployClick.bind(this)}
+            disabled={this.props.acl.isReadOnly()}
+            modifier="positive"
+            ref="deployAction"
+            tooltip={
+              `Add this ${entity.type} to ` +
+              `${modelName ? 'your current' : 'a new'} model`}>
+            {title}
+          </Button>
+        </span>
       );
     } else {
       deployAction = (

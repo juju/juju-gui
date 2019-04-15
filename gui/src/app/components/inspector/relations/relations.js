@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const CheckListItem = require('../../check-list-item/check-list-item');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const OverviewAction = require('../overview-action/overview-action');
 
 require('./_relations.scss');
@@ -187,13 +187,15 @@ class InspectorRelations extends React.Component {
     var buttons = [];
     buttons.push({
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: this._handleRemoveRelation.bind(this),
       disabled: disabled
     });
     return (
-      <ButtonRow
-        buttons={buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons} />
+      </span>);
   }
 
   /**

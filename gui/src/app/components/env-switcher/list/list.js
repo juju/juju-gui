@@ -6,7 +6,7 @@ const React = require('react');
 
 const CreateModelButton = require('../../create-model-button/create-model-button');
 const DateDisplay = require('../../date-display/date-display');
-const Panel = require('../../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 
 require('./_list.scss');
 
@@ -145,9 +145,9 @@ class EnvList extends React.Component {
           action={this._handleNewModelClick.bind(this)}
           changeState={this.props.changeState}
           disabled={!canAddModels}
+          modifier="neutral"
           switchModel={this.props.switchModel}
-          title="Start a new model"
-          type="neutral" />);
+          title="Start a new model" />);
     }
     return (
       <Panel

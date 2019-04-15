@@ -47,17 +47,17 @@ const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-set
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const Notification = require('../components/notification/notification');
 const NotificationList = require('../components/notification-list/notification-list');
-const Panel = require('../components/shared/panel/panel');
 const Popup = require('../components/popup/popup');
 const PostDeployment = require('../components/post-deployment/post-deployment');
 const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
-const SvgIcon = require('../components/svg-icon/svg-icon');
-const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Terminal} = require('@canonical/juju-react-components');
 
 
 /**
@@ -369,7 +369,9 @@ class App extends React.Component {
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
         address={address}
-        changeState={this._bound.changeState}
+        close={this.props.appState.changeState.bind(this.props.appState, {
+          terminal: null
+        })}
         commands={commands}
         creds={creds}
         WebSocket={WebSocket} />);
@@ -1375,11 +1377,12 @@ Browser: ${navigator.userAgent}`
     const buttons = [{
       title: 'Cancel',
       action: this.setState.bind(this, {popupAction: null}),
-      type: 'inline-neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Continue',
       action: popupAction,
-      type: 'destructive'
+      modifier: 'negative'
     }];
     return (
       <Popup

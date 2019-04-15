@@ -8,8 +8,8 @@ const DeploymentBudget = require('./budget');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
 const GenericInput = require('../../generic-input/generic-input');
-const Button = require('../../shared/button/button');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
+const {Button} = require('@canonical/juju-react-components');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
 describe('DeploymentBudget', function() {
@@ -66,11 +66,11 @@ describe('DeploymentBudget', function() {
                 }]} />
             </div>
             <div className="three-col">
-              <span className="deployment-budget__increase-button">
+              <span className="deployment-budget__increase-button v1">
                 <Button
                   action={wrapper.find('Button').at(0).prop('action')}
                   disabled={false}
-                  type="base">
+                  modifier="base">
                   Increase budget
                 </Button>
               </span>
@@ -110,19 +110,19 @@ describe('DeploymentBudget', function() {
                 <div className="eight-col">
                   <span className="link">Manage all budgets</span>
                 </div>
-                <div className="two-col">
+                <div className="two-col v1">
                   <Button
                     action={wrapper.find('Button').at(1).prop('action')}
                     disabled={false}
-                    type="base">
+                    modifier="base">
                     Cancel
                   </Button>
                 </div>
-                <div className="two-col last-col">
+                <div className="two-col last-col v1">
                   <Button
                     action={wrapper.find('Button').at(2).prop('action')}
                     disabled={false}
-                    type="neutral">
+                    modifier="neutral">
                     Confirm
                   </Button>
                 </div>

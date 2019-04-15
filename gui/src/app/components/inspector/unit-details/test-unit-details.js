@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const Link = require('../../link/link');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const UnitDetails = require('./unit-details');
 
 describe('UnitDetails', function() {

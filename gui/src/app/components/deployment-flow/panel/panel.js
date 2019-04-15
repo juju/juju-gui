@@ -5,9 +5,9 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../../shared/button/button');
-const Panel = require('../../shared/panel/panel');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_panel.scss');
 
@@ -50,10 +50,10 @@ class DeploymentPanel extends React.Component {
     } else {
       return (
         <div className="deployment-panel__header">
-          <div className="deployment-panel__close">
+          <div className="deployment-panel__close v1">
             <Button
               action={this._handleClose.bind(this)}
-              type="neutral">
+              modifier="neutral">
               Back to canvas
             </Button>
           </div>

@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const Lightbox = require('../lightbox/lightbox');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const VanillaCard = require('../vanilla/card/card');
 const Tour = require('./tour/tour');
 
@@ -148,13 +148,15 @@ ${this.props.youtubeAPIKey}`,
               action="https://jujucharms.com/docs/search/"
               className="header-search__form"
               target="_blank">
-              <button
-                className="header-search__submit"
-                type="submit">
-                <SvgIcon
-                  name="search_16"
-                  size="16" />
-              </button>
+              <span className="v1">
+                <button
+                  className="header-search__submit"
+                  type="submit">
+                  <SvgIcon
+                    name="search_16"
+                    size="16" />
+                </button>
+              </span>
               <input
                 className="header-search__input"
                 name="text"

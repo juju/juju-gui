@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const Spinner = require('../../spinner/spinner');
@@ -245,7 +245,7 @@ class ProfileBundleList extends React.Component {
               <td className="u-align-text--right">
                 {bundle.unitCount}
               </td>
-              <td className="entity__release u-align-text--right">
+              <td className="entity__release u-align-text--right v1">
                 <span>
                   {version}
                 </span>
