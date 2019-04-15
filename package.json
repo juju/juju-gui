@@ -48,7 +48,6 @@
     "vanilla-framework": "^1.8.0",
     "xterm": "^3.8.0",
     "xterm-webfont": "^1.1.1",
-    "yui": "3.18.1",
     "zip": "1.2.0"
   },
   "devDependencies": {
