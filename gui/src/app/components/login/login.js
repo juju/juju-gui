@@ -135,7 +135,7 @@ class Login extends React.Component {
             <span className="v1">
               <Button
                 modifier="positive"
-                submit={true}>
+                type="submit">
                 Login
               </Button>
             </span>
