@@ -289,8 +289,8 @@ class Sharing extends React.Component {
         disabled={true}
         modifier="positive"
         ref="grantButton"
-        submit={true}
-        tooltip="Add user">
+        tooltip="Add user"
+        type="submit">
         Add
       </Button>);
     } else if (this.state.sent) {
@@ -306,8 +306,8 @@ class Sharing extends React.Component {
         disabled={!this.state.canAdd}
         modifier="positive"
         ref="grantButton"
-        submit={true}
-        tooltip="Add user">
+        tooltip="Add user"
+        type="submit">
         <SvgIcon
           name="tick_16"
           size="16" />
@@ -317,8 +317,8 @@ class Sharing extends React.Component {
         disabled={!this.state.canAdd}
         modifier="positive"
         ref="grantButton"
-        submit={true}
-        tooltip="Add user">
+        tooltip="Add user"
+        type="submit">
         Add
       </Button>);
     }
@@ -346,7 +346,7 @@ class Sharing extends React.Component {
           <span className="v1">
             <Button
               action={this.props.closeHandler}
-              extraClasses="is-inline right" 
+              extraClasses="is-inline right"
               modifier="neutral">
               Done
             </Button>

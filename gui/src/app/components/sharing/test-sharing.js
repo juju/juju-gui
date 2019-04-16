@@ -197,8 +197,8 @@ describe('Sharing', () => {
               disabled={true}
               modifier="positive"
               ref="grantButton"
-              submit={true}
-              tooltip="Add user">
+              tooltip="Add user"
+              type="submit">
               Add
             </Button>
           </div>
