@@ -175,15 +175,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       because we want the browser warning to execute before spending the time
       to download an app the user might not be able to use anyway.
     -->
-
-    {{if .debug}}
-    <script src="{{.comboURL}}?app/assets/javascripts/version.js"></script>
-    <script src="{{.comboURL}}?app/assets/javascripts/yui/yui/yui.js"></script>
-    {{else}}
-    <script src="{{.staticURL}}/static/build/version.json"></script>
-    <script src="{{.staticURL}}/static/yui/yui/yui-min.js"></script>
-    {{end}}
-
+    <script src="{{.staticURL}}/static/build/version.json" type="application/json"></script>
+    <script src="{{.staticURL}}/static/assets/javascript/yui-min.js"></script>
+    <script src="{{.staticURL}}/static/assets/javascript/yui-bundle.js"></script>
     <script>
       // Now that all of the above JS is loaded we can define the real start
       // function which will be picked up by the setTimeout, and the app will
@@ -206,11 +200,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
               window.JujuGUI = new JujuGUI(juju_config);
             });
           };
-          {{if .debug}}
-          script.src = '{{.comboURL}}?app/-pkg.js';
-          {{else}}
           script.src = '{{.staticURL}}/static/build/init-pkg.js';
-          {{end}}
           document.head.appendChild(script);
 
           const stopHandler = () => {

@@ -9,9 +9,11 @@
     "url": "https://github.com/juju/juju-gui.git"
   },
   "scripts": {
-    "build": "webpack --config webpack.dev.js && cp -r node_modules/yui static && rm -rf static/yui/node_modules && ./scripts/version.sh",
+    "build": "webpack --config webpack.dev.js && ./scripts/version.sh",
     "build-dist": "yarn run clean && yarn && yarn build && ./scripts/build-dist.js",
-    "clean": "rm -rf static/yui static/build node_modules webapp/__pycache__ dist/",
+    "build-prod": "webpack --config webpack.prod.js && ./scripts/version.sh",
+    "build-prod-dist": "yarn run clean && yarn && yarn build-prod && ./scripts/build-dist.js",
+    "clean": "rm -rf static/build node_modules webapp/__pycache__ dist/",
     "watch": "webpack --config webpack.dev.js --watch",
     "lint-python": "flake8 --exclude '*env*,node_modules,gui,scripts/lib' && black --line-length 79 --check --exclude '(jujugui/.*|scripts/.*|node_modules/.*|[^/]*env[0-9]?/.*)' .",
     "lint-js": "eslint --rulesdir eslint-rules gui/src",
@@ -46,7 +48,6 @@
     "react-dom": "^16.5.2",
     "shapeup": "0.2.5",
     "vanilla-framework": "^1.8.0",
-    "yui": "3.18.1",
     "zip": "1.2.0"
   },
   "devDependencies": {
