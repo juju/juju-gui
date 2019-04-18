@@ -8,6 +8,7 @@ const {urls} = require('jaaslib');
 
 const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
+const SeriesList = require('../../series-list/series-list');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
 class SearchResultsItem extends React.Component {
@@ -48,37 +49,6 @@ class SearchResultsItem extends React.Component {
             href={this.props.generatePath({search: {tags: tag}})}
             onClick={this._handleTagClick.bind(this, tag)}>
             {tag}
-          </a>
-        </li>
-      );
-    }, this);
-    return components;
-  }
-
-  /**
-    Generate the elements for the series list.
-
-    @method _generateSeriesList
-    @returns {String} The generated elements.
-  */
-  _generateSeriesList() {
-    var item = this.props.item;
-    var series = item.series;
-    var components = [];
-    // Prevent layouts from collapsing due to empty content.
-    if (series.length === 0) {
-      return <li>&nbsp;</li>;
-    }
-    series.forEach(function(s) {
-      components.push(
-        <li
-          className="list-series__item"
-          key={s.name}>
-          <a
-            className="list-block__list--item-link"
-            href={this._generateStoreURL(s.storeId)}
-            onClick={this._handleItemClick.bind(this, s.storeId)}>
-            {s.name}
           </a>
         </li>
       );
@@ -245,9 +215,7 @@ class SearchResultsItem extends React.Component {
           </ul>
         </div>
         <div className={this._generateSeriesClass()}>
-          <ul className="list-series">
-            {this._generateSeriesList()}
-          </ul>
+          <SeriesList items={this.props.item.series.map(series => series.name)} />
         </div>
         <div className={this._generateCharmsClass()}>
           <IconList

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SeriesList can render 1`] = `
+<ul
+  className="series-list p-inline-list u-no-margin--bottom"
+>
+  <li
+    className="p-inline-list__item series-list__item"
+    key="wily"
+  >
+    wily
+  </li>
+  <li
+    className="p-inline-list__item series-list__item series-list__item--kubernetes"
+    key="kubernetes"
+  >
+    k8s
+  </li>
+</ul>
+`;
