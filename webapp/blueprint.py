@@ -7,11 +7,40 @@ gui = flask.Blueprint(
     "gui", __name__, template_folder="/templates", static_folder="/static"
 )
 
+JAAS_URL = "https://jaas.ai"
+INDEX = "index.html"
+
+
+def loggedIn():
+    return "loggedin" in flask.request.cookies
+
 
 @gui.route("/")
+def root():
+    if loggedIn():
+        return flask.redirect("/new")
+    else:
+        return flask.redirect(JAAS_URL)
+
+
+@gui.route("/home")
+def jaas():
+    return flask.redirect(JAAS_URL)
+
+
+@gui.route("/new")
+@gui.route("/login")
+@gui.route("/logout")
+def guiIndex(path=""):
+    return flask.render_template(INDEX)
+
+
 @gui.route("/<path:path>")
-def homepage(path=""):
-    return flask.render_template("index.html")
+def entity(path=""):
+    if loggedIn():
+        return flask.render_template(INDEX)
+    else:
+        return flask.redirect(JAAS_URL + path)
 
 
 @gui.route("/robots.txt")
