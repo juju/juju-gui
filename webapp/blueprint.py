@@ -12,7 +12,7 @@ INDEX = "index.html"
 
 
 def loggedIn():
-    return "loggedin" in flask.request.cookies
+    return flask.request.cookies.get('loggedin') == 'true'
 
 
 @gui.route("/")
