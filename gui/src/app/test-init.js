@@ -4,6 +4,7 @@
 const User = require('./user/user');
 const utils = require('./init/testing-utils');
 
+const cookie = require('js-cookie');
 const {
   charmstore,
   identity,
@@ -371,11 +372,11 @@ describe('init', () => {
       app = createApp({conn: conn, gisf: true});
       sinon.stub(app, 'maskVisibility');
       sinon.stub(app.state, 'changeState');
-      sinon.stub(app, '_sendGISFPostBack');
       sinon.stub(app, '_ensureLoggedIntoCharmstore');
       document.dispatchEvent(new Event('login'));
-      assert.equal(app._sendGISFPostBack.callCount, 1);
       assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
+      cookie.get('loggedin', true);
+      cookie.delete('loggedin');
     });
   });
 
