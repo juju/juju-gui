@@ -407,6 +407,8 @@ describe('init', () => {
 
     describe('logout', () => {
       it('logs out from API connections and then reconnects', () => {
+        // Set a cookie that should be removed.
+        cookie.set('loggedin', 'true');
         let controllerClosed = false;
         let modelClosed = false;
         let controllerConnected = false;
@@ -468,6 +470,7 @@ describe('init', () => {
           root: null,
           store: null
         }]);
+        assert.equal(cookie.get('loggedin'), undefined);
       });
 
       it('clears the db changed timer when the app is destroyed', () => {
