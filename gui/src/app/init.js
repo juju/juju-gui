@@ -1,6 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const cookie = require('js-cookie');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
@@ -820,16 +821,10 @@ class GUIApp {
       return;
     }
     console.log('successfully logged into controller');
-
-    // If the GUI is embedded in storefront, we need to share login
-    // data with the storefront backend and ensure we're already
-    // logged into the charmstore.
     if (this.applicationConfig.gisf) {
-      this._sendGISFPostBack(() => {
-        // We can only request the updated config file after the storefront has
-        // been notified of the users login information.
-        this.reloadConfigFile(document);
-      });
+      // If this is the JAAS GUI then we need to set a cookie to say that we're
+      // logged in to correctly redirect requests to jaas.ai if necessary.
+      cookie.set('loggedin', 'true');
       this._ensureLoggedIntoCharmstore();
     } else {
       // If this isn't embedded in the storefront then go fetch the config again
@@ -1382,33 +1377,6 @@ class GUIApp {
       }
       this._listAndSwitchModel(userState);
     });
-  }
-
-  /**
-    Sends the discharge token via POST to the storefront. This is used
-    when the GUI is operating in GISF mode, allowing a shared login between
-    the GUI and the storefront.
-    @param {Function} callback (optional) The callback to call after the post response.
-  */
-  _sendGISFPostBack(callback) {
-    const dischargeToken = this.user.getMacaroon('identity');
-    if (!dischargeToken) {
-      console.error('no discharge token in local storage after login');
-      const message = 'Authentication failed. Please try refreshing the GUI.';
-      this.db.notifications.add({
-        title: message,
-        message: message,
-        level: 'error'
-      });
-      return;
-    }
-    console.log('sending discharge token to storefront');
-    const content = 'discharge-token=' + dischargeToken;
-    const webhandler = new WebHandler();
-    webhandler.sendPostRequest(
-      '/_login',
-      {'Content-Type': 'application/x-www-form-urlencoded'},
-      content, null, null, null, null, callback);
   }
 
   /**
