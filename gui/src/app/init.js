@@ -1611,6 +1611,7 @@ class GUIApp {
     });
     if (config.gisf) {
       const gisfLogoutUrl = config.gisfLogout || '';
+      cookie.delete('loggedin');
       window.location.assign(window.location.origin + gisfLogoutUrl);
     }
   }
