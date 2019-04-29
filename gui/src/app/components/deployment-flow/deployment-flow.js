@@ -1087,7 +1087,7 @@ class DeploymentFlow extends React.Component {
       'inner-wrapper',
       'deployment-flow__deploy',
       {'deployment-flow__deploy--cookie-visible': this.props.gtmEnabled &&
-        cookieUtil.shouldShowNotification(document)}
+        cookieUtil.shouldShowNotification()}
     );
     return (
       <div className="twelve-col">

@@ -4,6 +4,7 @@
 const User = require('./user/user');
 const utils = require('./init/testing-utils');
 
+const cookie = require('js-cookie');
 const {
   charmstore,
   identity,
@@ -371,11 +372,11 @@ describe('init', () => {
       app = createApp({conn: conn, gisf: true});
       sinon.stub(app, 'maskVisibility');
       sinon.stub(app.state, 'changeState');
-      sinon.stub(app, '_sendGISFPostBack');
       sinon.stub(app, '_ensureLoggedIntoCharmstore');
       document.dispatchEvent(new Event('login'));
-      assert.equal(app._sendGISFPostBack.callCount, 1);
       assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
+      cookie.get('logged-in', true);
+      cookie.delete('logged-in');
     });
   });
 
@@ -406,6 +407,8 @@ describe('init', () => {
 
     describe('logout', () => {
       it('logs out from API connections and then reconnects', () => {
+        // Set a cookie that should be removed.
+        cookie.set('logged-in', 'true');
         let controllerClosed = false;
         let modelClosed = false;
         let controllerConnected = false;
@@ -467,6 +470,7 @@ describe('init', () => {
           root: null,
           store: null
         }]);
+        assert.equal(cookie.get('logged-in'), undefined);
       });
 
       it('clears the db changed timer when the app is destroyed', () => {

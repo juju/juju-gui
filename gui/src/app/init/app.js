@@ -1316,7 +1316,7 @@ Browser: ${navigator.userAgent}`
   */
   _generateCookieNotice() {
     if (this.props.applicationConfig.GTM_enabled) {
-      return cookieUtil.check(document, this.props.appState);
+      return cookieUtil.check(this.props.appState);
     }
   }
 

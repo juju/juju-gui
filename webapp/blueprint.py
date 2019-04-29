@@ -7,11 +7,48 @@ gui = flask.Blueprint(
     "gui", __name__, template_folder="/templates", static_folder="/static"
 )
 
+JAAS_URL = "https://jaas.ai"
+INDEX = "index.html"
+
+
+def loggedIn():
+    return (
+        flask.request.cookies.get("logged-in") == "true"
+        # Jeff April 29 2019 - The old jujucharms.com website used the
+        # `auth_tkt` cookie to store a hash to indicate that they were
+        # logged in. If this is still here a few months after the above date it
+        # can be removed without issue as any service that provides this
+        # cookie will have been sunset.
+        or flask.request.cookies.get("auth_tkt") is not None
+    )
+
 
 @gui.route("/")
+def root():
+    if loggedIn():
+        return flask.redirect("/new")
+    else:
+        return flask.redirect(JAAS_URL)
+
+
+@gui.route("/home")
+def jaas():
+    return flask.redirect(JAAS_URL)
+
+
+@gui.route("/new")
+@gui.route("/login")
+@gui.route("/logout")
+def guiIndex(path=""):
+    return flask.render_template(INDEX)
+
+
 @gui.route("/<path:path>")
-def homepage(path=""):
-    return flask.render_template("index.html")
+def entity(path=""):
+    if loggedIn():
+        return flask.render_template(INDEX)
+    else:
+        return flask.redirect(os.path.join(JAAS_URL, path))
 
 
 @gui.route("/robots.txt")
