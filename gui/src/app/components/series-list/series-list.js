@@ -20,7 +20,7 @@ class SeriesList extends React.Component {
         'series-list__item',
         {'series-list__item--kubernetes': isKubernetes}
       );
-      const name = series === 'kubernetes' ? 'k8s' : series;
+      const name = isKubernetes ? 'k8s' : series;
       return (
         <li
           className={className}
