@@ -48,7 +48,7 @@ def entity(path=""):
     if loggedIn():
         return flask.render_template(INDEX)
     else:
-        return flask.redirect(JAAS_URL + path)
+        return flask.redirect(os.path.join(JAAS_URL, path))
 
 
 @gui.route("/robots.txt")
