@@ -47,7 +47,7 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
             </span>
           </li>
           <li
-            className="entity-header__series"
+            className="entity-header__revision"
             key="cs:~who/django-42"
           >
             <span
@@ -60,18 +60,24 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
             </span>
           </li>
           <li
-            className="entity-header__series"
-            key="trusty"
-          >
-            trusty
-          </li>
-          <li
             className="entity-header__channels"
             key="Stable, Candidate"
           >
             Stable, Candidate
           </li>
         </ul>
+        <div
+          className="entity-header__series"
+        >
+          Supports:
+          <SeriesList
+            items={
+              Array [
+                "trusty",
+              ]
+            }
+          />
+        </div>
         <ul
           className="entity-header__social-list"
         >
