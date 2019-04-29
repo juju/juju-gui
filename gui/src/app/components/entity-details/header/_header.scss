@@ -126,6 +126,15 @@
     }
   }
 
+  &__series {
+    margin-top: 1rem;
+
+    .series-list {
+      display: inline-block;
+      margin: 0;
+    }
+  }
+
   &__right {
     .copy-to-clipboard[type='text'] {
       box-shadow: none;

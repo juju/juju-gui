@@ -8,6 +8,7 @@ const {urls} = require('jaaslib');
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
+const SeriesList = require('../../series-list/series-list');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
@@ -256,7 +257,7 @@ class EntityHeader extends React.Component {
     }
     const url = urls.URL.fromLegacyString(lastRevision);
     return (
-      <li className="entity-header__series" key={lastRevision}>
+      <li className="entity-header__revision" key={lastRevision}>
         <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
             Latest version (#{url.revision})
         </span>
@@ -307,8 +308,12 @@ class EntityHeader extends React.Component {
       return null;
     }
     series = !Array.isArray(series) ? [series] : series;
-    return series.map(series =>
-      <li className="entity-header__series" key={series}>{series}</li>);
+    return (
+      <div className="entity-header__series">
+        Supports:
+        <SeriesList items={series} />
+      </div>
+    );
   }
 
   /**
@@ -379,9 +384,9 @@ class EntityHeader extends React.Component {
                 </li>
                 {this._generateSubordinate()}
                 {this._generateLatestRevision()}
-                {this._generateSeriesList()}
                 {this._generateChannelList()}
               </ul>
+              {this._generateSeriesList()}
               {this._generateCounts()}
               <ul className="entity-header__social-list">
                 <li>
