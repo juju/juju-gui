@@ -180,6 +180,7 @@
 
         .list-block__list--item-deploy-link {
           display: inline-block;
+          margin-bottom: 0;
         }
       }
 
@@ -277,27 +278,6 @@
         @media only screen and (min-width: 768px) {
           float: right;
           margin-left: 6px;
-        }
-      }
-    }
-
-    .list-series {
-      list-style: none;
-      margin: 0;
-
-      .list-series__item {
-        text-transform: capitalize;
-        float: left;
-        margin-bottom: 4px;
-        margin-right: 4px;
-        color: $dark-warm-grey;
-
-        &:after {
-          content: ' \2022';
-        }
-
-        &:last-child:after {
-          content: '';
         }
       }
     }
