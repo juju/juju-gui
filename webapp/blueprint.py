@@ -12,7 +12,15 @@ INDEX = "index.html"
 
 
 def loggedIn():
-    return flask.request.cookies.get("logged-in") == "true"
+    return (
+        flask.request.cookies.get("logged-in") == "true"
+        # Jeff April 29 2019 - The old jujucharms.com website used the
+        # `auth_tkt` cookie to store a hash to indicate that they were
+        # logged in. If this is still here a few months after the above date it
+        # can be removed without issue as any service that provides this
+        # cookie will have been sunset.
+        or flask.request.cookies.get("auth_tkt") is not None
+    )
 
 
 @gui.route("/")
