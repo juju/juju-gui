@@ -375,8 +375,8 @@ describe('init', () => {
       sinon.stub(app, '_ensureLoggedIntoCharmstore');
       document.dispatchEvent(new Event('login'));
       assert.equal(app._ensureLoggedIntoCharmstore.callCount, 1);
-      cookie.get('loggedin', true);
-      cookie.delete('loggedin');
+      cookie.get('logged-in', true);
+      cookie.delete('logged-in');
     });
   });
 
@@ -408,7 +408,7 @@ describe('init', () => {
     describe('logout', () => {
       it('logs out from API connections and then reconnects', () => {
         // Set a cookie that should be removed.
-        cookie.set('loggedin', 'true');
+        cookie.set('logged-in', 'true');
         let controllerClosed = false;
         let modelClosed = false;
         let controllerConnected = false;
@@ -470,7 +470,7 @@ describe('init', () => {
           root: null,
           store: null
         }]);
-        assert.equal(cookie.get('loggedin'), undefined);
+        assert.equal(cookie.get('logged-in'), undefined);
       });
 
       it('clears the db changed timer when the app is destroyed', () => {

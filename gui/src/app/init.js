@@ -824,7 +824,7 @@ class GUIApp {
     if (this.applicationConfig.gisf) {
       // If this is the JAAS GUI then we need to set a cookie to say that we're
       // logged in to correctly redirect requests to jaas.ai if necessary.
-      cookie.set('loggedin', 'true');
+      cookie.set('logged-in', 'true');
       this._ensureLoggedIntoCharmstore();
     } else {
       // If this isn't embedded in the storefront then go fetch the config again
@@ -1611,7 +1611,7 @@ class GUIApp {
     });
     if (config.gisf) {
       const gisfLogoutUrl = config.gisfLogout || '';
-      cookie.delete('loggedin');
+      cookie.delete('logged-in');
       window.location.assign(window.location.origin + gisfLogoutUrl);
     }
   }
