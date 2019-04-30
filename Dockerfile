@@ -10,8 +10,7 @@ RUN apt-get update && \
     apt-get install curl --yes && \
     curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get update && \
-    apt-get install --yes \
-        build-essential python3-dev python3-pip git curl nodejs
+    apt-get install --yes build-essential python3-dev python3-pip git nodejs
 
 # Import code, install code dependencies
 ADD . .
