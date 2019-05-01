@@ -22,6 +22,10 @@ ADD requirements.txt requirements.txt
 ADD entrypoint entrypoint
 RUN pip3 install -r requirements.txt
 
+ARG TALISKER_REVISION_ID
+RUN test -n "${TALISKER_REVISION_ID}"
+ENV TALISKER_REVISION_ID "${TALISKER_REVISION_ID}"
+
 # Setup commands to run server
 ENTRYPOINT ["./entrypoint"]
 CMD ["0.0.0.0:80"]
