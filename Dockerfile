@@ -10,13 +10,17 @@ RUN apt-get update && \
     apt-get install curl --yes && \
     curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get update && \
-    apt-get install --yes build-essential python3-dev python3-pip git nodejs
+    apt-get install --yes build-essential python3-dev python3-pip
 
 # Import code, install code dependencies
-ADD . .
+ADD templates/ templates/
+ADD static/assets/ static/assets/
+ADD static/build/ static/build/
+ADD static/gui/ static/gui/
+ADD webapp/ webapp/
+ADD requirements.txt requirements.txt
+ADD entrypoint entrypoint
 RUN pip3 install -r requirements.txt
-RUN npm install --global yarn
-RUN yarn build-prod
 
 # Setup commands to run server
 ENTRYPOINT ["./entrypoint"]
