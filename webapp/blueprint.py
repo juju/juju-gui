@@ -31,7 +31,22 @@ def root():
         return flask.redirect(JAAS_URL)
 
 
+@gui.route("/big-data")
+@gui.route("/community")
+@gui.route("/community/cards")
+@gui.route("/community/partners")
+@gui.route("/containers")
+@gui.route("/experts")
+@gui.route("/experts/spicule")
+@gui.route("/experts/tengu")
+@gui.route("/getting-started")
 @gui.route("/home")
+@gui.route("/how-it-works")
+@gui.route("/jaas")
+@gui.route("/kubernetes")
+@gui.route("/openstack")
+@gui.route("/store")
+@gui.route("/support")
 def jaas():
     return flask.redirect(JAAS_URL)
 
