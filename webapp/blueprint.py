@@ -45,6 +45,7 @@ def root():
 @gui.route("/jaas")
 @gui.route("/kubernetes")
 @gui.route("/openstack")
+@gui.route("/store")
 @gui.route("/support")
 def jaas():
     return flask.redirect(JAAS_URL)
