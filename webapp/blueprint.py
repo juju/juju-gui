@@ -34,7 +34,9 @@ def root():
 
 @gui.route("/docs/<path:path>")
 def docs(path=""):
-    return flask.redirect(urllib.parse.urljoin("https://docs.jujucharms.com", path))
+    return flask.redirect(
+        urllib.parse.urljoin("https://docs.jujucharms.com", path)
+    )
 
 
 @gui.route("/big-data")
@@ -57,7 +59,9 @@ def jaas():
     if flask.request.path == "/home":
         return flask.redirect(JAAS_URL)
     else:
-        return flask.redirect(urllib.parse.urljoin(JAAS_URL, flask.request.path))
+        return flask.redirect(
+            urllib.parse.urljoin(JAAS_URL, flask.request.path)
+        )
 
 
 @gui.route("/new")
