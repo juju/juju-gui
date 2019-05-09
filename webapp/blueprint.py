@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urljoin
 
 import flask
 
@@ -8,6 +9,7 @@ gui = flask.Blueprint(
 )
 
 JAAS_URL = "https://jaas.ai"
+DOCS_URL = "https://docs.jujucharms.com"
 INDEX = "index.html"
 
 
@@ -31,6 +33,15 @@ def root():
         return flask.redirect(JAAS_URL)
 
 
+@gui.route("/docs")
+@gui.route("/docs/<path:path>")
+def docs(path=""):
+    if path == "/docs":
+        return flask.redirect(DOCS_URL)
+    else:
+        return flask.redirect(urljoin(DOCS_URL, path))
+
+
 @gui.route("/big-data")
 @gui.route("/community")
 @gui.route("/community/cards")
@@ -48,7 +59,10 @@ def root():
 @gui.route("/store")
 @gui.route("/support")
 def jaas():
-    return flask.redirect(JAAS_URL)
+    if flask.request.path == "/home":
+        return flask.redirect(JAAS_URL)
+    else:
+        return flask.redirect(urljoin(JAAS_URL, flask.request.path))
 
 
 @gui.route("/new")
@@ -63,7 +77,7 @@ def entity(path=""):
     if loggedIn():
         return flask.render_template(INDEX)
     else:
-        return flask.redirect(os.path.join(JAAS_URL, path))
+        return flask.redirect(urljoin(JAAS_URL, path))
 
 
 @gui.route("/robots.txt")
