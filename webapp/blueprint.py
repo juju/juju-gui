@@ -9,6 +9,7 @@ gui = flask.Blueprint(
 )
 
 JAAS_URL = "https://jaas.ai"
+DOCS_URL = "https://docs.jujucharms.com"
 INDEX = "index.html"
 
 
@@ -32,9 +33,13 @@ def root():
         return flask.redirect(JAAS_URL)
 
 
+@gui.route("/docs")
 @gui.route("/docs/<path:path>")
 def docs(path=""):
-    return flask.redirect(urljoin("https://docs.jujucharms.com", path))
+    if path == "/docs":
+        return flask.redirect(DOCS_URL)
+    else:
+        return flask.redirect(urljoin(DOCS_URL, path))
 
 
 @gui.route("/big-data")
