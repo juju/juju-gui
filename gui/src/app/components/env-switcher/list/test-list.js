@@ -26,13 +26,13 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who@external',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
+        provider: 'aws'
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek@external',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
+        provider: 'gce'
       }
     ];
     const wrapper = renderComponent({envs: models});
@@ -45,24 +45,25 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who@external',
-        lastConnection: new Date('July 20, 69 00:20:18 GMT+00:00')
+        provider: 'aws'
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek@external',
-        lastConnection: new Date('July 20, 69 00:00:18 GMT+00:00')
+        provider: 'aws'
       },
       {
         uuid: 'model-uuid-3',
         name: 'model-name-3',
         owner: 'who@external',
-        lastConnection: new Date('July 20, 69 00:10:18 GMT+00:00')
+        provider: 'gce'
       },
       {
         uuid: 'model-uuid-4',
         name: 'model-name-4',
-        owner: 'dalek@external'
+        owner: 'dalek@external',
+        provider: 'gce'
       }
     ];
     const wrapper = renderComponent({envs: models});
@@ -75,13 +76,13 @@ describe('EnvList', function() {
         uuid: 'model-uuid-1',
         name: 'model-name-1',
         owner: 'who',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
+        provider: 'gce'
       },
       {
         uuid: 'model-uuid-2',
         name: 'model-name-2',
         owner: 'dalek',
-        lastConnection: new Date('Mon, 19 Jan 2020 21:07:24 GMT')
+        provider: 'aws'
       }
     ];
     const wrapper = renderComponent({envs: models});
@@ -94,7 +95,12 @@ describe('EnvList', function() {
   });
 
   it('clicking a model calls the handleModelClick prop', function() {
-    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+    const models = [{
+      uuid: 'abc123',
+      name: 'the name',
+      owner: 'who@external',
+      provider: 'aws'
+    }];
     const handleModelClick = sinon.stub();
     const getAttribute = sinon.stub();
     getAttribute.withArgs('data-id').returns('abc123');
@@ -111,7 +117,12 @@ describe('EnvList', function() {
 
   it('new model call is made when clicking on the createm model button', function() {
     const handleModelClick = sinon.stub();
-    const models = [{uuid: 'abc123', name: 'the name', owner: 'who@external'}];
+    const models = [{
+      uuid: 'abc123',
+      name: 'the name',
+      owner: 'who@external',
+      provider: 'aws'
+    }];
     const wrapper = renderComponent({envs: models, handleModelClick});
     wrapper.find('CreateModelButton').props().action();
     assert.equal(handleModelClick.callCount, 1);

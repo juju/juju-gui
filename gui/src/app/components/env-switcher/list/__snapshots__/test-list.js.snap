@@ -25,6 +25,11 @@ exports[`EnvList handles local model owners 1`] = `
       tabIndex="0"
     >
       who/model-name-1
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-google"
+        size="26"
+      />
     </li>
     <li
       className="env-list__environment"
@@ -37,6 +42,11 @@ exports[`EnvList handles local model owners 1`] = `
       tabIndex="0"
     >
       dalek/model-name-2
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-aws"
+        size="26"
+      />
     </li>
   </ul>
   <CreateModelButton
@@ -75,18 +85,11 @@ exports[`EnvList orders the model list, and handles never connected ones 1`] = `
       tabIndex="0"
     >
       model-name-1
-    </li>
-    <li
-      className="env-list__environment"
-      data-id="model-uuid-3"
-      data-name="model-name-3"
-      data-owner="who@external"
-      key="model-uuid-3"
-      onClick={[Function]}
-      role="menuitem"
-      tabIndex="0"
-    >
-      model-name-3
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-aws"
+        size="26"
+      />
     </li>
     <li
       className="env-list__environment"
@@ -99,6 +102,28 @@ exports[`EnvList orders the model list, and handles never connected ones 1`] = `
       tabIndex="0"
     >
       dalek/model-name-2
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-aws"
+        size="26"
+      />
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-3"
+      data-name="model-name-3"
+      data-owner="who@external"
+      key="model-uuid-3"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      model-name-3
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-google"
+        size="26"
+      />
     </li>
     <li
       className="env-list__environment"
@@ -111,6 +136,11 @@ exports[`EnvList orders the model list, and handles never connected ones 1`] = `
       tabIndex="0"
     >
       dalek/model-name-4
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-google"
+        size="26"
+      />
     </li>
   </ul>
   <CreateModelButton
@@ -149,6 +179,11 @@ exports[`EnvList renders a list of models 1`] = `
       tabIndex="0"
     >
       model-name-1
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-aws"
+        size="26"
+      />
     </li>
     <li
       className="env-list__environment"
@@ -161,6 +196,11 @@ exports[`EnvList renders a list of models 1`] = `
       tabIndex="0"
     >
       dalek/model-name-2
+      <SvgIcon
+        className="env-list__environment-icon"
+        name="profile-google"
+        size="26"
+      />
     </li>
   </ul>
   <CreateModelButton

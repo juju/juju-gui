@@ -20,6 +20,7 @@
     "lint-js": "eslint --rulesdir eslint-rules gui/src",
     "lint": "yarn run lint-js && yarn run lint-python",
     "serve": "./entrypoint 0.0.0.0:$PORT",
+    "svg-sprite": "yarn add svg-sprite@1.3.6 && svg-sprite --dest ./static/gui/build/app/assets --stack ./static/assets/svgs/*.svg && yarn remove svg-sprite",
     "test-js-old": "./scripts/test-js.sh && ./scripts/test-js-old.sh",
     "test-js-ci": "jest --maxWorkers=2",
     "test-js": "jest",

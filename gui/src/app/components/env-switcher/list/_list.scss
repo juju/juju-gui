@@ -38,6 +38,10 @@
       list-style-type: none;
       padding: 10px 20px;
       margin-bottom: 0;
+
+      &-icon {
+        float: right;
+      }
     }
 
     &__environment:hover,
