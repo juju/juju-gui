@@ -1,0 +1,175 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnvList handles local model owners 1`] = `
+<Panel
+  focus={true}
+  instanceName="env-list-panel"
+  visible={true}
+>
+  <ul
+    aria-expanded="true"
+    aria-hidden="false"
+    aria-labelledby="environmentSwitcherToggle"
+    className="env-list"
+    id="environmentSwitcherMenu"
+    role="menubar"
+  >
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-1"
+      data-name="model-name-1"
+      data-owner="who"
+      key="model-uuid-1"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      who/model-name-1
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-2"
+      data-name="model-name-2"
+      data-owner="dalek"
+      key="model-uuid-2"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      dalek/model-name-2
+    </li>
+  </ul>
+  <CreateModelButton
+    action={[Function]}
+    changeState={[Function]}
+    disabled={false}
+    modifier="neutral"
+    switchModel={[Function]}
+    title="Start a new model"
+  />
+</Panel>
+`;
+
+exports[`EnvList orders the model list, and handles never connected ones 1`] = `
+<Panel
+  focus={true}
+  instanceName="env-list-panel"
+  visible={true}
+>
+  <ul
+    aria-expanded="true"
+    aria-hidden="false"
+    aria-labelledby="environmentSwitcherToggle"
+    className="env-list"
+    id="environmentSwitcherMenu"
+    role="menubar"
+  >
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-1"
+      data-name="model-name-1"
+      data-owner="who@external"
+      key="model-uuid-1"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      model-name-1
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-3"
+      data-name="model-name-3"
+      data-owner="who@external"
+      key="model-uuid-3"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      model-name-3
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-2"
+      data-name="model-name-2"
+      data-owner="dalek@external"
+      key="model-uuid-2"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      dalek/model-name-2
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-4"
+      data-name="model-name-4"
+      data-owner="dalek@external"
+      key="model-uuid-4"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      dalek/model-name-4
+    </li>
+  </ul>
+  <CreateModelButton
+    action={[Function]}
+    changeState={[Function]}
+    disabled={false}
+    modifier="neutral"
+    switchModel={[Function]}
+    title="Start a new model"
+  />
+</Panel>
+`;
+
+exports[`EnvList renders a list of models 1`] = `
+<Panel
+  focus={true}
+  instanceName="env-list-panel"
+  visible={true}
+>
+  <ul
+    aria-expanded="true"
+    aria-hidden="false"
+    aria-labelledby="environmentSwitcherToggle"
+    className="env-list"
+    id="environmentSwitcherMenu"
+    role="menubar"
+  >
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-1"
+      data-name="model-name-1"
+      data-owner="who@external"
+      key="model-uuid-1"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      model-name-1
+    </li>
+    <li
+      className="env-list__environment"
+      data-id="model-uuid-2"
+      data-name="model-name-2"
+      data-owner="dalek@external"
+      key="model-uuid-2"
+      onClick={[Function]}
+      role="menuitem"
+      tabIndex="0"
+    >
+      dalek/model-name-2
+    </li>
+  </ul>
+  <CreateModelButton
+    action={[Function]}
+    changeState={[Function]}
+    disabled={false}
+    modifier="neutral"
+    switchModel={[Function]}
+    title="Start a new model"
+  />
+</Panel>
+`;

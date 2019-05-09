@@ -45,17 +45,6 @@ class EnvList extends React.Component {
       .map(model => {
         let name = model.name;
         let owner = model.owner;
-        let lastConnected = 'Never accessed';
-        if (model.lastConnection) {
-          lastConnected = (
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={model.lastConnection}
-                relative={true} />
-            </span>
-          );
-        }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
@@ -78,9 +67,6 @@ class EnvList extends React.Component {
             role="menuitem"
             tabIndex="0">
             {name}
-            <div className="env-list__last-connected">
-              {lastConnected}
-            </div>
           </li>
         );
       });
