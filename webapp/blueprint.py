@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 
 import flask
 
@@ -31,6 +32,11 @@ def root():
         return flask.redirect(JAAS_URL)
 
 
+@gui.route("/docs/<path:path>")
+def docs(path=""):
+    return flask.redirect(urllib.parse.urljoin("https://docs.jujucharms.com", path))
+
+
 @gui.route("/big-data")
 @gui.route("/community")
 @gui.route("/community/cards")
@@ -48,7 +54,10 @@ def root():
 @gui.route("/store")
 @gui.route("/support")
 def jaas():
-    return flask.redirect(JAAS_URL)
+    if flask.request.path == "/home":
+        return flask.redirect(JAAS_URL)
+    else:
+        return flask.redirect(urllib.parse.urljoin(JAAS_URL, flask.request.path))
 
 
 @gui.route("/new")
@@ -63,7 +72,7 @@ def entity(path=""):
     if loggedIn():
         return flask.render_template(INDEX)
     else:
-        return flask.redirect(os.path.join(JAAS_URL, path))
+        return flask.redirect(urllib.parse.urljoin(JAAS_URL, path))
 
 
 @gui.route("/robots.txt")
