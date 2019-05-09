@@ -37,13 +37,10 @@ exports[`Profile Model List can render 1`] = `
           "content": "Owner",
         },
         Object {
-          "content": "Machines, cloud/region",
+          "content": "Clouds/region",
         },
         Object {
           "content": "",
-        },
-        Object {
-          "content": "Last accessed",
         },
         Object {
           "content": "",
@@ -71,11 +68,11 @@ exports[`Profile Model List can render 1`] = `
             },
             Object {
               "content": <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-aws"
+                  size="26"
+                />
                 aws
                 /eu-west-1
               </React.Fragment>,
@@ -98,15 +95,6 @@ exports[`Profile Model List can render 1`] = `
                   size="16"
                 />
               </span>,
-            },
-            Object {
-              "classes": Array [
-                "u-hide--small",
-              ],
-              "content": <DateDisplay
-                date="2017-07-06T14:47:03.000Z"
-                relative={true}
-              />,
             },
             Object {
               "classes": Array [
@@ -136,11 +124,11 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-aws"
+                  size="26"
+                />
                 aws
                 /eu-west-1
               </React.Fragment>
@@ -171,12 +159,6 @@ exports[`Profile Model List can render 1`] = `
                   size="16"
                 />
               </span>
-            </td>
-            <td>
-              <DateDisplay
-                date="2017-07-06T14:47:03.000Z"
-                relative={true}
-              />
             </td>
             <td
               className="u-align--center"
@@ -211,11 +193,11 @@ exports[`Profile Model List can render 1`] = `
             },
             Object {
               "content": <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-google"
+                  size="26"
+                />
                 google
                 /us-central1
               </React.Fragment>,
@@ -238,15 +220,6 @@ exports[`Profile Model List can render 1`] = `
                   size="16"
                 />
               </span>,
-            },
-            Object {
-              "classes": Array [
-                "u-hide--small",
-              ],
-              "content": <DateDisplay
-                date="2017-07-06T16:26:47.000Z"
-                relative={true}
-              />,
             },
             Object {
               "classes": Array [
@@ -276,11 +249,11 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  0
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-google"
+                  size="26"
+                />
                 google
                 /us-central1
               </React.Fragment>
@@ -311,12 +284,6 @@ exports[`Profile Model List can render 1`] = `
                   size="16"
                 />
               </span>
-            </td>
-            <td>
-              <DateDisplay
-                date="2017-07-06T16:26:47.000Z"
-                relative={true}
-              />
             </td>
             <td
               className="u-align--center"
@@ -351,11 +318,11 @@ exports[`Profile Model List can render 1`] = `
             },
             Object {
               "content": <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  2
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-google"
+                  size="26"
+                />
                 google
                 /us-east1
               </React.Fragment>,
@@ -381,15 +348,6 @@ exports[`Profile Model List can render 1`] = `
             },
             Object {
               "classes": Array [
-                "u-hide--small",
-              ],
-              "content": <DateDisplay
-                date="--"
-                relative={true}
-              />,
-            },
-            Object {
-              "classes": Array [
                 "u-align--center",
               ],
               "content": null,
@@ -409,11 +367,11 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  2
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-google"
+                  size="26"
+                />
                 google
                 /us-east1
               </React.Fragment>
@@ -442,12 +400,6 @@ exports[`Profile Model List can render 1`] = `
                 />
               </span>
             </td>
-            <td>
-              <DateDisplay
-                date="--"
-                relative={true}
-              />
-            </td>
             <td
               className="u-align--center"
             />
@@ -472,11 +424,11 @@ exports[`Profile Model List can render 1`] = `
             },
             Object {
               "content": <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  25
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-google"
+                  size="26"
+                />
                 google
                 /us-east1
               </React.Fragment>,
@@ -499,15 +451,6 @@ exports[`Profile Model List can render 1`] = `
                   size="16"
                 />
               </span>,
-            },
-            Object {
-              "classes": Array [
-                "u-hide--small",
-              ],
-              "content": <DateDisplay
-                date="2017-07-05T01:42:05.000Z"
-                relative={true}
-              />,
             },
             Object {
               "classes": Array [
@@ -537,11 +480,11 @@ exports[`Profile Model List can render 1`] = `
             </td>
             <td>
               <React.Fragment>
-                <span
-                  className="profile-model-list__machine-number"
-                >
-                  25
-                </span>
+                <SvgIcon
+                  className="profile-model-list__cloud-icon"
+                  name="profile-google"
+                  size="26"
+                />
                 google
                 /us-east1
               </React.Fragment>
@@ -569,12 +512,6 @@ exports[`Profile Model List can render 1`] = `
                   size="16"
                 />
               </span>
-            </td>
-            <td>
-              <DateDisplay
-                date="2017-07-05T01:42:05.000Z"
-                relative={true}
-              />
             </td>
             <td
               className="u-align--center"

@@ -5,8 +5,9 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const CreateModelButton = require('../../create-model-button/create-model-button');
-const DateDisplay = require('../../date-display/date-display');
+const initUtils = require('../../../init/utils');
 const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_list.scss');
 
@@ -33,29 +34,9 @@ class EnvList extends React.Component {
     }
     const currentUser = this.props.user ? this.props.user.username : null;
     const sortedModels = models
-      .sort((a, b) => {
-        if (!b.lastConnection) {
-          return -1;
-        }
-        if (!a.lastConnection) {
-          return 1;
-        }
-        return b.lastConnection.getTime() - a.lastConnection.getTime();
-      })
       .map(model => {
         let name = model.name;
         let owner = model.owner;
-        let lastConnected = 'Never accessed';
-        if (model.lastConnection) {
-          lastConnected = (
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={model.lastConnection}
-                relative={true} />
-            </span>
-          );
-        }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
@@ -67,6 +48,7 @@ class EnvList extends React.Component {
         if (owner !== currentUser) {
           name = `${ownerNoDomain}/${model.name}`;
         }
+        let cloud = initUtils.getCloudProviderDetails(model.provider).id;
         return (
           <li
             className="env-list__environment"
@@ -78,9 +60,10 @@ class EnvList extends React.Component {
             role="menuitem"
             tabIndex="0">
             {name}
-            <div className="env-list__last-connected">
-              {lastConnected}
-            </div>
+            <SvgIcon
+              className="env-list__environment-icon"
+              name={`profile-${cloud}`}
+              size="26" />
           </li>
         );
       });

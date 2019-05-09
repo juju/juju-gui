@@ -233,7 +233,7 @@ describe('Profile Model List', function() {
       listModelsWithInfo: sinon.stub().callsArgWith(0, null, models)
     });
     assert.strictEqual(
-      wrapper.find('BasicTable').prop('rows')[0].columns[5].content, null);
+      wrapper.find('BasicTable').prop('rows')[0].columns[4].content, null);
   });
 
   it('does not show models that are being destroyed', () => {
