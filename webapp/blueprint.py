@@ -32,6 +32,7 @@ def root():
     else:
         return flask.redirect(JAAS_URL)
 
+
 @gui.route("/docs")
 @gui.route("/docs/<path:path>")
 def docs(path=""):
