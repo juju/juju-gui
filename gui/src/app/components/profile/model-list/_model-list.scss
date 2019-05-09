@@ -3,7 +3,7 @@
 .profile-model-list {
   tr {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.25fr 0.25fr 0.75fr 0.25fr;
+    grid-template-columns: 1fr 1fr 1.25fr 0.25fr 0.25fr;
   }
 
   tbody tr {
@@ -15,13 +15,17 @@
     grid-template-columns: 1fr 170px;
   }
 
-  &__machine-number {
+  &__cloud-icon {
     margin-right: 1rem;
   }
 
   &__link {
     display: block;
     padding: 1rem 0;
+  }
+
+  .svg-icon {
+    vertical-align: middle;
   }
 
   // XXX These override styles are required until the <PopUp> components is converted to Vanilla v1

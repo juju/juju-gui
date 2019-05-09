@@ -6,7 +6,7 @@ const React = require('react');
 
 const {BasicTable} = require('@canonical/juju-react-components');
 const CreateModelButton = require('../../create-model-button/create-model-button');
-const DateDisplay = require('../../date-display/date-display');
+const initUtils = require('../../../init/utils');
 const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
 const {SvgIcon} = require('@canonical/juju-react-components');
@@ -198,9 +198,13 @@ class ProfileModelList extends React.Component {
             {model.name}
           </a>
         );
+        let cloud = initUtils.getCloudProviderDetails(model.provider).id;
         const regionContent = (
           <React.Fragment>
-            <span className="profile-model-list__machine-number">{model.numMachines}</span>
+            <SvgIcon
+              className="profile-model-list__cloud-icon"
+              name={`profile-${cloud}`}
+              size="26" />
             {model.cloud || model.provider}
             {region}
           </React.Fragment>
@@ -214,11 +218,6 @@ class ProfileModelList extends React.Component {
               name={icons.get(profileUser.access)}
               size="16" />
           </span>
-        );
-        const dateContent = (
-          <DateDisplay
-            date={model.lastConnection || '--'}
-            relative={true} />
         );
         const destroyContent =
           userIsAdmin && !model.isController ? (
@@ -256,9 +255,6 @@ class ProfileModelList extends React.Component {
             }, {
               content: accessContent
             }, {
-              content: dateContent,
-              classes: ['u-hide--small']
-            }, {
               content: destroyContent,
               classes: ['u-align--center']
             }
@@ -272,7 +268,6 @@ class ProfileModelList extends React.Component {
                 {expandedContent}
               </td>
               <td>{accessContent}</td>
-              <td>{dateContent}</td>
               <td className="u-align--center">{destroyContent}</td>
             </React.Fragment>
           ),
@@ -336,11 +331,9 @@ class ProfileModelList extends React.Component {
               }, {
                 content: 'Owner'
               }, {
-                content: 'Machines, cloud/region'
+                content: 'Clouds/region'
               }, {
                 content: ''
-              }, {
-                content: 'Last accessed'
               }, {
                 content: ''
               }
