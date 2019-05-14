@@ -61,7 +61,6 @@ describe('ProfileCredentialList', () => {
         addNotification={options.addNotification || sinon.stub()}
         controllerAPI={options.controllerAPI || controllerAPI}
         controllerIsReady={options.controllerIsReady || sinon.stub()}
-        sendAnalytics={options.sendAnalytics || sinon.stub()}
         username={options.username || 'foo@external'} />);
     return component;
   }
@@ -73,7 +72,6 @@ describe('ProfileCredentialList', () => {
       controllerAPI={options.controllerAPI || controllerAPI}
       controllerIsReady={options.controllerIsReady || sinon.stub()}
       credential="azure_foo@external_cred1"
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       username={options.username || 'foo@external'} />
   );
 

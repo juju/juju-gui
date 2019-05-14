@@ -137,10 +137,6 @@ describe('test_model.js', function() {
       });
     });
 
-    beforeEach(function() {
-      window._gaq = [];
-    });
-
     afterEach(function() {
       cleanups.forEach(cleanup => {
         cleanup();
@@ -250,29 +246,6 @@ describe('test_model.js', function() {
         wordpress: 'peer-relation-broken'
       }]);
     });
-
-    it('service unit list should update analytics when units are added',
-      function() {
-        var sl = new models.ServiceList();
-        var mysql = new models.Service({id: 'mysql'});
-        sl.add([mysql]);
-        var my0 = {id: 'mysql/0', agent_state: 'pending'};
-        var my1 = {id: 'mysql/1', agent_state: 'pending'};
-        var sul = mysql.get('units');
-
-        window._gaq.should.eql([]);
-        sul.add([my0], true);
-        sul.update_service_unit_aggregates(mysql);
-        window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
-          'mysql', 1]);
-        sul.add([my1], true);
-        sul.update_service_unit_aggregates(mysql);
-        window._gaq.pop().should.eql(['_trackEvent', 'Service Stats', 'Update',
-          'mysql', 2]);
-        // Calling update with no additions does not create a new trackEvent.
-        sul.update_service_unit_aggregates(mysql);
-        window._gaq.should.eql([]);
-      });
 
     it('services are instantiated with _dirtyFields property', function() {
       var service = new models.Service();
@@ -1615,7 +1588,6 @@ describe('test_model.js', function() {
     });
 
     beforeEach(function() {
-      window._gaq = [];
       django = new models.Service({id: 'django'});
       rails = new models.Service({
         charm: 'cs:/precise/rails-2',

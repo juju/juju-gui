@@ -22,7 +22,6 @@ const dropTarget = {
     @param {Object} component The component that is being dropped onto.
   */
   drop: function(props, monitor, component) {
-    props.sendAnalytics('Machine View', 'Drop Target', 'Machine');
     props.dropUnit(monitor.getItem().unit, props.machineAPI.machine.id);
   },
 
@@ -179,7 +178,6 @@ class MachineViewMachine extends React.Component {
           key={unit.id}
           machineType={props.type}
           removeUnit={props.machineAPI.removeUnit}
-          sendAnalytics={props.sendAnalytics}
           unit={unit} />);
     });
     return (
@@ -311,7 +309,6 @@ MachineViewMachine.propTypes = {
     updateMachineSeries: PropTypes.func
   }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   showConstraints: PropTypes.bool,
   showSSHButton: PropTypes.bool,
   type: PropTypes.string.isRequired

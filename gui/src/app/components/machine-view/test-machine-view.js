@@ -24,8 +24,7 @@ describe('MachineView', function() {
         modelAPI={options.modelAPI || modelAPI}
         parseConstraints={options.parseConstraints || sinon.stub()}
         parseMachineDetails={options.parseMachineDetails || sinon.stub()}
-        parseMachineName={options.parseMachineName || parseMachineName}
-        sendAnalytics={options.sendAnalytics || sinon.stub()} />,
+        parseMachineName={options.parseMachineName || parseMachineName} />,
       {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
@@ -106,7 +105,6 @@ describe('MachineView', function() {
           <MachineViewColumn
             acl={acl}
             droppable={false}
-            sendAnalytics={sinon.stub()}
             title="New units"
             toggle={{
               action: columns.at(0).prop('toggle').action,
@@ -167,7 +165,6 @@ describe('MachineView', function() {
               action: machineMenuItems[8].action
             }]}
             ref="machinesColumn"
-            sendAnalytics={sinon.stub()}
             title="My Model (0)"
             type="machine">
             {undefined}
@@ -214,7 +211,6 @@ describe('MachineView', function() {
               action: containerMenuItems[4].action
             }]}
             ref="containersColumn"
-            sendAnalytics={sinon.stub()}
             title="0 containers, 0 units"
             type="container">
             {undefined}

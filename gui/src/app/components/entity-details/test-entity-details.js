@@ -31,7 +31,6 @@ describe('EntityDetails', function() {
         importBundleYAML={options.importBundleYAML || sinon.stub()}
         listPlansForCharm={options.listPlansForCharm || sinon.stub()}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
-        sendAnalytics={options.sendAnalytics || sinon.stub()}
         setPageTitle={options.setPageTitle || sinon.stub()}
         showTerms={options.showTerms || sinon.stub()}
         staticURL={options.staticURL || 'http://example.com'} />,
@@ -113,7 +112,6 @@ describe('EntityDetails', function() {
             hasPlans={false}
             plans={null}
             scrollCharmbrowser={sinon.stub()}
-            sendAnalytics={sinon.stub()}
             showTerms={sinon.stub()}
             staticURL="http://example.com" />
         </div>

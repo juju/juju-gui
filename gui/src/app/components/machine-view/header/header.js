@@ -26,7 +26,6 @@ MachineViewHeaderGlobals.dropTarget = {
     @param {Object} component The component that is being dropped onto.
   */
   drop: function(props, monitor, component) {
-    props.sendAnalytics('Machine View', 'Drop Target', 'Header');
     if (props.droppable) {
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
@@ -135,7 +134,6 @@ MachineViewHeader.propTypes = {
   droppable: PropTypes.bool.isRequired,
   isOver: PropTypes.bool.isRequired,
   menuItems: PropTypes.array,
-  sendAnalytics: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   toggle: PropTypes.object,
   type: PropTypes.string

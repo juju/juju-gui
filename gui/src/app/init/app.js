@@ -286,7 +286,7 @@ class App extends React.Component {
           changeState={this._bound.changeState}
           displayTerminalButton={this._shouldEnableTerminal()}
           exportEnvironmentFile={initUtils.exportEnvironmentFile.bind(
-            initUtils, props.db, props.sendAnalytics)}
+            initUtils, props.db)}
           hideDragOverNotification={this._showDragOverNotification.bind(
             this, false)}
           importBundleFile={props.bundleImporter.importBundleFile.bind(
@@ -499,7 +499,6 @@ Browser: ${navigator.userAgent}`
         getUser={this.props.identity.getUser.bind(this.props.identity)}
         gisf={this.props.applicationConfig.gisf}
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
-        sendAnalytics={this.props.sendAnalytics}
         showPay={this.props.applicationConfig.flags.pay || false}
         storeUser={this.props.storeUser.bind(this)}
         stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
@@ -728,7 +727,6 @@ Browser: ${navigator.userAgent}`
         importBundleYAML={this.props.bundleImporter.importBundleYAML.bind(
           this.props.bundleImporter)}
         listPlansForCharm={this.props.plans.listPlansForCharm.bind(this.props.plans)}
-        sendAnalytics={this.props.sendAnalytics}
         setPageTitle={this.props.setPageTitle.bind(this)}
         showTerms={this.props.terms.showTerms.bind(this.props.terms)}
         staticURL={this.props.applicationConfig.staticURL || ''} />);
@@ -794,7 +792,6 @@ Browser: ${navigator.userAgent}`
         parseMachineDetails={initUtils.parseMachineDetails.bind(
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
-        sendAnalytics={this.props.sendAnalytics}
         series={urls.CHARM_SERIES}
         showSSHButtons={this._shouldEnableTerminal()} />);
   }
@@ -1038,7 +1035,6 @@ Browser: ${navigator.userAgent}`
         plans={this.props.plans && shapeup.fromShape(this.props.plans, propTypes.plans)}
         profileUsername={this.props.getUserInfo(state).profile}
         region={modelAPI.get('region')}
-        sendAnalytics={this.props.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showPay={this.props.applicationConfig.flags.pay || false}
         staticURL={this.props.applicationConfig.staticURL || ''}
@@ -1084,8 +1080,7 @@ Browser: ${navigator.userAgent}`
             changesUtils.generateChangeDescription.bind(
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
-          modelCommitted={this.props.modelAPI.get('connected')}
-          sendAnalytics={this.props.sendAnalytics} />
+          modelCommitted={this.props.modelAPI.get('connected')} />
       </div>);
   }
 
@@ -1465,7 +1460,6 @@ App.propTypes = {
   payment: PropTypes.object,
   plans: PropTypes.object,
   rates: PropTypes.object,
-  sendAnalytics: PropTypes.func.isRequired,
   setModelUUID: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   stats: PropTypes.object,

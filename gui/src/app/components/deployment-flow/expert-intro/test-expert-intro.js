@@ -21,7 +21,6 @@ describe('DeploymentExpertIntro', () => {
       } : options.entityModel}
       generatePath={options.generatePath || sinon.stub()}
       getDiagramURL={options.getDiagramURL || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       staticURL={options.staticURL || '/static/url'} />
   );
 

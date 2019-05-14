@@ -124,7 +124,6 @@ exports[`EntityContent can display a bundle for Juju 2 1`] = `
       >
         <ExpertContactCard
           expert="test-owner"
-          sendAnalytics={[Function]}
           staticURL="http://example.com"
         />
         <div
@@ -353,7 +352,6 @@ exports[`EntityContent can display plans 1`] = `
         </div>
         <ExpertContactCard
           expert="test-owner"
-          sendAnalytics={[Function]}
           staticURL="http://example.com"
         />
         <div

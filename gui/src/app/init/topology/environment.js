@@ -24,7 +24,6 @@ class EnvironmentView {
     this.bundleImporter = options.bundleImporter;
     this.state = options.state;
     this.staticURL = options.staticURL;
-    this.sendAnalytics = options.sendAnalytics;
     this.container = options.container;
   }
 
@@ -219,11 +218,6 @@ class EnvironmentView {
     @param {Object} e The click event
   */
   _handlePlusClick(e) {
-    this.sendAnalytics(
-      'Onboarding',
-      'Click',
-      'Onboarding plus'
-    );
     this.state.changeState({
       store: ''
     });

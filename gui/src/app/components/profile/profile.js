@@ -23,16 +23,6 @@ require('./_profile.scss');
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
   /**
-    Send profile analytics.
-    @param {String} action Some identifiable action.
-    @param {String} label Name of the event.
-    @param {Object} value An optional single depth object for extra info.
-  */
-  _sendAnalytics(action, label, value) {
-    this.props.sendAnalytics('Profile', action, label, value);
-  }
-
-  /**
     Get the base path for the active section e.g. "credentials/aws_prod" would
     return "credentials".
     @returns {String} The active base section of the path.
@@ -206,7 +196,6 @@ class Profile extends React.Component {
               controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
-              sendAnalytics={this._sendAnalytics.bind(this)}
               username={props.controllerUser} />
           );
         }
@@ -328,7 +317,6 @@ Profile.propTypes = {
     updateBillingAddress: PropTypes.func,
     updatePaymentMethod: PropTypes.func
   }),
-  sendAnalytics: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
   storeUser: PropTypes.func.isRequired,
   stripe: shapeup.shape({

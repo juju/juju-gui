@@ -44,7 +44,6 @@ describe('EntityContent', function() {
       hasPlans={options.hasPlans === undefined ? false : options.hasPlans}
       plans={options.plans}
       scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
       staticURL={options.staticURL || 'http://example.com'} />
   );

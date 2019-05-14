@@ -60,11 +60,6 @@ class DeploymentBar extends React.Component {
     @method _deployAction
   */
   _deployAction() {
-    this.props.sendAnalytics(
-      'Deployment Flow',
-      'Button click',
-      'deploy'
-    );
     this.props.changeState({
       gui: {
         deploy: ''
@@ -113,8 +108,7 @@ DeploymentBar.propTypes = {
   currentChangeSet: PropTypes.object.isRequired,
   generateChangeDescription: PropTypes.func.isRequired,
   hasEntities: PropTypes.bool.isRequired,
-  modelCommitted: PropTypes.bool.isRequired,
-  sendAnalytics: PropTypes.func.isRequired
+  modelCommitted: PropTypes.bool.isRequired
 };
 
 module.exports = DeploymentBar;

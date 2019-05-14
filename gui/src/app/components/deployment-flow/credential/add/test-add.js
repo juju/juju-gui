@@ -12,11 +12,10 @@ const {ButtonRow} = require('@canonical/juju-react-components');
 const FileField = require('../../../file-field/file-field');
 
 describe('DeploymentCredentialAdd', function() {
-  let acl, sendAnalytics, refs;
+  let acl, refs;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    sendAnalytics = sinon.stub();
     refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -52,7 +51,6 @@ describe('DeploymentCredentialAdd', function() {
       credentials={options.credentials || []}
       onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
       onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
-      sendAnalytics={sendAnalytics}
       setCredential={sinon.stub()}
       updateCloudCredential={options.updateCloudCredential || sinon.stub()}
       user="user-admin" />
@@ -427,9 +425,6 @@ describe('DeploymentCredentialAdd', function() {
     instance.refs = refs;
     wrapper.find('InsetSelect').simulate('change', 'oauth2');
     instance._handleAddCredentials({preventDefault: sinon.stub()});
-    assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
-    assert.deepEqual(sendAnalytics.args[0],
-      ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'google_user-admin_new@test');
@@ -456,9 +451,6 @@ describe('DeploymentCredentialAdd', function() {
     instance.refs = refs;
     wrapper.find('InsetSelect').simulate('change', 'oauth2');
     wrapper.find('form').simulate('submit', {preventDefault: sinon.stub()});
-    assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
-    assert.deepEqual(sendAnalytics.args[0],
-      ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'google_user-admin_new@test');

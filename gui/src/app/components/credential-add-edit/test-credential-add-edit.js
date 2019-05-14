@@ -44,7 +44,6 @@ describe('CredentialAddEdit', () => {
       credentials={['test1', 'test2']}
       onCancel={options.onCancel || sinon.stub()}
       onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       username="spinach@external" />
   );
 
@@ -107,7 +106,6 @@ describe('CredentialAddEdit', () => {
             key="deployment-credential-add"
             onCancel={sinon.stub()}
             onCredentialUpdated={sinon.stub()}
-            sendAnalytics={sinon.stub()}
             updateCloudCredential={sinon.stub()}
             user="spinach@external" />
         </div>
@@ -133,7 +131,6 @@ describe('CredentialAddEdit', () => {
           key="deployment-credential-add"
           onCancel={sinon.stub()}
           onCredentialUpdated={sinon.stub()}
-          sendAnalytics={sinon.stub()}
           updateCloudCredential={sinon.stub()}
           user="spinach@external" />
       </div>);

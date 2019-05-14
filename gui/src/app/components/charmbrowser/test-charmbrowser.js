@@ -29,7 +29,6 @@ describe('Charmbrowser', function() {
       gisf={options.gisf === undefined ? true : options.gisf}
       importBundleYAML={options.importBundleYAML || sinon.stub()}
       listPlansForCharm={options.listPlansForCharm || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       setPageTitle={options.setPageTitle || sinon.stub()}
       showTerms={options.showTerms || sinon.stub()}
       staticURL={options.staticURL} />
@@ -170,7 +169,6 @@ describe('Charmbrowser', function() {
           importBundleYAML={importBundleYAML}
           listPlansForCharm={listPlansForCharm}
           scrollCharmbrowser={entityDetails.prop('scrollCharmbrowser')}
-          sendAnalytics={sinon.stub()}
           setPageTitle={setPageTitle}
           showTerms={showTerms}
           staticURL="http://example.com" />

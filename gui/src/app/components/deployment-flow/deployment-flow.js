@@ -72,7 +72,6 @@ class DeploymentFlow extends React.Component {
     if (this.props.isLoggedIn()) {
       this._getAgreements();
     }
-    this.sendAnalytics('Component mounted');
     if (this.state.isDirectDeploy) {
       this._getDirectDeployEntity(this.props.ddData.id);
     }
@@ -414,10 +413,6 @@ class DeploymentFlow extends React.Component {
       return;
     }
     this.setState({deploying: true});
-    this.sendAnalytics(
-      'Button click',
-      'Deploy model'
-    );
     if (this.props.stats) {
       this.props.stats.increase('deploy');
     }
@@ -771,37 +766,6 @@ class DeploymentFlow extends React.Component {
   }
 
   /**
-    Wrapper that generates a string based on various state to send to GA.
-
-    @method sendAnalytics
-    @param {string} action The action being performed.
-    @param {arguments} args All arguments passed will be used.
-  */
-  sendAnalytics(action, ...args) {
-    if (this.props.ddData) {
-      args.push('is DD');
-    } else {
-      args.push('is from canvas');
-    }
-    if (!this.props.modelCommitted) {
-      args.push('is new model');
-    } else {
-      args.push('is model update');
-    }
-    if (this.props.gisf) {
-      args.push('has USSO');
-    } else {
-      args.push('doesn\'t have USSO');
-    }
-
-    this.props.sendAnalytics(
-      'Deployment Flow',
-      action,
-      args.join(' - ')
-    );
-  }
-
-  /**
     Determines if we should show the login links in the Deployment Login component.
     @return {Boolean} Whether or not it should render based on the component state.
   */
@@ -906,7 +870,6 @@ class DeploymentFlow extends React.Component {
           credential={this.state.credential}
           editable={!this.props.modelCommitted}
           region={this.state.region}
-          sendAnalytics={this.sendAnalytics.bind(this)}
           setCredential={this._setCredential.bind(this)}
           setRegion={this._setRegion.bind(this)}
           user={this.props.getUserName()} />
@@ -1118,7 +1081,6 @@ class DeploymentFlow extends React.Component {
         entityModel={this.state.ddEntity}
         generatePath={this.props.generatePath}
         getDiagramURL={this.props.charmstore.getDiagramURL}
-        sendAnalytics={this.props.sendAnalytics}
         staticURL={this.props.staticURL} />);
   }
 
@@ -1253,7 +1215,6 @@ class DeploymentFlow extends React.Component {
           changeState={this.props.changeState}
           isDirectDeploy={this.state.isDirectDeploy}
           loggedIn={this.props.isLoggedIn()}
-          sendAnalytics={this.sendAnalytics.bind(this)}
           title={this.props.modelName}>
           {content}
         </DeploymentPanel>
@@ -1324,7 +1285,6 @@ DeploymentFlow.propTypes = {
   }).isRequired,
   profileUsername: PropTypes.string.isRequired,
   region: PropTypes.string,
-  sendAnalytics: PropTypes.func.isRequired,
   setModelName: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
   staticURL: PropTypes.string.isRequired,

@@ -80,7 +80,6 @@ describe('DeploymentFlow', function() {
       payment,
       plans,
       profileUsername: 'Spinach',
-      sendAnalytics: sinon.stub(),
       setModelName: sinon.stub(),
       showPay: false,
       staticURL: '/static/url',
@@ -192,7 +191,6 @@ describe('DeploymentFlow', function() {
           changeState={sinon.stub()}
           isDirectDeploy={false}
           loggedIn={true}
-          sendAnalytics={wrapper.find('DeploymentPanel').prop('sendAnalytics')}
           title="Pavlova">
           <React.Fragment>
             <DeploymentSection
@@ -615,10 +613,6 @@ describe('DeploymentFlow', function() {
     section.prop('buttons')[0].action();
     assert.isNull(instance.state.cloud);
     assert.isNull(instance.state.credential);
-    assert.equal(instance.props.sendAnalytics.callCount, 1);
-    assert.deepEqual(instance.props.sendAnalytics.args[0], [
-      'Deployment Flow', 'Component mounted',
-      'is DD - is new model - doesn\'t have USSO']);
   });
 
   it('can enable the credential section', function() {
@@ -787,13 +781,6 @@ describe('DeploymentFlow', function() {
       region: 'north'
     });
     assert.equal(props.changeState.callCount, 1);
-    assert.equal(props.sendAnalytics.callCount, 2);
-    assert.deepEqual(props.sendAnalytics.args[0], [
-      'Deployment Flow', 'Component mounted',
-      'is DD - is model update - doesn\'t have USSO']);
-    assert.deepEqual(props.sendAnalytics.args[1], [
-      'Deployment Flow', 'Button click',
-      'Deploy model - is DD - is model update - doesn\'t have USSO']);
   });
 
   it('Enables the deploy button if deploying fails', function() {

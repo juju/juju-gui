@@ -20,8 +20,7 @@ describe('DeploymentBar', function() {
       hasEntities={
         options.hasEntities === undefined ? true : options.hasEntities}
       modelCommitted={
-        options.modelCommitted === undefined ? false : options.modelCommitted}
-      sendAnalytics={options.sendAnalytics || sinon.stub()} />
+        options.modelCommitted === undefined ? false : options.modelCommitted} />
   );
 
   beforeEach(function() {
@@ -192,18 +191,12 @@ describe('DeploymentBar', function() {
   });
 
   it('calls the deploy method when the deploy button is pressed', () =>{
-    const sendAnalytics = sinon.stub();
     const changeState = sinon.stub();
     const wrapper = renderComponent({
-      sendAnalytics,
       changeState
     });
     wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: {deploy: ''}});
-    assert.equal(sendAnalytics.callCount, 1);
-    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
-    assert.equal(sendAnalytics.args[0][1], 'Button click');
-    assert.equal(sendAnalytics.args[0][2], 'deploy');
   });
 });

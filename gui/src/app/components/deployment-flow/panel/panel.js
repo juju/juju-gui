@@ -18,10 +18,6 @@ class DeploymentPanel extends React.Component {
     @method _handleClose
   */
   _handleClose() {
-    this.props.sendAnalytics(
-      'Button click',
-      'Cancel deployment'
-    );
     this.props.changeState({
       gui: {deploy: null},
       profile: null,
@@ -88,7 +84,6 @@ DeploymentPanel.propTypes = {
   ]),
   isDirectDeploy: PropTypes.bool,
   loggedIn: PropTypes.bool,
-  sendAnalytics: PropTypes.func,
   title: PropTypes.string
 };
 

@@ -130,7 +130,6 @@ class DeploymentExpertIntro extends React.Component {
               </ExpertBlock>
               <ExpertContactCard
                 expert={entity.owner}
-                sendAnalytics={this.props.sendAnalytics}
                 staticURL={this.props.staticURL} />
             </div>
           </div>
@@ -152,7 +151,6 @@ DeploymentExpertIntro.propTypes = {
   entityModel: PropTypes.object,
   generatePath: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   staticURL: PropTypes.string
 };
 

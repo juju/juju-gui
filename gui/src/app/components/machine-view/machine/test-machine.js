@@ -34,7 +34,6 @@ describe('MachineViewMachine', function() {
       machineAPI={options.machineAPI || machineAPI}
       modelAPI={options.modelAPI || modelAPI}
       parseConstraints={options.parseConstraints || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       showConstraints={
         options.showConstraints === undefined ? true : options.showConstraints}
       showSSHButton={
@@ -141,7 +140,6 @@ describe('MachineViewMachine', function() {
               key="wordpress/0"
               machineType="machine"
               removeUnit={sinon.stub()}
-              sendAnalytics={sinon.stub()}
               unit={{
                 'agent_state': 'started',
                 'displayName': 'wordpress/0',
@@ -152,7 +150,6 @@ describe('MachineViewMachine', function() {
               key="wordpress/1"
               machineType="machine"
               removeUnit={sinon.stub()}
-              sendAnalytics={sinon.stub()}
               unit={{
                 'agent_state': 'started',
                 'displayName': 'wordpress/1',
@@ -269,7 +266,6 @@ describe('MachineViewMachine', function() {
             key="wordpress/1"
             machineType="machine"
             removeUnit={sinon.stub()}
-            sendAnalytics={sinon.stub()}
             unit={{
               'deleted': false,
               'displayName': 'wordpress/1',
@@ -300,7 +296,6 @@ describe('MachineViewMachine', function() {
           key="wordpress/0"
           machineType="container"
           removeUnit={sinon.stub()}
-          sendAnalytics={sinon.stub()}
           unit={{
             'agent_state': 'started',
             'displayName': 'wordpress/0',
@@ -311,7 +306,6 @@ describe('MachineViewMachine', function() {
           key="wordpress/1"
           machineType="container"
           removeUnit={sinon.stub()}
-          sendAnalytics={sinon.stub()}
           unit={{
             'agent_state': 'started',
             'displayName': 'wordpress/1',

@@ -29,7 +29,6 @@ MachineViewColumnGlobals.dropTarget = {
     if (monitor.didDrop()) {
       return;
     };
-    props.sendAnalytics('Machine View', 'Drop Target', 'Column');
     if (props.droppable) {
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
@@ -90,7 +89,6 @@ class MachineViewColumn extends React.Component {
           droppable={props.droppable}
           dropUnit={props.dropUnit}
           menuItems={props.menuItems}
-          sendAnalytics={props.sendAnalytics}
           title={props.title}
           toggle={props.toggle}
           type={props.type} />
@@ -123,7 +121,6 @@ MachineViewColumn.propTypes = {
   droppable: PropTypes.bool.isRequired,
   isOver: PropTypes.bool.isRequired,
   menuItems: PropTypes.array,
-  sendAnalytics: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   toggle: PropTypes.object,
   type: PropTypes.string

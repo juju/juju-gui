@@ -95,7 +95,6 @@ class CredentialAddEdit extends React.Component {
         key="deployment-credential-add"
         onCancel={this.props.onCancel}
         onCredentialUpdated={this.props.onCredentialUpdated}
-        sendAnalytics={this.props.sendAnalytics}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
         user={this.props.username} />);
   }
@@ -163,7 +162,6 @@ CredentialAddEdit.propTypes = {
   credentials: PropTypes.arrayOf(PropTypes.string.isRequired),
   onCancel: PropTypes.func,
   onCredentialUpdated: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
 };
 

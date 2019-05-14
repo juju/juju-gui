@@ -118,14 +118,6 @@ class DeploymentCredential extends React.Component {
       showAdd: this.props.editable &&
         (!credentials || credentialList.length === 0)
     });
-    this.props.sendAnalytics(
-      'Select cloud',
-      this.props.cloud.name,
-      ((!credentials || credentialList.length === 0) ?
-        'doesn\'t have' :
-        'has') +
-      ' credentials'
-    );
     if (credentials && credentialList.length > 0) {
       let select = credentialList[0].id;
       // If the supplied credential to select is actually in the list then
@@ -160,10 +152,6 @@ class DeploymentCredential extends React.Component {
       this.setState({savedCredential: this.props.credential});
       this.props.setCredential(null);
     } else if (cancel) {
-      this.props.sendAnalytics(
-        'Button click',
-        'Cancel add credential'
-      );
       // Restore previous credentials.
       this.props.setCredential(this.state.savedCredential);
     }
@@ -297,7 +285,6 @@ class DeploymentCredential extends React.Component {
         onCancel={
           this.state.credentials.length ? this._toggleAdd.bind(this, true) : null}
         onCredentialUpdated={this._onCredentialUpdated.bind(this)}
-        sendAnalytics={this.props.sendAnalytics}
         updateCloudCredential={this.props.controllerAPI.updateCloudCredential}
         user={this.props.user} />);
   }
@@ -348,7 +335,6 @@ DeploymentCredential.propTypes = {
   credential: PropTypes.string,
   editable: PropTypes.bool,
   region: PropTypes.string,
-  sendAnalytics: PropTypes.func.isRequired,
   setCredential: PropTypes.func.isRequired,
   setRegion: PropTypes.func.isRequired,
   user: PropTypes.string
