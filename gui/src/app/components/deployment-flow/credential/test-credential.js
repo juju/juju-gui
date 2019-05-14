@@ -12,7 +12,7 @@ const {ExpandingRow} = require('@canonical/juju-react-components');
 const DeploymentCredentialAdd = require('./add/add');
 
 describe('DeploymentCredential', function() {
-  var acl, controllerAPI, sendAnalytics, cloud, credentials, regions, credentialNames, user;
+  var acl, controllerAPI, cloud, credentials, regions, credentialNames, user;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentCredential
@@ -24,7 +24,6 @@ describe('DeploymentCredential', function() {
       credential={options.credential}
       editable={options.editable === undefined ? true : options.editable}
       region={options.region}
-      sendAnalytics={options.sendAnalytics || sendAnalytics}
       setCredential={options.setCredential || sinon.stub()}
       setRegion={options.setRegion || sinon.stub()}
       user={options.user === undefined ? user : options.user} />
@@ -32,7 +31,6 @@ describe('DeploymentCredential', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    sendAnalytics = sinon.stub();
     regions = [{name: 'test-region'}];
     cloud = {id: 'azure', id: 'azure', regions: regions};
     credentials = {
@@ -79,7 +77,6 @@ describe('DeploymentCredential', function() {
             onCancel={null}
             onCredentialUpdated={
               wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
-            sendAnalytics={sendAnalytics}
             updateCloudCredential={sinon.stub()}
             user={user} />
         </ExpandingRow>
@@ -217,13 +214,6 @@ describe('DeploymentCredential', function() {
     instance._toggleAdd(true);
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], credential);
-    assert.equal(sendAnalytics.callCount, 2);
-    assert.deepEqual(sendAnalytics.args[0], [
-      'Select cloud',
-      undefined,
-      'has credentials']);
-    assert.deepEqual(sendAnalytics.args[1],
-      ['Button click', 'Cancel add credential']);
   });
 
   it('can handle errors when getting credential names', () => {

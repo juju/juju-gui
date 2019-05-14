@@ -18,7 +18,6 @@ const dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
-    props.sendAnalytics('Machine View', 'Drag Target', 'Machine Unit');
     return {unit: props.unit};
   },
 
@@ -94,7 +93,6 @@ MachineViewMachineUnit.propTypes = {
   isDragging: PropTypes.bool.isRequired,
   machineType: PropTypes.string.isRequired,
   removeUnit: PropTypes.func,
-  sendAnalytics: PropTypes.func.isRequired,
   unit: PropTypes.object.isRequired
 };
 

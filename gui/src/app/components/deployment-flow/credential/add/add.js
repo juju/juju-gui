@@ -76,10 +76,6 @@ class DeploymentCredentialAdd extends React.Component {
       return;
     }
     const credentialName = this.refs.credentialName.getValue();
-    this.props.sendAnalytics(
-      'Button click',
-      'Add credentials'
-    );
     props.updateCloudCredential(
       initUtils.generateCloudCredentialName(
         props.cloud.name, props.user, credentialName),
@@ -320,7 +316,6 @@ DeploymentCredentialAdd.propTypes = {
   credentials: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   onCredentialUpdated: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   updateCloudCredential: PropTypes.func.isRequired,
   user: PropTypes.string
 };

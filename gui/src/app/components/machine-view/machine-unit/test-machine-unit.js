@@ -25,7 +25,6 @@ describe('MachineViewMachineUnit', function() {
       isDragging={options.isDragging === undefined ? false : options.isDragging}
       machineType={options.machineType || 'machine'}
       removeUnit={options.removeUnit || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       unit={options.unit || unit} />
   );
 

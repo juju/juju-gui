@@ -123,7 +123,6 @@ class EntityDetails extends React.Component {
               hasPlans={this.state.hasPlans}
               plans={this.state.plans}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
-              sendAnalytics={this.props.sendAnalytics}
               showTerms={this.props.showTerms}
               staticURL={this.props.staticURL} />
           </div>
@@ -292,7 +291,6 @@ EntityDetails.propTypes = {
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string

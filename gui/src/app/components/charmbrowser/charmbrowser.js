@@ -150,7 +150,6 @@ class Charmbrowser extends React.Component {
             key={id}
             listPlansForCharm={this.props.listPlansForCharm}
             scrollCharmbrowser={this._scrollCharmbrowser.bind(this)}
-            sendAnalytics={this.props.sendAnalytics}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}
             staticURL={this.props.staticURL} />
@@ -203,7 +202,6 @@ Charmbrowser.propTypes = {
   gisf: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string

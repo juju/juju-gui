@@ -518,7 +518,6 @@ class GUIApp {
         payment={this.payment}
         plans={this.plans}
         rates={this.rates}
-        sendAnalytics={this.sendAnalytics}
         setModelUUID={this._setModelUUID.bind(this)}
         setPageTitle={this.setPageTitle.bind(this)}
         stats={this.stats}
@@ -547,8 +546,7 @@ class GUIApp {
     }
     const state = new State({
       baseURL: baseURL,
-      seriesList: urls.SERIES,
-      sendAnalytics: this.sendAnalytics
+      seriesList: urls.SERIES
     });
     state.register([
       ['*', this._ensureControllerConnection.bind(this)],
@@ -1563,7 +1561,6 @@ class GUIApp {
       bundleImporter: this.bundleImporter,
       state: this.state,
       staticURL: this.applicationConfig.staticURL,
-      sendAnalytics: this.sendAnalytics,
       container: document.querySelector(
         this.applicationConfig.container || '#main')
     });

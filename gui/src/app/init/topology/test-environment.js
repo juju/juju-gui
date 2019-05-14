@@ -279,8 +279,7 @@ describe('EnvironmentView', function() {
           get: function() {}
         },
         charmstore: fakeStore,
-        state: {changeState: sinon.stub()},
-        sendAnalytics: sinon.stub()
+        state: {changeState: sinon.stub()}
       });
       click = new MouseEvent('click', {
         view: window,

@@ -23,7 +23,6 @@ describe('MachineViewUnplacedUnit', function() {
       dbAPI={options.dbAPI || dbAPI}
       isDragging={options.isDragging === undefined ? false : options.isDragging}
       modelAPI={options.modelAPI || modelAPI}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       unitAPI={options.unitAPI || unitAPI} />
   );
 

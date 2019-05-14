@@ -15,7 +15,6 @@ describe('DeploymentPanel', function() {
       changeState={options.changeState || sinon.stub()}
       isDirectDeploy={options.isDirectDeploy}
       loggedIn={options.loggedIn}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       title={options.title || 'Lamington'}>
       {options.children || (<span>content</span>)}
     </DeploymentPanel>

@@ -74,10 +74,8 @@ utils.unloadWindow = function() {
   Export the YAML for the current model, including uncommitted changes.
 
   @param {Object} db The application database.
-  @param {Function} [sendAnalytics] Function to send analytics about the use of
-    the bundle export.
 */
-utils.exportEnvironmentFile = (db, sendAnalytics)=> {
+utils.exportEnvironmentFile = db => {
   const apps = db.services.toArray();
   const idMap = new Map();
   // Store a map of all the temporary app ids to the real ids.
@@ -96,7 +94,6 @@ utils.exportEnvironmentFile = (db, sendAnalytics)=> {
   const exportBlob = new Blob([exportData],
     {type: 'text/plain;charset=utf-8'});
   const envName = db.environment.get('name');
-  sendAnalytics('BundleExport', 'export', 'export', apps.length);
   FileSaver.saveAs(exportBlob, utils._generateBundleExportFileName(envName));
 };
 

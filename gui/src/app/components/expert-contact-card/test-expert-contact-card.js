@@ -13,7 +13,6 @@ describe('ExpertContactCard', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <ExpertContactCard
       expert={options.expert || 'spiculecharms'}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       staticURL="/media" />
   );
 
@@ -112,12 +111,5 @@ describe('ExpertContactCard', function() {
         </ul>
       </div>);
     assert.compareJSX(wrapper.find('.expert-contact-card__contact'), expected);
-  });
-
-  it('can send analytics when the contact button is clicked', () => {
-    const sendAnalytics = sinon.stub();
-    const wrapper = renderComponent({sendAnalytics});
-    wrapper.find('Button').props().action();
-    assert.equal(sendAnalytics.callCount, 1);
   });
 });

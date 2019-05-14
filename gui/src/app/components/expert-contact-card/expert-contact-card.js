@@ -23,7 +23,6 @@ class ExpertContactCard extends React.Component {
     Change the show contact state.
   */
   _showContact() {
-    this.props.sendAnalytics('Charmbrowser', 'Entity Details', 'Expert Contact');
     this.setState({showContact: true});
   }
 
@@ -116,7 +115,6 @@ class ExpertContactCard extends React.Component {
 
 ExpertContactCard.propTypes = {
   expert: PropTypes.string.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   staticURL: PropTypes.string
 };
 

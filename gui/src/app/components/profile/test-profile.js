@@ -34,7 +34,6 @@ describe('Profile', function() {
         getUser={options.getUser || sinon.stub()}
         gisf={true}
         payment={options.payment}
-        sendAnalytics={sinon.stub()}
         showPay={options.showPay || false}
         storeUser={options.storeUser || sinon.stub()}
         stripe={options.stripe}

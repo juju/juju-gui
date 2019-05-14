@@ -34,7 +34,6 @@ describe('App', () => {
       payment={options.payment || {}}
       plans={options.plans || {}}
       rates={options.rates || {}}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       setModelUUID={options.setModelUUID || sinon.stub()}
       setPageTitle={options.setPageTitle || sinon.stub()}
       stats={options.stats || {}}

@@ -13,7 +13,7 @@ const {SvgIcon} = require('@canonical/juju-react-components');
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewColumn', function() {
-  let acl, sendAnalytics;
+  let acl;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     // The component is wrapped to handle drag and drop, but we just want to
@@ -27,7 +27,6 @@ describe('MachineViewColumn', function() {
       dropUnit={options.dropUnit || sinon.stub()}
       isOver={options.isOver === undefined ? false : options.isOver}
       menuItems={options.menuItems || []}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       title={options.title || 'Sandbox'}
       toggle={options.toggle || {}}
       type={options.type || 'machine'}>
@@ -37,7 +36,6 @@ describe('MachineViewColumn', function() {
 
   beforeEach(() => {
     acl = shapeup.deepFreeze(shapeup.addReshape({isReadOnly: () => false}));
-    sendAnalytics = sinon.stub();
   });
 
   it('can render', function() {
@@ -52,7 +50,6 @@ describe('MachineViewColumn', function() {
           droppable={true}
           dropUnit={sinon.stub()}
           menuItems={[]}
-          sendAnalytics={sendAnalytics}
           title="Sandbox"
           toggle={{}}
           type="machine" />

@@ -253,7 +253,6 @@ class ProfileCredentialList extends React.Component {
         onCancel={overrides.onCancel || this._toggleAdd.bind(this)}
         onCredentialUpdated={
           overrides.onCredentialUpdated || this._onCredentialAdded.bind(this)}
-        sendAnalytics={this.props.sendAnalytics}
         username={this.props.username} />);
   }
 
@@ -400,7 +399,6 @@ ProfileCredentialList.propTypes = {
   }),
   controllerIsReady: PropTypes.func.isRequired,
   credential: PropTypes.string,
-  sendAnalytics: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
 };
 
