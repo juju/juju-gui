@@ -126,9 +126,11 @@ class EntityHeader extends React.Component {
             disabled={this.props.acl.isReadOnly()}
             modifier="positive"
             ref="deployAction"
-            tooltip={
-              `Add this ${entity.type} to ` +
-              `${modelName ? 'your current' : 'a new'} model`}>
+            tooltip={{
+              msg: `Add this ${entity.type} to ` +
+                  `${modelName ? 'your current' : 'a new'} model`,
+              position: 'btm-lft'
+            }}>
             {title}
           </Button>
         </span>
