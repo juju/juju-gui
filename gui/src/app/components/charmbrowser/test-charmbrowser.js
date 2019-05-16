@@ -3,12 +3,8 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-const shapeup = require('shapeup');
 
 const Charmbrowser = require('./charmbrowser');
-const EntityDetails = require('../entity-details/entity-details');
-const SearchResults = require('../search-results/search-results');
-const Store = require('../store/store');
 
 describe('Charmbrowser', function() {
   var acl, appState, charmstore;
@@ -18,6 +14,11 @@ describe('Charmbrowser', function() {
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       addToModel={options.addToModel || sinon.stub()}
+      analytics={{
+        addCategory: sinon.stub().returns({
+          sendEvent: sinon.stub()
+        })
+      }}
       appState={options.appState || {}}
       charmstore={options.charmstore || charmstore}
       charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
@@ -69,28 +70,7 @@ describe('Charmbrowser', function() {
       importBundleYAML,
       setPageTitle
     });
-    const searchResults = wrapper.find('SearchResults');
-    const expected = (
-      <div
-        className="charmbrowser"
-        ref="charmbrowser">
-        <SearchResults
-          acl={acl}
-          addToModel={addToModel}
-          changeState={searchResults.prop('changeState')}
-          charmstoreSearch={charmstore.search}
-          generatePath={searchResults.prop('generatePath')}
-          owner={undefined}
-          provides={undefined}
-          query={query}
-          requires={undefined}
-          series={undefined}
-          setPageTitle={setPageTitle}
-          sort={undefined}
-          tags={undefined}
-          type={undefined} />
-      </div>);
-    assert.compareJSX(wrapper.find('.charmbrowser'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('displays the store when the app state calls for it', function() {
@@ -100,19 +80,7 @@ describe('Charmbrowser', function() {
       setPageTitle,
       staticURL: 'surl'
     });
-    const expected = (
-      <div
-        className="charmbrowser"
-        ref="charmbrowser">
-        <Store
-          changeState={wrapper.find('Store').prop('changeState')}
-          charmstoreURL="http://1.2.3.4/"
-          gisf={true}
-          setPageTitle={setPageTitle}
-          showExperts={undefined}
-          staticURL='surl' />
-      </div>);
-    assert.compareJSX(wrapper.find('.charmbrowser'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('displays entity details when the app state calls for it', function() {
@@ -142,38 +110,7 @@ describe('Charmbrowser', function() {
       showTerms,
       staticURL: 'http://example.com'
     });
-    const entityDetails = wrapper.find('EntityDetails');
-    const expected = (
-      <div
-        className="charmbrowser"
-        ref="charmbrowser">
-        <EntityDetails
-          acl={acl}
-          addNotification={addNotification}
-          changeState={entityDetails.prop('changeState')}
-          charmstore={{
-            getBundleYAML: charmstore.getBundleYAML,
-            getDiagramURL: charmstore.getDiagramURL,
-            getEntity: charmstore.getEntity,
-            getFile: charmstore.getFile,
-            reshape: shapeup.reshapeFunc,
-            url: charmstore.url
-          }}
-          clearLightbox={clearLightbox}
-          deployService={deployService}
-          displayLightbox={displayLightbox}
-          flags={{'test.ddeploy': true}}
-          getModelName={getModelName}
-          hash="readme"
-          id={id}
-          importBundleYAML={importBundleYAML}
-          listPlansForCharm={listPlansForCharm}
-          scrollCharmbrowser={entityDetails.prop('scrollCharmbrowser')}
-          setPageTitle={setPageTitle}
-          showTerms={showTerms}
-          staticURL="http://example.com" />
-      </div>);
-    assert.compareJSX(wrapper.find('.charmbrowser'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('closes when clicked outside', function() {

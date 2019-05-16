@@ -216,7 +216,7 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.analytics = new Analytics({getLabel: () => {
+    this.analytics = new Analytics(window.dataLayer, {getLabel: () => {
       const details = [
         `model committed: ${this.controllerAPI.get('connected')}`,
         `user authenticated: ${this.controllerAPI.userIsAuthenticated}`

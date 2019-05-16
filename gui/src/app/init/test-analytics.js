@@ -1,87 +1,102 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const analytics = require('./analytics');
-
-chai.config.includeStack = true;
-chai.config.truncateThreshold = 0;
+const {Analytics} = require('./analytics');
 
 describe('Analytics', () => {
-  const sendAnalyticsFactory = analytics.sendAnalyticsFactory;
-
-  // Fake it with an array
-  let dataLayer;
-  const controllerAPI = {
-    userIsAuthenticated: true
-  };
-
-  beforeEach(() => {
-    dataLayer = [];
+  it('can add category', () => {
+    let analytics = new Analytics([]);
+    analytics = analytics.addCategory('Inspector');
+    assert.deepEqual(analytics.categories, ['Inspector']);
   });
 
-  it('returns a function when initialized', () => {
-    assert.isFunction(sendAnalyticsFactory(null, null));
+  it('returns a new instance when adding a new category', () => {
+    const analytics = new Analytics([]);
+    const analytics2 = analytics.addCategory('Inspector');
+    assert.deepEqual(analytics.categories, []);
+    assert.deepEqual(analytics2.categories, ['Inspector']);
   });
 
-  it('returns null when no dataLayer is set', () => {
-    const sendAnalytics = sendAnalyticsFactory(null, null);
-    assert.isNull(sendAnalytics('category', 'action', 'label'));
-  });
-
-  it('logs an error when required arguments are missing', () => {
-    const sendAnalytics = sendAnalyticsFactory(controllerAPI, dataLayer);
-    const original = console.error;
-    const check = (err, func) => {
-      const error = sinon.stub();
-      console.error = error;
-      func();
-      console.error = original;
-      assert.strictEqual(error.calledOnce, true, err);
-      const args = error.args[0];
-      assert.strictEqual(args.length, 1, err);
-      assert.strictEqual(args[0], err);
-    };
-    check('cannot send analytics: category required', () => {
-      sendAnalytics();
+  it('can add category from a React component', () => {
+    let analytics = new Analytics([]);
+    analytics = analytics.addCategory({
+      _reactInternalFiber: {
+        elementType: {
+          name: 'Inspector'
+        }
+      }
     });
-    check('cannot send analytics: action required', () => {
-      sendAnalytics('category');
-    });
-    check('cannot send analytics: label required', () => {
-      sendAnalytics('category', 'action');
-    });
+    assert.deepEqual(analytics.categories, ['Inspector']);
   });
 
-  it('pushes to dataLayer when all arguments are present', () => {
-    const sendAnalytics = sendAnalyticsFactory(controllerAPI, dataLayer);
-    sendAnalytics('category', 'action', 'label');
-    assert.lengthOf(dataLayer, 1);
+  it('can send an event', () => {
+    let dataLayer = [];
+    let analytics = new Analytics(dataLayer);
+    analytics = analytics.addCategory('Inspector');
+    analytics = analytics.addCategory('Config');
+    analytics.sendEvent('Click');
     assert.deepEqual(dataLayer[0], {
       'event': 'GAEvent',
-      'eventCategory': 'category',
-      'eventAction': 'action',
-      'eventLabel': 'label',
-      'eventValue': 'loggedIn:true'
+      'eventCategory': 'Inspector > Config',
+      'eventAction': 'Click',
+      'eventLabel': undefined,
+      'eventValue': undefined
     });
   });
 
-  it('combines values if present', () => {
-    const sendAnalytics = sendAnalyticsFactory(controllerAPI, dataLayer);
-    sendAnalytics(
-      'category',
-      'action',
-      'label',
-      {
-        'value': 'mambo',
-        'number': 5
-      });
-    assert.lengthOf(dataLayer, 1);
+  it('can send an event with a provided label', () => {
+    let dataLayer = [];
+    let analytics = new Analytics(dataLayer);
+    analytics = analytics.addCategory('Inspector');
+    analytics.sendEvent('Click', {label: 'cs:k8s'});
     assert.deepEqual(dataLayer[0], {
       'event': 'GAEvent',
-      'eventCategory': 'category',
-      'eventAction': 'action',
-      'eventLabel': 'label',
-      'eventValue': 'loggedIn:true|value:mambo|number:5'
+      'eventCategory': 'Inspector',
+      'eventAction': 'Click',
+      'eventLabel': 'cs:k8s',
+      'eventValue': undefined
+    });
+  });
+
+  it('can send an event with a provided value', () => {
+    let dataLayer = [];
+    let analytics = new Analytics(dataLayer);
+    analytics = analytics.addCategory('Inspector');
+    analytics.sendEvent('Click', {value: 99});
+    assert.deepEqual(dataLayer[0], {
+      'event': 'GAEvent',
+      'eventCategory': 'Inspector',
+      'eventAction': 'Click',
+      'eventLabel': undefined,
+      'eventValue': 99
+    });
+  });
+
+  it('can send an event with a label from a function', () => {
+    let dataLayer = [];
+    let analytics = new Analytics(dataLayer, {getLabel: () => 'authorised: true'});
+    analytics = analytics.addCategory('Inspector');
+    analytics.sendEvent('Click');
+    assert.deepEqual(dataLayer[0], {
+      'event': 'GAEvent',
+      'eventCategory': 'Inspector',
+      'eventAction': 'Click',
+      'eventLabel': 'authorised: true',
+      'eventValue': undefined
+    });
+  });
+
+  it('can send an event with an appended label', () => {
+    let dataLayer = [];
+    let analytics = new Analytics(dataLayer, {getLabel: () => 'authorised: true'});
+    analytics = analytics.addCategory('Inspector');
+    analytics.sendEvent('Click', {label: 'charm: k8s'});
+    assert.deepEqual(dataLayer[0], {
+      'event': 'GAEvent',
+      'eventCategory': 'Inspector',
+      'eventAction': 'Click',
+      'eventLabel': 'authorised: true, charm: k8s',
+      'eventValue': undefined
     });
   });
 });
