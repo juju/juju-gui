@@ -22,6 +22,7 @@ class SearchResults extends React.Component {
     var state = this._generateState(this.props);
     state.waitingForSearch = false;
     this.state = state;
+    this.analytics = this.props.analytics.addCategory('Search Results');
   }
 
   componentDidMount() {
@@ -344,12 +345,14 @@ class SearchResults extends React.Component {
                     <div className="list-block__filters--selects">
                       <form>
                         <SearchResultsSelectFilter
+                          analytics={this.analytics}
                           changeState={this.props.changeState}
                           currentValue={nextProps.sort || this.props.sort}
                           filter='sort'
                           items={sortItems}
                           label="Sort by" />
                         <SearchResultsSelectFilter
+                          analytics={this.analytics}
                           changeState={this.props.changeState}
                           currentValue={
                             nextProps.series || this.props.series}
@@ -566,6 +569,7 @@ class SearchResults extends React.Component {
 SearchResults.propTypes = {
   acl: PropTypes.object.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,

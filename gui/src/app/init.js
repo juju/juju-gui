@@ -550,6 +550,7 @@ class GUIApp {
       return this.state;
     }
     const state = new State({
+      analytics: this.analytics,
       baseURL: baseURL,
       seriesList: urls.SERIES
     });
@@ -1558,6 +1559,7 @@ class GUIApp {
   */
   _renderTopology() {
     const topology = new EnvironmentView({
+      analytics: this.analytics,
       endpointsController: this.endpointsController,
       db: this.db,
       env: this.modelAPI,

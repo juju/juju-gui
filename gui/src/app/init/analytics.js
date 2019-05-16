@@ -6,26 +6,37 @@
 class Analytics {
   constructor(data) {
     if (data) {
-      this.category = data.category;
-      this.label = data.label;
+      this.categories = data.categories || [];
       this.getLabel = data.getLabel;
+      this.label = data.label;
+      // Common events.
+      this.CANCEL = 'Cancel';
+      this.CLICK = 'Click';
+      this.UPDATE = 'Update';
+      this.VIEW = 'View';
     }
   }
 
-  addComponent(component) {
-    let categories = this.category ? [this.category] : [];
-    categories.push(component._reactInternalFiber.elementType.name);
-    // Return a new analytics instance with the new data. This is so that we
+  addCategory(categoryOrComponent) {
+    let name;
+    if (typeof categoryOrComponent === 'string') {
+      name = categoryOrComponent;
+    } else {
+      // Let's just be helpful for React components so that we don't have to
+      // specify the name each time.
+      name = categoryOrComponent._reactInternalFiber.elementType.name;
+    }
+    // Return a new Analytics instance with the new data. This is so that we
     // don't overwrite a top level instance with every fork as the analytics is
     // passed into nested components.
     return new Analytics({
-      category: categories.join(' > '),
+      categories: this.categories.concat([name]),
       getLabel: this.getLabel,
       label: this.label
     });
   }
 
-  sendEvent(action, value) {
+  sendEvent(action, options={}) {
     if (!action) {
       console.error('Analytics action not provided');
       return;
@@ -34,12 +45,19 @@ class Analytics {
     if (this.getLabel) {
       label = this.getLabel();
     }
+    if (options.label) {
+      if (label) {
+        label = `${label}, ${options.label}`;
+      } else {
+        label = options.label;
+      }
+    }
     const event = {
       'event': 'GAEvent',
-      'eventCategory': this.category,
+      'eventCategory': this.categories.join(' > '),
       'eventAction': action,
       'eventLabel': label,
-      'eventValue': value
+      'eventValue': options.value
     };
     console.log('send event', event);
     // DISABLED FOR TESTING.
@@ -47,13 +65,6 @@ class Analytics {
   }
 }
 
-const commonEvents = {
-  UPDATE: 'Update',
-  CANCEL: 'Cancel',
-  VIEW: 'View'
-};
-
 module.exports = {
-  Analytics,
-  commonEvents
+  Analytics
 };

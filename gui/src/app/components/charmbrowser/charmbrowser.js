@@ -115,6 +115,7 @@ class Charmbrowser extends React.Component {
           <SearchResults
             acl={this.props.acl}
             addToModel={this.props.addToModel}
+            analytics={this.props.analytics.addCategory(this)}
             changeState={changeState}
             charmstoreSearch={this.props.charmstore.search}
             generatePath={appState.generatePath.bind(appState)}
@@ -184,6 +185,7 @@ Charmbrowser.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   charmstore: shapeup.shape({
     getBundleYAML: PropTypes.func.isRequired,

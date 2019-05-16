@@ -93,6 +93,8 @@ class State {
     */
     this._dispatchers = {};
 
+    this.analytics = cfg.analytics;
+
     window.onpopstate = () => {
       // We don't really care what the onpopstate event is, so just calling the
       // dispatch to fetch the state from the url.
@@ -439,6 +441,10 @@ class State {
 
     this._appStateHistory.push(purgedState);
     this._pushState();
+
+    this.analytics.addCategory('Navigation').sendEvent('State change', {
+      label: `url: ${this.location.href}`
+    });
 
     let {error} = this.dispatch(nullKeys, false);
     if (error !== null) {

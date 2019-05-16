@@ -6,7 +6,6 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const analytics = require('../../../init/analytics');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
@@ -24,6 +23,7 @@ class Configuration extends React.Component {
       series: this.props.service.get('series'),
       changed: false
     };
+    this.analytics = this.props.analytics.addCategory(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,7 +34,7 @@ class Configuration extends React.Component {
   }
 
   componentDidMount() {
-    this.props.analytics.addComponent(this).sendEvent(analytics.commonEvents.VIEW);
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -100,7 +100,7 @@ class Configuration extends React.Component {
     // Reset the form so the file can be uploaded again
     this.refs['file-form'].reset();
     this._handleOnChange();
-    this.props.analytics.addComponent(this).sendEvent('Import');
+    this.analytics.sendEvent('Import');
   }
 
   /**
@@ -170,7 +170,7 @@ class Configuration extends React.Component {
       );
     }
     this._showInspectorIndex();
-    this.props.analytics.addComponent(this).sendEvent(analytics.commonEvents.UPDATE);
+    this.analytics.sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -392,7 +392,7 @@ class Configuration extends React.Component {
       title: 'Cancel',
       modifier: 'base',
       action: () => {
-        this.props.analytics.addComponent(this).sendEvent(analytics.commonEvents.CANCEL);
+        this.analytics.sendEvent(this.props.analytics.CANCEL);
         this._showInspectorIndex();
       }
     }, {

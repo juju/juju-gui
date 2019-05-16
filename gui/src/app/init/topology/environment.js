@@ -16,6 +16,7 @@ const ViewportModule = require('./viewport');
 */
 class EnvironmentView {
   constructor(options={}) {
+    this.analytics = options.analytics.addCategory('Canvas');
     this.endpointsController = options.endpointsController;
     this.db = options.db;
     this.env = options.env;
@@ -221,6 +222,7 @@ class EnvironmentView {
     this.state.changeState({
       store: ''
     });
+    this.analytics.addCategory('Onboarding plus').sendEvent(this.analytics.CLICK);
   }
 };
 

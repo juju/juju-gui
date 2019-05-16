@@ -152,6 +152,7 @@ class Inspector extends React.Component {
           component:
             <UnitDetails
               acl={nextProps.acl}
+              analytics={this.props.analytics.addCategory(this)}
               changeState={changeState}
               destroyUnits={nextProps.modelAPI.destroyUnits}
               generatePath={this.props.appState.generatePath}
@@ -198,7 +199,7 @@ class Inspector extends React.Component {
             <Configuration
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
-              analytics={this.props.analytics.addComponent(this)}
+              analytics={this.props.analytics.addCategory(this)}
               changeState={changeState}
               charm={nextProps.charm}
               getServiceByName={nextProps.services.getServiceByName}

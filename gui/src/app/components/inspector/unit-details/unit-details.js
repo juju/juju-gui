@@ -11,6 +11,9 @@ const {SvgIcon} = require('@canonical/juju-react-components');
 require('./_unit-details.scss');
 
 class UnitDetails extends React.Component {
+  componentDidMount() {
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
+  }
   /**
     Handle removing a unit if the button has been clicked.
 
@@ -285,6 +288,7 @@ class UnitDetails extends React.Component {
 
 UnitDetails.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
