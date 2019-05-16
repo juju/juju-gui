@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
-const analytics = require('./init/analytics');
+const {Analytics} = require('./init/analytics');
 const App = require('./init/app');
 const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
@@ -216,9 +216,13 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.sendAnalytics = analytics.sendAnalyticsFactory(
-      this.controllerAPI,
-      window.dataLayer);
+    this.analytics = new Analytics({getLabel: () => {
+      const details = [
+        `model committed: ${this.controllerAPI.get('connected')}`,
+        `user authenticated: ${this.controllerAPI.userIsAuthenticated}`
+      ];
+      return details.join(', ');
+    }});
 
     let baseURL = config.baseUrl;
     if (baseURL.indexOf('://') < 0) {
@@ -498,6 +502,7 @@ class GUIApp {
       <App
         acl={this.acl}
         addToModel={this.addToModel.bind(this)}
+        analytics={this.analytics}
         applicationConfig={this.applicationConfig}
         appState={this.state}
         bakery={this.bakery}

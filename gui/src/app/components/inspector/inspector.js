@@ -198,6 +198,7 @@ class Inspector extends React.Component {
             <Configuration
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
+              analytics={this.props.analytics.addComponent(this)}
               changeState={changeState}
               charm={nextProps.charm}
               getServiceByName={nextProps.services.getServiceByName}
@@ -393,6 +394,7 @@ Inspector.propTypes = {
   acl: PropTypes.object.isRequired,
   addCharm: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,

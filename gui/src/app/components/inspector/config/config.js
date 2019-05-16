@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
+const analytics = require('../../../init/analytics');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
@@ -30,6 +31,10 @@ class Configuration extends React.Component {
       // Have to clone the config so we don't update it via reference.
       serviceConfig: this._clone(nextProps.service.get('config'))
     });
+  }
+
+  componentDidMount() {
+    this.props.analytics.addComponent(this).sendEvent(analytics.commonEvents.VIEW);
   }
 
   /**
@@ -95,6 +100,7 @@ class Configuration extends React.Component {
     // Reset the form so the file can be uploaded again
     this.refs['file-form'].reset();
     this._handleOnChange();
+    this.props.analytics.addComponent(this).sendEvent('Import');
   }
 
   /**
@@ -164,6 +170,7 @@ class Configuration extends React.Component {
       );
     }
     this._showInspectorIndex();
+    this.props.analytics.addComponent(this).sendEvent(analytics.commonEvents.UPDATE);
   }
 
   /**
@@ -384,7 +391,10 @@ class Configuration extends React.Component {
       disabled: disabled,
       title: 'Cancel',
       modifier: 'base',
-      action: this._showInspectorIndex.bind(this)
+      action: () => {
+        this.props.analytics.addComponent(this).sendEvent(analytics.commonEvents.CANCEL);
+        this._showInspectorIndex();
+      }
     }, {
       disabled: disabled,
       title: 'Save',
@@ -435,6 +445,7 @@ class Configuration extends React.Component {
 Configuration.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   getServiceByName: PropTypes.func.isRequired,
