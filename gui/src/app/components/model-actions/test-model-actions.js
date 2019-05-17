@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const ModelActions = require('./model-actions');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
@@ -13,6 +14,7 @@ describe('ModelActions', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <ModelActions
       acl={options.acl || acl}
+      analytics={Analytics}
       appState={options.appState || {current: {}}}
       changeState={options.changeState || sinon.stub()}
       displayTerminalButton={

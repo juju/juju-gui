@@ -5,6 +5,7 @@ const jest = require('jest');
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const Configuration = require('./config');
 const initUtils = require('../../../init/utils');
 
@@ -18,11 +19,7 @@ describe('Configuration', function() {
       <Configuration
         acl={options.acl || acl}
         addNotification={options.addNotification || sinon.stub()}
-        analytics={{
-          addCategory: sinon.stub().returns({
-            sendEvent: sinon.stub()
-          })
-        }}
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         charm={options.charm || charm}
         getServiceByName={options.getServiceByName || sinon.stub()}

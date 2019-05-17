@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const EnvSwitcher = require('./env-switcher');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
@@ -12,6 +13,7 @@ describe('EnvSwitcher', function() {
     <EnvSwitcher.WrappedComponent
       acl={{}}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       environmentName={options.environmentName || 'MyEnv'}
       listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}

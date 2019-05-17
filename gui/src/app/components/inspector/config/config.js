@@ -23,7 +23,7 @@ class Configuration extends React.Component {
       series: this.props.service.get('series'),
       changed: false
     };
-    this.analytics = this.props.analytics.addCategory(this);
+    this.analytics = this.props.analytics.addCategory('Configuration');
   }
 
   componentWillReceiveProps(nextProps) {

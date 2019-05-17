@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const EnvList = require('./list');
 
 describe('EnvList', function() {
@@ -12,6 +13,7 @@ describe('EnvList', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <EnvList
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       environmentName={options.environmentName || 'model-name-1'}
       envs={options.envs || []}

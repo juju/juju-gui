@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const SearchResultsSelectFilter = require('./select-filter');
 
 describe('SearchResultsSelectFilter', function() {
@@ -11,11 +12,7 @@ describe('SearchResultsSelectFilter', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <SearchResultsSelectFilter
-      analytics={{
-        addCategory: sinon.stub().returns({
-          sendEvent: sinon.stub()
-        })
-      }}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       currentValue={options.currentValue || null}
       filter={options.filter || 'sort'}

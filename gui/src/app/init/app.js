@@ -282,6 +282,7 @@ class App extends React.Component {
       <div id="model-actions-container">
         <ModelActions
           acl={props.acl}
+          analytics={this.props.analytics.addCategory('Header')}
           appState={props.appState}
           changeState={this._bound.changeState}
           displayTerminalButton={this._shouldEnableTerminal()}
@@ -513,7 +514,9 @@ Browser: ${navigator.userAgent}`
   _generateHeaderSearch() {
     return (
       <li className="header-banner__list-item header-banner__list-item--no-padding">
-        <HeaderSearch appState={this.props.appState} />
+        <HeaderSearch
+          analytics={this.props.analytics.addCategory('Header')}
+          appState={this.props.appState} />
       </li>);
   }
 
@@ -525,6 +528,8 @@ Browser: ${navigator.userAgent}`
       this.props.appState.changeState({
         help: true
       });
+      this.props.analytics.addCategory('Header').addCategory('Help')
+        .sendEvent(this.props.analytics.CLICK);
     };
     return (
       <li
@@ -636,6 +641,7 @@ Browser: ${navigator.userAgent}`
     }
     const handler = new WebHandler();
     return (<Help
+      analytics={this.props.analytics}
       changeState={this._bound.changeState}
       displayShortcutsModal={this._displayShortcutsModal.bind(this, true)}
       gisf={this.props.applicationConfig.gisf}
@@ -694,7 +700,11 @@ Browser: ${navigator.userAgent}`
         <HeaderLogo
           gisf={gisf}
           homePath={homePath}
-          showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)} />
+          showProfile={() => {
+            this.props.analytics.addCategory('Header').addCategory('Logo')
+              .sendEvent(this.props.analytics.CLICK);
+            initUtils.showProfile(this._bound.changeState, userName);
+          }} />
       </div>);
   }
 
@@ -1129,9 +1139,11 @@ Browser: ${navigator.userAgent}`
     }
     const charmstore = this.props.charmstore;
     const bakery = this.props.bakery;
+    const analytics = this.props.analytics.addCategory('Header');
     const _USSOLoginLink = (
       <USSOLoginLink
         addNotification={this._bound.addNotification}
+        analytics={analytics}
         displayType="text"
         loginToController={
           controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
@@ -1144,6 +1156,7 @@ Browser: ${navigator.userAgent}`
       return this.props.getUser('charmstore') && !applicationConfig.gisf;
     };
     const LogoutLink = (<Logout
+      analytics={analytics}
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
       doCharmstoreLogout={doCharmstoreLogout}
       locationAssign={window.location.assign.bind(window.location)}
@@ -1170,6 +1183,7 @@ Browser: ${navigator.userAgent}`
         className="header-banner__list-item header-banner__list-item--no-padding"
         id="profile-link-container">
         <UserMenu
+          analytics={analytics}
           controllerAPI={controllerAPI}
           LogoutLink={LogoutLink}
           navigateUserProfile={navigateUserProfile}
@@ -1209,6 +1223,7 @@ Browser: ${navigator.userAgent}`
         <HeaderBreadcrumb
           acl={this.props.acl}
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics.addCategory('Header')}
           appState={this.props.appState}
           changeState={this._bound.changeState}
           listModelsWithInfo={listModelsWithInfo}

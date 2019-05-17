@@ -103,6 +103,7 @@ exports[`SearchResults functional tests can render the promulgated search result
               <SearchResultsSelectFilter
                 analytics={
                   Object {
+                    "addCategory": [Function],
                     "sendEvent": [Function],
                   }
                 }
@@ -146,6 +147,7 @@ exports[`SearchResults functional tests can render the promulgated search result
               <SearchResultsSelectFilter
                 analytics={
                   Object {
+                    "addCategory": [Function],
                     "sendEvent": [Function],
                   }
                 }

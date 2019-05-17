@@ -51,6 +51,12 @@ exports[`EnvList handles local model owners 1`] = `
   </ul>
   <CreateModelButton
     action={[Function]}
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     changeState={[Function]}
     disabled={false}
     modifier="neutral"
@@ -145,6 +151,12 @@ exports[`EnvList orders the model list, and handles never connected ones 1`] = `
   </ul>
   <CreateModelButton
     action={[Function]}
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     changeState={[Function]}
     disabled={false}
     modifier="neutral"
@@ -205,6 +217,12 @@ exports[`EnvList renders a list of models 1`] = `
   </ul>
   <CreateModelButton
     action={[Function]}
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     changeState={[Function]}
     disabled={false}
     modifier="neutral"

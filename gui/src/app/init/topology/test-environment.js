@@ -4,6 +4,7 @@
 let d3 = require('d3');
 const {charmstore} = require('jaaslib');
 
+const Analytics = require('../../../test/fake-analytics');
 const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
@@ -272,11 +273,7 @@ describe('EnvironmentView', function() {
       charm = new models.Charm(charmData.charm);
       db.charms.add(charm);
       view = new EnvironmentView({
-        analytics: {
-          addCategory: sinon.stub().returns({
-            sendEvent: sinon.stub()
-          })
-        },
+        analytics: Analytics,
         container: container,
         db: db,
         env: {

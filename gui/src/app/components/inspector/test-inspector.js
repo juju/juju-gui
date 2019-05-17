@@ -5,6 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../test/fake-analytics');
 const Inspector = require('./inspector');
 const InspectorChangeVersion = require('./change-version/change-version');
 const InspectorExpose = require('./expose/expose');
@@ -26,11 +27,7 @@ describe('Inspector', function() {
       acl={options.acl || acl}
       addCharm={options.addCharm || sinon.stub()}
       addNotification={options.addNotification || sinon.stub()}
-      analytics={{
-        addCategory: sinon.stub().returns({
-          sendEvent: sinon.stub()
-        })
-      }}
+      analytics={Analytics}
       appState={options.appState || appState}
       charm={options.charm || charm}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}

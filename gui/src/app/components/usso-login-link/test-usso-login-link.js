@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const USSOLoginLink = require('./usso-login-link');
 const {Button} = require('@canonical/juju-react-components');
 
@@ -12,6 +13,7 @@ describe('USSOLoginLink', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <USSOLoginLink
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       displayType={options.displayType || 'text'}
       gisf={options.gisf}
       loginToController={options.loginToController || sinon.stub()}
