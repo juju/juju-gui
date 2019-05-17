@@ -14,6 +14,7 @@ const config = {
   snapshotSerializers: ['enzyme-to-json/serializer'],
   testMatch: [
     '**/components/**/test-*.js',
+    '**/init/test-analytics.js',
     '**/init/test-app.js',
     '**/init/test-cookie-util.js',
     '**/maraca/test-*.js'

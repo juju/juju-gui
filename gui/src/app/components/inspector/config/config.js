@@ -23,6 +23,7 @@ class Configuration extends React.Component {
       series: this.props.service.get('series'),
       changed: false
     };
+    this.analytics = this.props.analytics.addCategory(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,6 +31,10 @@ class Configuration extends React.Component {
       // Have to clone the config so we don't update it via reference.
       serviceConfig: this._clone(nextProps.service.get('config'))
     });
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -95,6 +100,7 @@ class Configuration extends React.Component {
     // Reset the form so the file can be uploaded again
     this.refs['file-form'].reset();
     this._handleOnChange();
+    this.analytics.sendEvent('Import');
   }
 
   /**
@@ -164,6 +170,7 @@ class Configuration extends React.Component {
       );
     }
     this._showInspectorIndex();
+    this.analytics.sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -384,7 +391,10 @@ class Configuration extends React.Component {
       disabled: disabled,
       title: 'Cancel',
       modifier: 'base',
-      action: this._showInspectorIndex.bind(this)
+      action: () => {
+        this.analytics.sendEvent(this.props.analytics.CANCEL);
+        this._showInspectorIndex();
+      }
     }, {
       disabled: disabled,
       title: 'Save',
@@ -435,6 +445,7 @@ class Configuration extends React.Component {
 Configuration.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   getServiceByName: PropTypes.func.isRequired,

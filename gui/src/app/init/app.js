@@ -714,6 +714,7 @@ Browser: ${navigator.userAgent}`
         acl={this.props.acl}
         addNotification={this._bound.addNotification}
         addToModel={this.props.addToModel.bind(this, charmstore)}
+        analytics={this.props.analytics}
         appState={this.props.appState}
         charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
         charmstoreURL={
@@ -862,6 +863,7 @@ Browser: ${navigator.userAgent}`
           acl={this.props.acl}
           addCharm={addCharm}
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics}
           appState={this.props.appState}
           charm={charm}
           getAvailableVersions={charmstore.getAvailableVersions.bind(charmstore)}
@@ -1440,6 +1442,7 @@ Browser: ${navigator.userAgent}`
 App.propTypes = {
   acl: PropTypes.object.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   applicationConfig: PropTypes.object.isRequired,
   bakery: PropTypes.object.isRequired,

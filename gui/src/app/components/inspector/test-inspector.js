@@ -9,7 +9,6 @@ const Inspector = require('./inspector');
 const InspectorChangeVersion = require('./change-version/change-version');
 const InspectorExpose = require('./expose/expose');
 const InspectorHeader = require('./header/header');
-const Configuration = require('./config/config');
 const InspectorPlan = require('./plan/plan');
 const InspectorRelateTo = require('./relate-to/relate-to');
 const InspectorRelateToEndpoint = require('./relate-to/endpoint/endpoint');
@@ -17,7 +16,6 @@ const InspectorRelations = require('./relations/relations');
 const InspectorResourcesList = require('./resources/list/list');
 const ScaleService = require('./scale-service/scale-service');
 const ServiceOverview = require('./service-overview/service-overview');
-const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
@@ -28,6 +26,11 @@ describe('Inspector', function() {
       acl={options.acl || acl}
       addCharm={options.addCharm || sinon.stub()}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={{
+        addCategory: sinon.stub().returns({
+          sendEvent: sinon.stub()
+        })
+      }}
       appState={options.appState || appState}
       charm={options.charm || charm}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
@@ -172,24 +175,7 @@ describe('Inspector', function() {
       activeComponent: 'config'
     };
     const wrapper = renderComponent();
-    const header = wrapper.find('InspectorHeader');
-    assert.equal(header.prop('activeComponent'), 'config');
-    assert.equal(header.prop('title'), 'Configure');
-    const expected = (
-      <div className="inspector-content">
-        <Configuration
-          acl={acl}
-          addNotification={sinon.stub()}
-          changeState={wrapper.find('Configuration').prop('changeState')}
-          charm={charm}
-          getServiceByName={sinon.stub()}
-          service={service}
-          serviceRelations={['relations']}
-          setConfig={sinon.stub()}
-          unplaceServiceUnits={sinon.stub()}
-          updateServiceUnitsDisplayname={sinon.stub()} />
-      </div>);
-    assert.compareJSX(wrapper.find('.inspector-content'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('displays the unit details when the app state calls for it', function() {
@@ -207,24 +193,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     const wrapper = renderComponent();
-    const header = wrapper.find('InspectorHeader');
-    assert.equal(header.prop('activeComponent'), 'unit');
-    assert.equal(header.prop('title'), 'demo-unit');
-    assert.equal(header.prop('type'), headerType);
-    const expected = (
-      <div className="inspector-content">
-        <UnitDetails
-          acl={acl}
-          changeState={wrapper.find('UnitDetails').prop('changeState')}
-          destroyUnits={sinon.stub()}
-          generatePath={sinon.stub()}
-          previousComponent={undefined}
-          service={service}
-          showSSHButtons={false}
-          unit={unit}
-          unitStatus={null} />
-      </div>);
-    assert.compareJSX(wrapper.find('.inspector-content'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('handles the unit being removed while viewing the unit', function() {

@@ -272,6 +272,11 @@ describe('EnvironmentView', function() {
       charm = new models.Charm(charmData.charm);
       db.charms.add(charm);
       view = new EnvironmentView({
+        analytics: {
+          addCategory: sinon.stub().returns({
+            sendEvent: sinon.stub()
+          })
+        },
         container: container,
         db: db,
         env: {

@@ -18,6 +18,11 @@ describe('Configuration', function() {
       <Configuration
         acl={options.acl || acl}
         addNotification={options.addNotification || sinon.stub()}
+        analytics={{
+          addCategory: sinon.stub().returns({
+            sendEvent: sinon.stub()
+          })
+        }}
         changeState={options.changeState || sinon.stub()}
         charm={options.charm || charm}
         getServiceByName={options.getServiceByName || sinon.stub()}
