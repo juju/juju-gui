@@ -16,6 +16,8 @@ class Analytics {
     // Common events.
     this.CANCEL = 'Cancel';
     this.CLICK = 'Click';
+    this.ADD = 'Add';
+    this.DELETE = 'Delete';
     this.UPDATE = 'Update';
     this.VIEW = 'View';
   }
@@ -41,15 +43,16 @@ class Analytics {
       // Let's just be helpful for React components so that we don't have to
       // specify the name each time.
       name = categoryOrComponent._reactInternalFiber.elementType.name;
-    } else {
-      // We don't know to handle this category, so exit here.
-      return;
+    }
+    let categories = this.categories;
+    if (name) {
+      categories = this.categories.concat([name]);
     }
     // Return a new Analytics instance with the new data. This is so that we
     // don't overwrite a top level instance with every fork as the analytics is
     // passed into nested components.
     return new Analytics(this.dataLayer, {
-      categories: this.categories.concat([name]),
+      categories: categories,
       globalLabels: this.globalLabels
     });
   }

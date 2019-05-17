@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const ProfileModelList = require('./model-list');
 const Spinner = require('../../spinner/spinner');
 
@@ -152,6 +153,7 @@ describe('Profile Model List', function() {
       <ProfileModelList
         acl={{}}
         addNotification={options.addNotification || sinon.stub()}
+        analytics={Analytics}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
         destroyModel={options.destroyModel || sinon.stub()}

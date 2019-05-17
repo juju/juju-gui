@@ -21,6 +21,7 @@ class DeploymentCredentialAdd extends React.Component {
     this.state = {
       authType: info && info.forms && Object.keys(info.forms)[0] || ''
     };
+    this.analytics = this.props.analytics.addCategory('Credential Form');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -82,6 +83,7 @@ class DeploymentCredentialAdd extends React.Component {
       this.state.authType,
       this._generateCredentials(),
       this._updateCloudCredentialCallback.bind(this, credentialName));
+    this.analytics.sendEvent(this.props.analytics.ADD);
   }
 
   /**
@@ -232,7 +234,10 @@ class DeploymentCredentialAdd extends React.Component {
     }];
     if (props.onCancel) {
       buttons.unshift({
-        action: props.onCancel,
+        action: () => {
+          props.onCancel();
+          this.analytics.sendEvent(this.props.analytics.CANCEL);
+        },
         title: 'Cancel',
         modifier: 'neutral'
       });
@@ -311,6 +316,7 @@ class DeploymentCredentialAdd extends React.Component {
 DeploymentCredentialAdd.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   cloud: PropTypes.object,
   credentialName: PropTypes.string,
   credentials: PropTypes.array.isRequired,

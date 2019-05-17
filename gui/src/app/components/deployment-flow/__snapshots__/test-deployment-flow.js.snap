@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentFlow can render 1`] = `
+<div
+  className="deployment-flow"
+>
+  <DeploymentPanel
+    changeState={[Function]}
+    isDirectDeploy={false}
+    loggedIn={true}
+    title="Pavlova"
+  >
+    <DeploymentSection
+      completed={true}
+      instance="deployment-model-name"
+      showCheck={true}
+      title="Set your model name"
+    >
+      <DeploymentModelName
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        ddEntity={null}
+        focusName={true}
+        modelName="Pavlova"
+        setModelName={[Function]}
+      />
+    </DeploymentSection>
+    <DeploymentSection
+      completed={false}
+      disabled={false}
+      instance="deployment-cloud"
+      showCheck={true}
+      title="Choose cloud to deploy to"
+    >
+      <DeploymentCloud
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        addNotification={[Function]}
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        cloud={null}
+        controllerIsReady={[Function]}
+        listClouds={[Function]}
+        setCloud={[Function]}
+        setCloudCount={[Function]}
+      />
+    </DeploymentSection>
+    <DeploymentSection
+      completed={false}
+      disabled={true}
+      instance="deployment-ssh-key"
+      showCheck={true}
+      title={
+        <span>
+          Add public SSH keys 
+          <em>
+            (optional)
+          </em>
+        </span>
+      }
+    >
+      <DeploymentSSHKey
+        WebHandler={[Function]}
+        addNotification={[Function]}
+        cloud={null}
+        setLaunchpadUsernames={[Function]}
+        setSSHKeys={[Function]}
+      />
+    </DeploymentSection>
+    <DeploymentSection
+      completed={false}
+      disabled={true}
+      instance="deployment-machines"
+      showCheck={false}
+      title="Machines to be provisioned"
+    >
+      <DeploymentMachines
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        cloud={null}
+        initUtils={
+          Object {
+            "formatConstraints": [Function],
+            "generateMachineDetails": [Function],
+            "reshape": [Function],
+          }
+        }
+        machines={
+          Object {
+            "two": Object {
+              "command": Object {
+                "args": Array [
+                  Object {
+                    "machine": "machine1",
+                  },
+                ],
+                "method": "_addMachines",
+              },
+            },
+          }
+        }
+      />
+    </DeploymentSection>
+    <div
+      className="deployment-services"
+    >
+      <AccordionSection
+        startOpen={false}
+        title="Model changes"
+      >
+        <DeploymentServices
+          acl={
+            Object {
+              "isReadOnly": [Function],
+            }
+          }
+          addNotification={[Function]}
+          changesUtils={
+            Object {
+              "generateAllChangeDescriptions": [Function],
+              "generateChangeDescription": [Function],
+              "reshape": [Function],
+              "sortDescriptionsByApplication": [Function],
+            }
+          }
+          charmsGetById={[Function]}
+          getCurrentChangeSet={[Function]}
+          getServiceByName={[Function]}
+          listPlansForCharm={[Function]}
+          parseTermId={[Function]}
+          showTerms={[Function]}
+          withPlans={true}
+        />
+      </AccordionSection>
+    </div>
+    <DeploymentSection
+      completed={false}
+      disabled={true}
+      instance="deployment-budget"
+      showCheck={true}
+      title="Confirm budget"
+    >
+      <DeploymentBudget
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        addNotification={[Function]}
+        listBudgets={[Function]}
+        setBudget={[Function]}
+        user="dalek"
+      />
+    </DeploymentSection>
+    <div
+      className="twelve-col"
+    >
+      <div
+        className="inner-wrapper deployment-flow__deploy"
+      >
+        <div
+          className="deployment-flow__deploy-action v1"
+        >
+          <Button
+            action={[Function]}
+            disabled={true}
+            modifier="positive"
+          >
+            Deploy
+          </Button>
+        </div>
+      </div>
+    </div>
+  </DeploymentPanel>
+</div>
+`;

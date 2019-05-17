@@ -20,6 +20,12 @@ exports[`Profile Model List can render 1`] = `
       </span>
     </h4>
     <CreateModelButton
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
       changeState={[Function]}
       modifier="neutral"
       switchModel={[Function]}

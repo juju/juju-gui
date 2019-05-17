@@ -22,6 +22,7 @@ class DeploymentCredential extends React.Component {
       savedCredential: null,
       showAdd: this.props.editable
     };
+    this.analytics = this.props.analytics.addCategory('Credentials');
   }
 
   componentWillMount() {
@@ -279,6 +280,7 @@ class DeploymentCredential extends React.Component {
       <DeploymentCredentialAdd
         acl={this.props.acl}
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         cloud={this.props.cloud}
         credentials={this.state.credentials.map(credential =>
           credential.displayName)}
@@ -324,6 +326,7 @@ class DeploymentCredential extends React.Component {
 DeploymentCredential.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   cloud: PropTypes.object,
   controllerAPI: shapeup.shape({
     getCloudCredentialNames: PropTypes.func.isRequired,

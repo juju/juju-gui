@@ -6,6 +6,7 @@ const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const ProfileCredentialList = require('./credential-list');
 
 describe('ProfileCredentialList', () => {
@@ -59,6 +60,7 @@ describe('ProfileCredentialList', () => {
       <ProfileCredentialList
         acl={acl}
         addNotification={options.addNotification || sinon.stub()}
+        analytics={Analytics}
         controllerAPI={options.controllerAPI || controllerAPI}
         controllerIsReady={options.controllerIsReady || sinon.stub()}
         username={options.username || 'foo@external'} />);
@@ -69,6 +71,7 @@ describe('ProfileCredentialList', () => {
     <ProfileCredentialList
       acl={acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       controllerAPI={options.controllerAPI || controllerAPI}
       controllerIsReady={options.controllerIsReady || sinon.stub()}
       credential="azure_foo@external_cred1"

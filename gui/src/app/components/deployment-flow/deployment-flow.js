@@ -66,6 +66,7 @@ class DeploymentFlow extends React.Component {
       vpcId: INITIAL_VPC_ID,
       vpcIdForce: false
     };
+    this.analytics = this.props.analytics.addCategory('Deployment Flow');
   }
 
   componentWillMount() {
@@ -830,6 +831,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentCloud
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.controllerAPI.listClouds}
@@ -860,6 +862,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentCredential
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           cloud={cloud}
           controllerAPI={shapeup.addReshape({
             getCloudCredentialNames: controllerAPI.getCloudCredentialNames.bind(controllerAPI),
@@ -1227,6 +1230,7 @@ DeploymentFlow.propTypes = {
   WebHandler: PropTypes.func.isRequired,
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
