@@ -11,6 +11,11 @@ describe('SearchResultsSelectFilter', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <SearchResultsSelectFilter
+      analytics={{
+        addCategory: sinon.stub().returns({
+          sendEvent: sinon.stub()
+        })
+      }}
       changeState={options.changeState || sinon.stub()}
       currentValue={options.currentValue || null}
       filter={options.filter || 'sort'}

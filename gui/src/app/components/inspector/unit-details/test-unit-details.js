@@ -14,6 +14,11 @@ describe('UnitDetails', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <UnitDetails
       acl={options.acl || acl}
+      analytics={{
+        addCategory: sinon.stub().returns({
+          sendEvent: sinon.stub()
+        })
+      }}
       changeState={options.changeState || sinon.stub()}
       destroyUnits={options.destroyUnits || sinon.stub()}
       generatePath={options.generatePath || sinon.stub()}
