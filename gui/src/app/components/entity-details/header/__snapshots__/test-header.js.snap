@@ -121,7 +121,12 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
             action={[Function]}
             disabled={false}
             modifier="positive"
-            tooltip="Add this charm to a new model"
+            tooltip={
+              Object {
+                "msg": "Add this charm to a new model",
+                "position": "btm-lft",
+              }
+            }
           >
             Add to model
           </Button>
