@@ -93,6 +93,7 @@ def config():
     JIMM_WSS_URL = os.environ.get(
         "JIMM_WSS_URL", default="jimm.jujucharms.com:443"
     )
+    FLASK_DEBUG = os.environ.get("FLASK_DEBUG", default="false")
 
     return (
         flask.render_template(
@@ -104,6 +105,7 @@ def config():
             controllerSocketTemplate="wss://$server:$port/api",
             flags="{terminal: true, support: true, anssr: true, expert: true}",
             gisf="true",
+            GTM_enabled="false" if FLASK_DEBUG == "true" else "true",
             uuid="",
             paymentURL=JAAS_API_BASE + "/payment",
             plansURL=JAAS_API_BASE + "/omnibus",
