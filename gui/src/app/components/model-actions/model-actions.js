@@ -10,11 +10,16 @@ const {SvgIcon} = require('@canonical/juju-react-components');
 require('./_model-actions.scss');
 
 class ModelActions extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Model Actions');
+  }
   /**
     Export the env when the button is clicked.
   */
   _handleExport() {
     this.props.exportEnvironmentFile();
+    this.analytics.addCategory('Export').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -24,6 +29,7 @@ class ModelActions extends React.Component {
     var input = this.refs['file-input'];
     if (input) {
       input.click();
+      this.analytics.addCategory('Import').sendEvent(this.props.analytics.CLICK);
     }
   }
 
@@ -49,6 +55,7 @@ class ModelActions extends React.Component {
     this.props.changeState({
       terminal: true
     });
+    this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -82,7 +89,10 @@ class ModelActions extends React.Component {
       shareAction = (
         <span
           className={shareClasses}
-          onClick={props.sharingVisibility}
+          onClick={() => {
+            props.sharingVisibility();
+            this.analytics.addCategory('Share').sendEvent(this.props.analytics.CLICK);
+          }}
           role="button"
           tabIndex="0">
           <SvgIcon
@@ -167,6 +177,7 @@ class ModelActions extends React.Component {
 
 ModelActions.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   displayTerminalButton: PropTypes.bool.isRequired,

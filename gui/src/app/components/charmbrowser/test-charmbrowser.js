@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const Charmbrowser = require('./charmbrowser');
 
 describe('Charmbrowser', function() {
@@ -14,11 +15,7 @@ describe('Charmbrowser', function() {
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
       addToModel={options.addToModel || sinon.stub()}
-      analytics={{
-        addCategory: sinon.stub().returns({
-          sendEvent: sinon.stub()
-        })
-      }}
+      analytics={Analytics}
       appState={options.appState || {}}
       charmstore={options.charmstore || charmstore}
       charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}

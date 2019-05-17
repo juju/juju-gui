@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const CreateModelButton = require('./create-model-button');
 const {Button} = require('@canonical/juju-react-components');
 
@@ -12,6 +13,7 @@ describe('CreateModelButton', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <CreateModelButton
       action={options.action || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       disabled={options.disabled === undefined ? false : options.disabled}
       modifier={options.modifier}

@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../test/fake-analytics');
 const App = require('./app');
 
 describe('App', () => {
@@ -14,6 +15,7 @@ describe('App', () => {
     <App
       acl={options.acl || {}}
       addToModel={options.addToModel || sinon.stub()}
+      analytics={Analytics}
       applicationConfig={options.applicationConfig || applicationConfig}
       appState={options.appState || appState}
       bakery={options.bakery || {}}

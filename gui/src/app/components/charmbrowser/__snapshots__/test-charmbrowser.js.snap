@@ -70,6 +70,7 @@ exports[`Charmbrowser displays the search results when the app state calls for i
       addToModel={[Function]}
       analytics={
         Object {
+          "addCategory": [Function],
           "sendEvent": [Function],
         }
       }

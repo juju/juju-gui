@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const HeaderSearch = require('./header-search');
 
 describe('HeaderSearch', function() {
@@ -12,6 +13,7 @@ describe('HeaderSearch', function() {
   const renderComponent = (options = {}) => {
     const wrapper = enzyme.shallow(
       <HeaderSearch
+        analytics={Analytics}
         appState={options.appState || appState} />
     );
     const instance = wrapper.instance();

@@ -26,6 +26,7 @@ exports[`Inspector displays the configuration when the app state calls for it 1`
       addNotification={[Function]}
       analytics={
         Object {
+          "addCategory": [Function],
           "sendEvent": [Function],
         }
       }
@@ -81,6 +82,7 @@ exports[`Inspector displays the unit details when the app state calls for it 1`]
       }
       analytics={
         Object {
+          "addCategory": [Function],
           "sendEvent": [Function],
         }
       }

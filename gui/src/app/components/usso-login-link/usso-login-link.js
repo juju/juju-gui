@@ -18,6 +18,7 @@ class USSOLoginLink extends React.Component {
       // preventDefault method.
       e.preventDefault();
     }
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.CLICK);
     this.props.loginToController(err => {
       if (err) {
         const message = 'cannot log into the controller';
@@ -94,6 +95,7 @@ class USSOLoginLink extends React.Component {
 
 USSOLoginLink.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   callback: PropTypes.func,
   children: PropTypes.node,
   displayType: PropTypes.string.isRequired,

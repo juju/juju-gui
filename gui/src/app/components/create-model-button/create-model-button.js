@@ -25,6 +25,7 @@ class CreateModelButton extends React.Component {
     if (this.props.action) {
       this.props.action();
     }
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.CLICK);
   }
 
   render() {
@@ -44,6 +45,7 @@ class CreateModelButton extends React.Component {
 
 CreateModelButton.propTypes = {
   action: PropTypes.func,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   modifier: PropTypes.string,

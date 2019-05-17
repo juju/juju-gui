@@ -13,14 +13,15 @@ const Tour = require('./tour/tour');
 require('./_help.scss');
 
 class Help extends React.Component {
-  constructor() {
-    super();
-
+  constructor(props) {
+    super(props);
     this.state = {
       jujuShow: null,
       tour: false
     };
+    this.analytics = this.props.analytics.addCategory('Help');
   }
+
   componentWillMount() {
     if (!this.props.youtubeAPIKey) {
       return;
@@ -51,22 +52,29 @@ ${this.props.youtubeAPIKey}`,
     );
   }
 
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+
   _handleClose() {
     this.props.changeState({
       help: null
     });
+    this.analytics.addCategory('Close').sendEvent(this.props.analytics.CLICK);
   }
 
   _startTour() {
     this.setState({
       tour: true
     });
+    this.analytics.addCategory('Start Tour').sendEvent(this.props.analytics.CLICK);
   }
 
   _endTour() {
     this.setState({
       tour: false
     });
+    this.analytics.addCategory('End Tour').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -75,6 +83,7 @@ ${this.props.youtubeAPIKey}`,
    @param {Object} evt The click event.
   */
   _handleShortcutsLink(evt) {
+    this.analytics.addCategory('Shortcuts').sendEvent(this.props.analytics.CLICK);
     evt.stopPropagation();
     this._handleClose();
     this.props.displayShortcutsModal();
@@ -272,6 +281,7 @@ ${this.props.youtubeAPIKey}`,
 }
 
 Help.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   displayShortcutsModal: PropTypes.func.isRequired,
   gisf: PropTypes.bool.isRequired,

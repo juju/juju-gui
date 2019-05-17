@@ -16,6 +16,7 @@ class HeaderSearch extends React.Component {
       query: this._getSearchQuery(),
       active: this._activeForComponent()
     };
+    this.analytics = this.props.analytics.addCategory('Header Search');
   }
 
   /**
@@ -174,6 +175,10 @@ class HeaderSearch extends React.Component {
       },
       store: query === '' ? '' : null
     });
+    this.props.analytics.sendEvent(
+      'Submit', {
+        label: `search query: ${query}`
+      });
   }
 
   /**
@@ -188,6 +193,7 @@ class HeaderSearch extends React.Component {
       store: null,
       search: null
     });
+    this.analytics.addCategory('Close').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -264,6 +270,7 @@ class HeaderSearch extends React.Component {
 };
 
 HeaderSearch.propTypes = {
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired
 };
 

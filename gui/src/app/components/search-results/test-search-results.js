@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const SearchResults = require('./search-results');
 
 describe('SearchResults', function() {
@@ -14,11 +15,7 @@ describe('SearchResults', function() {
     <SearchResults
       acl={options.acl || acl}
       addToModel={options.addToModel || sinon.stub()}
-      analytics={{
-        addCategory: sinon.stub().returns({
-          sendEvent: sinon.stub()
-        })
-      }}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
       generatePath={options.generatePath || generatePath}

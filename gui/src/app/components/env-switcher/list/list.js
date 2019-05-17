@@ -17,6 +17,11 @@ class EnvList extends React.Component {
     this.state = {
       envs: this.props.envs
     };
+    this.analytics = this.props.analytics.addCategory('Model Switcher');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -83,6 +88,7 @@ class EnvList extends React.Component {
       name: currentTarget.getAttribute('data-name'),
       owner: currentTarget.getAttribute('data-owner')
     });
+    this.analytics.addCategory('Model').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -126,6 +132,7 @@ class EnvList extends React.Component {
       createNew = (
         <CreateModelButton
           action={this._handleNewModelClick.bind(this)}
+          analytics={this.analytics}
           changeState={this.props.changeState}
           disabled={!canAddModels}
           modifier="neutral"
@@ -145,6 +152,7 @@ class EnvList extends React.Component {
 
 EnvList.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
   envs: PropTypes.array.isRequired,
