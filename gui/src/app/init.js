@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
-const {Analytics} = require('./init/analytics');
+const Analytics = require('./init/analytics');
 const App = require('./init/app');
 const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
@@ -216,7 +216,7 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.analytics = new Analytics(window.dataLayer, {getLabel: () => {
+    this.analytics = new Analytics(window.dataLayer, {globalLabels: () => {
       const details = [
         `model committed: ${this.controllerAPI.get('connected')}`,
         `user authenticated: ${this.controllerAPI.userIsAuthenticated}`

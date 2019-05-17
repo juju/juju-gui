@@ -7,12 +7,12 @@ class Analytics {
     @param {String} dataLayer - The Google Tag Manager dataLayer instance.
     @param {Object} data - Optional parameters:
       - categories: an array of categories;
-      - getLabel: a function that will be used to generate the label string.
+      - globalLabels: a function that will be used to generate the label string.
   */
   constructor(dataLayer, data={}) {
     this.dataLayer = dataLayer;
     this.categories = data.categories || [];
-    this.getLabel = data.getLabel;
+    this.globalLabels = data.globalLabels;
     // Common events.
     this.CANCEL = 'Cancel';
     this.CLICK = 'Click';
@@ -30,18 +30,27 @@ class Analytics {
   addCategory(categoryOrComponent) {
     let name;
     if (typeof categoryOrComponent === 'string') {
+      if (categoryOrComponent.includes('>')) {
+        console.error(
+          'Analytics category string includes ">" which is reserved for ' +
+          'separating categories.');
+        return;
+      }
       name = categoryOrComponent;
-    } else {
+    } else if (categoryOrComponent && categoryOrComponent._reactInternalFiber) {
       // Let's just be helpful for React components so that we don't have to
       // specify the name each time.
       name = categoryOrComponent._reactInternalFiber.elementType.name;
+    } else {
+      // We don't know to handle this category, so exit here.
+      return;
     }
     // Return a new Analytics instance with the new data. This is so that we
     // don't overwrite a top level instance with every fork as the analytics is
     // passed into nested components.
     return new Analytics(this.dataLayer, {
       categories: this.categories.concat([name]),
-      getLabel: this.getLabel
+      globalLabels: this.globalLabels
     });
   }
 
@@ -62,8 +71,8 @@ class Analytics {
       return;
     }
     let label;
-    if (this.getLabel) {
-      label = this.getLabel();
+    if (this.globalLabels) {
+      label = this.globalLabels();
     }
     if (options.label) {
       if (label) {
@@ -83,6 +92,4 @@ class Analytics {
   }
 }
 
-module.exports = {
-  Analytics
-};
+module.exports = Analytics;

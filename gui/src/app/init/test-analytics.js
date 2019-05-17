@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const {Analytics} = require('./analytics');
+const Analytics = require('./analytics');
 
 describe('Analytics', () => {
   it('can add category', () => {
@@ -74,7 +74,7 @@ describe('Analytics', () => {
 
   it('can send an event with a label from a function', () => {
     let dataLayer = [];
-    let analytics = new Analytics(dataLayer, {getLabel: () => 'authorised: true'});
+    let analytics = new Analytics(dataLayer, {globalLabels: () => 'authorised: true'});
     analytics = analytics.addCategory('Inspector');
     analytics.sendEvent('Click');
     assert.deepEqual(dataLayer[0], {
@@ -88,7 +88,7 @@ describe('Analytics', () => {
 
   it('can send an event with an appended label', () => {
     let dataLayer = [];
-    let analytics = new Analytics(dataLayer, {getLabel: () => 'authorised: true'});
+    let analytics = new Analytics(dataLayer, {globalLabels: () => 'authorised: true'});
     analytics = analytics.addCategory('Inspector');
     analytics.sendEvent('Click', {label: 'charm: k8s'});
     assert.deepEqual(dataLayer[0], {
