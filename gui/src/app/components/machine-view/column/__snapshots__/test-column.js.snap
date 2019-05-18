@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MachineViewColumn can render 1`] = `
+<div
+  className="machine-view__column"
+>
+  <DropTarget(MachineViewHeader)
+    acl={
+      Object {
+        "isReadOnly": [Function],
+      }
+    }
+    activeMenuItem="name"
+    dropUnit={[Function]}
+    droppable={true}
+    menuItems={Array []}
+    title="Sandbox"
+    toggle={Object {}}
+    type="machine"
+  />
+  <div
+    className="machine-view__column-content"
+  >
+    <div>
+      contents
+    </div>
+    <div
+      className="machine-view__column-drop-target"
+    >
+      <SvgIcon
+        name="add_16"
+        size="16"
+      />
+    </div>
+  </div>
+</div>
+`;

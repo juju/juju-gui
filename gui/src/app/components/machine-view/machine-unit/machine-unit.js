@@ -87,6 +87,7 @@ MachineViewMachineUnit.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   canDrag: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   icon: PropTypes.string.isRequired,

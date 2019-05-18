@@ -86,6 +86,7 @@ class MachineViewColumn extends React.Component {
         <MachineViewHeader
           acl={props.acl.reshape(propTypes.acl)}
           activeMenuItem={props.activeMenuItem}
+          analytics={this.analytics}
           droppable={props.droppable}
           dropUnit={props.dropUnit}
           menuItems={props.menuItems}
@@ -111,6 +112,7 @@ MachineViewColumn.propTypes = {
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
+  analytics: PropTypes.object.isRequired,
   canDrop: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.object,

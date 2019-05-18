@@ -11,6 +11,15 @@ const {ButtonRow} = require('@canonical/juju-react-components');
 require('./_scale-up.scss');
 
 class MachineViewScaleUp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Scale Up');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     Display a list of applications.
 
@@ -70,6 +79,7 @@ class MachineViewScaleUp extends React.Component {
       if (parts) {
         const application = props.dbAPI.applications.getById(parts[2]);
         props.dbAPI.addGhostAndEcsUnits(application, this.refs[ref].value);
+        this.analytics.addCategory('Add Units').sendEvent(this.props.analytics.CLICK);
       }
     });
     props.toggleScaleUp();
@@ -77,7 +87,10 @@ class MachineViewScaleUp extends React.Component {
 
   render() {
     var buttons = [{
-      action: this.props.toggleScaleUp,
+      action: () =>{
+        this.props.toggleScaleUp();
+        this.analytics.sendEvent(this.props.analytics.CANCEL);
+      },
       title: 'Cancel',
       modifier: 'base'
     }, {
@@ -103,6 +116,7 @@ MachineViewScaleUp.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   dbAPI: shapeup.shape({
     addGhostAndEcsUnits: PropTypes.func.isRequired,
     applications: PropTypes.object.isRequired

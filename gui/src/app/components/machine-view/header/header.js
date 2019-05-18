@@ -128,6 +128,7 @@ MachineViewHeader.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
+  analytics: PropTypes.object.isRequired,
   canDrop: PropTypes.bool.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
   dropUnit: PropTypes.func,

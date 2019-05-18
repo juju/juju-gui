@@ -3,9 +3,9 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const MachineViewAddMachine = require('./add-machine');
 const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
@@ -16,6 +16,7 @@ describe('MachineViewAddMachine', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <MachineViewAddMachine
       acl={options.acl || acl}
+      analytics={Analytics}
       close={options.close || sinon.stub()}
       dbAPI={options.dbAPI}
       modelAPI={options.modelAPI || modelAPI}

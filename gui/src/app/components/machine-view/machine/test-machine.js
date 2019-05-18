@@ -3,12 +3,11 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
-const {Machine} = require('@canonical/juju-react-components');
 const MachineViewMachine = require('./machine');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
@@ -23,6 +22,7 @@ describe('MachineViewMachine', function() {
     // test the internal component so we access it via DecoratedComponent.
     <MachineViewMachine.DecoratedComponent
       acl={acl}
+      analytics={Analytics}
       canDrop={options.canDrop === undefined ? false : options.canDrop}
       changeState={
         options.changeState === undefined ? null : options.changeState}
@@ -113,56 +113,7 @@ describe('MachineViewMachine', function() {
 
   it('can render a machine', function() {
     const wrapper = renderComponent();
-    const expected = (
-      <div>
-        <Machine
-          classes={['machine-view__machine', 'machine-view__machine--machine']}
-          hardware={[{
-            label: 'mem',
-            value: '1.00GB'
-          }]}
-          isContainer={false}
-          machine={{
-            name: 'new0',
-            root: false,
-            region: null,
-            series: 'wily',
-            status: null
-          }}
-          menuItems={null}
-          onClick={wrapper.find('Machine').prop('onClick')}
-          sshAction={undefined}
-          sshLabel={undefined}>
-          <ul className="machine-view__machine-units machine__units">
-            <MachineViewMachineUnit
-              acl={machineUnitACL}
-              icon="icon.svg"
-              key="wordpress/0"
-              machineType="machine"
-              removeUnit={sinon.stub()}
-              unit={{
-                'agent_state': 'started',
-                'displayName': 'wordpress/0',
-                'id': 'wordpress/0'}} />
-            <MachineViewMachineUnit
-              acl={machineUnitACL}
-              icon="icon.svg"
-              key="wordpress/1"
-              machineType="machine"
-              removeUnit={sinon.stub()}
-              unit={{
-                'agent_state': 'started',
-                'displayName': 'wordpress/1',
-                'id': 'wordpress/1'}} />
-          </ul>
-          <div className="machine-view__machine-drop-target">
-            <div className="machine-view__machine-drop-message">
-              Add to {'new0'}
-            </div>
-          </div>
-        </Machine>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render a machine in drop mode', function() {
@@ -262,6 +213,7 @@ describe('MachineViewMachine', function() {
         {[
           <MachineViewMachineUnit
             acl={machineUnitACL}
+            analytics={Analytics}
             icon="icon.svg"
             key="wordpress/1"
             machineType="machine"
@@ -288,30 +240,7 @@ describe('MachineViewMachine', function() {
     machineAPI.machine = machine;
     const wrapper = renderComponent({type: 'container'});
     assert.equal(wrapper.find('.add-machine__constraints').length, 0);
-    const expected = (
-      <ul className="machine-view__machine-units machine__units">
-        <MachineViewMachineUnit
-          acl={machineUnitACL}
-          icon="icon.svg"
-          key="wordpress/0"
-          machineType="container"
-          removeUnit={sinon.stub()}
-          unit={{
-            'agent_state': 'started',
-            'displayName': 'wordpress/0',
-            'id': 'wordpress/0'}} />
-        <MachineViewMachineUnit
-          acl={machineUnitACL}
-          icon="icon.svg"
-          key="wordpress/1"
-          machineType="container"
-          removeUnit={sinon.stub()}
-          unit={{
-            'agent_state': 'started',
-            'displayName': 'wordpress/1',
-            'id': 'wordpress/1'}} />
-      </ul>);
-    assert.compareJSX(wrapper.find('.machine-view__machine-units'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can destroy a machine', function() {

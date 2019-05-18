@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MachineView can render 1`] = `
+<div
+  className="machine-view"
+>
+  <div
+    className="machine-view__content"
+  >
+    <DropTarget(MachineViewColumn)
+      acl={
+        Object {
+          "isReadOnly": [Function],
+          "reshape": [Function],
+        }
+      }
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      droppable={false}
+      title="New units"
+      toggle={
+        Object {
+          "action": [Function],
+          "disabled": true,
+          "toggleOn": false,
+        }
+      }
+    >
+      <div
+        className="machine-view__column-onboarding"
+      >
+        <div>
+          <p>
+            Unplaced units will appear here. Drag and drop them to customise your deployment.
+          </p>
+          <span
+            className="link"
+            onClick={[Function]}
+          >
+            Add applications to get started
+          </span>
+        </div>
+      </div>
+    </DropTarget(MachineViewColumn)>
+    <DropTarget(MachineViewColumn)
+      acl={
+        Object {
+          "isReadOnly": [Function],
+          "reshape": [Function],
+        }
+      }
+      activeMenuItem="name"
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      dropUnit={[Function]}
+      droppable={true}
+      menuItems={
+        Array [
+          Object {
+            "action": [Function],
+            "label": "Add machine",
+          },
+          Object {
+            "action": [Function],
+            "label": "Hide constraints",
+          },
+          Object {
+            "label": "Sort by:",
+          },
+          Object {
+            "action": [Function],
+            "id": "name",
+            "label": "Name",
+          },
+          Object {
+            "action": [Function],
+            "id": "applications",
+            "label": "No. applications",
+          },
+          Object {
+            "action": [Function],
+            "id": "units",
+            "label": "No. units",
+          },
+          Object {
+            "action": [Function],
+            "id": "disk",
+            "label": "Disk",
+          },
+          Object {
+            "action": [Function],
+            "id": "ram",
+            "label": "RAM",
+          },
+          Object {
+            "action": [Function],
+            "id": "cpu",
+            "label": "CPU",
+          },
+        ]
+      }
+      title="My Model (0)"
+      type="machine"
+    >
+      <div
+        className="machine-view__column-onboarding"
+      >
+        <p>
+          Use machine view to:
+        </p>
+        <ul>
+          <li>
+            Create machines
+          </li>
+          <li>
+            Create containers
+          </li>
+          <li>
+            Customise placement
+          </li>
+          <li>
+            Scale up your model
+          </li>
+          <li>
+            Manually place new units
+          </li>
+          <li>
+            Colocate applications
+          </li>
+        </ul>
+        <span
+          className="link"
+          onClick={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          Add machine
+        </span>
+      </div>
+    </DropTarget(MachineViewColumn)>
+    <DropTarget(MachineViewColumn)
+      acl={
+        Object {
+          "isReadOnly": [Function],
+          "reshape": [Function],
+        }
+      }
+      activeMenuItem="name"
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      dropUnit={[Function]}
+      droppable={true}
+      menuItems={
+        Array [
+          Object {
+            "action": [Function],
+            "label": "Add container",
+          },
+          Object {
+            "label": "Sort by:",
+          },
+          Object {
+            "action": [Function],
+            "id": "name",
+            "label": "Name",
+          },
+          Object {
+            "action": [Function],
+            "id": "units",
+            "label": "No. units",
+          },
+          Object {
+            "action": [Function],
+            "id": "applications",
+            "label": "Applications",
+          },
+        ]
+      }
+      title="0 containers, 0 units"
+      type="container"
+    />
+  </div>
+</div>
+`;
