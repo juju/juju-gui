@@ -250,6 +250,8 @@ class SearchResults extends React.Component {
       filters,
       this._searchCallback.bind(this),
       150);
+    this.analytics.sendEvent(
+      this.props.analytics.VIEW, {label: `query: ${query} filters: ${filters}`});
   }
 
   /**
@@ -339,6 +341,7 @@ class SearchResults extends React.Component {
                 {this._generateResultsMessage(data.text, data.solutionsCount)}
                 <div className="list-block__filters">
                   <SearchResultsTypeFilter
+                    analytics={this.analytics}
                     changeState={this.props.changeState}
                     currentType={currentType} />
                   <div className="six-col last-col">
@@ -474,6 +477,7 @@ class SearchResults extends React.Component {
           <SearchResultsItem
             acl={this.props.acl}
             addToModel={this.props.addToModel}
+            analytics={this.analytics}
             changeState={this.props.changeState}
             generatePath={this.props.generatePath}
             item={item}
@@ -489,6 +493,7 @@ class SearchResults extends React.Component {
     let state = this.state;
     state.showCommunity = !this.state.showCommunity;
     this.setState(this._generateState(state));
+    this.analytics.addCategory('Toggle Community').sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -527,6 +532,7 @@ class SearchResults extends React.Component {
             <SearchResultsItem
               acl={this.props.acl}
               addToModel={this.props.addToModel}
+              analytics={this.analytics}
               changeState={this.props.changeState}
               generatePath={this.props.generatePath}
               item={item}

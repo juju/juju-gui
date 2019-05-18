@@ -90,6 +90,12 @@ exports[`SearchResults functional tests can render the promulgated search result
         className="list-block__filters"
       >
         <SearchResultsTypeFilter
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           changeState={[Function]}
           currentType="charm"
         />
@@ -227,6 +233,12 @@ exports[`SearchResults functional tests can render the promulgated search result
                   }
                 }
                 addToModel={[Function]}
+                analytics={
+                  Object {
+                    "addCategory": [Function],
+                    "sendEvent": [Function],
+                  }
+                }
                 changeState={[Function]}
                 generatePath={[Function]}
                 item={
@@ -252,6 +264,12 @@ exports[`SearchResults functional tests can render the promulgated search result
                   }
                 }
                 addToModel={[Function]}
+                analytics={
+                  Object {
+                    "addCategory": [Function],
+                    "sendEvent": [Function],
+                  }
+                }
                 changeState={[Function]}
                 generatePath={[Function]}
                 item={
@@ -309,6 +327,12 @@ exports[`SearchResults functional tests can render the promulgated search result
                     }
                   }
                   addToModel={[Function]}
+                  analytics={
+                    Object {
+                      "addCategory": [Function],
+                      "sendEvent": [Function],
+                    }
+                  }
                   changeState={[Function]}
                   generatePath={[Function]}
                   item={
@@ -334,6 +358,12 @@ exports[`SearchResults functional tests can render the promulgated search result
                     }
                   }
                   addToModel={[Function]}
+                  analytics={
+                    Object {
+                      "addCategory": [Function],
+                      "sendEvent": [Function],
+                    }
+                  }
                   changeState={[Function]}
                   generatePath={[Function]}
                   item={

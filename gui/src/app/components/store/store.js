@@ -11,8 +11,14 @@ const ExpertStoreCard = require('../expert-store-card/expert-store-card');
 require('./_store.scss');
 
 class Store extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Store');
+  }
+
   componentDidMount() {
     this.props.setPageTitle('Store');
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -79,6 +85,8 @@ class Store extends React.Component {
     this.props.changeState({
       store: id
     });
+    this.analytics.addCategory('Entity').sendEvent(
+      this.props.analytics.CLICK, {label: `entity: ${id}`});
   }
 
   /**
@@ -102,6 +110,8 @@ class Store extends React.Component {
       root: null,
       search: search
     });
+    this.analytics.addCategory('Search').sendEvent(
+      this.props.analytics.CLICK, {label: `query: ${search.text}`});
   }
 
   /**
@@ -1087,6 +1097,7 @@ class Store extends React.Component {
 };
 
 Store.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstoreURL: PropTypes.string.isRequired,
   gisf: PropTypes.bool.isRequired,

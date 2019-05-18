@@ -176,9 +176,7 @@ describe('SearchResults', function() {
 
     beforeEach(function() {
       searchResults = new SearchResults({
-        analytics: {
-          addCategory: sinon.stub()
-        }
+        analytics: Analytics
       });
     });
 
@@ -412,7 +410,7 @@ describe('SearchResults', function() {
       searchResults.setState = sinon.spy();
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
-      searchResults.props = {charmstoreSearch: searchSpy};
+      searchResults.props = {analytics: Analytics, charmstoreSearch: searchSpy};
       searchResults._searchRequest(query, 'ops');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
         'waitingForSearch flag is not set');
@@ -426,7 +424,7 @@ describe('SearchResults', function() {
       searchResults.setState = sinon.spy();
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
-      searchResults.props = {charmstoreSearch: searchSpy};
+      searchResults.props = {analytics: Analytics, charmstoreSearch: searchSpy};
       searchResults._searchRequest(query, 'ops', 'bundle', '-name');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
         'waitingForSearch flag is not set');

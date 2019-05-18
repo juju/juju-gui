@@ -4,12 +4,15 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+
+const Analytics = require('../../../../../test/fake-analytics');
 const EntityResources = require('./resources');
 
 describe('EntityResources', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityResources
+      analytics={Analytics}
       apiUrl={options.apiUrl || '/api'}
       entityId={options.entityId || 'cs:foo-0'}
       resources={options.resources || []} />
