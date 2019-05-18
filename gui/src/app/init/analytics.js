@@ -14,10 +14,12 @@ class Analytics {
     this.categories = data.categories || [];
     this.globalLabels = data.globalLabels;
     // Common events.
+    this.ADD = 'Add';
     this.CANCEL = 'Cancel';
     this.CLICK = 'Click';
-    this.ADD = 'Add';
     this.DELETE = 'Delete';
+    this.DROP = 'Drop';
+    this.HOVER = 'Hover';
     this.UPDATE = 'Update';
     this.VIEW = 'View';
   }

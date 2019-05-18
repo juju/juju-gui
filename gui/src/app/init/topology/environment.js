@@ -120,6 +120,7 @@ class EnvironmentView {
     let topo = this.topo;
     if (!topo) {
       topo = new Topology({
+        analytics: this.analytics,
         includePlus: true,
         size: [640, 480],
         ecs: this.ecs,
@@ -133,10 +134,15 @@ class EnvironmentView {
         staticURL: this.staticURL
       });
       // Bind all the behaviors we need as modules.
-      topo.addModule(ServiceModule, {useTransitions: true});
+      topo.addModule(ServiceModule, {
+        analytics: this.analytics,
+        useTransitions: true
+      });
       topo.addModule(PanZoomModule);
       topo.addModule(ViewportModule);
-      topo.addModule(RelationModule);
+      topo.addModule(RelationModule, {
+        analytics: this.analytics
+      });
       this.topo = topo;
     }
     return topo;

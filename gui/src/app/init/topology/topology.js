@@ -30,6 +30,7 @@ class Topology extends Component {
     this.minZoom = options.minZoom || 0.25;
     this.maxZoom = options.maxZoom || 2;
     this.includePlus = options.includePlus || true;
+    this.analytics = options.analytics;
     this.ecs = options.ecs;
     this.env = options.env;
     this.environmentView = options.environmentView;

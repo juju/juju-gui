@@ -31,9 +31,10 @@ const RelationMenu = require('../../components/relation-menu/relation-menu');
  * @class RelationModule
  */
 class RelationModule {
-  constructor() {
+  constructor(options={}) {
     this.name = 'RelationModule';
     this.relations = [];
+    this.analytics = options.analytics.addCategory('Relation');
     this.events = {
       scene: {
         '.rel-indicator': {
@@ -585,6 +586,7 @@ class RelationModule {
       vis.select('.plus-service').classed('fade', true);
       // Start the add-relation process.
       this.addRelationStart(d, this);
+      this.analytics.addCategory('Start').sendEvent(this.analytics.CLICK);
     }
   }
 
@@ -648,6 +650,7 @@ class RelationModule {
     // If we landed on a rect, add relation, otherwise, cancel.
     if (rect) {
       self.ambiguousAddRelationCheck(endpoint, self, rect);
+      this.analytics.sendEvent(self.analytics.ADD);
     } else {
       // TODO clean up, abstract
       self.cancelRelationBuild();
@@ -992,6 +995,7 @@ class RelationModule {
         ];
         menu.classList.remove('active');
         view.addRelationEnd(endpoints_item, view, context);
+        self.analytics.addCategory('Ambiguous Menu Item').sendEvent(self.analytics.CLICK);
       });
     });
     // Add a cancel item.
@@ -1070,6 +1074,7 @@ class RelationModule {
    */
   relationClick(relation, self) {
     self.showRelationMenu(relation);
+    self.analytics.sendEvent(self.analytics.CLICK);
   }
 
   /**
@@ -1135,6 +1140,7 @@ class RelationModule {
     // The state needs to be cleared after the relation is destroyed as well
     // to hide the destroy relation popup.
     document.dispatchEvent(new Event('topo.clearState'));
+    self.analytics.sendEvent(self.analytics.DELETE);
   }
 
   /**
