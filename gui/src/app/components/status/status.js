@@ -13,6 +13,14 @@ require('./_status.scss');
 
 /** Status React component used to display Juju status. */
 class Status extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Status');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
 
   /**
     Generate the state to navigate to an application.
@@ -43,6 +51,8 @@ class Status extends React.Component {
     // Navigate to the app in the inspector, clearing the state so that the
     // app overview is shown.
     this.props.changeState(this._generateApplicationClickState(appId));
+    this.analytics.addCategory('Application').sendEvent(
+      this.props.analytics.CLICK, {label: `application: ${appId}`});
   }
 
   /**
@@ -61,6 +71,8 @@ class Status extends React.Component {
   _navigateToCharm(charmURL, evt) {
     evt.preventDefault();
     this.props.changeState(this._generateCharmClickState(charmURL));
+    this.analytics.addCategory('Charm').sendEvent(
+      this.props.analytics.CLICK, {label: `charm: ${charmURL}`});
   }
 
   /**
@@ -93,6 +105,8 @@ class Status extends React.Component {
     evt.stopPropagation();
     evt.preventDefault();
     this.props.changeState(this._generateMachineClickState(machineId));
+    this.analytics.addCategory('Machine').sendEvent(
+      this.props.analytics.CLICK, {label: `machine: ${machineId}`});
   }
 
   /**
@@ -212,6 +226,7 @@ class Status extends React.Component {
 };
 
 Status.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   model: shapeup.shape({

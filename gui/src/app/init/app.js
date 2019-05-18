@@ -819,6 +819,7 @@ Browser: ${navigator.userAgent}`
     const propTypes = Status.propTypes;
     return (
       <Status
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         model={shapeup.fromShape(this.props.modelAPI.getAttrs(), propTypes.model)}
