@@ -30,6 +30,7 @@ MachineViewColumnGlobals.dropTarget = {
       return;
     };
     if (props.droppable) {
+      props.analytics.addCategory('Column').sendEvent(props.analytics.DROP);
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
   },
@@ -86,7 +87,7 @@ class MachineViewColumn extends React.Component {
         <MachineViewHeader
           acl={props.acl.reshape(propTypes.acl)}
           activeMenuItem={props.activeMenuItem}
-          analytics={this.analytics}
+          analytics={this.props.analytics}
           droppable={props.droppable}
           dropUnit={props.dropUnit}
           menuItems={props.menuItems}

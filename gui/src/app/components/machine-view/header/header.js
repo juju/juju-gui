@@ -27,6 +27,7 @@ MachineViewHeaderGlobals.dropTarget = {
   */
   drop: function(props, monitor, component) {
     if (props.droppable) {
+      props.analytics.addCategory('Header').sendEvent(props.analytics.DROP);
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
   },

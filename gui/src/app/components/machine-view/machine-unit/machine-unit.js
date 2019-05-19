@@ -18,6 +18,7 @@ const dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
+    props.analytics.addCategory('Unit').sendEvent(props.analytics.DRAG);
     return {unit: props.unit};
   },
 

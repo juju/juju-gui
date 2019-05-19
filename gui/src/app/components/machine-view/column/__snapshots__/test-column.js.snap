@@ -11,6 +11,12 @@ exports[`MachineViewColumn can render 1`] = `
       }
     }
     activeMenuItem="name"
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     dropUnit={[Function]}
     droppable={true}
     menuItems={Array []}

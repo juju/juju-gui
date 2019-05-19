@@ -22,6 +22,9 @@ const dropTarget = {
     @param {Object} component The component that is being dropped onto.
   */
   drop: function(props, monitor, component) {
+    const analytics = props.analytics.addCategory(
+      props.type === 'container' ? 'Container' : 'Machine');
+    analytics.sendEvent(props.analytics.DROP);
     props.dropUnit(monitor.getItem().unit, props.machineAPI.machine.id);
   },
 
