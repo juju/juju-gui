@@ -6,8 +6,6 @@ const enzyme = require('enzyme');
 
 const Analytics = require('../../../test/fake-analytics');
 const DeploymentBar = require('./deployment-bar');
-const DeploymentBarNotification = require('./notification/notification');
-const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
