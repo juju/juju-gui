@@ -29,6 +29,8 @@ class DeploymentModelName extends React.Component {
     this.setState({modelName: modelName});
     if (modelName !== '') {
       this.props.setModelName(modelName);
+      this.props.analytics.addCategory('Model Name').sendEvent(
+        this.props.analytics.UPDATE);
     }
   }
 
@@ -66,6 +68,7 @@ class DeploymentModelName extends React.Component {
 
 DeploymentModelName.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   ddEntity: PropTypes.object,
   focusName: PropTypes.bool,
   modelName: PropTypes.string.isRequired,

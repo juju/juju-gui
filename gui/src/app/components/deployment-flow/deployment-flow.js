@@ -66,7 +66,13 @@ class DeploymentFlow extends React.Component {
       vpcId: INITIAL_VPC_ID,
       vpcIdForce: false
     };
-    this.analytics = this.props.analytics.addCategory('Deployment Flow');
+    let flowType = 'Deployment';
+    if (this.state.isDirectDeploy) {
+      flowType = 'Direct Deploy';
+    } else if (this._isExpertFlow()) {
+      flowType = 'Expert';
+    }
+    this.analytics = this.props.analytics.addCategory(`${flowType} Flow`);
   }
 
   componentWillMount() {
@@ -76,6 +82,10 @@ class DeploymentFlow extends React.Component {
     if (this.state.isDirectDeploy) {
       this._getDirectDeployEntity(this.props.ddData.id);
     }
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -503,6 +513,7 @@ class DeploymentFlow extends React.Component {
     } else {
       deploy();
     }
+    this.analytics.sendEvent('Deploy');
   }
 
   /**
@@ -652,6 +663,7 @@ class DeploymentFlow extends React.Component {
         title={title}>
         <DeploymentSSHKey
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           cloud={cloud}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           setSSHKeys={this._setSSHKeys.bind(this)}
@@ -675,7 +687,9 @@ class DeploymentFlow extends React.Component {
       <div className="deployment-vpc">
         <AccordionSection
           title={<span>Add AWS VPC ID <em>(optional)</em></span>}>
-          <DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
+          <DeploymentVPC
+            analytics={this.analytics}
+            setVPCId={this._setVPCId.bind(this)} />
         </AccordionSection>
       </div>);
 
@@ -701,6 +715,7 @@ class DeploymentFlow extends React.Component {
         title="Set your model name">
         <DeploymentModelName
           acl={this.props.acl}
+          analytics={this.analytics}
           ddEntity={this.state.ddEntity}
           focusName={!isExpertFlow}
           modelName={this.props.modelName}
@@ -725,6 +740,7 @@ class DeploymentFlow extends React.Component {
         title="Pricing">
         <DeploymentPricing
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           applications={this.props.applications}
           changeState={this.props.changeState}
           charms={this.props.charms}
@@ -759,6 +775,7 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title="Set your maximum monthly budget (optional)">
         <DeploymentExpertBudget
+          analytics={this.analytics}
           budget={this.state.budget}
           // 720 is the average number of hours in a month.
           estimateWithSLA={((hourPrice * machineCount * 720) + estimate).toFixed(2)}
@@ -801,6 +818,7 @@ class DeploymentFlow extends React.Component {
     return (
       <DeploymentLogin
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         callback={callback}
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}
@@ -963,6 +981,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentBudget
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           listBudgets={this.props.plans.listBudgets}
           setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />
@@ -991,6 +1010,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentPayment
           acl={props.acl}
           addNotification={props.addNotification}
+          analytics={this.analytics}
           changeState={props.changeState}
           generatePath={props.generatePath}
           payment={props.payment}
@@ -1026,6 +1046,7 @@ class DeploymentFlow extends React.Component {
     return (
       <DeploymentAgreements
         acl={this.props.acl}
+        analytics={this.analytics}
         disabled={status.disabled}
         onCheckboxChange={this._handleTermsAgreement.bind(this)}
         showTerms={!!isExpertFlow}
@@ -1079,6 +1100,7 @@ class DeploymentFlow extends React.Component {
     return (
       <DeploymentExpertIntro
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         changeState={this.props.changeState}
         ddData={this.props.ddData}
         entityModel={this.state.ddEntity}
@@ -1110,6 +1132,7 @@ class DeploymentFlow extends React.Component {
       return (
         <DeploymentDirectDeploy
           addNotification={props.addNotification}
+          analytics={this.analytics}
           changeState={props.changeState}
           ddData={props.ddData}
           entityModel={state.ddEntity}
@@ -1215,6 +1238,7 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-flow">
         <DeploymentPanel
+          analytics={this.analytics}
           changeState={this.props.changeState}
           isDirectDeploy={this.state.isDirectDeploy}
           loggedIn={this.props.isLoggedIn()}

@@ -107,6 +107,12 @@ exports[`DeploymentExpertIntro can render for a bundle 1`] = `
           </div>
         </ExpertBlock>
         <ExpertContactCard
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           expert="spinach"
           staticURL="/static/url"
         />
@@ -216,6 +222,12 @@ exports[`DeploymentExpertIntro can render for a charm 1`] = `
           </div>
         </ExpertBlock>
         <ExpertContactCard
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           expert="spinach"
           staticURL="/static/url"
         />
@@ -347,6 +359,12 @@ exports[`DeploymentExpertIntro can render without a description 1`] = `
           </div>
         </ExpertBlock>
         <ExpertContactCard
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           expert="spinach"
           staticURL="/static/url"
         />

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentAgreements can render 1`] = `
+<div
+  className="deployment-flow-agreements deployment-flow__deploy-option"
+>
+  <input
+    className="deployment-flow__deploy-checkbox"
+    disabled={false}
+    id="terms"
+    onChange={[Function]}
+    type="checkbox"
+  />
+  <label
+    className="deployment-flow__deploy-label"
+    htmlFor="terms"
+  >
+    I agree to all terms.
+  </label>
+</div>
+`;

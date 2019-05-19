@@ -65,6 +65,7 @@ class DeploymentLogin extends React.Component {
           <div className="deployment-login__login">
             <USSOLoginLink
               addNotification={this.props.addNotification}
+              analytics={this.props.analytics}
               callback={this.props.callback}
               displayType="button"
               gisf={this.props.gisf}
@@ -76,6 +77,7 @@ class DeploymentLogin extends React.Component {
             Do not have an account?
             <USSOLoginLink
               addNotification={this.props.addNotification}
+              analytics={this.props.analytics}
               callback={this.props.callback}
               displayType="text"
               gisf={this.props.gisf}
@@ -99,6 +101,7 @@ class DeploymentLogin extends React.Component {
         </span>
         <USSOLoginLink
           addNotification={this.props.addNotification}
+          analytics={this.props.analytics}
           callback={this.props.callback}
           displayType="button"
           gisf={this.props.gisf}
@@ -108,6 +111,7 @@ class DeploymentLogin extends React.Component {
         or&nbsp;
         <USSOLoginLink
           addNotification={this.props.addNotification}
+          analytics={this.props.analytics}
           callback={this.props.callback}
           displayType="text"
           gisf={this.props.gisf}
@@ -236,6 +240,7 @@ class DeploymentLogin extends React.Component {
 
 DeploymentLogin.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   callback: PropTypes.func.isRequired,
   gisf: PropTypes.bool,
   isDirectDeploy: PropTypes.bool,

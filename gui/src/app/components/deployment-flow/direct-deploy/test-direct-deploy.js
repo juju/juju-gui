@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentDirectDeploy = require('./direct-deploy');
 const {Button} = require('@canonical/juju-react-components');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
@@ -14,6 +15,7 @@ describe('DirectDeploy', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentDirectDeploy
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       ddData={options.ddData}
       entityModel={options.entityModel}

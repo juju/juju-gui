@@ -22,7 +22,7 @@ class DeploymentCredential extends React.Component {
       savedCredential: null,
       showAdd: this.props.editable
     };
-    this.analytics = this.props.analytics.addCategory('Credentials');
+    this.analytics = this.props.analytics.addCategory('Credential');
   }
 
   componentWillMount() {
@@ -152,9 +152,11 @@ class DeploymentCredential extends React.Component {
       // Save the credential in case we need to restore it on cancel.
       this.setState({savedCredential: this.props.credential});
       this.props.setCredential(null);
+      this.analytics.sendEvent(this.props.analytics.UPDATE);
     } else if (cancel) {
       // Restore previous credentials.
       this.props.setCredential(this.state.savedCredential);
+      this.analytics.sendEvent(this.props.analytics.CANCEL);
     }
     this.setState({showAdd: showAdd});
   }
@@ -190,6 +192,7 @@ class DeploymentCredential extends React.Component {
       this._toggleAdd();
     } else {
       this.props.setCredential(value);
+      this.analytics.sendEvent(this.props.analytics.UPDATE);
     }
   }
 

@@ -16,6 +16,7 @@ class Analytics {
     // Common events.
     this.ADD = 'Add';
     this.CANCEL = 'Cancel';
+    this.CLOSE = 'Close';
     this.CLICK = 'Click';
     this.DELETE = 'Delete';
     this.DROP = 'Drop';

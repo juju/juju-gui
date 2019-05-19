@@ -605,6 +605,7 @@ describe('DeploymentFlow', function() {
     const expected = (
       <DeploymentAgreements
         acl={acl}
+        analytics={Analytics}
         disabled={false}
         onCheckboxChange={wrapper.find('DeploymentAgreements').prop('onCheckboxChange')}
         showTerms={false}

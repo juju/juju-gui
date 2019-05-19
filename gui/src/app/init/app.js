@@ -1089,6 +1089,7 @@ Browser: ${navigator.userAgent}`
       <div id="deployment-bar-container">
         <DeploymentBar
           acl={this.props.acl}
+          analytics={this.props.analytics}
           changeState={this._bound.changeState}
           currentChangeSet={ecs.getCurrentChangeSet()}
           generateChangeDescription={

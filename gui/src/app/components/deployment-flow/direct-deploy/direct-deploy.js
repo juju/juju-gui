@@ -29,6 +29,8 @@ class DeploymentDirectDeploy extends React.Component {
       profile: null,
       special: {dd: null}
     });
+    this.props.analytics.addCategory('Edit Model').analytics.sendEvent(
+      this.props.analytics.CLICK);
   }
 
   /**
@@ -89,6 +91,7 @@ class DeploymentDirectDeploy extends React.Component {
       store: '',
       special: {dd: null}
     });
+    this.props.analytics.addCategory('Store').analytics.sendEvent(this.props.analytics.CLICK);
   }
 
   render() {
@@ -153,6 +156,7 @@ class DeploymentDirectDeploy extends React.Component {
 
 DeploymentDirectDeploy.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   ddData: PropTypes.object.isRequired,
   entityModel: PropTypes.object,

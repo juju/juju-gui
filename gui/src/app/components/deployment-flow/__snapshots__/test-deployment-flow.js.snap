@@ -5,6 +5,12 @@ exports[`DeploymentFlow can render 1`] = `
   className="deployment-flow"
 >
   <DeploymentPanel
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     changeState={[Function]}
     isDirectDeploy={false}
     loggedIn={true}
@@ -20,6 +26,12 @@ exports[`DeploymentFlow can render 1`] = `
         acl={
           Object {
             "isReadOnly": [Function],
+          }
+        }
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
           }
         }
         ddEntity={null}
@@ -62,7 +74,7 @@ exports[`DeploymentFlow can render 1`] = `
       showCheck={true}
       title={
         <span>
-          Add public SSH keys 
+          Add public SSH keys
           <em>
             (optional)
           </em>
@@ -72,6 +84,12 @@ exports[`DeploymentFlow can render 1`] = `
       <DeploymentSSHKey
         WebHandler={[Function]}
         addNotification={[Function]}
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
         cloud={null}
         setLaunchpadUsernames={[Function]}
         setSSHKeys={[Function]}
@@ -160,6 +178,12 @@ exports[`DeploymentFlow can render 1`] = `
           }
         }
         addNotification={[Function]}
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
         listBudgets={[Function]}
         setBudget={[Function]}
         user="dalek"

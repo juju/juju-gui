@@ -14,14 +14,15 @@ const BudgetChart = require('../../budget-chart/budget-chart');
 require('./_budget.scss');
 
 class DeploymentBudget extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.xhrs = [];
     this.state = {
       budgets: null,
       increaseExpanded: false,
       loadingBudgets: false
     };
+    this.analytics = this.props.analytics.addCategory('Budget');
   }
 
   componentWillMount() {
@@ -116,6 +117,7 @@ class DeploymentBudget extends React.Component {
   */
   _handleBudgetChange(value) {
     this.props.setBudget(value);
+    this.analytics.sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -226,6 +228,7 @@ class DeploymentBudget extends React.Component {
 DeploymentBudget.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   listBudgets: PropTypes.func.isRequired,
   setBudget: PropTypes.func.isRequired,
   user: PropTypes.string

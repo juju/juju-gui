@@ -10,12 +10,13 @@ const {Button} = require('@canonical/juju-react-components');
 require('./_deployment-bar.scss');
 
 class DeploymentBar extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.previousNotifications = [];
     this.state = {
       latestChangeDescription: null
     };
+    this.analytics = this.props.analytics.addCategory('Deployment Bar');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -65,6 +66,8 @@ class DeploymentBar extends React.Component {
         deploy: ''
       }
     });
+    this.analytics.addCategory(
+      this.props.modelCommitted ? 'Commit' : 'Deploy').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -95,6 +98,7 @@ class DeploymentBar extends React.Component {
     return (
       <div className="deployment-bar">
         <DeploymentBarNotification
+          analytics={this.analytics}
           change={this.state.latestChangeDescription} />
         {this._generateButton()}
       </div>
@@ -104,6 +108,7 @@ class DeploymentBar extends React.Component {
 
 DeploymentBar.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   currentChangeSet: PropTypes.object.isRequired,
   generateChangeDescription: PropTypes.func.isRequired,

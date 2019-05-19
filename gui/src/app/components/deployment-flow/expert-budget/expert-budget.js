@@ -52,7 +52,11 @@ class DeploymentExpertBudget extends React.Component {
         </div>
         <div className="deployment-expert-budget__row v1">
           <Button
-            action={this.props.setBudget.bind(this, this.state.budget)}
+            action={() => {
+              this.props.setBudget(this.state.budget);
+              this.props.analytics.addCategory('Expert Budget').sendEvent(
+                this.props.analytics.UPDATE);
+            }}
             disabled={!changed}
             extraClasses="is-inline"
             modifier="positive">
@@ -65,6 +69,7 @@ class DeploymentExpertBudget extends React.Component {
 };
 
 DeploymentExpertBudget.propTypes = {
+  analytics: PropTypes.object.isRequired,
   budget: PropTypes.any,
   estimateWithSLA: PropTypes.any,
   setBudget: PropTypes.func.isRequired

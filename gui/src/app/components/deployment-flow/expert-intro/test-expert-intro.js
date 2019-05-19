@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentExpertIntro = require('./expert-intro');
 
 describe('DeploymentExpertIntro', () => {
@@ -12,6 +13,7 @@ describe('DeploymentExpertIntro', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentExpertIntro
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       ddData={options.ddData || {
         id: 'cs:apache-21'

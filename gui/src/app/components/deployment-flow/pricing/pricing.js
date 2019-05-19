@@ -13,6 +13,7 @@ require('./_pricing.scss');
 
 const DeploymentPricing = props => {
   const machineLabel = initUtils.pluralize('machine', parseInt(props.machineCount, 10));
+  const analytics = props.analytics.addCategory('Pricing');
   return (
     <div className="deployment-pricing">
       <DeploymentPlanTable
@@ -46,6 +47,7 @@ const DeploymentPricing = props => {
         </div>
       </div>
       <DeploymentSupportSelection
+        analytics={analytics}
         getSLAMachineRates={props.getSLAMachineRates}
         machineCount={props.machineCount}
         setSLA={props.setSLA} />
@@ -75,6 +77,7 @@ const DeploymentPricing = props => {
 
 DeploymentPricing.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   charms: PropTypes.object.isRequired,

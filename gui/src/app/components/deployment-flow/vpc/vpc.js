@@ -10,9 +10,10 @@ const GenericInput = require('../../generic-input/generic-input');
   identifier.
 */
 class DeploymentVPC extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {force: false, forceEnabled: false};
+    this.analytics = this.props.analytics.addCategory('VPC');
   }
 
   /**
@@ -61,6 +62,7 @@ class DeploymentVPC extends React.Component {
   */
   setVPC(force) {
     this.props.setVPCId(this.refs.vpcId.getValue(), force);
+    this.analytics.sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -107,6 +109,7 @@ class DeploymentVPC extends React.Component {
 };
 
 DeploymentVPC.propTypes = {
+  analytics: PropTypes.object.isRequired,
   setVPCId: PropTypes.func.isRequired
 };
 
