@@ -25,8 +25,8 @@ require('./_inspector.scss');
 class Inspector extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.generateState(this.props);
     this.analytics = this.props.analytics.addCategory('Inspector');
+    this.state = this.generateState(this.props);
   }
 
   componentDidMount() {
@@ -297,7 +297,7 @@ class Inspector extends React.Component {
                 changeState={changeState}
                 createRelation={nextProps.relationUtils.createRelation}
                 endpoints={nextProps.relationUtils.getAvailableEndpoints(
-                  service, nextProps.services.getById(spouse))} />,
+                  service, nextProps.services.getById(spouse)) || []} />,
             backState: {
               gui: {
                 inspector: {

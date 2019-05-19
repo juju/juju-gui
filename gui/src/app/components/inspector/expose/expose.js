@@ -11,6 +11,15 @@ const InspectorExposeUnit = require('./unit/unit');
 require('./_expose.scss');
 
 class InspectorExpose extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Expose');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     The callable to be passed to the unit items for navigating to the unit
     details.
@@ -29,6 +38,7 @@ class InspectorExpose extends React.Component {
         }
       }
     });
+    this.analytics.addCategory('Unit').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -73,13 +83,15 @@ class InspectorExpose extends React.Component {
   _handleExposeChange() {
     var service = this.props.service;
     var serviceId = service.get('id');
-    if (service.get('exposed')) {
+    const exposed = service.get('exposed');
+    if (exposed) {
       this.props.modelAPI.unexposeService(serviceId,
         this._exposeServiceCallback.bind(this), {});
     } else {
       this.props.modelAPI.exposeService(serviceId,
         this._exposeServiceCallback.bind(this), {});
     }
+    this.analytics.sendEvent(this.props.analytics.UPDATE, {label: `exposed: ${exposed}`});
   }
 
   /**

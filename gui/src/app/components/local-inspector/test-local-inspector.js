@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const LocalInspector = require('./local-inspector');
 const {ButtonRow} = require('@canonical/juju-react-components');
 const InspectorHeader = require('../inspector/header/header');
@@ -14,6 +15,7 @@ describe('LocalInspector', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <LocalInspector
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       file={options.file || file}
       localType={options.localType || 'new'}
@@ -69,6 +71,7 @@ describe('LocalInspector', function() {
     var expected = (
       <div className="inspector-view local-inspector">
         <InspectorHeader
+          analytics={Analytics}
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
           title="Local charm" />
         <div className="inspector-content local-inspector__section">

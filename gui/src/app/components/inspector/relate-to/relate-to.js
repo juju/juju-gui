@@ -26,6 +26,7 @@ class InspectorRelateTo extends React.Component {
         }
       }
     });
+    this.props.analytics.addCategory('Relate To').sendEvent(this.props.analytics.CLICK);
   }
 
   /**

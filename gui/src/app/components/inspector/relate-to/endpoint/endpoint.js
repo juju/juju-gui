@@ -83,6 +83,7 @@ class InspectorRelateToEndpoint extends React.Component {
       }
     });
     props.changeState(props.backState);
+    this.props.analytics.addCategory('Endpoint').sendEvent(this.props.analytics.ADD);
   }
 
   /**

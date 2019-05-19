@@ -8,7 +8,7 @@ require('./_plan.scss');
 
 class InspectorPlan extends React.Component {
   componentDidMount() {
-    this.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
   }
 
   /**

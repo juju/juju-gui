@@ -13,12 +13,13 @@ const OverviewAction = require('../overview-action/overview-action');
 require('./_service-overview.scss');
 
 class ServiceOverview extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       activePlan: null,
       plans: null
     };
+    this.analytics = this.props.analytics.addCategory('Application');
   }
 
   componentWillMount() {
@@ -74,6 +75,10 @@ class ServiceOverview extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     Fires changeState to update the UI based on the component clicked.
 
@@ -90,6 +95,7 @@ class ServiceOverview extends React.Component {
       }
     });
     this.props.changeState(activeAction.state);
+    this.analytics.addCategory(activeAction.title).sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -251,6 +257,7 @@ class ServiceOverview extends React.Component {
     // db, env, and service have already been bound to this function in
     // the app.js definition.
     this.props.destroyService();
+    this.analytics.sendEvent(this.props.analytics.DELETE);
   }
 
   _generateDelete(render, readOnly) {

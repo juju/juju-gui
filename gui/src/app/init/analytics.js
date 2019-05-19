@@ -17,6 +17,7 @@ class Analytics {
     this.ADD = 'Add';
     this.CANCEL = 'Cancel';
     this.CLICK = 'Click';
+    this.CLOSE = 'Close';
     this.DELETE = 'Delete';
     this.DROP = 'Drop';
     this.HOVER = 'Hover';

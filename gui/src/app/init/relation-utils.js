@@ -531,7 +531,7 @@ function getAvailableEndpoints(
     return relatableEndpoints;
   }
   // Filter out the existing relations
-  return relatableEndpoints.filter(relation =>
+  return relatableEndpoints && relatableEndpoints.filter(relation =>
     !existing.some(existingRelation =>
       relation[0].name === existingRelation.far.name ||
       relation[1].name === existingRelation.near.name

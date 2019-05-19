@@ -12,7 +12,6 @@ require('./_header.scss');
 class InspectorHeader extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.generateState(this.props);
     this.analytics = this.props.analytics.addCategory('Header');
   }
 

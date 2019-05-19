@@ -12,12 +12,17 @@ const Constraints = require('../../constraints/constraints');
 require('./_scale-service.scss');
 
 class ScaleService extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       constraints: null,
       constraintsVisibility: false
     };
+    this.analytics = this.props.analytics.addCategory('Scale Service');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -99,6 +104,8 @@ class ScaleService extends React.Component {
       this.props.initUtils.createMachinesPlaceUnits(numUnits, constraints);
     }
     this.props.changeState(appState);
+    this.analytics.addCategory('Units').sendEvent(
+      this.props.analytics.ADD, {label: `auto place: ${!state.constraintsVisibility}`});
   }
 
   render() {
