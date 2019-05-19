@@ -129,6 +129,7 @@ class InspectorExpose extends React.Component {
 InspectorExpose.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   modelAPI: shapeup.shape({
     exposeService: PropTypes.func.isRequired,

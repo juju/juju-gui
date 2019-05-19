@@ -324,6 +324,7 @@ class UnitList extends React.Component {
 
 UnitList.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   envResolved: PropTypes.func.isRequired,

@@ -7,6 +7,10 @@ const React = require('react');
 require('./_plan.scss');
 
 class InspectorPlan extends React.Component {
+  componentDidMount() {
+    this.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     Generates the elements if the applicaton has a plan selected.
 
@@ -50,6 +54,7 @@ class InspectorPlan extends React.Component {
 
 InspectorPlan.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   currentPlan: PropTypes.object
 };
 

@@ -40,6 +40,7 @@ class InspectorResourcesList extends React.Component {
 
 InspectorResourcesList.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   resources: PropTypes.array.isRequired
 };
 

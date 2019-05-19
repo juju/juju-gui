@@ -172,6 +172,7 @@ class ScaleService extends React.Component {
 
 ScaleService.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   initUtils: shapeup.shape({
     addGhostAndEcsUnits: PropTypes.func.isRequired,

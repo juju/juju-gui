@@ -294,6 +294,7 @@ class ServiceOverview extends React.Component {
 ServiceOverview.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   destroyService: PropTypes.func.isRequired,

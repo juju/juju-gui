@@ -224,6 +224,7 @@ InspectorChangeVersion.propTypes = {
   acl: PropTypes.object.isRequired,
   addCharm: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmId: PropTypes.string.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,

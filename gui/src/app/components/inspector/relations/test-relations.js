@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const InspectorRelations = require('./relations');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const {ButtonRow} = require('@canonical/juju-react-components');
@@ -15,6 +16,7 @@ describe('InspectorRelations', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorRelations
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       destroyRelations={options.destroyRelations || sinon.stub()}
       service={options.service || service}

@@ -10,6 +10,12 @@ const {urls} = require('jaaslib');
 require('./_header.scss');
 
 class InspectorHeader extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this.generateState(this.props);
+    this.analytics = this.props.analytics.addCategory('Header');
+  }
+
   /**
     Returns the supplied classes with the type class applied if it
     is truthy.
@@ -54,6 +60,8 @@ class InspectorHeader extends React.Component {
     this.props.changeState({
       postDeploymentPanel: this.props.charmId
     });
+    this.analytics.addCategory('Get Started').sendEvent(
+      this.props.analytics.CLICK, {label: `charm: ${this.props.charmId}`});
   }
 
   /**
@@ -65,6 +73,8 @@ class InspectorHeader extends React.Component {
     this.props.changeState({
       store: urls.URL.fromAnyString(this.props.charmId).path()
     });
+    this.analytics.addCategory('Charm Details').sendEvent(
+      this.props.analytics.CLICK, {label: `charm: ${this.props.charmId}`});
   }
 
   /**
@@ -102,7 +112,10 @@ class InspectorHeader extends React.Component {
     return (
       <div
         className={this._headerClasses()}
-        onClick={this.props.backCallback}
+        onClick={() => {
+          this.props.backCallback();
+          this.analytics.sendEvent('Back');
+        }}
         role="button"
         tabIndex="0">
         <span
@@ -124,6 +137,7 @@ class InspectorHeader extends React.Component {
 
 InspectorHeader.propTypes = {
   activeComponent: PropTypes.string,
+  analytics: PropTypes.object.isRequired,
   backCallback: PropTypes.func.isRequired,
   changeState: PropTypes.func,
   charmId: PropTypes.string,

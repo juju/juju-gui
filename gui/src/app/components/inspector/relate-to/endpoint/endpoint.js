@@ -123,6 +123,7 @@ class InspectorRelateToEndpoint extends React.Component {
 };
 
 InspectorRelateToEndpoint.propTypes = {
+  analytics: PropTypes.object.isRequired,
   backState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   createRelation: PropTypes.func.isRequired,

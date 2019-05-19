@@ -31,6 +31,7 @@ class InspectorRelationDetails extends React.Component {
 };
 
 InspectorRelationDetails.propTypes = {
+  analytics: PropTypes.object.isRequired,
   relation: PropTypes.object.isRequired
 };
 

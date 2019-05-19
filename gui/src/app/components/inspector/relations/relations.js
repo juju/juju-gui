@@ -229,6 +229,7 @@ class InspectorRelations extends React.Component {
 
 InspectorRelations.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyRelations: PropTypes.func.isRequired,
   service: PropTypes.object.isRequired,

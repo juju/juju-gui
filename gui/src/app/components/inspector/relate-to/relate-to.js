@@ -70,6 +70,7 @@ class InspectorRelateTo extends React.Component {
 };
 
 InspectorRelateTo.propTypes = {
+  analytics: PropTypes.object.isRequired,
   application: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   relatableApplications: PropTypes.array.isRequired
