@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const UnitList = require('./unit-list');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const OverviewAction = require('../overview-action/overview-action');
@@ -15,6 +16,7 @@ describe('UnitList', () => {
     const wrapper = enzyme.shallow(
       <UnitList
         acl={options.acl || acl}
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         destroyUnits={options.destroyUnits || sinon.stub()}
         envResolved={options.envResolved || sinon.stub()}

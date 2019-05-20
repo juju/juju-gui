@@ -364,15 +364,17 @@ class App extends React.Component {
       creds.user = user.controller.user;
       creds.password = user.controller.password;
     }
+    this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.VIEW);
     return (
       <Terminal
         addNotification={this._bound.addNotification}
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
         address={address}
-        close={this.props.appState.changeState.bind(this.props.appState, {
-          terminal: null
-        })}
+        close={() => {
+          this.props.appState.changeState({terminal: null});
+          this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.CLOSE);
+        }}
         commands={commands}
         creds={creds}
         WebSocket={WebSocket} />);
@@ -921,6 +923,7 @@ Browser: ${navigator.userAgent}`
       inspector = (
         <LocalInspector
           acl={this.props.acl}
+          analytics={this.props.analytics}
           changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}

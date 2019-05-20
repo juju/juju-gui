@@ -26,6 +26,7 @@ class InspectorRelateTo extends React.Component {
         }
       }
     });
+    this.props.analytics.addCategory('Relate To').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -70,6 +71,7 @@ class InspectorRelateTo extends React.Component {
 };
 
 InspectorRelateTo.propTypes = {
+  analytics: PropTypes.object.isRequired,
   application: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   relatableApplications: PropTypes.array.isRequired

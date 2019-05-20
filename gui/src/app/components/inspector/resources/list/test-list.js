@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../../test/fake-analytics');
 const InspectorResourcesList = require('./list');
 
 describe('InspectorResourcesList', function() {
@@ -12,6 +13,7 @@ describe('InspectorResourcesList', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorResourcesList
       acl={options.acl || acl}
+      analytics={Analytics}
       resources={options.resources} />
   );
 

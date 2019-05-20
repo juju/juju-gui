@@ -5,6 +5,7 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const ScaleService = require('./scale-service');
 
 describe('ScaleService', function() {
@@ -13,6 +14,7 @@ describe('ScaleService', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <ScaleService
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       initUtils={options.initUtils || initUtils}
       serviceId={options.serviceId || '123'} />,

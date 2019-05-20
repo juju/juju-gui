@@ -83,6 +83,7 @@ class InspectorRelateToEndpoint extends React.Component {
       }
     });
     props.changeState(props.backState);
+    this.props.analytics.addCategory('Endpoint').sendEvent(this.props.analytics.ADD);
   }
 
   /**
@@ -123,6 +124,7 @@ class InspectorRelateToEndpoint extends React.Component {
 };
 
 InspectorRelateToEndpoint.propTypes = {
+  analytics: PropTypes.object.isRequired,
   backState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   createRelation: PropTypes.func.isRequired,

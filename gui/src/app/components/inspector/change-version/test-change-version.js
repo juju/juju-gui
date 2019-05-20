@@ -6,6 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
+const Analytics = require('../../../../test/fake-analytics');
 const InspectorChangeVersion = require('./change-version');
 const InspectorChangeVersionItem = require('./item/item');
 
@@ -17,6 +18,7 @@ describe('InspectorChangeVersion', function() {
       acl={options.acl || acl}
       addCharm={options.addCharm || sinon.stub()}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       charmId={options.charmId || 'cs:django-5'}
       getAvailableVersions={

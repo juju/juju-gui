@@ -4,12 +4,14 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const InspectorHeader = require('./header');
 
 describe('InspectorHeader', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorHeader
+      analytics={Analytics}
       backCallback={options.backCallback || sinon.stub()}
       changeState={options.changeState}
       charmId={options.charmId}

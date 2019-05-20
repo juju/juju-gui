@@ -11,9 +11,14 @@ const OverviewAction = require('../overview-action/overview-action');
 require('./_relations.scss');
 
 class InspectorRelations extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {activeCount: 0};
+    this.analytics = this.props.analytics.addCategory('Relations');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -29,6 +34,7 @@ class InspectorRelations extends React.Component {
           id: this.props.service.get('id'),
           activeComponent: 'relate-to'
         }}});
+    this.analytics.addCategory('Build A Relation').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -129,6 +135,7 @@ class InspectorRelations extends React.Component {
         }
       }
     });
+    this.analytics.addCategory('Relation').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -148,6 +155,7 @@ class InspectorRelations extends React.Component {
     });
     this.props.destroyRelations(relations);
     this._selectAllRelations(false);
+    this.analytics.addCategory('Relation').sendEvent(this.props.analytics.DELETE);
   }
 
   /**
@@ -170,6 +178,7 @@ class InspectorRelations extends React.Component {
         });
       }
     });
+    this.analytics.addCategory('Select All').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -229,6 +238,7 @@ class InspectorRelations extends React.Component {
 
 InspectorRelations.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyRelations: PropTypes.func.isRequired,
   service: PropTypes.object.isRequired,

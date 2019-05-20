@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const ServiceOverview = require('./service-overview');
 
 describe('ServiceOverview', function() {
@@ -13,6 +14,7 @@ describe('ServiceOverview', function() {
     <ServiceOverview
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       charm={options.charm || charm}
       destroyService={options.destroyService || sinon.stub()}

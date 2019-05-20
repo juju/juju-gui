@@ -11,9 +11,14 @@ const OverviewAction = require('../overview-action/overview-action');
 require('./_unit-list.scss');
 
 class UnitList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {activeCount: 0};
+    this.analytics = this.props.analytics.addCategory('Unit List');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -29,6 +34,7 @@ class UnitList extends React.Component {
           id: this.props.service.get('id'),
           activeComponent: 'scale'
         }}});
+    this.analytics.addCategory('Scale Application').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -68,6 +74,7 @@ class UnitList extends React.Component {
     } else {
       setChecked(group, groups);
     }
+    this.analytics.addCategory('Select All').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -90,6 +97,7 @@ class UnitList extends React.Component {
         }
       }
     });
+    this.analytics.addCategory('Unit').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -103,6 +111,7 @@ class UnitList extends React.Component {
     const units = this.props.units;
     const refs = this.refs;
     const envResolved = this.props.envResolved;
+    const analytics = this.analytics.addCategory('Unit');
     Object.keys(refs).forEach(function(ref) {
       let isInstance = ref.split('-')[0] === 'CheckListItem';
       if (isInstance && refs[ref].state.checked) {
@@ -126,6 +135,9 @@ class UnitList extends React.Component {
     });
     if (action === 'remove') {
       this.props.destroyUnits(unitNames);
+      analytics.sendEvent(this.props.analytics.DELETE);
+    } else if (action === 'retry' || action === 'resolve') {
+      analytics.sendEvent(action);
     }
     this._selectAllUnits(null, false);
   }
@@ -324,6 +336,7 @@ class UnitList extends React.Component {
 
 UnitList.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   envResolved: PropTypes.func.isRequired,
