@@ -38,7 +38,7 @@ class InspectorExpose extends React.Component {
         }
       }
     });
-    this.analytics.addCategory('Unit').sendEvent(this.props.analytics.CLICK);
+    this.analytics.addCategory('Unit Details').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
