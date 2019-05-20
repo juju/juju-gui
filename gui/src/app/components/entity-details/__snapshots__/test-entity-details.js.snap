@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntityDetails fetches an entity properly 1`] = `
+<div
+  className="entity-details charm"
+  tabIndex="0"
+>
+  <div>
+    <EntityHeader
+      acl={
+        Object {
+          "isReadOnly": [Function],
+        }
+      }
+      addNotification={[Function]}
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      deployService={[Function]}
+      entityModel={
+        Object {
+          "get": [Function],
+          "getAttrs": [Function],
+          "hasMetrics": [Function],
+          "set": [Function],
+          "toEntity": [Function],
+        }
+      }
+      getBundleYAML={[Function]}
+      getModelName={[Function]}
+      hasPlans={false}
+      importBundleYAML={[Function]}
+      plans={null}
+    />
+    <EntityContent
+      addNotification={[Function]}
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      charmstore={
+        Object {
+          "getDiagramURL": [Function],
+          "getFile": [Function],
+          "reshape": [Function],
+          "url": "http://example.com",
+        }
+      }
+      clearLightbox={[Function]}
+      displayLightbox={[Function]}
+      entityModel={
+        Object {
+          "get": [Function],
+          "getAttrs": [Function],
+          "hasMetrics": [Function],
+          "set": [Function],
+          "toEntity": [Function],
+        }
+      }
+      flags={
+        Object {
+          "test.ddeploy": true,
+        }
+      }
+      hasPlans={false}
+      hash="readme"
+      plans={null}
+      scrollCharmbrowser={[Function]}
+      showTerms={[Function]}
+      staticURL="http://example.com"
+    />
+  </div>
+</div>
+`;

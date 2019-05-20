@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const EntityHeader = require('./header');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
@@ -16,6 +17,7 @@ describe('EntityHeader', function() {
     <EntityHeader
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       deployService={options.deployService || sinon.stub()}
       entityModel={options.entityModel || mockEntity}

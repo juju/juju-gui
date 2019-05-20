@@ -4,6 +4,8 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+
+const Analytics = require('../../../../test/fake-analytics');
 const SearchResultsItem = require('./item');
 
 describe('SearchResultsItem', function() {
@@ -13,6 +15,7 @@ describe('SearchResultsItem', function() {
     <SearchResultsItem
       acl={options.acl || acl}
       addToModel={options.addToModel || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       generatePath={options.generatePath || generatePath}
       item={options.item || item} />

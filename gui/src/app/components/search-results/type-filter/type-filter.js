@@ -67,6 +67,8 @@ class SearchResultsTypeFilter extends React.Component {
         type: type
       }
     });
+    this.props.analytics.addCategory('Entity Type Filter').sendEvent(
+      this.props.analytics.CLICK, {label: `filter by: ${type}`});
   }
 
   render() {
@@ -81,6 +83,7 @@ class SearchResultsTypeFilter extends React.Component {
 };
 
 SearchResultsTypeFilter.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   currentType: PropTypes.string
 };

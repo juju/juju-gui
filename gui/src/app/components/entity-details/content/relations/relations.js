@@ -8,12 +8,12 @@ const React = require('react');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
 class EntityContentRelations extends React.Component {
-  constructor() {
-    super();
-
+  constructor(props) {
+    super(props);
     this.state = {
       showAllRelations: false
     };
+    this.analytics = this.props.analytics.addCategory('Relations');
   }
 
   /**
@@ -32,12 +32,15 @@ class EntityContentRelations extends React.Component {
       search: search,
       store: null
     });
+    this.analytics.addCategory('Relations').sendEvent(
+      this.props.analytics.VIEW, {label: `relation: ${name}`});
   }
 
   _handleViewMore() {
     this.setState({
       showAllRelations: !this.state.showAllRelations
     });
+    this.analytics.addCategory('View More').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -124,6 +127,7 @@ class EntityContentRelations extends React.Component {
 };
 
 EntityContentRelations.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   relations: PropTypes.object.isRequired
 };
