@@ -74,7 +74,7 @@ exports[`DeploymentFlow can render 1`] = `
       showCheck={true}
       title={
         <span>
-          Add public SSH keys
+          Add public SSH keys 
           <em>
             (optional)
           </em>
