@@ -3,12 +3,10 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const MachineViewColumn = require('./column');
-const MachineViewHeader = require('../header/header');
-const {SvgIcon} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -21,6 +19,7 @@ describe('MachineViewColumn', function() {
     <MachineViewColumn.DecoratedComponent
       acl={options.acl || acl}
       activeMenuItem={options.activeMenuItem || 'name'}
+      analytics={Analytics}
       canDrop={options.canDrop === undefined ? false : options.canDrop}
       connectDropTarget={jsTestUtils.connectDropTarget}
       droppable={options.droppable === undefined ? true : options.droppable}
@@ -40,29 +39,7 @@ describe('MachineViewColumn', function() {
 
   it('can render', function() {
     const wrapper = renderComponent();
-    const expected = (
-      <div className="machine-view__column">
-        <MachineViewHeader
-          acl={acl.reshape(
-            MachineViewHeader.DecoratedComponent.propTypes.acl
-          )}
-          activeMenuItem="name"
-          droppable={true}
-          dropUnit={sinon.stub()}
-          menuItems={[]}
-          title="Sandbox"
-          toggle={{}}
-          type="machine" />
-        <div className="machine-view__column-content">
-          <div>contents</div>
-          <div className="machine-view__column-drop-target">
-            <SvgIcon
-              name="add_16"
-              size="16" />
-          </div>
-        </div>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render in droppable mode', function() {

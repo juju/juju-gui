@@ -3,9 +3,9 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const MachineViewScaleUp = require('./scale-up');
 const {ButtonRow} = require('@canonical/juju-react-components');
 
@@ -15,6 +15,7 @@ describe('MachineViewScaleUp', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <MachineViewScaleUp
       acl={options.acl || acl}
+      analytics={Analytics}
       dbAPI={options.dbAPI || dbAPI}
       toggleScaleUp={options.toggleScaleUp || sinon.stub()} />
   );

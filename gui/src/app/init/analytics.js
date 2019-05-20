@@ -19,6 +19,7 @@ class Analytics {
     this.CLICK = 'Click';
     this.CLOSE = 'Close';
     this.DELETE = 'Delete';
+    this.DRAG = 'Drag';
     this.DROP = 'Drop';
     this.HOVER = 'Hover';
     this.UPDATE = 'Update';

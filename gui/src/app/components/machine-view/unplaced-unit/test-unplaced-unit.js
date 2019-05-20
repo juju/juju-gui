@@ -3,9 +3,9 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const MachineViewUnplacedUnit = require('./unplaced-unit');
 const {ButtonDropdown} = require('@canonical/juju-react-components');
 
@@ -19,6 +19,7 @@ describe('MachineViewUnplacedUnit', function() {
     // test the internal component so we access it via DecoratedComponent.
     <MachineViewUnplacedUnit.DecoratedComponent
       acl={options.acl || acl}
+      analytics={Analytics}
       connectDragSource={jsTestUtils.connectDragSource}
       dbAPI={options.dbAPI || dbAPI}
       isDragging={options.isDragging === undefined ? false : options.isDragging}
