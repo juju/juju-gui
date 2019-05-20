@@ -4,12 +4,14 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const Store = require('./store');
 
 describe('Store', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Store
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       charmstoreURL={options.charmstoreURL || 'http://1.2.3.4/'}
       gisf={options.gisf === undefined ? true : options.gisf}

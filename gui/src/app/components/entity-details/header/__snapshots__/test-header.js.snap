@@ -111,6 +111,12 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
         className="entity-header__right four-col last-col no-margin-bottom"
       >
         <CopyToClipboard
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           className="copy-to-clipboard"
           value="juju deploy cs:django"
         />

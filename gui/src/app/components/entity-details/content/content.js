@@ -256,14 +256,17 @@ class EntityContent extends React.Component {
   */
   _handleTagClick(e) {
     e.stopPropagation();
+    const tag = e.target.getAttribute('data-id');
     this.props.changeState({
       hash: null,
       search: {
-        tags: e.target.getAttribute('data-id'),
+        tags: tag,
         text: ''
       },
       store: null
     });
+    this.props.analytics.addCategory('Tag').sendEvent(
+      this.props.analytics.CLICK, {label: `tag: ${tag}`});
   }
 
   /**
@@ -306,6 +309,10 @@ class EntityContent extends React.Component {
   */
   _toggleTerms(terms = null) {
     this.setState({showTerms: terms});
+    if (terms) {
+      this.props.analytics.addCategory('Terms').sendEvent(
+        this.props.analytics.VIEW, {label: `terms: ${terms}`});
+    }
   }
 
   /**
@@ -415,6 +422,7 @@ class EntityContent extends React.Component {
       if (relationsList.length > 0) {
         return (
           <EntityContentRelations
+            analytics={this.props.analytics}
             changeState={this.props.changeState}
             relations={relations} />);
       }
@@ -475,6 +483,7 @@ class EntityContent extends React.Component {
     }
     return (
       <ExpertContactCard
+        analytics={this.props.analytics}
         expert={entityModel.get('owner')}
         staticURL={this.props.staticURL} />);
   }
@@ -597,6 +606,7 @@ class EntityContent extends React.Component {
           </a>.
         </p>
         <CopyToClipboard
+          analytics={this.props.analytics}
           className="copy-to-clipboard"
           value={script} />
         <h4>Preview</h4>
@@ -654,6 +664,7 @@ EntityContent.defaultProps = {
 
 EntityContent.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     getDiagramURL: PropTypes.func.isRequired,

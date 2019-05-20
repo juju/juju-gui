@@ -24,6 +24,8 @@ class ExpertContactCard extends React.Component {
   */
   _showContact() {
     this.setState({showContact: true});
+    this.props.analytics.addCategory(this).addCategory('Show Contact Details').sendEvent(
+      this.props.analytics.CLICK, {label: `expert: ${this.props.expert}`});
   }
 
   /**
@@ -114,6 +116,7 @@ class ExpertContactCard extends React.Component {
 };
 
 ExpertContactCard.propTypes = {
+  analytics: PropTypes.object.isRequired,
   expert: PropTypes.string.isRequired,
   staticURL: PropTypes.string
 };

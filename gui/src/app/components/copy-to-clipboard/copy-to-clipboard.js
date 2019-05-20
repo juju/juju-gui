@@ -19,8 +19,10 @@ class CopyToClipboard extends React.Component {
   componentDidMount() {
     var node = ReactDOM.findDOMNode(this).querySelector('button');
     this.clipboard = new Clipboard(node, {
-      target(trigger) {
-        return trigger.previousElementSibling;
+      target: trigger => {
+        this.props.analytics.addCategory(this).sendEvent(
+          this.props.analytics.CLICK, {label: `entity: ${this.props.value}`});
+        return this.refs.input;
       }
     });
   }
@@ -35,7 +37,7 @@ class CopyToClipboard extends React.Component {
       <div className={className}>
         <input
           className={className + '__input'}
-          readOnly="true"
+          readOnly={true}
           ref="input"
           type="text"
           value={this.props.value} />
@@ -54,6 +56,7 @@ class CopyToClipboard extends React.Component {
 };
 
 CopyToClipboard.propTypes = {
+  analytics: PropTypes.object.isRequired,
   className: PropTypes.string,
   value: PropTypes.string.isRequired
 };

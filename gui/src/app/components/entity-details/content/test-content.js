@@ -5,28 +5,11 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
+const Analytics = require('../../../../test/fake-analytics');
 const EntityContent = require('./content');
-const EntityContentConfigOption = require('./config-option/config-option');
-const EntityContentDescription = require('./description/description');
-const EntityContentReadme = require('./readme/readme');
-const EntityContentRelations = require('./relations/relations');
-const EntityFiles = require('./files/files');
-const EntityResources = require('./resources/resources');
 const Spinner = require('../../spinner/spinner');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
-
-function generateScript(isBundle, isDD) {
-  let id = 'trusty/django-123';
-  if (isBundle) {
-    id = 'django-cluster';
-  }
-  const dataDD = isDD ? 'data-dd' : '';
-  return '<script ' +
-    'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
-    '<div class="juju-card" ' + dataDD + ' data-id="' + id + '"></div>';
-}
 
 describe('EntityContent', function() {
   let charmstore, mockEntity;
@@ -34,6 +17,7 @@ describe('EntityContent', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityContent
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       charmstore={options.charmstore || charmstore}
       clearLightbox={options.clearLightbox || sinon.stub()}
@@ -63,117 +47,9 @@ describe('EntityContent', function() {
   });
 
   it('can display a charm', function() {
-    const description = mockEntity.get('description');
-    const script = generateScript();
     mockEntity.set('resources', [{resource: 'one'}]);
     const wrapper = renderComponent();
-    const expected = (
-      <div className="entity-content">
-        {undefined}
-        <div className="row">
-          <div className="inner-wrapper">
-            <div className="eight-col">
-              <EntityContentDescription
-                changeState={sinon.stub()}
-                description={description}
-                includeHeading={true} />
-              <div className="entity-content__terms">
-                <div className="entity-content__metadata">
-                  <h4 className="entity-content__metadata-title">
-                    Tags:
-                  </h4>&nbsp;
-                  <a
-                    className="link link--cold"
-                    data-id="database"
-                    onClick={wrapper.find('.link').at(0).prop('onClick')}>
-                    database
-                  </a>
-                </div>
-              </div>
-              <EntityContentReadme
-                addNotification={sinon.stub()}
-                changeState={sinon.stub()}
-                entityModel={mockEntity}
-                getFile={sinon.stub()}
-                hash="readme"
-                scrollCharmbrowser={sinon.stub()} />
-              <div
-                className="entity-content__configuration"
-                id="configuration">
-                <h3 className="entity-content__header">
-                  Configuration
-                </h3>
-                <dl>
-                  <EntityContentConfigOption
-                    option={{
-                      default: 'spinach',
-                      description: 'Your username',
-                      name: 'username',
-                      type: 'string'
-                    }} />
-                  <EntityContentConfigOption
-                    option={{
-                      default: 'abc123',
-                      description: 'Your password',
-                      name: 'password',
-                      type: 'string'
-                    }} />
-                </dl>
-              </div>
-            </div>
-            <div className="four-col last-col">
-              {null}
-              <div className="section section__contribute">
-                <h3 className="section__title">
-                  Contribute
-                </h3>
-                <ul className="section__list">
-                  <li className="section__list-item">
-                    <a
-                      className="link link--cold"
-                      href="https://bugs.launchpad.net/charms/+source/django"
-                      target="_blank">
-                      Submit a bug
-                    </a>
-                  </li>
-                  {undefined}
-                </ul>
-              </div>
-              <EntityResources
-                apiUrl={charmstore.url}
-                entityId={mockEntity.get('id')}
-                resources={[{resource: 'one'}]} />
-              <EntityContentRelations
-                changeState={sinon.stub()}
-                relations={mockEntity.get('relations')} />
-              <EntityFiles
-                apiUrl={charmstore.url}
-                entityModel={mockEntity} />
-              <div className="entity-content__card section clearfix">
-                <h3 className="section__title">
-                  Embed this charm
-                </h3>
-                <p>
-                  Add this card to your website by copying the code below.&nbsp;
-                  <a
-                    className="entity-content__card-cta"
-                    href="https://jujucharms.com/community/cards"
-                    target="_blank">
-                    Learn more
-                  </a>.
-                </p>
-                <CopyToClipboard
-                  className="copy-to-clipboard"
-                  value={script} />
-                <h4>Preview</h4>
-                <div className="juju-card" data-id="trusty/django-123"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can display a direct deploy card', function() {
