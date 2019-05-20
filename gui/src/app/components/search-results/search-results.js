@@ -493,7 +493,9 @@ class SearchResults extends React.Component {
     let state = this.state;
     state.showCommunity = !this.state.showCommunity;
     this.setState(this._generateState(state));
-    this.analytics.addCategory('Toggle Community').sendEvent(this.props.analytics.VIEW);
+    if (state.showCommunity) {
+      this.analytics.addCategory('Toggle Community').sendEvent(this.props.analytics.VIEW);
+    }
   }
 
   /**

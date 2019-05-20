@@ -54,7 +54,7 @@ class EntityHeader extends React.Component {
       label += `,
        plan: ${plan}`;
     }
-    this.props.analytics.addCategory('Add To Canvas').sendEvent(
+    this.analytics('Add To Canvas').sendEvent(
       this.props.analytics.CLICK, {label});
   }
 
@@ -288,7 +288,7 @@ class EntityHeader extends React.Component {
     const revisions = props.entityModel.get('revisions');
     const url = urls.URL.fromLegacyString(revisions[0]);
     props.changeState({store: url.path()});
-    this.props.analytics.addCategory('Latest version').sendEvent(this.props.analytics.CLICK);
+    this.analytics('Latest version').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -307,7 +307,7 @@ class EntityHeader extends React.Component {
       store: null,
       profile: owner
     });
-    this.props.analytics.addCategory('Owner').sendEvent(
+    this.analytics('Owner').sendEvent(
       this.props.analytics.CLICK, {label: `owner: ${owner}`});
   }
 

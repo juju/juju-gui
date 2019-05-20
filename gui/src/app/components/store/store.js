@@ -13,7 +13,7 @@ require('./_store.scss');
 class Store extends React.Component {
   constructor(props) {
     super(props);
-    this.analytics = this.props.analytics.addCategory('Store');
+    this.analytics = this.props.analytics.addCategory('Homepage');
   }
 
   componentDidMount() {

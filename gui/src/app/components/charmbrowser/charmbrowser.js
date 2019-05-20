@@ -25,7 +25,7 @@ class Charmbrowser extends React.Component {
     // Setting a default state object.
     var state = this.generateState(this.props);
     this.state = state;
-    this.analytics = this.props.analytics.addCategory('Charmbrowser');
+    this.analytics = this.props.analytics.addCategory('Store');
   }
 
   /**
