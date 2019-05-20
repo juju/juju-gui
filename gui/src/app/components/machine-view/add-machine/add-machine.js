@@ -53,7 +53,7 @@ class MachineViewAddMachine extends React.Component {
       return;
     }
     const selectedMachine = state.selectedMachine;
-    let constraints;
+    let constraints = null;
     let machine = {};
     let series;
     // If the state is set for a new machine or container then actually add
@@ -82,7 +82,7 @@ class MachineViewAddMachine extends React.Component {
     this.props.close();
     this.analytics.sendEvent(this.props.analytics.ADD, {
       label: `type: ${selectedContainer === 'new' ? 'machine' : selectedContainer}` +
-        `, series: ${series}, constraints: ${constraints}, `
+        `, series: ${series}, constraints: ${JSON.stringify(constraints)}, `
     });
   }
 
