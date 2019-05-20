@@ -5,6 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../test/fake-analytics');
 const Status = require('./status');
 
 describe('Status', function() {
@@ -13,6 +14,7 @@ describe('Status', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Status
+      analytics={Analytics}
       changeState={options.changeState || changeState}
       generatePath={options.generatePath || generatePath}
       model={shapeup.fromShape(options.model || model, propTypes.model)}
