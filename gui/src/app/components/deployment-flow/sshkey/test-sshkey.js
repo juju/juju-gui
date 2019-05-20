@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentSSHKey = require('./sshkey');
 const InsetSelect = require('../../inset-select/inset-select');
 const {SvgIcon} = require('@canonical/juju-react-components');
@@ -19,6 +20,7 @@ describe('DeploymentSSHKey', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentSSHKey
       addNotification={options.addNotification || addNotification}
+      analytics={Analytics}
       cloud={options.cloud === undefined ? {cloudType: 'aws'} : options.cloud}
       setLaunchpadUsernames={options.setLaunchpadUsernames || setLaunchpadUsernames}
       setSSHKeys={options.setSSHKeys || setSSHKeys}

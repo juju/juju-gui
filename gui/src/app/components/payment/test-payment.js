@@ -5,6 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const Payment = require('./payment');
 const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
@@ -18,6 +19,7 @@ describe('Payment', function() {
     <Payment
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       payment={options.payment || payment}
       stripe={options.stripe || stripe}
       username={options.spinach || 'spinach'} />

@@ -15,18 +15,23 @@ const {Button} = require('@canonical/juju-react-components');
 require('./_payment.scss');
 
 class Payment extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.xhrs = [];
     this.state = {
       loading: false,
       paymentUser: null,
       showAdd: false
     };
+    this.analytics = this.props.analytics.addCategory('Payment');
   }
 
   componentWillMount() {
     this._getUser();
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillUnmount() {
@@ -178,7 +183,11 @@ class Payment extends React.Component {
           <p>You are not set up to make payments.</p>
           <p className="v1">
             <Button
-              action={this._toggleAdd.bind(this)}
+              action={() => {
+                this._toggleAdd();
+                this.analytics.addCategory('Set Up Payments').sendEvent(
+                  this.props.analytics.CLICK);
+              }}
               extraClasses="is-inline"
               modifier="positive">
               Set up payments
@@ -211,6 +220,7 @@ class Payment extends React.Component {
 Payment.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   payment: shapeup.shape({
     addAddress: PropTypes.func,
     addBillingAddress: PropTypes.func,

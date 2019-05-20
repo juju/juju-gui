@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentBudget = require('./budget');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
@@ -19,6 +20,7 @@ describe('DeploymentBudget', function() {
     <DeploymentBudget
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       listBudgets={options.listBudgets || sinon.stub()}
       setBudget={options.setBudget || sinon.stub()}
       user={options.user === undefined ? 'user-admin' : options.user} />

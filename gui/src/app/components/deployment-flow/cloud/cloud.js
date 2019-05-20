@@ -92,7 +92,7 @@ class DeploymentCloud extends React.Component {
           onClick={() => {
             this.props.setCloud(cloud);
             this.props.analytics.addCategory('Choose cloud').sendEvent(
-              this.props.analytics.CLICK, {label: `cloud: ${cloud.name}`});
+              this.props.analytics.UPDATE, {label: `cloud: ${cloud.name}`});
           }}
           role="button"
           tabIndex="0">

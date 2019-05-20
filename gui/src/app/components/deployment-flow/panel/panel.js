@@ -23,6 +23,7 @@ class DeploymentPanel extends React.Component {
       profile: null,
       special: {dd: null}
     });
+    this.props.analytics.sendEvent(this.props.analytics.CLOSE);
   }
 
   /**
@@ -77,6 +78,7 @@ class DeploymentPanel extends React.Component {
 };
 
 DeploymentPanel.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.object,

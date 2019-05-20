@@ -4,9 +4,8 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const DeploymentBar = require('./deployment-bar');
-const DeploymentBarNotification = require('./notification/notification');
-const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
@@ -14,6 +13,7 @@ describe('DeploymentBar', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentBar
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       currentChangeSet={options.currentChangeSet || {}}
       generateChangeDescription={options.generateChangeDescription || sinon.stub()}
@@ -36,20 +36,7 @@ describe('DeploymentBar', function() {
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     const wrapper = renderComponent({currentChangeSet});
-    var expected = (
-      <div className="deployment-bar">
-        <DeploymentBarNotification
-          change={null} />
-        <div className="deployment-bar__deploy v1">
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            disabled={false}
-            type="inline-deployment">
-            Deploy changes (2)
-          </Button>
-        </div>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('enables the button if there are changes', function() {

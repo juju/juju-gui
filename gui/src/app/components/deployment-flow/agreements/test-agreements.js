@@ -4,6 +4,7 @@
 const enzyme = require('enzyme');
 const React = require('react');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentAgreements = require('./agreements');
 const {Button} = require('@canonical/juju-react-components');
 
@@ -13,6 +14,7 @@ describe('DeploymentAgreements', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentAgreements
       acl={options.acl || acl}
+      analytics={Analytics}
       disabled={options.disabled === undefined ? false : options.disabled}
       onCheckboxChange={options.onCheckboxChange || sinon.stub()}
       showTerms={options.showTerms === undefined ? false : options.showTerms}
@@ -26,21 +28,7 @@ describe('DeploymentAgreements', function() {
 
   it('can render', function() {
     const wrapper = renderComponent();
-    const expected = (
-      <div className="deployment-flow-agreements deployment-flow__deploy-option">
-        <input
-          className="deployment-flow__deploy-checkbox"
-          disabled={false}
-          id="terms"
-          onChange={sinon.stub()}
-          type="checkbox" />
-        <label
-          className="deployment-flow__deploy-label"
-          htmlFor="terms">
-          I agree to all terms.
-        </label>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can display as disabled', function() {

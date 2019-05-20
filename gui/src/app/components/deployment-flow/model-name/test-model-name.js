@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentModelName = require('./model-name');
 const GenericInput = require('../../generic-input/generic-input');
 
@@ -13,6 +14,7 @@ describe('DeploymentModelName', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentModelName
       acl={options.acl || acl}
+      analytics={Analytics}
       ddEntity={options.ddEntity}
       focusName={options.focusName}
       modelName={options.modelName || 'mymodel'}

@@ -16,6 +16,7 @@ class DeploymentSupportSelection extends React.Component {
       selectedPlan: null,
       slaMachineRates: null
     };
+    this.analytics = this.props.analytics.addCategory('Support');
   }
 
   componentWillMount() {
@@ -73,6 +74,7 @@ class DeploymentSupportSelection extends React.Component {
       }
       return (
         <DeploymentSupportSelectionPlan
+          analytics={this.analytics}
           classes={classes}
           features={plan.features}
           hourPrice={plan.hourPrice}
@@ -94,6 +96,7 @@ class DeploymentSupportSelection extends React.Component {
 };
 
 DeploymentSupportSelection.propTypes = {
+  analytics: PropTypes.object.isRequired,
   getSLAMachineRates: PropTypes.func.isRequired,
   machineCount: PropTypes.string.isRequired,
   setSLA: PropTypes.func.isRequired

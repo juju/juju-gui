@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentBar can render and pass the correct props 1`] = `
+<div
+  className="deployment-bar"
+>
+  <DeploymentBarNotification
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
+    change={null}
+  />
+  <div
+    className="deployment-bar__deploy v1"
+  >
+    <Button
+      action={[Function]}
+      disabled={false}
+      type="inline-deployment"
+    >
+      Deploy changes (2)
+    </Button>
+  </div>
+</div>
+`;

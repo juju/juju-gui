@@ -59,6 +59,7 @@ class DeploymentBarNotification extends React.Component {
   _handleClick() {
     window.clearTimeout(this.timeout);
     this._hideNotification();
+    this.props.analytics.addCategory('Notification').sendEvent(this.props.analytics.CLOSE);
   }
 
   render() {
@@ -80,6 +81,7 @@ class DeploymentBarNotification extends React.Component {
 };
 
 DeploymentBarNotification.propTypes = {
+  analytics: PropTypes.object.isRequired,
   change: PropTypes.object
 };
 

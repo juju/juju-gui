@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeploymentSupportSelection can render 1`] = `
+<div
+  className="deployment-support-selection equal-height"
+>
+  <DeploymentSupportSelectionPlan
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
+    classes={Array []}
+    features={
+      Array [
+        "8hx5d ticked",
+      ]
+    }
+    hourPrice="0.011"
+    key="Essential"
+    machineCount={3}
+    onSelect={[Function]}
+    selected={false}
+    title="Essential"
+  />
+  <DeploymentSupportSelectionPlan
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
+    classes={Array []}
+    features={
+      Array [
+        "10x5 phone support",
+        "2hr critical response",
+      ]
+    }
+    hourPrice="0.055"
+    key="Standard"
+    machineCount={3}
+    onSelect={[Function]}
+    selected={false}
+    title="Standard"
+  />
+  <DeploymentSupportSelectionPlan
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
+    classes={
+      Array [
+        "last-col",
+      ]
+    }
+    features={
+      Array [
+        "24x7 phone support",
+        "1hr critical response",
+      ]
+    }
+    hourPrice="0.110"
+    key="Advanced"
+    machineCount={3}
+    onSelect={[Function]}
+    selected={false}
+    title="Advanced"
+  />
+</div>
+`;

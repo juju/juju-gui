@@ -34,6 +34,7 @@ class DeploymentSSHKey extends React.Component {
       error: null,
       buttonDisabled: true
     };
+    this.analytics = this.props.analytics.addCategory('SSH Keys');
   }
 
   /**
@@ -178,6 +179,8 @@ class DeploymentSSHKey extends React.Component {
       this.refs.launchpadUsername.setValue(null);
       this.refs.launchpadUsername.focus();
     }
+    this.analytics.sendEvent(
+      this.props.analytics.ADD, {label: `key type: ${source}`});
   }
 
   /**
@@ -474,6 +477,7 @@ class DeploymentSSHKey extends React.Component {
 DeploymentSSHKey.propTypes = {
   WebHandler: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   cloud: PropTypes.object,
   setLaunchpadUsernames: PropTypes.func.isRequired,
   setSSHKeys: PropTypes.func.isRequired,

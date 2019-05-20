@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentVPC = require('./vpc');
 const GenericInput = require('../../generic-input/generic-input');
 
@@ -12,6 +13,7 @@ describe('DeploymentVPC', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentVPC
+      analytics={Analytics}
       setVPCId={options.setVPCId || setVPCId} />
   );
 

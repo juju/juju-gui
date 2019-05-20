@@ -45,7 +45,11 @@ class DeploymentSupportSelectionPlan extends React.Component {
       <div className={classes}>
         <div
           className="deployment-support-select-plan__card"
-          onClick={this.props.onSelect}
+          onClick={() => {
+            this.props.onSelect();
+            this.props.analytics.addCategory('SLA Plan').sendEvent(
+              this.props.analytics.UPDATE);
+          }}
           role="button"
           tabIndex="0">
           <h3>{this.props.title}</h3>
@@ -67,6 +71,7 @@ class DeploymentSupportSelectionPlan extends React.Component {
 
 
 DeploymentSupportSelectionPlan.propTypes = {
+  analytics: PropTypes.object.isRequired,
   classes: PropTypes.array,
   features: PropTypes.array.isRequired,
   hourPrice: PropTypes.string.isRequired,
