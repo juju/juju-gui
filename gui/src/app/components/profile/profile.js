@@ -22,6 +22,15 @@ require('./_profile.scss');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Profile');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     Get the base path for the active section e.g. "credentials/aws_prod" would
     return "credentials".
@@ -127,6 +136,7 @@ class Profile extends React.Component {
             <ProfileModelList
               acl={props.acl}
               addNotification={props.addNotification}
+              analytics={this.analytics}
               baseURL={props.baseURL}
               changeState={props.changeState}
               destroyModel={props.destroyModel}
@@ -147,6 +157,7 @@ class Profile extends React.Component {
             acl={props.acl}
             addNotification={props.addNotification}
             addToModel={props.addToModel}
+            analytics={this.analytics}
             bakery={props.bakery}
             baseURL={props.baseURL}
             changeState={props.changeState}
@@ -170,6 +181,7 @@ class Profile extends React.Component {
             acl={props.acl}
             addNotification={props.addNotification}
             addToModel={props.addToModel}
+            analytics={this.analytics}
             bakery={props.bakery}
             baseURL={props.baseURL}
             changeState={props.changeState}
@@ -193,6 +205,7 @@ class Profile extends React.Component {
             <ProfileCredentialList
               acl={props.acl}
               addNotification={props.addNotification}
+              analytics={this.analytics}
               controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
@@ -248,6 +261,7 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
+          analytics={this.analytics}
           changeState={props.changeState}
           controllerIP={props.controllerIP}
           getUser={props.getUser}
@@ -279,6 +293,7 @@ Profile.propTypes = {
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   bakery: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,

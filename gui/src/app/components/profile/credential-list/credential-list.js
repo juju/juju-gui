@@ -28,10 +28,12 @@ class ProfileCredentialList extends React.Component {
       removeCredential: null,
       showAdd: false
     };
+    this.analytics = this.props.analytics.addCategory('Credential List');
   }
 
   componentDidMount() {
     this._getClouds();
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   async _getClouds() {
@@ -144,6 +146,9 @@ class ProfileCredentialList extends React.Component {
     Show the add credentials form.
   */
   _toggleAdd() {
+    if (!this.state.showAdd) {
+      this.analytics.addCategory('Add credential').sendEvent(this.props.analytics.CLICK);
+    }
     this.setState({showAdd: !this.state.showAdd});
   }
 
@@ -152,6 +157,9 @@ class ProfileCredentialList extends React.Component {
     @param {String} credentialId The credential ID to edit.
   */
   _setEditCredential(credentialId = null) {
+    if (credentialId) {
+      this.analytics.addCategory('Edit credential').sendEvent(this.props.analytics.CLICK);
+    }
     this.setState({editCredential: credentialId});
   }
 
@@ -160,6 +168,9 @@ class ProfileCredentialList extends React.Component {
     @param credential {String} A credential id.
   */
   _setDeleteCredential(credential = null) {
+    if (credential) {
+      this.analytics.addCategory('Delete credential').sendEvent(this.props.analytics.CLICK);
+    }
     this.setState({removeCredential: credential});
   }
 
@@ -241,6 +252,7 @@ class ProfileCredentialList extends React.Component {
       <CredentialAddEdit
         acl={this.props.acl}
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         controllerAPI={shapeup.addReshape({
           listClouds: controllerAPI.listClouds.bind(controllerAPI),
           updateCloudCredential: controllerAPI.updateCloudCredential.bind(controllerAPI)
@@ -390,6 +402,7 @@ ProfileCredentialList.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   controllerAPI: shapeup.shape({
     getCloudCredentialNames: PropTypes.func.isRequired,
     listClouds: PropTypes.func.isRequired,

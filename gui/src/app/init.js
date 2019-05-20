@@ -217,9 +217,9 @@ class GUIApp {
       it is used by state and relies on the controllerAPI instance.
     */
     if (!window.dataLayer) {
-      // If the dataLayer is not available (e.g. when in development mode) then
-      // store the events in our own array. This is useful for debugging the
-      // events.
+      // If the dataLayer is not available (e.g. in development mode and in
+      // embedded juju) then store the events in our own array. This is useful
+      // for debugging the events.
       window.dataLayer = [];
     }
     this.analytics = new Analytics(window.dataLayer, {globalLabels: () => {

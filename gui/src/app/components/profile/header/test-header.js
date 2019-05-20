@@ -3,6 +3,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const ProfileHeader = require('./header');
 
 describe('Profile Header', function() {
@@ -11,6 +12,7 @@ describe('Profile Header', function() {
   const renderComponent = (options = {}) =>
     enzyme.shallow(
       <ProfileHeader
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         controllerIP={options.controllerIP || '1.2.3.4'}
         getUser={options.getUser || getUser}

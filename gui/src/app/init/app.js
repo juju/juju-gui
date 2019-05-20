@@ -479,6 +479,7 @@ Browser: ${navigator.userAgent}`
         activeSection={state.hash}
         addNotification={this._bound.addNotification}
         addToModel={this.props.addToModel.bind(this, charmstore)}
+        analytics={this.props.analytics}
         bakery={this.props.bakery}
         baseURL={this.props.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
@@ -1001,6 +1002,7 @@ Browser: ${navigator.userAgent}`
       <DeploymentFlow
         acl={this.props.acl}
         addNotification={this._bound.addNotification}
+        analytics={this.props.analytics}
         applications={services.toArray()}
         changes={currentChangeSet}
         changeState={this._bound.changeState}

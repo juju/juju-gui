@@ -53,6 +53,7 @@ class ProfileHeader extends React.Component {
       hash: null,
       profile: null
     });
+    this.props.analytics.addCategory(this).sendEvent('Close');
   }
 
   /**
@@ -191,6 +192,7 @@ class ProfileHeader extends React.Component {
 }
 
 ProfileHeader.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   controllerIP: PropTypes.string,
   getUser: PropTypes.func.isRequired,
