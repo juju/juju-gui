@@ -89,7 +89,11 @@ class DeploymentCloud extends React.Component {
         <li
           className={classes}
           key={cloud.name}
-          onClick={this.props.setCloud.bind(null, cloud)}
+          onClick={() => {
+            this.props.setCloud(cloud);
+            this.props.analytics.addCategory('Choose cloud').sendEvent(
+              this.props.analytics.CLICK, {label: `cloud: ${cloud.name}`});
+          }}
           role="button"
           tabIndex="0">
           <span className="deployment-cloud__cloud-logo">
@@ -152,6 +156,7 @@ class DeploymentCloud extends React.Component {
 DeploymentCloud.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   cloud: PropTypes.object,
   controllerIsReady: PropTypes.func.isRequired,
   listClouds: PropTypes.func.isRequired,

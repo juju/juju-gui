@@ -5,11 +5,10 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const DeploymentCredential = require('./credential');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
-const {ExpandingRow} = require('@canonical/juju-react-components');
-const DeploymentCredentialAdd = require('./add/add');
 
 describe('DeploymentCredential', function() {
   var acl, controllerAPI, cloud, credentials, regions, credentialNames, user;
@@ -18,6 +17,7 @@ describe('DeploymentCredential', function() {
     <DeploymentCredential
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       cloud={options.cloud === undefined ? cloud : options.cloud}
       controllerAPI={controllerAPI}
       controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
@@ -62,26 +62,7 @@ describe('DeploymentCredential', function() {
   it('can render with a cloud', function() {
     controllerAPI.getCloudCredentials.callsArgWith(1, null, []);
     const wrapper = renderComponent();
-    var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={true}>
-          {undefined}
-          <DeploymentCredentialAdd
-            acl={acl}
-            addNotification={sinon.stub()}
-            cloud={cloud}
-            credentials={[]}
-            onCancel={null}
-            onCredentialUpdated={
-              wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
-            updateCloudCredential={sinon.stub()}
-            user={user} />
-        </ExpandingRow>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render when not editable', function() {
@@ -102,36 +83,7 @@ describe('DeploymentCredential', function() {
 
   it('can show existing credentials', function() {
     const wrapper = renderComponent();
-    var expected = (
-      <form className="deployment-credential__form">
-        <div className="prepend-two four-col">
-          <InsetSelect
-            disabled={false}
-            label="Credential"
-            onChange={wrapper.find('InsetSelect').at(0).prop('onChange')}
-            options={[{
-              label: 'default',
-              value: 'lxd_admin@local_default'
-            }, {
-              label: 'Add credential...',
-              value: 'add-credential'
-            }]}
-            ref="credential"
-            value={undefined} />
-        </div>
-        <div className="four-col deployment-credential__form-region">
-          <InsetSelect
-            disabled={false}
-            label="Region"
-            onChange={sinon.stub()}
-            options={[
-              {label: 'Default', value: ''},
-              {label: 'test-region', value: 'test-region'}
-            ]}
-            value={undefined} />
-        </div>
-      </form>);
-    assert.compareJSX(wrapper.find('.deployment-credential__form'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('selects an initial credential', function() {

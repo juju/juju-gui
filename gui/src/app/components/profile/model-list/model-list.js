@@ -18,17 +18,22 @@ require('./_model-list.scss');
   their profile.
 */
 class ProfileModelList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       loadingModels: false,
       models: null,
       notification: null
     };
+    this.analytics = this.props.analytics.addCategory('Model List');
   }
 
   componentWillMount() {
     this._fetchModels(this.props.facadesExist);
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -82,6 +87,7 @@ class ProfileModelList extends React.Component {
   */
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
+    this.analytics.addCategory('Model').sendEvent(this.props.analytics.DESTROY);
     this.props.destroyModel(modelUUID, (errors, data) => {
       if (errors) {
         errors.forEach(error => {
@@ -153,6 +159,7 @@ class ProfileModelList extends React.Component {
     this.props.changeState({
       hash: `credentials/${credential}`
     });
+    this.analytics.addCategory('Credential').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -294,6 +301,7 @@ class ProfileModelList extends React.Component {
     // in this case.
     this.props.changeState({profile: null});
     this.props.switchModel(model);
+    this.analytics.addCategory('Model').sendEvent(this.props.analytics.CLICK);
   }
 
   _generateNotification() {
@@ -319,6 +327,7 @@ class ProfileModelList extends React.Component {
             <span className="profile__title-count">({rowData.length})</span>
           </h4>
           <CreateModelButton
+            analytics={this.analytics}
             changeState={this.props.changeState}
             switchModel={this.props.switchModel}
             title="Start a new model" />
@@ -348,6 +357,7 @@ class ProfileModelList extends React.Component {
 ProfileModelList.propTypes = {
   acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyModel: PropTypes.func.isRequired,

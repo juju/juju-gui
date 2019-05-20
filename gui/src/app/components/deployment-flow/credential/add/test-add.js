@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../../test/fake-analytics');
 const DeploymentCredentialAdd = require('./add');
 const {SvgIcon} = require('@canonical/juju-react-components');
 const InsetSelect = require('../../../inset-select/inset-select');
@@ -46,6 +47,7 @@ describe('DeploymentCredentialAdd', function() {
     <DeploymentCredentialAdd
       acl={acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       cloud={options.cloud || null}
       credentialName={options.credentialName || undefined}
       credentials={options.credentials || []}

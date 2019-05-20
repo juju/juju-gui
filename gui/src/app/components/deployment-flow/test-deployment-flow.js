@@ -5,18 +5,9 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../test/fake-analytics');
 const DeploymentFlow = require('./deployment-flow');
-const AccordionSection = require('../accordion-section/accordion-section');
 const DeploymentAgreements = require('./agreements/agreements');
-const DeploymentBudget = require('./budget/budget');
-const DeploymentCloud = require('./cloud/cloud');
-const DeploymentMachines = require('./machines/machines');
-const DeploymentModelName = require('./model-name/model-name');
-const DeploymentPanel = require('./panel/panel');
-const DeploymentSection = require('./section/section');
-const DeploymentServices = require('./services/services');
-const DeploymentSSHKey = require('./sshkey/sshkey');
-const {Button} = require('@canonical/juju-react-components');
 
 describe('DeploymentFlow', function() {
   let acl, applications, changesUtils, controllerAPI, charmstore, initUtils,
@@ -43,6 +34,7 @@ describe('DeploymentFlow', function() {
       WebHandler: sinon.stub(),
       acl: acl,
       addNotification: sinon.stub(),
+      analytics: Analytics,
       applications: [],
       changeState: sinon.stub(),
       changes: {
@@ -185,123 +177,7 @@ describe('DeploymentFlow', function() {
     const instance = wrapper.instance();
     instance.setState({cloudCount: 2});
     wrapper.update();
-    const expected = (
-      <div className="deployment-flow">
-        <DeploymentPanel
-          changeState={sinon.stub()}
-          isDirectDeploy={false}
-          loggedIn={true}
-          title="Pavlova">
-          <React.Fragment>
-            <DeploymentSection
-              completed={true}
-              instance="deployment-model-name"
-              showCheck={true}
-              title="Set your model name">
-              <DeploymentModelName
-                acl={acl}
-                ddEntity={null}
-                focusName={true}
-                modelName="Pavlova"
-                setModelName={sinon.stub()} />
-            </DeploymentSection>
-            <DeploymentSection
-              buttons={undefined}
-              completed={false}
-              disabled={false}
-              instance="deployment-cloud"
-              showCheck={true}
-              title="Choose cloud to deploy to">
-              <DeploymentCloud
-                acl={acl}
-                addNotification={sinon.stub()}
-                cloud={null}
-                controllerIsReady={sinon.stub()}
-                listClouds={sinon.stub()}
-                setCloud={wrapper.find('DeploymentCloud').prop('setCloud')}
-                setCloudCount={wrapper.find('DeploymentCloud').prop('setCloudCount')} />
-            </DeploymentSection>
-            <DeploymentSection
-              completed={false}
-              disabled={true}
-              instance="deployment-ssh-key"
-              showCheck={true}
-              title={<span>Add public SSH keys <em>(optional)</em></span>}>
-              <DeploymentSSHKey
-                addNotification={sinon.stub()}
-                cloud={null}
-                setLaunchpadUsernames={
-                  wrapper.find('DeploymentSSHKey').prop('setLaunchpadUsernames')}
-                setSSHKeys={wrapper.find('DeploymentSSHKey').prop('setSSHKeys')}
-                username={undefined}
-                WebHandler={sinon.stub()} />
-            </DeploymentSection>
-            {undefined}
-            <DeploymentSection
-              completed={false}
-              disabled={true}
-              instance="deployment-machines"
-              showCheck={false}
-              title="Machines to be provisioned">
-              <DeploymentMachines
-                acl={acl}
-                cloud={null}
-                initUtils={{
-                  formatConstraints: sinon.stub(),
-                  generateMachineDetails: sinon.stub(),
-                  reshape: shapeup.reshapeFunc
-                }}
-                machines={{machine: 'machine1'}} />
-            </DeploymentSection>
-            <div className="deployment-services">
-              <AccordionSection
-                startOpen={false}
-                title="Model changes">
-                <DeploymentServices
-                  acl={acl}
-                  addNotification={sinon.stub()}
-                  changesUtils={changesUtils}
-                  charmsGetById={sinon.stub()}
-                  getCurrentChangeSet={sinon.stub()}
-                  getServiceByName={sinon.stub()}
-                  listPlansForCharm={sinon.stub()}
-                  parseTermId={wrapper.find('DeploymentServices').prop('parseTermId')}
-                  showTerms={sinon.stub()}
-                  withPlans={true} />
-              </AccordionSection>
-            </div>
-            <DeploymentSection
-              completed={false}
-              disabled={true}
-              instance="deployment-budget"
-              showCheck={true}
-              title="Confirm budget">
-              <DeploymentBudget
-                acl={acl}
-                addNotification={sinon.stub()}
-                listBudgets={sinon.stub()}
-                setBudget={wrapper.find('DeploymentBudget').prop('setBudget')}
-                user="dalek" />
-            </DeploymentSection>
-            {null}
-            <div className="twelve-col">
-              <div className="inner-wrapper deployment-flow__deploy">
-                {undefined}
-                <div className="deployment-flow__deploy-action v1">
-                  <Button
-                    action={wrapper.find('Button').prop('action')}
-                    disabled={true}
-                    modifier="positive">
-                    Deploy
-                  </Button>
-                </div>
-              </div>
-            </div>
-            {null}
-          </React.Fragment>
-        </DeploymentPanel>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('updates terms and agreements when applications change', () => {

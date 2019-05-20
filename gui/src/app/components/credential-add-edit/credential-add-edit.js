@@ -21,6 +21,8 @@ class CredentialAddEdit extends React.Component {
       cloud: null,
       loading: false
     };
+    this.analytics = this.props.analytics.addCategory(
+      `Credential ${this.props.credential ? 'Edit' : 'Add'} Form`);
   }
 
   componentWillMount() {
@@ -68,6 +70,7 @@ class CredentialAddEdit extends React.Component {
       <DeploymentCloud
         acl={this.props.acl}
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         cloud={this.state.cloud}
         controllerIsReady={this.props.controllerIsReady}
         key="deployment-cloud"
@@ -86,6 +89,7 @@ class CredentialAddEdit extends React.Component {
       <DeploymentCredentialAdd
         acl={this.props.acl}
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         cloud={
           credential && credential.cloud ?
             this.state.clouds[credential.cloud] : this.state.cloud}
@@ -110,7 +114,10 @@ class CredentialAddEdit extends React.Component {
     return (
       <div className="credential-add-edit__choose-cloud v1">
         <Button
-          action={this._setCloud.bind(this, null)}
+          action={() => {
+            this._setCloud(null);
+            this.analytics.addCategory('Clear cloud').sendEvent(this.props.analytics.CLICK);
+          }}
           extraClasses="is-inline"
           modifier="neutral">
           Change cloud
@@ -152,6 +159,7 @@ class CredentialAddEdit extends React.Component {
 CredentialAddEdit.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   controllerAPI: shapeup.shape({
     listClouds: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc,
