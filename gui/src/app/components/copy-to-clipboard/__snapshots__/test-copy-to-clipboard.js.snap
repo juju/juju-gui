@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CopyToClipboard renders with a default value 1`] = `
+<div
+  className="copy-to-clipboard"
+>
+  <input
+    className="copy-to-clipboard__input"
+    readOnly={true}
+    type="text"
+    value=""
+  />
+  <span
+    className="v1"
+  >
+    <button
+      className="copy-to-clipboard__btn"
+    >
+      <SvgIcon
+        name="copy-to-clipboard-16"
+        size="16"
+      />
+    </button>
+  </span>
+</div>
+`;

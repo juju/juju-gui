@@ -24,10 +24,11 @@ class EntityHeader extends React.Component {
     const props = this.props;
     const entityModel = props.entityModel;
     const entity = entityModel.toEntity();
+    let plan = null;
     if (entity.type === 'charm') {
       const refs = this.refs;
       const plans = props.plans;
-      const plan = refs.plan && refs.plan.value;
+      plan = refs.plan && refs.plan.value;
       let activePlan;
       if (plan && Array.isArray(plans)) {
         // It is possible that plan is a string "loading plans..."
@@ -48,6 +49,13 @@ class EntityHeader extends React.Component {
         this._getBundleYAMLCallback.bind(this, bundleURL.path()));
     }
     this._closeEntityDetails();
+    let label = `entity: ${entity.id}`;
+    if (plan) {
+      label += `,
+       plan: ${plan}`;
+    }
+    this.props.analytics.addCategory('Add To Canvas').sendEvent(
+      this.props.analytics.CLICK, {label});
   }
 
   /**
@@ -60,6 +68,7 @@ class EntityHeader extends React.Component {
       hash: null,
       store: null
     });
+    this.props.analytics.sendEvent(this.props.analytics.CLOSE);
   }
 
   /**
@@ -279,6 +288,7 @@ class EntityHeader extends React.Component {
     const revisions = props.entityModel.get('revisions');
     const url = urls.URL.fromLegacyString(revisions[0]);
     props.changeState({store: url.path()});
+    this.props.analytics.addCategory('Latest version').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -291,11 +301,14 @@ class EntityHeader extends React.Component {
     evt.stopPropagation();
     const props = this.props;
     const entity = props.entityModel;
+    const owner = entity.get('owner');
     props.changeState({
       hash: null,
       store: null,
-      profile: entity.get('owner')
+      profile: owner
     });
+    this.props.analytics.addCategory('Owner').sendEvent(
+      this.props.analytics.CLICK, {label: `owner: ${owner}`});
   }
 
   /**
@@ -417,6 +430,7 @@ class EntityHeader extends React.Component {
               'entity-header__right four-col last-col no-margin-bottom'}>
               {this._generateSelectPlan()}
               <CopyToClipboard
+                analytics={this.props.analytics}
                 value={'juju deploy ' + entity.id} />
               {this._generateDeployAction()}
             </div>
@@ -430,6 +444,7 @@ class EntityHeader extends React.Component {
 EntityHeader.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   deployService: PropTypes.func.isRequired,
   entityModel: PropTypes.object.isRequired,

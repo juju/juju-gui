@@ -12,6 +12,11 @@ const SeriesList = require('../../series-list/series-list');
 const {SvgIcon} = require('@canonical/juju-react-components');
 
 class SearchResultsItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Search Item');
+  }
+
   /**
     Generate the element for the special flag.
 
@@ -108,6 +113,8 @@ class SearchResultsItem extends React.Component {
   _handleItemClick(id, evt) {
     evt.preventDefault();
     this.props.changeState(this._generateStoreState(id));
+    this.analytics.addCategory('Entity').sendEvent(
+      this.props.analytics.CLICK, {label: `entity: ${id}`});
   }
 
   /**
@@ -130,6 +137,8 @@ class SearchResultsItem extends React.Component {
         type: null
       }
     });
+    this.analytics.addCategory('Tag').sendEvent(
+      this.props.analytics.CLICK, {label: `tag: ${tag}`});
   }
 
   /**
@@ -142,6 +151,8 @@ class SearchResultsItem extends React.Component {
   _handleOwnerClick(owner, evt) {
     evt.preventDefault();
     this.props.changeState({search: null, profile: owner});
+    this.analytics.addCategory('Owner').sendEvent(
+      this.props.analytics.CLICK, {label: `owner: ${owner}`});
   }
 
   /**
@@ -157,6 +168,8 @@ class SearchResultsItem extends React.Component {
       search: null,
       profile: null
     });
+    this.analytics.addCategory('Add to canvas').sendEvent(
+      this.props.analytics.CLICK, {label: `entity: ${id}`});
   }
 
   /**
@@ -255,6 +268,7 @@ class SearchResultsItem extends React.Component {
 SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired

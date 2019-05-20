@@ -17,6 +17,12 @@ exports[`Charmbrowser displays entity details when the app state calls for it 1`
         }
       }
       addNotification={[Function]}
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
       changeState={[Function]}
       charmstore={
         Object {
@@ -95,6 +101,12 @@ exports[`Charmbrowser displays the store when the app state calls for it 1`] = `
     className="charmbrowser"
   >
     <Store
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
       changeState={[Function]}
       charmstoreURL="http://1.2.3.4/"
       gisf={true}

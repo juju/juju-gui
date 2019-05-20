@@ -25,6 +25,7 @@ class Charmbrowser extends React.Component {
     // Setting a default state object.
     var state = this.generateState(this.props);
     this.state = state;
+    this.analytics = this.props.analytics.addCategory('Store');
   }
 
   /**
@@ -101,6 +102,7 @@ class Charmbrowser extends React.Component {
       case 'store':
         activeChild = (
           <Store
+            analytics={this.analytics}
             changeState={changeState}
             charmstoreURL={this.props.charmstoreURL}
             gisf={this.props.gisf}
@@ -115,7 +117,7 @@ class Charmbrowser extends React.Component {
           <SearchResults
             acl={this.props.acl}
             addToModel={this.props.addToModel}
-            analytics={this.props.analytics.addCategory(this)}
+            analytics={this.analytics}
             changeState={changeState}
             charmstoreSearch={this.props.charmstore.search}
             generatePath={appState.generatePath.bind(appState)}
@@ -138,6 +140,7 @@ class Charmbrowser extends React.Component {
           <EntityDetails
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            analytics={this.analytics}
             changeState={changeState}
             charmstore={shapeup.fromShape(charmstore, EntityDetails.propTypes.charmstore)}
             clearLightbox={this.props.clearLightbox}
