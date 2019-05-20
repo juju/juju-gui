@@ -27,6 +27,7 @@ MachineViewHeaderGlobals.dropTarget = {
   */
   drop: function(props, monitor, component) {
     if (props.droppable) {
+      props.analytics.addCategory('Header').sendEvent(props.analytics.DROP);
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
   },
@@ -128,6 +129,7 @@ MachineViewHeader.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
+  analytics: PropTypes.object.isRequired,
   canDrop: PropTypes.bool.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
   dropUnit: PropTypes.func,

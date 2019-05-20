@@ -18,6 +18,7 @@ const dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
+    props.analytics.addCategory('Unit').sendEvent(props.analytics.DRAG);
     return {unit: props.unit};
   },
 
@@ -87,6 +88,7 @@ MachineViewMachineUnit.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   canDrag: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   icon: PropTypes.string.isRequired,

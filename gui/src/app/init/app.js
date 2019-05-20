@@ -780,6 +780,7 @@ Browser: ${navigator.userAgent}`
     return (
       <MachineView
         acl={shapeup.fromShape(this.props.acl, propTypes.acl)}
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(

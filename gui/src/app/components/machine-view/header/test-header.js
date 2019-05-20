@@ -6,6 +6,7 @@ const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const MachineViewHeader = require('./header');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -19,6 +20,7 @@ describe('MachineViewHeader', function() {
     <MachineViewHeader.DecoratedComponent
       acl={options.acl || acl}
       activeMenuItem={options.activeMenuItem}
+      analytics={Analytics}
       canDrop={options.canDrop === undefined ? false : options.canDrop}
       connectDropTarget={jsTestUtils.connectDropTarget}
       droppable={options.droppable === undefined ? true : options.droppable}
