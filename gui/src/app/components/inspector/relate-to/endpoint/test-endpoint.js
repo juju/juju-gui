@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../../test/fake-analytics');
 const InspectorRelateToEndpoint = require('./endpoint');
 const {ButtonRow} = require('@canonical/juju-react-components');
 const CheckListItem = require('../../../check-list-item/check-list-item');
@@ -12,6 +13,7 @@ describe('InspectorRelateToEndpoint', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorRelateToEndpoint
+      analytics={Analytics}
       backState={options.backState || {}}
       changeState={options.changeState || sinon.stub()}
       createRelation={options.createRelation || sinon.stub()}

@@ -4,12 +4,14 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../../test/fake-analytics');
 const InspectorRelateTo = require('./relate-to');
 
 describe('InspectorRelateTo', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorRelateTo
+      analytics={Analytics}
       application={options.application || {}}
       changeState={options.changeState || sinon.stub()}
       relatableApplications={options.relatableApplications || [{

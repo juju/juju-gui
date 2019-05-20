@@ -5,6 +5,7 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const Analytics = require('../../../../test/fake-analytics');
 const InspectorExpose = require('./expose');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const InspectorExposeUnit = require('./unit/unit');
@@ -16,6 +17,7 @@ describe('InspectorExpose', function() {
     <InspectorExpose
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       modelAPI={options.modelAPI || modelAPI}
       service={options.service || service}

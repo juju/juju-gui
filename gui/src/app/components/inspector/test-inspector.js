@@ -117,6 +117,7 @@ describe('Inspector', function() {
       <div className="inspector-view">
         <InspectorHeader
           activeComponent={undefined}
+          analytics={Analytics}
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
           changeState={wrapper.find('InspectorHeader').prop('changeState')}
           charmId="charmid"
@@ -129,6 +130,7 @@ describe('Inspector', function() {
           <ServiceOverview
             acl={acl}
             addNotification={sinon.stub()}
+            analytics={Analytics}
             changeState={wrapper.find('ServiceOverview').prop('changeState')}
             charm={charm}
             destroyService={sinon.stub()}
@@ -157,6 +159,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <UnitList
           acl={acl}
+          analytics={Analytics}
           changeState={wrapper.find('UnitList').prop('changeState')}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -310,6 +313,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <ScaleService
           acl={acl}
+          analytics={Analytics}
           changeState={wrapper.find('ScaleService').prop('changeState')}
           initUtils={{
             addGhostAndEcsUnits: sinon.stub(),
@@ -337,6 +341,7 @@ describe('Inspector', function() {
         <InspectorExpose
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={Analytics}
           changeState={wrapper.find('InspectorExpose').prop('changeState')}
           modelAPI={{
             exposeService: sinon.stub(),
@@ -361,6 +366,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <InspectorRelations
           acl={acl}
+          analytics={Analytics}
           changeState={wrapper.find('InspectorRelations').prop('changeState')}
           destroyRelations={sinon.stub()}
           service={service}
@@ -380,6 +386,7 @@ describe('Inspector', function() {
     const expected = (
       <div className="inspector-content">
         <InspectorRelateTo
+          analytics={Analytics}
           application={service}
           changeState={wrapper.find('InspectorRelateTo').prop('changeState')}
           relatableApplications={['apps']} />
@@ -403,6 +410,7 @@ describe('Inspector', function() {
     const expected = (
       <div className="inspector-content">
         <InspectorRelateToEndpoint
+          analytics={Analytics}
           backState={{
             gui: {
               inspector: {
@@ -432,6 +440,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <InspectorPlan
           acl={acl}
+          analytics={Analytics}
           currentPlan={activePlan} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
@@ -451,6 +460,7 @@ describe('Inspector', function() {
           acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
+          analytics={Analytics}
           changeState={wrapper.find('InspectorChangeVersion').prop('changeState')}
           charmId="cs:demo"
           getAvailableVersions={sinon.stub()}
@@ -477,6 +487,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <InspectorResourcesList
           acl={acl}
+          analytics={Analytics}
           resources={[{resource: 'one'}]} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
