@@ -251,7 +251,7 @@ class SearchResults extends React.Component {
       this._searchCallback.bind(this),
       150);
     this.analytics.sendEvent(
-      this.props.analytics.VIEW, {label: `query: ${query} filters: ${filters}`});
+      this.props.analytics.VIEW, {label: `query: ${query}, filters: ${JSON.stringify(filters)}`});
   }
 
   /**
