@@ -650,7 +650,7 @@ class RelationModule {
     // If we landed on a rect, add relation, otherwise, cancel.
     if (rect) {
       self.ambiguousAddRelationCheck(endpoint, self, rect);
-      this.analytics.sendEvent(self.analytics.ADD);
+      self.analytics.sendEvent(self.analytics.ADD);
     } else {
       // TODO clean up, abstract
       self.cancelRelationBuild();
