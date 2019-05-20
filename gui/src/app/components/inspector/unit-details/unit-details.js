@@ -11,9 +11,19 @@ const {SvgIcon} = require('@canonical/juju-react-components');
 require('./_unit-details.scss');
 
 class UnitDetails extends React.Component {
-  componentDidMount() {
-    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
+  constructor(props) {
+    super(props);
+    this.state = {
+      constraints: null,
+      constraintsVisibility: false
+    };
+    this.analytics = this.props.analytics.addCategory('Unit Details');
   }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+  
   /**
     Handle removing a unit if the button has been clicked.
 
@@ -30,6 +40,7 @@ class UnitDetails extends React.Component {
           unitStatus: this.props.unitStatus,
           unit: null
         }}});
+    this.analytics.sendEvent(this.props.analytics.DELETE);
   }
 
   /**

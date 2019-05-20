@@ -6,6 +6,12 @@ exports[`Inspector displays the configuration when the app state calls for it 1`
 >
   <InspectorHeader
     activeComponent="config"
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     backCallback={[Function]}
     changeState={[Function]}
     charmId="charmid"
@@ -62,6 +68,12 @@ exports[`Inspector displays the unit details when the app state calls for it 1`]
 >
   <InspectorHeader
     activeComponent="unit"
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     backCallback={[Function]}
     changeState={[Function]}
     charmId="charmid"

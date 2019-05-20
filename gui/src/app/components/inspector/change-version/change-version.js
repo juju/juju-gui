@@ -12,17 +12,19 @@ const InspectorChangeVersionItem = require('./item/item');
 require('./_change-version.scss');
 
 class InspectorChangeVersion extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.versionsXhr = null;
     this.state = {
       loading: false,
       versions: null
     };
+    this.analytics = this.props.analytics.addCategory('Change Version');
   }
 
   componentDidMount() {
     this._getVersions(this.props.charmId);
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -44,6 +46,7 @@ class InspectorChangeVersion extends React.Component {
   */
   _viewCharmDetails(url, evt) {
     this.props.changeState({store: url.path()});
+    this.analytics.addCategory('Charm Details').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -58,6 +61,7 @@ class InspectorChangeVersion extends React.Component {
     // XXX hatch: the ecs doesn't yet support addCharm so we are going to
     // send the command to juju immediately.
     this.props.addCharm(charmId, callback, {immediate: true});
+    this.analytics.addCategory('Change Version').sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -224,6 +228,7 @@ InspectorChangeVersion.propTypes = {
   acl: PropTypes.object.isRequired,
   addCharm: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmId: PropTypes.string.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,
