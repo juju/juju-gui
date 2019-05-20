@@ -179,7 +179,7 @@ class DeploymentSSHKey extends React.Component {
       this.refs.launchpadUsername.setValue(null);
       this.refs.launchpadUsername.focus();
     }
-    this.props.analytics.sendEvent(
+    this.analytics.sendEvent(
       this.props.analytics.ADD, {label: `key type: ${source}`});
   }
 
