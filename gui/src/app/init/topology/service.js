@@ -14,6 +14,7 @@ class ServiceModule {
   constructor(options={}) {
     this.name = 'ServiceModule';
     this.useTransitions = options.useTransitions || false;
+    this.analytics = options.analytics;
     this.DRAG_START = 1;
     this.DRAG_ACTIVE = 2;
     this.events = {
@@ -739,6 +740,7 @@ class ServiceModule {
     // as arguments.
     self[curr_click_action](box, topo);
     self._raiseToTop(box.id);
+    self.analytics.addCategory('Application').sendEvent(self.analytics.CLICK);
   }
 
   serviceMouseEnter(box, context) {
@@ -752,6 +754,7 @@ class ServiceModule {
     document.dispatchEvent(new CustomEvent('topo.snapToService', {
       detail: [{service: box, rect: rect}]
     }));
+    box.module.analytics.addCategory('Application').sendEvent(box.module.analytics.HOVER);
   }
 
   serviceMouseLeave(box, context) {
@@ -833,6 +836,7 @@ class ServiceModule {
   _canvasDropHandler(files, topo, env, db, evt) {
     var self = this;
     if (files && files.length) {
+      self.analytics.addCategory('Local Charm').sendEvent(self.analytics.DROP);
       // If it is a file from the users file system being dropped.
       Array.prototype.forEach.call(files, function(file) {
         // In order to support the user dragging and dropping multiple files
@@ -998,6 +1002,7 @@ class ServiceModule {
     @param {Object} db A reference to the apps db.
   */
   _showUpgradeOrNewInspector(file, env, db) {
+    this.analytics.addCategory('Local Inspector').sendEvent(this.analytics.VIEW);
     // Store the local file in the global store.
     window.localCharmFile = file;
     this.topo.state.changeState({
@@ -1141,6 +1146,7 @@ class ServiceModule {
         document.dispatchEvent(new CustomEvent('topo.addRelationDragStart', {
           detail: [{service: box}]
         }));
+        self.analytics.addCategory('Add Relation Start').sendEvent(self.analytics.Click);
       }
     }, 250, box, evt);
   }
