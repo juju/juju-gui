@@ -685,6 +685,7 @@ Browser: ${navigator.userAgent}`
     }
     return (
       <PostDeployment
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         charmstore={
           shapeup.fromShape(this.props.charmstore, PostDeployment.propTypes.charmstore)}
@@ -1124,6 +1125,7 @@ Browser: ${navigator.userAgent}`
       <div className="full-screen-mask">
         <Login
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics}
           bakeryEnabled={this.props.applicationConfig.bakeryEnabled}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}

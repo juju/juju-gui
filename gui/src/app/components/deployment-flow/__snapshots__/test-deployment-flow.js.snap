@@ -136,6 +136,7 @@ exports[`DeploymentFlow can render 1`] = `
       className="deployment-services"
     >
       <AccordionSection
+        onExpand={[Function]}
         startOpen={false}
         title="Model changes"
       >
@@ -146,6 +147,12 @@ exports[`DeploymentFlow can render 1`] = `
             }
           }
           addNotification={[Function]}
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           changesUtils={
             Object {
               "generateAllChangeDescriptions": [Function],
