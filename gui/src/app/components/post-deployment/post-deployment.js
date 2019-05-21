@@ -43,6 +43,7 @@ class PostDeployment extends React.Component {
       script: null,
       loading: true
     };
+    this.analytics = this.props.analytics.addCategory('Get Started');
   }
 
   /**
@@ -67,6 +68,7 @@ class PostDeployment extends React.Component {
 
   componentDidMount() {
     this._fetchFiles();
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentDidUpdate(prevProps) {
@@ -131,7 +133,8 @@ class PostDeployment extends React.Component {
     if (this.state[POST_DEPLOYMENT]) {
       return (<div className="v1">
         <Button
-          action={this._executePostDeploymentScript.bind(this)}>
+          action={this._executePostDeploymentScript.bind(this)}
+          extraClasses="u-no-margin--bottom">
             Execute post-deployment script
         </Button>
       </div>);
@@ -144,6 +147,8 @@ class PostDeployment extends React.Component {
   */
   _executePostDeploymentScript() {
     this.props.changeState({terminal: this.state[POST_DEPLOYMENT].split('\n')});
+    this.analytics.addCategory('Execute Post Deployment Script').sendEvent(
+      this.props.analytics.CLICK);
   }
 
   /**
@@ -238,6 +243,7 @@ class PostDeployment extends React.Component {
       search: null,
       store: url.path()
     });
+    this.analytics.addCategory('View Details').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -250,6 +256,7 @@ class PostDeployment extends React.Component {
     this.props.changeState({
       postDeploymentPanel: null
     });
+    this.analytics.sendEvent(this.props.analytics.CLOSE);
   }
 
   render() {
@@ -289,6 +296,7 @@ class PostDeployment extends React.Component {
 }
 
 PostDeployment.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     getFile: PropTypes.func.isRequired
