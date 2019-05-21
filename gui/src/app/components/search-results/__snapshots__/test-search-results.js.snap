@@ -167,36 +167,32 @@ exports[`SearchResults functional tests can render the promulgated search result
                       "value": "",
                     },
                     Object {
-                      "label": "Precise 12.04",
-                      "value": "precise",
-                    },
-                    Object {
-                      "label": "Trusty 14.04",
-                      "value": "trusty",
+                      "label": "Kubernetes",
+                      "value": "kubernetes",
                     },
                     Object {
                       "label": "Xenial 16.04",
                       "value": "xenial",
                     },
                     Object {
+                      "label": "Bionic 18.04",
+                      "value": "bionic",
+                    },
+                    Object {
+                      "label": "Cosmic 18.10",
+                      "value": "cosmic",
+                    },
+                    Object {
+                      "label": "Trusty 14.04",
+                      "value": "trusty",
+                    },
+                    Object {
                       "label": "CentOS 7",
                       "value": "centos7",
                     },
                     Object {
-                      "label": "Windows Server 2012 R2 Hyper-V",
-                      "value": "win2012hvr2",
-                    },
-                    Object {
-                      "label": "Windows Server 2012 Hyper-V",
-                      "value": "win2012hv",
-                    },
-                    Object {
-                      "label": "Windows Server 2012 R2",
-                      "value": "win2012r2",
-                    },
-                    Object {
-                      "label": "Windows Server 2012",
-                      "value": "win2012",
+                      "label": "Windows",
+                      "value": "win2016",
                     },
                   ]
                 }
