@@ -14,7 +14,7 @@ exports[`SeriesList can render 1`] = `
     className="p-inline-list__item series-list__item series-list__item--kubernetes"
     key="kubernetes"
   >
-    k8s
+    kubernetes
   </li>
 </ul>
 `;
