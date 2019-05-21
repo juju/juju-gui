@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
-const utils = require('../testing-utils');
+const utils = require('testing-utils');
 
 let locateRelativePointOnCanvas = sinon.stub();
 const relationInjector = require('inject-loader!./relation');

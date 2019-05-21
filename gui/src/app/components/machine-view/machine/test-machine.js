@@ -5,7 +5,7 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
 const MachineViewMachine = require('./machine');

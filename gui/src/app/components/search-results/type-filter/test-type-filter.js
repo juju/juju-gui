@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const SearchResultsTypeFilter = require('./type-filter');
 
 describe('SearchResultsTypeFilter', function() {

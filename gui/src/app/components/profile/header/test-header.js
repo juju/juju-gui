@@ -3,7 +3,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const ProfileHeader = require('./header');
 
 describe('Profile Header', function() {

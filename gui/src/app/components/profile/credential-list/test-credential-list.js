@@ -6,7 +6,7 @@ const ReactDOM = require('react-dom');
 const ReactTestUtils = require('react-dom/test-utils');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const ProfileCredentialList = require('./credential-list');
 
 describe('ProfileCredentialList', () => {
