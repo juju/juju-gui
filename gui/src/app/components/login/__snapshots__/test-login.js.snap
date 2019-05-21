@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginComponent renders 1`] = `
+<div
+  className="login"
+>
+  <div
+    className="login__logo"
+  >
+    <SvgIcon
+      height="30"
+      name="juju-logo"
+      width="75"
+    />
+  </div>
+  <div
+    className="login__full-form"
+  >
+    <div
+      className="login__env-name"
+    >
+      Login
+    </div>
+    <form
+      className="login__form"
+      onSubmit={[Function]}
+    >
+      <label
+        className="login__label"
+      >
+        Username
+        <input
+          className="login__input"
+          name="username"
+          type="text"
+        />
+      </label>
+      <label
+        className="login__label"
+      >
+        Password
+        <input
+          className="login__input"
+          name="password"
+          type="password"
+        />
+      </label>
+      <span
+        className="v1"
+      >
+        <Button
+          modifier="positive"
+          type="submit"
+        >
+          Login
+        </Button>
+      </span>
+      <USSOLoginLink
+        addNotification={[Function]}
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        displayType="button"
+        loginToController={[Function]}
+      />
+    </form>
+  </div>
+  <div
+    className="login__message"
+  >
+    <p>
+      Find your username and password with
+      <br />
+      <code>
+        juju show-controller --show-password
+      </code>
+    </p>
+    <div
+      className="login__message-link"
+    >
+      <a
+        href="https://jujucharms.com"
+        target="_blank"
+      >
+        jujucharms.com
+      </a>
+    </div>
+  </div>
+</div>
+`;

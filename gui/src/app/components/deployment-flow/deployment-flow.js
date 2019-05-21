@@ -66,11 +66,13 @@ class DeploymentFlow extends React.Component {
       vpcId: INITIAL_VPC_ID,
       vpcIdForce: false
     };
-    let flowType = 'Deployment';
+    let flowType = 'Deploy';
     if (this.state.isDirectDeploy) {
       flowType = 'Direct Deploy';
     } else if (this._isExpertFlow()) {
       flowType = 'Expert';
+    } else if (this.props.modelCommitted) {
+      flowType = 'Commit';
     }
     this.analytics = this.props.analytics.addCategory(`${flowType} Flow`);
   }
@@ -943,11 +945,16 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-services">
         <AccordionSection
+          onExpand={() => {
+            this.analytics.addCategory('Model Changes').sendEvent(
+              this.props.analytics.VIEW);
+          }}
           startOpen={this.props.modelCommitted}
           title="Model changes">
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            analytics={this.analytics}
             changesUtils={this.props.changesUtils}
             charmsGetById={this.props.charmsGetById}
             getCurrentChangeSet={this.props.getCurrentChangeSet}

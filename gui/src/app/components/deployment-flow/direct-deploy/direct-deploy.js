@@ -29,7 +29,7 @@ class DeploymentDirectDeploy extends React.Component {
       profile: null,
       special: {dd: null}
     });
-    this.props.analytics.addCategory('Edit Model').analytics.sendEvent(
+    this.props.analytics.addCategory('Edit Model').sendEvent(
       this.props.analytics.CLICK);
   }
 
@@ -91,7 +91,7 @@ class DeploymentDirectDeploy extends React.Component {
       store: '',
       special: {dd: null}
     });
-    this.props.analytics.addCategory('Store').analytics.sendEvent(this.props.analytics.CLICK);
+    this.props.analytics.addCategory('Store').sendEvent(this.props.analytics.CLICK);
   }
 
   render() {
