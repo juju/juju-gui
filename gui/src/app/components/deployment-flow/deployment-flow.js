@@ -66,11 +66,13 @@ class DeploymentFlow extends React.Component {
       vpcId: INITIAL_VPC_ID,
       vpcIdForce: false
     };
-    let flowType = 'Deployment';
+    let flowType = 'Deploy';
     if (this.state.isDirectDeploy) {
       flowType = 'Direct Deploy';
     } else if (this._isExpertFlow()) {
       flowType = 'Expert';
+    } else if (this.props.modelCommitted) {
+      flowType = 'Commit';
     }
     this.analytics = this.props.analytics.addCategory(`${flowType} Flow`);
   }

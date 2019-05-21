@@ -685,6 +685,7 @@ Browser: ${navigator.userAgent}`
     }
     return (
       <PostDeployment
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         charmstore={
           shapeup.fromShape(this.props.charmstore, PostDeployment.propTypes.charmstore)}
