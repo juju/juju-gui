@@ -6,9 +6,6 @@ const enzyme = require('enzyme');
 
 const Analytics = require('../../../test/fake-analytics');
 const Login = require('./login');
-const {SvgIcon} = require('@canonical/juju-react-components');
-const {Button} = require('@canonical/juju-react-components');
-const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 describe('LoginComponent', function() {
 

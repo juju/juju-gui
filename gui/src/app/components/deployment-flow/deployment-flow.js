@@ -943,11 +943,16 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-services">
         <AccordionSection
+          onExpand={() => {
+            this.analytics.addCategory('Model Changes').sendEvent(
+              this.props.analytics.VIEW);
+          }}
           startOpen={this.props.modelCommitted}
           title="Model changes">
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            analytics={this.analytics}
             changesUtils={this.props.changesUtils}
             charmsGetById={this.props.charmsGetById}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
