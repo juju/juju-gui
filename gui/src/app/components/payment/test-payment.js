@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const Payment = require('./payment');
 const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');

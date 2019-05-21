@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const InspectorRelations = require('./relations');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const {ButtonRow} = require('@canonical/juju-react-components');

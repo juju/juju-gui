@@ -5,6 +5,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('../../../test/fake-analytics');
 const PostDeployment = require('./post-deployment');
 
 describe('PostDeployment', () => {
@@ -13,6 +14,7 @@ describe('PostDeployment', () => {
   const renderComponent = (options = {}) => {
     return enzyme.shallow(
       <PostDeployment
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         charmstore={options.charmstore || charmstore}
         entityURLs={options.entityURLs || ['test']} />

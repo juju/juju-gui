@@ -237,7 +237,7 @@ class DeploymentCredentialAdd extends React.Component {
     // If a name was provided then we're editing, not adding.
     const prefix = props.credentialName ? 'Update' : 'Add';
     let buttons = [{
-      submit: true,
+      type: 'submit',
       title: `${prefix} cloud credential`,
       modifier: 'positive'
     }];

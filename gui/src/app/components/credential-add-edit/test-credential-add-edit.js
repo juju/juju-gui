@@ -5,7 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const CredentialAddEdit = require('./credential-add-edit');
 const Spinner = require('../spinner/spinner');
 

@@ -5,7 +5,7 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const InspectorExpose = require('./expose');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const InspectorExposeUnit = require('./unit/unit');
