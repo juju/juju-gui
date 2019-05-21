@@ -114,7 +114,7 @@ class ScaleService extends React.Component {
     const buttons = [{
       disabled: disabled,
       title: 'Confirm',
-      submit: true
+      type: 'submit'
     }];
 
     return (
