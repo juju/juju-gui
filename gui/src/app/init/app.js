@@ -1124,6 +1124,7 @@ Browser: ${navigator.userAgent}`
       <div className="full-screen-mask">
         <Login
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics}
           bakeryEnabled={this.props.applicationConfig.bakeryEnabled}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}

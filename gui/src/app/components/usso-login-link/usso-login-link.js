@@ -18,7 +18,7 @@ class USSOLoginLink extends React.Component {
       // preventDefault method.
       e.preventDefault();
     }
-    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.CLICK);
+    this.props.analytics.addCategory(this).sendEvent('Login');
     this.props.loginToController(err => {
       if (err) {
         const message = 'cannot log into the controller';
