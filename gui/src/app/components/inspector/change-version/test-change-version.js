@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const InspectorChangeVersion = require('./change-version');
 const InspectorChangeVersionItem = require('./item/item');
 

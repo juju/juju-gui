@@ -4,7 +4,7 @@
 let d3 = require('d3');
 const {charmstore} = require('jaaslib');
 
-const utils = require('../testing-utils');
+const utils = require('testing-utils');
 
 const findCharmEntries = sinon.stub();
 const getEntries = sinon.stub();

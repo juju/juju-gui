@@ -4,11 +4,11 @@
 let d3 = require('d3');
 const {charmstore} = require('jaaslib');
 
-const Analytics = require('../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
-const testUtils = require('../testing-utils');
+const testUtils = require('testing-utils');
 const User = require('../../user/user');
 
 const getEndpoints = sinon.stub();

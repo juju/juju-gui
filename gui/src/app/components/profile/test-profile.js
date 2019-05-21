@@ -4,7 +4,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const Profile = require('./profile');
 
 describe('Profile', function() {

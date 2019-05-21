@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const UnitList = require('./unit-list');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const OverviewAction = require('../overview-action/overview-action');
