@@ -224,7 +224,7 @@ class GUIApp {
     }
     this.analytics = new Analytics(window.dataLayer, {globalLabels: () => {
       const details = [
-        `model committed: ${this.controllerAPI.get('connected')}`,
+        `model committed: ${this.modelAPI.get('connected')}`,
         `user authenticated: ${this.controllerAPI.userIsAuthenticated}`
       ];
       return details.join(', ');
