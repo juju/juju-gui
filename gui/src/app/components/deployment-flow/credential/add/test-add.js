@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const DeploymentCredentialAdd = require('./add');
 const {SvgIcon} = require('@canonical/juju-react-components');
 const InsetSelect = require('../../../inset-select/inset-select');
@@ -202,7 +202,7 @@ describe('DeploymentCredentialAdd', function() {
                 extraClasses: 'is-inline',
                 modifier: 'neutral'
               }, {
-                submit: true,
+                type: 'submit',
                 title: 'Add cloud credential',
                 extraClasses: 'is-inline',
                 modifier: 'positive'
@@ -219,7 +219,7 @@ describe('DeploymentCredentialAdd', function() {
     });
     const buttons = wrapper.find('ButtonRow').prop('buttons');
     assert.deepEqual(buttons, [{
-      submit: true,
+      type: 'submit',
       title: 'Add cloud credential',
       modifier: 'positive'
     }]);

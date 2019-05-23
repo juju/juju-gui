@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const enzyme = require('enzyme');
 
 
-const Analytics = require('../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const CopyToClipboard = require('./copy-to-clipboard');
 
 const testUtils = require('react-dom/test-utils');

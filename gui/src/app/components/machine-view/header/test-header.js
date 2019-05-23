@@ -6,7 +6,7 @@ const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const MachineViewHeader = require('./header');
 
 const jsTestUtils = require('../../../utils/component-test-utils');

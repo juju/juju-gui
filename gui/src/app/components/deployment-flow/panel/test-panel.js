@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Analytics = require('../../../../test/fake-analytics');
+const Analytics = require('test/fake-analytics');
 const DeploymentPanel = require('./panel');
 const {Button} = require('@canonical/juju-react-components');
 const {SvgIcon} = require('@canonical/juju-react-components');

@@ -1,6 +1,11 @@
 'use strict';
 
 const config = {
+  moduleDirectories: [
+    '<rootDir>/gui/src/app/',
+    '<rootDir>/gui/src/',
+    'node_modules'
+  ],
   moduleNameMapper: {
     '.scss$': '<rootDir>/gui/src/test/proxy-module.js'
   },
