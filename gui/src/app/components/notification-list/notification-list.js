@@ -38,18 +38,6 @@ class NotificationList extends React.Component {
       type: notification.level,
       timestamp: notification.timestamp
     };
-
-    // Emiting a google tag manager event registering the notification.
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        'event': 'GAEvent',
-        'eventCategory': 'Notification',
-        'eventAction': notification.level,
-        'eventLabel': notification.message,
-        'eventValue': undefined
-      });
-    }
-
     return structured;
   }
 
