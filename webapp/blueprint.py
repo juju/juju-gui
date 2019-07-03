@@ -38,6 +38,7 @@ def config():
             controllerSocketTemplate="wss://$server:$port/api",
             flags="{terminal: true, support: true, anssr: true, expert: true}",
             gisf="true",
+            jujushellURL="wss://shell.jujugui.org:443/ws/",
             uuid="",
             paymentURL="https://" + JAAS_API_BASE + "/payment",
             plansURL="https://" + JAAS_API_BASE + "/omnibus",
