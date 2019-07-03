@@ -364,7 +364,7 @@ class App extends React.Component {
       creds.user = user.controller.user;
       creds.password = user.controller.password;
     }
-    this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.VIEW);
+    this.props.analytics.addCategory('Terminal').sendEvent(this.props.analytics.VIEW);
     return (
       <Terminal
         addNotification={this._bound.addNotification}
@@ -373,7 +373,7 @@ class App extends React.Component {
         address={address}
         close={() => {
           this.props.appState.changeState({terminal: null});
-          this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.CLOSE);
+          this.props.analytics.addCategory('Terminal').sendEvent(this.props.analytics.CLOSE);
         }}
         commands={commands}
         creds={creds}
