@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const MachineUnit = require('../../shared/machine-unit/machine-unit');
+const {MachineUnit} = require('@canonical/juju-react-components');
 
 require('./_machine-unit.scss');
 
@@ -18,7 +18,7 @@ const dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
-    props.sendAnalytics('Machine View', 'Drag Target', 'Machine Unit');
+    props.analytics.addCategory('Unit').sendEvent(props.analytics.DRAG);
     return {unit: props.unit};
   },
 
@@ -88,13 +88,13 @@ MachineViewMachineUnit.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   canDrag: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   icon: PropTypes.string.isRequired,
   isDragging: PropTypes.bool.isRequired,
   machineType: PropTypes.string.isRequired,
   removeUnit: PropTypes.func,
-  sendAnalytics: PropTypes.func.isRequired,
   unit: PropTypes.object.isRequired
 };
 

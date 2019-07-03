@@ -3,11 +3,11 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('test/fake-analytics');
 const MachineViewAddMachine = require('./add-machine');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
 
 describe('MachineViewAddMachine', function() {
@@ -16,6 +16,7 @@ describe('MachineViewAddMachine', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <MachineViewAddMachine
       acl={options.acl || acl}
+      analytics={Analytics}
       close={options.close || sinon.stub()}
       dbAPI={options.dbAPI}
       modelAPI={options.modelAPI || modelAPI}
@@ -55,12 +56,12 @@ describe('MachineViewAddMachine', function() {
     const wrapper = renderComponent();
     const buttons = [{
       title: 'Cancel',
-      type: 'base',
+      modifier: 'base',
       action: sinon.stub()
     }, {
       title: 'Create',
       action: wrapper.find('ButtonRow').prop('buttons')[1].action,
-      type: 'neutral',
+      modifier: 'neutral',
       disabled: undefined
     }];
     const expected = (
@@ -77,9 +78,11 @@ describe('MachineViewAddMachine', function() {
             series={undefined}
             valuesChanged={wrapper.find('Constraints').prop('valuesChanged')} />
         </div>
-        <ButtonRow
-          buttons={buttons}
-          key="buttons" />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons}
+            key="buttons" />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

@@ -5,8 +5,8 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../../shared/button-row/button-row');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {ButtonRow} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_section.scss');
 
@@ -40,8 +40,10 @@ class DeploymentSection extends React.Component {
       return;
     }
     return (
-      <ButtonRow
-        buttons={this.props.buttons} />);
+      <span className="v1">
+        <ButtonRow
+          buttons={this.props.buttons} />
+      </span>);
   }
 
   /**

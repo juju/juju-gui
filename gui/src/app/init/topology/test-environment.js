@@ -4,10 +4,11 @@
 let d3 = require('d3');
 const {charmstore} = require('jaaslib');
 
+const Analytics = require('test/fake-analytics');
 const EnvironmentChangeSet = require('../environment-change-set');
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');
-const testUtils = require('../testing-utils');
+const testUtils = require('testing-utils');
 const User = require('../../user/user');
 
 const getEndpoints = sinon.stub();
@@ -272,6 +273,7 @@ describe('EnvironmentView', function() {
       charm = new models.Charm(charmData.charm);
       db.charms.add(charm);
       view = new EnvironmentView({
+        analytics: Analytics,
         container: container,
         db: db,
         env: {
@@ -279,8 +281,7 @@ describe('EnvironmentView', function() {
           get: function() {}
         },
         charmstore: fakeStore,
-        state: {changeState: sinon.stub()},
-        sendAnalytics: sinon.stub()
+        state: {changeState: sinon.stub()}
       });
       click = new MouseEvent('click', {
         view: window,

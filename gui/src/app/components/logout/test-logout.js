@@ -4,12 +4,14 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const Logout = require('./logout');
 
 describe('Logout', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Logout
+      analytics={Analytics}
       charmstoreLogoutUrl={options.charmstoreLogoutUrl || 'http://charmstorelogout'}
       doCharmstoreLogout={options.doCharmstoreLogout || sinon.stub().returns(false)}
       locationAssign={options.locationAssign || sinon.stub()}

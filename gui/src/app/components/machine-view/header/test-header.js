@@ -6,12 +6,13 @@ const enzyme = require('enzyme');
 
 const shapeup = require('shapeup');
 
+const Analytics = require('test/fake-analytics');
 const MachineViewHeader = require('./header');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
 describe('MachineViewHeader', function() {
-  let acl, sendAnalytics;
+  let acl;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     // The component is wrapped to handle drag and drop, but we just want to
@@ -19,12 +20,12 @@ describe('MachineViewHeader', function() {
     <MachineViewHeader.DecoratedComponent
       acl={options.acl || acl}
       activeMenuItem={options.activeMenuItem}
+      analytics={Analytics}
       canDrop={options.canDrop === undefined ? false : options.canDrop}
       connectDropTarget={jsTestUtils.connectDropTarget}
       droppable={options.droppable === undefined ? true : options.droppable}
       isOver={options.isOver === undefined ? false : options.isOver}
       menuItems={options.menuItems}
-      sendAnalytics={options.sendAnalytics || sendAnalytics}
       title={options.title || 'Sandbox'}
       toggle={options.toggle}
       type={options.type || 'machine'} />
@@ -32,7 +33,6 @@ describe('MachineViewHeader', function() {
 
   beforeEach(() => {
     acl = shapeup.deepFreeze({isReadOnly: () => false});
-    sendAnalytics = sinon.stub();
   });
 
   it('can render', function() {

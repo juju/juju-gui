@@ -93,7 +93,7 @@ class State {
     */
     this._dispatchers = {};
 
-    this.sendAnalytics = cfg.sendAnalytics || function() {};
+    this.analytics = cfg.analytics;
 
     window.onpopstate = () => {
       // We don't really care what the onpopstate event is, so just calling the
@@ -442,11 +442,9 @@ class State {
     this._appStateHistory.push(purgedState);
     this._pushState();
 
-    this.sendAnalytics(
-      'Navigation',
-      'State change',
-      this.location.href
-    );
+    this.analytics.addCategory('Navigation').sendEvent('State change', {
+      label: `url: ${this.location.href}`
+    });
 
     let {error} = this.dispatch(nullKeys, false);
     if (error !== null) {

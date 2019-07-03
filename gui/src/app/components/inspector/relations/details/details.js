@@ -7,6 +7,10 @@ const React = require('react');
 require('./_details.scss');
 
 class InspectorRelationDetails extends React.Component {
+  componentDidMount() {
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
+  }
+
   render() {
     var relation = this.props.relation;
     return (
@@ -31,6 +35,7 @@ class InspectorRelationDetails extends React.Component {
 };
 
 InspectorRelationDetails.propTypes = {
+  analytics: PropTypes.object.isRequired,
   relation: PropTypes.object.isRequired
 };
 

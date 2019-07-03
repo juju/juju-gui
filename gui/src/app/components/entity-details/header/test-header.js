@@ -4,8 +4,9 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const EntityHeader = require('./header');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -16,6 +17,7 @@ describe('EntityHeader', function() {
     <EntityHeader
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       deployService={options.deployService || sinon.stub()}
       entityModel={options.entityModel || mockEntity}
@@ -138,7 +140,7 @@ describe('EntityHeader', function() {
   it('displays an add to model button', function() {
     const wrapper = renderComponent();
     const deployAction = wrapper.find('Button');
-    assert.equal(deployAction.prop('type'), 'positive');
+    assert.equal(deployAction.prop('modifier'), 'positive');
     assert.equal(deployAction.children().text(), 'Add to model');
   });
 
@@ -147,7 +149,7 @@ describe('EntityHeader', function() {
       getModelName: sinon.stub().returns('porkchop')
     });
     const deployAction = wrapper.find('Button');
-    assert.equal(deployAction.prop('type'), 'positive');
+    assert.equal(deployAction.prop('modifier'), 'positive');
     assert.equal(deployAction.children().text(), 'Add to porkchop');
   });
 

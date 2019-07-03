@@ -7,8 +7,8 @@ const enzyme = require('enzyme');
 
 const PaymentCharges = require('./charges');
 const DateDisplay = require('../../date-display/date-display');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {ExpandingRow} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('PaymentCharges', function() {
   let acl, payment;
@@ -100,11 +100,12 @@ describe('PaymentCharges', function() {
                 <div className="two-col last-col no-margin-bottom">
                   {120} {'USD'}
                 </div>
-                <div className="two-col last-col no-margin-bottom">
+                <div className="two-col last-col no-margin-bottom v1">
                   <Button
                     action={wrapper.find('Button').prop('action')}
                     disabled={false}
-                    type="inline-neutral">
+                    extraClasses="is-inline"
+                    modifier="neutral">
                     Show receipt
                   </Button>
                 </div>

@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_create-model-button.scss');
 
@@ -25,16 +25,17 @@ class CreateModelButton extends React.Component {
     if (this.props.action) {
       this.props.action();
     }
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.CLICK);
   }
 
   render() {
     const disabled = this.props.disabled || false;
     return (
-      <div className="create-new-model">
+      <div className="create-new-model v1">
         <Button
           action={this._createNewModel.bind(this)}
           disabled={disabled}
-          type={this.props.type}>
+          modifier={this.props.modifier}>
           {this.props.title}
         </Button>
       </div>
@@ -44,15 +45,16 @@ class CreateModelButton extends React.Component {
 
 CreateModelButton.propTypes = {
   action: PropTypes.func,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  modifier: PropTypes.string,
   switchModel: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  type: PropTypes.string
+  title: PropTypes.string
 };
 
 CreateModelButton.defaultProps = {
-  type: 'inline-neutral',
+  modifier: 'neutral',
   title: 'Create new'
 };
 

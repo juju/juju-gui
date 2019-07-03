@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 const MachineViewAddMachine = require('../add-machine/add-machine');
 
 require('./_unplaced-unit.scss');
@@ -23,7 +23,7 @@ MachineViewUnplacedUnitGlobals.dragSource = {
     @param {Object} props The component props.
   */
   beginDrag: function(props) {
-    props.sendAnalytics('Machine View', 'Drag Target', 'Application Unit');
+    props.analytics.addCategory('Unplaced Unit').sendEvent(props.analytics.DRAG);
     return {unit: props.unitAPI.unit};
   },
 
@@ -54,9 +54,10 @@ MachineViewUnplacedUnitGlobals.collect = function(connect, monitor) {
 };
 
 class MachineViewUnplacedUnit extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {showPlaceUnit: false};
+    this.analytics = this.props.analytics.addCategory('Unplaced Unit');
   }
 
   /**
@@ -82,6 +83,7 @@ class MachineViewUnplacedUnit extends React.Component {
     return (
       <MachineViewAddMachine
         acl={props.acl.reshape(propTypes.acl)}
+        analytics={this.analytics}
         close={this._togglePlaceUnit.bind(this)}
         dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
@@ -114,7 +116,10 @@ class MachineViewUnplacedUnit extends React.Component {
       action: (!isReadOnly && this._togglePlaceUnit.bind(this)) || null
     }, {
       label: 'Destroy',
-      action: (!isReadOnly && unitAPI.removeUnit.bind(null, unit.id)) || null
+      action: isReadOnly ? null : () => {
+        unitAPI.removeUnit(unit.id);
+        this.analytics.sendEvent(this.props.analytics.DELETE);
+      }
     }];
     // Wrap the returned components in the drag source method.
     return props.connectDragSource(
@@ -124,9 +129,11 @@ class MachineViewUnplacedUnit extends React.Component {
           className="machine-view__unplaced-unit-icon"
           src={unitAPI.icon} />
         {unit.displayName}
-        <ButtonDropdown
-          classes={['machine-view__unplaced-unit-dropdown']}
-          listItems={menuItems} />
+        <span className="v1">
+          <ButtonDropdown
+            classes={['machine-view__unplaced-unit-dropdown']}
+            listItems={menuItems} />
+        </span>
         {this._generatePlaceUnit()}
         <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>
@@ -139,6 +146,7 @@ MachineViewUnplacedUnit.propTypes = {
     isReadOnly: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   connectDragSource: PropTypes.func.isRequired,
   dbAPI: shapeup.shape({
     machines: PropTypes.object.isRequired
@@ -149,7 +157,6 @@ MachineViewUnplacedUnit.propTypes = {
     placeUnit: PropTypes.func.isRequired,
     providerType: PropTypes.string
   }).isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.array,
   unitAPI: shapeup.shape({
     icon: PropTypes.string.isRequired,

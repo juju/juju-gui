@@ -4,29 +4,31 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const CreateModelButton = require('./create-model-button');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('CreateModelButton', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <CreateModelButton
       action={options.action || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       disabled={options.disabled === undefined ? false : options.disabled}
+      modifier={options.modifier}
       switchModel={options.switchModel || sinon.stub()}
-      title={options.title}
-      type={options.type} />
+      title={options.title} />
   );
 
   it('renders a button with default values', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="create-new-model">
+      <div className="create-new-model v1">
         <Button
           action={wrapper.find('Button').prop('action')}
           disabled={false}
-          type="inline-neutral">
+          modifier="neutral">
           Create new
         </Button>
       </div>
@@ -37,10 +39,10 @@ describe('CreateModelButton', () => {
   it('renders a button with provided values', () => {
     const wrapper = renderComponent({
       title: 'test',
-      type: 'positive'
+      modifier: 'positive'
     });
     const button = wrapper.find('Button');
-    assert.equal(button.prop('type'), 'positive');
+    assert.equal(button.prop('modifier'), 'positive');
     assert.equal(button.children().text(), 'test');
   });
 

@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentBarNotification = require('./notification');
 
 describe('DeploymentBarNotification', function() {
@@ -11,6 +12,7 @@ describe('DeploymentBarNotification', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentBarNotification
+      analytics={Analytics}
       change={options.change || {
         id: 'service-added-1',
         description: 'Django added'

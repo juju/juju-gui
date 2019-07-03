@@ -6,18 +6,23 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
 
 require('./_scale-service.scss');
 
 class ScaleService extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       constraints: null,
       constraintsVisibility: false
     };
+    this.analytics = this.props.analytics.addCategory('Scale Service');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -99,6 +104,8 @@ class ScaleService extends React.Component {
       this.props.initUtils.createMachinesPlaceUnits(numUnits, constraints);
     }
     this.props.changeState(appState);
+    this.analytics.addCategory('Units').sendEvent(
+      this.props.analytics.ADD, {label: `auto place: ${!state.constraintsVisibility}`});
   }
 
   render() {
@@ -107,7 +114,7 @@ class ScaleService extends React.Component {
     const buttons = [{
       disabled: disabled,
       title: 'Confirm',
-      submit: true
+      type: 'submit'
     }];
 
     return (
@@ -158,7 +165,9 @@ class ScaleService extends React.Component {
             providerType={props.providerType}
             valuesChanged={this._updateConstraints.bind(this)} />
         </div>
-        <ButtonRow buttons={buttons} />
+        <span className="v1">
+          <ButtonRow buttons={buttons} />
+        </span>
       </form>
     );
   }
@@ -170,6 +179,7 @@ class ScaleService extends React.Component {
 
 ScaleService.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   initUtils: shapeup.shape({
     addGhostAndEcsUnits: PropTypes.func.isRequired,

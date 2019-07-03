@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const Spinner = require('../../spinner/spinner');
@@ -19,13 +19,14 @@ require('./_bundle-list.scss');
   their profile.
 */
 class ProfileBundleList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.xhrs = [];
     this.state = {
       data: [],
       loading: false
     };
+    this.analytics = this.props.analytics.addCategory('Bundle List');
   }
 
   componentWillMount() {
@@ -33,6 +34,10 @@ class ProfileBundleList extends React.Component {
     if (user) {
       this._fetchBundles(user);
     }
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillUnmount() {
@@ -88,6 +93,7 @@ class ProfileBundleList extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     this.props.changeState({profile: null, store: path, hash: null});
+    this.analytics.addCategory('Bundle').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -245,14 +251,18 @@ class ProfileBundleList extends React.Component {
               <td className="u-align-text--right">
                 {bundle.unitCount}
               </td>
-              <td className="entity__release u-align-text--right">
+              <td className="entity__release u-align-text--right v1">
                 <span>
                   {version}
                 </span>
                 <button
                   className="p-button--positive"
                   disabled={this.props.acl.isReadOnly()}
-                  onClick={e => props.handleDeploy(e, bundle.id, this.props)}
+                  onClick={e => {
+                    props.handleDeploy(e, bundle.id, this.props);
+                    this.analytics.addCategory('Add to model').sendEvent(
+                      this.props.analytics.CLICK, {label: `bundle: ${bundle.id}`});
+                  }}
                   tooltip={
                     `Add this ${bundle.entityType} to
                       ${this.modelName ? 'your current' : 'a new'} model`}>
@@ -300,6 +310,7 @@ ProfileBundleList.propTypes = {
   }).frozen.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   bakery: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,

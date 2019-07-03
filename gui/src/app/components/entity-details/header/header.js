@@ -6,9 +6,10 @@ const React = require('react');
 const {urls} = require('jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const SeriesList = require('../../series-list/series-list');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 
@@ -23,10 +24,11 @@ class EntityHeader extends React.Component {
     const props = this.props;
     const entityModel = props.entityModel;
     const entity = entityModel.toEntity();
+    let plan = null;
     if (entity.type === 'charm') {
       const refs = this.refs;
       const plans = props.plans;
-      const plan = refs.plan && refs.plan.value;
+      plan = refs.plan && refs.plan.value;
       let activePlan;
       if (plan && Array.isArray(plans)) {
         // It is possible that plan is a string "loading plans..."
@@ -47,6 +49,13 @@ class EntityHeader extends React.Component {
         this._getBundleYAMLCallback.bind(this, bundleURL.path()));
     }
     this._closeEntityDetails();
+    let label = `entity: ${entity.id}`;
+    if (plan) {
+      label += `,
+       plan: ${plan}`;
+    }
+    this.props.analytics.addCategory('Add To Canvas').sendEvent(
+      this.props.analytics.CLICK, {label});
   }
 
   /**
@@ -59,6 +68,7 @@ class EntityHeader extends React.Component {
       hash: null,
       store: null
     });
+    this.props.analytics.sendEvent(this.props.analytics.CLOSE);
   }
 
   /**
@@ -119,16 +129,20 @@ class EntityHeader extends React.Component {
     const title = `Add to ${modelName || 'model'}`;
     if (entity.type !== 'charm' || entity.series) {
       deployAction = (
-        <Button
-          action={this._handleDeployClick.bind(this)}
-          disabled={this.props.acl.isReadOnly()}
-          ref="deployAction"
-          tooltip={
-            `Add this ${entity.type} to ` +
-            `${modelName ? 'your current' : 'a new'} model`}
-          type="positive">
-          {title}
-        </Button>
+        <span className="v1">
+          <Button
+            action={this._handleDeployClick.bind(this)}
+            disabled={this.props.acl.isReadOnly()}
+            modifier="positive"
+            ref="deployAction"
+            tooltip={{
+              msg: `Add this ${entity.type} to ` +
+                  `${modelName ? 'your current' : 'a new'} model`,
+              position: 'btm-lft'
+            }}>
+            {title}
+          </Button>
+        </span>
       );
     } else {
       deployAction = (
@@ -254,7 +268,7 @@ class EntityHeader extends React.Component {
     }
     const url = urls.URL.fromLegacyString(lastRevision);
     return (
-      <li className="entity-header__series" key={lastRevision}>
+      <li className="entity-header__revision" key={lastRevision}>
         <span className="link" onClick={this._onLastRevisionClick.bind(this)}>
             Latest version (#{url.revision})
         </span>
@@ -274,6 +288,7 @@ class EntityHeader extends React.Component {
     const revisions = props.entityModel.get('revisions');
     const url = urls.URL.fromLegacyString(revisions[0]);
     props.changeState({store: url.path()});
+    this.props.analytics.addCategory('Latest version').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -286,11 +301,14 @@ class EntityHeader extends React.Component {
     evt.stopPropagation();
     const props = this.props;
     const entity = props.entityModel;
+    const owner = entity.get('owner');
     props.changeState({
       hash: null,
       store: null,
-      profile: entity.get('owner')
+      profile: owner
     });
+    this.props.analytics.addCategory('Owner').sendEvent(
+      this.props.analytics.CLICK, {label: `owner: ${owner}`});
   }
 
   /**
@@ -305,8 +323,12 @@ class EntityHeader extends React.Component {
       return null;
     }
     series = !Array.isArray(series) ? [series] : series;
-    return series.map(series =>
-      <li className="entity-header__series" key={series}>{series}</li>);
+    return (
+      <div className="entity-header__series">
+        Supports:
+        <SeriesList items={series} />
+      </div>
+    );
   }
 
   /**
@@ -377,9 +399,9 @@ class EntityHeader extends React.Component {
                 </li>
                 {this._generateSubordinate()}
                 {this._generateLatestRevision()}
-                {this._generateSeriesList()}
                 {this._generateChannelList()}
               </ul>
+              {this._generateSeriesList()}
               {this._generateCounts()}
               <ul className="entity-header__social-list">
                 <li>
@@ -408,6 +430,7 @@ class EntityHeader extends React.Component {
               'entity-header__right four-col last-col no-margin-bottom'}>
               {this._generateSelectPlan()}
               <CopyToClipboard
+                analytics={this.props.analytics}
                 value={'juju deploy ' + entity.id} />
               {this._generateDeployAction()}
             </div>
@@ -421,6 +444,7 @@ class EntityHeader extends React.Component {
 EntityHeader.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   deployService: PropTypes.func.isRequired,
   entityModel: PropTypes.object.isRequired,

@@ -1,12 +1,13 @@
 /* Copyright (C) 2017 Canonical Ltd. */
 'use strict';
 
+const cookie = require('js-cookie');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const mixwith = require('mixwith');
 
 const acl = require('./store/env/acl');
-const analytics = require('./init/analytics');
+const Analytics = require('./init/analytics');
 const App = require('./init/app');
 const EnvironmentChangeSet = require('./init/environment-change-set');
 const utils = require('./init/utils');
@@ -215,9 +216,19 @@ class GUIApp {
       Generated send analytics method. Must be setup before state is set up as
       it is used by state and relies on the controllerAPI instance.
     */
-    this.sendAnalytics = analytics.sendAnalyticsFactory(
-      this.controllerAPI,
-      window.dataLayer);
+    if (!window.dataLayer) {
+      // If the dataLayer is not available (e.g. in development mode and in
+      // embedded juju) then store the events in our own array. This is useful
+      // for debugging the events.
+      window.dataLayer = [];
+    }
+    this.analytics = new Analytics(window.dataLayer, {globalLabels: () => {
+      const details = [
+        `model committed: ${this.modelAPI.get('connected')}`,
+        `user authenticated: ${this.controllerAPI.userIsAuthenticated}`
+      ];
+      return details.join(', ');
+    }});
 
     let baseURL = config.baseUrl;
     if (baseURL.indexOf('://') < 0) {
@@ -497,6 +508,7 @@ class GUIApp {
       <App
         acl={this.acl}
         addToModel={this.addToModel.bind(this)}
+        analytics={this.analytics}
         applicationConfig={this.applicationConfig}
         appState={this.state}
         bakery={this.bakery}
@@ -517,7 +529,6 @@ class GUIApp {
         payment={this.payment}
         plans={this.plans}
         rates={this.rates}
-        sendAnalytics={this.sendAnalytics}
         setModelUUID={this._setModelUUID.bind(this)}
         setPageTitle={this.setPageTitle.bind(this)}
         stats={this.stats}
@@ -545,9 +556,9 @@ class GUIApp {
       return this.state;
     }
     const state = new State({
+      analytics: this.analytics,
       baseURL: baseURL,
-      seriesList: urls.SERIES,
-      sendAnalytics: this.sendAnalytics
+      seriesList: urls.SERIES
     });
     state.register([
       ['*', this._ensureControllerConnection.bind(this)],
@@ -820,16 +831,10 @@ class GUIApp {
       return;
     }
     console.log('successfully logged into controller');
-
-    // If the GUI is embedded in storefront, we need to share login
-    // data with the storefront backend and ensure we're already
-    // logged into the charmstore.
     if (this.applicationConfig.gisf) {
-      this._sendGISFPostBack(() => {
-        // We can only request the updated config file after the storefront has
-        // been notified of the users login information.
-        this.reloadConfigFile(document);
-      });
+      // If this is the JAAS GUI then we need to set a cookie to say that we're
+      // logged in to correctly redirect requests to jaas.ai if necessary.
+      cookie.set('logged-in', 'true');
       this._ensureLoggedIntoCharmstore();
     } else {
       // If this isn't embedded in the storefront then go fetch the config again
@@ -1385,33 +1390,6 @@ class GUIApp {
   }
 
   /**
-    Sends the discharge token via POST to the storefront. This is used
-    when the GUI is operating in GISF mode, allowing a shared login between
-    the GUI and the storefront.
-    @param {Function} callback (optional) The callback to call after the post response.
-  */
-  _sendGISFPostBack(callback) {
-    const dischargeToken = this.user.getMacaroon('identity');
-    if (!dischargeToken) {
-      console.error('no discharge token in local storage after login');
-      const message = 'Authentication failed. Please try refreshing the GUI.';
-      this.db.notifications.add({
-        title: message,
-        message: message,
-        level: 'error'
-      });
-      return;
-    }
-    console.log('sending discharge token to storefront');
-    const content = 'discharge-token=' + dischargeToken;
-    const webhandler = new WebHandler();
-    webhandler.sendPostRequest(
-      '/_login',
-      {'Content-Type': 'application/x-www-form-urlencoded'},
-      content, null, null, null, null, callback);
-  }
-
-  /**
     Generate a user info object.
     @param {Object} state - The application state.
   */
@@ -1587,6 +1565,7 @@ class GUIApp {
   */
   _renderTopology() {
     const topology = new EnvironmentView({
+      analytics: this.analytics,
       endpointsController: this.endpointsController,
       db: this.db,
       env: this.modelAPI,
@@ -1595,7 +1574,6 @@ class GUIApp {
       bundleImporter: this.bundleImporter,
       state: this.state,
       staticURL: this.applicationConfig.staticURL,
-      sendAnalytics: this.sendAnalytics,
       container: document.querySelector(
         this.applicationConfig.container || '#main')
     });
@@ -1643,6 +1621,7 @@ class GUIApp {
     });
     if (config.gisf) {
       const gisfLogoutUrl = config.gisfLogout || '';
+      cookie.remove('logged-in');
       window.location.assign(window.location.origin + gisfLogoutUrl);
     }
   }

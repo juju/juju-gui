@@ -5,10 +5,10 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const Button = require('../../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../../generic-input/generic-input');
 const initUtils = require('../../../../init/utils');
-const ExpandingRow = require('../../../shared/expanding-row/expanding-row');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const AddressForm = require('../../../address-form/address-form');
 const PaymentMethodCard = require('../card/card');
 
@@ -117,15 +117,17 @@ class PaymentMethod extends React.Component {
             }]}
             value={`${month}/${paymentMethod.year}`} />
         </div>
-        <div className="twelve-col payment-method__buttons">
+        <div className="twelve-col payment-method__buttons v1">
           <Button
             action={this._toggleForm.bind(this)}
-            type="inline-neutral">
+            extraClasses="is-inline"
+            modifier="neutral">
             Cancel
           </Button>
           <Button
             action={this._updatePaymentMethod.bind(this)}
-            type="inline-positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Update
           </Button>
         </div>

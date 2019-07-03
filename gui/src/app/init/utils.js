@@ -74,10 +74,8 @@ utils.unloadWindow = function() {
   Export the YAML for the current model, including uncommitted changes.
 
   @param {Object} db The application database.
-  @param {Function} [sendAnalytics] Function to send analytics about the use of
-    the bundle export.
 */
-utils.exportEnvironmentFile = (db, sendAnalytics)=> {
+utils.exportEnvironmentFile = db => {
   const apps = db.services.toArray();
   const idMap = new Map();
   // Store a map of all the temporary app ids to the real ids.
@@ -96,7 +94,6 @@ utils.exportEnvironmentFile = (db, sendAnalytics)=> {
   const exportBlob = new Blob([exportData],
     {type: 'text/plain;charset=utf-8'});
   const envName = db.environment.get('name');
-  sendAnalytics('BundleExport', 'export', 'export', apps.length);
   FileSaver.saveAs(exportBlob, utils._generateBundleExportFileName(envName));
 };
 
@@ -1105,17 +1102,15 @@ utils.removeGhostAddUnitCallback = removeGhostAddUnitCallback;
  */
 utils.getSeriesList = function() {
   // For a list of supported series in Juju see:
-  // https://github.com/juju/charmstore/blob/v5-unstable/internal/
-  // series/series.go#L37
+  // https://github.com/juju/charmstore/blob/v5/internal/series/series.go
   return {
-    precise: {name: 'Precise 12.04'},
-    trusty: {name: 'Trusty 14.04'},
+    kubernetes: {name: 'Kubernetes'},
     xenial: {name: 'Xenial 16.04'},
+    bionic: {name: 'Bionic 18.04'},
+    cosmic: {name: 'Cosmic 18.10'},
+    trusty: {name: 'Trusty 14.04'},
     centos7: {name: 'CentOS 7'},
-    win2012hvr2: {name: 'Windows Server 2012 R2 Hyper-V'},
-    win2012hv: {name: 'Windows Server 2012 Hyper-V'},
-    win2012r2: {name: 'Windows Server 2012 R2'},
-    win2012: {name: 'Windows Server 2012'}
+    win2016: {name: 'Windows'}
   };
 };
 

@@ -2,4 +2,9 @@
 
 .create-new-model {
   font-size: $base;
+
+  .p-button {
+    width: 100%;
+    margin-bottom: 0;
+  }
 }

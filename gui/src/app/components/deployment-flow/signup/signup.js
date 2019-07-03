@@ -4,9 +4,9 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const DeploymentPanel = require('../panel/panel');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_signup.scss');
 
@@ -87,11 +87,12 @@ class DeploymentSignup extends React.Component {
                   Add your model to deploy
                 </li>
               </ol>
-              <p>
+              <p className="v1">
                 Continue to the&nbsp;
                 <Button
                   action={this._displayFlow.bind(this)}
-                  type="inline-neutral">
+                  extraClasses="is-inline"
+                  modifier="neutral">
                   Deployment demo of Juju
                 </Button>
               </p>
@@ -124,9 +125,9 @@ class DeploymentSignup extends React.Component {
                   Reusable shareable models with unlimited users
                 </li>
               </ul>
-              <p>
+              <p className="v1">
                 <a
-                  className="button--inline-positive"
+                  className="p-button--positive is-inline"
                   href="https://jujucharms.com/beta"
                   onClick={this._handleSignup.bind(this)}
                   target="_blank">

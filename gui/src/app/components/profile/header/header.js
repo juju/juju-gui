@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 
@@ -53,6 +53,7 @@ class ProfileHeader extends React.Component {
       hash: null,
       profile: null
     });
+    this.props.analytics.addCategory(this).sendEvent('Close');
   }
 
   /**
@@ -191,6 +192,7 @@ class ProfileHeader extends React.Component {
 }
 
 ProfileHeader.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   controllerIP: PropTypes.string,
   getUser: PropTypes.func.isRequired,

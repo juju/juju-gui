@@ -4,20 +4,18 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../shared/button/button');
+const Analytics = require('test/fake-analytics');
 const SearchResults = require('./search-results');
-const SearchResultsItem = require('./item/item');
-const SearchResultsSelectFilter = require('./select-filter/select-filter');
-const SearchResultsTypeFilter = require('./type-filter/type-filter');
 
 describe('SearchResults', function() {
-  let acl, addToModel, charmstoreSearch, generatePath,
+  let acl, charmstoreSearch, generatePath,
       models, results;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <SearchResults
       acl={options.acl || acl}
       addToModel={options.addToModel || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       charmstoreSearch={options.charmstoreSearch || charmstoreSearch}
       generatePath={options.generatePath || generatePath}
@@ -36,7 +34,6 @@ describe('SearchResults', function() {
       Charm: sinon.stub().returnsArg(0)
     };
     acl = {isReadOnly: sinon.stub().returns(false)};
-    addToModel = sinon.stub();
     generatePath = sinon.stub();
     results = [{
       name: 'mysql-one',
@@ -104,48 +101,13 @@ describe('SearchResults', function() {
     it('can display a message if there are no results', function() {
       charmstoreSearch.callsArgWith(1, null, []);
       const wrapper = renderComponent();
-      const expected = (
-        <div className="twelve-col no-results-container last-col">
-          <h1 className="row-title">
-            Your search for <strong>spinach</strong>
-            {' '}
-            returned 0 results
-          </h1>
-          <p>
-            Try a more specific or different query, try other keywords or
-            learn how to
-            {' '}
-            <a href="http://jujucharms.com/docs/authors-charm-writing">
-              create your own solution
-            </a>.
-          </p>
-        </div>);
-      assert.compareJSX(wrapper.find('.no-results-container'), expected);
+      expect(wrapper).toMatchSnapshot();
     });
 
     it('can display a message if there is a loading error', function() {
       charmstoreSearch.callsArgWith(1, 'bad wolf', []);
       const wrapper = renderComponent();
-      const expected = (
-        <div className="twelve-col no-results-container last-col">
-          <h1 className="row-title">
-            Something went wrong
-          </h1>
-          <p>
-            For some reason the search failed. You could try searching at
-            {' '}
-            <a href="http://jujucharms.com/store">
-              http://jujucharms.com
-            </a>
-            {' '}or go{' '}
-            <span
-              className="link"
-              onClick={wrapper.find('.link').prop('onClick')}>
-              back
-            </span>.
-          </p>
-        </div>);
-      assert.compareJSX(wrapper.find('.no-results-container'), expected);
+      expect(wrapper).toMatchSnapshot();
     });
 
     it('loads search results', function() {
@@ -180,133 +142,12 @@ describe('SearchResults', function() {
     });
 
     it('can render the promulgated search results', function() {
-      const sortItems = [{
-        label: 'Default',
-        value: ''
-      }, {
-        label: 'Most popular',
-        value: '-downloads'
-      }, {
-        label: 'Least popular',
-        value: 'downloads'
-      }, {
-        label: 'Name (a-z)',
-        value: 'name'
-      }, {
-        label: 'Name (z-a)',
-        value: '-name'
-      }, {
-        label: 'Author (a-z)',
-        value: 'owner'
-      }, {
-        label: 'Author (z-a)',
-        value: '-owner'
-      }];
-      const seriesItems = [{
-        label: 'All',
-        value: ''
-      }, {
-        label: 'Vivid Vervet 15.04',
-        value: 'vivid'
-      }, {
-        label: 'Wily Werewolf 15.10',
-        value: 'wily'
-      }];
       const wrapper = renderComponent({
         series: 'wily',
         sort: '-name',
         type: 'charm'
       });
-      const expected = (
-        <div className="search-results">
-          <div className="row no-padding-top">
-            <div className="inner-wrapper list-block">
-              <div className="twelve-col list-block__title no-margin-bottom">
-                Your search for &lsquo;{'spinach'}&rsquo; returned {4}{' '}
-                results.
-              </div>
-              <div className="list-block__filters">
-                <SearchResultsTypeFilter
-                  changeState={sinon.stub()}
-                  currentType="charm" />
-                <div className="six-col last-col">
-                  <div className="list-block__filters--selects">
-                    <form>
-                      <SearchResultsSelectFilter
-                        changeState={sinon.stub()}
-                        currentValue="-name"
-                        filter='sort'
-                        items={sortItems}
-                        label="Sort by" />
-                      <SearchResultsSelectFilter
-                        changeState={sinon.stub()}
-                        currentValue="wily"
-                        filter='series'
-                        items={seriesItems}
-                        label="Series" />
-                    </form>
-                  </div>
-                </div>
-              </div>
-              <div className="entity-search-results">
-                <div>
-                  <div className="clearfix promulgated-results">
-                    <h4>
-                      Recommended <span className="count">({2})</span>
-                    </h4>
-                    <ul className="list-block__list">
-                      <SearchResultsItem
-                        acl={acl}
-                        addToModel={addToModel}
-                        changeState={sinon.stub()}
-                        generatePath={generatePath}
-                        item={results[0]}
-                        key="~test-owner/mysql-one" />
-                      <SearchResultsItem
-                        acl={acl}
-                        addToModel={addToModel}
-                        changeState={sinon.stub()}
-                        generatePath={generatePath}
-                        item={results[1]}
-                        key="~test-owner/mysql-two" />
-                    </ul>
-                  </div>
-                  <div className="clearfix community-results">
-                    <div className="button-wrapper--ruled">
-                      <Button
-                        action={wrapper.find('Button').prop('action')}
-                        extraClasses="show-community-button"
-                        type="inline-neutral">
-                        Show 2 community results
-                      </Button>
-                    </div>
-                    <div
-                      className="clearfix community-results__content hidden">
-                      <h4>Community <span className="count">({2})</span></h4>
-                      <ul className="list-block__list">
-                        <SearchResultsItem
-                          acl={acl}
-                          addToModel={addToModel}
-                          changeState={sinon.stub()}
-                          generatePath={generatePath}
-                          item={results[2]}
-                          key="~test-owner/mysql-three" />
-                        <SearchResultsItem
-                          acl={acl}
-                          addToModel={addToModel}
-                          changeState={sinon.stub()}
-                          generatePath={generatePath}
-                          item={results[3]}
-                          key="~test-owner/mysql-four" />
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>);
-      assert.compareJSX(wrapper, expected);
+      expect(wrapper).toMatchSnapshot();
     });
 
     it('will show community results', function() {
@@ -334,7 +175,9 @@ describe('SearchResults', function() {
     var searchResults;
 
     beforeEach(function() {
-      searchResults = new SearchResults({});
+      searchResults = new SearchResults({
+        analytics: Analytics
+      });
     });
 
     afterEach(function() {
@@ -567,7 +410,7 @@ describe('SearchResults', function() {
       searchResults.setState = sinon.spy();
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
-      searchResults.props = {charmstoreSearch: searchSpy};
+      searchResults.props = {analytics: Analytics, charmstoreSearch: searchSpy};
       searchResults._searchRequest(query, 'ops');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
         'waitingForSearch flag is not set');
@@ -581,7 +424,7 @@ describe('SearchResults', function() {
       searchResults.setState = sinon.spy();
       var stateSpy = searchResults.setState;
       var searchSpy = sinon.spy();
-      searchResults.props = {charmstoreSearch: searchSpy};
+      searchResults.props = {analytics: Analytics, charmstoreSearch: searchSpy};
       searchResults._searchRequest(query, 'ops', 'bundle', '-name');
       assert.deepEqual(stateSpy.getCall(1).args[0], {waitingForSearch: true},
         'waitingForSearch flag is not set');

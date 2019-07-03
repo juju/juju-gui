@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header-search.scss');
 
@@ -16,6 +16,7 @@ class HeaderSearch extends React.Component {
       query: this._getSearchQuery(),
       active: this._activeForComponent()
     };
+    this.analytics = this.props.analytics.addCategory('Header Search');
   }
 
   /**
@@ -174,6 +175,10 @@ class HeaderSearch extends React.Component {
       },
       store: query === '' ? '' : null
     });
+    this.props.analytics.sendEvent(
+      'Submit', {
+        label: `search query: ${query}`
+      });
   }
 
   /**
@@ -188,6 +193,7 @@ class HeaderSearch extends React.Component {
       store: null,
       search: null
     });
+    this.analytics.addCategory('Close').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -217,14 +223,16 @@ class HeaderSearch extends React.Component {
     return (
       <div className={this._generateClasses()} ref="headerSearchContainer">
         <form className="header-search__form">
-          <button
-            className="header-search__submit"
-            onClick={this._handleSubmit.bind(this)}
-            type="submit">
-            <SvgIcon
-              name="search_16"
-              size="16" />
-          </button>
+          <span className="v1">
+            <button
+              className="header-search__submit"
+              onClick={this._handleSubmit.bind(this)}
+              type="submit">
+              <SvgIcon
+                name="search_16"
+                size="16" />
+            </button>
+          </span>
           <input
             className="header-search__input"
             name="query"
@@ -262,6 +270,7 @@ class HeaderSearch extends React.Component {
 };
 
 HeaderSearch.propTypes = {
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired
 };
 

@@ -7,7 +7,7 @@ const ReactDOM = require('react-dom');
 const shapeup = require('shapeup');
 
 const EntityDetails = require('../entity-details/entity-details');
-const Panel = require('../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 const SearchResults = require('../search-results/search-results');
 const Store = require('../store/store');
 
@@ -25,6 +25,7 @@ class Charmbrowser extends React.Component {
     // Setting a default state object.
     var state = this.generateState(this.props);
     this.state = state;
+    this.analytics = this.props.analytics.addCategory('Store');
   }
 
   /**
@@ -101,6 +102,7 @@ class Charmbrowser extends React.Component {
       case 'store':
         activeChild = (
           <Store
+            analytics={this.analytics}
             changeState={changeState}
             charmstoreURL={this.props.charmstoreURL}
             gisf={this.props.gisf}
@@ -115,6 +117,7 @@ class Charmbrowser extends React.Component {
           <SearchResults
             acl={this.props.acl}
             addToModel={this.props.addToModel}
+            analytics={this.analytics}
             changeState={changeState}
             charmstoreSearch={this.props.charmstore.search}
             generatePath={appState.generatePath.bind(appState)}
@@ -137,6 +140,7 @@ class Charmbrowser extends React.Component {
           <EntityDetails
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            analytics={this.analytics}
             changeState={changeState}
             charmstore={shapeup.fromShape(charmstore, EntityDetails.propTypes.charmstore)}
             clearLightbox={this.props.clearLightbox}
@@ -150,7 +154,6 @@ class Charmbrowser extends React.Component {
             key={id}
             listPlansForCharm={this.props.listPlansForCharm}
             scrollCharmbrowser={this._scrollCharmbrowser.bind(this)}
-            sendAnalytics={this.props.sendAnalytics}
             setPageTitle={this.props.setPageTitle}
             showTerms={this.props.showTerms}
             staticURL={this.props.staticURL} />
@@ -185,6 +188,7 @@ Charmbrowser.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   charmstore: shapeup.shape({
     getBundleYAML: PropTypes.func.isRequired,
@@ -203,7 +207,6 @@ Charmbrowser.propTypes = {
   gisf: PropTypes.bool.isRequired,
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string

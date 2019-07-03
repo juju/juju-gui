@@ -47,7 +47,7 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
             </span>
           </li>
           <li
-            className="entity-header__series"
+            className="entity-header__revision"
             key="cs:~who/django-42"
           >
             <span
@@ -60,18 +60,24 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
             </span>
           </li>
           <li
-            className="entity-header__series"
-            key="trusty"
-          >
-            trusty
-          </li>
-          <li
             className="entity-header__channels"
             key="Stable, Candidate"
           >
             Stable, Candidate
           </li>
         </ul>
+        <div
+          className="entity-header__series"
+        >
+          Supports:
+          <SeriesList
+            items={
+              Array [
+                "trusty",
+              ]
+            }
+          />
+        </div>
         <ul
           className="entity-header__social-list"
         >
@@ -105,17 +111,32 @@ exports[`EntityHeader renders the latest entity properly 1`] = `
         className="entity-header__right four-col last-col no-margin-bottom"
       >
         <CopyToClipboard
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           className="copy-to-clipboard"
           value="juju deploy cs:django"
         />
-        <Button
-          action={[Function]}
-          disabled={false}
-          tooltip="Add this charm to a new model"
-          type="positive"
+        <span
+          className="v1"
         >
-          Add to model
-        </Button>
+          <Button
+            action={[Function]}
+            disabled={false}
+            modifier="positive"
+            tooltip={
+              Object {
+                "msg": "Add this charm to a new model",
+                "position": "btm-lft",
+              }
+            }
+          >
+            Add to model
+          </Button>
+        </span>
       </div>
     </div>
   </header>

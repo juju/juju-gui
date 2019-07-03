@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_accordion-section.scss');
 
@@ -35,6 +35,9 @@ class AccordionSection extends React.Component {
     Toggles the collapsable content section.
   */
   _toggle() {
+    if (!this.state.open) {
+      this.props.onExpand && this.props.onExpand();
+    }
     this.setState({open: !this.state.open});
   }
 
@@ -111,6 +114,7 @@ AccordionSection.propTypes = {
     PropTypes.string,
     PropTypes.object
   ]),
+  onExpand: PropTypes.func,
   startOpen: PropTypes.bool,
   title: PropTypes.oneOfType([
     PropTypes.string,

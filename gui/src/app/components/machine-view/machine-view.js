@@ -12,8 +12,8 @@ const MachineViewColumn = require('./column/column');
 const MachineViewMachine = require('./machine/machine');
 const MachineViewScaleUp = require('./scale-up/scale-up');
 const MachineViewUnplacedUnit = require('./unplaced-unit/unplaced-unit');
-const SvgIcon = require('../svg-icon/svg-icon');
-const Button = require('../shared/button/button');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_machine-view.scss');
 
@@ -28,10 +28,12 @@ class MachineView extends React.Component {
       showConstraints: true,
       showScaleUp: false
     };
+    this.analytics = this.props.analytics.addCategory('Machine View');
   }
 
   componentDidMount() {
     this.selectMachine(this.props.machine);
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -112,6 +114,7 @@ class MachineView extends React.Component {
   */
   _openStore() {
     this.props.changeState({store: ''});
+    this.analytics.addCategory('Store').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -175,10 +178,10 @@ class MachineView extends React.Component {
       components.push(
         <MachineViewUnplacedUnit
           acl={props.acl.reshape(propTypes.acl)}
+          analytics={this.analytics}
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           key={unit.id}
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
-          sendAnalytics={props.sendAnalytics}
           series={props.series}
           unitAPI={{
             icon: service.get('icon') || '',
@@ -191,12 +194,18 @@ class MachineView extends React.Component {
     return (
       <div>
         <div className="machine-view__auto-place">
-          <Button
-            action={props.modelAPI.autoPlaceUnits}
-            disabled={props.acl.isReadOnly()}
-            type="inline-neutral">
-            Auto place
-          </Button>
+          <span className="v1">
+            <Button
+              action={() => {
+                props.modelAPI.autoPlaceUnits();
+                this.analytics.addCategory('Auto Place').sendEvent(this.props.analytics.CLICK);
+              }}
+              disabled={props.acl.isReadOnly()}
+              extraClasses="is-inline"
+              modifier="neutral">
+              Auto place
+            </Button>
+          </span>
           <p>
             You can also drag and drop unplaced units to customise your
             deployment.
@@ -224,6 +233,7 @@ class MachineView extends React.Component {
     return (
       <MachineViewScaleUp
         acl={props.acl.reshape(propTypes.acl)}
+        analytics={this.analytics}
         dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
         toggleScaleUp={this._toggleScaleUp.bind(this)} />);
   }
@@ -291,7 +301,11 @@ class MachineView extends React.Component {
           </ul>
           <span
             className="link"
-            onClick={this._addMachine.bind(this)}
+            onClick={() => {
+              this._addMachine();
+              this.analytics.addCategory('Machine Onboarding').addCategory('Add Machine')
+                .sendEvent(this.props.analytics.CLICK);
+            }}
             role="button"
             tabIndex="0">
             Add machine
@@ -315,6 +329,7 @@ class MachineView extends React.Component {
       components.push(
         <MachineViewMachine
           acl={acl}
+          analytics={this.analytics}
           changeState={props.changeState}
           dbAPI={dbAPI}
           dropUnit={this._dropUnit.bind(this)}
@@ -329,7 +344,6 @@ class MachineView extends React.Component {
           modelAPI={modelAPI}
           parseConstraints={props.parseConstraints}
           ref={`machine-${machine.id}`}
-          sendAnalytics={props.sendAnalytics}
           showConstraints={
             this.state.showConstraints || machine.id === selectedMachine}
           showSSHButton={props.showSSHButtons && window.juju_config.flags.expert}
@@ -378,6 +392,7 @@ class MachineView extends React.Component {
       components.push(
         <MachineViewMachine
           acl={props.acl.reshape(propTypes.acl)}
+          analytics={this.analytics}
           dbAPI={props.dbAPI.reshape(propTypes.dbAPI)}
           dropUnit={this._dropUnit.bind(this)}
           key={container.id}
@@ -391,7 +406,6 @@ class MachineView extends React.Component {
           modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
           parseConstraints={props.parseConstraints}
           ref={`container-${container.id}`}
-          sendAnalytics={props.sendAnalytics}
           type="container" />);
     });
     return (
@@ -419,6 +433,7 @@ class MachineView extends React.Component {
       placingUnit: null,
       showAddMachine: false
     });
+    this.analytics.addCategory('Machine Add Form').sendEvent(this.props.analytics.CANCEL);
   }
 
   /**
@@ -435,6 +450,7 @@ class MachineView extends React.Component {
     return (
       <MachineViewAddMachine
         acl={props.acl.reshape(propTypes.acl)}
+        analytics={this.analytics}
         close={this._closeAddMachine.bind(this)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         selectMachine={this.selectMachine.bind(this)}
@@ -457,6 +473,7 @@ class MachineView extends React.Component {
     }
     if (selectedMachine && !deleted) {
       this.setState({showAddContainer: true});
+      this.analytics.addCategory('Container Add Form').sendEvent(this.props.analytics.VIEW);
     }
   }
 
@@ -470,6 +487,7 @@ class MachineView extends React.Component {
       placingUnit: null,
       showAddContainer: false
     });
+    this.analytics.addCategory('Container Add Form').sendEvent(this.props.analytics.CANCEL);
   }
 
   /**
@@ -486,6 +504,7 @@ class MachineView extends React.Component {
     return (
       <MachineViewAddMachine
         acl={props.acl.reshape(propTypes.acl)}
+        analytics={this.analytics}
         close={this._closeAddContainer.bind(this)}
         modelAPI={props.modelAPI.reshape(propTypes.modelAPI)}
         parentId={this._getSelected().machine}
@@ -751,8 +770,8 @@ class MachineView extends React.Component {
         <div className="machine-view__content">
           <MachineViewColumn
             acl={acl}
+            analytics={this.analytics}
             droppable={false}
-            sendAnalytics={props.sendAnalytics}
             title="New units"
             toggle={unplacedToggle}>
             {this._generateScaleUp()}
@@ -761,11 +780,11 @@ class MachineView extends React.Component {
           <MachineViewColumn
             acl={acl}
             activeMenuItem={this.state.machineSort}
+            analytics={this.analytics}
             droppable={true}
             dropUnit={this._dropUnit.bind(this)}
             menuItems={machineMenuItems}
             ref="machinesColumn"
-            sendAnalytics={props.sendAnalytics}
             title={this._generateMachinesTitle()}
             type="machine">
             {this._generateAddMachine()}
@@ -774,11 +793,11 @@ class MachineView extends React.Component {
           <MachineViewColumn
             acl={acl}
             activeMenuItem={this.state.containerSort}
+            analytics={this.analytics}
             droppable={!!this._getSelected().machine}
             dropUnit={this._dropUnit.bind(this)}
             menuItems={containerMenuItems}
             ref="containersColumn"
-            sendAnalytics={props.sendAnalytics}
             title={this._generateContainersTitle()}
             type="container">
             {this._generateAddContainer()}
@@ -795,6 +814,7 @@ MachineView.propTypes = {
     isReadOnly: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   dbAPI: shapeup.shape({
     addGhostAndEcsUnits: PropTypes.func.isRequired,
@@ -820,7 +840,6 @@ MachineView.propTypes = {
   parseConstraints: PropTypes.func.isRequired,
   parseMachineDetails: PropTypes.func.isRequired,
   parseMachineName: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   series: PropTypes.array,
   showSSHButtons: PropTypes.bool
 };

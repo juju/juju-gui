@@ -5,11 +5,11 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
+const Analytics = require('test/fake-analytics');
 const Inspector = require('./inspector');
 const InspectorChangeVersion = require('./change-version/change-version');
 const InspectorExpose = require('./expose/expose');
 const InspectorHeader = require('./header/header');
-const Configuration = require('./config/config');
 const InspectorPlan = require('./plan/plan');
 const InspectorRelateTo = require('./relate-to/relate-to');
 const InspectorRelateToEndpoint = require('./relate-to/endpoint/endpoint');
@@ -17,7 +17,6 @@ const InspectorRelations = require('./relations/relations');
 const InspectorResourcesList = require('./resources/list/list');
 const ScaleService = require('./scale-service/scale-service');
 const ServiceOverview = require('./service-overview/service-overview');
-const UnitDetails = require('./unit-details/unit-details');
 const UnitList = require('./unit-list/unit-list');
 
 describe('Inspector', function() {
@@ -28,6 +27,7 @@ describe('Inspector', function() {
       acl={options.acl || acl}
       addCharm={options.addCharm || sinon.stub()}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       appState={options.appState || appState}
       charm={options.charm || charm}
       getAvailableVersions={options.getAvailableVersions || sinon.stub()}
@@ -117,6 +117,7 @@ describe('Inspector', function() {
       <div className="inspector-view">
         <InspectorHeader
           activeComponent={undefined}
+          analytics={Analytics}
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
           changeState={wrapper.find('InspectorHeader').prop('changeState')}
           charmId="charmid"
@@ -129,6 +130,7 @@ describe('Inspector', function() {
           <ServiceOverview
             acl={acl}
             addNotification={sinon.stub()}
+            analytics={Analytics}
             changeState={wrapper.find('ServiceOverview').prop('changeState')}
             charm={charm}
             destroyService={sinon.stub()}
@@ -157,6 +159,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <UnitList
           acl={acl}
+          analytics={Analytics}
           changeState={wrapper.find('UnitList').prop('changeState')}
           destroyUnits={sinon.stub()}
           envResolved={sinon.stub()}
@@ -172,24 +175,7 @@ describe('Inspector', function() {
       activeComponent: 'config'
     };
     const wrapper = renderComponent();
-    const header = wrapper.find('InspectorHeader');
-    assert.equal(header.prop('activeComponent'), 'config');
-    assert.equal(header.prop('title'), 'Configure');
-    const expected = (
-      <div className="inspector-content">
-        <Configuration
-          acl={acl}
-          addNotification={sinon.stub()}
-          changeState={wrapper.find('Configuration').prop('changeState')}
-          charm={charm}
-          getServiceByName={sinon.stub()}
-          service={service}
-          serviceRelations={['relations']}
-          setConfig={sinon.stub()}
-          unplaceServiceUnits={sinon.stub()}
-          updateServiceUnitsDisplayname={sinon.stub()} />
-      </div>);
-    assert.compareJSX(wrapper.find('.inspector-content'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('displays the unit details when the app state calls for it', function() {
@@ -207,24 +193,7 @@ describe('Inspector', function() {
       unit: '5'
     };
     const wrapper = renderComponent();
-    const header = wrapper.find('InspectorHeader');
-    assert.equal(header.prop('activeComponent'), 'unit');
-    assert.equal(header.prop('title'), 'demo-unit');
-    assert.equal(header.prop('type'), headerType);
-    const expected = (
-      <div className="inspector-content">
-        <UnitDetails
-          acl={acl}
-          changeState={wrapper.find('UnitDetails').prop('changeState')}
-          destroyUnits={sinon.stub()}
-          generatePath={sinon.stub()}
-          previousComponent={undefined}
-          service={service}
-          showSSHButtons={false}
-          unit={unit}
-          unitStatus={null} />
-      </div>);
-    assert.compareJSX(wrapper.find('.inspector-content'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('handles the unit being removed while viewing the unit', function() {
@@ -344,6 +313,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <ScaleService
           acl={acl}
+          analytics={Analytics}
           changeState={wrapper.find('ScaleService').prop('changeState')}
           initUtils={{
             addGhostAndEcsUnits: sinon.stub(),
@@ -371,6 +341,7 @@ describe('Inspector', function() {
         <InspectorExpose
           acl={acl}
           addNotification={sinon.stub()}
+          analytics={Analytics}
           changeState={wrapper.find('InspectorExpose').prop('changeState')}
           modelAPI={{
             exposeService: sinon.stub(),
@@ -395,6 +366,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <InspectorRelations
           acl={acl}
+          analytics={Analytics}
           changeState={wrapper.find('InspectorRelations').prop('changeState')}
           destroyRelations={sinon.stub()}
           service={service}
@@ -414,6 +386,7 @@ describe('Inspector', function() {
     const expected = (
       <div className="inspector-content">
         <InspectorRelateTo
+          analytics={Analytics}
           application={service}
           changeState={wrapper.find('InspectorRelateTo').prop('changeState')}
           relatableApplications={['apps']} />
@@ -437,6 +410,7 @@ describe('Inspector', function() {
     const expected = (
       <div className="inspector-content">
         <InspectorRelateToEndpoint
+          analytics={Analytics}
           backState={{
             gui: {
               inspector: {
@@ -466,6 +440,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <InspectorPlan
           acl={acl}
+          analytics={Analytics}
           currentPlan={activePlan} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);
@@ -485,6 +460,7 @@ describe('Inspector', function() {
           acl={acl}
           addCharm={sinon.stub()}
           addNotification={sinon.stub()}
+          analytics={Analytics}
           changeState={wrapper.find('InspectorChangeVersion').prop('changeState')}
           charmId="cs:demo"
           getAvailableVersions={sinon.stub()}
@@ -511,6 +487,7 @@ describe('Inspector', function() {
       <div className="inspector-content">
         <InspectorResourcesList
           acl={acl}
+          analytics={Analytics}
           resources={[{resource: 'one'}]} />
       </div>);
     assert.compareJSX(wrapper.find('.inspector-content'), expected);

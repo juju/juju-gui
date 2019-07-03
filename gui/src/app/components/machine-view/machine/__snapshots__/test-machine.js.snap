@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MachineViewMachine can render a container 1`] = `
+<div>
+  <Machine
+    classes={
+      Array [
+        "machine-view__machine",
+      ]
+    }
+    isContainer={true}
+    machine={
+      Object {
+        "name": "new0/lxc/0",
+        "region": undefined,
+        "root": undefined,
+        "series": undefined,
+        "status": undefined,
+      }
+    }
+    menuItems={
+      Array [
+        Object {
+          "action": [Function],
+          "label": "Destroy",
+        },
+      ]
+    }
+    onClick={[Function]}
+  >
+    <ul
+      className="machine-view__machine-units machine__units"
+    >
+      <DragSource(MachineViewMachineUnit)
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        icon="icon.svg"
+        key="wordpress/0"
+        machineType="container"
+        removeUnit={[Function]}
+        unit={
+          Object {
+            "agent_state": "started",
+            "displayName": "wordpress/0",
+            "id": "wordpress/0",
+          }
+        }
+      />
+      <DragSource(MachineViewMachineUnit)
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        icon="icon.svg"
+        key="wordpress/1"
+        machineType="container"
+        removeUnit={[Function]}
+        unit={
+          Object {
+            "agent_state": "started",
+            "displayName": "wordpress/1",
+            "id": "wordpress/1",
+          }
+        }
+      />
+    </ul>
+    <div
+      className="machine-view__machine-drop-target"
+    >
+      <div
+        className="machine-view__machine-drop-message"
+      >
+        Add to 
+        new0/lxc/0
+      </div>
+    </div>
+  </Machine>
+</div>
+`;
+
+exports[`MachineViewMachine can render a machine 1`] = `
+<div>
+  <Machine
+    classes={
+      Array [
+        "machine-view__machine",
+      ]
+    }
+    hardware={
+      Array [
+        Object {
+          "label": "mem",
+          "value": "1.00GB",
+        },
+      ]
+    }
+    isContainer={false}
+    machine={
+      Object {
+        "name": "new0",
+        "region": undefined,
+        "root": undefined,
+        "series": "wily",
+        "status": undefined,
+      }
+    }
+    menuItems={
+      Array [
+        Object {
+          "action": [Function],
+          "label": "Destroy",
+        },
+      ]
+    }
+    onClick={[Function]}
+  >
+    <ul
+      className="machine-view__machine-units machine__units"
+    >
+      <DragSource(MachineViewMachineUnit)
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        icon="icon.svg"
+        key="wordpress/0"
+        machineType="machine"
+        removeUnit={[Function]}
+        unit={
+          Object {
+            "agent_state": "started",
+            "displayName": "wordpress/0",
+            "id": "wordpress/0",
+          }
+        }
+      />
+      <DragSource(MachineViewMachineUnit)
+        acl={
+          Object {
+            "isReadOnly": [Function],
+          }
+        }
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        icon="icon.svg"
+        key="wordpress/1"
+        machineType="machine"
+        removeUnit={[Function]}
+        unit={
+          Object {
+            "agent_state": "started",
+            "displayName": "wordpress/1",
+            "id": "wordpress/1",
+          }
+        }
+      />
+    </ul>
+    <div
+      className="machine-view__machine-drop-target"
+    >
+      <div
+        className="machine-view__machine-drop-message"
+      >
+        Add to 
+        new0
+      </div>
+    </div>
+  </Machine>
+</div>
+`;

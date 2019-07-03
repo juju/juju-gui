@@ -24,6 +24,7 @@ class Logout extends React.Component {
 
   _handleClick() {
     const props = this.props;
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.CLICK);
     if (props.doCharmstoreLogout()) {
       props.locationAssign(props.logoutUrl);
     }
@@ -51,6 +52,7 @@ class Logout extends React.Component {
 };
 
 Logout.propTypes = {
+  analytics: PropTypes.object.isRequired,
   charmstoreLogoutUrl: PropTypes.string.isRequired,
   doCharmstoreLogout: PropTypes.func.isRequired,
   locationAssign: PropTypes.func.isRequired,

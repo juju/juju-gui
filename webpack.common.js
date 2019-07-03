@@ -13,6 +13,7 @@ module.exports = {
     library: 'JujuGUI',
     libraryTarget: 'var'
   },
+
   module: {
     rules: [
       // Use Babel on all our files, but not node_modules.
@@ -59,6 +60,12 @@ module.exports = {
       chunkFilename: '[id].css'
     })
   ],
+  resolve: {
+    modules: [
+      path.resolve(__dirname, 'gui/src/app/'),
+      'node_modules'
+    ]
+  },
   stats: {
     // This hides the output from MiniCssExtractPlugin as it's incredibly verbose.
     children: false

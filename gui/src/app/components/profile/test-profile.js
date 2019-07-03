@@ -4,6 +4,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const Profile = require('./profile');
 
 describe('Profile', function() {
@@ -14,6 +15,7 @@ describe('Profile', function() {
         activeSection={options.activeSection || undefined}
         addNotification={sinon.stub()}
         addToModel={options.addToModel || sinon.stub()}
+        analytics={Analytics}
         bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}
@@ -34,7 +36,6 @@ describe('Profile', function() {
         getUser={options.getUser || sinon.stub()}
         gisf={true}
         payment={options.payment}
-        sendAnalytics={sinon.stub()}
         showPay={options.showPay || false}
         storeUser={options.storeUser || sinon.stub()}
         stripe={options.stripe}

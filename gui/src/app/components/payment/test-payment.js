@@ -5,11 +5,12 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const Payment = require('./payment');
 const PaymentCharges = require('./charges/charges');
 const PaymentDetails = require('./details/details');
 const PaymentMethods = require('./methods/methods');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('Payment', function() {
   let acl, payment, stripe, user;
@@ -18,6 +19,7 @@ describe('Payment', function() {
     <Payment
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       payment={options.payment || payment}
       stripe={options.stripe || stripe}
       username={options.spinach || 'spinach'} />
@@ -130,10 +132,11 @@ describe('Payment', function() {
     const expected = (
       <div className="payment__no-user">
         <p>You are not set up to make payments.</p>
-        <p>
+        <p className="v1">
           <Button
             action={wrapper.find('Button').prop('action')}
-            type="inline-positive">
+            extraClasses="is-inline"
+            modifier="positive">
             Set up payments
           </Button>
         </p>

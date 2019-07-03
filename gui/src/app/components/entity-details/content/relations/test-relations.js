@@ -4,8 +4,10 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+
+const Analytics = require('test/fake-analytics');
 const EntityContentRelations = require('./relations');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../../utils/component-test-utils');
 
@@ -14,6 +16,7 @@ describe('EntityContentRelations', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <EntityContentRelations
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       relations={mockEntity.get('relations')} />
   );
@@ -97,7 +100,7 @@ describe('EntityContentRelations', function() {
       const wrapper = renderComponent();
       const expected = (
         <button
-          className="button--inline-neutral"
+          className="p-button--neutral is-inline"
           onClick={wrapper.find('button').prop('onClick')}
           role="button">View more relations</button>);
       assert.compareJSX(wrapper.find('button'), expected);

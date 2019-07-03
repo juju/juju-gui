@@ -1,75 +1,102 @@
-/* Copyright (C) 2017 Canonical Ltd. */
+/* Copyright (C) 2019 Canonical Ltd. */
 'use strict';
 
-
-/**
-  Factory that returns a function for sending analytics to GA.
-
-  @param {String} controllerAPI For checking status of the user.
-  @param {String} dataLayer The GA dataLayer instance.
-  @return {function} The curryed function for sending analaytics.
-*/
-const sendAnalyticsFactory = function(controllerAPI, dataLayer) {
+class Analytics {
+  /**
+    Set up the analytics instance.
+    @param {String} dataLayer - The Google Tag Manager dataLayer instance.
+    @param {Object} data - Optional parameters:
+      - categories: an array of categories;
+      - globalLabels: a function that will be used to generate the label string.
+  */
+  constructor(dataLayer, data={}) {
+    this.dataLayer = dataLayer;
+    this.categories = data.categories || [];
+    this.globalLabels = data.globalLabels;
+    // Common events.
+    this.ADD = 'Add';
+    this.CANCEL = 'Cancel';
+    this.CLICK = 'Click';
+    this.CLOSE = 'Close';
+    this.DELETE = 'Delete';
+    this.DRAG = 'Drag';
+    this.DROP = 'Drop';
+    this.HOVER = 'Hover';
+    this.UPDATE = 'Update';
+    this.VIEW = 'View';
+  }
 
   /**
-    The retunrned function that sends stats to GA.
-
-    @param {String} category A sensible category name. Generally the
-      component name is a good start.
-    @param {String} action Some identifiable action.
-    @param {String} label Name the event. This might be enough for
-      some events.
-    @param {Object} value An optional single depth object for
-      extra information.
+    Append a category. This will be displayed in the analytics as
+    something like: Charmbrowser > Search Results > Filter
+    @param {Object|String} categoryOrComponent - A category name or React
+      component.
+    @returns {Object} A new Analytics instance including the old and new data.
   */
-  return function(category, action, label, value) {
-    // We want to check for required params to provide good feedback for
-    // developers - this is a fail fast way to ensure required fields are
-    // set. On the other hand, we don't want to block the execution in case
-    // of errors while sending analytics.
-    const requiredArgs = ['category', 'action', 'label'];
-    for (let i = 0, ii = requiredArgs.length; i < ii; i+= 1) {
-      if (!arguments[i]) {
-        console.error(`cannot send analytics: ${requiredArgs[i]} required`);
+  addCategory(categoryOrComponent) {
+    let name;
+    if (typeof categoryOrComponent === 'string') {
+      if (categoryOrComponent.includes('>')) {
+        console.error(
+          'Analytics category string includes ">" which is reserved for ' +
+          'separating categories.');
         return;
       }
+      name = categoryOrComponent;
+    } else if (categoryOrComponent && categoryOrComponent._reactInternalFiber) {
+      // Let's just be helpful for React components so that we don't have to
+      // specify the name each time.
+      name = categoryOrComponent._reactInternalFiber.elementType.name;
     }
-    if (!dataLayer) {
-      return null;
+    let categories = this.categories;
+    if (name) {
+      categories = this.categories.concat([name]);
     }
-    let loggedIn = undefined;
-    // Sometimes this doesn't get set...
-    // Always decorate with whether the user is logged in
-    if (controllerAPI) {
-      loggedIn = controllerAPI.userIsAuthenticated;
-    }
-    let valueObj = {
-      loggedIn: loggedIn
-    };
-    let valueArr = [];
-    let valueStr;
-
-    if (value) {
-      Object.keys(value).forEach(key => {
-        valueObj[key] = value[key];
-      });
-    }
-
-    Object.keys(valueObj).forEach(key => {
-      valueArr.push(`${key}:${valueObj[key]}`);
+    // Return a new Analytics instance with the new data. This is so that we
+    // don't overwrite a top level instance with every fork as the analytics is
+    // passed into nested components.
+    return new Analytics(this.dataLayer, {
+      categories: categories,
+      globalLabels: this.globalLabels
     });
+  }
 
-    valueStr = valueArr.join('|');
-
-    // Emit a google tag manager event registering the state change.
-    dataLayer.push({
+  /**
+    Send an analytics event.
+    @param {String} action - An action e.g. Click or Delete.
+    @param {Object} options - Optional parameters:
+      - value: as an int;
+      - label: a string that will be appended to the existing label.
+  */
+  sendEvent(action, options={}) {
+    // It's possible the analytics tracking code isn't available.
+    if (!this.dataLayer) {
+      return;
+    }
+    if (!action) {
+      console.error('Analytics action not provided');
+      return;
+    }
+    let label;
+    if (this.globalLabels) {
+      label = this.globalLabels();
+    }
+    if (options.label) {
+      if (label) {
+        label = `${label}, ${options.label}`;
+      } else {
+        label = options.label;
+      }
+    }
+    const event = {
       'event': 'GAEvent',
-      'eventCategory': category,
+      'eventCategory': this.categories.join(' > '),
       'eventAction': action,
       'eventLabel': label,
-      'eventValue': valueStr
-    });
-  };
-};
+      'eventValue': options.value
+    };
+    this.dataLayer.push(event);
+  }
+}
 
-module.exports = {sendAnalyticsFactory};
+module.exports = Analytics;

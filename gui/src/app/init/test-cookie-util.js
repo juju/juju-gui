@@ -3,17 +3,15 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
+const cookie = require('js-cookie');
 
 const cookieUtil = require('./cookie-util');
 const Notification = require('../components/notification/notification');
 
 describe('CookieUtil', () => {
-  let fakeDocument, state;
+  let state;
 
   beforeEach(() => {
-    fakeDocument = {
-      cookie: ''
-    };
     state = {
       dispatch: sinon.stub()
     };
@@ -21,6 +19,7 @@ describe('CookieUtil', () => {
 
   afterEach(() => {
     localStorage.removeItem('disable-cookie');
+    cookie.remove('_cookies_accepted');
   });
 
   it('calling check returns the notification', () => {
@@ -28,7 +27,7 @@ describe('CookieUtil', () => {
     // Notification component.
     const wrapper = enzyme.shallow(
       <div>
-        {cookieUtil.check(fakeDocument, state)}
+        {cookieUtil.check(state)}
       </div>);
     const content = (
       <span>
@@ -50,21 +49,19 @@ describe('CookieUtil', () => {
   });
 
   it('closing the banner sets the cookie', () => {
-    const date = new Date('January 12, 2025');
-    assert.equal(fakeDocument.cookie, '');
-    cookieUtil.close(fakeDocument, state);
-    assert.equal(fakeDocument.cookie, `_cookies_accepted=true; expiry=${date}`);
+    assert.equal(cookie.get('_cookies_accepted'), undefined);
+    cookieUtil.close(state);
+    assert.equal(cookie.get('_cookies_accepted'), 'true');
   });
 
   it('the cookie prevents the node from being made visible', () => {
-    const date = new Date('January 12, 2025');
-    fakeDocument.cookie = `_cookies_accepted=true; expiry=${date}`;
-    assert.strictEqual(cookieUtil.check(fakeDocument, state), null);
+    cookie.set('_cookies_accepted', 'true');
+    assert.strictEqual(cookieUtil.check(state), null);
   });
 
   it('the custom setting prevents the node from being made visible', () => {
     localStorage.setItem('disable-cookie', 'true');
-    cookieUtil.check(fakeDocument);
-    assert.strictEqual(cookieUtil.check(fakeDocument, state), null);
+    cookieUtil.check(state);
+    assert.strictEqual(cookieUtil.check(state), null);
   });
 });

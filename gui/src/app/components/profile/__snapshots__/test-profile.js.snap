@@ -8,6 +8,12 @@ exports[`Profile can render 1`] = `
   visible={true}
 >
   <ProfileHeader
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
     changeState={[Function]}
     controllerIP="1.2.3.4"
     getUser={[Function]}
@@ -63,6 +69,12 @@ exports[`Profile can render 1`] = `
             }
           }
           addNotification={[Function]}
+          analytics={
+            Object {
+              "addCategory": [Function],
+              "sendEvent": [Function],
+            }
+          }
           baseURL="/gui/"
           changeState={[Function]}
           destroyModel={[Function]}

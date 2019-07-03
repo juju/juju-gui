@@ -3,11 +3,11 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
+const Analytics = require('test/fake-analytics');
 const MachineViewUnplacedUnit = require('./unplaced-unit');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
 
@@ -19,11 +19,11 @@ describe('MachineViewUnplacedUnit', function() {
     // test the internal component so we access it via DecoratedComponent.
     <MachineViewUnplacedUnit.DecoratedComponent
       acl={options.acl || acl}
+      analytics={Analytics}
       connectDragSource={jsTestUtils.connectDragSource}
       dbAPI={options.dbAPI || dbAPI}
       isDragging={options.isDragging === undefined ? false : options.isDragging}
       modelAPI={options.modelAPI || modelAPI}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       unitAPI={options.unitAPI || unitAPI} />
   );
 
@@ -57,15 +57,17 @@ describe('MachineViewUnplacedUnit', function() {
           className="machine-view__unplaced-unit-icon"
           src="icon.svg" />
         django/7
-        <ButtonDropdown
-          classes={['machine-view__unplaced-unit-dropdown']}
-          listItems={[{
-            label: 'Deploy to...',
-            action: items[0].action
-          }, {
-            label: 'Destroy',
-            action: items[1].action
-          }]} />
+        <span className="v1">
+          <ButtonDropdown
+            classes={['machine-view__unplaced-unit-dropdown']}
+            listItems={[{
+              label: 'Deploy to...',
+              action: items[0].action
+            }, {
+              label: 'Destroy',
+              action: items[1].action
+            }]} />
+        </span>
         {undefined}
         <div className="machine-view__unplaced-unit-drag-state"></div>
       </li>);

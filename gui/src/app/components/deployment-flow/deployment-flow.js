@@ -29,7 +29,7 @@ const DeploymentSSHKey = require('./sshkey/sshkey');
 const DeploymentVPC = require('./vpc/vpc');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const Spinner = require('../spinner/spinner');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_deployment-flow.scss');
 
@@ -66,16 +66,28 @@ class DeploymentFlow extends React.Component {
       vpcId: INITIAL_VPC_ID,
       vpcIdForce: false
     };
+    let flowType = 'Deploy';
+    if (this.state.isDirectDeploy) {
+      flowType = 'Direct Deploy';
+    } else if (this._isExpertFlow()) {
+      flowType = 'Expert';
+    } else if (this.props.modelCommitted) {
+      flowType = 'Commit';
+    }
+    this.analytics = this.props.analytics.addCategory(`${flowType} Flow`);
   }
 
   componentWillMount() {
     if (this.props.isLoggedIn()) {
       this._getAgreements();
     }
-    this.sendAnalytics('Component mounted');
     if (this.state.isDirectDeploy) {
       this._getDirectDeployEntity(this.props.ddData.id);
     }
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -414,10 +426,6 @@ class DeploymentFlow extends React.Component {
       return;
     }
     this.setState({deploying: true});
-    this.sendAnalytics(
-      'Button click',
-      'Deploy model'
-    );
     if (this.props.stats) {
       this.props.stats.increase('deploy');
     }
@@ -507,6 +515,7 @@ class DeploymentFlow extends React.Component {
     } else {
       deploy();
     }
+    this.analytics.sendEvent('Deploy');
   }
 
   /**
@@ -626,7 +635,7 @@ class DeploymentFlow extends React.Component {
       action: this._clearCloud.bind(this),
       disabled: this.props.acl.isReadOnly(),
       title: 'Change cloud',
-      type: 'neutral'
+      modifier: 'neutral'
     }];
   }
 
@@ -656,6 +665,7 @@ class DeploymentFlow extends React.Component {
         title={title}>
         <DeploymentSSHKey
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           cloud={cloud}
           setLaunchpadUsernames={this._setLaunchpadUsernames.bind(this)}
           setSSHKeys={this._setSSHKeys.bind(this)}
@@ -679,7 +689,9 @@ class DeploymentFlow extends React.Component {
       <div className="deployment-vpc">
         <AccordionSection
           title={<span>Add AWS VPC ID <em>(optional)</em></span>}>
-          <DeploymentVPC setVPCId={this._setVPCId.bind(this)} />
+          <DeploymentVPC
+            analytics={this.analytics}
+            setVPCId={this._setVPCId.bind(this)} />
         </AccordionSection>
       </div>);
 
@@ -705,6 +717,7 @@ class DeploymentFlow extends React.Component {
         title="Set your model name">
         <DeploymentModelName
           acl={this.props.acl}
+          analytics={this.analytics}
           ddEntity={this.state.ddEntity}
           focusName={!isExpertFlow}
           modelName={this.props.modelName}
@@ -729,6 +742,7 @@ class DeploymentFlow extends React.Component {
         title="Pricing">
         <DeploymentPricing
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           applications={this.props.applications}
           changeState={this.props.changeState}
           charms={this.props.charms}
@@ -763,42 +777,12 @@ class DeploymentFlow extends React.Component {
         showCheck={true}
         title="Set your maximum monthly budget (optional)">
         <DeploymentExpertBudget
+          analytics={this.analytics}
           budget={this.state.budget}
           // 720 is the average number of hours in a month.
           estimateWithSLA={((hourPrice * machineCount * 720) + estimate).toFixed(2)}
           setBudget={this._setBudget.bind(this)} />
       </DeploymentSection>);
-  }
-
-  /**
-    Wrapper that generates a string based on various state to send to GA.
-
-    @method sendAnalytics
-    @param {string} action The action being performed.
-    @param {arguments} args All arguments passed will be used.
-  */
-  sendAnalytics(action, ...args) {
-    if (this.props.ddData) {
-      args.push('is DD');
-    } else {
-      args.push('is from canvas');
-    }
-    if (!this.props.modelCommitted) {
-      args.push('is new model');
-    } else {
-      args.push('is model update');
-    }
-    if (this.props.gisf) {
-      args.push('has USSO');
-    } else {
-      args.push('doesn\'t have USSO');
-    }
-
-    this.props.sendAnalytics(
-      'Deployment Flow',
-      action,
-      args.join(' - ')
-    );
   }
 
   /**
@@ -836,6 +820,7 @@ class DeploymentFlow extends React.Component {
     return (
       <DeploymentLogin
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         callback={callback}
         gisf={this.props.gisf}
         isDirectDeploy={state.isDirectDeploy}
@@ -866,6 +851,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentCloud
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           cloud={cloud}
           controllerIsReady={this.props.controllerIsReady}
           listClouds={this.props.controllerAPI.listClouds}
@@ -896,6 +882,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentCredential
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           cloud={cloud}
           controllerAPI={shapeup.addReshape({
             getCloudCredentialNames: controllerAPI.getCloudCredentialNames.bind(controllerAPI),
@@ -906,7 +893,6 @@ class DeploymentFlow extends React.Component {
           credential={this.state.credential}
           editable={!this.props.modelCommitted}
           region={this.state.region}
-          sendAnalytics={this.sendAnalytics.bind(this)}
           setCredential={this._setCredential.bind(this)}
           setRegion={this._setRegion.bind(this)}
           user={this.props.getUserName()} />
@@ -959,11 +945,16 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-services">
         <AccordionSection
+          onExpand={() => {
+            this.analytics.addCategory('Model Changes').sendEvent(
+              this.props.analytics.VIEW);
+          }}
           startOpen={this.props.modelCommitted}
           title="Model changes">
           <DeploymentServices
             acl={this.props.acl}
             addNotification={this.props.addNotification}
+            analytics={this.analytics}
             changesUtils={this.props.changesUtils}
             charmsGetById={this.props.charmsGetById}
             getCurrentChangeSet={this.props.getCurrentChangeSet}
@@ -997,6 +988,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentBudget
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           listBudgets={this.props.plans.listBudgets}
           setBudget={this._setBudget.bind(this)}
           user={this.props.getUserName()} />
@@ -1025,6 +1017,7 @@ class DeploymentFlow extends React.Component {
         <DeploymentPayment
           acl={props.acl}
           addNotification={props.addNotification}
+          analytics={this.analytics}
           changeState={props.changeState}
           generatePath={props.generatePath}
           payment={props.payment}
@@ -1060,6 +1053,7 @@ class DeploymentFlow extends React.Component {
     return (
       <DeploymentAgreements
         acl={this.props.acl}
+        analytics={this.analytics}
         disabled={status.disabled}
         onCheckboxChange={this._handleTermsAgreement.bind(this)}
         showTerms={!!isExpertFlow}
@@ -1087,17 +1081,17 @@ class DeploymentFlow extends React.Component {
       'inner-wrapper',
       'deployment-flow__deploy',
       {'deployment-flow__deploy--cookie-visible': this.props.gtmEnabled &&
-        cookieUtil.shouldShowNotification(document)}
+        cookieUtil.shouldShowNotification()}
     );
     return (
       <div className="twelve-col">
         <div className={classes}>
           {this._generateAgreementsSection()}
-          <div className="deployment-flow__deploy-action">
+          <div className="deployment-flow__deploy-action v1">
             <Button
               action={this._handleDeploy.bind(this)}
               disabled={!this._deploymentAllowed()}
-              type="positive">
+              modifier="positive">
               {deployTitle}
             </Button>
           </div>
@@ -1113,12 +1107,12 @@ class DeploymentFlow extends React.Component {
     return (
       <DeploymentExpertIntro
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         changeState={this.props.changeState}
         ddData={this.props.ddData}
         entityModel={this.state.ddEntity}
         generatePath={this.props.generatePath}
         getDiagramURL={this.props.charmstore.getDiagramURL}
-        sendAnalytics={this.props.sendAnalytics}
         staticURL={this.props.staticURL} />);
   }
 
@@ -1145,6 +1139,7 @@ class DeploymentFlow extends React.Component {
       return (
         <DeploymentDirectDeploy
           addNotification={props.addNotification}
+          analytics={this.analytics}
           changeState={props.changeState}
           ddData={props.ddData}
           entityModel={state.ddEntity}
@@ -1250,10 +1245,10 @@ class DeploymentFlow extends React.Component {
     return (
       <div className="deployment-flow">
         <DeploymentPanel
+          analytics={this.analytics}
           changeState={this.props.changeState}
           isDirectDeploy={this.state.isDirectDeploy}
           loggedIn={this.props.isLoggedIn()}
-          sendAnalytics={this.sendAnalytics.bind(this)}
           title={this.props.modelName}>
           {content}
         </DeploymentPanel>
@@ -1266,6 +1261,7 @@ DeploymentFlow.propTypes = {
   WebHandler: PropTypes.func.isRequired,
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   applications: PropTypes.array.isRequired,
   changeState: PropTypes.func.isRequired,
   changes: PropTypes.object.isRequired,
@@ -1324,7 +1320,6 @@ DeploymentFlow.propTypes = {
   }).isRequired,
   profileUsername: PropTypes.string.isRequired,
   region: PropTypes.string,
-  sendAnalytics: PropTypes.func.isRequired,
   setModelName: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
   staticURL: PropTypes.string.isRequired,

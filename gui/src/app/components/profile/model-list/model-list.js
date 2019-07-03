@@ -4,12 +4,12 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const CreateModelButton = require('../../create-model-button/create-model-button');
-const DateDisplay = require('../../date-display/date-display');
+const initUtils = require('../../../init/utils');
 const Popup = require('../../popup/popup');
 const Spinner = require('../../spinner/spinner');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_model-list.scss');
 
@@ -18,17 +18,22 @@ require('./_model-list.scss');
   their profile.
 */
 class ProfileModelList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       loadingModels: false,
       models: null,
       notification: null
     };
+    this.analytics = this.props.analytics.addCategory('Model List');
   }
 
   componentWillMount() {
     this._fetchModels(this.props.facadesExist);
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -82,6 +87,7 @@ class ProfileModelList extends React.Component {
   */
   _confirmDestroy(modelUUID) {
     this.setState({notification: null});
+    this.analytics.addCategory('Model').sendEvent(this.props.analytics.DESTROY);
     this.props.destroyModel(modelUUID, (errors, data) => {
       if (errors) {
         errors.forEach(error => {
@@ -104,11 +110,12 @@ class ProfileModelList extends React.Component {
     const buttons = [{
       title: 'Cancel',
       action: () => this.setState({notification: null}),
-      type: 'inline-neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Destroy',
       action: this._confirmDestroy.bind(this, model.uuid),
-      type: 'destructive'
+      modifier: 'negative'
     }];
     const message =
       `Are you sure you want to destroy ${model.name}?` +
@@ -152,6 +159,7 @@ class ProfileModelList extends React.Component {
     this.props.changeState({
       hash: `credentials/${credential}`
     });
+    this.analytics.addCategory('Credential').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -197,9 +205,13 @@ class ProfileModelList extends React.Component {
             {model.name}
           </a>
         );
+        let cloud = initUtils.getCloudProviderDetails(model.provider).id;
         const regionContent = (
           <React.Fragment>
-            <span className="profile-model-list__machine-number">{model.numMachines}</span>
+            <SvgIcon
+              className="profile-model-list__cloud-icon"
+              name={`profile-${cloud}`}
+              size="26" />
             {model.cloud || model.provider}
             {region}
           </React.Fragment>
@@ -213,11 +225,6 @@ class ProfileModelList extends React.Component {
               name={icons.get(profileUser.access)}
               size="16" />
           </span>
-        );
-        const dateContent = (
-          <DateDisplay
-            date={model.lastConnection || '--'}
-            relative={true} />
         );
         const destroyContent =
           userIsAdmin && !model.isController ? (
@@ -255,9 +262,6 @@ class ProfileModelList extends React.Component {
             }, {
               content: accessContent
             }, {
-              content: dateContent,
-              classes: ['u-hide--small']
-            }, {
               content: destroyContent,
               classes: ['u-align--center']
             }
@@ -271,7 +275,6 @@ class ProfileModelList extends React.Component {
                 {expandedContent}
               </td>
               <td>{accessContent}</td>
-              <td>{dateContent}</td>
               <td className="u-align--center">{destroyContent}</td>
             </React.Fragment>
           ),
@@ -298,6 +301,7 @@ class ProfileModelList extends React.Component {
     // in this case.
     this.props.changeState({profile: null});
     this.props.switchModel(model);
+    this.analytics.addCategory('Model').sendEvent(this.props.analytics.CLICK);
   }
 
   _generateNotification() {
@@ -323,6 +327,7 @@ class ProfileModelList extends React.Component {
             <span className="profile__title-count">({rowData.length})</span>
           </h4>
           <CreateModelButton
+            analytics={this.analytics}
             changeState={this.props.changeState}
             switchModel={this.props.switchModel}
             title="Start a new model" />
@@ -335,11 +340,9 @@ class ProfileModelList extends React.Component {
               }, {
                 content: 'Owner'
               }, {
-                content: 'Machines, cloud/region'
+                content: 'Clouds/region'
               }, {
                 content: ''
-              }, {
-                content: 'Last accessed'
               }, {
                 content: ''
               }
@@ -354,6 +357,7 @@ class ProfileModelList extends React.Component {
 ProfileModelList.propTypes = {
   acl: PropTypes.object,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyModel: PropTypes.func.isRequired,

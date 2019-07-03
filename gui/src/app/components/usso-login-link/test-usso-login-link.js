@@ -4,14 +4,16 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const USSOLoginLink = require('./usso-login-link');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 describe('USSOLoginLink', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <USSOLoginLink
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       displayType={options.displayType || 'text'}
       gisf={options.gisf}
       loginToController={options.loginToController || sinon.stub()}
@@ -23,7 +25,7 @@ describe('USSOLoginLink', () => {
   it('can render a text link', () => {
     const wrapper = renderComponent();
     const expected = (
-      <div className="usso-login">
+      <div className="usso-login v1">
         <a
           className="usso-login__action"
           onClick={wrapper.find('.usso-login__action').prop('onClick')}
@@ -60,11 +62,11 @@ describe('USSOLoginLink', () => {
   it('can render a button link', () => {
     const wrapper = renderComponent({displayType: 'button'});
     var expected = (
-      <div className="usso-login">
+      <div className="usso-login v1">
         <Button
           action={wrapper.find('Button').prop('action')}
           extraClasses="usso-login__action"
-          type="positive" >
+          modifier="positive" >
           Sign up/Log in with USSO
         </Button>
       </div>);

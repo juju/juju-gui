@@ -5,10 +5,10 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../shared/button-row/button-row');
-const Button = require('../shared/button/button');
-const Panel = require('../shared/panel/panel');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {ButtonRow} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_popup.scss');
 
@@ -26,8 +26,10 @@ class Popup extends React.Component {
     const buttons = this.props.buttons;
     if (buttons) {
       return (
-        <ButtonRow
-          buttons={buttons} />);
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>);
     }
   }
 
@@ -40,10 +42,11 @@ class Popup extends React.Component {
     const close = this.props.close;
     if (close) {
       return (
-        <div className="popup__close">
+        <div className="popup__close v1">
           <Button
             action={close}
-            type="inline-base">
+            extraClasses="is-inline"
+            modifier="base">
             <SvgIcon
               name="close_16"
               size="16" />

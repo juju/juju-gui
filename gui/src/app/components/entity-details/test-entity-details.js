@@ -5,9 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 const shapeup = require('shapeup');
 
+const Analytics = require('test/fake-analytics');
 const EntityDetails = require('./entity-details');
-const EntityContent = require('./content/content');
-const EntityHeader = require('./header/header');
 
 const jsTestUtils = require('../../utils/component-test-utils');
 
@@ -19,6 +18,7 @@ describe('EntityDetails', function() {
       <EntityDetails
         acl={options.acl || acl}
         addNotification={options.addNotification || sinon.stub()}
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         charmstore={options.charmstore || charmstore}
         clearLightbox={options.clearLightbox || sinon.stub()}
@@ -31,7 +31,6 @@ describe('EntityDetails', function() {
         importBundleYAML={options.importBundleYAML || sinon.stub()}
         listPlansForCharm={options.listPlansForCharm || sinon.stub()}
         scrollCharmbrowser={options.scrollCharmbrowser || sinon.stub()}
-        sendAnalytics={options.sendAnalytics || sinon.stub()}
         setPageTitle={options.setPageTitle || sinon.stub()}
         showTerms={options.showTerms || sinon.stub()}
         staticURL={options.staticURL || 'http://example.com'} />,
@@ -78,48 +77,7 @@ describe('EntityDetails', function() {
       'getEntity function not called');
     assert.equal(charmstore.getEntity.args[0][0], 'django',
       'getEntity not called with the entity ID');
-    const expected = (
-      <div
-        className="entity-details charm"
-        ref="content"
-        tabIndex="0">
-        <div>
-          <EntityHeader
-            acl={acl}
-            addNotification={sinon.stub()}
-            changeState={sinon.stub()}
-            deployService={sinon.stub()}
-            entityModel={mockEntity}
-            getBundleYAML={sinon.stub()}
-            getModelName={sinon.stub()}
-            hasPlans={false}
-            importBundleYAML={sinon.stub()}
-            plans={null} />
-          {undefined}
-          <EntityContent
-            addNotification={sinon.stub()}
-            changeState={sinon.stub()}
-            charmstore={{
-              getDiagramURL: charmstore.getDiagramURL,
-              getFile: charmstore.getFile,
-              reshape: shapeup.reshapeFunc,
-              url: charmstore.url
-            }}
-            clearLightbox={sinon.stub()}
-            displayLightbox={sinon.stub()}
-            entityModel={mockEntity}
-            flags={{'test.ddeploy': true}}
-            hash="readme"
-            hasPlans={false}
-            plans={null}
-            scrollCharmbrowser={sinon.stub()}
-            sendAnalytics={sinon.stub()}
-            showTerms={sinon.stub()}
-            staticURL="http://example.com" />
-        </div>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can display a message if there is a loading error', function() {

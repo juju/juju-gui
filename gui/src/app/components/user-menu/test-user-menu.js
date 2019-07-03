@@ -4,8 +4,9 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const UserMenu = require('./user-menu');
-const ButtonDropdown = require('../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 
 describe('UserMenu', () => {
 
@@ -14,6 +15,7 @@ describe('UserMenu', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <UserMenu
+      analytics={Analytics}
       controllerAPI={{
         userIsAuthenticated: options.userIsAuthenticated !== undefined ?
           options.userIsAuthenticated : true
@@ -31,7 +33,7 @@ describe('UserMenu', () => {
       userIsAuthenticated: false
     });
     const expected = (
-      <div>
+      <div className="v1">
         <ButtonDropdown
           classes={['user-menu']}
           disableDropdown={true}

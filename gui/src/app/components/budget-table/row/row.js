@@ -4,8 +4,8 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {ExpandingRow} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
 require('./_row.scss');
@@ -126,11 +126,11 @@ class BudgetTableRow extends React.Component {
           <div className="two-col">
             Recommended allocation: $550.
           </div>
-          <div className="two-col last-col">
+          <div className="two-col last-col v1">
             <Button
               action={this._toggle.bind(this)}
               disabled={disabled}
-              type="neutral">
+              modifier="neutral">
               Select plan
             </Button>
           </div>
@@ -179,11 +179,11 @@ class BudgetTableRow extends React.Component {
     var disabled = this.props.acl.isReadOnly();
     return (
       <div className="two-col last-col no-margin-bottom">
-        <div className="budget-table__edit">
+        <div className="budget-table__edit v1">
           <Button
             action={this._toggle.bind(this)}
             disabled={disabled}
-            type="neutral">
+            modifier="neutral">
             Change plan
           </Button>
         </div>
@@ -313,10 +313,10 @@ class BudgetTableRow extends React.Component {
       return (
         <div className={
           'two-col prepend-five no-margin-bottom budget-table-row__link ' +
-          'budget-table-row__terms-link'}>
+          'budget-table-row__terms-link v1'}>
           <Button
             action={this._toggleTerms.bind(this)}
-            type="base">
+            modifier="base">
             Terms
           </Button>
         </div>);

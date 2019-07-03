@@ -5,26 +5,25 @@ const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentCredential = require('./credential');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const DeploymentCredentialAdd = require('./add/add');
 
 describe('DeploymentCredential', function() {
-  var acl, controllerAPI, sendAnalytics, cloud, credentials, regions, credentialNames, user;
+  var acl, controllerAPI, cloud, credentials, regions, credentialNames, user;
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentCredential
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       cloud={options.cloud === undefined ? cloud : options.cloud}
       controllerAPI={controllerAPI}
       controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
       credential={options.credential}
       editable={options.editable === undefined ? true : options.editable}
       region={options.region}
-      sendAnalytics={options.sendAnalytics || sendAnalytics}
       setCredential={options.setCredential || sinon.stub()}
       setRegion={options.setRegion || sinon.stub()}
       user={options.user === undefined ? user : options.user} />
@@ -32,7 +31,6 @@ describe('DeploymentCredential', function() {
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    sendAnalytics = sinon.stub();
     regions = [{name: 'test-region'}];
     cloud = {id: 'azure', id: 'azure', regions: regions};
     credentials = {
@@ -64,27 +62,7 @@ describe('DeploymentCredential', function() {
   it('can render with a cloud', function() {
     controllerAPI.getCloudCredentials.callsArgWith(1, null, []);
     const wrapper = renderComponent();
-    var expected = (
-      <div className="clearfix">
-        <ExpandingRow
-          classes={{'no-margin-bottom': true, 'twelve-col': true}}
-          clickable={false}
-          expanded={true}>
-          {undefined}
-          <DeploymentCredentialAdd
-            acl={acl}
-            addNotification={sinon.stub()}
-            cloud={cloud}
-            credentials={[]}
-            onCancel={null}
-            onCredentialUpdated={
-              wrapper.find('DeploymentCredentialAdd').prop('onCredentialUpdated')}
-            sendAnalytics={sendAnalytics}
-            updateCloudCredential={sinon.stub()}
-            user={user} />
-        </ExpandingRow>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render when not editable', function() {
@@ -105,36 +83,7 @@ describe('DeploymentCredential', function() {
 
   it('can show existing credentials', function() {
     const wrapper = renderComponent();
-    var expected = (
-      <form className="deployment-credential__form">
-        <div className="prepend-two four-col">
-          <InsetSelect
-            disabled={false}
-            label="Credential"
-            onChange={wrapper.find('InsetSelect').at(0).prop('onChange')}
-            options={[{
-              label: 'default',
-              value: 'lxd_admin@local_default'
-            }, {
-              label: 'Add credential...',
-              value: 'add-credential'
-            }]}
-            ref="credential"
-            value={undefined} />
-        </div>
-        <div className="four-col deployment-credential__form-region">
-          <InsetSelect
-            disabled={false}
-            label="Region"
-            onChange={sinon.stub()}
-            options={[
-              {label: 'Default', value: ''},
-              {label: 'test-region', value: 'test-region'}
-            ]}
-            value={undefined} />
-        </div>
-      </form>);
-    assert.compareJSX(wrapper.find('.deployment-credential__form'), expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('selects an initial credential', function() {
@@ -217,13 +166,6 @@ describe('DeploymentCredential', function() {
     instance._toggleAdd(true);
     assert.equal(setCredential.callCount, 1);
     assert.equal(setCredential.args[0][0], credential);
-    assert.equal(sendAnalytics.callCount, 2);
-    assert.deepEqual(sendAnalytics.args[0], [
-      'Select cloud',
-      undefined,
-      'has credentials']);
-    assert.deepEqual(sendAnalytics.args[1],
-      ['Button click', 'Cancel add credential']);
   });
 
   it('can handle errors when getting credential names', () => {

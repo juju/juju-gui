@@ -6,6 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const ProfileCharmList = require('./charm-list');
 
 describe('Profile Charm List', function() {
@@ -51,6 +52,7 @@ describe('Profile Charm List', function() {
         acl={options.acl || acl}
         addNotification={sinon.stub()}
         addToModel={options.addToModel || sinon.stub()}
+        analytics={Analytics}
         bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}

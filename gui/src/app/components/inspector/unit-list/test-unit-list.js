@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const UnitList = require('./unit-list');
 const CheckListItem = require('../../check-list-item/check-list-item');
 const OverviewAction = require('../overview-action/overview-action');
@@ -15,6 +16,7 @@ describe('UnitList', () => {
     const wrapper = enzyme.shallow(
       <UnitList
         acl={options.acl || acl}
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         destroyUnits={options.destroyUnits || sinon.stub()}
         envResolved={options.envResolved || sinon.stub()}
@@ -238,7 +240,7 @@ describe('UnitList', () => {
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }];
@@ -250,17 +252,17 @@ describe('UnitList', () => {
     const buttonItems = wrapper.find('ButtonRow').prop('buttons');
     var buttons = [{
       title: 'Resolve',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[0].action,
       disabled: true
     }, {
       title: 'Retry',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[1].action,
       disabled: true
     }, {
       title: 'Remove',
-      type: 'neutral',
+      modifier: 'neutral',
       action: buttonItems[2].action,
       disabled: true
     }];

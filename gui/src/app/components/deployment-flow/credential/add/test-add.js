@@ -4,19 +4,19 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentCredentialAdd = require('./add');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
-const ButtonRow = require('../../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const FileField = require('../../../file-field/file-field');
 
 describe('DeploymentCredentialAdd', function() {
-  let acl, sendAnalytics, refs;
+  let acl, refs;
 
   beforeEach(() => {
     acl = {isReadOnly: sinon.stub().returns(false)};
-    sendAnalytics = sinon.stub();
     refs = {
       'credentialName': {
         validate: sinon.stub().returns(true),
@@ -47,12 +47,12 @@ describe('DeploymentCredentialAdd', function() {
     <DeploymentCredentialAdd
       acl={acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       cloud={options.cloud || null}
       credentialName={options.credentialName || undefined}
       credentials={options.credentials || []}
       onCancel={options.onCancel !== undefined ? options.onCancel : sinon.stub()}
       onCredentialUpdated={options.onCredentialUpdated || sinon.stub()}
-      sendAnalytics={sendAnalytics}
       setCredential={sinon.stub()}
       updateCloudCredential={options.updateCloudCredential || sinon.stub()}
       user="user-admin" />
@@ -194,16 +194,18 @@ describe('DeploymentCredentialAdd', function() {
             </div>
           </div>
           <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom v1'}>
             <ButtonRow
               buttons={[{
                 action: sinon.stub(),
                 title: 'Cancel',
-                type: 'inline-neutral'
+                extraClasses: 'is-inline',
+                modifier: 'neutral'
               }, {
-                submit: true,
+                type: 'submit',
                 title: 'Add cloud credential',
-                type: 'inline-positive'
+                extraClasses: 'is-inline',
+                modifier: 'positive'
               }]} />
           </div>
         </form>
@@ -217,9 +219,9 @@ describe('DeploymentCredentialAdd', function() {
     });
     const buttons = wrapper.find('ButtonRow').prop('buttons');
     assert.deepEqual(buttons, [{
-      submit: true,
+      type: 'submit',
       title: 'Add cloud credential',
-      type: 'inline-positive'
+      modifier: 'positive'
     }]);
   });
 
@@ -425,9 +427,6 @@ describe('DeploymentCredentialAdd', function() {
     instance.refs = refs;
     wrapper.find('InsetSelect').simulate('change', 'oauth2');
     instance._handleAddCredentials({preventDefault: sinon.stub()});
-    assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
-    assert.deepEqual(sendAnalytics.args[0],
-      ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'google_user-admin_new@test');
@@ -454,9 +453,6 @@ describe('DeploymentCredentialAdd', function() {
     instance.refs = refs;
     wrapper.find('InsetSelect').simulate('change', 'oauth2');
     wrapper.find('form').simulate('submit', {preventDefault: sinon.stub()});
-    assert.equal(sendAnalytics.callCount, 1, 'sendAnalytics not called');
-    assert.deepEqual(sendAnalytics.args[0],
-      ['Button click', 'Add credentials']);
     assert.equal(updateCloudCredential.callCount, 1, 'updateCloudCredential not called');
     const args = updateCloudCredential.args[0];
     assert.equal(args[0], 'google_user-admin_new@test');

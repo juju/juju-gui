@@ -4,11 +4,11 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const initUtils = require('../../../../init/utils');
 const InsetSelect = require('../../../inset-select/inset-select');
 const GenericInput = require('../../../generic-input/generic-input');
-const ButtonRow = require('../../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const FileField = require('../../../file-field/file-field');
 
 require('./_add.scss');
@@ -21,6 +21,12 @@ class DeploymentCredentialAdd extends React.Component {
     this.state = {
       authType: info && info.forms && Object.keys(info.forms)[0] || ''
     };
+    this.analytics = this.props.analytics.addCategory(
+      `Credential ${this.props.credentialName ? 'Edit' : 'Add'} Form`);
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,16 +82,17 @@ class DeploymentCredentialAdd extends React.Component {
       return;
     }
     const credentialName = this.refs.credentialName.getValue();
-    this.props.sendAnalytics(
-      'Button click',
-      'Add credentials'
-    );
     props.updateCloudCredential(
       initUtils.generateCloudCredentialName(
         props.cloud.name, props.user, credentialName),
       this.state.authType,
       this._generateCredentials(),
       this._updateCloudCredentialCallback.bind(this, credentialName));
+    if (props.credentialName) {
+      this.analytics.sendEvent(this.props.analytics.UPDATE);
+    } else {
+      this.analytics.sendEvent(this.props.analytics.ADD);
+    }
   }
 
   /**
@@ -230,15 +237,18 @@ class DeploymentCredentialAdd extends React.Component {
     // If a name was provided then we're editing, not adding.
     const prefix = props.credentialName ? 'Update' : 'Add';
     let buttons = [{
-      submit: true,
+      type: 'submit',
       title: `${prefix} cloud credential`,
-      type: 'inline-positive'
+      modifier: 'positive'
     }];
     if (props.onCancel) {
       buttons.unshift({
-        action: props.onCancel,
+        action: () => {
+          props.onCancel();
+          this.analytics.sendEvent(this.props.analytics.CANCEL);
+        },
         title: 'Cancel',
-        type: 'inline-neutral'
+        modifier: 'neutral'
       });
     }
     // If no cloud has been selected we set a default so that the disabled
@@ -302,7 +312,7 @@ class DeploymentCredentialAdd extends React.Component {
           </h3>
           {this._generateCredentialsFields()}
           <div className={
-            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom'}>
+            'deployment-credential-add__buttons twelve-col last-col no-margin-bottom v1'}>
             <ButtonRow
               buttons={buttons} />
           </div>
@@ -315,12 +325,12 @@ class DeploymentCredentialAdd extends React.Component {
 DeploymentCredentialAdd.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   cloud: PropTypes.object,
   credentialName: PropTypes.string,
   credentials: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   onCredentialUpdated: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   updateCloudCredential: PropTypes.func.isRequired,
   user: PropTypes.string
 };

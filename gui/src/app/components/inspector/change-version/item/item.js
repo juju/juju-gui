@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_item.scss');
 
@@ -31,13 +31,16 @@ class InspectorChangeVersionItem extends React.Component {
         <span className="inspector-current-version__title" title={path}>
           version {props.url.revision}
         </span>
-        <Button
-          action={props.buttonAction}
-          disabled={props.acl.isReadOnly()}
-          key={path}
-          type='inline-neutral'>
-          {this._generateButtonLabel()}
-        </Button>
+        <span className="v1">
+          <Button
+            action={props.buttonAction}
+            disabled={props.acl.isReadOnly()}
+            extraClasses="is-inline"
+            key={path}
+            modifier="neutral">
+            {this._generateButtonLabel()}
+          </Button>
+        </span>
       </li>
     );
   }

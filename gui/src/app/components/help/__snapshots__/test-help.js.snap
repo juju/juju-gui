@@ -28,15 +28,19 @@ exports[`Help renders 1`] = `
           className="header-search__form"
           target="_blank"
         >
-          <button
-            className="header-search__submit"
-            type="submit"
+          <span
+            className="v1"
           >
-            <SvgIcon
-              name="search_16"
-              size="16"
-            />
-          </button>
+            <button
+              className="header-search__submit"
+              type="submit"
+            >
+              <SvgIcon
+                name="search_16"
+                size="16"
+              />
+            </button>
+          </span>
           <input
             className="header-search__input"
             name="text"

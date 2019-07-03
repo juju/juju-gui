@@ -7,6 +7,10 @@ const React = require('react');
 require('./_list.scss');
 
 class InspectorResourcesList extends React.Component {
+  componentDidMount() {
+    this.props.analytics.addCategory(this).sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     Generate a list of resources to display.
 
@@ -40,6 +44,7 @@ class InspectorResourcesList extends React.Component {
 
 InspectorResourcesList.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   resources: PropTypes.array.isRequired
 };
 

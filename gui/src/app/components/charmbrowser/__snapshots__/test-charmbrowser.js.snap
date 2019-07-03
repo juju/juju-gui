@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Charmbrowser displays entity details when the app state calls for it 1`] = `
+<Panel
+  clickAction={[Function]}
+  focus={false}
+  instanceName="white-box"
+  visible={true}
+>
+  <div
+    className="charmbrowser"
+  >
+    <EntityDetails
+      acl={
+        Object {
+          "isReadOnly": [Function],
+        }
+      }
+      addNotification={[Function]}
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      charmstore={
+        Object {
+          "getBundleYAML": [Function],
+          "getDiagramURL": [Function],
+          "getEntity": [Function],
+          "getFile": [Function],
+          "reshape": [Function],
+          "url": "http://example.com",
+        }
+      }
+      clearLightbox={[Function]}
+      deployService={[Function]}
+      displayLightbox={[Function]}
+      flags={
+        Object {
+          "test.ddeploy": true,
+        }
+      }
+      getModelName={[Function]}
+      hash="readme"
+      id="foobar"
+      importBundleYAML={[Function]}
+      key="foobar"
+      listPlansForCharm={[Function]}
+      scrollCharmbrowser={[Function]}
+      setPageTitle={[Function]}
+      showTerms={[Function]}
+      staticURL="http://example.com"
+    />
+  </div>
+</Panel>
+`;
+
+exports[`Charmbrowser displays the search results when the app state calls for it 1`] = `
+<Panel
+  clickAction={[Function]}
+  focus={false}
+  instanceName="white-box"
+  visible={true}
+>
+  <div
+    className="charmbrowser"
+  >
+    <SearchResults
+      acl={
+        Object {
+          "isReadOnly": [Function],
+        }
+      }
+      addToModel={[Function]}
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      charmstoreSearch={[Function]}
+      generatePath={[Function]}
+      query="django"
+      setPageTitle={[Function]}
+    />
+  </div>
+</Panel>
+`;
+
+exports[`Charmbrowser displays the store when the app state calls for it 1`] = `
+<Panel
+  clickAction={[Function]}
+  focus={false}
+  instanceName="white-box"
+  visible={true}
+>
+  <div
+    className="charmbrowser"
+  >
+    <Store
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      charmstoreURL="http://1.2.3.4/"
+      gisf={true}
+      setPageTitle={[Function]}
+      staticURL="surl"
+    />
+  </div>
+</Panel>
+`;

@@ -4,12 +4,14 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const SearchResultsTypeFilter = require('./type-filter');
 
 describe('SearchResultsTypeFilter', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <SearchResultsTypeFilter
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       currentType={options.currentType || null} />
   );

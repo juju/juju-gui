@@ -5,13 +5,18 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const USSOLoginLink = require('../usso-login-link/usso-login-link');
 
 require('./_login.scss');
 
 class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Login');
+  }
+
   componentDidMount() {
     if (this.props.gisf) {
       const bounce = startTime => {
@@ -36,6 +41,7 @@ class Login extends React.Component {
       bounce(performance.now());
     } else {
       this.refs.username.focus();
+      this.analytics.sendEvent(this.props.analytics.VIEW);
     }
   }
 
@@ -55,6 +61,7 @@ class Login extends React.Component {
       user: this.refs.username.value,
       password: this.refs.password.value
     }, false);
+    this.analytics.addCategory('Login Form').sendEvent('Login');
   }
 
   /**
@@ -90,6 +97,7 @@ class Login extends React.Component {
     return (
       <USSOLoginLink
         addNotification={this.props.addNotification}
+        analytics={this.analytics}
         displayType="button"
         loginToController={this.props.loginToController}
         ref="USSOLoginLink" />);
@@ -132,11 +140,13 @@ class Login extends React.Component {
                 ref="password"
                 type="password" />
             </label>
-            <Button
-              submit={true}
-              type="positive">
-              Login
-            </Button>
+            <span className="v1">
+              <Button
+                modifier="positive"
+                type="submit">
+                Login
+              </Button>
+            </span>
             {this._generateUSSOLink()}
           </form>
         </div>
@@ -155,6 +165,7 @@ class Login extends React.Component {
 
 Login.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   bakeryEnabled: PropTypes.bool.isRequired,
   controllerIsConnected: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,

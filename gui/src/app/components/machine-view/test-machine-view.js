@@ -5,9 +5,9 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const MachineView = require('./machine-view');
-const MachineViewColumn = require('./column/column');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('MachineView', function() {
   let acl, dbAPI, machineList, machines, modelAPI, parseMachineName, units;
@@ -18,14 +18,14 @@ describe('MachineView', function() {
       // test the internal component so we access it via DecoratedComponent.
       <MachineView.DecoratedComponent
         acl={options.acl || acl}
+        analytics={Analytics}
         changeState={options.changeState || sinon.stub()}
         dbAPI={options.dbAPI || dbAPI}
         machine={options.machine === undefined ? 'new0' : options.machine}
         modelAPI={options.modelAPI || modelAPI}
         parseConstraints={options.parseConstraints || sinon.stub()}
         parseMachineDetails={options.parseMachineDetails || sinon.stub()}
-        parseMachineName={options.parseMachineName || parseMachineName}
-        sendAnalytics={options.sendAnalytics || sinon.stub()} />,
+        parseMachineName={options.parseMachineName || parseMachineName} />,
       {disableLifecycleMethods: true}
     );
     const instance = wrapper.instance();
@@ -96,133 +96,7 @@ describe('MachineView', function() {
 
   it('can render', function() {
     const wrapper = renderComponent();
-    const columns = wrapper.find('DropTarget(MachineViewColumn)');
-    const machineMenuItems = columns.at(1).prop('menuItems');
-    const containerMenuItems = columns.at(2).prop('menuItems');
-    const links = wrapper.find('.link');
-    const expected = (
-      <div className="machine-view">
-        <div className="machine-view__content">
-          <MachineViewColumn
-            acl={acl}
-            droppable={false}
-            sendAnalytics={sinon.stub()}
-            title="New units"
-            toggle={{
-              action: columns.at(0).prop('toggle').action,
-              disabled: true,
-              toggleOn: false
-            }}>
-            {undefined}
-            <div className="machine-view__column-onboarding">
-              <div>
-                <p>
-                  Unplaced units will appear here. Drag and drop them to
-                  customise your deployment.
-                </p>
-                <span
-                  className="link"
-                  onClick={links.at(0).prop('onClick')}>
-                  Add applications to get started
-                </span>
-              </div>
-            </div>
-          </MachineViewColumn>
-          <MachineViewColumn
-            acl={acl}
-            activeMenuItem="name"
-            droppable={true}
-            dropUnit={columns.at(1).prop('dropUnit')}
-            menuItems={[{
-              label: 'Add machine',
-              action: machineMenuItems[0].action
-            }, {
-              label: 'Hide constraints',
-              action: machineMenuItems[1].action
-            }, {
-              label: 'Sort by:'
-            }, {
-              label: 'Name',
-              id: 'name',
-              action: machineMenuItems[3].action
-            }, {
-              label: 'No. applications',
-              id: 'applications',
-              action: machineMenuItems[4].action
-            }, {
-              label: 'No. units',
-              id: 'units',
-              action: machineMenuItems[5].action
-            }, {
-              label: 'Disk',
-              id: 'disk',
-              action: machineMenuItems[6].action
-            }, {
-              label: 'RAM',
-              id: 'ram',
-              action: machineMenuItems[7].action
-            }, {
-              label: 'CPU',
-              id: 'cpu',
-              action: machineMenuItems[8].action
-            }]}
-            ref="machinesColumn"
-            sendAnalytics={sinon.stub()}
-            title="My Model (0)"
-            type="machine">
-            {undefined}
-            <div className="machine-view__column-onboarding">
-              <p>Use machine view to:</p>
-              <ul>
-                <li>Create machines</li>
-                <li>Create containers</li>
-                <li>Customise placement</li>
-                <li>Scale up your model</li>
-                <li>Manually place new units</li>
-                <li>Colocate applications</li>
-              </ul>
-              <span
-                className="link"
-                onClick={links.at(1).prop('onClick')}
-                role="button"
-                tabIndex="0">
-                Add machine
-              </span>
-            </div>
-          </MachineViewColumn>
-          <MachineViewColumn
-            acl={acl}
-            activeMenuItem="name"
-            droppable={true}
-            dropUnit={columns.at(2).prop('dropUnit')}
-            menuItems={[{
-              label: 'Add container',
-              action: null
-            }, {
-              label: 'Sort by:'
-            }, {
-              label: 'Name',
-              id: 'name',
-              action: containerMenuItems[2].action
-            }, {
-              label: 'No. units',
-              id: 'units',
-              action: containerMenuItems[3].action
-            }, {
-              label: 'Applications',
-              id: 'applications',
-              action: containerMenuItems[4].action
-            }]}
-            ref="containersColumn"
-            sendAnalytics={sinon.stub()}
-            title="0 containers, 0 units"
-            type="container">
-            {undefined}
-            {undefined}
-          </MachineViewColumn>
-        </div>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can display onboarding if there are no applications', function() {

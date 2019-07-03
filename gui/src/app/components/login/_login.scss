@@ -61,7 +61,16 @@
     margin-top: 25px;
   }
 
-  button {
-    margin-bottom: 10px;
+  button[type="submit"] {
+    margin: 0 1rem 0 0;
+  }
+
+  .usso-login {
+    display: inline-block;
+
+    button {
+      margin: 0;
+      padding: 0.3375rem 1rem;
+    }
   }
 }

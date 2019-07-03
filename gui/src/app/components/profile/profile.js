@@ -14,7 +14,7 @@ const ProfileBundleList = require('./bundle-list/bundle-list');
 const ProfileCredentialList = require('./credential-list/credential-list');
 const ProfileInvoiceList = require('./invoice-list/invoice-list');
 const Invoice = require('../invoice/invoice');
-const Panel = require('../shared/panel/panel');
+const {Panel} = require('@canonical/juju-react-components');
 const RevenueStatement = require('../revenue-statement/revenue-statement');
 const Link = require('../link/link');
 
@@ -22,14 +22,13 @@ require('./_profile.scss');
 
 /** Profile React component used to display user details. */
 class Profile extends React.Component {
-  /**
-    Send profile analytics.
-    @param {String} action Some identifiable action.
-    @param {String} label Name of the event.
-    @param {Object} value An optional single depth object for extra info.
-  */
-  _sendAnalytics(action, label, value) {
-    this.props.sendAnalytics('Profile', action, label, value);
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Profile');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -137,6 +136,7 @@ class Profile extends React.Component {
             <ProfileModelList
               acl={props.acl}
               addNotification={props.addNotification}
+              analytics={this.analytics}
               baseURL={props.baseURL}
               changeState={props.changeState}
               destroyModel={props.destroyModel}
@@ -157,6 +157,7 @@ class Profile extends React.Component {
             acl={props.acl}
             addNotification={props.addNotification}
             addToModel={props.addToModel}
+            analytics={this.analytics}
             bakery={props.bakery}
             baseURL={props.baseURL}
             changeState={props.changeState}
@@ -180,6 +181,7 @@ class Profile extends React.Component {
             acl={props.acl}
             addNotification={props.addNotification}
             addToModel={props.addToModel}
+            analytics={this.analytics}
             bakery={props.bakery}
             baseURL={props.baseURL}
             changeState={props.changeState}
@@ -203,10 +205,10 @@ class Profile extends React.Component {
             <ProfileCredentialList
               acl={props.acl}
               addNotification={props.addNotification}
+              analytics={this.analytics}
               controllerAPI={shapeup.fromShape(props.controllerAPI, propTypes.controllerAPI)}
               controllerIsReady={props.controllerIsReady}
               credential={this._getSectionInfo().sub}
-              sendAnalytics={this._sendAnalytics.bind(this)}
               username={props.controllerUser} />
           );
         }
@@ -259,6 +261,7 @@ class Profile extends React.Component {
         instanceName="profile"
         visible={true}>
         <ProfileHeader
+          analytics={this.analytics}
           changeState={props.changeState}
           controllerIP={props.controllerIP}
           getUser={props.getUser}
@@ -290,6 +293,7 @@ Profile.propTypes = {
   activeSection: PropTypes.string,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   bakery: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,
@@ -328,7 +332,6 @@ Profile.propTypes = {
     updateBillingAddress: PropTypes.func,
     updatePaymentMethod: PropTypes.func
   }),
-  sendAnalytics: PropTypes.func.isRequired,
   showPay: PropTypes.bool,
   storeUser: PropTypes.func.isRequired,
   stripe: shapeup.shape({

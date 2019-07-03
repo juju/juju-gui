@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_usso-login-link.scss');
 
@@ -18,6 +18,7 @@ class USSOLoginLink extends React.Component {
       // preventDefault method.
       e.preventDefault();
     }
+    this.props.analytics.addCategory(this).sendEvent('Login');
     this.props.loginToController(err => {
       if (err) {
         const message = 'cannot log into the controller';
@@ -72,7 +73,7 @@ class USSOLoginLink extends React.Component {
       <Button
         action={this.handleLogin.bind(this)}
         extraClasses="usso-login__action"
-        type="positive">
+        modifier="positive">
         {this._generateContent('Sign up/Log in with USSO')}
       </Button>
     );
@@ -86,7 +87,7 @@ class USSOLoginLink extends React.Component {
       ele = this._renderTextLink();
     }
     return(
-      <div className="usso-login">
+      <div className="usso-login v1">
         {ele}
       </div>);
   }
@@ -94,6 +95,7 @@ class USSOLoginLink extends React.Component {
 
 USSOLoginLink.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   callback: PropTypes.func,
   children: PropTypes.node,
   displayType: PropTypes.string.isRequired,

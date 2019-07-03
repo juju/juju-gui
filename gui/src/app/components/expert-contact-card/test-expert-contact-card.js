@@ -4,16 +4,18 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../shared/button/button');
-const SvgIcon = require('../svg-icon/svg-icon');
+
+const Analytics = require('test/fake-analytics');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const ExpertContactCard = require('../expert-contact-card/expert-contact-card');
 
 describe('ExpertContactCard', function() {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <ExpertContactCard
+      analytics={Analytics}
       expert={options.expert || 'spiculecharms'}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       staticURL="/media" />
   );
 
@@ -50,11 +52,13 @@ describe('ExpertContactCard', function() {
               </li>
             ]}
           </ul>
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            type="positive">
-            Show contact details&hellip;
-          </Button>
+          <span className="v1">
+            <Button
+              action={wrapper.find('Button').prop('action')}
+              modifier="positive">
+              Show contact details&hellip;
+            </Button>
+          </span>
         </div>
       </div>);
     assert.compareJSX(wrapper.find('.expert-contact-card'), expected);
@@ -110,12 +114,5 @@ describe('ExpertContactCard', function() {
         </ul>
       </div>);
     assert.compareJSX(wrapper.find('.expert-contact-card__contact'), expected);
-  });
-
-  it('can send analytics when the contact button is clicked', () => {
-    const sendAnalytics = sinon.stub();
-    const wrapper = renderComponent({sendAnalytics});
-    wrapper.find('Button').props().action();
-    assert.equal(sendAnalytics.callCount, 1);
   });
 });

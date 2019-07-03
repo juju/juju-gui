@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const InspectorHeader = require('../inspector/header/header');
 
 require('./_local-inspector.scss');
@@ -12,7 +12,12 @@ require('./_local-inspector.scss');
 class LocalInspector extends React.Component {
   constructor(props) {
     super(props);
+    this.analytics = this.props.analytics.addCategory('Local Inspector');
     this.state = this._generateState(this.props);
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -139,6 +144,7 @@ class LocalInspector extends React.Component {
   */
   _handleUpload() {
     this.props.uploadLocalCharm(this.refs.series.value, this.props.file);
+    this.analytics.sendEvent('Upload');
   }
 
   /**
@@ -158,6 +164,7 @@ class LocalInspector extends React.Component {
         this.props.services.getById(serviceId.split('-').splice(1).join('-')));
       this.props.upgradeServiceUsingLocalCharm(serviceList, this.props.file);
       this._close();
+      this.analytics.sendEvent(this.props.analytics.UPDATE);
     }
   }
 
@@ -168,18 +175,22 @@ class LocalInspector extends React.Component {
     var size = (file.size / 1024).toFixed(2);
     var buttons = [{
       title: 'Cancel',
-      action: this._close.bind(this),
-      type: 'base'
+      action: () => {
+        this._close();
+        this.analytics.sendEvent(this.props.analytics.CANCEL);
+      },
+      modifier: 'base'
     }, {
       title: 'Upload',
       action: this.state.activeComponent === 'new' ?
         this._handleUpload.bind(this) : this._handleUpdate.bind(this),
       disabled: isReadOnly,
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     return (
       <div className="inspector-view local-inspector">
         <InspectorHeader
+          analytics={this.analytics}
           backCallback={this._close.bind(this)}
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
@@ -214,8 +225,10 @@ class LocalInspector extends React.Component {
           </ul>
           {this._generateComponent(this.state.activeComponent)}
         </div>
-        <ButtonRow
-          buttons={buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>
       </div>
     );
   }
@@ -223,6 +236,7 @@ class LocalInspector extends React.Component {
 
 LocalInspector.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   file: PropTypes.object.isRequired,
   localType: PropTypes.string.isRequired,

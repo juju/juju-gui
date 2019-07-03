@@ -5,8 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const PaymentMethodCard = require('./card');
-const Button = require('../../../shared/button/button');
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('PaymentMethodCard', () => {
   let card;
@@ -96,15 +96,17 @@ describe('PaymentMethodCard', () => {
       removePaymentMethod: sinon.stub()
     });
     const expected = (
-      <div className="payment-card-actions">
+      <div className="payment-card-actions v1">
         <Button
           action={sinon.stub()}
-          type="inline-neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Update payment details
         </Button>
         <Button
           action={wrapper.find('Button').at(1).prop('action')}
-          type="inline-neutral">
+          extraClasses="is-inline"
+          modifier="neutral">
           Remove payment details
         </Button>
       </div>);

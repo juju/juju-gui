@@ -6,7 +6,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const {urls} = require('jaaslib');
 
-const BasicTable = require('../../shared/basic-table/basic-table');
+const {BasicTable} = require('@canonical/juju-react-components');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');
 const Spinner = require('../../spinner/spinner');
 
@@ -17,13 +17,14 @@ require('./_charm-list.scss');
   their profile.
 */
 class ProfileCharmList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.xhrs = [];
     this.state = {
       data: [],
       loading: false
     };
+    this.analytics = this.props.analytics.addCategory('Charm List');
   }
 
   componentWillMount() {
@@ -31,6 +32,10 @@ class ProfileCharmList extends React.Component {
     if (user) {
       this._fetchCharms(user);
     }
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillUnmount() {
@@ -83,6 +88,7 @@ class ProfileCharmList extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     this.props.changeState({profile: null, store: path, hash: null});
+    this.analytics.addCategory('Charm').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -106,6 +112,7 @@ class ProfileCharmList extends React.Component {
       },
       hash: null
     });
+    this.analytics.addCategory('Tag').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -163,6 +170,7 @@ class ProfileCharmList extends React.Component {
     }
     return 0;
   }
+
   render() {
     const props = this.props;
     let content;
@@ -288,14 +296,18 @@ class ProfileCharmList extends React.Component {
                   {props.generatePermissions(charm.perm.read, props)}
                 </span>
               </td>
-              <td className="entity__release">
+              <td className="entity__release v1">
                 <span>
                   {version}
                 </span>
                 <button
                   className="p-button--positive"
                   disabled={props.acl.isReadOnly()}
-                  onClick={e => props.handleDeploy(e, charm.id, this.props)}
+                  onClick={e => {
+                    props.handleDeploy(e, charm.id, this.props);
+                    this.analytics.addCategory('Add to model').sendEvent(
+                      this.props.analytics.CLICK, {label: `charm: ${charm.id}`});
+                  }}
                   tooltip={
                     `Add this ${charm.entityType} to
                       ${this.modelName ? 'your current' : 'a new'} model`}>
@@ -336,6 +348,7 @@ ProfileCharmList.propTypes = {
   }).frozen.isRequired,
   addNotification: PropTypes.func.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   bakery: PropTypes.object.isRequired,
   baseURL: PropTypes.string.isRequired,
   changeState: PropTypes.func.isRequired,

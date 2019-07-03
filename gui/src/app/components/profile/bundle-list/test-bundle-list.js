@@ -5,6 +5,7 @@ const React = require('react');
 const shapeup = require('shapeup');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const ProfileBundleList = require('./bundle-list');
 
 describe('Profile Bundle List', function() {
@@ -76,6 +77,7 @@ describe('Profile Bundle List', function() {
         acl={options.acl || acl}
         addNotification={sinon.stub()}
         addToModel={options.addToModel || sinon.stub()}
+        analytics={Analytics}
         bakery={{}}
         baseURL="/gui/"
         changeState={options.changeState || sinon.stub()}

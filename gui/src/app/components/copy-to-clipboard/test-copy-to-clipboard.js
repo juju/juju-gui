@@ -6,8 +6,9 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const enzyme = require('enzyme');
 
+
+const Analytics = require('test/fake-analytics');
 const CopyToClipboard = require('./copy-to-clipboard');
-const SvgIcon = require('../svg-icon/svg-icon');
 
 const testUtils = require('react-dom/test-utils');
 
@@ -16,6 +17,7 @@ describe('CopyToClipboard', function() {
   const renderComponent = (options = {}) => {
     return enzyme.shallow(
       <CopyToClipboard
+        analytics={Analytics}
         className={options.className}
         value={options.value} />,
       // Don't call componentDidMount as it requires nodes that don't exist in
@@ -25,24 +27,7 @@ describe('CopyToClipboard', function() {
 
   it('renders with a default value', function() {
     const wrapper = renderComponent();
-    var expected = (
-      <div className="copy-to-clipboard">
-        <input
-          className="copy-to-clipboard__input"
-          readOnly="true"
-          ref="input"
-          type="text"
-          value="" />
-        <button
-          className="copy-to-clipboard__btn"
-          ref="btn">
-          <SvgIcon
-            name="copy-to-clipboard-16"
-            size="16" />
-        </button>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render with a provided className', function() {

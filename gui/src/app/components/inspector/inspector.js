@@ -25,7 +25,12 @@ require('./_inspector.scss');
 class Inspector extends React.Component {
   constructor(props) {
     super(props);
+    this.analytics = this.props.analytics.addCategory('Inspector');
     this.state = this.generateState(this.props);
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -78,6 +83,7 @@ class Inspector extends React.Component {
           component: <ServiceOverview
             acl={nextProps.acl}
             addNotification={nextProps.addNotification}
+            analytics={this.analytics}
             changeState={changeState}
             charm={nextProps.charm}
             destroyService={nextProps.initUtils.destroyService}
@@ -104,6 +110,7 @@ class Inspector extends React.Component {
           component:
             <UnitList
               acl={nextProps.acl}
+              analytics={this.analytics}
               changeState={changeState}
               destroyUnits={nextProps.modelAPI.destroyUnits}
               envResolved={nextProps.modelAPI.envResolved}
@@ -152,6 +159,7 @@ class Inspector extends React.Component {
           component:
             <UnitDetails
               acl={nextProps.acl}
+              analytics={this.analytics}
               changeState={changeState}
               destroyUnits={nextProps.modelAPI.destroyUnits}
               generatePath={this.props.appState.generatePath}
@@ -176,6 +184,7 @@ class Inspector extends React.Component {
           component:
             <ScaleService
               acl={nextProps.acl}
+              analytics={this.analytics}
               changeState={changeState}
               initUtils={{
                 addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits,
@@ -198,6 +207,7 @@ class Inspector extends React.Component {
             <Configuration
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
+              analytics={this.analytics}
               changeState={changeState}
               charm={nextProps.charm}
               getServiceByName={nextProps.services.getServiceByName}
@@ -220,6 +230,7 @@ class Inspector extends React.Component {
             <InspectorExpose
               acl={nextProps.acl}
               addNotification={nextProps.addNotification}
+              analytics={this.analytics}
               changeState={changeState}
               modelAPI={shapeup.addReshape({
                 exposeService: modelAPI.exposeService,
@@ -240,6 +251,7 @@ class Inspector extends React.Component {
           component:
             <InspectorRelations
               acl={nextProps.acl}
+              analytics={this.analytics}
               changeState={changeState}
               destroyRelations={nextProps.relationUtils.destroyRelations}
               service={service}
@@ -260,6 +272,7 @@ class Inspector extends React.Component {
           icon: service.get('icon'),
           component:
             <InspectorRelationDetails
+              analytics={this.analytics}
               relation={relation} />,
           backState: {
             gui: {
@@ -275,6 +288,7 @@ class Inspector extends React.Component {
             icon: service.get('icon'),
             component:
               <InspectorRelateToEndpoint
+                analytics={this.analytics}
                 backState={{
                   gui: {
                     inspector: {
@@ -283,7 +297,7 @@ class Inspector extends React.Component {
                 changeState={changeState}
                 createRelation={nextProps.relationUtils.createRelation}
                 endpoints={nextProps.relationUtils.getAvailableEndpoints(
-                  service, nextProps.services.getById(spouse))} />,
+                  service, nextProps.services.getById(spouse)) || []} />,
             backState: {
               gui: {
                 inspector: {
@@ -296,6 +310,7 @@ class Inspector extends React.Component {
           icon: service.get('icon'),
           component:
             <InspectorRelateTo
+              analytics={this.analytics}
               application={service}
               changeState={changeState}
               relatableApplications={nextProps.relatableApplications} />,
@@ -318,6 +333,7 @@ class Inspector extends React.Component {
               acl={nextProps.acl}
               addCharm={nextProps.addCharm}
               addNotification={nextProps.addNotification}
+              analytics={this.analytics}
               changeState={changeState}
               charmId={service.get('charm')}
               getAvailableVersions={nextProps.getAvailableVersions}
@@ -339,6 +355,7 @@ class Inspector extends React.Component {
           component:
             <InspectorResourcesList
               acl={nextProps.acl}
+              analytics={this.analytics}
               resources={nextProps.charm.get('resources')} />,
           backState: {
             gui: {
@@ -353,6 +370,7 @@ class Inspector extends React.Component {
           component:
             <InspectorPlan
               acl={nextProps.acl}
+              analytics={this.analytics}
               currentPlan={nextProps.service.get('activePlan')} />,
           backState: {
             gui: {
@@ -373,6 +391,7 @@ class Inspector extends React.Component {
       <div className="inspector-view">
         <InspectorHeader
           activeComponent={this.state.activeComponent}
+          analytics={this.analytics}
           backCallback={this._backCallback.bind(this)}
           changeState={this.props.appState.changeState.bind(this.props.appState)}
           charmId={this.props.charm.get('id')}
@@ -393,6 +412,7 @@ Inspector.propTypes = {
   acl: PropTypes.object.isRequired,
   addCharm: PropTypes.func.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   charm: PropTypes.object.isRequired,
   getAvailableVersions: PropTypes.func.isRequired,

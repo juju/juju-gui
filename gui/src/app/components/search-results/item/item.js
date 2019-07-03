@@ -6,11 +6,17 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const SeriesList = require('../../series-list/series-list');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 class SearchResultsItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Search Item');
+  }
+
   /**
     Generate the element for the special flag.
 
@@ -48,37 +54,6 @@ class SearchResultsItem extends React.Component {
             href={this.props.generatePath({search: {tags: tag}})}
             onClick={this._handleTagClick.bind(this, tag)}>
             {tag}
-          </a>
-        </li>
-      );
-    }, this);
-    return components;
-  }
-
-  /**
-    Generate the elements for the series list.
-
-    @method _generateSeriesList
-    @returns {String} The generated elements.
-  */
-  _generateSeriesList() {
-    var item = this.props.item;
-    var series = item.series;
-    var components = [];
-    // Prevent layouts from collapsing due to empty content.
-    if (series.length === 0) {
-      return <li>&nbsp;</li>;
-    }
-    series.forEach(function(s) {
-      components.push(
-        <li
-          className="list-series__item"
-          key={s.name}>
-          <a
-            className="list-block__list--item-link"
-            href={this._generateStoreURL(s.storeId)}
-            onClick={this._handleItemClick.bind(this, s.storeId)}>
-            {s.name}
           </a>
         </li>
       );
@@ -138,6 +113,8 @@ class SearchResultsItem extends React.Component {
   _handleItemClick(id, evt) {
     evt.preventDefault();
     this.props.changeState(this._generateStoreState(id));
+    this.analytics.addCategory('Entity').sendEvent(
+      this.props.analytics.CLICK, {label: `entity: ${id}`});
   }
 
   /**
@@ -160,6 +137,8 @@ class SearchResultsItem extends React.Component {
         type: null
       }
     });
+    this.analytics.addCategory('Tag').sendEvent(
+      this.props.analytics.CLICK, {label: `tag: ${tag}`});
   }
 
   /**
@@ -172,6 +151,8 @@ class SearchResultsItem extends React.Component {
   _handleOwnerClick(owner, evt) {
     evt.preventDefault();
     this.props.changeState({search: null, profile: owner});
+    this.analytics.addCategory('Owner').sendEvent(
+      this.props.analytics.CLICK, {label: `owner: ${owner}`});
   }
 
   /**
@@ -187,6 +168,8 @@ class SearchResultsItem extends React.Component {
       search: null,
       profile: null
     });
+    this.analytics.addCategory('Add to canvas').sendEvent(
+      this.props.analytics.CLICK, {label: `entity: ${id}`});
   }
 
   /**
@@ -245,9 +228,7 @@ class SearchResultsItem extends React.Component {
           </ul>
         </div>
         <div className={this._generateSeriesClass()}>
-          <ul className="list-series">
-            {this._generateSeriesList()}
-          </ul>
+          <SeriesList items={this.props.item.series.map(series => series.name)} />
         </div>
         <div className={this._generateCharmsClass()}>
           <IconList
@@ -268,12 +249,12 @@ class SearchResultsItem extends React.Component {
             </a>
           </p>
         </div>
-        <div className="one-col last-col list-block__list--item-deploy">
+        <div className="one-col last-col list-block__list--item-deploy v1">
           <Button
             action={this._handleDeploy.bind(this, item.id)}
             disabled={this.props.acl.isReadOnly()}
-            extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
+            extraClasses="is-inline list-block__list--item-deploy-link"
+            modifier="neutral">
             <SvgIcon
               name="add-icon"
               size="16" />
@@ -287,6 +268,7 @@ class SearchResultsItem extends React.Component {
 SearchResultsItem.propTypes = {
   acl: PropTypes.object.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired

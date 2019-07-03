@@ -4,10 +4,11 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentSSHKey = require('./sshkey');
 const InsetSelect = require('../../inset-select/inset-select');
-const SvgIcon = require('../../svg-icon/svg-icon');
-const Button = require('../../shared/button/button');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../../generic-input/generic-input');
 const Notification = require('../../notification/notification');
 
@@ -19,6 +20,7 @@ describe('DeploymentSSHKey', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentSSHKey
       addNotification={options.addNotification || addNotification}
+      analytics={Analytics}
       cloud={options.cloud === undefined ? {cloudType: 'aws'} : options.cloud}
       setLaunchpadUsernames={options.setLaunchpadUsernames || setLaunchpadUsernames}
       setSSHKeys={options.setSSHKeys || setSSHKeys}
@@ -82,11 +84,11 @@ describe('DeploymentSSHKey', function() {
               required={false}
               type="text" />
           </div>
-          <div className="deployment-ssh-key__add-key right">
+          <div className="deployment-ssh-key__add-key right v1">
             <Button
               action={wrapper.find('Button').prop('action')}
               disabled
-              type="positive">Add keys</Button>
+              modifier="positive">Add keys</Button>
           </div>
         </div>
       </div>

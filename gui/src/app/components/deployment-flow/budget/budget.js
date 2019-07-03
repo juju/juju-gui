@@ -7,21 +7,22 @@ const React = require('react');
 const Spinner = require('../../spinner/spinner');
 const InsetSelect = require('../../inset-select/inset-select');
 const GenericInput = require('../../generic-input/generic-input');
-const Button = require('../../shared/button/button');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
+const {Button} = require('@canonical/juju-react-components');
+const {ExpandingRow} = require('@canonical/juju-react-components');
 const BudgetChart = require('../../budget-chart/budget-chart');
 
 require('./_budget.scss');
 
 class DeploymentBudget extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.xhrs = [];
     this.state = {
       budgets: null,
       increaseExpanded: false,
       loadingBudgets: false
     };
+    this.analytics = this.props.analytics.addCategory('Budget');
   }
 
   componentWillMount() {
@@ -116,6 +117,7 @@ class DeploymentBudget extends React.Component {
   */
   _handleBudgetChange(value) {
     this.props.setBudget(value);
+    this.analytics.sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -154,11 +156,11 @@ class DeploymentBudget extends React.Component {
                 options={this._generateBudgetOptions()} />
             </div>
             <div className="three-col">
-              <span className="deployment-budget__increase-button">
+              <span className="deployment-budget__increase-button v1">
                 <Button
                   action={this._toggleIncrease.bind(this)}
                   disabled={disabled}
-                  type="base">
+                  modifier="base">
                   Increase budget
                 </Button>
               </span>
@@ -198,19 +200,19 @@ class DeploymentBudget extends React.Component {
                 <div className="eight-col">
                   <span className="link">Manage all budgets</span>
                 </div>
-                <div className="two-col">
+                <div className="two-col v1">
                   <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
-                    type="base">
+                    modifier="base">
                     Cancel
                   </Button>
                 </div>
-                <div className="two-col last-col">
+                <div className="two-col last-col v1">
                   <Button
                     action={this._toggleIncrease.bind(this)}
                     disabled={disabled}
-                    type="neutral">
+                    modifier="neutral">
                     Confirm
                   </Button>
                 </div>
@@ -226,6 +228,7 @@ class DeploymentBudget extends React.Component {
 DeploymentBudget.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   listBudgets: PropTypes.func.isRequired,
   setBudget: PropTypes.func.isRequired,
   user: PropTypes.string

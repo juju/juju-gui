@@ -4,12 +4,14 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const Help = require('./help');
 
 describe('Help', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <Help
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       displayShortcutsModal={options.displayShortcutsModal || sinon.stub()}
       gisf={options.gisf}

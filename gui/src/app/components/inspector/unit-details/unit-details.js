@@ -4,13 +4,26 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Link = require('../../link/link');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_unit-details.scss');
 
 class UnitDetails extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      constraints: null,
+      constraintsVisibility: false
+    };
+    this.analytics = this.props.analytics.addCategory('Unit Details');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+  
   /**
     Handle removing a unit if the button has been clicked.
 
@@ -27,6 +40,7 @@ class UnitDetails extends React.Component {
           unitStatus: this.props.unitStatus,
           unit: null
         }}});
+    this.analytics.sendEvent(this.props.analytics.DELETE);
   }
 
   /**
@@ -271,7 +285,7 @@ class UnitDetails extends React.Component {
           {this._generateAddressList()}
         </div>
         {this._generateTerminalActions()}
-        <div className="twelve-col no-margin-bottom">
+        <div className="twelve-col no-margin-bottom v1">
           <ButtonRow buttons={[{
             disabled: props.acl.isReadOnly(),
             title: 'Remove',
@@ -285,6 +299,7 @@ class UnitDetails extends React.Component {
 
 UnitDetails.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   destroyUnits: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,

@@ -4,9 +4,10 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentCloud = require('./cloud');
 const Spinner = require('../../spinner/spinner');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('DeploymentCloud', function() {
   let acl, cloudList;
@@ -15,6 +16,7 @@ describe('DeploymentCloud', function() {
     <DeploymentCloud
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       cloud={options.cloud || null}
       controllerIsReady={options.controllerIsReady || sinon.stub().returns(true)}
       listClouds={options.listClouds || sinon.stub().callsArgWith(0, null, cloudList)}

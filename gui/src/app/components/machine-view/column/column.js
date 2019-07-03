@@ -7,7 +7,7 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const MachineViewHeader = require('../header/header');
 
 require('./_column.scss');
@@ -29,8 +29,8 @@ MachineViewColumnGlobals.dropTarget = {
     if (monitor.didDrop()) {
       return;
     };
-    props.sendAnalytics('Machine View', 'Drop Target', 'Column');
     if (props.droppable) {
+      props.analytics.addCategory('Column').sendEvent(props.analytics.DROP);
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
   },
@@ -87,10 +87,10 @@ class MachineViewColumn extends React.Component {
         <MachineViewHeader
           acl={props.acl.reshape(propTypes.acl)}
           activeMenuItem={props.activeMenuItem}
+          analytics={this.props.analytics}
           droppable={props.droppable}
           dropUnit={props.dropUnit}
           menuItems={props.menuItems}
-          sendAnalytics={props.sendAnalytics}
           title={props.title}
           toggle={props.toggle}
           type={props.type} />
@@ -113,6 +113,7 @@ MachineViewColumn.propTypes = {
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
+  analytics: PropTypes.object.isRequired,
   canDrop: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.object,
@@ -123,7 +124,6 @@ MachineViewColumn.propTypes = {
   droppable: PropTypes.bool.isRequired,
   isOver: PropTypes.bool.isRequired,
   menuItems: PropTypes.array,
-  sendAnalytics: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   toggle: PropTypes.object,
   type: PropTypes.string

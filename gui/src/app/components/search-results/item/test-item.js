@@ -4,10 +4,9 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const Button = require('../../shared/button/button');
-const IconList = require('../../icon-list/icon-list');
+
+const Analytics = require('test/fake-analytics');
 const SearchResultsItem = require('./item');
-const SvgIcon = require('../../svg-icon/svg-icon');
 
 describe('SearchResultsItem', function() {
   let acl, item, generatePath;
@@ -16,6 +15,7 @@ describe('SearchResultsItem', function() {
     <SearchResultsItem
       acl={options.acl || acl}
       addToModel={options.addToModel || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       generatePath={options.generatePath || generatePath}
       item={options.item || item} />
@@ -45,93 +45,7 @@ describe('SearchResultsItem', function() {
 
   it('can render an item', function() {
     const wrapper = renderComponent();
-    const tagLinks = wrapper.find('.tag-list a');
-    const seriesLinks = wrapper.find('.list-series__item a');
-    var expected = (
-      <li className="list-block__list--item charm">
-        <a
-          className="list-block__list--item-main-link"
-          href="/u/spinach/apache2"
-          onClick={
-            wrapper.find('.list-block__list--item-main-link').prop('onClick')}></a>
-        <div className="four-col charm-name__column">
-          <h3 className="list-block__list--item-title">
-            mysql
-            <span className="special-flag"></span>
-          </h3>
-          <ul className="tag-list">
-            <li className="tag-list--item">
-              <a
-                className="list-block__list--item-link"
-                href="/u/spinach/apache2"
-                onClick={tagLinks.at(0).prop('onClick')}>
-                tag1
-              </a>
-            </li>
-            <li className="tag-list--item">
-              <a
-                className="list-block__list--item-link"
-                href="/u/spinach/apache2"
-                onClick={tagLinks.at(1).prop('onClick')}>
-                tag2
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div className="series__column four-col">
-          <ul className="list-series">
-            {[
-              <li
-                className="list-series__item"
-                key="vivid">
-                <a
-                  className="list-block__list--item-link"
-                  href="/u/spinach/apache2"
-                  onClick={seriesLinks.at(0).prop('onClick')}>vivid</a>
-              </li>,
-              <li
-                className="list-series__item"
-                key="wily">
-                <a
-                  className="list-block__list--item-link"
-                  href="/u/spinach/apache2"
-                  onClick={seriesLinks.at(1).prop('onClick')}>wily</a>
-              </li>
-            ]}
-          </ul>
-        </div>
-        <div className="charm-logos__column list-block__column one-col">
-          <IconList
-            applications={[item]}
-            changeState={sinon.stub()}
-            generatePath={sinon.stub()} />
-        </div>
-        <div className="two-col owner__column list-block__column">
-          <p className="cell">
-            {'By '}
-            <a
-              className="list-block__list--item-link"
-              href="/u/spinach/apache2"
-              onClick={wrapper.find('.owner__column a').prop('onClick')}
-              title="See other charms and bundles by test-owner">
-              {item.owner}
-            </a>
-          </p>
-        </div>
-        <div className="one-col last-col list-block__list--item-deploy">
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            disabled={false}
-            extraClasses="list-block__list--item-deploy-link"
-            type="inline-neutral">
-            <SvgIcon
-              name="add-icon"
-              size="16" />
-          </Button>
-        </div>
-      </li>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('can render an item with defaults for missing props', function() {
@@ -173,32 +87,6 @@ describe('SearchResultsItem', function() {
       profile: null,
       search: null,
       store: 'mysql'
-    });
-  });
-
-  it('can handle clicking on a series', function() {
-    var changeState = sinon.stub();
-    var preventDefault = sinon.stub();
-    const wrapper = renderComponent({changeState});
-    wrapper.find('.list-series__item a').at(0).simulate('click', {
-      preventDefault: preventDefault
-    });
-    assert.equal(changeState.callCount, 1);
-    assert.equal(preventDefault.callCount, 1);
-    assert.deepEqual(changeState.args[0][0], {
-      profile: null,
-      search: null,
-      store: 'u/test-owner/mysql/vivid'
-    });
-    wrapper.find('.list-series__item a').at(1).simulate('click', {
-      preventDefault: preventDefault
-    });
-    assert.equal(changeState.callCount, 2);
-    assert.equal(preventDefault.callCount, 2);
-    assert.deepEqual(changeState.args[1][0], {
-      profile: null,
-      search: null,
-      store: 'u/test-owner/mysql/wily'
     });
   });
 

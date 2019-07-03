@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HeaderBreadcrumb renders properly with the current user 1`] = `
+<div
+  className="header-breadcrumb"
+>
+  <div
+    className="header-breadcrumb__loading"
+  >
+    Loading model
+  </div>
+  <ul
+    className="header-breadcrumb__list"
+    data-username="who"
+  >
+    <li
+      className="header-breadcrumb__list-item"
+    >
+      <a
+        className="header-breadcrumb--link"
+        href="/u/who"
+        onClick={[Function]}
+        title="who"
+      >
+        who
+      </a>
+    </li>
+    <li
+      className="header-breadcrumb__list-item"
+    >
+      <WrappedEnvSwitcher
+        acl={Object {}}
+        addNotification={[Function]}
+        analytics={
+          Object {
+            "addCategory": [Function],
+            "sendEvent": [Function],
+          }
+        }
+        changeState={[Function]}
+        environmentName="mymodel"
+        listModelsWithInfo={[Function]}
+        modelCommitted={true}
+        setModelName={[Function]}
+        switchModel={[Function]}
+        user={
+          Object {
+            "displayName": "who",
+            "username": "who@external",
+          }
+        }
+      />
+    </li>
+  </ul>
+</div>
+`;

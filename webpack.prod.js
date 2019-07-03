@@ -10,7 +10,7 @@ module.exports = merge(common, {
   mode: 'production',
   output: {
     // Change the output filename for production.
-    filename: 'init-pkg-min.js'
+    filename: 'init-pkg.js'
   },
   optimization: {
     minimizer: [

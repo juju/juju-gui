@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Inspector displays the configuration when the app state calls for it 1`] = `
+<div
+  className="inspector-view"
+>
+  <InspectorHeader
+    activeComponent="config"
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
+    backCallback={[Function]}
+    changeState={[Function]}
+    charmId="charmid"
+    hasGetStarted={true}
+    icon="icon.png"
+    showLinks={false}
+    title="Configure"
+  />
+  <div
+    className="inspector-content"
+  >
+    <Configuration
+      acl={
+        Object {
+          "isReadOnly": [Function],
+        }
+      }
+      addNotification={[Function]}
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      charm={
+        Object {
+          "get": [Function],
+          "hasGetStarted": [Function],
+        }
+      }
+      getServiceByName={[Function]}
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      serviceRelations={
+        Array [
+          "relations",
+        ]
+      }
+      setConfig={[Function]}
+      unplaceServiceUnits={[Function]}
+      updateServiceUnitsDisplayname={[Function]}
+    />
+  </div>
+</div>
+`;
+
+exports[`Inspector displays the unit details when the app state calls for it 1`] = `
+<div
+  className="inspector-view"
+>
+  <InspectorHeader
+    activeComponent="unit"
+    analytics={
+      Object {
+        "addCategory": [Function],
+        "sendEvent": [Function],
+      }
+    }
+    backCallback={[Function]}
+    changeState={[Function]}
+    charmId="charmid"
+    hasGetStarted={true}
+    icon="icon.png"
+    showLinks={false}
+    title="demo-unit"
+    type="active"
+  />
+  <div
+    className="inspector-content"
+  >
+    <UnitDetails
+      acl={
+        Object {
+          "isReadOnly": [Function],
+        }
+      }
+      analytics={
+        Object {
+          "addCategory": [Function],
+          "sendEvent": [Function],
+        }
+      }
+      changeState={[Function]}
+      destroyUnits={[Function]}
+      generatePath={[Function]}
+      service={
+        Object {
+          "get": [Function],
+        }
+      }
+      showSSHButtons={false}
+      unit={
+        Object {
+          "agent_state": "active",
+          "displayName": "demo-unit",
+        }
+      }
+      unitStatus={null}
+    />
+  </div>
+</div>
+`;

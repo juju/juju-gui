@@ -3,10 +3,10 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-
 const shapeup = require('shapeup');
 
-const MachineUnit = require('../../shared/machine-unit/machine-unit');
+const Analytics = require('test/fake-analytics');
+const {MachineUnit} = require('@canonical/juju-react-components');
 const MachineViewMachineUnit = require('./machine-unit');
 
 const jsTestUtils = require('../../../utils/component-test-utils');
@@ -19,13 +19,13 @@ describe('MachineViewMachineUnit', function() {
     // test the internal component so we access it via DecoratedComponent.
     <MachineViewMachineUnit.DecoratedComponent
       acl={options.acl || acl}
+      analytics={Analytics}
       canDrag={options.canDrag === undefined ? false : options.canDrag}
       connectDragSource={jsTestUtils.connectDragSource}
       icon={options.icon || 'icon.svg'}
       isDragging={options.isDragging === undefined ? false : options.isDragging}
       machineType={options.machineType || 'machine'}
       removeUnit={options.removeUnit || sinon.stub()}
-      sendAnalytics={options.sendAnalytics || sinon.stub()}
       unit={options.unit || unit} />
   );
 

@@ -7,9 +7,9 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const Button = require('../../shared/button/button');
-const ButtonDropdown = require('../../button-dropdown/button-dropdown');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_header.scss');
 
@@ -26,8 +26,8 @@ MachineViewHeaderGlobals.dropTarget = {
     @param {Object} component The component that is being dropped onto.
   */
   drop: function(props, monitor, component) {
-    props.sendAnalytics('Machine View', 'Drop Target', 'Header');
     if (props.droppable) {
+      props.analytics.addCategory('Header').sendEvent(props.analytics.DROP);
       props.dropUnit(monitor.getItem().unit, null, props.type);
     }
   },
@@ -71,21 +71,26 @@ class MachineViewHeader extends React.Component {
     var toggle = this.props.toggle;
     if (menuItems) {
       return (
-        <ButtonDropdown
-          activeItem={this.props.activeMenuItem}
-          classes={['machine-view__header-dropdown']}
-          listItems={menuItems} />);
+        <span className="v1">
+          <ButtonDropdown
+            activeItem={this.props.activeMenuItem}
+            classes={['machine-view__header-dropdown']}
+            listItems={menuItems} />
+        </span>);
     } else if (toggle) {
       var icon = toggle.toggleOn ? 'close_16_white' : 'add-light-16';
       return (
-        <Button
-          action={toggle.action}
-          disabled={toggle.disabled}
-          type='inline-positive'>
-          <SvgIcon
-            name={icon}
-            size="16" />
-        </Button>);
+        <span className="v1">
+          <Button
+            action={toggle.action}
+            disabled={toggle.disabled}
+            extraClasses="is-inline"
+            modifier="positive">
+            <SvgIcon
+              name={icon}
+              size="16" />
+          </Button>
+        </span>);
     }
   }
 
@@ -124,13 +129,13 @@ MachineViewHeader.propTypes = {
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
   activeMenuItem: PropTypes.string,
+  analytics: PropTypes.object.isRequired,
   canDrop: PropTypes.bool.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
   dropUnit: PropTypes.func,
   droppable: PropTypes.bool.isRequired,
   isOver: PropTypes.bool.isRequired,
   menuItems: PropTypes.array,
-  sendAnalytics: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   toggle: PropTypes.object,
   type: PropTypes.string

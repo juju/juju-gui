@@ -5,12 +5,12 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DateDisplay = require('../date-display/date-display');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Spinner = require('../spinner/spinner');
 const Popup = require('../popup/popup');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_sharing.scss');
 
@@ -188,7 +188,7 @@ class Sharing extends React.Component {
       if (this.props.canShareModel) {
         const revokeUserAccess = this._revokeModelAccess.bind(this, user);
         revokeMarkup = (
-          <div className="sharing__user-revoke">
+          <div className="sharing__user-revoke v1">
             <Button
               action={revokeUserAccess}
               tooltip="Remove user">
@@ -269,7 +269,7 @@ class Sharing extends React.Component {
               options={accessOptions}
               ref="access" />
           </div>
-          <div className="sharing__invite--grant-button">
+          <div className="sharing__invite--grant-button v1">
             {this.generateAddButton()}
           </div>
           {error}
@@ -287,10 +287,10 @@ class Sharing extends React.Component {
     if (this.state.sending) {
       return (<Button
         disabled={true}
+        modifier="positive"
         ref="grantButton"
-        submit={true}
         tooltip="Add user"
-        type="positive">
+        type="submit">
         Add
       </Button>);
     } else if (this.state.sent) {
@@ -304,10 +304,10 @@ class Sharing extends React.Component {
       setTimeout(sent, 1500);
       return (<Button
         disabled={!this.state.canAdd}
+        modifier="positive"
         ref="grantButton"
-        submit={true}
         tooltip="Add user"
-        type="positive">
+        type="submit">
         <SvgIcon
           name="tick_16"
           size="16" />
@@ -315,10 +315,10 @@ class Sharing extends React.Component {
     } else {
       return (<Button
         disabled={!this.state.canAdd}
+        modifier="positive"
         ref="grantButton"
-        submit={true}
         tooltip="Add user"
-        type="positive">
+        type="submit">
         Add
       </Button>);
     }
@@ -343,12 +343,14 @@ class Sharing extends React.Component {
           <div className="sharing__users">
             {this._generateUsersWithAccess()}
           </div>
-          <Button
-            action={this.props.closeHandler}
-            extraClasses="right"
-            type="inline-neutral">
-            Done
-          </Button>
+          <span className="v1">
+            <Button
+              action={this.props.closeHandler}
+              extraClasses="is-inline right"
+              modifier="neutral">
+              Done
+            </Button>
+          </span>
         </Popup>
       </div>
     );

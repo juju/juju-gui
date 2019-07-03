@@ -1,0 +1,60 @@
+@import './mixins';
+@import './variables';
+
+/// Button classes
+/// @group Buttons
+@mixin juju-gui-buttons {
+  @include juju-gui-deployment-button;
+}
+
+/// Deployment button styling
+/// @group Buttons
+/// @example
+/// <a class="button--deployment">
+///   ...
+/// </a>
+@mixin juju-gui-deployment-button {
+  .v1 .p-button {
+    &[type='inline-deployment'] {
+      background-color: $uncommitted;
+      border: none;
+      color: $white;
+
+      &:focus,
+      &:active,
+      &:hover {
+        background-color: darken($uncommitted, 10%);
+      }
+
+      &:disabled {
+        &:focus,
+        &:active,
+        &:hover {
+          background-color: $uncommitted;
+        }
+      }
+    }
+  }
+}
+
+.button-wrapper--ruled {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  [class*='button'] {
+    white-space: nowrap;
+    margin: 10px 20px;
+  }
+
+  &:before,
+  &:after {
+    content: ' ';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: $color-mid-light;
+  }
+}

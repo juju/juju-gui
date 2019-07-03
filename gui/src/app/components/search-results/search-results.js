@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const initUtils = require('../../init/utils');
 const jujulibConversionUtils = require('../../init/jujulib-conversion-utils');
 const SearchResultsItem = require('./item/item');
@@ -22,6 +22,7 @@ class SearchResults extends React.Component {
     var state = this._generateState(this.props);
     state.waitingForSearch = false;
     this.state = state;
+    this.analytics = this.props.analytics.addCategory('Search Results');
   }
 
   componentDidMount() {
@@ -249,6 +250,9 @@ class SearchResults extends React.Component {
       filters,
       this._searchCallback.bind(this),
       150);
+    this.analytics.sendEvent(
+      this.props.analytics.VIEW,
+      {label: `query: ${query}, filters: ${JSON.stringify(filters)}`});
   }
 
   /**
@@ -338,18 +342,21 @@ class SearchResults extends React.Component {
                 {this._generateResultsMessage(data.text, data.solutionsCount)}
                 <div className="list-block__filters">
                   <SearchResultsTypeFilter
+                    analytics={this.analytics}
                     changeState={this.props.changeState}
                     currentType={currentType} />
                   <div className="six-col last-col">
                     <div className="list-block__filters--selects">
                       <form>
                         <SearchResultsSelectFilter
+                          analytics={this.analytics}
                           changeState={this.props.changeState}
                           currentValue={nextProps.sort || this.props.sort}
                           filter='sort'
                           items={sortItems}
                           label="Sort by" />
                         <SearchResultsSelectFilter
+                          analytics={this.analytics}
                           changeState={this.props.changeState}
                           currentValue={
                             nextProps.series || this.props.series}
@@ -471,6 +478,7 @@ class SearchResults extends React.Component {
           <SearchResultsItem
             acl={this.props.acl}
             addToModel={this.props.addToModel}
+            analytics={this.analytics}
             changeState={this.props.changeState}
             generatePath={this.props.generatePath}
             item={item}
@@ -486,6 +494,9 @@ class SearchResults extends React.Component {
     let state = this.state;
     state.showCommunity = !this.state.showCommunity;
     this.setState(this._generateState(state));
+    if (state.showCommunity) {
+      this.analytics.addCategory('Toggle Community').sendEvent(this.props.analytics.VIEW);
+    }
   }
 
   /**
@@ -505,11 +516,11 @@ class SearchResults extends React.Component {
     const buttonTitle = this.state.showCommunity ?
       'Hide community results' : `Show ${community.length} community results`;
     const button = hasPromulgated ? (
-      <div className="button-wrapper--ruled">
+      <div className="button-wrapper--ruled v1">
         <Button
           action={this._toggleCommunityResults.bind(this)}
-          extraClasses="show-community-button"
-          type="inline-neutral">
+          extraClasses="is-inline show-community-button"
+          modifier="neutral">
           {buttonTitle}
         </Button>
       </div>) : null;
@@ -524,6 +535,7 @@ class SearchResults extends React.Component {
             <SearchResultsItem
               acl={this.props.acl}
               addToModel={this.props.addToModel}
+              analytics={this.analytics}
               changeState={this.props.changeState}
               generatePath={this.props.generatePath}
               item={item}
@@ -566,6 +578,7 @@ class SearchResults extends React.Component {
 SearchResults.propTypes = {
   acl: PropTypes.object.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstoreSearch: PropTypes.func.isRequired,
   generatePath: PropTypes.func.isRequired,

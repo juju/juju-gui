@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ButtonDropdown = require('../button-dropdown/button-dropdown');
+const {ButtonDropdown} = require('@canonical/juju-react-components');
 
 require('./_user-menu.scss');
 
@@ -15,28 +15,36 @@ require('./_user-menu.scss');
 const UserMenu = props => {
   const controllerAPI = props.controllerAPI;
   const showLogin = controllerAPI && !controllerAPI.userIsAuthenticated;
+  const analytics = props.analytics.addCategory('User Menu');
   return (
-    <div>
+    <div className="v1">
       <ButtonDropdown
         classes={['user-menu']}
         disableDropdown={showLogin}
         icon={showLogin ? props.USSOLoginLink : 'user_16'}
         listItems={[{
-          action: props.navigateUserProfile,
+          action: function(navigateUserProfile, analytics) {
+            navigateUserProfile();
+            analytics.addCategory('Profile').sendEvent(analytics.CLICK);
+          }.bind(this, props.navigateUserProfile, analytics),
           label: 'Profile'
         }, {
-          action: props.showHelp,
+          action: function(showHelp, analytics) {
+            showHelp();
+            analytics.addCategory('Help').sendEvent(analytics.CLICK);
+          }.bind(this, props.showHelp, analytics),
           label: 'GUI help'
         }, {
           element: props.LogoutLink
         }]}
-        tooltip={showLogin ? '' : 'user'} />
+        tooltip={showLogin ? '' : 'User'} />
     </div>);
 };
 
 UserMenu.propTypes = {
   LogoutLink: PropTypes.object,
   USSOLoginLink: PropTypes.object,
+  analytics: PropTypes.object.isRequired,
   controllerAPI: PropTypes.object,
   navigateUserProfile: PropTypes.func.isRequired,
   showHelp: PropTypes.func.isRequired

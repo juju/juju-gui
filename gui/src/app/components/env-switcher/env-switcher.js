@@ -7,7 +7,7 @@ const React = require('react');
 const enhanceWithClickOutside = require('../../init/react-click-outside');
 
 const EnvList = require('./list/list');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_env-switcher.scss');
 
@@ -126,6 +126,7 @@ class EnvSwitcher extends React.Component {
       return (
         <EnvList
           acl={this.props.acl}
+          analytics={this.props.analytics}
           changeState={this.props.changeState}
           environmentName={this.props.environmentName}
           envs={this.state.envList}
@@ -180,6 +181,7 @@ class EnvSwitcher extends React.Component {
       hasFocus: false
     });
     if (valid) {
+      this.props.analytics.addCategory('Model Name').sendEvent(this.props.analytics.UPDATE);
       this.props.setModelName(name);
     }
   }
@@ -253,6 +255,7 @@ class EnvSwitcher extends React.Component {
 EnvSwitcher.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
   listModelsWithInfo: PropTypes.func,

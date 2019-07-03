@@ -5,9 +5,9 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../../shared/button/button');
-const Panel = require('../../shared/panel/panel');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_panel.scss');
 
@@ -18,15 +18,12 @@ class DeploymentPanel extends React.Component {
     @method _handleClose
   */
   _handleClose() {
-    this.props.sendAnalytics(
-      'Button click',
-      'Cancel deployment'
-    );
     this.props.changeState({
       gui: {deploy: null},
       profile: null,
       special: {dd: null}
     });
+    this.props.analytics.sendEvent(this.props.analytics.CLOSE);
   }
 
   /**
@@ -50,10 +47,10 @@ class DeploymentPanel extends React.Component {
     } else {
       return (
         <div className="deployment-panel__header">
-          <div className="deployment-panel__close">
+          <div className="deployment-panel__close v1">
             <Button
               action={this._handleClose.bind(this)}
-              type="neutral">
+              modifier="neutral">
               Back to canvas
             </Button>
           </div>
@@ -81,6 +78,7 @@ class DeploymentPanel extends React.Component {
 };
 
 DeploymentPanel.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.object,
@@ -88,7 +86,6 @@ DeploymentPanel.propTypes = {
   ]),
   isDirectDeploy: PropTypes.bool,
   loggedIn: PropTypes.bool,
-  sendAnalytics: PropTypes.func,
   title: PropTypes.string
 };
 

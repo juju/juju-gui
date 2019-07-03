@@ -4,14 +4,16 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const InspectorRelateToEndpoint = require('./endpoint');
-const ButtonRow = require('../../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const CheckListItem = require('../../../check-list-item/check-list-item');
 
 describe('InspectorRelateToEndpoint', () => {
 
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorRelateToEndpoint
+      analytics={Analytics}
       backState={options.backState || {}}
       changeState={options.changeState || sinon.stub()}
       createRelation={options.createRelation || sinon.stub()}
@@ -37,13 +39,15 @@ describe('InspectorRelateToEndpoint', () => {
             ref="InspectorRelateToEndpoint-0"
             whenChanged={wrapper.find('CheckListItem').prop('whenChanged')} />]}
         </ul>
-        <ButtonRow
-          buttons={[{
-            title: 'Relate',
-            type: 'neutral',
-            action: wrapper.find('ButtonRow').prop('buttons')[0].action,
-            disabled: true
-          }]} />
+        <span className="v1">
+          <ButtonRow
+            buttons={[{
+              title: 'Relate',
+              modifier: 'neutral',
+              action: wrapper.find('ButtonRow').prop('buttons')[0].action,
+              disabled: true
+            }]} />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

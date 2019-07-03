@@ -16,6 +16,7 @@ const ViewportModule = require('./viewport');
 */
 class EnvironmentView {
   constructor(options={}) {
+    this.analytics = options.analytics.addCategory('Canvas');
     this.endpointsController = options.endpointsController;
     this.db = options.db;
     this.env = options.env;
@@ -24,7 +25,6 @@ class EnvironmentView {
     this.bundleImporter = options.bundleImporter;
     this.state = options.state;
     this.staticURL = options.staticURL;
-    this.sendAnalytics = options.sendAnalytics;
     this.container = options.container;
   }
 
@@ -120,6 +120,7 @@ class EnvironmentView {
     let topo = this.topo;
     if (!topo) {
       topo = new Topology({
+        analytics: this.analytics,
         includePlus: true,
         size: [640, 480],
         ecs: this.ecs,
@@ -133,10 +134,15 @@ class EnvironmentView {
         staticURL: this.staticURL
       });
       // Bind all the behaviors we need as modules.
-      topo.addModule(ServiceModule, {useTransitions: true});
+      topo.addModule(ServiceModule, {
+        analytics: this.analytics,
+        useTransitions: true
+      });
       topo.addModule(PanZoomModule);
       topo.addModule(ViewportModule);
-      topo.addModule(RelationModule);
+      topo.addModule(RelationModule, {
+        analytics: this.analytics
+      });
       this.topo = topo;
     }
     return topo;
@@ -219,14 +225,10 @@ class EnvironmentView {
     @param {Object} e The click event
   */
   _handlePlusClick(e) {
-    this.sendAnalytics(
-      'Onboarding',
-      'Click',
-      'Onboarding plus'
-    );
     this.state.changeState({
       store: ''
     });
+    this.analytics.addCategory('Onboarding plus').sendEvent(this.analytics.CLICK);
   }
 };
 

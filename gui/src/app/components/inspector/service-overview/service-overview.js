@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const {urls} = require('jaaslib');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const initUtils = require('../../../init/utils');
 const InspectorConfirm = require('../confirm/confirm');
 const OverviewAction = require('../overview-action/overview-action');
@@ -13,12 +13,13 @@ const OverviewAction = require('../overview-action/overview-action');
 require('./_service-overview.scss');
 
 class ServiceOverview extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       activePlan: null,
       plans: null
     };
+    this.analytics = this.props.analytics.addCategory('Application');
   }
 
   componentWillMount() {
@@ -74,6 +75,10 @@ class ServiceOverview extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
+  }
+
   /**
     Fires changeState to update the UI based on the component clicked.
 
@@ -90,6 +95,7 @@ class ServiceOverview extends React.Component {
       }
     });
     this.props.changeState(activeAction.state);
+    this.analytics.addCategory(activeAction.title).sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -251,6 +257,7 @@ class ServiceOverview extends React.Component {
     // db, env, and service have already been bound to this function in
     // the app.js definition.
     this.props.destroyService();
+    this.analytics.sendEvent(this.props.analytics.DELETE);
   }
 
   _generateDelete(render, readOnly) {
@@ -261,7 +268,7 @@ class ServiceOverview extends React.Component {
         action: this._destroyService.bind(this)
       }];
       return (
-        <div className="service-overview__delete">
+        <div className="service-overview__delete v1">
           <ButtonRow
             buttons={buttons} />
         </div>
@@ -294,6 +301,7 @@ class ServiceOverview extends React.Component {
 ServiceOverview.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   destroyService: PropTypes.func.isRequired,

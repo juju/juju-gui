@@ -23,6 +23,7 @@ class EntityDetails extends React.Component {
     state.hasPlans = false;
     state.plans = null;
     this.state = state;
+    this.analytics = this.props.analytics.addCategory('EntityDetails');
   }
 
   componentDidMount() {
@@ -33,6 +34,7 @@ class EntityDetails extends React.Component {
     // new id format.
     const xhr = this._getEntity(this.props.id, this._fetchCallback.bind(this));
     this.xhrs.push(xhr);
+    this.analytics.sendEvent(this.props.analytics.VIEW, {label: `entity: ${this.props.id}`});
   }
 
   componentWillUnmount() {
@@ -99,6 +101,7 @@ class EntityDetails extends React.Component {
             <EntityHeader
               acl={this.props.acl}
               addNotification={this.props.addNotification}
+              analytics={this.analytics}
               changeState={this.props.changeState}
               deployService={this.props.deployService}
               entityModel={entityModel}
@@ -109,6 +112,7 @@ class EntityDetails extends React.Component {
               plans={this.state.plans} />
             <EntityContent
               addNotification={this.props.addNotification}
+              analytics={this.analytics}
               changeState={this.props.changeState}
               charmstore={shapeup.addReshape({
                 getDiagramURL: charmstore.getDiagramURL,
@@ -123,7 +127,6 @@ class EntityDetails extends React.Component {
               hasPlans={this.state.hasPlans}
               plans={this.state.plans}
               scrollCharmbrowser={this.props.scrollCharmbrowser}
-              sendAnalytics={this.props.sendAnalytics}
               showTerms={this.props.showTerms}
               staticURL={this.props.staticURL} />
           </div>
@@ -273,6 +276,7 @@ class EntityDetails extends React.Component {
 EntityDetails.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charmstore: shapeup.shape({
     getBundleYAML: PropTypes.func.isRequired,
@@ -292,7 +296,6 @@ EntityDetails.propTypes = {
   importBundleYAML: PropTypes.func.isRequired,
   listPlansForCharm: PropTypes.func.isRequired,
   scrollCharmbrowser: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   showTerms: PropTypes.func.isRequired,
   staticURL: PropTypes.string

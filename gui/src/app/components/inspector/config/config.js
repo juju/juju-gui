@@ -9,7 +9,7 @@ const {urls} = require('jaaslib');
 const BooleanConfig = require('../../boolean-config/boolean-config');
 const initUtils = require('../../../init/utils');
 const StringConfig = require('../../string-config/string-config');
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 
 require('./_config.scss');
 
@@ -23,6 +23,7 @@ class Configuration extends React.Component {
       series: this.props.service.get('series'),
       changed: false
     };
+    this.analytics = this.props.analytics.addCategory('Configuration');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,6 +31,10 @@ class Configuration extends React.Component {
       // Have to clone the config so we don't update it via reference.
       serviceConfig: this._clone(nextProps.service.get('config'))
     });
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -95,6 +100,7 @@ class Configuration extends React.Component {
     // Reset the form so the file can be uploaded again
     this.refs['file-form'].reset();
     this._handleOnChange();
+    this.analytics.sendEvent('Import');
   }
 
   /**
@@ -164,6 +170,7 @@ class Configuration extends React.Component {
       );
     }
     this._showInspectorIndex();
+    this.analytics.sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -383,16 +390,20 @@ class Configuration extends React.Component {
     const actionButtons = [{
       disabled: disabled,
       title: 'Cancel',
-      type: 'base',
-      action: this._showInspectorIndex.bind(this)
+      modifier: 'base',
+      action: () => {
+        this.analytics.sendEvent(this.props.analytics.CANCEL);
+        this._showInspectorIndex();
+      }
     }, {
       disabled: disabled,
-      title: 'Save changes',
-      type: 'neutral',
+      title: 'Save',
+      modifier: 'positive',
       action: this._saveConfig.bind(this)
     }];
     const classes = classNames(
       'inspector-config__buttons',
+      'v1',
       {'inspector-config__buttons--hidden': !this.state.changed});
     return (
       <div className={classes}>
@@ -420,7 +431,7 @@ class Configuration extends React.Component {
               ref="file"
               type="file" />
           </form>
-          <div className="inspector-config__config-file">
+          <div className="inspector-config__config-file v1">
             <ButtonRow buttons={importButton} />
           </div>
           {this._generateConfigElements()}
@@ -434,6 +445,7 @@ class Configuration extends React.Component {
 Configuration.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   charm: PropTypes.object.isRequired,
   getServiceByName: PropTypes.func.isRequired,

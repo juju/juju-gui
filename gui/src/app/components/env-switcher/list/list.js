@@ -5,8 +5,9 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const CreateModelButton = require('../../create-model-button/create-model-button');
-const DateDisplay = require('../../date-display/date-display');
-const Panel = require('../../shared/panel/panel');
+const initUtils = require('../../../init/utils');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_list.scss');
 
@@ -16,6 +17,11 @@ class EnvList extends React.Component {
     this.state = {
       envs: this.props.envs
     };
+    this.analytics = this.props.analytics.addCategory('Model Switcher');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,29 +39,9 @@ class EnvList extends React.Component {
     }
     const currentUser = this.props.user ? this.props.user.username : null;
     const sortedModels = models
-      .sort((a, b) => {
-        if (!b.lastConnection) {
-          return -1;
-        }
-        if (!a.lastConnection) {
-          return 1;
-        }
-        return b.lastConnection.getTime() - a.lastConnection.getTime();
-      })
       .map(model => {
         let name = model.name;
         let owner = model.owner;
-        let lastConnected = 'Never accessed';
-        if (model.lastConnection) {
-          lastConnected = (
-            <span>
-              Last accessed&nbsp;
-              <DateDisplay
-                date={model.lastConnection}
-                relative={true} />
-            </span>
-          );
-        }
         let ownerNoDomain;
         if (owner.indexOf('@') === -1) {
           // Juju does not return domains for local owners when listing models.
@@ -67,6 +53,7 @@ class EnvList extends React.Component {
         if (owner !== currentUser) {
           name = `${ownerNoDomain}/${model.name}`;
         }
+        let cloud = initUtils.getCloudProviderDetails(model.provider).id;
         return (
           <li
             className="env-list__environment"
@@ -78,9 +65,10 @@ class EnvList extends React.Component {
             role="menuitem"
             tabIndex="0">
             {name}
-            <div className="env-list__last-connected">
-              {lastConnected}
-            </div>
+            <SvgIcon
+              className="env-list__environment-icon"
+              name={`profile-${cloud}`}
+              size="26" />
           </li>
         );
       });
@@ -100,6 +88,7 @@ class EnvList extends React.Component {
       name: currentTarget.getAttribute('data-name'),
       owner: currentTarget.getAttribute('data-owner')
     });
+    this.analytics.addCategory('Model').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -143,11 +132,12 @@ class EnvList extends React.Component {
       createNew = (
         <CreateModelButton
           action={this._handleNewModelClick.bind(this)}
+          analytics={this.analytics}
           changeState={this.props.changeState}
           disabled={!canAddModels}
+          modifier="neutral"
           switchModel={this.props.switchModel}
-          title="Start a new model"
-          type="neutral" />);
+          title="Start a new model" />);
     }
     return (
       <Panel
@@ -162,6 +152,7 @@ class EnvList extends React.Component {
 
 EnvList.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   environmentName: PropTypes.string,
   envs: PropTypes.array.isRequired,

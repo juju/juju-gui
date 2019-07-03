@@ -4,8 +4,9 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const LocalInspector = require('./local-inspector');
-const ButtonRow = require('../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const InspectorHeader = require('../inspector/header/header');
 
 describe('LocalInspector', function() {
@@ -14,6 +15,7 @@ describe('LocalInspector', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <LocalInspector
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       file={options.file || file}
       localType={options.localType || 'new'}
@@ -58,17 +60,18 @@ describe('LocalInspector', function() {
     var buttons = [{
       title: 'Cancel',
       action: buttonList[0].action,
-      type: 'base'
+      modifier: 'base'
     }, {
       title: 'Upload',
       action: buttonList[1].action,
       disabled: false,
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     var inputs = wrapper.find('input');
     var expected = (
       <div className="inspector-view local-inspector">
         <InspectorHeader
+          analytics={Analytics}
           backCallback={wrapper.find('InspectorHeader').prop('backCallback')}
           title="Local charm" />
         <div className="inspector-content local-inspector__section">
@@ -112,8 +115,10 @@ describe('LocalInspector', function() {
             </select>
           </div>
         </div>
-        <ButtonRow
-          buttons={buttons} />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons} />
+        </span>
       </div>);
     assert.compareJSX(wrapper, expected);
   });

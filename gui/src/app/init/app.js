@@ -47,17 +47,17 @@ const ModalGUISettings = require('../components/modal-gui-settings/modal-gui-set
 const ModalShortcuts = require('../components/modal-shortcuts/modal-shortcuts');
 const Notification = require('../components/notification/notification');
 const NotificationList = require('../components/notification-list/notification-list');
-const Panel = require('../components/shared/panel/panel');
 const Popup = require('../components/popup/popup');
 const PostDeployment = require('../components/post-deployment/post-deployment');
 const Profile = require('../components/profile/profile');
 const Sharing = require('../components/sharing/sharing');
 const Status = require('../components/status/status');
-const SvgIcon = require('../components/svg-icon/svg-icon');
-const Terminal = require('../components/terminal/terminal');
 const UserMenu = require('../components/user-menu/user-menu');
 const USSOLoginLink = require('../components/usso-login-link/usso-login-link');
 const Zoom = require('../components/zoom/zoom');
+const {Panel} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
+const {Terminal} = require('@canonical/juju-react-components');
 
 
 /**
@@ -282,11 +282,12 @@ class App extends React.Component {
       <div id="model-actions-container">
         <ModelActions
           acl={props.acl}
+          analytics={this.props.analytics.addCategory('Header')}
           appState={props.appState}
           changeState={this._bound.changeState}
           displayTerminalButton={this._shouldEnableTerminal()}
           exportEnvironmentFile={initUtils.exportEnvironmentFile.bind(
-            initUtils, props.db, props.sendAnalytics)}
+            initUtils, props.db)}
           hideDragOverNotification={this._showDragOverNotification.bind(
             this, false)}
           importBundleFile={props.bundleImporter.importBundleFile.bind(
@@ -363,13 +364,17 @@ class App extends React.Component {
       creds.user = user.controller.user;
       creds.password = user.controller.password;
     }
+    this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.VIEW);
     return (
       <Terminal
         addNotification={this._bound.addNotification}
         // If a URL has been provided for the jujuShellURL then use it over any
         // provided by the environment.
         address={address}
-        changeState={this._bound.changeState}
+        close={() => {
+          this.props.appState.changeState({terminal: null});
+          this.analytics.addCategory('Terminal').sendEvent(this.props.analytics.CLOSE);
+        }}
         commands={commands}
         creds={creds}
         WebSocket={WebSocket} />);
@@ -476,6 +481,7 @@ Browser: ${navigator.userAgent}`
         activeSection={state.hash}
         addNotification={this._bound.addNotification}
         addToModel={this.props.addToModel.bind(this, charmstore)}
+        analytics={this.props.analytics}
         bakery={this.props.bakery}
         baseURL={this.props.applicationConfig.baseUrl}
         changeState={this._bound.changeState}
@@ -497,7 +503,6 @@ Browser: ${navigator.userAgent}`
         getUser={this.props.identity.getUser.bind(this.props.identity)}
         gisf={this.props.applicationConfig.gisf}
         payment={payment && shapeup.fromShape(payment, Profile.propTypes.payment)}
-        sendAnalytics={this.props.sendAnalytics}
         showPay={this.props.applicationConfig.flags.pay || false}
         storeUser={this.props.storeUser.bind(this)}
         stripe={stripe && shapeup.fromShape(stripe, Profile.propTypes.stripe)}
@@ -512,7 +517,9 @@ Browser: ${navigator.userAgent}`
   _generateHeaderSearch() {
     return (
       <li className="header-banner__list-item header-banner__list-item--no-padding">
-        <HeaderSearch appState={this.props.appState} />
+        <HeaderSearch
+          analytics={this.props.analytics.addCategory('Header')}
+          appState={this.props.appState} />
       </li>);
   }
 
@@ -524,6 +531,8 @@ Browser: ${navigator.userAgent}`
       this.props.appState.changeState({
         help: true
       });
+      this.props.analytics.addCategory('Header').addCategory('Help')
+        .sendEvent(this.props.analytics.CLICK);
     };
     return (
       <li
@@ -635,6 +644,7 @@ Browser: ${navigator.userAgent}`
     }
     const handler = new WebHandler();
     return (<Help
+      analytics={this.props.analytics}
       changeState={this._bound.changeState}
       displayShortcutsModal={this._displayShortcutsModal.bind(this, true)}
       gisf={this.props.applicationConfig.gisf}
@@ -675,6 +685,7 @@ Browser: ${navigator.userAgent}`
     }
     return (
       <PostDeployment
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         charmstore={
           shapeup.fromShape(this.props.charmstore, PostDeployment.propTypes.charmstore)}
@@ -693,7 +704,11 @@ Browser: ${navigator.userAgent}`
         <HeaderLogo
           gisf={gisf}
           homePath={homePath}
-          showProfile={initUtils.showProfile.bind(this, this._bound.changeState, userName)} />
+          showProfile={() => {
+            this.props.analytics.addCategory('Header').addCategory('Logo')
+              .sendEvent(this.props.analytics.CLICK);
+            initUtils.showProfile(this._bound.changeState, userName);
+          }} />
       </div>);
   }
 
@@ -713,6 +728,7 @@ Browser: ${navigator.userAgent}`
         acl={this.props.acl}
         addNotification={this._bound.addNotification}
         addToModel={this.props.addToModel.bind(this, charmstore)}
+        analytics={this.props.analytics}
         appState={this.props.appState}
         charmstore={shapeup.fromShape(this.props.charmstore, propTypes.charmstore)}
         charmstoreURL={
@@ -726,7 +742,6 @@ Browser: ${navigator.userAgent}`
         importBundleYAML={this.props.bundleImporter.importBundleYAML.bind(
           this.props.bundleImporter)}
         listPlansForCharm={this.props.plans.listPlansForCharm.bind(this.props.plans)}
-        sendAnalytics={this.props.sendAnalytics}
         setPageTitle={this.props.setPageTitle.bind(this)}
         showTerms={this.props.terms.showTerms.bind(this.props.terms)}
         staticURL={this.props.applicationConfig.staticURL || ''} />);
@@ -766,6 +781,7 @@ Browser: ${navigator.userAgent}`
     return (
       <MachineView
         acl={shapeup.fromShape(this.props.acl, propTypes.acl)}
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         dbAPI={shapeup.addReshape({
           addGhostAndEcsUnits: initUtils.addGhostAndEcsUnits.bind(
@@ -792,7 +808,6 @@ Browser: ${navigator.userAgent}`
         parseMachineDetails={initUtils.parseMachineDetails.bind(
           initUtils, modelAPI.genericConstraints)}
         parseMachineName={db.machines.parseMachineName.bind(db.machines)}
-        sendAnalytics={this.props.sendAnalytics}
         series={urls.CHARM_SERIES}
         showSSHButtons={this._shouldEnableTerminal()} />);
   }
@@ -809,6 +824,7 @@ Browser: ${navigator.userAgent}`
     const propTypes = Status.propTypes;
     return (
       <Status
+        analytics={this.props.analytics}
         changeState={this._bound.changeState}
         generatePath={this.props.appState.generatePath.bind(this.props.appState)}
         model={shapeup.fromShape(this.props.modelAPI.getAttrs(), propTypes.model)}
@@ -863,6 +879,7 @@ Browser: ${navigator.userAgent}`
           acl={this.props.acl}
           addCharm={addCharm}
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics}
           appState={this.props.appState}
           charm={charm}
           getAvailableVersions={charmstore.getAvailableVersions.bind(charmstore)}
@@ -908,6 +925,7 @@ Browser: ${navigator.userAgent}`
       inspector = (
         <LocalInspector
           acl={this.props.acl}
+          analytics={this.props.analytics}
           changeState={this._bound.changeState}
           file={window.localCharmFile}
           localType={localType}
@@ -989,6 +1007,7 @@ Browser: ${navigator.userAgent}`
       <DeploymentFlow
         acl={this.props.acl}
         addNotification={this._bound.addNotification}
+        analytics={this.props.analytics}
         applications={services.toArray()}
         changes={currentChangeSet}
         changeState={this._bound.changeState}
@@ -1036,7 +1055,6 @@ Browser: ${navigator.userAgent}`
         plans={this.props.plans && shapeup.fromShape(this.props.plans, propTypes.plans)}
         profileUsername={this.props.getUserInfo(state).profile}
         region={modelAPI.get('region')}
-        sendAnalytics={this.props.sendAnalytics}
         setModelName={modelAPI.set.bind(modelAPI, 'environmentName')}
         showPay={this.props.applicationConfig.flags.pay || false}
         staticURL={this.props.applicationConfig.staticURL || ''}
@@ -1076,14 +1094,14 @@ Browser: ${navigator.userAgent}`
       <div id="deployment-bar-container">
         <DeploymentBar
           acl={this.props.acl}
+          analytics={this.props.analytics}
           changeState={this._bound.changeState}
           currentChangeSet={ecs.getCurrentChangeSet()}
           generateChangeDescription={
             changesUtils.generateChangeDescription.bind(
               changesUtils, services, units)}
           hasEntities={servicesArray.length > 0 || machines.length > 0}
-          modelCommitted={this.props.modelAPI.get('connected')}
-          sendAnalytics={this.props.sendAnalytics} />
+          modelCommitted={this.props.modelAPI.get('connected')} />
       </div>);
   }
 
@@ -1107,6 +1125,7 @@ Browser: ${navigator.userAgent}`
       <div className="full-screen-mask">
         <Login
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics}
           bakeryEnabled={this.props.applicationConfig.bakeryEnabled}
           controllerIsConnected={controllerIsConnected}
           errorMessage={err}
@@ -1130,9 +1149,11 @@ Browser: ${navigator.userAgent}`
     }
     const charmstore = this.props.charmstore;
     const bakery = this.props.bakery;
+    const analytics = this.props.analytics.addCategory('Header');
     const _USSOLoginLink = (
       <USSOLoginLink
         addNotification={this._bound.addNotification}
+        analytics={analytics}
         displayType="text"
         loginToController={
           controllerAPI.loginWithMacaroon.bind(controllerAPI, bakery)} />);
@@ -1145,6 +1166,7 @@ Browser: ${navigator.userAgent}`
       return this.props.getUser('charmstore') && !applicationConfig.gisf;
     };
     const LogoutLink = (<Logout
+      analytics={analytics}
       charmstoreLogoutUrl={charmstore.getLogoutUrl()}
       doCharmstoreLogout={doCharmstoreLogout}
       locationAssign={window.location.assign.bind(window.location)}
@@ -1171,6 +1193,7 @@ Browser: ${navigator.userAgent}`
         className="header-banner__list-item header-banner__list-item--no-padding"
         id="profile-link-container">
         <UserMenu
+          analytics={analytics}
           controllerAPI={controllerAPI}
           LogoutLink={LogoutLink}
           navigateUserProfile={navigateUserProfile}
@@ -1210,6 +1233,7 @@ Browser: ${navigator.userAgent}`
         <HeaderBreadcrumb
           acl={this.props.acl}
           addNotification={this._bound.addNotification}
+          analytics={this.props.analytics.addCategory('Header')}
           appState={this.props.appState}
           changeState={this._bound.changeState}
           listModelsWithInfo={listModelsWithInfo}
@@ -1314,7 +1338,7 @@ Browser: ${navigator.userAgent}`
   */
   _generateCookieNotice() {
     if (this.props.applicationConfig.GTM_enabled) {
-      return cookieUtil.check(document, this.props.appState);
+      return cookieUtil.check(this.props.appState);
     }
   }
 
@@ -1375,11 +1399,12 @@ Browser: ${navigator.userAgent}`
     const buttons = [{
       title: 'Cancel',
       action: this.setState.bind(this, {popupAction: null}),
-      type: 'inline-neutral'
+      extraClasses: 'is-inline',
+      modifier: 'neutral'
     }, {
       title: 'Continue',
       action: popupAction,
-      type: 'destructive'
+      modifier: 'negative'
     }];
     return (
       <Popup
@@ -1442,6 +1467,7 @@ Browser: ${navigator.userAgent}`
 App.propTypes = {
   acl: PropTypes.object.isRequired,
   addToModel: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   applicationConfig: PropTypes.object.isRequired,
   bakery: PropTypes.object.isRequired,
@@ -1462,7 +1488,6 @@ App.propTypes = {
   payment: PropTypes.object,
   plans: PropTypes.object,
   rates: PropTypes.object,
-  sendAnalytics: PropTypes.func.isRequired,
   setModelUUID: PropTypes.func.isRequired,
   setPageTitle: PropTypes.func.isRequired,
   stats: PropTypes.object,

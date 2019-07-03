@@ -6,11 +6,11 @@ const enzyme = require('enzyme');
 
 const DateDisplay = require('../date-display/date-display');
 const Sharing = require('./sharing');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const GenericInput = require('../generic-input/generic-input');
 const InsetSelect = require('../inset-select/inset-select');
 const Popup = require('../popup/popup');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('Sharing', () => {
   let users, getModelUserInfo;
@@ -68,12 +68,14 @@ describe('Sharing', () => {
           <div className="sharing__users">
             {undefined}
           </div>
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            extraClasses="right"
-            type="inline-neutral">
-            Done
-          </Button>
+          <span className="v1">
+            <Button
+              action={wrapper.find('Button').prop('action')}
+              extraClasses="is-inline right"
+              modifier="neutral">
+              Done
+            </Button>
+          </span>
         </Popup>
       </div>
     );
@@ -190,13 +192,13 @@ describe('Sharing', () => {
               options={expectedOptions}
               ref="access" />
           </div>
-          <div className="sharing__invite--grant-button">
+          <div className="sharing__invite--grant-button v1">
             <Button
               disabled={true}
+              modifier="positive"
               ref="grantButton"
-              submit={true}
               tooltip="Add user"
-              type="positive">
+              type="submit">
               Add
             </Button>
           </div>
@@ -235,7 +237,7 @@ describe('Sharing', () => {
     });
     // Validate that the markup is correct.
     const expected = (
-      <div className="sharing__user-revoke">
+      <div className="sharing__user-revoke v1">
         <Button
           action={wrapper.find('.sharing__user-revoke Button').at(0).prop('action')}
           tooltip="Remove user">

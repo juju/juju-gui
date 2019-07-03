@@ -5,7 +5,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
 
 require('./_add-machine.scss');
@@ -13,13 +13,18 @@ require('./_add-machine.scss');
 class MachineViewAddMachine extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       constraints: null,
       selectedContainer: null,
       selectedMachine:
         !this.props.dbAPI && !this.props.parentId ? 'new' : null
     };
+    this.analytics = this.props.analytics.addCategory(
+      `Add ${this.state.selectedMachine === 'new' ? 'Machine' : 'Container'} Form`);
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -48,7 +53,9 @@ class MachineViewAddMachine extends React.Component {
       return;
     }
     const selectedMachine = state.selectedMachine;
+    let constraints = null;
     let machine = {};
+    let series;
     // If the state is set for a new machine or container then actually add
     // the machine/container.
     if (
@@ -57,8 +64,8 @@ class MachineViewAddMachine extends React.Component {
       selectedContainer === 'lxd' ||
       selectedContainer === 'kvm'
     ) {
-      const constraints = state.constraints || {};
-      const series = constraints.series || null;
+      constraints = state.constraints || {};
+      series = constraints.series || null;
       delete constraints.series;
       machine = props.modelAPI.createMachine(
         selectedContainer, machineId, series, constraints);
@@ -73,6 +80,10 @@ class MachineViewAddMachine extends React.Component {
         props.unit, machine.id || selectedContainer || selectedMachine);
     }
     this.props.close();
+    this.analytics.sendEvent(this.props.analytics.ADD, {
+      label: `type: ${selectedContainer === 'new' ? 'machine' : selectedContainer}` +
+        `, series: ${series}, constraints: ${JSON.stringify(constraints)}, `
+    });
   }
 
   /**
@@ -118,6 +129,8 @@ class MachineViewAddMachine extends React.Component {
   */
   _updateSelectedContainer(e) {
     this.setState({selectedContainer: e.currentTarget.value});
+    this.analytics.addCategory('Choose Container Type').sendEvent(
+      this.props.analytics.CLICK, {label: `container: ${e.currentTarget.value}`});
   }
 
   /**
@@ -154,8 +167,6 @@ class MachineViewAddMachine extends React.Component {
 
   /**
     Generate machine selection.
-
-    @method _generateSelectContainer
   */
   _generateSelectMachine() {
     return (
@@ -241,21 +252,26 @@ class MachineViewAddMachine extends React.Component {
     const props = this.props;
     const buttons = [{
       title: 'Cancel',
-      action: props.close,
-      type: 'base'
+      action: () => {
+        props.close();
+        this.analytics.sendEvent(this.props.analytics.CANCEL);
+      },
+      modifier: 'base'
     }, {
       title: props.unit ? 'Place' : 'Create',
       action: this._submitForm.bind(this),
-      type: 'neutral',
+      modifier: 'neutral',
       // In the add-container mode disable the Create button until a container
       // type has been selected.
       disabled: props.acl.isReadOnly() || (!props.unit && !props.dbAPI
         && props.parentId && !this.state.selectedContainer)
     }];
     return (
-      <ButtonRow
-        buttons={buttons}
-        key="buttons" />);
+      <span className="v1">
+        <ButtonRow
+          buttons={buttons}
+          key="buttons" />
+      </span>);
   }
 
   render() {
@@ -296,6 +312,7 @@ MachineViewAddMachine.propTypes = {
   acl: shapeup.shape({
     isReadOnly: PropTypes.func.isRequired
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired,
   dbAPI: shapeup.shape({
     machines: PropTypes.object.isRequired

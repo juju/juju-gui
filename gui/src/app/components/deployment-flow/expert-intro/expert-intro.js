@@ -18,6 +18,7 @@ class DeploymentExpertIntro extends React.Component {
   constructor(props) {
     super(props);
     this.isBundle = this.props.ddData.id.includes('bundle');
+    this.analytics = this.props.analytics.addCategory('Expert Intro');
   }
 
   /**
@@ -30,6 +31,7 @@ class DeploymentExpertIntro extends React.Component {
       store: '',
       special: {dd: null}
     });
+    this.analytics.addCategory('Store').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -129,8 +131,8 @@ class DeploymentExpertIntro extends React.Component {
                 </div>
               </ExpertBlock>
               <ExpertContactCard
+                analytics={this.analytics}
                 expert={entity.owner}
-                sendAnalytics={this.props.sendAnalytics}
                 staticURL={this.props.staticURL} />
             </div>
           </div>
@@ -147,12 +149,12 @@ class DeploymentExpertIntro extends React.Component {
 
 DeploymentExpertIntro.propTypes = {
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   ddData: PropTypes.object.isRequired,
   entityModel: PropTypes.object,
   generatePath: PropTypes.func.isRequired,
   getDiagramURL: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   staticURL: PropTypes.string
 };
 

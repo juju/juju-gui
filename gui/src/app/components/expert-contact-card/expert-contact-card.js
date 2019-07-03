@@ -6,8 +6,8 @@ const React = require('react');
 
 const EXPERTS = require('../expert-card/experts');
 const ExpertCard = require('../expert-card/expert-card');
-const Button = require('../shared/button/button');
-const SvgIcon = require('../svg-icon/svg-icon');
+const {Button} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 require('./_expert-contact-card.scss');
 
@@ -23,8 +23,9 @@ class ExpertContactCard extends React.Component {
     Change the show contact state.
   */
   _showContact() {
-    this.props.sendAnalytics('Charmbrowser', 'Entity Details', 'Expert Contact');
     this.setState({showContact: true});
+    this.props.analytics.addCategory(this).addCategory('Show Contact Details').sendEvent(
+      this.props.analytics.CLICK, {label: `expert: ${this.props.expert}`});
   }
 
   /**
@@ -46,11 +47,13 @@ class ExpertContactCard extends React.Component {
         <ul className="expert-contact-card__highlights">
           {highlights}
         </ul>
-        <Button
-          action={this._showContact.bind(this)}
-          type="positive">
-          Show contact details&hellip;
-        </Button>
+        <span className="v1">
+          <Button
+            action={this._showContact.bind(this)}
+            modifier="positive">
+            Show contact details&hellip;
+          </Button>
+        </span>
       </div>);
   }
 
@@ -113,8 +116,8 @@ class ExpertContactCard extends React.Component {
 };
 
 ExpertContactCard.propTypes = {
+  analytics: PropTypes.object.isRequired,
   expert: PropTypes.string.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   staticURL: PropTypes.string
 };
 

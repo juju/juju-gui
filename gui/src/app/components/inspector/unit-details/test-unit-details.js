@@ -4,8 +4,9 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const Link = require('../../link/link');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 const UnitDetails = require('./unit-details');
 
 describe('UnitDetails', function() {
@@ -14,6 +15,7 @@ describe('UnitDetails', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <UnitDetails
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       destroyUnits={options.destroyUnits || sinon.stub()}
       generatePath={options.generatePath || sinon.stub()}

@@ -36,6 +36,10 @@ class SearchResultsSelectFilter extends React.Component {
     this.props.changeState({
       search: search
     });
+    this.props.analytics.addCategory('Search Filter').sendEvent(
+      this.props.analytics.CLICK, {
+        label: `filter ${this.props.filter} by: ${e.currentTarget.value}`
+      });
   }
 
   render() {
@@ -54,6 +58,7 @@ class SearchResultsSelectFilter extends React.Component {
 };
 
 SearchResultsSelectFilter.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   currentValue: PropTypes.string,
   filter: PropTypes.string.isRequired,

@@ -4,7 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
-const EnvSwitcher = require('../env-switcher/env-switcher');
+const Analytics = require('test/fake-analytics');
 const HeaderBreadcrumb = require('./header-breadcrumb');
 
 describe('HeaderBreadcrumb', () => {
@@ -15,6 +15,7 @@ describe('HeaderBreadcrumb', () => {
     <HeaderBreadcrumb
       acl={options.acl || acl}
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       appState={options.appState || appState}
       changeState={options.changeState || sinon.stub()}
       listModelsWithInfo={options.listModelsWithInfo || sinon.stub()}
@@ -46,35 +47,7 @@ describe('HeaderBreadcrumb', () => {
       modelOwner: '',
       showEnvSwitcher: true
     });
-    const expected = (
-      <div className="header-breadcrumb">
-        <div className="header-breadcrumb__loading">Loading model</div>
-        <ul className="header-breadcrumb__list" data-username="who">
-          <li className="header-breadcrumb__list-item">
-            <a
-              className="header-breadcrumb--link"
-              href="/u/who"
-              onClick={wrapper.find('.header-breadcrumb--link').prop('onClick')}
-              title="who">
-              who
-            </a>
-          </li>
-          <li className="header-breadcrumb__list-item">
-            <EnvSwitcher
-              acl={acl}
-              addNotification={sinon.stub()}
-              changeState={sinon.stub()}
-              environmentName={'mymodel'}
-              listModelsWithInfo={sinon.stub()}
-              modelCommitted={true}
-              setModelName={sinon.stub()}
-              switchModel={sinon.stub()}
-              user={{username: 'who@external', displayName: 'who'}} />
-          </li>
-        </ul>
-      </div>
-    );
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('renders properly with the model owner', () => {

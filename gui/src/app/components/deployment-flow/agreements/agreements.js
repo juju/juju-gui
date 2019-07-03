@@ -5,7 +5,7 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const TermsPopup = require('../../terms-popup/terms-popup');
 
 require('./_agreements.scss');
@@ -52,11 +52,14 @@ class DeploymentAgreements extends React.Component {
     const terms = this.props.terms;
     if (terms && terms.length) {
       return (
-        <Button
-          action={this._toggleTerms.bind(this)}
-          type="inline-base">
-          View terms
-        </Button>);
+        <span className="v1">
+          <Button
+            action={this._toggleTerms.bind(this)}
+            extraClasses="is-inline"
+            modifier="base">
+            View terms
+          </Button>
+        </span>);
     }
   }
 
@@ -74,7 +77,11 @@ class DeploymentAgreements extends React.Component {
           className="deployment-flow__deploy-checkbox"
           disabled={disabled}
           id="terms"
-          onChange={this.props.onCheckboxChange}
+          onChange={() => {
+            this.props.onCheckboxChange();
+            this.props.analytics.addCategory('Agree To Terms').sendEvent(
+              this.props.analytics.UPDATE);
+          }}
           type="checkbox" />
         <label
           className="deployment-flow__deploy-label"
@@ -90,6 +97,7 @@ class DeploymentAgreements extends React.Component {
 
 DeploymentAgreements.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
   onCheckboxChange: PropTypes.func.isRequired,
   showTerms: PropTypes.bool,

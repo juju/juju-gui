@@ -1,0 +1,18 @@
+.v1 .button-row {
+  .p-inline-list,
+  [class^="p-button"] {
+    margin-bottom: 0;
+  }
+
+  .p-inline-list {
+    display: flex;
+
+    &__item {
+        flex: 1 0 0;
+    }
+  }
+
+  [class^="p-button"] {
+    width: 100%;
+  }
+}

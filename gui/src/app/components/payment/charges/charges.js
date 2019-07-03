@@ -7,8 +7,8 @@ const shapeup = require('shapeup');
 
 const ReceiptPopup = require('./receipt-popup/receipt-popup');
 const DateDisplay = require('../../date-display/date-display');
-const ExpandingRow = require('../../shared/expanding-row/expanding-row');
-const Button = require('../../shared/button/button');
+const {ExpandingRow} = require('@canonical/juju-react-components');
+const {Button} = require('@canonical/juju-react-components');
 const Spinner = require('../../spinner/spinner');
 
 require('./_charges.scss');
@@ -166,11 +166,12 @@ class PaymentCharges extends React.Component {
             <div className="two-col last-col no-margin-bottom">
               {(charge.price + charge.vat) / 100} {charge.currency}
             </div>
-            <div className="two-col last-col no-margin-bottom">
+            <div className="two-col last-col no-margin-bottom v1">
               <Button
                 action={this._togglePopup.bind(this, charge.id)}
                 disabled={false}
-                type="inline-neutral">
+                extraClasses="is-inline"
+                modifier="neutral">
                 Show receipt
               </Button>
             </div>

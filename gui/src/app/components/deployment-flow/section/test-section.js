@@ -5,8 +5,8 @@ const React = require('react');
 const enzyme = require('enzyme');
 
 const DeploymentSection = require('./section');
-const ButtonRow = require('../../shared/button-row/button-row');
-const SvgIcon = require('../../svg-icon/svg-icon');
+const {ButtonRow} = require('@canonical/juju-react-components');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 describe('DeploymentSection', function() {
 
@@ -45,7 +45,7 @@ describe('DeploymentSection', function() {
     var buttons = [{
       action: sinon.stub(),
       title: 'Add credential',
-      type: 'neutral'
+      modifier: 'neutral'
     }];
     const wrapper = renderComponent({
       buttons: buttons,
@@ -65,8 +65,10 @@ describe('DeploymentSection', function() {
               <div className="deployment-section__extra">
                 <span>extra</span>
               </div>
-              <ButtonRow
-                buttons={buttons} />
+              <span className="v1">
+                <ButtonRow
+                  buttons={buttons} />
+              </span>
             </div>
             <h3 className="deployment-section__title">
               <SvgIcon

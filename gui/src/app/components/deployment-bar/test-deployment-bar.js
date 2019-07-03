@@ -4,9 +4,8 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentBar = require('./deployment-bar');
-const DeploymentBarNotification = require('./notification/notification');
-const Button = require('../shared/button/button');
 
 describe('DeploymentBar', function() {
   var acl, previousNotifications;
@@ -14,14 +13,14 @@ describe('DeploymentBar', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentBar
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       currentChangeSet={options.currentChangeSet || {}}
       generateChangeDescription={options.generateChangeDescription || sinon.stub()}
       hasEntities={
         options.hasEntities === undefined ? true : options.hasEntities}
       modelCommitted={
-        options.modelCommitted === undefined ? false : options.modelCommitted}
-      sendAnalytics={options.sendAnalytics || sinon.stub()} />
+        options.modelCommitted === undefined ? false : options.modelCommitted} />
   );
 
   beforeEach(function() {
@@ -37,20 +36,7 @@ describe('DeploymentBar', function() {
   it('can render and pass the correct props', function() {
     var currentChangeSet = {one: 1, two: 2};
     const wrapper = renderComponent({currentChangeSet});
-    var expected = (
-      <div className="deployment-bar">
-        <DeploymentBarNotification
-          change={null} />
-        <div className="deployment-bar__deploy">
-          <Button
-            action={wrapper.find('Button').prop('action')}
-            disabled={false}
-            type="inline-deployment">
-            Deploy changes (2)
-          </Button>
-        </div>
-      </div>);
-    assert.compareJSX(wrapper, expected);
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('enables the button if there are changes', function() {
@@ -192,18 +178,12 @@ describe('DeploymentBar', function() {
   });
 
   it('calls the deploy method when the deploy button is pressed', () =>{
-    const sendAnalytics = sinon.stub();
     const changeState = sinon.stub();
     const wrapper = renderComponent({
-      sendAnalytics,
       changeState
     });
     wrapper.find('Button').props().action();
     assert.equal(changeState.callCount, 1);
     assert.deepEqual(changeState.args[0][0], {gui: {deploy: ''}});
-    assert.equal(sendAnalytics.callCount, 1);
-    assert.equal(sendAnalytics.args[0][0], 'Deployment Flow');
-    assert.equal(sendAnalytics.args[0][1], 'Button click');
-    assert.equal(sendAnalytics.args[0][2], 'deploy');
   });
 });

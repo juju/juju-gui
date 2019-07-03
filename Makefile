@@ -4,7 +4,6 @@ PYTEST := bin/py.test
 GUISRC := jujugui/static/gui/src
 GUIBUILD := jujugui/static/gui/build
 ASSETS_DIR := $(GUISRC)/app/assets
-SVG_SPRITE_SOURCE_DIR := $(GUISRC)/app/assets/svgs
 STATIC_IMAGES := $(GUIBUILD)/app/assets/images
 FAVICON := $(GUIBUILD)/app/favicon.ico
 CSS_FILE := $(GUIBUILD)/app/assets/juju-gui.css
@@ -14,7 +13,6 @@ FLAKE8 := bin/flake8
 PYRAMID := lib/python2.7/site-packages/pyramid
 PYTESTPKG := lib/python2.7/site-packages/pytest.py
 NODE_MODULES := node_modules
-SVG_SPRITE_MODULE := $(NODE_MODULES)/svg-sprite/
 YUI := $(NODE_MODULES)/yui
 BUILT_YUI := $(BUILT_JS_ASSETS)/yui
 SELENIUM := lib/python2.7/site-packages/selenium-2.47.3-py2.7.egg/selenium/selenium.py
@@ -58,7 +56,6 @@ help:
 	@echo "run - run the development server and watch for changes"
 	@echo "server - run the server with development settings"
 	@echo "start-karma - run Karma for development js testing"
-	@echo "svg-sprite - build the svg sprite"
 	@echo "sysdeps - install the system-wide dependencies"
 	@echo "test - run python tests with the default Python"
 	@echo "test-deps - install the test dependencies"
@@ -141,23 +138,12 @@ $(STATIC_FONT_FILES): $(FONT_FILES)
 $(STATIC_IMAGES):
 	mkdir -p $(GUIBUILD)/app/assets
 	cp -r $(GUISRC)/app/assets/images $(GUIBUILD)/app/assets/images
-	mkdir -p $(GUIBUILD)/app/assets/stack/svg
-	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 $(FAVICON):
 	cp $(GUISRC)/app/favicon.ico $(GUIBUILD)/app/favicon.ico
 
-$(SVG_SPRITE_MODULE):
-	npm install svg-sprite@1.3.6
-
 .PHONY: images
 images: $(STATIC_IMAGES) $(FAVICON)
-
-.PHONY: svg-sprite
-svg-sprite: $(SVG_SPRITE_MODULE)
-	$(NODE_MODULES)/.bin/svg-sprite --dest=$(ASSETS_DIR) --stack $(SVG_SPRITE_SOURCE_DIR)/*.svg
-	mkdir -p $(GUIBUILD)/app/assets/stack/svg
-	cp $(GUISRC)/app/assets/stack/svg/sprite.css.svg $(GUIBUILD)/app/assets/stack/svg/sprite.css.svg
 
 .PHONY: gui-deps
 gui-deps: $(JUJUGUI) $(BUILT_JS_ASSETS) $(BUILT_YUI) $(STATIC_IMAGES) $(FAVICON) $(STATIC_FONT_FILES)

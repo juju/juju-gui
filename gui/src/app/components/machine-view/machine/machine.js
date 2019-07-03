@@ -6,9 +6,9 @@ const React = require('react');
 const ReactDnD = require('react-dnd');
 const shapeup = require('shapeup');
 
-const ButtonRow = require('../../shared/button-row/button-row');
+const {ButtonRow} = require('@canonical/juju-react-components');
 const Constraints = require('../../constraints/constraints');
-const Machine = require('../../shared/machine/machine');
+const {Machine} = require('@canonical/juju-react-components');
 const MachineViewMachineUnit = require('../machine-unit/machine-unit');
 
 require('./_machine.scss');
@@ -22,7 +22,9 @@ const dropTarget = {
     @param {Object} component The component that is being dropped onto.
   */
   drop: function(props, monitor, component) {
-    props.sendAnalytics('Machine View', 'Drop Target', 'Machine');
+    const analytics = props.analytics.addCategory(
+      props.type === 'container' ? 'Container' : 'Machine');
+    analytics.sendEvent(props.analytics.DROP);
     props.dropUnit(monitor.getItem().unit, props.machineAPI.machine.id);
   },
 
@@ -50,12 +52,18 @@ const collect = function(connect, monitor) {
 };
 
 class MachineViewMachine extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       constraints: null,
       showForm: false
     };
+    this.analytics = this.props.analytics.addCategory(
+      this.props.type === 'container' ? 'Container' : 'Machine');
+  }
+
+  componentDidMount() {
+    this.analytics.sendEvent(this.props.analytics.VIEW);
   }
 
   /**
@@ -88,6 +96,7 @@ class MachineViewMachine extends React.Component {
     modelAPI.updateMachineConstraints(id, constraints);
     modelAPI.updateMachineSeries(id, series);
     this._toggleForm();
+    this.analytics.addCategory('Constraints Form').sendEvent(this.props.analytics.UPDATE);
   }
 
   /**
@@ -105,12 +114,15 @@ class MachineViewMachine extends React.Component {
       machine.id, this.props.type === 'machine');
     const buttons = [{
       title: 'Cancel',
-      action: this._toggleForm.bind(this),
-      type: 'base'
+      action: () => {
+        this._toggleForm();
+        this.analytics.addCategory('Constraints Form').sendEvent(this.props.analytics.CANCEL);
+      },
+      modifier: 'base'
     }, {
       title: 'Update',
       action: this._setConstraints.bind(this),
-      type: 'neutral',
+      modifier: 'neutral',
       disabled: disabled
     }];
     return (
@@ -126,9 +138,11 @@ class MachineViewMachine extends React.Component {
           providerType={this.props.modelAPI.providerType}
           series={this.props.machineAPI.series}
           valuesChanged={this._updateConstraints.bind(this)} />
-        <ButtonRow
-          buttons={buttons}
-          key="buttons" />
+        <span className="v1">
+          <ButtonRow
+            buttons={buttons}
+            key="buttons" />
+        </span>
       </div>);
   }
 
@@ -173,11 +187,11 @@ class MachineViewMachine extends React.Component {
       components.push(
         <MachineViewMachineUnit
           acl={props.acl.reshape(propTypes.acl)}
+          analytics={this.analytics}
           icon={service.get('icon')}
           key={unit.id}
           machineType={props.type}
           removeUnit={props.machineAPI.removeUnit}
-          sendAnalytics={props.sendAnalytics}
           unit={unit} />);
     });
     return (
@@ -192,6 +206,7 @@ class MachineViewMachine extends React.Component {
   _destroyMachine() {
     const props = this.props;
     props.modelAPI.destroyMachines([props.machineAPI.machine.id], true);
+    this.analytics.sendEvent(this.props.analytics.DELETE);
   }
 
   /**
@@ -224,6 +239,7 @@ class MachineViewMachine extends React.Component {
     const machine = this.props.machineAPI.machine.id;
     const commands = [`juju ssh ${machine}`];
     this.props.changeState({terminal: commands});
+    this.analytics.addCategory('SSH To Machine').sendEvent(this.props.analytics.CLICK);
   }
 
   _generateSSHAction() {
@@ -284,6 +300,7 @@ MachineViewMachine.propTypes = {
     isReadOnly: PropTypes.func.isRequired,
     reshape: shapeup.reshapeFunc
   }).frozen.isRequired,
+  analytics: PropTypes.object.isRequired,
   canDrop: PropTypes.bool.isRequired,
   changeState: PropTypes.func,
   connectDropTarget: PropTypes.func.isRequired,
@@ -309,7 +326,6 @@ MachineViewMachine.propTypes = {
     updateMachineSeries: PropTypes.func
   }).isRequired,
   parseConstraints: PropTypes.func.isRequired,
-  sendAnalytics: PropTypes.func.isRequired,
   showConstraints: PropTypes.bool,
   showSSHButton: PropTypes.bool,
   type: PropTypes.string.isRequired

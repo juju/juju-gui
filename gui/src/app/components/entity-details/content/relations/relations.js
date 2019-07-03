@@ -5,15 +5,15 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const SvgIcon = require('../../../svg-icon/svg-icon');
+const {SvgIcon} = require('@canonical/juju-react-components');
 
 class EntityContentRelations extends React.Component {
-  constructor() {
-    super();
-
+  constructor(props) {
+    super(props);
     this.state = {
       showAllRelations: false
     };
+    this.analytics = this.props.analytics.addCategory('Relations');
   }
 
   /**
@@ -32,12 +32,15 @@ class EntityContentRelations extends React.Component {
       search: search,
       store: null
     });
+    this.analytics.addCategory('Relations').sendEvent(
+      this.props.analytics.VIEW, {label: `relation: ${name}`});
   }
 
   _handleViewMore() {
     this.setState({
       showAllRelations: !this.state.showAllRelations
     });
+    this.analytics.addCategory('View More').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -87,9 +90,9 @@ class EntityContentRelations extends React.Component {
         'View fewer relations' :
         'View more relations';
       components.push(
-        <li className="section__list-item" key="show-more">
+        <li className="section__list-item v1" key="show-more">
           <button
-            className="button--inline-neutral"
+            className="p-button--neutral is-inline"
             onClick={this._handleViewMore.bind(this)}
             role="button">
             {buttonText}
@@ -124,6 +127,7 @@ class EntityContentRelations extends React.Component {
 };
 
 EntityContentRelations.propTypes = {
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   relations: PropTypes.object.isRequired
 };

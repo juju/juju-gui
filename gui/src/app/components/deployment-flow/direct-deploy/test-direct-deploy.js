@@ -4,8 +4,9 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const DeploymentDirectDeploy = require('./direct-deploy');
-const Button = require('../../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const EntityContentDiagram = require('../../entity-details/content/diagram/diagram');
 const EntityContentDescription = require('../../entity-details/content/description/description'); //eslint-disable-line max-len
 
@@ -14,6 +15,7 @@ describe('DirectDeploy', function() {
   const renderComponent = (options = {}) => enzyme.shallow(
     <DeploymentDirectDeploy
       addNotification={options.addNotification || sinon.stub()}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       ddData={options.ddData}
       entityModel={options.entityModel}
@@ -106,10 +108,11 @@ describe('DirectDeploy', function() {
                 width="96" />
             </div>
           </div>
-          <div className="deployment-direct-deploy__edit-model">
+          <div className="deployment-direct-deploy__edit-model v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Edit model
             </Button>
           </div>
@@ -160,10 +163,11 @@ describe('DirectDeploy', function() {
             <EntityContentDiagram
               diagramUrl="imageLink" />
           </div>
-          <div className="deployment-direct-deploy__edit-model">
+          <div className="deployment-direct-deploy__edit-model v1">
             <Button
               action={wrapper.find('Button').prop('action')}
-              type="inline-neutral">
+              extraClasses="is-inline"
+              modifier="neutral">
               Edit model
             </Button>
           </div>

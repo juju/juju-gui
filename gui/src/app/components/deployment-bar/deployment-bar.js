@@ -5,17 +5,18 @@ const PropTypes = require('prop-types');
 const React = require('react');
 
 const DeploymentBarNotification = require('./notification/notification');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 
 require('./_deployment-bar.scss');
 
 class DeploymentBar extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.previousNotifications = [];
     this.state = {
       latestChangeDescription: null
     };
+    this.analytics = this.props.analytics.addCategory('Deployment Bar');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -60,16 +61,13 @@ class DeploymentBar extends React.Component {
     @method _deployAction
   */
   _deployAction() {
-    this.props.sendAnalytics(
-      'Deployment Flow',
-      'Button click',
-      'deploy'
-    );
     this.props.changeState({
       gui: {
         deploy: ''
       }
     });
+    this.analytics.addCategory(
+      this.props.modelCommitted ? 'Commit' : 'Deploy').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -86,7 +84,7 @@ class DeploymentBar extends React.Component {
         </div>);
     }
     return (
-      <div className="deployment-bar__deploy">
+      <div className="deployment-bar__deploy v1">
         <Button
           action={this._deployAction.bind(this)}
           disabled={changeCount === 0}
@@ -100,6 +98,7 @@ class DeploymentBar extends React.Component {
     return (
       <div className="deployment-bar">
         <DeploymentBarNotification
+          analytics={this.analytics}
           change={this.state.latestChangeDescription} />
         {this._generateButton()}
       </div>
@@ -109,12 +108,12 @@ class DeploymentBar extends React.Component {
 
 DeploymentBar.propTypes = {
   acl: PropTypes.object.isRequired,
+  analytics: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   currentChangeSet: PropTypes.object.isRequired,
   generateChangeDescription: PropTypes.func.isRequired,
   hasEntities: PropTypes.bool.isRequired,
-  modelCommitted: PropTypes.bool.isRequired,
-  sendAnalytics: PropTypes.func.isRequired
+  modelCommitted: PropTypes.bool.isRequired
 };
 
 module.exports = DeploymentBar;

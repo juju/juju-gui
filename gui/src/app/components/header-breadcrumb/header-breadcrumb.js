@@ -16,6 +16,10 @@ const NO_MODEL = 'untitled-model';
 // displayed, including information about the current model and all other
 // available models.
 class HeaderBreadcrumb extends React.Component {
+  constructor(props) {
+    super(props);
+    this.analytics = this.props.analytics.addCategory('Header Breadcrumb');
+  }
   /**
     Returns the classes for the button based on the provided props.
     @method _generateClasses
@@ -43,6 +47,7 @@ class HeaderBreadcrumb extends React.Component {
         <EnvSwitcher
           acl={this.props.acl}
           addNotification={this.props.addNotification}
+          analytics={this.analytics}
           changeState={this.props.changeState}
           environmentName={this.props.modelName}
           listModelsWithInfo={this.props.listModelsWithInfo}
@@ -68,6 +73,7 @@ class HeaderBreadcrumb extends React.Component {
       return;
     }
     this.props.showProfile(username);
+    this.analytics.addCategory('Username').sendEvent(this.props.analytics.CLICK);
   }
 
   /**
@@ -157,6 +163,7 @@ class HeaderBreadcrumb extends React.Component {
 HeaderBreadcrumb.propTypes = {
   acl: PropTypes.object.isRequired,
   addNotification: PropTypes.func.isRequired,
+  analytics: PropTypes.object.isRequired,
   appState: PropTypes.object.isRequired,
   changeState: PropTypes.func.isRequired,
   listModelsWithInfo: PropTypes.func,

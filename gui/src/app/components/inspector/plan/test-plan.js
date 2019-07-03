@@ -4,6 +4,7 @@
 const React = require('react');
 const enzyme = require('enzyme');
 
+const Analytics = require('test/fake-analytics');
 const InspectorPlan = require('./plan');
 
 describe('InspectorPlan', () => {
@@ -12,6 +13,7 @@ describe('InspectorPlan', () => {
   const renderComponent = (options = {}) => enzyme.shallow(
     <InspectorPlan
       acl={options.acl || acl}
+      analytics={Analytics}
       changeState={options.changeState || sinon.stub()}
       currentPlan={options.currentPlan}
       service={options.service || {}} />

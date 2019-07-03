@@ -7,7 +7,7 @@ const shapeup = require('shapeup');
 
 const CreatePaymentUser = require('./create-payment-user');
 const GenericInput = require('../generic-input/generic-input');
-const Button = require('../shared/button/button');
+const {Button} = require('@canonical/juju-react-components');
 const CardForm = require('../card-form/card-form');
 const AddressForm = require('../address-form/address-form');
 
@@ -140,11 +140,12 @@ describe('CreatePaymentUser', function() {
             </label>
             {null}
             {null}
-            <div className="create-payment-user__add">
+            <div className="create-payment-user__add v1">
               <Button
                 action={wrapper.find('Button').prop('action')}
                 disabled={false}
-                type="inline-positive">
+                extraClasses="is-inline"
+                modifier="positive">
                 Add payment details
               </Button>
             </div>
