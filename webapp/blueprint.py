@@ -105,6 +105,7 @@ def config():
             controllerSocketTemplate="wss://$server:$port/api",
             flags="{terminal: true, support: true, anssr: true, expert: true}",
             gisf="true",
+            jujushellURL="wss://shell.jujugui.org:443/ws/",
             GTM_enabled="false" if FLASK_DEBUG == "true" else "true",
             uuid="",
             paymentURL=JAAS_API_BASE + "/payment",
