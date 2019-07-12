@@ -4,6 +4,7 @@ A Flask application for the Juju GUI
 
 import flask
 import talisker.flask
+import talisker.logs
 from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.debug import DebuggedApplication
 from werkzeug.routing import BaseConverter
@@ -21,6 +22,7 @@ app = flask.Flask(
     __name__, template_folder="../templates", static_folder="../static"
 )
 
+talisker.logs.set_global_extra({"service": "juju-gui"})
 
 app.url_map.strict_slashes = False
 app.url_map.converters["regex"] = RegexConverter
