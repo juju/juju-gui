@@ -719,7 +719,7 @@ utils.getCloudProviderDetails = providerName => {
             title="Cloud credentials help">credentials in
           general</a> or <a
             className="deployment-panel__link"
-            href="https://jujucharms.com/docs/stable/help-aws"
+            href="https://docs.jujucharms.com/aws-cloud"
             target="_blank"
             title="Help using the Amazon Web Service public cloud">setting up
           AWS credentials</a>.
