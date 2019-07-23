@@ -142,6 +142,12 @@ window.yui.add('juju-controller-api', function(Y) {
       if (!op.params) {
         op.params = {};
       }
+      // The Cloud facade api in the GUI requires the user of the
+      // "UpdateCredentials" method which is only available on facade version 2
+      // This will lock the facade version of the Cloud facade requests to 2.
+      if (op.type === 'Cloud') {
+        op.version = 2;
+      }
       var msg = JSON.stringify(op);
       this.ws.send(msg);
     },

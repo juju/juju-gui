@@ -56,7 +56,7 @@ describe('Controller API', function() {
     controllerAPI.set('facades', {
       AllModelWatcher: [2],
       Bundle: [1],
-      Cloud: [1],
+      Cloud: [1, 2, 3, 4, 5],
       Controller: [3],
       MigrationTarget: [1],
       ModelManager: [4],
@@ -2085,7 +2085,7 @@ describe('Controller API', function() {
           'request-id': 1,
           type: 'Cloud',
           request: 'UpdateCredentials',
-          version: 1,
+          version: 2,
           params: {credentials: [{
             tag: 'cloudcred-' + name,
             credential: {'auth-type': authType, attrs: attrs}
