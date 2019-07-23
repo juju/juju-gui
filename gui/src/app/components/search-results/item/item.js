@@ -210,6 +210,17 @@ class SearchResultsItem extends React.Component {
     );
   }
 
+  /**
+    Returns a boolean whether the Add To Canvas button should be disabled.
+    @param {Object} entity The entity object.
+  */
+  _shouldDisableAddToCanvas(entity) {
+    const isReadOnly = this.props.acl.isReadOnly();
+    const isK8s = entity.series.filter(series => series.name === 'kubernetes').length > 0;
+    console.log(isReadOnly || isK8s);
+    return isReadOnly || isK8s;
+  }
+
   render() {
     var item = this.props.item;
     return (
@@ -252,7 +263,7 @@ class SearchResultsItem extends React.Component {
         <div className="one-col last-col list-block__list--item-deploy v1">
           <Button
             action={this._handleDeploy.bind(this, item.id)}
-            disabled={this.props.acl.isReadOnly()}
+            disabled={this._shouldDisableAddToCanvas(item)}
             extraClasses="is-inline list-block__list--item-deploy-link"
             modifier="neutral">
             <SvgIcon
