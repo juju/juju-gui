@@ -156,4 +156,18 @@ describe('SearchResultsItem', function() {
     assert.equal(addToModel.callCount, 1);
     assert.deepEqual(addToModel.args[0][0], 'mysql');
   });
+
+  it('disables deploying an entity if entity is k8s series', function() {
+    const changeState = sinon.stub();
+    const addToModel = sinon.stub();
+    item.series = [
+      {name: 'kubernetes', storeId: '~test-owner/kubernetes/mysql'}
+    ];
+    const wrapper = renderComponent({
+      addToModel,
+      changeState,
+      item
+    });
+    assert.equal(wrapper.find('Button').props().disabled, true);
+  });
 });
