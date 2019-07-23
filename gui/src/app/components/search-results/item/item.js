@@ -211,14 +211,21 @@ class SearchResultsItem extends React.Component {
   }
 
   /**
+    Returns a boolean whether an entity is kubernetes.
+    @param {Object} entity The entity object.
+    @returns {Boolean}
+  */
+  _isKubernetes(entity) {
+    return entity.series.filter(series => series.name === 'kubernetes').length > 0;
+  }
+
+  /**
     Returns a boolean whether the Add To Canvas button should be disabled.
     @param {Object} entity The entity object.
+    @returns {Boolean}
   */
   _shouldDisableAddToCanvas(entity) {
-    const isReadOnly = this.props.acl.isReadOnly();
-    const isK8s = entity.series.filter(series => series.name === 'kubernetes').length > 0;
-    console.log(isReadOnly || isK8s);
-    return isReadOnly || isK8s;
+    return this.props.acl.isReadOnly() || this._isKubernetes(entity);
   }
 
   render() {
