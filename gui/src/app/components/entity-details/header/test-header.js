@@ -288,4 +288,10 @@ describe('EntityHeader', function() {
     const wrapper = renderComponent();
     assert.equal(wrapper.find('Button').prop('disabled'), true);
   });
+
+  it('can disable the deploy button when series is kubernetes', function() {
+    mockEntity.set('series', 'kubernetes');
+    const wrapper = renderComponent();
+    assert.equal(wrapper.find('Button').prop('disabled'), true);
+  });
 });

@@ -114,6 +114,39 @@ class EntityHeader extends React.Component {
   }
 
   /**
+    Returns a boolean whether an entity is kubernetes.
+    @param {Object} entity The entity object.
+    @returns {Boolean}
+  */
+  _isKubernetes(entity) {
+    if (!Array.isArray(entity.series)) {
+      return entity.series === 'kubernetes';
+    }
+    return !!entity.series.find(series => series === 'kubernetes');
+  }
+
+  /**
+    Returns a boolean whether the Add To Canvas button should be disabled.
+    @param {Object} entity The entity object.
+    @returns {Boolean}
+  */
+  _shouldDisableAddToCanvas(entity) {
+    return this.props.acl.isReadOnly() || this._isKubernetes(entity);
+  }
+
+  /**
+    Returns the deploy tooltip depending on the entities series.
+    @param {Object} entity The entity object.
+    @param {String} modelName The name of the model.
+  */
+  _getDeployTooltip(entity, modelName) {
+    if (this._isKubernetes(entity)) {
+      return 'Unable to deploy kubernetes charms via the GUI. Please use the CLI';
+    }
+    return `Add this ${entity.type} to ${modelName ? 'your current' : 'a new'} model`;
+  }
+
+  /**
     Generate the deploy action or a notice if deployment is not supported.
     XXX kadams54, 2016-01-04: the deployAction var will need to be removed
     once we fully support multi-series charms.
@@ -132,12 +165,11 @@ class EntityHeader extends React.Component {
         <span className="v1">
           <Button
             action={this._handleDeployClick.bind(this)}
-            disabled={this.props.acl.isReadOnly()}
+            disabled={this._shouldDisableAddToCanvas(entity)}
             modifier="positive"
             ref="deployAction"
             tooltip={{
-              msg: `Add this ${entity.type} to ` +
-                  `${modelName ? 'your current' : 'a new'} model`,
+              msg: this._getDeployTooltip(entity, modelName),
               position: 'btm-lft'
             }}>
             {title}
