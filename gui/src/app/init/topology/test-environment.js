@@ -2,7 +2,7 @@
 'use strict';
 
 let d3 = require('d3');
-const {charmstore} = require('jaaslib');
+const {charmstore} = require('@canonical/jaaslib');
 
 const Analytics = require('test/fake-analytics');
 const EnvironmentChangeSet = require('../environment-change-set');

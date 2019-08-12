@@ -2,7 +2,7 @@
 'use strict';
 
 const PropTypes = require('prop-types');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 const React = require('react');
 
 const {Button} = require('@canonical/juju-react-components');

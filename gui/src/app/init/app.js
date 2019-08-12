@@ -6,7 +6,7 @@ const PropTypes = require('prop-types');
 const queryString = require('query-string');
 const React = require('react');
 const shapeup = require('shapeup');
-const jaaslib = require('jaaslib');
+const jaaslib = require('@canonical/jaaslib');
 
 // This CSS needs to be imported before the components below so that the order
 // of CSS is correct.

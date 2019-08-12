@@ -5,7 +5,7 @@ const marked = require('marked');
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const {Button} = require('@canonical/juju-react-components');
 const {Panel} = require('@canonical/juju-react-components');

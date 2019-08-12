@@ -40,7 +40,7 @@ const {
   stripe,
   terms,
   urls
-} = require('jaaslib');
+} = require('@canonical/jaaslib');
 
 require('./yui-modules');
 

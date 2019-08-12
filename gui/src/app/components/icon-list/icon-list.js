@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 require('./_icon-list.scss');
 
