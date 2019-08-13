@@ -4,7 +4,7 @@
 const jsyaml = require('js-yaml');
 const React = require('react');
 const FileSaver = require('file-saver');
-const {charmstore} = require('jaaslib');
+const {charmstore} = require('@canonical/jaaslib');
 
 const BundleExporter = require('./bundle-exporter');
 const initUtils = require('./utils');

@@ -3,7 +3,7 @@
 
 const React = require('react');
 const enzyme = require('enzyme');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const InspectorChangeVersionItem = require('./item');
 const {Button} = require('@canonical/juju-react-components');

@@ -4,7 +4,7 @@
 const enzyme = require('enzyme');
 const React = require('react');
 const shapeup = require('shapeup');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const Analytics = require('test/fake-analytics');
 const InspectorChangeVersion = require('./change-version');

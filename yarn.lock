@@ -119,6 +119,11 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@canonical/jaaslib@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@canonical/jaaslib/-/jaaslib-0.6.0.tgz#7b77ff0a6899a2e58adc1b2077d8971de019047b"
+  integrity sha512-3x0DmeFP1Fu/JPT9Sn/vJcNbCI5QSMmwF4rHIH7N/3T/KxwI1dK+gjv8djOFAe3UD8wVbFNwlhOpuhdg+2A+VQ==
+
 "@canonical/juju-react-components@0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@canonical/juju-react-components/-/juju-react-components-0.5.0.tgz#65a65988666bc31d7dc128f349342cb615f23886"
@@ -5382,7 +5387,7 @@ istanbul-reports@^1.5.1:
   dependencies:
     handlebars "^4.0.3"
 
-jaaslib@0.5.0, jaaslib@^0.5.0:
+jaaslib@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jaaslib/-/jaaslib-0.5.0.tgz#78cefa2acdc0894c0198509495b2e9deb5cc1acd"
   integrity sha512-zT0BVgJFgTfh8NZFwuLkbKfpyju99jwepnoDg3Q9DjZ/QmE4Cm+DV0DfGTGM+uqOxxFr3aa9OGFmFH1LGSLHaQ==

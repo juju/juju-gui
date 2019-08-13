@@ -4,7 +4,7 @@
 const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const {Button} = require('@canonical/juju-react-components');
 const IconList = require('../../icon-list/icon-list');

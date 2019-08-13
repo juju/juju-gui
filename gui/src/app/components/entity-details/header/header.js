@@ -3,7 +3,7 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const CopyToClipboard = require('../../copy-to-clipboard/copy-to-clipboard');
 const {Button} = require('@canonical/juju-react-components');

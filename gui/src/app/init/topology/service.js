@@ -3,7 +3,7 @@
 
 const d3 = require('d3');
 const jsyaml = require('js-yaml');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const environmentUtils = require('./environment-utils');
 const relationUtils = require('../relation-utils');

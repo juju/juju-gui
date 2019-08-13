@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const Spinner = require('../../spinner/spinner');
 const InspectorChangeVersionItem = require('./item/item');

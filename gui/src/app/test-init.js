@@ -11,7 +11,7 @@ const {
   plans,
   terms,
   urls
-} = require('jaaslib');
+} = require('@canonical/jaaslib');
 
 
 describe('init', () => {

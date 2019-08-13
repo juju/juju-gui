@@ -4,7 +4,7 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 const shapeup = require('shapeup');
-const {urls} = require('jaaslib');
+const {urls} = require('@canonical/jaaslib');
 
 const {BasicTable} = require('@canonical/juju-react-components');
 const ProfileCharmstoreLogin = require('../charmstore-login/charmstore-login');

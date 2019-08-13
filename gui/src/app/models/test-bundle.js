@@ -18,7 +18,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-const jaaslib = require('jaaslib');
+const jaaslib = require('@canonical/jaaslib');
 const charmstoreUtils = jaaslib.charmstore;
 const utils = require('../init/testing-utils');
 
