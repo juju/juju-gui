@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.15.0] - 2019-08-22
 ### Changed
+- Upgraded jaaslib to remove request for `revision-info` on Charmstore requests.
+- Series list has been updated to include new OS series.
 - Added Prettier to the codebase to format `.scss` files.
 - Update to Xterm 3.8.0.
 - Browserify has been replaced with Webpack which also now builds the SCSS files.
@@ -16,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace components with juju-react-components.
 
 ### Fixed
+- Forced Cloud facade to v2 to support UpdateCredentials method.
+- Updated broken links in deployment flow.
 - Broken GCP cloud logo in Firefox.
 - Repeating port values on Status pane.
 - Broken styles on the Status pane.
@@ -24,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Entity details pages no longer have sticky headers.
+- It's no longer possible to deploy k8s charms via the GUI.
 
 ## [2.14.1] - 2018-10-26
 ### Changed
