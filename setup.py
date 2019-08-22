@@ -12,7 +12,7 @@ tests_requires = parse_requirements("test-requirements.txt")
 
 setup(
     name="jujugui",
-    version="2.14.1",
+    version="2.15.0",
     description="jujugui",
     classifiers=[
         "Programming Language :: Python",
