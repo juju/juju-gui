@@ -240,7 +240,15 @@
         });
       };
     </script>
-    <script src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>
+    <script src="https://assets.ubuntu.com/v1/juju-cards-v1.7.2.js"></script>
+    <link rel="stylesheet" href="https://assets.ubuntu.com/v1/juju-cards-v1.7.2.css" />
+
+    <script>
+      setTimeout(function() {
+        jujuCards(demoDomain);
+        jujuCards.updateHead();
+      }, 5000);
+    </script>
 
     <!-- Google Tag Manager -->
     <noscript

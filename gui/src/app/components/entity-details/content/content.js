@@ -584,12 +584,14 @@ class EntityContent extends React.Component {
     const ddeploy = this.props.flags['test.ddeploy'];
     const dataDD = ddeploy ? 'data-dd' : '';
     const script = '<script ' +
-      'src="https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js"></script>\n' +
+      'src="https://assets.ubuntu.com/v1/juju-cards-v1.7.2.js"></script>\n' +
       `<div class="juju-card" ${dataDD} data-id="${storeId}"></div>`;
     let cardElement = <div className="juju-card" data-id={storeId}></div>;
     if (ddeploy) {
       cardElement = <div className="juju-card" data-dd data-id={storeId}></div>;
     }
+
+    cardElement = <div className="juju-card" data-dd data-id="trusty/wordpress-5"></div>;
 
     return (
       <div className="entity-content__card section clearfix">

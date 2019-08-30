@@ -194,7 +194,7 @@ exports[`EntityContent can display a bundle for Juju 2 1`] = `
               }
             }
             className="copy-to-clipboard"
-            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js\\"></script>
+            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.7.2.js\\"></script>
 <div class=\\"juju-card\\"  data-id=\\"django-cluster\\"></div>"
           />
           <h4>
@@ -402,7 +402,7 @@ exports[`EntityContent can display a charm 1`] = `
               }
             }
             className="copy-to-clipboard"
-            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js\\"></script>
+            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.7.2.js\\"></script>
 <div class=\\"juju-card\\"  data-id=\\"trusty/django-123\\"></div>"
           />
           <h4>
@@ -671,7 +671,7 @@ exports[`EntityContent can display plans 1`] = `
               }
             }
             className="copy-to-clipboard"
-            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.6.0.js\\"></script>
+            value="<script src=\\"https://assets.ubuntu.com/v1/juju-cards-v1.7.2.js\\"></script>
 <div class=\\"juju-card\\"  data-id=\\"trusty/django-123\\"></div>"
           />
           <h4>
