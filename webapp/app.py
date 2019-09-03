@@ -8,6 +8,7 @@ import talisker.logs
 from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.debug import DebuggedApplication
 from werkzeug.routing import BaseConverter
+from canonicalwebteam.yaml_responses.flask_helpers import prepare_redirects
 
 from webapp.blueprint import gui
 
@@ -34,6 +35,10 @@ if app.debug:
 talisker.flask.register(app)
 
 app.register_blueprint(gui)
+
+app.before_request(
+    prepare_redirects(path="permanent-redirects.yaml", permanent=True)
+)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
