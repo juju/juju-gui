@@ -20,6 +20,7 @@ ADD static/gui/ static/gui/
 ADD webapp/ webapp/
 ADD requirements.txt requirements.txt
 ADD entrypoint entrypoint
+ADD permanent-redirects.yaml permanent-redirects.yaml
 RUN pip3 install -r requirements.txt
 
 ARG TALISKER_REVISION_ID
