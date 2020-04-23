@@ -1,7 +1,7 @@
 ---
 defaults: &defaults
   docker:
-    - image: canonicalwebteam/dev
+    - image: canonicalwebteam/dev:v1.6.4
   environment:
   working_directory: ~/project
 
