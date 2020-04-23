@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 # Set up environment
 ENV LANG C.UTF-8
@@ -7,9 +7,6 @@ WORKDIR /srv
 # System dependencies
 # Node ppa provided by: https://github.com/nodesource/distributions
 RUN apt-get update && \
-    apt-get install curl --yes && \
-    curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get update && \
     apt-get install --yes build-essential python3-dev python3-pip
 
 # Import code, install code dependencies
@@ -23,9 +20,9 @@ ADD entrypoint entrypoint
 ADD permanent-redirects.yaml permanent-redirects.yaml
 RUN pip3 install -r requirements.txt
 
-ARG TALISKER_REVISION_ID
-RUN test -n "${TALISKER_REVISION_ID}"
-ENV TALISKER_REVISION_ID "${TALISKER_REVISION_ID}"
+ARG BUILD_ID
+RUN test -n "${BUILD_ID}"
+ENV TALISKER_REVISION_ID "${BUILD_ID}"
 
 # Setup commands to run server
 ENTRYPOINT ["./entrypoint"]
