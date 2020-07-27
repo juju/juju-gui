@@ -2,6 +2,10 @@ domain: jujucharms.com
 
 image: prod-comms.docker-registry.canonical.com/jujucharms.com
 
+env:
+  - name: SENTRY_DSN
+    value: https://1b1af92e654247648f1c37ddb5853e1d@sentry.is.canonical.com//39
+
 useProxy: false
 
 # Overrides for production
