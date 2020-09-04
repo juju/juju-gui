@@ -40,7 +40,7 @@
     "js-yaml": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.9.1.tgz",
     "lodash.clonedeep": "^4.5.0",
     "macaroon-bakery": "0.2.0",
-    "marked": "^0.5.1",
+    "marked": "^0.7.0",
     "mixwith": "0.1.1",
     "normalize.css": "^8.0.0",
     "query-string": "^6.2.0",
