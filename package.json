@@ -91,7 +91,7 @@
     "mkdirp": "0.5.1",
     "mocha": "^5.2.0",
     "mutation-observer": "^1.0.3",
-    "node-sass": "^4.10.0",
+    "node-sass": "^4.13.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "1.15.1",
     "pretty-quick": "^1.8.0",
